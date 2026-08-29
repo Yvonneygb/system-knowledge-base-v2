@@ -1384,6 +1384,7 @@ WHERE I.INVOICE_CODE = ?
 </div>
 
 <div id="manual" style="display:none;" class="kb-manual" markdown="1">
+
 > **适用模块：** 家装管理 → 家装往来 → 家装核销发票上传  
 > **适用角色：** 经销商、家装业务操作员  
 > **前置条件：** 已有家装项目出库记录，且持有交易发票/收据凭证
