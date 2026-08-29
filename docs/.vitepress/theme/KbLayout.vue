@@ -701,8 +701,9 @@ const expandedGroup = ref('项目往来')
 
 onMounted(() => {
   const p = currentPath.value
+  const base = import.meta.env.BASE_URL || '/'
   // 根路径自动跳转到家装真实性核销（使用 withBase 确保 base 路径正确）
-  if (p === '/' || p === '/index.html' || p === '/system-knowledge-base/' || p === '/system-knowledge-base/index.html') {
+  if (p === '/' || p === '/index.html' || p === base || p === (base === '/' ? '' : base + 'index.html')) {
     router.go(withBase('/家装管理/项目往来/家装真实性核销/'))
     return
   }
