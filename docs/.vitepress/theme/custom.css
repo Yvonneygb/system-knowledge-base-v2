@@ -2366,7 +2366,7 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
 
 /* ====== 操作手册 tab 内容：恢复标题显示（全局 .kb-page-content h1/h2 被隐藏，这里单独恢复） ====== */
 #manual {
-  padding-top: 8px;
+  padding: 8px 10% 24px;
 }
 #manual h1, #manual h2, #manual h3, #manual h4 {
   display: block !important;
