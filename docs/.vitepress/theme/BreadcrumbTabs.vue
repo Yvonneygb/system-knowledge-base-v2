@@ -17,11 +17,9 @@
         <svg v-if="tab.id==='faq'" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
         <svg v-if="tab.id==='changelog'" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17" y1="12" x2="22.96" y2="12"/></svg>
         <svg v-if="tab.id==='history'" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <svg v-if="tab.id==='manual'" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
         <span>{{ tab.label }}</span>
       </div>
-    </div>
-    <div class="kb-tabs-extra">
-      <slot name="tab-extra" />
     </div>
   </div>
 </template>
@@ -38,6 +36,7 @@ const tabs = [
   { id: 'faq', label: '常见问题FAQ', icon: 'fa-solid fa-circle-question' },
   { id: 'changelog', label: '更新记录', icon: 'fa-solid fa-code-commit' },
   { id: 'history', label: '历史排查记录', icon: 'fa-solid fa-clock-rotate-left' },
+  { id: 'manual', label: '操作手册', icon: 'fa-solid fa-book' },
 ]
 
 const activeTab = ref('biz-intro')
@@ -128,31 +127,5 @@ onMounted(() => {
   font-size: 0.85rem;
   width: 16px;
   text-align: center;
-}
-.kb-tabs-extra {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  padding-right: 16px;
-  padding-left: 8px;
-}
-.kb-tabs-extra a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 16px;
-  background: linear-gradient(135deg, #7C3AED, #6D28D9);
-  color: #fff !important;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
-  line-height: 1.2;
-}
-.kb-tabs-extra a:hover {
-  filter: brightness(1.08);
-  color: #fff !important;
 }
 </style>

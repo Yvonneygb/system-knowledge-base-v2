@@ -2363,3 +2363,29 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
 .kb-primary-icon svg { width: 22px !important; height: 22px !important; }
 .kb-logo-mark svg    { width: 22px !important; height: 22px !important; }
 .kb-arrow-svg        { width: 12px !important; height: 12px !important; }
+
+/* ====== 操作手册 tab 内容：恢复标题显示（全局 .kb-page-content h1/h2 被隐藏，这里单独恢复） ====== */
+#manual {
+  padding-top: 8px;
+}
+#manual h1, #manual h2, #manual h3, #manual h4 {
+  display: block !important;
+}
+#manual h2 {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: var(--kb-title) !important;
+  margin: 28px 0 14px !important;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--kb-purple-light);
+}
+#manual h3 {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: var(--kb-purple) !important;
+  margin: 20px 0 10px !important;
+}
+#manual > p {
+  line-height: 1.8 !important;
+  color: var(--kb-text) !important;
+}
