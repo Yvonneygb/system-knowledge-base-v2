@@ -20,6 +20,9 @@
         <span>{{ tab.label }}</span>
       </div>
     </div>
+    <div class="kb-tabs-extra">
+      <slot name="tab-extra" />
+    </div>
   </div>
 </template>
 
@@ -125,5 +128,31 @@ onMounted(() => {
   font-size: 0.85rem;
   width: 16px;
   text-align: center;
+}
+.kb-tabs-extra {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-right: 16px;
+  padding-left: 8px;
+}
+.kb-tabs-extra a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  background: linear-gradient(135deg, #7C3AED, #6D28D9);
+  color: #fff !important;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+  line-height: 1.2;
+}
+.kb-tabs-extra a:hover {
+  filter: brightness(1.08);
+  color: #fff !important;
 }
 </style>

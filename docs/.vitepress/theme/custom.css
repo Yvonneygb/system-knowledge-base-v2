@@ -2330,3 +2330,36 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
 }
 /* 列宽由 <col> 精确控制：合法值列宽约减半（12%），数据库列名置于末列 */
 
+
+/* ====== 全局 SVG 兜底：锁死导航/装饰图标尺寸，防意外撑爆 ======
+   历史问题：BreadcrumbTabs 里的 book-open 等 SVG（width=16 height=16）被某
+   全局规则放大到 100% 视口，看似巨型房子。此处强制所有导航性 SVG 不超过 32px。
+   排除 .bf-fc-svg 大流程图（自行控制尺寸）。 */
+.kb-page-content svg:not(.bf-fc-svg),
+.kb-tabs-bar svg,
+.kb-primary-nav svg,
+.kb-secondary-panel svg,
+.kb-topbar svg {
+  max-width: 32px !important;
+  max-height: 32px !important;
+  width: auto !important;
+  height: auto !important;
+}
+.kb-page-content svg:not(.bf-fc-svg):not([width]):not([height]),
+.kb-tabs-bar svg:not([width]):not([height]),
+.kb-primary-nav svg:not([width]):not([height]),
+.kb-secondary-panel svg:not([width]):not([height]),
+.kb-topbar svg:not([width]):not([height]) {
+  width: 16px !important;
+  height: 16px !important;
+}
+.kb-page-content svg[width="16"],
+.kb-tabs-bar svg[width="16"],
+.kb-primary-nav svg[width="16"],
+.kb-secondary-panel svg[width="16"] {
+  width: 16px !important;
+  height: 16px !important;
+}
+.kb-primary-icon svg { width: 22px !important; height: 22px !important; }
+.kb-logo-mark svg    { width: 22px !important; height: 22px !important; }
+.kb-arrow-svg        { width: 12px !important; height: 12px !important; }

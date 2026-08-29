@@ -1,4 +1,8 @@
-<BreadcrumbTabs />
+<BreadcrumbTabs>
+  <template #tab-extra>
+    <a href="./操作手册">查看操作手册</a>
+  </template>
+</BreadcrumbTabs>
 
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
