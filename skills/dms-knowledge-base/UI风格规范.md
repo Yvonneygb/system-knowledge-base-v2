@@ -202,6 +202,28 @@ docs/.vitepress/theme/ui/
 
 视觉节奏:不依赖边框分隔,只用底色交替制造层级。KBB 组件 scoped `background` 已被全局 `!important` 覆盖。
 
+### 7.1.1 模块标题靠左(biz-kl-hdr)
+所有模块化卡片标题容器 `.biz-kl-hdr` 必须**靠左对齐**(`text-align: left`):
+- 全局 `custom.css` 默认是 `text-align: center` (居中),由于全局改动影响 141 个页面,**当前约定为:具体页面用内联 style 覆盖** —— 在 `<div class="biz-kl-hdr">` 上加 `style="text-align:left;"`
+- 内联 style 优先级最高,能压过 `custom.css` 的 `text-align: center`
+- 后续如有需要统一全局靠左,可将 `custom.css` 第 1941 行的 `text-align: center` 改为 `text-align: left`,自动对 141 个源页面生效
+- 涵盖场景:`biz-kl-hdr` 内的 `h2`(如「界面模块 1」「列表页查询栏」「详情页头表单」「常见问题排查思路」等模块大标题)及其下属文字
+
+### 7.1.2 SQL 代码块留白
+所有 SQL 代码块(渲染产物 `div[class*="language-"]`)必须有**明显的上下间距**:
+- `custom.css` 默认 `margin: 12px 0`,视觉上贴上下文
+- **本规范要求 `margin: 20px 0`**(上下各 20px),用空行撑开节奏
+- 页面级覆盖:在页面 `.md` 顶部 `<BreadcrumbTabs />` 之后插入 `<style>` 块:
+  ```html
+  <style>
+  div[class*="language-"] { margin: 20px 0 !important; }
+  </style>
+  ```
+  - `!important` 压过 `custom.css` 同等优先级的 `!important`(靠后加载胜出)
+  - 只在本页生效,不影响其他 140 页
+- 也可用全局方案:把 `custom.css` 第 119 行 `margin: 12px 0 !important;` 改为 `margin: 20px 0 !important;`,所有页面统一
+- 适用:Markdown ```` ```sql ```` fenced code block 渲染的 `pre.shiki` 块、FAQ 卡片/报错弹窗内的 `pre.shiki` 块(全站统一)
+
 ### 7.2 表格表头(紫色)
 所有 `.kb-page-content table th` 必须使用紫色表头:
 - 底色:`linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)` 浅紫渐变
@@ -405,3 +427,5 @@ SELECT * FROM EPM_PROJECT WHERE IS_HOME = 2
 16. **不要把「重点逻辑」的"业务意义"写成粗体段落(`**业务意义**：...`)**,必须用 `<KbQuote>` 紫色引用块(即 `class="kb-quote"`)承载,与【家装核销发票上传】对齐(见 §7.5)。
 17. **不要把「重点逻辑」的"具体逻辑"写成 `<KbSubTitle>具体逻辑</KbSubTitle>` 组件或 `具体逻辑描述`**,必须用 `**具体逻辑**：`(`<strong>` 包裹的普通文本,与【家装核销发票上传】一致,见 §7.5)。
 18. **不要把「重点逻辑」的详细逻辑写成自动编号的有序列表(`<ol>`,即 Markdown `1.` `2.` 形式),也不要漏掉 `1、2、3、` 序号**:必须用 `<ul><li>` 无序列表,并在每条 li 文本前手动加 `1、2、3、` 中文序号(如 `- 1、第1点：...`,与【家装核销发票上传】的 `ul/li` 结构一致,见 §7.5)。
+19. **不要让 `biz-kl-hdr` 标题居中显示**:必须靠左对齐(`text-align: left`),内联 style 覆盖全局 `text-align: center`(见 §7.1.1);「界面模块 1」「详情页头表单」等模块大标题必须从左边缘开始读。
+20. **不要让 SQL 代码块紧贴上下文(留白不足)**:必须用 `margin: 20px 0`(上下各 20px),页面级用 `<style>div[class*="language-"] { margin: 20px 0 !important; }</style>` 覆盖 `custom.css` 默认 12px(见 §7.1.2)。

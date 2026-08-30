@@ -3,12 +3,17 @@
 
 <BreadcrumbTabs />
 
+<style>
+/* 本页定制：SQL 块上下间距加大（custom.css 默认 12px） */
+div[class*="language-"] { margin: 20px 0 !important; }
+</style>
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">背景与动机</span>
     <h2>为何要做样品及长库龄要货订单</h2>
     <p>门店向集团申请样品及长库龄产品发货的业务单据，与工程/家装要货共用同一套表结构</p>
@@ -45,7 +50,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">定义</span>
     <h2>本质 & 具体是什么</h2>
     <p>门店维度的"要货申请"，头表 + 行表结构，按业务类型与价格类型细分</p>
@@ -79,7 +84,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">流程</span>
     <h2>样品及长库龄要货订单全流程</h2>
     <p>从新建到 ERP 发货，价格模式决定审批路径</p>
@@ -118,7 +123,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">角色</span>
     <h2>谁在做？主要在做什么？</h2>
     <p>门店运营 / 业务员发起，价格模式决定审批与下游动作</p>
@@ -144,7 +149,7 @@
 <div class="kl-wrap">
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">流程图</span>
     <h2>业务流程图</h2>
     <p>新建 → 编辑头信息 → 选价格模式 → 添加行选样品 → 保存并提交 → 审批/生成CRM → ERP发货</p>
@@ -207,7 +212,7 @@
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">上游依赖</span>
     <h2>上游依赖</h2>
     <p>页面渲染与保存提交依赖的主数据与外部系统</p>
@@ -236,7 +241,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">下游影响</span>
     <h2>下游影响</h2>
     <p>订单提交后对 CRM、ERP 及各关联模块的回写与联动</p>
@@ -333,7 +338,7 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">界面模块 1</span>
     <h2>列表页查询栏</h2>
   </div>
@@ -378,7 +383,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">界面模块 2</span>
     <h2>列表页表格</h2>
   </div>
@@ -434,7 +439,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">界面模块 3</span>
     <h2>详情页头表单</h2>
   </div>
@@ -491,7 +496,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">界面模块 4</span>
     <h2>详情页行表格</h2>
   </div>
@@ -541,7 +546,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">界面模块 5</span>
     <h2>详情页Tab结构</h2>
   </div>
@@ -579,7 +584,7 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">选择弹窗</span>
     <h2>选择弹窗</h2>
     <p>8 个单选 LOV 弹窗的入参与查询 SQL</p>
@@ -1091,7 +1096,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">导入</span>
     <h2>导入</h2>
     <p>Excel 产品明细行导入的前置约定、字段映射、处理逻辑、异常与运维保障</p>
@@ -1099,7 +1104,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">import</span>
     <h2>前置约定</h2>
   </div>
@@ -1107,7 +1112,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">import</span>
     <h2>字段映射</h2>
   </div>
@@ -1150,7 +1155,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">import</span>
     <h2>处理逻辑</h2>
   </div>
@@ -1158,7 +1163,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">import</span>
     <h2>异常与结果约定</h2>
   </div>
@@ -1166,7 +1171,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">import</span>
     <h2>运维保障</h2>
   </div>
@@ -1174,7 +1179,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">其他按钮</span>
     <h2>其他按钮</h2>
     <p>列表页与详情页共 11 个操作按钮的显隐与执行逻辑</p>
@@ -1182,7 +1187,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">其他按钮</span>
     <h2>按钮清单</h2>
   </div>
@@ -1279,7 +1284,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 1</span>
     <h2>编辑（详情页）</h2>
   </div>
@@ -1293,7 +1298,7 @@ SELECT h.INTERIM_BIINO, h.HZ_APPROVE_STATUS, h.ORDER_STAT
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 2</span>
     <h2>取消编辑（详情页）</h2>
   </div>
@@ -1301,7 +1306,7 @@ SELECT h.INTERIM_BIINO, h.HZ_APPROVE_STATUS, h.ORDER_STAT
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 3</span>
     <h2>删除（详情页）</h2>
   </div>
@@ -1315,7 +1320,7 @@ SELECT h.HEAD_ID, h.HZ_APPROVE_STATUS, h.IS_AUDITING_WH, h.SA_SALEBILLNO, h.ORDE
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 4</span>
     <h2>新建（详情页）</h2>
   </div>
@@ -1323,7 +1328,7 @@ SELECT h.HEAD_ID, h.HZ_APPROVE_STATUS, h.IS_AUDITING_WH, h.SA_SALEBILLNO, h.ORDE
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 5</span>
     <h2>保存（详情页）</h2>
   </div>
@@ -1337,7 +1342,7 @@ SELECT h.HEAD_ID, h.PRICE_TYPE, h.BUSINESS_TYPE, h.HZ_APPROVE_STATUS
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 6</span>
     <h2>保存并提交（详情页）</h2>
   </div>
@@ -1351,7 +1356,7 @@ SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 7</span>
     <h2>查看下单数量及坎级（详情页）</h2>
   </div>
@@ -1366,7 +1371,7 @@ SELECT dpl.MATERIAL_CODE, dpl.ACTIVE_QTY, dpl.MOQ, dpl.CAP_QTY, dpl.CAP_LEVEL
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 8</span>
     <h2>生成CRM订单（详情页）</h2>
   </div>
@@ -1380,7 +1385,7 @@ SELECT h.HEAD_ID, h.INTERIM_BIINO, h.PRICE_TYPE, h.BUSINESS_TYPE, h.SA_SALEBILLN
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 9</span>
     <h2>批量获取当月报送总量（详情页）</h2>
   </div>
@@ -1401,7 +1406,7 @@ SELECT m.MATERIAL_CODE,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 10</span>
     <h2>同步地址信息（详情页）</h2>
   </div>
@@ -1417,7 +1422,7 @@ SELECT ca.TAKE_MAN, ca.TAKE_PHONE, ca.TAKE_ADDRESS
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 11</span>
     <h2>导出（列表页）</h2>
   </div>
@@ -1445,7 +1450,7 @@ SELECT h.INTERIM_BIINO      AS 要货单号,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">保存校验</span>
     <h2>保存校验</h2>
     <p>保存时 preCheckData / verifyCustomer 的 10 项校验规则</p>
@@ -1453,7 +1458,7 @@ SELECT h.INTERIM_BIINO      AS 要货单号,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">保存校验</span>
     <h2>保存校验</h2>
     <p>保存校验校验规则明细</p>
@@ -1632,7 +1637,7 @@ SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
 
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">提交校验</span>
     <h2>提交校验</h2>
     <p>保存并提交时 OA 审批推送与 CRM 订单生成的校验</p>
@@ -1640,7 +1645,7 @@ SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">提交校验</span>
     <h2>提交校验</h2>
     <p>提交校验校验规则明细</p>
@@ -1705,7 +1710,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">状态机</span>
     <h2>状态机</h2>
     <p>单据状态与 OA 审批状态的流转关系</p>
@@ -1740,7 +1745,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">state</span>
     <h2>状态机列表</h2>
   </div>
@@ -1800,14 +1805,14 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 <p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">---</p>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <h2>数据库表详解</h2>
     <p>头表与行表的字段、类型与业务逻辑</p>
   </div>
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">表 1</span>
     <h2>SA_OUT_BILL_HEAD（要货订单头表）</h2>
   </div>
@@ -2226,7 +2231,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">表 2</span>
     <h2>SA_OUT_BILL_LINE（要货订单行表）</h2>
   </div>
@@ -2492,7 +2497,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 <div class="kl-wrap">
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(239,68,68,0.08);color:#DC2626;border-color:rgba(239,68,68,0.18);">权限控制</span>
     <h2>删除按钮权限</h2>
     <p>列表操作列的删除按钮按角色显隐</p>
@@ -2505,7 +2510,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(239,68,68,0.08);color:#DC2626;border-color:rgba(239,68,68,0.18);">用户权限</span>
     <h2>字段与按钮的权限依赖</h2>
     <p>页面渲染时按值集与角色决定字段显隐与可编辑</p>
@@ -2525,7 +2530,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 <div class="kl-wrap">
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">报错一览表</span>
     <h2>常见报错与根因</h2>
     <p>保存/提交/删除环节的典型报错与排查逻辑（点"查看"展开详细逻辑）</p>
@@ -2651,7 +2656,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">常见问题</span>
     <h2>常见问题排查思路</h2>
     <p>从现象到根因的快速定位</p>
@@ -2740,7 +2745,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 <div class="kl-wrap">
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">更新记录</span>
     <h2>更新记录</h2>
     <p>本菜单页面的修订历史</p>
@@ -2764,7 +2769,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 <div class="kl-wrap">
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
+  <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">历史排查记录</span>
     <h2>历史排查记录</h2>
     <p>本菜单相关的历史问题排查留痕</p>
