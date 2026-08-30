@@ -1593,7 +1593,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 <p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
 
 <div style="overflow-x:auto;padding:8px 0;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" style="display:block;margin:0 auto;min-width:720px;max-width:100%;height:auto;max-height:none;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" style="display:block;margin:0 auto;width:auto;max-width:100%;height:720px;">
     <defs>
       <marker id="arr-grn-sm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker>
       <marker id="arr-gry-sm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9CA3AF"/></marker>
