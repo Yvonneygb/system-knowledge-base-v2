@@ -1592,54 +1592,48 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 
 <p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
 <div style="overflow-x:auto;padding:8px 0;">
-<svg class="bf-fc-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 340" style="display:block;margin:0 auto;width:auto;max-width:100%;height:340px;"><!--
+<svg class="bf-fc-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 180" style="display:block;margin:0 auto;width:auto;max-width:100%;height:180px;"><!--
 --><defs>
-<marker id="arr-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#059669"/></marker>
-<marker id="arr-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker>
+<marker id="arr-bl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker>
+<marker id="arr-rd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker>
 </defs>
-<rect x="10" y="10" width="80" height="38" rx="6" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
-<text x="50" y="35" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">开始</text>
-<line x1="90" y1="29" x2="120" y2="29" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<rect x="120" y="10" width="90" height="38" rx="6" fill="#ECFDF5" stroke="#059669" stroke-width="2"/>
-<text x="165" y="33" text-anchor="middle" fill="#065F46" font-size="13" font-weight="600">新建/草稿</text>
-<text x="165" y="46" text-anchor="middle" fill="#065F46" font-size="10">stat=1</text>
-<line x1="210" y1="29" x2="240" y2="29" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<polygon points="270,5 350,29 270,53 190,29" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
-<text x="270" y="28" text-anchor="middle" fill="#7C3AED" font-size="11" font-weight="600">价格类型</text>
-<text x="270" y="40" text-anchor="middle" fill="#7C3AED" font-size="10">折扣/价目</text>
-<line x1="350" y1="29" x2="380" y2="29" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<rect x="380" y="10" width="100" height="38" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
-<text x="430" y="30" text-anchor="middle" fill="#92400E" font-size="12" font-weight="600">折扣政策</text>
-<text x="430" y="43" text-anchor="middle" fill="#92400E" font-size="9">(走OA审批)</text>
-<line x1="480" y1="29" x2="510" y2="29" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<rect x="510" y="10" width="90" height="38" rx="6" fill="#ECFDF5" stroke="#059669" stroke-width="2"/>
-<text x="555" y="30" text-anchor="middle" fill="#065F46" font-size="12" font-weight="600">价目表</text>
-<text x="555" y="43" text-anchor="middle" fill="#065F46" font-size="9">(直通CRM)</text>
-<line x1="600" y1="29" x2="630" y2="29" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<rect x="630" y="10" width="100" height="38" rx="6" fill="#ECFDF5" stroke="#059669" stroke-width="2"/>
-<text x="680" y="30" text-anchor="middle" fill="#065F46" font-size="12" font-weight="600">生成CRM</text>
-<text x="680" y="43" text-anchor="middle" fill="#065F46" font-size="9">NO_APPROVED/stat=5</text>
-<line x1="730" y1="29" x2="760" y2="29" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<rect x="760" y="10" width="85" height="38" rx="6" fill="#065F46" stroke="#047857" stroke-width="2"/>
-<text x="802" y="35" text-anchor="middle" fill="#FFF" font-size="14" font-weight="700">ERP发货</text>
-<line x1="760" y1="48" x2="700" y2="68" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<text x="775" y="70" text-anchor="middle" fill="#7C3AED" font-size="10">完成</text>
+<!-- 第一行主流程 -->
+<rect x="10" y="8" width="70" height="34" rx="17" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"/>
+<text x="45" y="30" text-anchor="middle" fill="#1D4ED8" font-size="12" font-weight="600">开始</text>
+<line x1="80" y1="25" x2="100" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<rect x="100" y="8" width="90" height="34" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
+<text x="145" y="30" text-anchor="middle" fill="#334155" font-size="12" font-weight="500">新建/草稿</text>
+<line x1="190" y1="25" x2="210" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<rect x="210" y="8" width="90" height="34" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
+<text x="255" y="30" text-anchor="middle" fill="#334155" font-size="12" font-weight="500">价格类型</text>
+<line x1="300" y1="25" x2="320" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<rect x="320" y="8" width="90" height="34" rx="6" fill="#FFF7ED" stroke="#F97316" stroke-width="1"/>
+<text x="365" y="30" text-anchor="middle" fill="#C2410C" font-size="12" font-weight="500">折扣政策</text>
+<line x1="410" y1="25" x2="430" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<rect x="430" y="8" width="90" height="34" rx="6" fill="#F0FDF4" stroke="#22C55E" stroke-width="1"/>
+<text x="475" y="30" text-anchor="middle" fill="#15803D" font-size="12" font-weight="500">价目表</text>
+<line x1="520" y1="25" x2="540" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<rect x="540" y="8" width="90" height="34" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
+<text x="585" y="30" text-anchor="middle" fill="#334155" font-size="12" font-weight="500">生成CRM</text>
+<line x1="630" y1="25" x2="650" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<rect x="650" y="8" width="80" height="34" rx="6" fill="#2563EB" stroke="#1D4ED8" stroke-width="1"/>
+<text x="690" y="30" text-anchor="middle" fill="#FFF" font-size="12" font-weight="600">ERP发货</text>
 
-<!-- 第二行：折扣政策分支的审批结果 -->
-<line x1="430" y1="48" x2="430" y2="70" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<polygon points="430,75 475,92 430,109 385,92" fill="#F3E8FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="4,2"/>
-<text x="430" y="93" text-anchor="middle" fill="#7C3AED" font-size="10" font-weight="600">审批</text>
-<line x1="385" y1="92" x2="345" y2="92" stroke="#059669" stroke-width="2" marker-end="url(#arr-g)"/>
-<rect x="260" y="78" width="80" height="28" rx="6" fill="#ECFDF5" stroke="#059669" stroke-width="2"/>
-<text x="300" y="97" text-anchor="middle" fill="#065F46" font-size="11" font-weight="600">通过</text>
-<line x1="475" y1="92" x2="520" y2="92" stroke="#DC2626" stroke-width="2" marker-end="url(#arr-r)"/>
-<rect x="520" y="78" width="80" height="28" rx="6" fill="#FEF2F2" stroke="#DC2626" stroke-width="2"/>
-<text x="560" y="97" text-anchor="middle" fill="#991B1B" font-size="11" font-weight="600">拒绝</text>
-
-<!-- 审批通过 → 生成CRM -->
-<line x1="300" y1="106" x2="680" y2="60" stroke="#059669" stroke-width="2"/>
-<!-- 拒绝 → 退回修改 -->
-<line x1="560" y1="106" x2="680" y2="60" stroke="#DC2626" stroke-width="2"/>
+<!-- 第二行：折扣政策分支 -->
+<line x1="365" y1="42" x2="365" y2="58" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<rect x="325" y="62" width="80" height="30" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
+<text x="365" y="81" text-anchor="middle" fill="#334155" font-size="11" font-weight="500">OA审批</text>
+<line x1="365" y1="92" x2="365" y2="110" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<rect x="320" y="112" width="90" height="30" rx="6" fill="#F0FDF4" stroke="#22C55E" stroke-width="1"/>
+<text x="365" y="131" text-anchor="middle" fill="#15803D" font-size="12" font-weight="500">通过</text>
+<line x1="410" y1="127" x2="585" y2="35" stroke="#22C55E" stroke-width="1.5" marker-end="url(#arr-bl)"/>
+<line x1="365" y1="92" x2="525" y2="92" stroke="#94A3B8" stroke-width="1"/>
+<line x1="525" y1="92" x2="525" y2="110" stroke="#DC2626" stroke-width="1.5" marker-end="url(#arr-rd)"/>
+<rect x="480" y="112" width="90" height="30" rx="6" fill="#FEF2F2" stroke="#DC2626" stroke-width="1"/>
+<text x="525" y="131" text-anchor="middle" fill="#991B1B" font-size="12" font-weight="500">拒绝</text>
+<line x1="525" y1="142" x2="525" y2="155" stroke="#DC2626" stroke-width="1.5"/>
+<line x1="525" y1="155" x2="690" y2="155" stroke="#DC2626" stroke-width="1.5"/>
+<line x1="690" y1="155" x2="690" y2="135" stroke="#DC2626" stroke-width="1.5" marker-end="url(#arr-rd)"/>
 </svg>
 </div>
 
