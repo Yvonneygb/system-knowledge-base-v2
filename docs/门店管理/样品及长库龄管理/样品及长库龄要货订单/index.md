@@ -3,9 +3,9 @@
 
 <BreadcrumbTabs />
 
-<style>
+<style scoped>
 /* 本页定制：SQL 块上下间距加大（custom.css 默认 12px） */
-div[class*="language-"] { margin: 20px 0 !important; }
+:deep(div[class*="language-"]) { margin: 20px 0 !important; }
 </style>
 
 <div id="biz-intro" style="display:none;">
