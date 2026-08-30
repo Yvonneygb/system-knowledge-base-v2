@@ -1592,176 +1592,128 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 
 <p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
 
-<div class="tab-pad">
-<div class="bf-truth-flow">
-  <h4 class="bf-main-title">要货订单状态机流转</h4>
-  <p class="bf-main-sub">制单 → 草稿 → ⚖ 价格类型(折扣政策/价目表) → OA审批或直通CRM → 生成CRM订单 → ERP发货</p>
-  <div class="bf-fc-svg-wrap">
-    <svg class="bf-fc-svg" style="max-height:none;" viewBox="0 0 960 720" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <marker id="arr-grn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/>
-        </marker>
-        <marker id="arr-gry" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0,0 L10,5 L0,10 z" fill="#9CA3AF"/>
-        </marker>
-        <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0,0 L10,5 L0,10 z" fill="#EF4444"/>
-        </marker>
-        <filter id="shd" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/>
-        </filter>
-      </defs>
+<div style="overflow-x:auto;padding:8px 0;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" style="display:block;margin:0 auto;min-width:720px;max-width:100%;height:auto;max-height:none;">
+    <defs>
+      <marker id="arr-grn-sm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"/></marker>
+      <marker id="arr-gry-sm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9CA3AF"/></marker>
+      <marker id="arr-red-sm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#EF4444"/></marker>
+      <filter id="shd-sm" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/></filter>
+    </defs>
 
-      <!-- 上游支撑横带 -->
-      <rect x="30" y="20" width="900" height="85" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="6,4"/>
-      <text x="480" y="42" text-anchor="middle" fill="#1D4ED8" font-size="13" font-weight="600">上游支撑</text>
-      <rect x="230" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
-      <text x="290" y="78" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">产品基础表</text>
-      <rect x="360" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
-      <text x="420" y="78" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">门店基础表</text>
-      <rect x="490" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
-      <text x="550" y="78" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">单位基础表</text>
-      <rect x="620" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
-      <text x="680" y="78" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">用户权限</text>
+    <rect x="30" y="20" width="900" height="85" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="6,4"/>
+    <text x="480" y="42" text-anchor="middle" fill="#1D4ED8" font-size="13" font-weight="600">上游支撑</text>
+    <rect x="230" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
+    <text x="290" y="78" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">产品基础表</text>
+    <rect x="360" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
+    <text x="420" y="78" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">门店基础表</text>
+    <rect x="490" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
+    <text x="550" y="78" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">单位基础表</text>
+    <rect x="620" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
+    <text x="680" y="78" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">用户权限</text>
 
-      <!-- 上游→开始 -->
-      <line x1="60" y1="105" x2="60" y2="140" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-grn)"/>
+    <line x1="60" y1="105" x2="60" y2="140" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-grn-sm)"/>
 
-      <!-- ========== 主流程 ========== -->
-      <!-- 开始 -->
-      <rect x="20" y="140" width="80" height="44" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
-      <text x="60" y="167" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">开始</text>
-      <line x1="100" y1="162" x2="130" y2="162" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn)"/>
+    <rect x="20" y="140" width="80" height="44" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="60" y="167" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">开始</text>
+    <line x1="100" y1="162" x2="130" y2="162" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn-sm)"/>
 
-      <!-- 新建 -->
-      <rect x="130" y="140" width="100" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-      <text x="180" y="163" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">新建</text>
-      <text x="180" y="178" text-anchor="middle" fill="#166534" font-size="11" font-weight="400">stat=1</text>
-      <line x1="230" y1="162" x2="260" y2="162" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn)"/>
+    <rect x="130" y="140" width="100" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+    <text x="180" y="163" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">新建</text>
+    <text x="180" y="178" text-anchor="middle" fill="#166534" font-size="11" font-weight="400">stat=1</text>
+    <line x1="230" y1="162" x2="260" y2="162" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn-sm)"/>
 
-      <!-- 草稿 -->
-      <rect x="260" y="140" width="100" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-      <text x="310" y="163" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">草稿</text>
-      <text x="310" y="178" text-anchor="middle" fill="#166534" font-size="11" font-weight="400">stat=1</text>
-      <line x1="360" y1="162" x2="460" y2="162" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn)"/>
+    <rect x="260" y="140" width="100" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+    <text x="310" y="163" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">草稿</text>
+    <text x="310" y="178" text-anchor="middle" fill="#166534" font-size="11" font-weight="400">stat=1</text>
+    <line x1="360" y1="162" x2="460" y2="162" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn-sm)"/>
 
-      <!-- ⚖ 价格类型判断（主流程行内，但下方分裂两条分支） -->
-      <polygon points="520,125 620,162 520,199 420,162"
-               fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
-      <text x="520" y="161" text-anchor="middle" fill="#7C3AED" font-size="12" font-weight="600">⚖ 价格类型</text>
-      <text x="520" y="175" text-anchor="middle" fill="#7C3AED" font-size="11" font-weight="500">折扣政策/价目表</text>
+    <polygon points="520,125 620,162 520,199 420,162" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="520" y="161" text-anchor="middle" fill="#7C3AED" font-size="12" font-weight="600">[价格类型]</text>
+    <text x="520" y="175" text-anchor="middle" fill="#7C3AED" font-size="11" font-weight="500">折扣政策/价目表</text>
 
-      <!-- 判断→下方分成 折扣政策(左) 和 价目表(右) 两个分支 -->
-      <line x1="520" y1="199" x2="520" y2="215" stroke="#16A34A" stroke-width="2"/>
-      <line x1="520" y1="215" x2="160" y2="215" stroke="#16A34A" stroke-width="2"/>
-      <line x1="520" y1="215" x2="740" y2="215" stroke="#9CA3AF" stroke-width="2"/>
-      <line x1="160" y1="215" x2="160" y2="230" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn)"/>
-      <line x1="740" y1="215" x2="740" y2="230" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arr-gry)"/>
+    <line x1="520" y1="199" x2="520" y2="215" stroke="#16A34A" stroke-width="2"/>
+    <line x1="520" y1="215" x2="160" y2="215" stroke="#16A34A" stroke-width="2"/>
+    <line x1="520" y1="215" x2="740" y2="215" stroke="#9CA3AF" stroke-width="2"/>
+    <line x1="160" y1="215" x2="160" y2="230" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn-sm)"/>
+    <line x1="740" y1="215" x2="740" y2="230" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arr-gry-sm)"/>
 
-      <!-- 折扣政策分支标签 -->
-      <rect x="100" y="215" width="30" height="22" rx="3" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
-      <text x="115" y="231" text-anchor="middle" fill="#166534" font-size="10" font-weight="600">✓</text>
-      <!-- 价目表分支标签 -->
-      <rect x="720" y="215" width="42" height="22" rx="3" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1"/>
-      <text x="741" y="231" text-anchor="middle" fill="#6B7280" font-size="10" font-weight="600">直通</text>
+    <rect x="100" y="215" width="30" height="22" rx="3" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
+    <text x="115" y="231" text-anchor="middle" fill="#166534" font-size="10" font-weight="600">Y</text>
+    <rect x="720" y="215" width="42" height="22" rx="3" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1"/>
+    <text x="741" y="231" text-anchor="middle" fill="#6B7280" font-size="10" font-weight="600">直通</text>
 
-      <!-- ======= 左分支：折扣政策分支 ======= -->
-      <rect x="30" y="240" width="280" height="310" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="6,4"/>
-      <text x="170" y="262" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">折扣政策分支 → OA审批</text>
+    <rect x="30" y="240" width="280" height="310" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="6,4"/>
+    <text x="170" y="262" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">折扣政策分支 / OA审批</text>
 
-      <!-- OA审批中 -->
-      <rect x="95" y="276" width="150" height="44" rx="6" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
-      <text x="170" y="299" text-anchor="middle" fill="#92400E" font-size="13" font-weight="600">OA审批中</text>
-      <text x="170" y="313" text-anchor="middle" fill="#92400E" font-size="11" font-weight="400">NEW</text>
-      <line x1="170" y1="320" x2="170" y2="335" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn)"/>
+    <rect x="95" y="276" width="150" height="44" rx="6" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+    <text x="170" y="299" text-anchor="middle" fill="#92400E" font-size="13" font-weight="600">OA审批中</text>
+    <text x="170" y="313" text-anchor="middle" fill="#92400E" font-size="11" font-weight="400">NEW</text>
+    <line x1="170" y1="320" x2="170" y2="335" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn-sm)"/>
 
-      <!-- 审批结果菱形 -->
-      <polygon points="170,335 240,368 170,401 100,368"
-               fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
-      <text x="170" y="371" text-anchor="middle" fill="#7C3AED" font-size="12" font-weight="600">⚖ 审批结果</text>
+    <polygon points="170,335 240,368 170,401 100,368" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="170" y="371" text-anchor="middle" fill="#7C3AED" font-size="12" font-weight="600">[审批结果]</text>
 
-      <!-- 通过（左） -->
-      <line x1="100" y1="368" x2="70" y2="368" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn)"/>
-      <rect x="55" y="370" width="70" height="28" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
-      <text x="90" y="389" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">通过 ✓</text>
+    <line x1="100" y1="368" x2="70" y2="368" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn-sm)"/>
+    <rect x="55" y="370" width="70" height="28" rx="4" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
+    <text x="90" y="389" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">通过</text>
 
-      <!-- 审批通过 node -->
-      <rect x="45" y="406" width="120" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-      <text x="105" y="429" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">审批通过</text>
-      <text x="105" y="443" text-anchor="middle" fill="#166534" font-size="11" font-weight="400">stat=5</text>
+    <rect x="45" y="406" width="120" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+    <text x="105" y="429" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">审批通过</text>
+    <text x="105" y="443" text-anchor="middle" fill="#166534" font-size="11" font-weight="400">stat=5</text>
 
-      <!-- 拒绝（右） -->
-      <line x1="240" y1="368" x2="270" y2="368" stroke="#EF4444" stroke-width="2" marker-end="url(#arr-red)"/>
-      <rect x="260" y="370" width="70" height="28" rx="4" fill="#FEF2F2" stroke="#EF4444" stroke-width="1"/>
-      <text x="295" y="389" text-anchor="middle" fill="#DC2626" font-size="11" font-weight="600">拒绝 ✗</text>
+    <line x1="240" y1="368" x2="270" y2="368" stroke="#EF4444" stroke-width="2" marker-end="url(#arr-red-sm)"/>
+    <rect x="260" y="370" width="70" height="28" rx="4" fill="#FEF2F2" stroke="#EF4444" stroke-width="1"/>
+    <text x="295" y="389" text-anchor="middle" fill="#DC2626" font-size="11" font-weight="600">拒绝</text>
 
-      <!-- 审批拒绝 node -->
-      <rect x="245" y="406" width="120" height="44" rx="6" fill="#FEF2F2" stroke="#EF4444" stroke-width="2"/>
-      <text x="305" y="429" text-anchor="middle" fill="#991B1B" font-size="13" font-weight="600">审批拒绝</text>
-      <text x="305" y="443" text-anchor="middle" fill="#991B1B" font-size="11" font-weight="400">stat=4</text>
+    <rect x="245" y="406" width="120" height="44" rx="6" fill="#FEF2F2" stroke="#EF4444" stroke-width="2"/>
+    <text x="305" y="429" text-anchor="middle" fill="#991B1B" font-size="13" font-weight="600">审批拒绝</text>
+    <text x="305" y="443" text-anchor="middle" fill="#991B1B" font-size="11" font-weight="400">stat=4</text>
 
-      <!-- 审批中滞留（中间，不继续走） -->
-      <line x1="170" y1="401" x2="170" y2="418" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arr-gry)"/>
-      <rect x="115" y="418" width="110" height="40" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
-      <text x="170" y="443" text-anchor="middle" fill="#4B5563" font-size="12" font-weight="600">审批中（滞留）</text>
+    <line x1="170" y1="401" x2="170" y2="418" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arr-gry-sm)"/>
+    <rect x="115" y="418" width="110" height="40" rx="6" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="1.5"/>
+    <text x="170" y="443" text-anchor="middle" fill="#4B5563" font-size="12" font-weight="600">审批中(滞留)</text>
 
-      <!-- 通过→生成CRM订单 -->
-      <line x1="105" y1="450" x2="105" y2="500" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn)"/>
-      <rect x="45" y="500" width="120" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-      <text x="105" y="525" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">生成CRM订单</text>
+    <line x1="105" y1="450" x2="105" y2="500" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn-sm)"/>
+    <rect x="45" y="500" width="120" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+    <text x="105" y="525" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">生成CRM订单</text>
 
-      <!-- 拒绝→退回修改 -->
-      <line x1="305" y1="450" x2="305" y2="500" stroke="#EF4444" stroke-width="2" marker-end="url(#arr-red)"/>
-      <rect x="245" y="500" width="120" height="40" rx="6" fill="#FAEEDA" stroke="#D97706" stroke-width="2"/>
-      <text x="305" y="525" text-anchor="middle" fill="#854F0B" font-size="13" font-weight="600">退回修改</text>
+    <line x1="305" y1="450" x2="305" y2="500" stroke="#EF4444" stroke-width="2" marker-end="url(#arr-red-sm)"/>
+    <rect x="245" y="500" width="120" height="40" rx="6" fill="#FAEEDA" stroke="#D97706" stroke-width="2"/>
+    <text x="305" y="525" text-anchor="middle" fill="#854F0B" font-size="13" font-weight="600">退回修改</text>
 
-      <!-- ======= 右分支：价目表分支 ======= -->
-      <rect x="590" y="240" width="300" height="190" rx="8" fill="#F9FAFB" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="6,4"/>
-      <text x="740" y="262" text-anchor="middle" fill="#6B7280" font-size="12" font-weight="600">价目表分支 → 直通CRM</text>
+    <rect x="590" y="240" width="300" height="190" rx="8" fill="#F9FAFB" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="6,4"/>
+    <text x="740" y="262" text-anchor="middle" fill="#6B7280" font-size="12" font-weight="600">价目表分支 / 直通CRM</text>
 
-      <rect x="655" y="276" width="170" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-      <text x="740" y="299" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">直接生成CRM</text>
-      <text x="740" y="313" text-anchor="middle" fill="#166534" font-size="11" font-weight="400">NO_APPROVED</text>
+    <rect x="655" y="276" width="170" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+    <text x="740" y="299" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">直接生成CRM</text>
+    <text x="740" y="313" text-anchor="middle" fill="#166534" font-size="11" font-weight="400">NO_APPROVED</text>
 
-      <line x1="740" y1="320" x2="740" y2="400" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arr-gry)"/>
-      <rect x="665" y="400" width="150" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
-      <text x="740" y="425" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">生成CRM订单</text>
+    <line x1="740" y1="320" x2="740" y2="400" stroke="#9CA3AF" stroke-width="2" marker-end="url(#arr-gry-sm)"/>
+    <rect x="665" y="400" width="150" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
+    <text x="740" y="425" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">生成CRM订单</text>
 
-      <!-- 发货（ERP发货 居中） -->
-      <!-- 左分支生成CRM → ERP发货 -->
-      <line x1="105" y1="540" x2="105" y2="570" stroke="#16A34A" stroke-width="2"/>
-      <line x1="105" y1="570" x2="480" y2="570" stroke="#16A34A" stroke-width="2"/>
-      <line x1="480" y1="570" x2="480" y2="580" stroke="#16A34A" stroke-width="2"/>
+    <line x1="105" y1="540" x2="105" y2="570" stroke="#16A34A" stroke-width="2"/>
+    <line x1="105" y1="570" x2="480" y2="570" stroke="#16A34A" stroke-width="2"/>
+    <line x1="480" y1="570" x2="480" y2="580" stroke="#16A34A" stroke-width="2"/>
+    <line x1="740" y1="440" x2="740" y2="570" stroke="#9CA3AF" stroke-width="2"/>
+    <line x1="740" y1="570" x2="480" y2="570" stroke="#9CA3AF" stroke-width="2"/>
 
-      <!-- 右分支生成CRM → ERP发货 -->
-      <line x1="740" y1="440" x2="740" y2="570" stroke="#9CA3AF" stroke-width="2"/>
-      <line x1="740" y1="570" x2="480" y2="570" stroke="#9CA3AF" stroke-width="2"/>
+    <rect x="420" y="580" width="120" height="44" rx="6" fill="#16A34A" stroke="#15803D" stroke-width="2" filter="url(#shd-sm)"/>
+    <text x="480" y="607" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="700">ERP发货</text>
 
-      <!-- ERP发货核心高亮 -->
-      <rect x="420" y="580" width="120" height="44" rx="6" fill="#16A34A" stroke="#15803D" stroke-width="2" filter="url(#shd)"/>
-      <text x="480" y="607" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="700">★ ERP发货 ★</text>
+    <line x1="480" y1="624" x2="480" y2="645" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn-sm)"/>
 
-      <!-- ERP发货→结束 -->
-      <line x1="480" y1="624" x2="480" y2="645" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-grn)"/>
-
-      <!-- 结束 -->
-      <rect x="425" y="645" width="110" height="44" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
-      <text x="480" y="672" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">结束</text>
-
-      <!-- 结束→下游 -->
-      <line x1="480" y1="689" x2="480" y2="710" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="4,3"/>
-    </svg>
-  </div>
-
-  <!-- 图例 -->
-  <div class="bf-fc-legend">
-    <span class="bf-fc-legend-item"><span class="bf-fc-dot bf-fc-dot-green"></span> 主流程步骤</span>
-    <span class="bf-fc-legend-item"><span class="bf-fc-dot bf-fc-dot-purple"></span> 开始/结束/判断</span>
-    <span class="bf-fc-legend-item"><span class="bf-fc-dot bf-fc-dot-blue"></span> 上游支撑服务</span>
-    <span class="bf-fc-legend-item"><span style="display:inline-block;width:22px;height:2px;background:#EF4444;"></span> 审批拒绝/退回</span>
-  </div>
+    <rect x="425" y="645" width="110" height="44" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="480" y="672" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">结束</text>
+  </svg>
 </div>
+
+<div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin:10px 0 0;font-size:.72rem;color:#4C1D95;">
+  <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#16A34A;margin-right:4px;"></span> 主流程步骤</span>
+  <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#9333EA;margin-right:4px;"></span> 开始/结束/判断</span>
+  <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#3B82F6;margin-right:4px;"></span> 上游支撑服务</span>
+  <span><span style="display:inline-block;width:22px;height:2px;background:#EF4444;vertical-align:middle;margin-right:4px;"></span> 审批拒绝/退回</span>
 </div>
 
   <h4 class="kl-sub-title">状态机列表</h4>
