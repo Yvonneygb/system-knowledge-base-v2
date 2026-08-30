@@ -330,6 +330,7 @@
 </div>
 </div>
 </div><div id="detail-logic" style="display:none;">
+<div class="tab-pad">
 <div class="kl-wrap">
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
