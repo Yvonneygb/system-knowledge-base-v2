@@ -125,7 +125,7 @@
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;"><th style="padding:12px 16px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">角色</th><th style="padding:12px 16px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">职责</th></tr></thead>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"><th style="padding:12px 16px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">角色</th><th style="padding:12px 16px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">职责</th></tr></thead>
       <tbody>
         <tr><td style="padding:14px 16px;font-size:.73rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">门店运营 / 业务员</td><td style="padding:14px 16px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">列表页新建、详情页维护头信息与行、保存草稿、保存并提交</td></tr>
         <tr><td style="padding:14px 16px;font-size:.73rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">OA 审批人</td><td style="padding:14px 16px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">priceType=2 时审核 OA 流程（单据名 YPYHDD），通过或拒绝</td></tr>
@@ -214,7 +214,7 @@
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;"><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">上游模块</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">依赖类型</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">依赖说明</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">依赖成立条件</th></tr></thead>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">上游模块</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">依赖类型</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">依赖说明</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">依赖成立条件</th></tr></thead>
       <tbody>
         <tr><td style="padding:10px 12px;font-size:.73rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策管理</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">LOV依赖</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策选择弹窗 AE.GET_POLICY，提供政策编码、名称、渠道、有效期、坎级、起订量、封顶量等</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">priceType=2 时必填</td></tr>
         <tr><td style="padding:10px 12px;font-size:.73rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">价目表管理</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">LOV依赖</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">价目表选择，提供产品标准单价、安装单价</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">priceType=3 时启用</td></tr>
@@ -243,7 +243,7 @@
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;"><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">影响</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">说明</th></tr></thead>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">影响</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">说明</th></tr></thead>
       <tbody>
         <tr><td style="padding:10px 12px;font-size:.73rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">CRM 订单系统</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">审批通过后生成 CRM 订单，CRM 订单号回写 SA_OUT_BILL_HEAD.SA_SALEBILLNO；businessType=3 生成 Sample、12 生成 HomeDecorationSample、16 生成 Long_Inv_Age</td></tr>
         <tr><td style="padding:10px 12px;font-size:.73rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">ERP 发货系统</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">CRM 订单生成后推送 ERP 发货，发货数量回写 SA_OUT_BILL_LINE 已发数量</td></tr>
@@ -263,97 +263,73 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard num="1" title="重点逻辑1：isMakt=2 样品及长库龄标识区分">
+<KbQuote>确保业务隔离与统计准确，避免与工程/家装要货数据混淆。</KbQuote>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">重点逻辑 1</span>
-    <h2>isMakt=2 样品及长库龄标识区分</h2>
-    <p>与工程/家装要货共用表，靠 IS_MAKT=2 隔离数据归属</p>
-  </div>
-  <p style="font-size:.78rem;font-weight:600;color:#6B7280;margin:0 0 10px;">业务意义：确保业务隔离与统计准确，避免与工程/家装要货数据混淆。</p>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
-    <li>列表查询固定带参数 isMakt=2、searchFlag=1，仅返回样品及长库龄要货订单数据</li>
-    <li>新建订单时头表 IS_MAKT 字段默认赋值为 2</li>
-    <li>折扣政策选择弹窗 lovPara 传入 isMakt='2'，仅返回样品及长库龄适用的折扣政策</li>
-    <li>businessType 进一步细分：3=样品、12=家装样品、16=长库龄</li>
-  </ul>
-</div>
+**具体逻辑**：
 
-<div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">重点逻辑 2</span>
-    <h2>价格类型双轨制</h2>
-    <p>折扣政策(priceType=2)走 OA 审批；价目表(priceType=3)直接生成 CRM</p>
-  </div>
-  <p style="font-size:.78rem;font-weight:600;color:#6B7280;margin:0 0 10px;">业务意义：满足不同业务场景的审批严格度要求。</p>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
-    <li>priceType=2 时折扣政策必填，业务类型非必填，保存并提交走 OA 审批（hzApproveStatus=NEW）</li>
-    <li>priceType=3 时业务类型必填，折扣政策非必填，保存并提交直接生成 CRM 订单（hzApproveStatus=NO_APPROVED）</li>
-    <li>priceType 选择框 optionsFilter 仅允许 2 或 3，stat=5 或已审批或 crm_edit_flag=2 时 disabled</li>
-    <li>priceType 切换时联动清空折扣政策相关字段、重置业务类型必填校验</li>
-  </ul>
-</div>
+- 1、列表查询固定带参数 isMakt=2、searchFlag=1，仅返回样品及长库龄要货订单数据
+- 2、新建订单时头表 IS_MAKT 字段默认赋值为 2
+- 3、折扣政策选择弹窗 lovPara 传入 isMakt='2'，仅返回样品及长库龄适用的折扣政策
+- 4、businessType 进一步细分：3=样品、12=家装样品、16=长库龄
+</KbCard>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">重点逻辑 3</span>
-    <h2>期望到达日期严格校验</h2>
-    <p>按订单类型与销售渠道限制期望到达日期范围，避免超期下单</p>
-  </div>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
-    <li>常规订单(billType=1)每月 25 号前下单，期望到达日期需为当月；25 号后仅瓷砖产品线可下常规订单</li>
-    <li>计划订单(billType=2)电商渠道可选当月往后 6 个月内，其他渠道 3 个月内</li>
-    <li>期望到达日期不能晚于折扣政策有效期（effectiveDateEnd）</li>
-    <li>DatePicker 组件 max 设为一年后、min 设为今天，stat=5 或已审批时 disabled</li>
-  </ul>
-</div>
+<KbCard num="2" title="重点逻辑2：价格类型双轨制">
+<KbQuote>满足不同业务场景的审批严格度要求。</KbQuote>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">重点逻辑 4</span>
-    <h2>产品 SM 状态拦截</h2>
-    <p>按产品生命周期状态控制下单权限，避免对停产/淘汰产品下单</p>
-  </div>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
-    <li>smState='Z8' 禁止下单，硬拦截</li>
-    <li>smState='Z6' 计划淘汰中，提示关注但允许下单</li>
-    <li>smState='S6' 进入售后阶段，提示关注但允许下单</li>
-    <li>smState='Z7' 有库存数量发完即止，限制下单数量不超过库存</li>
-  </ul>
-</div>
+**具体逻辑**：
 
-<div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">重点逻辑 5</span>
-    <h2>起订量与封顶量校验</h2>
-    <p>基于折扣政策产品的起订量和坎级封顶量控制订单行数量</p>
-  </div>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
-    <li>订单行数量(qtyBill) ≥ 折扣政策产品行起订量，低于起订量拦截</li>
-    <li>订单行数量(qtyBill) ≤ 折扣政策坎级封顶量，超过封顶量拦截</li>
-    <li>保存时调用 updateActiveQty 扣减可下单数量，删除/取消时返还</li>
-    <li>get-view-qty 按钮(priceType=2)可查看下单数量及坎级信息</li>
-  </ul>
-</div>
+- 1、priceType=2 时折扣政策必填，业务类型非必填，保存并提交走 OA 审批（hzApproveStatus=NEW）
+- 2、priceType=3 时业务类型必填，折扣政策非必填，保存并提交直接生成 CRM 订单（hzApproveStatus=NO_APPROVED）
+- 3、priceType 选择框 optionsFilter 仅允许 2 或 3，stat=5 或已审批或 crm_edit_flag=2 时 disabled
+- 4、priceType 切换时联动清空折扣政策相关字段、重置业务类型必填校验
+</KbCard>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">重点逻辑 6</span>
-    <h2>紧急加急行数限制</h2>
-    <p>仅计划订单允许加急，限制紧急行数比例，避免冲击生产排期</p>
-  </div>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
-    <li>仅计划订单(billType=2 或 14)可加急，常规订单不可加急</li>
-    <li>紧急行数上限 = ceil(总行数/5)，即最多 20% 的行可加急</li>
-    <li>行 urgency 字段 Boolean(2/1)，editFlag 且 billType=2 时可编辑</li>
-  </ul>
-</div>
+<KbCard num="3" title="重点逻辑3：期望到达日期严格校验">
+<KbQuote>按订单类型与销售渠道限制期望到达日期范围，避免超期下单。</KbQuote>
 
-</div>
-</div>
-</div>
+**具体逻辑**：
 
-<div id="detail-logic" style="display:none;">
+- 1、常规订单(billType=1)每月 25 号前下单，期望到达日期需为当月；25 号后仅瓷砖产品线可下常规订单
+- 2、计划订单(billType=2)电商渠道可选当月往后 6 个月内，其他渠道 3 个月内
+- 3、期望到达日期不能晚于折扣政策有效期（effectiveDateEnd）
+- 4、DatePicker 组件 max 设为一年后、min 设为今天，stat=5 或已审批时 disabled
+</KbCard>
+
+<KbCard num="4" title="重点逻辑4：产品 SM 状态拦截">
+<KbQuote>按产品生命周期状态控制下单权限，避免对停产/淘汰产品下单。</KbQuote>
+
+**具体逻辑**：
+
+- 1、smState='Z8' 禁止下单，硬拦截
+- 2、smState='Z6' 计划淘汰中，提示关注但允许下单
+- 3、smState='S6' 进入售后阶段，提示关注但允许下单
+- 4、smState='Z7' 有库存数量发完即止，限制下单数量不超过库存
+</KbCard>
+
+<KbCard num="5" title="重点逻辑5：起订量与封顶量校验">
+<KbQuote>基于折扣政策产品的起订量和坎级封顶量控制订单行数量。</KbQuote>
+
+**具体逻辑**：
+
+- 1、订单行数量(qtyBill) ≥ 折扣政策产品行起订量，低于起订量拦截
+- 2、订单行数量(qtyBill) ≤ 折扣政策坎级封顶量，超过封顶量拦截
+- 3、保存时调用 updateActiveQty 扣减可下单数量，删除/取消时返还
+- 4、get-view-qty 按钮(priceType=2)可查看下单数量及坎级信息
+</KbCard>
+
+<KbCard num="6" title="重点逻辑6：紧急加急行数限制">
+<KbQuote>仅计划订单允许加急，限制紧急行数比例，避免冲击生产排期。</KbQuote>
+
+**具体逻辑**：
+
+- 1、仅计划订单(billType=2 或 14)可加急，常规订单不可加急
+- 2、紧急行数上限 = ceil(总行数/5)，即最多 20% 的行可加急
+- 3、行 urgency 字段 Boolean(2/1)，editFlag 且 billType=2 时可编辑
+</KbCard>
+</div>
+</div>
+</div><div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 <div class="kl-card">
@@ -362,242 +338,42 @@
     <h2>列表页查询栏</h2>
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
-    <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">字段名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据库列名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">组件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">业务释义</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">显隐条件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">取值/赋值逻辑</th>
-      </tr></thead>
-      <tbody>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">要货单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">INTERIM_BIINO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">要货订单编号，模糊查询</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入，支持模糊匹配</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">单据状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">HZ_APPROVE_STATUS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">OA审批状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集HWKF.APPROVE_STATUS</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">OA审批状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">REVIWESTATUS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">OA审批是否成功</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，Boolean值2=成功/1=失败</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">CRM订单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">SA_SALEBILLNO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CRM系统回写的订单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入，精确匹配</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">价格类型</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PRICE_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策或价目表</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.PRICE_TYPE</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_POLICY_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_POLICY_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">项目编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PROJECT_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">关联项目编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">项目名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PROJECT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">关联项目名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">ORDER_STAT</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">单据业务状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.REQUIRE_BILL.ORDER_STAT</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">事业部</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DIVISION_ID</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">所属事业部</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.DIVISION</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">客户编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">客户名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">客户简称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_SHORT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商简称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">门店编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TERMINAL_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">门店名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TERMINAL_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">经营属性</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_CLASS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店经营属性</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.CUSTOMER_CLASS</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">销售渠道</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CHANNEL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">销售渠道类型</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.MKT.SALES_CHANNEL</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单类型</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">BILL_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">常规/计划订单</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.BILL_TYPE</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">签约方式</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CONTRACT_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">签约方式</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.CONTRACT_TYPE</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">期望到达日期从</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">IN_DATE_BEGIN</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DatePicker</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">期望到达日期范围起</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动选择</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">期望到达日期至</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">IN_DATE_END</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DatePicker</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">期望到达日期范围止</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动选择</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">收货人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_MAN</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货人姓名</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">联系电话</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_PHONE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货人电话</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">收货地址</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_ADDRESS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货地址</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">创建人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CREATED_BY_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">单据创建人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动输入</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单日期从</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DATE_INVBILL_BEGIN</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DatePicker</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">订单日期范围起</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，手动选择</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">订单日期至</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">DATE_INVBILL_END</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">DatePicker</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">订单日期范围止</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">默认空，手动选择</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="kb-field-scroll">
+<table class="kb-field-tbl" style="table-layout:fixed;min-width:960px;width:100%;border-collapse:collapse;margin:0;">
+<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
+<thead><tr><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">组件</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">业务释义</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">显隐条件</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">取值/赋值逻辑</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">合法值</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据库列名</th></tr></thead>
+<tbody>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">要货单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">要货订单编号，模糊查询</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入，支持模糊匹配</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">INTERIM_BIINO</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OA审批状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集HWKF.APPROVE_STATUS</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">HZ_APPROVE_STATUS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OA审批状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OA审批是否成功</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，Boolean值2=成功/1=失败</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">REVIWESTATUS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM订单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM系统回写的订单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入，精确匹配</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">SA_SALEBILLNO</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">价格类型</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策或价目表</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.PRICE_TYPE</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PRICE_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_POLICY_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_POLICY_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">关联项目编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PROJECT_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">关联项目名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PROJECT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据业务状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.REQUIRE_BILL.ORDER_STAT</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">ORDER_STAT</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">事业部</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">所属事业部</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.DIVISION</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DIVISION_ID</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">客户编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">客户名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">客户简称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商简称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_SHORT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TERMINAL_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TERMINAL_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经营属性</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店经营属性</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.CUSTOMER_CLASS</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_CLASS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售渠道</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售渠道类型</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.MKT.SALES_CHANNEL</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CHANNEL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单类型</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">常规/计划订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.BILL_TYPE</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">BILL_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">签约方式</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">签约方式</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.CONTRACT_TYPE</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CONTRACT_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">期望到达日期从</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DatePicker</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">期望到达日期范围起</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">IN_DATE_BEGIN</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">期望到达日期至</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DatePicker</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">期望到达日期范围止</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">IN_DATE_END</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人姓名</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_MAN</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">联系电话</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人电话</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_PHONE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_ADDRESS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">创建人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据创建人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动输入</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CREATED_BY_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单日期从</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DatePicker</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单日期范围起</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DATE_INVBILL_BEGIN</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单日期至</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DatePicker</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单日期范围止</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，手动选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DATE_INVBILL_END</td></tr>
+</tbody>
+</table>
+</div>
   </div>
 </div>
 
@@ -607,330 +383,53 @@
     <h2>列表页表格</h2>
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
-    <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">字段名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据库列名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">组件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">业务释义</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">显隐条件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">取值/赋值逻辑</th>
-      </tr></thead>
-      <tbody>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">序号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">-</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Index</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">行序号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">自动生成</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">ORDER_STAT</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">单据业务状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">来源值集AE.EPM.REQUIRE_BILL.ORDER_STAT翻译</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">流程状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">HZ_APPROVE_STATUS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">OA审批流程状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">拒绝时红色显示</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">要货单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">INTERIM_BIINO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Link</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">要货订单编号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">点击跳转详情页</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">OA审核状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">HZ_APPROVE_STATUS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">OA审核状态描述</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">来源值集翻译</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">OA审批成功</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">REVIWESTATUS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">OA审批是否成功</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Boolean翻译</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">CRM订单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">SA_SALEBILLNO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CRM回写订单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">价格类型</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PRICE_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策/价目表</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">来源值集翻译</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_POLICY_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_POLICY_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">事业部</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DIVISION_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">事业部名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">客户编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">客户名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">客户简称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_SHORT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商简称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">币种</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CURRENCY</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">交易币种</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">交易公司</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TRADING_COMPANY_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">交易公司名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">开票单位</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">BILLING_UNIT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">开票单位名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">门店编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TERMINAL_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">门店名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TERMINAL_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">经营属性</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_CLASS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店经营属性</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">来源值集翻译</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">销售区域</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">SALES_AREA</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">销售区域</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">运营中心</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">OPERATION_CENTER</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">运营中心</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">期望到达日期</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">IN_DATE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">期望到达日期</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">收货人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_MAN</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货人姓名</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">联系电话</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_PHONE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货人电话</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">收货地址</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_ADDRESS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货地址</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单类型</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">BILL_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">常规/计划订单</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">来源值集翻译</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">销售渠道</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CHANNEL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">销售渠道</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">来源值集翻译</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">签约方式</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CONTRACT_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">签约方式</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">来源值集翻译</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">项目编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PROJECT_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">项目编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">项目名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PROJECT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">项目名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">备注</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">NOTE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">单据备注</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">接口状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">INTF_INFO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CRM接口返回信息</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">创建人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CREATED_BY_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">创建人姓名</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">创建时间</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CREATION_DATE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">创建时间</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">修改人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">LAST_UPDATED_BY_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">修改人姓名</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">修改时间</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">LAST_UPDATE_DATE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">修改时间</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">操作</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">-</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Button</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查看按钮</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">点击跳转详情页</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">操作</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">-</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">Button</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">删除按钮</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">hzApproveStatus='NEW'且saSalebillno为空</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">点击触发删除</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="kb-field-scroll">
+<table class="kb-field-tbl" style="table-layout:fixed;min-width:960px;width:100%;border-collapse:collapse;margin:0;">
+<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
+<thead><tr><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">组件</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">业务释义</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">显隐条件</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">取值/赋值逻辑</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">合法值</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据库列名</th></tr></thead>
+<tbody>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">序号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Index</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">行序号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">自动生成</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">-</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据业务状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">来源值集AE.EPM.REQUIRE_BILL.ORDER_STAT翻译</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">ORDER_STAT</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">流程状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OA审批流程状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">拒绝时红色显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">HZ_APPROVE_STATUS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">要货单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Link</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">要货订单编号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">点击跳转详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">INTERIM_BIINO</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OA审核状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OA审核状态描述</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">来源值集翻译</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">HZ_APPROVE_STATUS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OA审批成功</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OA审批是否成功</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Boolean翻译</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">REVIWESTATUS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM订单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM回写订单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">SA_SALEBILLNO</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">价格类型</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策/价目表</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">来源值集翻译</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PRICE_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_POLICY_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_POLICY_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">事业部</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">事业部名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DIVISION_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">客户编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">客户名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">客户简称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商简称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_SHORT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">币种</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">交易币种</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CURRENCY</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">交易公司</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">交易公司名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TRADING_COMPANY_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">开票单位</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">开票单位名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">BILLING_UNIT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TERMINAL_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TERMINAL_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经营属性</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店经营属性</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">来源值集翻译</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_CLASS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售区域</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售区域</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">SALES_AREA</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">运营中心</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">运营中心</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OPERATION_CENTER</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">期望到达日期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">期望到达日期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">IN_DATE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人姓名</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_MAN</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">联系电话</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人电话</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_PHONE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_ADDRESS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单类型</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">常规/计划订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">来源值集翻译</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">BILL_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售渠道</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售渠道</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">来源值集翻译</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CHANNEL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">签约方式</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">签约方式</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">来源值集翻译</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CONTRACT_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PROJECT_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PROJECT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">备注</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据备注</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">NOTE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">接口状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM接口返回信息</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">INTF_INFO</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">创建人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">创建人姓名</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CREATED_BY_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">创建时间</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">创建时间</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CREATION_DATE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">修改人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">修改人姓名</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">LAST_UPDATED_BY_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">修改时间</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">修改时间</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">LAST_UPDATE_DATE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">操作</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Button</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">查看按钮</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">点击跳转详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">-</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">操作</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Button</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">删除按钮</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">hzApproveStatus='NEW'且saSalebillno为空</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">点击触发删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">-</td></tr>
+</tbody>
+</table>
+</div>
   </div>
 </div>
 
@@ -940,338 +439,54 @@
     <h2>详情页头表单</h2>
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
-    <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">字段名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据库列名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">组件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">业务释义</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">显隐条件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">取值/赋值逻辑</th>
-      </tr></thead>
-      <tbody>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">要货单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">INTERIM_BIINO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">要货订单编号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，保存后后端生成，disabled不可编辑</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单日期</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DATE_INVBILL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DatePicker</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">单据创建日期</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认值当前日期，disabled不可编辑</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">申请人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CREATED_BY_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">单据创建人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认值当前登录用户，disabled不可编辑</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">ORDER_STAT</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">单据业务状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.REQUIRE_BILL.ORDER_STAT，disabled不可编辑</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">价格类型</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PRICE_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策/价目表</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.PRICE_TYPE_MAKT，optionsFilter仅允许2或3，stat=5或已审批或crm_edit_flag=2时disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_POLICY_OBJ</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Lov</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策选择</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，LOV:AE.GET_POLICY，lovPara含isMakt:'2'、isDilterMaterial:true，priceType=2时必填，已审批/priceType≠2/crmEditFlag=2时disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_POLICY_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择折扣政策后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_POLICY_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择折扣政策后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">政策有效期至</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">EFFECTIVE_DATE_END</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DatePicker</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策有效期截止</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择折扣政策后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">经销商编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_OBJ</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Lov</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商选择</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，LOV:BASIC_CUSTOM_ORG_LOV_2，必填，已审批/crmEditFlag=2/userType='D'时disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">经销商名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择经销商后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">经销商简称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_SHORT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">经销商简称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择经销商后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">销售区域</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">SALES_AREA</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">销售区域</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择经销商后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">门店编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TERMINAL_OBJ</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Lov</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店选择</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，LOV:SA_MKT_TERMINAL_LOV2，lovPara:usable:2、terminalStat:1、searchFlag:3、custId、custCode，选择经销商后可用</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">门店名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TERMINAL_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择门店后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">经营属性</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CUSTOMER_CLASS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">门店经营属性</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择门店后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">运营中心</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">OPERATION_CENTER</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">运营中心</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择门店后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">业务类型</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">BUSINESS_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">样品/家装样品/长库龄</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.MAKT.BUSINESS_TYPE，priceType=3时必填，已审批/crmEditFlag=2/priceType≠3时disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">期望到达日期</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">IN_DATE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DatePicker</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">期望到达日期</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，必填，max:一年后、min:今天，stat=5或已审批时disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单类型</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">BILL_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">常规/计划订单</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.EPM.BILL_TYPE，必填，optionsFilter仅允许1、2</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">订单产品线</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">ORDER_PDT_LINE_OBJ</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Lov</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">订单产品线选择</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，LOV:AE.ORDER_PDT_LINE_SQL，必填</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">事业部</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DIVISION_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">所属事业部</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认值当前用户deptName，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">交易公司</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TRADING_COMPANY_OBJ</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Lov</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">交易公司选择</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，LOV:TRADING_LEGAL_SQL_V，必填，lovPara:searchFlag:4、tradingScope:1</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">开票单位</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">BILLING_UNIT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">开票单位</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择交易公司后自动带出，disabled，必填</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">销售渠道</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CHANNEL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">销售渠道</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，来源值集AE.MKT.SALES_CHANNEL，bind:discountPolicyObj.channel，priceType=3时必填</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">项目编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PROJECT_OBJ</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Lov</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">项目选择</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，LOV:AE.GET_PROJECT_INFO，渠道非3且非4时disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">项目名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PROJECT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">项目名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择项目后自动带出，disabled，colSpan=2</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">签约方式</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CONTRACT_TYPE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Select</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">签约方式</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认值'2'，来源值集AE.EPM.CONTRACT_TYPE，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">收货人</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_MAN_OBJ</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Lov</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货人选择</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，LOV:AE.CUSTOMER_ADDRESS_INFO，必填，lovPara:searchFlag:1</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">联系电话</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_PHONE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货人电话</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择收货人后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">收货地址</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TAKE_ADDRESS</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">收货地址</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择收货人后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">CRM订单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">SA_SALEBILLNO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CRM回写订单号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，后端返回，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">余额账户</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">ACCOUNT_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">余额账户名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">可发货余额</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">MAY_CONSIGNMENT_AMOUNT</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">NumberField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">可发货余额</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">申请数量合计</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">QTY_SUM</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">NumberField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">所有行数量合计</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">自动计算=SUM(行qtyBill)，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">申请金额合计</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">WTAMOUNT_BILL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">所有行折后金额合计</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">自动计算=SUM(行wtamountBill)，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">币种</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CURRENCY</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextField</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">交易币种</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择经销商后自动带出，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">备注</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">NOTE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextArea</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">单据备注</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，stat=5或已审批时disabled，newLine，colSpan=4</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">返回原因</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">RETURN_REASON</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">TextArea</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">审批退回原因</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">orderStat=11或4时显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回，disabled</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">CRM返回信息</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">INTF_INFO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">TextArea</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">CRM接口返回信息</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">intfInfo非空时显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">后端返回，disabled</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="kb-field-scroll">
+<table class="kb-field-tbl" style="table-layout:fixed;min-width:960px;width:100%;border-collapse:collapse;margin:0;">
+<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
+<thead><tr><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">组件</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">业务释义</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">显隐条件</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">取值/赋值逻辑</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">合法值</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据库列名</th></tr></thead>
+<tbody>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">要货单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">要货订单编号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，保存后后端生成，disabled不可编辑</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">INTERIM_BIINO</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单日期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DatePicker</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据创建日期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认值当前日期，disabled不可编辑</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DATE_INVBILL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">申请人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据创建人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认值当前登录用户，disabled不可编辑</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CREATED_BY_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据业务状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.REQUIRE_BILL.ORDER_STAT，disabled不可编辑</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">ORDER_STAT</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">价格类型</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策/价目表</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.PRICE_TYPE_MAKT，optionsFilter仅允许2或3，stat=5或已审批或crm_edit_flag=2时disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PRICE_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Lov</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，LOV:AE.GET_POLICY，lovPara含isMakt:'2'、isDilterMaterial:true，priceType=2时必填，已审批/priceType≠2/crmEditFlag=2时disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_POLICY_OBJ</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择折扣政策后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_POLICY_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择折扣政策后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_POLICY_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">政策有效期至</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DatePicker</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策有效期截止</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择折扣政策后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">EFFECTIVE_DATE_END</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Lov</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，LOV:BASIC_CUSTOM_ORG_LOV_2，必填，已审批/crmEditFlag=2/userType='D'时disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_OBJ</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择经销商后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商简称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经销商简称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择经销商后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_SHORT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售区域</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售区域</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择经销商后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">SALES_AREA</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Lov</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，LOV:SA_MKT_TERMINAL_LOV2，lovPara:usable:2、terminalStat:1、searchFlag:3、custId、custCode，选择经销商后可用</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TERMINAL_OBJ</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择门店后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TERMINAL_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">经营属性</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">门店经营属性</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择门店后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CUSTOMER_CLASS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">运营中心</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">运营中心</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择门店后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">OPERATION_CENTER</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">业务类型</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">样品/家装样品/长库龄</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.MAKT.BUSINESS_TYPE，priceType=3时必填，已审批/crmEditFlag=2/priceType≠3时disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">BUSINESS_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">期望到达日期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DatePicker</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">期望到达日期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，必填，max:一年后、min:今天，stat=5或已审批时disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">IN_DATE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单类型</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">常规/计划订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.EPM.BILL_TYPE，必填，optionsFilter仅允许1、2</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">BILL_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单产品线</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Lov</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">订单产品线选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，LOV:AE.ORDER_PDT_LINE_SQL，必填</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">ORDER_PDT_LINE_OBJ</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">事业部</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">所属事业部</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认值当前用户deptName，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DIVISION_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">交易公司</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Lov</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">交易公司选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，LOV:TRADING_LEGAL_SQL_V，必填，lovPara:searchFlag:4、tradingScope:1</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TRADING_COMPANY_OBJ</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">开票单位</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">开票单位</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择交易公司后自动带出，disabled，必填</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">BILLING_UNIT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售渠道</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">销售渠道</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，来源值集AE.MKT.SALES_CHANNEL，bind:discountPolicyObj.channel，priceType=3时必填</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CHANNEL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Lov</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，LOV:AE.GET_PROJECT_INFO，渠道非3且非4时disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PROJECT_OBJ</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">项目名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择项目后自动带出，disabled，colSpan=2</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PROJECT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">签约方式</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Select</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">签约方式</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认值'2'，来源值集AE.EPM.CONTRACT_TYPE，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CONTRACT_TYPE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Lov</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人选择</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，LOV:AE.CUSTOMER_ADDRESS_INFO，必填，lovPara:searchFlag:1</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_MAN_OBJ</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">联系电话</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货人电话</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择收货人后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_PHONE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">收货地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择收货人后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TAKE_ADDRESS</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM订单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM回写订单号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，后端返回，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">SA_SALEBILLNO</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">余额账户</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">余额账户名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">ACCOUNT_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">可发货余额</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">NumberField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">可发货余额</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">MAY_CONSIGNMENT_AMOUNT</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">申请数量合计</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">NumberField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">所有行数量合计</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">自动计算=SUM(行qtyBill)，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">QTY_SUM</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">申请金额合计</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">所有行折后金额合计</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">自动计算=SUM(行wtamountBill)，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">WTAMOUNT_BILL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">币种</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextField</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">交易币种</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择经销商后自动带出，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CURRENCY</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">备注</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextArea</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">单据备注</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，stat=5或已审批时disabled，newLine，colSpan=4</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">NOTE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">返回原因</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextArea</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">审批退回原因</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">orderStat=11或4时显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">RETURN_REASON</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM返回信息</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">TextArea</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CRM接口返回信息</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">intfInfo非空时显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回，disabled</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">INTF_INFO</td></tr>
+</tbody>
+</table>
+</div>
   </div>
 </div>
 
@@ -1281,282 +496,47 @@
     <h2>详情页行表格</h2>
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
-    <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">字段名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据库列名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">组件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">业务释义</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">显隐条件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">取值/赋值逻辑</th>
-      </tr></thead>
-      <tbody>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">序号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">-</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Index</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">行序号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">自动生成</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣信息</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_INFO</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策坎级信息</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">viewQty=true时显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">政策可下单数</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">ACTIVE_QTY</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策可下单数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">viewQty=true时显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">MATERIAL_CODE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">样品产品编码</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择样品后自动带出</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">MATERIAL_NAME</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">样品产品名称</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择样品后自动带出</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">本次下单数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">QTY_BILL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">本次申请下单数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，必填，min:1，step:1，editFlag时可编辑</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">已发数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">QTY_DELIVERED</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">已发货数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">未发数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">QTY_UNDELIVERED</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">未发货数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">自动计算=qtyBill-qtyDelivered</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">取消数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">QTY_CANCELLED</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">取消数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">回复数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">QTY_REPLY</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">回复数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">billType=2时显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">回复备注</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">REPLY_NOTE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">回复备注</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">billType=2时显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">型号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">MODEL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">产品型号</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择样品后自动带出</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">是否紧急</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">URGENCY</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Boolean</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">是否加急</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认1=否，Boolean(2/1)，editFlag且billType=2时可编辑</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">计合同折扣(原)</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CONTRACT_DISCOUNT_OLD</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">原合同折扣</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">计合同折扣(新)</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">CONTRACT_DISCOUNT_NEW</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">新合同折扣</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">计广告费(原)</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">AD_FEE_OLD</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">原广告费</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">计广告费(新)</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">AD_FEE_NEW</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">新广告费</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">计开单折扣(原)</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">BILL_DISCOUNT_OLD</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">原开单折扣</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">计开单折扣(新)</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">BILL_DISCOUNT_NEW</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">新开单折扣</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">标准单价</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PRICE_BILL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">标准单价</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择样品后自动带出</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">安装单价</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">INSTALL_UNIT_PRICE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">安装单价</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">选择样品后自动带出</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">标准单价不含安装</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">STANDARD_PRICE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">不含安装的标准单价</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">自动计算=priceBill-installUnitPrice</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">包安装否</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">IS_INSTALL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Boolean</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">是否包安装</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认2=是，Boolean(2/1)，展厅(customerSubclass=5)时强制为0</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">应用折扣率</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_RATE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">应用折扣率</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回，precision:5</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">安装金额</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">INSTALL_UNIT_AMT</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">安装金额</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">自动计算=qtyBill×installUnitPrice，展厅时为0</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折后单价含</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNT_INSTALLATION</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折后含安装单价</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回，precision:7</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折后单价不含</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">DISCOUNTED_PRICE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折后不含安装单价</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回，precision:7</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折后金额</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">WTAMOUNT_BILL</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Currency</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折后金额</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">自动计算=qtyBill×discountedPrice，precision:2</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">SM状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">SM_STATE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">产品SM状态</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">整箱包装数</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">PACKAGE_QTY</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">整箱包装数量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">说明</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">NOTE</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Text</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">行备注</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">始终显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">默认空，editFlag时可编辑</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">全国生产起订量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">MOQ</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">全国生产起订量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">billType=2时显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">后端返回</td>
-        </tr>
-        <tr>
-          <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">全国当月报送总量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">MONTH_SUBMIT_QTY</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">Number</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">全国当月报送总量</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">billType=2时显示</td>
-          <td style="padding:9px 11px;font-size:.72rem;color:#374151;">后端返回</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="kb-field-scroll">
+<table class="kb-field-tbl" style="table-layout:fixed;min-width:960px;width:100%;border-collapse:collapse;margin:0;">
+<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
+<thead><tr><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">组件</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">业务释义</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">显隐条件</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">取值/赋值逻辑</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">合法值</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据库列名</th></tr></thead>
+<tbody>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">序号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Index</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">行序号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">自动生成</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">-</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣信息</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策坎级信息</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">viewQty=true时显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_INFO</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">政策可下单数</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折扣政策可下单数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">viewQty=true时显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">ACTIVE_QTY</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">样品编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">样品产品编码</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择样品后自动带出</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">MATERIAL_CODE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">样品名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">样品产品名称</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择样品后自动带出</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">MATERIAL_NAME</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">本次下单数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">本次申请下单数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，必填，min:1，step:1，editFlag时可编辑</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">QTY_BILL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">已发数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">已发货数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">QTY_DELIVERED</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">未发数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">未发货数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">自动计算=qtyBill-qtyDelivered</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">QTY_UNDELIVERED</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">取消数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">取消数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">QTY_CANCELLED</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">回复数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">回复数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">billType=2时显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">QTY_REPLY</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">回复备注</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">回复备注</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">billType=2时显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">REPLY_NOTE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">型号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">产品型号</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择样品后自动带出</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">MODEL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">是否紧急</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Boolean</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">是否加急</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认1=否，Boolean(2/1)，editFlag且billType=2时可编辑</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">URGENCY</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">计合同折扣(原)</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">原合同折扣</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CONTRACT_DISCOUNT_OLD</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">计合同折扣(新)</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">新合同折扣</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">CONTRACT_DISCOUNT_NEW</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">计广告费(原)</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">原广告费</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">AD_FEE_OLD</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">计广告费(新)</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">新广告费</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">AD_FEE_NEW</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">计开单折扣(原)</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">原开单折扣</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">BILL_DISCOUNT_OLD</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">计开单折扣(新)</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">新开单折扣</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">BILL_DISCOUNT_NEW</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">标准单价</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">标准单价</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择样品后自动带出</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PRICE_BILL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">安装单价</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">安装单价</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">选择样品后自动带出</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">INSTALL_UNIT_PRICE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">标准单价不含安装</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">不含安装的标准单价</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">自动计算=priceBill-installUnitPrice</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">STANDARD_PRICE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">包安装否</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Boolean</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">是否包安装</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认2=是，Boolean(2/1)，展厅(customerSubclass=5)时强制为0</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">IS_INSTALL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">应用折扣率</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">应用折扣率</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回，precision:5</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_RATE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">安装金额</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">安装金额</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">自动计算=qtyBill×installUnitPrice，展厅时为0</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">INSTALL_UNIT_AMT</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折后单价含</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折后含安装单价</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回，precision:7</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNT_INSTALLATION</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折后单价不含</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折后不含安装单价</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回，precision:7</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">DISCOUNTED_PRICE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折后金额</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Currency</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">折后金额</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">自动计算=qtyBill×discountedPrice，precision:2</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">WTAMOUNT_BILL</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">SM状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">产品SM状态</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">SM_STATE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">整箱包装数</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">整箱包装数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">PACKAGE_QTY</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">说明</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Text</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">行备注</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">始终显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">默认空，editFlag时可编辑</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">NOTE</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">全国生产起订量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">全国生产起订量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">billType=2时显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">MOQ</td></tr>
+<tr><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">全国当月报送总量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">Number</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">全国当月报送总量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">billType=2时显示</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">后端返回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;"></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;white-space:normal;word-break:break-word;">MONTH_SUBMIT_QTY</td></tr>
+</tbody>
+</table>
+</div>
   </div>
 </div>
 
@@ -1567,10 +547,10 @@
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">Tab名称</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">内容</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">显隐条件</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">Tab名称</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">内容</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">显隐条件</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -1607,18 +587,15 @@
 </div>
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">弹窗 1</span>
-    <h2>折扣政策选择（单选）</h2>
-  </div>
+  <KbSubTitle>弹窗 1：折扣政策选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">入参</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据范围</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -1697,18 +674,15 @@ SELECT dp.POLICY_ID          AS 政策ID,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">弹窗 2</span>
-    <h2>经销商选择（单选）</h2>
-  </div>
+  <KbSubTitle>弹窗 2：经销商选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">入参</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据范围</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -1761,18 +735,15 @@ SELECT c.CUSTOMER_ID        AS 客户ID,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">弹窗 3</span>
-    <h2>门店选择（单选）</h2>
-  </div>
+  <KbSubTitle>弹窗 3：门店选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">入参</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据范围</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -1839,18 +810,15 @@ SELECT t.TERMINAL_ID        AS 门店ID,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">弹窗 4</span>
-    <h2>样品产品选择（单选）</h2>
-  </div>
+  <KbSubTitle>弹窗 4：样品产品选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">入参</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据范围</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -1918,18 +886,15 @@ SELECT m.MATERIAL_ID        AS 产品ID,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">弹窗 5</span>
-    <h2>收货人选择（单选）</h2>
-  </div>
+  <KbSubTitle>弹窗 5：收货人选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">入参</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据范围</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -1972,18 +937,15 @@ SELECT ca.ADDRESS_ID       AS 地址ID,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">弹窗 6</span>
-    <h2>交易公司选择（单选）</h2>
-  </div>
+  <KbSubTitle>弹窗 6：交易公司选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">入参</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据范围</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -2035,18 +997,15 @@ SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">弹窗 7</span>
-    <h2>项目选择（单选）</h2>
-  </div>
+  <KbSubTitle>弹窗 7：项目选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">入参</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据范围</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -2089,18 +1048,15 @@ SELECT p.PROJECT_ID     AS 项目ID,
 ```
 
 <div class="kl-card">
-  <div class="biz-kl-hdr">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">弹窗 8</span>
-    <h2>订单产品线选择（单选）</h2>
-  </div>
+  <KbSubTitle>弹窗 8：订单产品线选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">入参</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;"></th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">数据范围</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"></th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -2157,11 +1113,11 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">字段含义</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">是否必输</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">字段格式</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">重复判定字段</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段含义</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">是否必输</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段格式</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">重复判定字段</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -2232,12 +1188,12 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">按钮名称</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">按钮作用</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">所在位置</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">显隐条件/可点击条件</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">影响</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">按钮名称</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">按钮作用</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">所在位置</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">显隐条件/可点击条件</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">影响</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -2498,12 +1454,19 @@ SELECT h.INTERIM_BIINO      AS 要货单号,
 
 <div class="kl-card">
   <div class="biz-kl-hdr">
-    <h2>保存校验 规则明细</h2>
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">保存校验</span>
+    <h2>保存校验</h2>
+    <p>保存校验校验规则明细</p>
   </div>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>校验1：业务类型必填 —— isMakt=2时businessType不能为空</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：当IS_MAKT=2时，头表单BUSINESS_TYPE字段不能为空</li><li>第2点：priceType=3时businessType必填，priceType=2时非必填</li><li>第3点：businessType取值范围：3=样品、12=家装样品、16=长库龄</li></ul><li>系统体现：保存时preCheckData校验，businessType为空则提示"业务类型不能为空"</li><li>排查SQL：</li></ul><li>校验2：折扣政策一致性 —— businessType/channel/billType需与折扣政策一致</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：头表单BUSINESS_TYPE需与折扣政策BUSINESS_TYPE一致</li><li>第2点：头表单CHANNEL需与折扣政策CHANNEL一致</li><li>第3点：头表单BILL_TYPE需与折扣政策BILL_TYPE一致</li></ul><li>系统体现：保存时preCheckData校验，不一致则提示"折扣政策与单据信息不一致"</li><li>排查SQL：</li></ul><li>校验3：起订量校验 —— 订单行数量≥折扣政策产品行起订量</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：每行QTY_BILL≥折扣政策产品行MOQ</li><li>第2点：低于起订量拦截，提示"样品{code}下单数量{qty}低于起订量{moq}"</li></ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul><li>校验4：封顶量校验 —— 订单行数量≤折扣政策坎级封顶量</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：每行QTY_BILL≤折扣政策产品行CAP_QTY</li><li>第2点：超过封顶量拦截，提示"样品{code}下单数量{qty}超过封顶量{capQty}"</li></ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul><li>校验5：期望有效期校验 —— 期望到达日期不能晚于政策有效期</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：头表单IN_DATE≤折扣政策EFFECTIVE_DATE_END</li><li>第2点：超过政策有效期拦截，提示"期望到达日期不能晚于政策有效期"</li></ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul><li>校验6：紧急行数校验 —— 仅计划订单可加急，上限=ceil(总行数/5)</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：仅billType=2或14时可加急，常规订单(billType=1)不允许有紧急行</li><li>第2点：紧急行数(urgency=2)≤ceil(总行数/5)</li><li>第3点：超过上限拦截，提示"紧急行数超过上限{maxQty}"</li></ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul><li>校验7：期望到达日期范围校验 —— 根据订单类型和渠道限制日期范围</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：常规订单(billType=1)每月25号前下单，期望到达日期需为当月</li><li>第2点：25号后仅瓷砖产品线可下常规订单</li><li>第3点：计划订单(billType=2)电商渠道可选当月往后6个月内，其他渠道3个月内</li></ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul><li>校验8：价格校验 —— 明细行价格字段不能为空且不能≤0</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：每行PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL不能为空</li><li>第2点：每行PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL不能≤0</li></ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul><li>校验9：产品SM状态校验 —— 根据产品生命周期状态控制下单</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：smState='Z8'禁止下单，硬拦截</li><li>第2点：smState='Z6'计划淘汰中，提示关注但允许下单</li><li>第3点：smState='S6'进入售后阶段，提示关注但允许下单</li><li>第4点：smState='Z7'有库存数量发完即止，限制下单数量不超过库存</li></ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul><li>校验10：客户信息校验 —— 校验客户信息完整性</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：经销商必填，CUSTOMER_OBJ不能为空</li><li>第2点：门店必填，TERMINAL_OBJ不能为空</li><li>第3点：收货人必填，TAKE_MAN_OBJ不能为空</li><li>第4点：交易公司必填，TRADING_COMPANY_OBJ不能为空</li><li>第5点：订单产品线必填，ORDER_PDT_LINE_OBJ不能为空</li></ul><li>系统体现：保存时verifyCustomer校验</li><li>排查SQL：</li></ul></ul>
 </div>
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验1 排查 SQL</p>
+<KbSubTitle>校验1：业务类型必填 —— isMakt=2时businessType不能为空</KbSubTitle>
+
+- 第1点：当 IS_MAKT=2 时，头表单 BUSINESS_TYPE 字段不能为空
+- 第2点：priceType=3 时 businessType 必填，priceType=2 时非必填
+- 第3点：businessType 取值范围：3=样品、12=家装样品、16=长库龄
+
+<KbTip>系统体现：保存时 preCheckData 校验，businessType 为空则提示"业务类型不能为空"</KbTip>
 
 ```sql
 SELECT h.HEAD_ID, h.IS_MAKT, h.PRICE_TYPE, h.BUSINESS_TYPE
@@ -2513,7 +1476,14 @@ SELECT h.HEAD_ID, h.IS_MAKT, h.PRICE_TYPE, h.BUSINESS_TYPE
    AND h.BUSINESS_TYPE IS NULL
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验2 排查 SQL</p>
+
+<KbSubTitle>校验2：折扣政策一致性 —— businessType/channel/billType需与折扣政策一致</KbSubTitle>
+
+- 第1点：头表单 BUSINESS_TYPE 需与折扣政策 BUSINESS_TYPE 一致
+- 第2点：头表单 CHANNEL 需与折扣政策 CHANNEL 一致
+- 第3点：头表单 BILL_TYPE 需与折扣政策 BILL_TYPE 一致
+
+<KbTip>系统体现：保存时 preCheckData 校验，不一致则提示"折扣政策与单据信息不一致"</KbTip>
 
 ```sql
 SELECT h.HEAD_ID, h.BUSINESS_TYPE AS 单据业务类型, h.CHANNEL AS 单据渠道, h.BILL_TYPE AS 单据订单类型,
@@ -2524,7 +1494,13 @@ SELECT h.HEAD_ID, h.BUSINESS_TYPE AS 单据业务类型, h.CHANNEL AS 单据渠�
    AND (h.BUSINESS_TYPE <> dp.BUSINESS_TYPE OR h.CHANNEL <> dp.CHANNEL OR h.BILL_TYPE <> dp.BILL_TYPE)
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验3 排查 SQL</p>
+
+<KbSubTitle>校验3：起订量校验 —— 订单行数量≥折扣政策产品行起订量</KbSubTitle>
+
+- 第1点：每行 QTY_BILL ≥ 折扣政策产品行 MOQ
+- 第2点：低于起订量拦截，提示"样品{code}下单数量{qty}低于起订量{moq}"
+
+<KbTip>系统体现：保存时 preCheckData 逐行校验</KbTip>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.MOQ
@@ -2535,7 +1511,13 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.MOQ
    AND l.QTY_BILL < dpl.MOQ
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验4 排查 SQL</p>
+
+<KbSubTitle>校验4：封顶量校验 —— 订单行数量≤折扣政策坎级封顶量</KbSubTitle>
+
+- 第1点：每行 QTY_BILL ≤ 折扣政策产品行 CAP_QTY
+- 第2点：超过封顶量拦截，提示"样品{code}下单数量{qty}超过封顶量{capQty}"
+
+<KbTip>系统体现：保存时 preCheckData 逐行校验</KbTip>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.CAP_QTY
@@ -2546,7 +1528,12 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.CAP_QTY
    AND l.QTY_BILL > dpl.CAP_QTY
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验5 排查 SQL</p>
+
+<KbSubTitle>校验5：期望有效期校验 —— 期望到达日期不能晚于政策有效期</KbSubTitle>
+
+- 第1点：头表单 IN_DATE 不能晚于折扣政策 EFFECTIVE_DATE_END
+
+<KbTip>系统体现：保存时 preCheckData 校验</KbTip>
 
 ```sql
 SELECT h.HEAD_ID, h.IN_DATE, dp.EFFECTIVE_DATE_END
@@ -2556,7 +1543,12 @@ SELECT h.HEAD_ID, h.IN_DATE, dp.EFFECTIVE_DATE_END
    AND h.IN_DATE > dp.EFFECTIVE_DATE_END
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验6 排查 SQL</p>
+
+<KbSubTitle>校验6：紧急行数校验 —— 紧急行数不能超过上限</KbSubTitle>
+
+- 第1点：紧急行数(URGENCY=2)不能超过 ceil(总行数/5)
+
+<KbTip>系统体现：保存时 preCheckData 逐行校验</KbTip>
 
 ```sql
 SELECT h.HEAD_ID,
@@ -2570,7 +1562,12 @@ SELECT h.HEAD_ID,
 HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) > CEIL(COUNT(l.LINE_ID) / 5)
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验7 排查 SQL</p>
+
+<KbSubTitle>校验7：期望到达日期范围校验 —— 期望到达日期不能超出允许范围</KbSubTitle>
+
+- 第1点：常规订单(billType=1)25号前仅当月；计划订单(billType=2)渠道限制范围(电商6个月/其他3个月)
+
+<KbTip>系统体现：保存时 preCheckData 校验</KbTip>
 
 ```sql
 SELECT h.HEAD_ID, h.BILL_TYPE, h.CHANNEL, h.IN_DATE, h.ORDER_PDT_LINE_ID
@@ -2582,7 +1579,12 @@ SELECT h.HEAD_ID, h.BILL_TYPE, h.CHANNEL, h.IN_DATE, h.ORDER_PDT_LINE_ID
             ELSE 0 END)
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验8 排查 SQL</p>
+
+<KbSubTitle>校验8：价格校验 —— 价格字段必须>0</KbSubTitle>
+
+- 第1点：行 PRICE_BILL/STANDARD_PRICE/DISCOUNT_RATE/DISCOUNT_INSTALLATION/DISCOUNTED_PRICE/WTAMOUNT_BILL 任一为 NULL 或 ≤0 则拦截
+
+<KbTip>系统体现：保存时 preCheckData 逐行校验</KbTip>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, l.PRICE_BILL, l.STANDARD_PRICE, l.DISCOUNT_RATE,
@@ -2597,7 +1599,12 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.PRICE_BILL, l.STANDARD_PRICE, l.DISCOUNT_RA
      OR l.WTAMOUNT_BILL IS NULL OR l.WTAMOUNT_BILL <= 0)
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验9 排查 SQL</p>
+
+<KbSubTitle>校验9：SM状态校验 —— 产品SM状态不能为Z8</KbSubTitle>
+
+- 第1点：订单行产品 SM_STATE='Z8' 禁止下单，硬拦截
+
+<KbTip>系统体现：保存时 preCheckData 逐行校验</KbTip>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, m.SM_STATE
@@ -2607,7 +1614,12 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, m.SM_STATE
    AND m.SM_STATE = 'Z8'
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验10 排查 SQL</p>
+
+<KbSubTitle>校验10：必填字段校验 —— 客户/终端/收货人/交易公司/订单产品线必填</KbSubTitle>
+
+- 第1点：CUSTOMER_ID/TERMINAL_ID/TAKE_MAN_ID/TRADING_COMPANY_ID/ORDER_PDT_LINE_ID 任一为 NULL 则拦截
+
+<KbTip>系统体现：保存时 preCheckData 校验</KbTip>
 
 ```sql
 SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
@@ -2617,6 +1629,7 @@ SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
    AND (h.CUSTOMER_ID IS NULL OR h.TERMINAL_ID IS NULL OR h.TAKE_MAN_ID IS NULL
      OR h.TRADING_COMPANY_ID IS NULL OR h.ORDER_PDT_LINE_ID IS NULL)
 ```
+
 
 <div class="kl-card">
   <div class="biz-kl-hdr">
@@ -2628,12 +1641,21 @@ SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
 
 <div class="kl-card">
   <div class="biz-kl-hdr">
-    <h2>提交校验 规则明细</h2>
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">提交校验</span>
+    <h2>提交校验</h2>
+    <p>提交校验校验规则明细</p>
   </div>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>校验1：OA审批推送校验 —— priceType=2时推送OA审批流程</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：priceType=2时设置hzApproveStatus=NEW</li><li>第2点：OA单据名称YPYHDD</li><li>第3点：流程编码根据渠道区分：渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT</li><li>第4点：调用doOaRequestOrderAudit推送OA审批</li><li>第5点：OA审批通过后生成CRM订单</li></ul><li>系统体现：保存并提交按钮触发，priceType=3时跳过OA直接生成CRM</li><li>排查SQL：</li></ul><li>校验2：CRM订单生成校验 —— 生成CRM订单前校验</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：businessType映射：3→Sample、12→HomeDecorationSample、16→Long_Inv_Age</li><li>第2点：校验头行信息完整性</li><li>第3点：priceType=3时直接生成CRM，hzApproveStatus=NO_APPROVED</li><li>第4点：priceType=2时OA审批通过后生成CRM</li><li>第5点：CRM订单号回写至SA_SALEBILLNO</li></ul><li>系统体现：保存并提交或生成CRM订单按钮触发</li><li>排查SQL：</li></ul><li>校验3：可下单数量扣减校验 —— 提交前校验可下单数量充足</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>详细逻辑</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：每行QTY_BILL≤折扣政策产品行ACTIVE_QTY</li><li>第2点：提交时调用updateActiveQty扣减可下单数量</li><li>第3点：可下单数量不足拦截，提示"样品{code}可下单数量不足"</li></ul><li>系统体现：保存并提交时updateActiveQty校验</li><li>排查SQL：</li></ul></ul>
 </div>
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验1 排查 SQL</p>
+<KbSubTitle>校验1：OA审批推送校验 —— priceType=2时推送OA审批流程</KbSubTitle>
+
+- 第1点：priceType=2 时设置 hzApproveStatus=NEW
+- 第2点：OA 单据名称 YPYHDD
+- 第3点：流程编码按渠道区分：渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT
+- 第4点：调用 doOaRequestOrderAudit 推送 OA 审批
+- 第5点：OA 审批通过后生成 CRM 订单
+
+<KbTip>系统体现：保存并提交按钮触发；priceType=3 时跳过 OA 直接生成 CRM</KbTip>
 
 ```sql
 SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS,
@@ -2643,7 +1665,16 @@ SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS,
  WHERE h.HEAD_ID = :headId
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验2 排查 SQL</p>
+
+<KbSubTitle>校验2：CRM订单生成校验 —— 生成CRM订单前校验</KbSubTitle>
+
+- 第1点：businessType 映射：3→Sample、12→HomeDecorationSample、16→Long_Inv_Age
+- 第2点：校验头行信息完整性
+- 第3点：priceType=3 时直接生成 CRM，hzApproveStatus=NO_APPROVED
+- 第4点：priceType=2 时 OA 审批通过后生成 CRM
+- 第5点：CRM 订单号回写至 SA_SALEBILLNO
+
+<KbTip>系统体现：保存并提交或生成 CRM 订单按钮触发</KbTip>
 
 ```sql
 SELECT h.HEAD_ID, h.BUSINESS_TYPE, h.PRICE_TYPE, h.HZ_APPROVE_STATUS, h.SA_SALEBILLNO,
@@ -2654,7 +1685,14 @@ SELECT h.HEAD_ID, h.BUSINESS_TYPE, h.PRICE_TYPE, h.HZ_APPROVE_STATUS, h.SA_SALEB
  WHERE h.HEAD_ID = :headId
 ```
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">校验3 排查 SQL</p>
+
+<KbSubTitle>校验3：可下单数量扣减校验 —— 提交前校验可下单数量充足</KbSubTitle>
+
+- 第1点：每行 QTY_BILL ≤ 折扣政策产品行 ACTIVE_QTY
+- 第2点：提交时调用 updateActiveQty 扣减可下单数量
+- 第3点：可下单数量不足拦截，提示"样品{code}可下单数量不足"
+
+<KbTip>系统体现：保存并提交时 updateActiveQty 校验</KbTip>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
@@ -2664,6 +1702,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
  WHERE h.HEAD_ID = :headId
    AND l.QTY_BILL > dpl.ACTIVE_QTY
 ```
+
 
 <div class="kl-card">
   <div class="biz-kl-hdr">
@@ -2707,10 +1746,10 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">状态机名称</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">状态释义</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">可执行的操作</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">状态机名称</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">状态释义</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">可执行的操作</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -2774,12 +1813,12 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">字段名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">类型</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">释义</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">对应界面字段</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">逻辑</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">类型</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">对应界面字段</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">逻辑</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -3193,12 +2232,12 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;">
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">字段名</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">类型</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">释义</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">对应界面字段</th>
-        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">逻辑</th>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">类型</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">对应界面字段</th>
+        <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">逻辑</th>
       </tr></thead>
       <tbody>
         <tr>
@@ -3489,25 +2528,125 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   <div class="biz-kl-hdr">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">报错一览表</span>
     <h2>常见报错与根因</h2>
-    <p>保存/提交/删除环节的典型报错与解决方案</p>
+    <p>保存/提交/删除环节的典型报错与排查逻辑（点"查看"展开详细逻辑）</p>
   </div>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
-    <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;"><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">报错信息</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">提示节点</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">根因与解决方案</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">等级</th></tr></thead>
-      <tbody>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">业务类型不能为空</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">isMakt=2 时 businessType 必填，选择业务类型后保存</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策与单据信息不一致</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">businessType/channel/billType 需与折扣政策一致，重新选择折扣政策或调整单据信息</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品{code}下单数量{qty}低于起订量{moq}</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">下单数量需 ≥ 折扣政策起订量，调整下单数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品{code}下单数量{qty}超过封顶量{capQty}</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">下单数量需 ≤ 折扣政策封顶量，调整下单数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">期望到达日期不能晚于政策有效期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">期望到达日期需 ≤ 政策有效期至，调整期望到达日期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">紧急行数超过上限{maxQty}</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">紧急行数上限 = ceil(总行数/5)，减少紧急行数</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">中</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品{code}已停产，禁止下单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">产品 SM状态='Z8' 禁止下单，移除该行</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品{code}可下单数量不足</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">提交校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策可下单数量不足，调整下单数量或联系管理员</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">单据已经审核，不允许删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">删除操作</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">hzApproveStatus=APPROVED 或 stat=5 或 isAuditingWh=2，不可删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">具备了订单号的订单，不允许删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">删除操作</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">saSalebillno 不为空，已生成 CRM 订单不可删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">高</td></tr>
-        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">价格不能为空或小于等于0</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">行价格字段缺失或异常，重新选择产品或联系管理员</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">高</td></tr>
-      </tbody>
-    </table>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">报错信息</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">提示节点</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">根因与解决方案</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">等级</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:center;white-space:nowrap;border-bottom:2px solid #E8ECF0;">详细逻辑</th></tr></thead>
+    <tbody>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">业务类型不能为空</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">isMakt=2 时 businessType 必填，选择业务类型后保存</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">折扣政策与单据信息不一致</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">businessType/channel/billType 需与折扣政策一致，重新选择折扣政策或调整单据信息</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品{code}下单数量{qty}低于起订量{moq}</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">下单数量需 ≥ 折扣政策起订量，调整下单数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品{code}下单数量{qty}超过封顶量{capQty}</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">下单数量需 ≤ 折扣政策封顶量，调整下单数量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">期望到达日期不能晚于政策有效期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">期望到达日期需 ≤ 政策有效期至，调整期望到达日期</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">紧急行数超过上限{maxQty}</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">紧急行数上限 = ceil(总行数/5)，减少紧急行数</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FFFBEB;color:#B45309;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">中</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品{code}已停产，禁止下单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">产品 SM状态='Z8' 禁止下单，移除该行</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品{code}可下单数量不足</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">提交校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">折扣政策可下单数量不足，调整下单数量或联系管理员</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">单据已经审核，不允许删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">删除操作</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">hzApproveStatus=APPROVED 或 stat=5 或 isAuditingWh=2，不可删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">具备了订单号的订单，不允许删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">删除操作</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">saSalebillno 不为空，已生成 CRM 订单不可删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+        <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">价格不能为空或小于等于0</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存校验</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">行价格字段缺失或异常，重新选择产品或联系管理员</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">高</span></td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>业务类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）isMakt=2 时 businessType 必填，选择业务类型后保存</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策与单据信息不一致</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）businessType/channel/billType 需与折扣政策一致，重新选择折扣政策或调整单据信息</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>样品{code}下单数量{qty}低于起订量{moq}</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）下单数量需 ≥ 折扣政策起订量，调整下单数量</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>样品{code}下单数量{qty}超过封顶量{capQty}</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）下单数量需 ≤ 折扣政策封顶量，调整下单数量</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能晚于政策有效期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）期望到达日期需 ≤ 政策有效期至，调整期望到达日期</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>紧急行数超过上限{maxQty}</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）紧急行数上限 = ceil(总行数/5)，减少紧急行数</div>
+    <div class="detail-tip" v-pre>等级：中</div>
+  </div>
+</div>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>样品{code}已停产，禁止下单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）产品 SM状态='Z8' 禁止下单，移除该行</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>样品{code}可下单数量不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）折扣政策可下单数量不足，调整下单数量或联系管理员</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据已经审核，不允许删除</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）hzApproveStatus=APPROVED 或 stat=5 或 isAuditingWh=2，不可删除</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>具备了订单号的订单，不允许删除</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）saSalebillno 不为空，已生成 CRM 订单不可删除</div>
+    <div class="detail-tip" v-pre>等级：高</div>
+  </div>
+</div>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>价格不能为空或小于等于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中"根因与解决方案"供参考：）行价格字段缺失或异常，重新选择产品或联系管理员</div>
+    <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
 
@@ -3517,22 +2656,86 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
     <h2>常见问题排查思路</h2>
     <p>从现象到根因的快速定位</p>
   </div>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
-    <li><strong>折扣政策选择弹窗无数据：</strong>当前经销商无可用折扣政策，或折扣政策已过期，或 isMakt 参数未正确传入（应为 '2'）</li>
-    <li><strong>保存并提交按钮不可点击：</strong>priceType=3 时该按钮隐藏，改用"生成CRM订单"；priceType=2 时需处于编辑状态</li>
-    <li><strong>OA审批流程未推送：</strong>流程编码未匹配（渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT），或 OA 接口异常</li>
-    <li><strong>CRM订单生成失败：</strong>businessType 映射异常（须为 3/12/16），或 CRM 接口异常，查看 INTF_INFO 字段获取返回信息</li>
-    <li><strong>可下单数量未正确扣减：</strong>updateActiveQty 未正确执行，或折扣政策产品行不存在，检查 DISCOUNT_POLICY_LINE.ACTIVE_QTY</li>
-    <li><strong>期望到达日期无法选择当月之后：</strong>常规订单(billType=1) 25号前仅允许当月；计划订单(billType=2) 渠道限制范围（电商6个月/其他3个月）</li>
-    <li><strong>展厅产品安装金额不为0：</strong>customerSubclass=5 展厅产品强制 INSTALL_UNIT_AMT=0、IS_INSTALL=0，检查该字段</li>
-  </ul>
+  <div class="faq-qa-wrap">
+    <h3 style="margin:0 0 24px 0;font-size:16px;font-weight:600;color:#374151;">其他常见问题</h3>
+    <div style="padding:0 12px;">
+  <div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">折扣政策选择弹窗无数据</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>当前经销商无可用折扣政策，或折扣政策已过期，或 isMakt 参数未正确传入（应为 '2'）<br>
+      <strong style="color:#7C3AED;">处理：</strong>确认经销商存在可用且未过期的折扣政策；检查 lovPara 中 isMakt='2' 是否正确传入弹窗
+    </div>
+  </div>
+  <div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">保存并提交按钮不可点击</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>priceType=3 时该按钮隐藏（改用“生成CRM订单”）；priceType=2 时需处于编辑状态<br>
+      <strong style="color:#7C3AED;">处理：</strong>priceType=3 改用“生成CRM订单”按钮；priceType=2 时确保单据处于编辑态再点击保存并提交
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">OA审批流程未推送</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>流程编码未匹配（渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT），或 OA 接口异常<br>
+      <strong style="color:#7C3AED;">处理：</strong>核对渠道对应的流程编码映射；检查 OA 接口连通性与返回，必要时联系 OA 管理员
+    </div>
+  </div>
+  <div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">CRM订单生成失败</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>businessType 映射异常（须为 3/12/16），或 CRM 接口异常<br>
+      <strong style="color:#7C3AED;">处理：</strong>确认 businessType∈{3,12,16}；查看 INTF_INFO 字段获取 CRM 返回信息定位失败原因
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">可下单数量未正确扣减</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>updateActiveQty 未正确执行，或折扣政策产品行不存在<br>
+      <strong style="color:#7C3AED;">处理：</strong>检查 DISCOUNT_POLICY_LINE.ACTIVE_QTY 是否正确；确认折扣政策产品行存在且可下单数量充足
+    </div>
+  </div>
+  <div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q6</span>
+      <span style="font-size:15px;">期望到达日期无法选择当月之后</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>常规订单(billType=1)25号前仅允许当月；计划订单(billType=2)渠道限制范围（电商6个月/其他3个月）<br>
+      <strong style="color:#7C3AED;">处理：</strong>常规订单在每月25号前下单；计划订单按渠道允许范围选择（电商6个月/其他3个月）
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q7</span>
+      <span style="font-size:15px;">展厅产品安装金额不为0</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>customerSubclass=5 展厅产品强制 INSTALL_UNIT_AMT=0、IS_INSTALL=0<br>
+      <strong style="color:#7C3AED;">处理：</strong>检查该订单行 customerSubclass=5 时 INSTALL_UNIT_AMT 与 IS_INSTALL 是否被正确置为 0
+    </div>
+  </div>
+    </div>
+  </div>
 </div>
 
 </div>
 </div>
-</div>
-
-<div id="changelog" style="display:none;">
+</div><div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 
@@ -3544,7 +2747,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
-      <thead><tr style="background:#F5F3FF;"><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">日期</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">提交ID</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">提交人</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#111827;text-align:left;border-bottom:2px solid #E8ECF0;">提交内容</th></tr></thead>
+      <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">日期</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">提交ID</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">提交人</th><th style="padding:10px 12px;font-size:.75rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">提交内容</th></tr></thead>
       <tbody>
         <tr><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">2026-08-30</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">-</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;border-bottom:1px solid #E8ECF0;">-</td><td style="padding:10px 12px;font-size:.73rem;color:#374151;">按最新逻辑梳理MD重写：遵循知识库样式规范，BreadcrumbTabs + biz-intro/biz-flow/key-logic/detail-logic/permission/faq/changelog 区块</td></tr>
       </tbody>
