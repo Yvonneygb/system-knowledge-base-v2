@@ -1590,34 +1590,104 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 <KbCard num="12" title="状态机">
   <p>单据状态与 OA 审批状态的流转关系</p>
 
-<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图 排查 SQL</p>
+<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
 
-```text
-┌───────────┐  保存   ┌───────────┐  提交(折扣政策)  ┌───────────┐
-│  新建     │────────▶│  草稿     │─────────────────▶│ OA审批中  │
-│  stat=1   │         │ stat=1    │                  │ NEW       │
-└───────────┘         └─────┬─────┘                  └─────┬─────┘
-                            │                              │
-                     提交(价目表)                ┌────────┼────────┐
-                            │                    ▼        ▼        ▼
-                            ▼              ┌─────────┐┌─────────┐┌─────────┐
-                      ┌───────────┐       │审批通过  ││审批拒绝  ││审批中    │
-                      │直接生成CRM │       │stat=5   ││stat=4   ││          │
-                      │NO_APPROVED│       └────┬────┘└────┬────┘└─────────┘
-                      └─────┬─────┘            │           │
-                            │                  ▼           ▼
-                            │            ┌───────────┐┌───────────┐
-                            │            │生成CRM    ││退回修改   │
-                            │            │订单       ││           │
-                            │            └─────┬─────┘└───────────┘
-                            │                  │
-                            │                  ▼
-                            │            ┌───────────┐
-                            └───────────▶│ ERP发货   │
-                                         └───────────┘
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 540" width="100%" role="img" aria-label="状态机流转图">
+  <title>状态机流转图</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
 
-<h2>状态机列表</h2>
+  <!-- 新建 stat=1 (蓝色) -->
+  <rect x="40" y="20" width="140" height="44" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.5"/>
+  <text x="110" y="37" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#185FA5">新建 stat=1</text>
+
+  <!-- 箭头：新建 → 草稿 -->
+  <line x1="180" y1="42" x2="230" y2="42" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="205" y="34" text-anchor="middle" font-family="sans-serif" font-size="11px" fill="#5F5E5A">保存</text>
+
+  <!-- 草稿 stat=1 (蓝色) -->
+  <rect x="236" y="20" width="140" height="44" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.5"/>
+  <text x="306" y="37" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#185FA5">草稿 stat=1</text>
+
+  <!-- 箭头：草稿 → OA审批中（折扣政策路径） -->
+  <line x1="376" y1="42" x2="430" y2="42" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="403" y="32" text-anchor="middle" font-family="sans-serif" font-size="11px" fill="#5F5E5A">提交</text>
+  <text x="403" y="50" text-anchor="middle" font-family="sans-serif" font-size="11px" fill="#5F5E5A">(折扣政策)</text>
+
+  <!-- OA审批中 NEW (橙色) -->
+  <rect x="436" y="20" width="160" height="44" rx="8" fill="#FEF3C7" stroke="#FCD34D" stroke-width="1.5"/>
+  <text x="516" y="37" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#92400E">OA审批中 NEW</text>
+
+  <!-- 箭头：草稿 → 直接生成CRM（价目表路径-向下） -->
+  <line x1="306" y1="64" x2="306" y2="100" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="280" y="84" text-anchor="end" font-family="sans-serif" font-size="11px" fill="#5F5E5A">提交(价目表)</text>
+
+  <!-- 直接生成CRM NO_APPROVED (绿色) -->
+  <rect x="226" y="104" width="160" height="44" rx="8" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.5"/>
+  <text x="306" y="121" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#166534">直接生成CRM</text>
+  <text x="306" y="138" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="11px" fill="#166534">NO_APPROVED</text>
+
+  <!-- 箭头：OA审批中 → 三个分支（向下） -->
+  <line x1="516" y1="64" x2="516" y2="100" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- 垂直主线下分三路 -->
+  <line x1="196" y1="148" x2="516" y2="148" stroke="#888780" stroke-width="1.5"/>
+  <line x1="196" y1="120" x2="196" y2="148" stroke="#888780" stroke-width="1.5"/>
+  <line x1="356" y1="120" x2="356" y2="148" stroke="#888780" stroke-width="1.5"/>
+  <line x1="516" y1="120" x2="516" y2="148" stroke="#888780" stroke-width="1.5"/>
+
+  <!-- 审批通过 stat=5 (绿色) → x=116 -->
+  <rect x="116" y="152" width="160" height="44" rx="8" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.5"/>
+  <text x="196" y="169" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#166534">审批通过 stat=5</text>
+
+  <!-- 审批拒绝 stat=4 (红色) → x=276 -->
+  <rect x="276" y="152" width="160" height="44" rx="8" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1.5"/>
+  <text x="356" y="169" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#991B1B">审批拒绝 stat=4</text>
+
+  <!-- 审批中 (灰色) → x=436 -->
+  <rect x="436" y="152" width="160" height="44" rx="8" fill="#F3F4F6" stroke="#D1D5DB" stroke-width="1.5"/>
+  <text x="516" y="169" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#374151">审批中</text>
+
+  <!-- 箭头：审批通过→生成CRM订单 -->
+  <line x1="196" y1="196" x2="196" y2="232" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- 箭头：审批拒绝→退回修改 -->
+  <line x1="356" y1="196" x2="356" y2="232" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- 箭头：直接生成CRM→生成CRM订单 -->
+  <line x1="306" y1="148" x2="196" y2="232" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 生成CRM订单 -->
+  <rect x="116" y="236" width="160" height="44" rx="8" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.5"/>
+  <text x="196" y="253" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#185FA5">生成CRM订单</text>
+
+  <!-- 退回修改 -->
+  <rect x="276" y="236" width="160" height="44" rx="8" fill="#FAEEDA" stroke="#BA7517" stroke-width="1.5"/>
+  <text x="356" y="253" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#854F0B">退回修改</text>
+
+  <!-- 箭头：生成CRM订单→ERP发货 -->
+  <line x1="196" y1="280" x2="196" y2="316" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ERP发货 -->
+  <rect x="116" y="320" width="160" height="44" rx="8" fill="#EAF3DE" stroke="#639922" stroke-width="1.5"/>
+  <text x="196" y="337" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="13px" font-weight="500" fill="#3B6D11">ERP发货</text>
+
+  <!-- 图例 -->
+  <rect x="440" y="240" width="200" height="120" rx="8" fill="#F9FAFB" stroke="#D1D5DB" stroke-width="0.5"/>
+  <text x="540" y="260" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12px" font-weight="500" fill="#374151">图例</text>
+  <rect x="452" y="272" width="40" height="16" rx="4" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+  <text x="500" y="280" dominant-baseline="central" font-family="sans-serif" font-size="11px" fill="#5F5E5A">新建/制单</text>
+  <rect x="452" y="294" width="40" height="16" rx="4" fill="#FEF3C7" stroke="#FCD34D" stroke-width="0.5"/>
+  <text x="500" y="302" dominant-baseline="central" font-family="sans-serif" font-size="11px" fill="#5F5E5A">审批中</text>
+  <rect x="452" y="316" width="40" height="16" rx="4" fill="#F0FDF4" stroke="#86EFAC" stroke-width="0.5"/>
+  <text x="500" y="324" dominant-baseline="central" font-family="sans-serif" font-size="11px" fill="#5F5E5A">通过/已完成</text>
+  <rect x="452" y="338" width="40" height="16" rx="4" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="0.5"/>
+  <text x="500" y="346" dominant-baseline="central" font-family="sans-serif" font-size="11px" fill="#5F5E5A">拒绝/退回</text>
+</svg>
+
+<p style="font-size:.78rem;color:#6B7280;margin:6px 0 0;">排查 SQL 见下方状态机列表</p>
+
+  <h4 class="kl-sub-title">状态机列表</h4>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
