@@ -577,9 +577,7 @@
     </table>
   </div>
 </div>
-</div><!-- /kl-wrap 界面模块1-5 -->
-<div class="kl-wrap" style="background:#FBFCFC;">
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">选择弹窗</span>
     <h2>选择弹窗</h2>
@@ -587,7 +585,7 @@
   </div>
 </div>
 
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <KbSubTitle>弹窗 1：折扣政策选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -674,7 +672,7 @@ SELECT dp.POLICY_ID          AS 政策ID,
  ORDER BY dp.POLICY_CODE
 ```
 
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <KbSubTitle>弹窗 2：经销商选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -735,7 +733,7 @@ SELECT c.CUSTOMER_ID        AS 客户ID,
  ORDER BY c.CUSTOMER_CODE
 ```
 
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <KbSubTitle>弹窗 3：门店选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -810,7 +808,7 @@ SELECT t.TERMINAL_ID        AS 门店ID,
  ORDER BY t.TERMINAL_CODE
 ```
 
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <KbSubTitle>弹窗 4：样品产品选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -886,7 +884,7 @@ SELECT m.MATERIAL_ID        AS 产品ID,
  ORDER BY m.MATERIAL_CODE
 ```
 
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <KbSubTitle>弹窗 5：收货人选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -937,7 +935,7 @@ SELECT ca.ADDRESS_ID       AS 地址ID,
  ORDER BY ca.DEFAULT_FLAG DESC, ca.ADDRESS_ID
 ```
 
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <KbSubTitle>弹窗 6：交易公司选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -997,7 +995,7 @@ SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
  ORDER BY tc.TRADING_COMPANY_CODE
 ```
 
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <KbSubTitle>弹窗 7：项目选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -1048,7 +1046,7 @@ SELECT p.PROJECT_ID     AS 项目ID,
  ORDER BY p.PROJECT_CODE
 ```
 
-<div class="kl-card" style="background:transparent;">
+<div class="kl-card">
   <KbSubTitle>弹窗 8：订单产品线选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -1078,7 +1076,6 @@ SELECT p.PROJECT_ID     AS 项目ID,
     </table>
   </div>
 </div>
-</div><!-- /kl-wrap 选择弹窗 -->
 > 查询SQL：
 
 ```sql
@@ -1091,7 +1088,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
  ORDER BY pl.PDT_LINE_CODE
 ```
 
-<div class="kl-wrap">
+
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">导入</span>
@@ -1174,8 +1171,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
   </div>
   <ol style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>导入文件大小限制10MB，超限拒绝上传</li><li>导入操作记录操作日志，包含操作人、操作时间、文件名、成功/失败行数</li><li>导入失败时可下载错误明细Excel，包含失败行号、样品编码、错误原因</li><li>导入过程事务性处理，任一行校验失败不影响其他行，最终统一写入</li></ol>
 </div>
-</div><!-- /kl-wrap 导入 -->
-<div class="kl-wrap">
+
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">其他按钮</span>
@@ -1426,7 +1422,6 @@ SELECT ca.TAKE_MAN, ca.TAKE_PHONE, ca.TAKE_ADDRESS
   </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：始终可点击</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：根据当前查询条件导出列表数据</li><li>第2点：生成Excel文件并下载</li></ul><li><strong>接口调用</strong>：GET /sa-out-bill-heads/sample-order-export</li><li><strong>排查SQL</strong>：</li></ul>
 </div>
-</div><!-- /kl-wrap 按钮 -->
 ```sql
 SELECT h.INTERIM_BIINO      AS 要货单号,
        h.HZ_APPROVE_STATUS  AS 单据状态,
@@ -1447,7 +1442,7 @@ SELECT h.INTERIM_BIINO      AS 要货单号,
  ORDER BY h.CREATION_DATE DESC
 ```
 
-<div class="kl-wrap">
+
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">保存校验</span>
@@ -1708,8 +1703,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 ```
 
 
-</div><!-- /kl-wrap 校验 -->
-<div class="kl-wrap">
+
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">状态机</span>
@@ -1811,8 +1805,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
     <p>头表与行表的字段、类型与业务逻辑</p>
   </div>
 </div>
-</div><!-- /kl-wrap 状态机 -->
-<div class="kl-wrap">
+
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">表 1</span>
@@ -2489,8 +2482,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
     </table>
   </div>
 </div>
-</div><!-- /kl-wrap 表1-2 -->
 <p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">---</p>
+</div>
 </div>
 </div>
 <div id="permission" style="display:none;">
