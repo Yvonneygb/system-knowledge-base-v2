@@ -202,30 +202,6 @@ docs/.vitepress/theme/ui/
 
 视觉节奏:不依赖边框分隔,只用底色交替制造层级。KBB 组件 scoped `background` 已被全局 `!important` 覆盖。
 
-### 7.1.1 模块标题靠左(biz-kl-hdr)
-所有模块化卡片标题容器 `.biz-kl-hdr` 必须**靠左对齐**(`text-align: left`):
-- 全局 `custom.css` 默认是 `text-align: center` (居中),由于全局改动影响 141 个页面,**当前约定为:具体页面用内联 style 覆盖** —— 在 `<div class="biz-kl-hdr">` 上加 `style="text-align:left;"`
-- 内联 style 优先级最高,能压过 `custom.css` 的 `text-align: center`
-- 后续如有需要统一全局靠左,可将 `custom.css` 第 1941 行的 `text-align: center` 改为 `text-align: left`,自动对 141 个源页面生效
-- 涵盖场景:`biz-kl-hdr` 内的 `h2`(如「界面模块 1」「列表页查询栏」「详情页头表单」「常见问题排查思路」等模块大标题)及其下属文字
-
-### 7.1.2 SQL 代码块留白(外边距 margin)
-所有 SQL 代码块(渲染产物 `div[class*="language-"]`)必须与周围内容拉开**外边距**留白(对齐 §2「卡片内边距 24px 10%」的视觉节奏,但语义为外边距 margin,因为 SQL 是暗色块):
-- **外边距**:`margin: 24px 10% !important`(上下 24px、左右各 10% 外留白)—— 暗色块与周围卡片/内容之间留白,不撑满容器
-- **内部 `pre` 恢复 `padding: 16px !important`**(代码离暗色块边界 16px,不贴边;暗色块自身不再加 padding,避免与 margin 语义混淆)
-- **实现位置**:`custom.css` 的 `.kb-page-content div[class*="language-"]` 容器(全局,全 141 页统一生效)
-- ⚠️ 术语澄清:`padding`=内边距(元素**内部**),`margin`=外边距(元素**外部**)。SQL 块与周围的留白属于**外边距**,用 `margin`,不要用 `padding` 把暗色块内部撑开
-- 适用:Markdown ```` ```sql ```` fenced code block 渲染的 `pre.shiki` 块、FAQ 卡片/报错弹窗内的 `pre.shiki` 块(全站统一)
-- 注:本项目 VitePress 配置 `html: false`,`.md` 中写 `<style>` / `<style scoped>` / `:deep()` / `vp-raw` 均被 markdown-it 剥除,**SQL 块级样式只能用 `custom.css` 全局方案**,无法单页覆盖
-
-### 7.1.3 SQL 代码块前的「查询SQL：」引导文字(引用块)
-SQL 代码块前的引导说明文字(如「查询SQL：」)必须用 **Markdown 引用块**书写,不要写成 HTML `<p>`:
-- 正确:`> 查询SQL：`(渲染为 `.kb-page-content blockquote`,带紫色左边线 + 浅紫底,即规范「样式」)
-- 错误:`<p style="...">&gt; 查询SQL：</p>` —— 会让 `&gt;` 变成字面文本 `>` 且**丢失紫色引用边框**(用户反馈的「样式丢失」)
-- 引用块与下方 ```` ```sql ```` 代码块之间保留一个空行,二者不合并
-- 原因:本项目 `html: false`,HTML `<p>` 即使写了内联样式也只是裸段落,无法获得引用块装饰;用 Markdown `>` 才走 `.kb-page-content blockquote` 样式
-- 引导文字引用块的**左右外边距(留白)**:`custom.css` 用 `.kb-page-content blockquote:not(.kb-quote) { margin: 24px 10% !important; }`(外边距上下 24px、左右各 10%,与 SQL 块 `margin:24px 10%` 同向外缩进、左右对齐);仅作用于纯引用块,不影响 KbQuote 组件。⚠️ 是 `margin`(外边距/块外侧),不是 `padding`(内边距/块内部)
-
 ### 7.2 表格表头(紫色)
 所有 `.kb-page-content table th` 必须使用紫色表头:
 - 底色:`linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)` 浅紫渐变
@@ -407,6 +383,87 @@ SELECT * FROM EPM_PROJECT WHERE IS_HOME = 2
   ```
 - **复用要求**:`kl-card` / `kl-num` / `kl-card-title` 为 `custom.css` 全局类,`faq-answer` 靠内联 style,**直接复用参考页写法,无需新增样式**。
 
+### 7.10 KbSubTitle 使用约束（避免 VitePress 组件解析失败）
+
+在 `<KbCard>` 组件的 `default` slot 中，**纯文本内容的 `<KbSubTitle>` 组件可能不被 VitePress 解析为 Vue 组件**，表现为标签名被当作普通文本输出或包裹在 `<pre><code>` 代码块中。
+
+**正确做法**：直接写入 HTML `<h4 class="kl-sub-title">`，不要使用 `<KbSubTitle>` 组件：
+
+```md
+<!-- ❌ 不推荐（可能不被 VitePress 解析） -->
+<KbSubTitle>前置约定</KbSubTitle>
+<KbSubTitle title="前置约定"></KbSubTitle>
+
+<!-- ✅ 推荐（直接写 HTML） -->
+<h4 class="kl-sub-title">前置约定</h4>
+```
+
+**特例**：当 `<KbSubTitle>` 内部包含 **Vue 子组件**（如 `<KbBadge>`）时，组件能被正常解析：
+
+```md
+<!-- ✅ 带子组件时可用 -->
+<KbSubTitle>弹窗1：折扣政策选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+```
+
+**缩进约束**：任何在 `<KbCard>` 插槽内的 HTML 标签（包括 `<h4>`、`<p>`、`<div>`、`<ol>` 等），**行首缩进不得超过 2 个空格**，否则 markdown-it 会把该行当作代码块渲染：
+
+```md
+<!-- ❌ 错误：4 空格缩进 → 被渲染为 <pre><code> -->
+    <h4 class="kl-sub-title">前置约定</h4>
+
+<!-- ✅ 正确：2 空格缩进 → 正常 HTML -->
+  <h4 class="kl-sub-title">前置约定</h4>
+```
+
+### 7.11 状态机流转图：用 HTML table 而非 SVG/ASCII
+
+VitePress 默认不安装 Mermaid 插件，且 `<svg>` 标签在 KbCard 插槽中可能被转义为文本。**推荐用 HTML `<table>` 构建状态机流程图**：
+
+```md
+<div style="overflow-x:auto;padding:12px 0;white-space:nowrap;">
+  <table style="border-collapse:collapse;margin:0 auto;">
+    <tr>
+      <td style="padding:4px 8px;">
+        <div style="background:#E6F1FB;border:2px solid #378ADD;border-radius:8px;
+                    padding:10px 20px;font-size:13px;font-weight:600;color:#185FA5;">
+          状态节点
+        </div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">→</td>
+      <td>...后续节点...</td>
+    </tr>
+  </table>
+</div>
+```
+
+颜色编码（与 KbFlow 组件一致：
+- 蓝色 `#E6F1FB/#378ADD`：新建/制单（`type="new"`）
+- 橙色 `#FEF3C7/#FCD34D`：审批中（`type="run"`）
+- 绿色 `#F0FDF4/#86EFAC`：通过/已完成（`type="approved"`）
+- 红色 `#FEF2F2/#FCA5A5`：拒绝/退回（`type="rejected"`）
+- 灰色 `#F3F4F6/#D1D5DB`：其他中间态
+
+### 7.12 SQL 代码块统一使用 Markdown 代码围栏
+
+所有 SQL 代码块**必须**使用 Markdown fenced ```sql 代码围栏，禁止使用 HTML `<pre><code>`：
+
+```md
+<!-- ❌ 错误：不会被 VitePress/Shiki 高亮 -->
+<pre class="kl-code"><code>SELECT * FROM TABLE</code></pre>
+
+<!-- ✅ 正确：被 Shiki 高亮为暗色代码框 -->
+```sql
+SELECT *
+  FROM TABLE
+ WHERE CONDITION = 1
+\```
+```
+
+同时确保：
+- SQL 应格式化为**多行**（关键字大写、子句换行、AND/OR 缩进）
+- `> 查询SQL：` 引导文字用 Markdown 引用块，**不要**用 `<p class="kl-blockquote">`
+- ```sql 代码围栏与 `>` 引用块之间保留空行，确保被正确解析
+
 ---
 
 ## 8. 禁止事项
@@ -429,5 +486,7 @@ SELECT * FROM EPM_PROJECT WHERE IS_HOME = 2
 16. **不要把「重点逻辑」的"业务意义"写成粗体段落(`**业务意义**：...`)**,必须用 `<KbQuote>` 紫色引用块(即 `class="kb-quote"`)承载,与【家装核销发票上传】对齐(见 §7.5)。
 17. **不要把「重点逻辑」的"具体逻辑"写成 `<KbSubTitle>具体逻辑</KbSubTitle>` 组件或 `具体逻辑描述`**,必须用 `**具体逻辑**：`(`<strong>` 包裹的普通文本,与【家装核销发票上传】一致,见 §7.5)。
 18. **不要把「重点逻辑」的详细逻辑写成自动编号的有序列表(`<ol>`,即 Markdown `1.` `2.` 形式),也不要漏掉 `1、2、3、` 序号**:必须用 `<ul><li>` 无序列表,并在每条 li 文本前手动加 `1、2、3、` 中文序号(如 `- 1、第1点：...`,与【家装核销发票上传】的 `ul/li` 结构一致,见 §7.5)。
-19. **不要让 `biz-kl-hdr` 标题居中显示**:必须靠左对齐(`text-align: left`),内联 style 覆盖全局 `text-align: center`(见 §7.1.1);「界面模块 1」「详情页头表单」等模块大标题必须从左边缘开始读。
-20. **不要让 SQL 代码块紧贴上下文(留白不足)**:必须用 `margin: 24px 10% !important`(上下 24px、左右各 10% 外留白),由 `custom.css` 的 `.kb-page-content div[class*="language-"]` 全局生效(见 §7.1.2)。左右 10% 外边距不可或缺,否则暗色块会撑满容器、与卡片贴边。
+19. **不要在 `<KbCard>` 插槽中使用 4 空格缩进的 HTML 标签**:4 空格在 Markdown 中会被视为代码块,渲染为 `<pre><code>`。所有在 KbCard 内的 HTML 标签行首缩进**不得超过 2 空格**。`<h4 class="kl-sub-title">`、`<p>`、`<div>`、`<ol>` 等均受此约束(例外:不在 KbCard 内的 biz-intro/biz-flow 区域不受此限)。
+20. **不要在 `<KbCard>` 插槽中使用纯文本子内容的 `<KbSubTitle>` 组件**:VitePress 可能不将其解析为 Vue 组件,表现为标签名被当作普通文本输出或被 `<pre><code>` 包裹。应直接写入 `<h4 class="kl-sub-title">`(见 §7.10)。仅当 KbSubTitle 内部包含 Vue 子组件(如 `<KbBadge>`)时可用。
+21. **不要把状态机流转图写成 ` ```text ` ASCII 图或 `<svg>`**:ASCII 图在 VitePress 中无交互且不可维护;`<svg>` 标签在 KbCard 插槽中可能因 KbCard 的 `padding: 24px 10%` 被压缩到极小尺寸,且存在被转义为文本的风险。应使用 HTML `<table>` 构建流程图,外层包裹 `overflow-x:auto` 容器(见 §7.11)。
+22. **不要用 `<p class="kl-blockquote">` 写"查询SQL："引导文字**:必须用 Markdown 引用块 `> 查询SQL：`,以获得标准 blockquote 样式(紫色左边线 + 浅紫背景)。
