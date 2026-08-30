@@ -280,10 +280,10 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
   border-right: none !important;
 }
 
-/* 查询SQL：等引导说明引用块 — 左右留白(内边距 10%),与 SQL 块视觉对齐;
+/* 查询SQL：等引导说明引用块 — 左右外边距 10%(与 SQL 块 margin:24px 10% 对齐,同向外缩进);
    不影响 KbQuote 引用组件(:not(.kb-quote)) */
 .kb-page-content blockquote:not(.kb-quote) {
-  padding: 24px 10% !important;
+  margin: 24px 10% !important;
 }
 
 /* ===== 横线隐藏 === */

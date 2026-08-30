@@ -224,7 +224,7 @@ SQL 代码块前的引导说明文字(如「查询SQL：」)必须用 **Markdown
 - 错误:`<p style="...">&gt; 查询SQL：</p>` —— 会让 `&gt;` 变成字面文本 `>` 且**丢失紫色引用边框**(用户反馈的「样式丢失」)
 - 引用块与下方 ```` ```sql ```` 代码块之间保留一个空行,二者不合并
 - 原因:本项目 `html: false`,HTML `<p>` 即使写了内联样式也只是裸段落,无法获得引用块装饰;用 Markdown `>` 才走 `.kb-page-content blockquote` 样式
-- 引导文字引用块的**左右留白**:`custom.css` 用 `.kb-page-content blockquote:not(.kb-quote) { padding: 24px 10% !important; }`(内边距上下 24px、左右各 10%,与 SQL 块 `margin:24px 10%` 的左右缩进视觉对齐);仅作用于纯引用块,不影响 KbQuote 组件
+- 引导文字引用块的**左右外边距(留白)**:`custom.css` 用 `.kb-page-content blockquote:not(.kb-quote) { margin: 24px 10% !important; }`(外边距上下 24px、左右各 10%,与 SQL 块 `margin:24px 10%` 同向外缩进、左右对齐);仅作用于纯引用块,不影响 KbQuote 组件。⚠️ 是 `margin`(外边距/块外侧),不是 `padding`(内边距/块内部)
 
 ### 7.2 表格表头(紫色)
 所有 `.kb-page-content table th` 必须使用紫色表头:
