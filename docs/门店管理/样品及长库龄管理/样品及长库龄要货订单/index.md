@@ -652,7 +652,7 @@
   </div>
 </div>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">&gt; 查询SQL：</p>
+> 查询SQL：
 
 ```sql
 SELECT dp.POLICY_ID          AS 政策ID,
@@ -718,7 +718,7 @@ SELECT dp.POLICY_ID          AS 政策ID,
   </div>
 </div>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">&gt; 查询SQL：</p>
+> 查询SQL：
 
 ```sql
 SELECT c.CUSTOMER_ID        AS 客户ID,
@@ -793,7 +793,7 @@ SELECT c.CUSTOMER_ID        AS 客户ID,
   </div>
 </div>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">&gt; 查询SQL：</p>
+> 查询SQL：
 
 ```sql
 SELECT t.TERMINAL_ID        AS 门店ID,
@@ -861,7 +861,7 @@ SELECT t.TERMINAL_ID        AS 门店ID,
   </div>
 </div>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">&gt; 查询SQL：</p>
+> 查询SQL：
 
 ```sql
 SELECT m.MATERIAL_ID        AS 产品ID,
@@ -923,7 +923,7 @@ SELECT m.MATERIAL_ID        AS 产品ID,
   </div>
 </div>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">&gt; 查询SQL：</p>
+> 查询SQL：
 
 ```sql
 SELECT ca.ADDRESS_ID       AS 地址ID,
@@ -981,7 +981,7 @@ SELECT ca.ADDRESS_ID       AS 地址ID,
   </div>
 </div>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">&gt; 查询SQL：</p>
+> 查询SQL：
 
 ```sql
 SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
@@ -1034,7 +1034,7 @@ SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
   </div>
 </div>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">&gt; 查询SQL：</p>
+> 查询SQL：
 
 ```sql
 SELECT p.PROJECT_ID     AS 项目ID,
@@ -1078,7 +1078,7 @@ SELECT p.PROJECT_ID     AS 项目ID,
   </div>
 </div>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">&gt; 查询SQL：</p>
+> 查询SQL：
 
 ```sql
 SELECT pl.PDT_LINE_ID   AS 产品线ID,

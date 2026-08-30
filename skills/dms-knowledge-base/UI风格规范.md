@@ -218,6 +218,13 @@ docs/.vitepress/theme/ui/
 - 适用:Markdown ```` ```sql ```` fenced code block 渲染的 `pre.shiki` 块、FAQ 卡片/报错弹窗内的 `pre.shiki` 块(全站统一)
 - 注:本项目 VitePress 配置 `html: false`,`.md` 中写 `<style>` / `<style scoped>` / `:deep()` / `vp-raw` 均被 markdown-it 剥除,**SQL 块级样式只能用 `custom.css` 全局方案**,无法单页覆盖
 
+### 7.1.3 SQL 代码块前的「查询SQL：」引导文字(引用块)
+SQL 代码块前的引导说明文字(如「查询SQL：」)必须用 **Markdown 引用块**书写,不要写成 HTML `<p>`:
+- 正确:`> 查询SQL：`(渲染为 `.kb-page-content blockquote`,带紫色左边线 + 浅紫底,即规范「样式」)
+- 错误:`<p style="...">&gt; 查询SQL：</p>` —— 会让 `&gt;` 变成字面文本 `>` 且**丢失紫色引用边框**(用户反馈的「样式丢失」)
+- 引用块与下方 ```` ```sql ```` 代码块之间保留一个空行,二者不合并
+- 原因:本项目 `html: false`,HTML `<p>` 即使写了内联样式也只是裸段落,无法获得引用块装饰;用 Markdown `>` 才走 `.kb-page-content blockquote` 样式
+
 ### 7.2 表格表头(紫色)
 所有 `.kb-page-content table th` 必须使用紫色表头:
 - 底色:`linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)` 浅紫渐变
@@ -422,4 +429,4 @@ SELECT * FROM EPM_PROJECT WHERE IS_HOME = 2
 17. **不要把「重点逻辑」的"具体逻辑"写成 `<KbSubTitle>具体逻辑</KbSubTitle>` 组件或 `具体逻辑描述`**,必须用 `**具体逻辑**：`(`<strong>` 包裹的普通文本,与【家装核销发票上传】一致,见 §7.5)。
 18. **不要把「重点逻辑」的详细逻辑写成自动编号的有序列表(`<ol>`,即 Markdown `1.` `2.` 形式),也不要漏掉 `1、2、3、` 序号**:必须用 `<ul><li>` 无序列表,并在每条 li 文本前手动加 `1、2、3、` 中文序号(如 `- 1、第1点：...`,与【家装核销发票上传】的 `ul/li` 结构一致,见 §7.5)。
 19. **不要让 `biz-kl-hdr` 标题居中显示**:必须靠左对齐(`text-align: left`),内联 style 覆盖全局 `text-align: center`(见 §7.1.1);「界面模块 1」「详情页头表单」等模块大标题必须从左边缘开始读。
-20. **不要让 SQL 代码块紧贴上下文(留白不足)**:必须用 `margin: 20px 0`(上下各 20px),页面级用 `<style>div[class*="language-"] { margin: 20px 0 !important; }</style>` 覆盖 `custom.css` 默认 12px(见 §7.1.2)。
+20. **不要让 SQL 代码块紧贴上下文(留白不足)**:必须用 `margin: 24px 10% !important`(上下 24px、左右各 10% 外留白),由 `custom.css` 的 `.kb-page-content div[class*="language-"]` 全局生效(见 §7.1.2)。左右 10% 外边距不可或缺,否则暗色块会撑满容器、与卡片贴边。
