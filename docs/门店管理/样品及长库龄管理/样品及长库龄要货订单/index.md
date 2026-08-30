@@ -1601,6 +1601,10 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       <filter id="shd-sm" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/></filter>
     </defs>
 
+    <rect x="0" y="0" width="960" height="720" fill="#FFF4E6" stroke="#FF8800" stroke-width="4"/>
+    <rect x="100" y="100" width="400" height="200" fill="#22C55E" opacity="0.3"/>
+    <text x="300" y="220" text-anchor="middle" fill="#000000" font-size="32" font-weight="700">TEST 测试矩形</text>
+
     <rect x="30" y="20" width="900" height="85" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="6,4"/>
     <text x="480" y="42" text-anchor="middle" fill="#1D4ED8" font-size="13" font-weight="600">上游支撑</text>
     <rect x="230" y="56" width="120" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
