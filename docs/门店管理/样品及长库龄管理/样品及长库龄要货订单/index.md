@@ -1051,19 +1051,10 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
   <ol style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>导入文件大小限制10MB，超限拒绝上传</li><li>导入操作记录操作日志，包含操作人、操作时间、文件名、成功/失败行数</li><li>导入失败时可下载错误明细Excel，包含失败行号、样品编码、错误原因</li><li>导入过程事务性处理，任一行校验失败不影响其他行，最终统一写入</li></ol>
 </KbCard>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">其他按钮</span>
-    <h2>其他按钮</h2>
-    <p>列表页与详情页共 11 个操作按钮的显隐与执行逻辑</p>
-  </div>
-</div>
+<KbCard num="9" title="其他按钮">
+  <p>列表页与详情页共 11 个操作按钮的显隐与执行逻辑</p>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">其他按钮</span>
     <h2>按钮清单</h2>
-  </div>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
@@ -1154,15 +1145,9 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
       </tbody>
     </table>
   </div>
-</div>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 1</span>
     <h2>编辑（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：单据非审批中状态</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：设置editFlag=true</li><li>第2点：头表单和行表格进入可编辑状态</li><li>第3点：根据priceType、stat、hzApproveStatus动态设置各字段disabled状态</li></ul><li><strong>接口调用</strong>：无</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
 
 ```sql
 SELECT h.INTERIM_BIINO, h.HZ_APPROVE_STATUS, h.ORDER_STAT
@@ -1170,21 +1155,11 @@ SELECT h.INTERIM_BIINO, h.HZ_APPROVE_STATUS, h.ORDER_STAT
  WHERE h.HEAD_ID = :headId
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 2</span>
     <h2>取消编辑（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：editFlag=true</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：设置editFlag=false</li><li>第2点：重新加载原始数据，放弃当前编辑内容</li><li>第3点：头表单和行表格恢复disabled状态</li></ul><li><strong>接口调用</strong>：GET /list-detail重新加载详情</li><li><strong>排查SQL</strong>：无</li></ul>
-</div>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 3</span>
     <h2>删除（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：roleList含'AE20250907'且backEditFlag且saSalebillno为空且hzApproveStatus='NEW'</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：校验hzApproveStatus≠APPROVED且stat≠5，否则提示"单据已经审核，不允许删除"</li><li>第2点：校验isAuditingWh≠2，否则提示"单据已经审核，不允许删除"</li><li>第3点：校验saSalebillno为空，否则提示"具备了订单号的订单，不允许删除"</li><li>第4点：调用updateActiveQty返还折扣政策可下单数量</li><li>第5点：删除SA_OUT_BILL_HEAD和SA_OUT_BILL_LINE数据</li></ul><li><strong>接口调用</strong>：DELETE /sa-out-bill-heads</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
 
 ```sql
 SELECT h.HEAD_ID, h.HZ_APPROVE_STATUS, h.IS_AUDITING_WH, h.SA_SALEBILLNO, h.ORDER_STAT
@@ -1192,21 +1167,11 @@ SELECT h.HEAD_ID, h.HZ_APPROVE_STATUS, h.IS_AUDITING_WH, h.SA_SALEBILLNO, h.ORDE
  WHERE h.HEAD_ID = :headId
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 4</span>
     <h2>新建（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：始终可点击</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：跳转空白新建页</li><li>第2点：头表单初始化默认值：订单日期=当前日期、申请人=当前用户、事业部=当前用户deptName、签约方式='2'、IS_MAKT=2</li><li>第3点：设置editFlag=true、backEditFlag=true</li></ul><li><strong>接口调用</strong>：无</li><li><strong>排查SQL</strong>：无</li></ul>
-</div>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 5</span>
     <h2>保存（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：editFlag且(backEditFlag或新建)</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：执行preCheckData校验紧急行数、业务类型必填、折扣政策一致性、起订量、封顶量</li><li>第2点：执行verifyCustomer校验客户信息</li><li>第3点：执行updateActiveQty返还旧的可下单数量</li><li>第4点：执行saveHeadData保存头信息</li><li>第5点：执行saveLineData保存行信息</li><li>第6点：执行updateActiveQty扣减新的可下单数量</li></ul><li><strong>接口调用</strong>：POST /sa-out-bill-heads</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
 
 ```sql
 SELECT h.HEAD_ID, h.PRICE_TYPE, h.BUSINESS_TYPE, h.HZ_APPROVE_STATUS
@@ -1214,13 +1179,8 @@ SELECT h.HEAD_ID, h.PRICE_TYPE, h.BUSINESS_TYPE, h.HZ_APPROVE_STATUS
  WHERE h.HEAD_ID = :headId
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 6</span>
     <h2>保存并提交（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：(backEditFlag或新建)且priceType≠3</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：执行保存全部校验逻辑</li><li>第2点：priceType=2时，设置hzApproveStatus=NEW，调用doOaRequestOrderAudit推送OA审批</li><li>第3点：OA流程编码根据渠道区分：渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT</li><li>第4点：OA单据名称YPYHDD</li><li>第5点：priceType=3时，设置hzApproveStatus=NO_APPROVED，直接生成CRM订单</li></ul><li><strong>接口调用</strong>：POST /sa-out-bill-heads/save-and-submit</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
 
 ```sql
 SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS
@@ -1228,13 +1188,8 @@ SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS
  WHERE h.HEAD_ID = :headId
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 7</span>
     <h2>查看下单数量及坎级（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：editFlag且priceType=2</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：设置viewQty=true</li><li>第2点：行表格显示折扣信息和政策可下单数列</li><li>第3点：查询折扣政策产品行的可下单数量和坎级信息</li></ul><li><strong>接口调用</strong>：无（前端联动显示）</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
 
 ```sql
 SELECT dpl.MATERIAL_CODE, dpl.ACTIVE_QTY, dpl.MOQ, dpl.CAP_QTY, dpl.CAP_LEVEL
@@ -1243,13 +1198,8 @@ SELECT dpl.MATERIAL_CODE, dpl.ACTIVE_QTY, dpl.MOQ, dpl.CAP_QTY, dpl.CAP_LEVEL
  ORDER BY dpl.MATERIAL_CODE
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 8</span>
     <h2>生成CRM订单（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：backEditFlag且有interimBiino且priceType=3</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：校验单据信息完整性</li><li>第2点：根据businessType映射CRM类型：3→Sample、12→HomeDecorationSample、16→Long_Inv_Age</li><li>第3点：调用CRM接口生成订单</li><li>第4点：CRM订单号回写至SA_OUT_BILL_HEAD.SA_SALEBILLNO</li></ul><li><strong>接口调用</strong>：POST /sa-out-bill-heads/update-create-crm</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
 
 ```sql
 SELECT h.HEAD_ID, h.INTERIM_BIINO, h.PRICE_TYPE, h.BUSINESS_TYPE, h.SA_SALEBILLNO
@@ -1257,13 +1207,8 @@ SELECT h.HEAD_ID, h.INTERIM_BIINO, h.PRICE_TYPE, h.BUSINESS_TYPE, h.SA_SALEBILLN
  WHERE h.HEAD_ID = :headId
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 9</span>
     <h2>批量获取当月报送总量（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：backEditFlag且billType=2</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：遍历行表格所有产品</li><li>第2点：查询每个产品全国当月报送总量</li><li>第3点：回写至行MONTH_SUBMIT_QTY字段</li></ul><li><strong>接口调用</strong>：POST /sa-out-bill-heads/get-cur-month-submit-qty</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
 
 ```sql
 SELECT m.MATERIAL_CODE,
@@ -1278,13 +1223,8 @@ SELECT m.MATERIAL_CODE,
  GROUP BY m.MATERIAL_CODE
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 10</span>
     <h2>同步地址信息（详情页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：有customerCode</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：调用接口获取经销商最新收货地址信息</li><li>第2点：更新头表单收货人、联系电话、收货地址</li><li>第3点：记录地址变更历史至地址变更历史Tab</li></ul><li><strong>接口调用</strong>：POST /sa-out-bill-heads/async-address</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
 
 ```sql
 SELECT ca.TAKE_MAN, ca.TAKE_PHONE, ca.TAKE_ADDRESS
@@ -1294,13 +1234,9 @@ SELECT ca.TAKE_MAN, ca.TAKE_PHONE, ca.TAKE_ADDRESS
    AND ca.DEFAULT_FLAG = 2
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 11</span>
     <h2>导出（列表页）</h2>
-  </div>
   <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：始终可点击</li><li><strong>执行逻辑</strong>：</li><ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：根据当前查询条件导出列表数据</li><li>第2点：生成Excel文件并下载</li></ul><li><strong>接口调用</strong>：GET /sa-out-bill-heads/sample-order-export</li><li><strong>排查SQL</strong>：</li></ul>
-</div>
+
 ```sql
 SELECT h.INTERIM_BIINO      AS 要货单号,
        h.HZ_APPROVE_STATUS  AS 单据状态,
@@ -1320,7 +1256,7 @@ SELECT h.INTERIM_BIINO      AS 要货单号,
    AND h.SEARCH_FLAG = 1
  ORDER BY h.CREATION_DATE DESC
 ```
-
+</KbCard>
 
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
