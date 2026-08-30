@@ -1089,7 +1089,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 <KbCard num="8" title="导入">
   <p>Excel 产品明细行导入的前置约定、字段映射、处理逻辑、异常与运维保障</p>
 
-    <h4 class="kl-sub-title">前置约定</h4>
+  <h4 class="kl-sub-title">前置约定</h4>
   <ol style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>导入仅支持产品明细行导入，头信息需在页面上完整填写</li><li>导入文件格式为Excel(.xlsx)，首行为表头行</li><li>导入前需已选择折扣政策(priceType=2)或价目表(priceType=3)，确保产品价格可匹配</li><li>导入前需已选择经销商和门店，确保产品范围可限定</li><li>样品编码必须存在于折扣政策产品范围内或价目表产品范围内</li><li>同一要货单不允许导入重复样品编码</li></ol>
 
   <h4 class="kl-sub-title">字段映射</h4>
@@ -1130,13 +1130,13 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
     </table>
   </div>
 
-    <h4 class="kl-sub-title">处理逻辑</h4>
+  <h4 class="kl-sub-title">处理逻辑</h4>
   <ol style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>解析Excel文件，逐行读取样品编码、本次下单数量、是否紧急、说明</li><li>根据样品编码查询产品主数据，校验产品是否存在、SM状态是否允许下单</li><li>根据折扣政策ID查询产品行，获取起订量、封顶量、可下单数量、标准单价、安装单价</li><li>校验本次下单数量≥起订量且≤封顶量且≤可下单数量</li><li>自动计算：标准单价不含安装=标准单价-安装单价、安装金额=本次下单数量×安装单价、折后金额=本次下单数量×折后单价不含</li><li>展厅产品(customerSubclass=5)强制安装金额=0、包安装否=0</li><li>累计申请数量合计=SUM(本次下单数量)、申请金额合计=SUM(折后金额)</li><li>全部行校验通过后写入行表格</li></ol>
 
   <h4 class="kl-sub-title">异常与结果约定</h4>
   <ol style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>样品编码不存在：跳过该行，记录错误"样品编码{code}不存在"</li><li>样品编码重复：跳过重复行，记录错误"样品编码{code}重复"</li><li>SM状态='Z8'：跳过该行，记录错误"样品{code}已停产，禁止下单"</li><li>下单数量&lt;起订量：跳过该行，记录错误"样品{code}下单数量{qty}低于起订量{moq}"</li><li>下单数量&gt;封顶量：跳过该行，记录错误"样品{code}下单数量{qty}超过封顶量{capQty}"</li><li>下单数量&gt;可下单数量：跳过该行，记录错误"样品{code}下单数量{qty}超过可下单数量{activeQty}"</li><li>导入完成后弹出结果提示：成功行数、失败行数、失败详情</li></ol>
 
-    <h4 class="kl-sub-title">运维保障</h4>
+  <h4 class="kl-sub-title">运维保障</h4>
   <ol style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>导入文件大小限制10MB，超限拒绝上传</li><li>导入操作记录操作日志，包含操作人、操作时间、文件名、成功/失败行数</li><li>导入失败时可下载错误明细Excel，包含失败行号、样品编码、错误原因</li><li>导入过程事务性处理，任一行校验失败不影响其他行，最终统一写入</li></ol>
 </KbCard>
 
