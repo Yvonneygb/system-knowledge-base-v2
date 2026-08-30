@@ -209,20 +209,14 @@ docs/.vitepress/theme/ui/
 - 后续如有需要统一全局靠左,可将 `custom.css` 第 1941 行的 `text-align: center` 改为 `text-align: left`,自动对 141 个源页面生效
 - 涵盖场景:`biz-kl-hdr` 内的 `h2`(如「界面模块 1」「列表页查询栏」「详情页头表单」「常见问题排查思路」等模块大标题)及其下属文字
 
-### 7.1.2 SQL 代码块留白
-所有 SQL 代码块(渲染产物 `div[class*="language-"]`)必须有**明显的上下间距**:
-- `custom.css` 默认 `margin: 12px 0`,视觉上贴上下文
-- **本规范要求 `margin: 20px 0`**(上下各 20px),用空行撑开节奏
-- 页面级覆盖:在页面 `.md` 顶部 `<BreadcrumbTabs />` 之后插入 `<style>` 块:
-  ```html
-  <style>
-  div[class*="language-"] { margin: 20px 0 !important; }
-  </style>
-  ```
-  - `!important` 压过 `custom.css` 同等优先级的 `!important`(靠后加载胜出)
-  - 只在本页生效,不影响其他 140 页
-- 也可用全局方案:把 `custom.css` 第 119 行 `margin: 12px 0 !important;` 改为 `margin: 20px 0 !important;`,所有页面统一
+### 7.1.2 SQL 代码块留白 + 内边距
+所有 SQL 代码块(渲染产物 `div[class*="language-"]`)必须遵循**卡片内边距规范**(§2「卡片内边距 24px 10%」),与 `.kb-card` / `.kl-card` 视觉一致:
+- **内边距**:`padding: 24px 10% !important`(上下 24px、左右各 10% 留白)—— 对齐设计令牌「卡片内边距 24px 10%」
+- **外间距**:`margin: 20px 0 !important`(上下各 20px,与上下文拉开节奏)
+- **实现位置**:`custom.css` 的 `.kb-page-content div[class*="language-"]` 容器(全局,全 141 页统一生效,2026-08-30 提交 e54dade 及后续)
+- **内部 `pre` 的 `padding` 必须为 `0`**(容器已提供 24px 10%,避免双层 padding 叠加导致代码离暗色块边界过远)
 - 适用:Markdown ```` ```sql ```` fenced code block 渲染的 `pre.shiki` 块、FAQ 卡片/报错弹窗内的 `pre.shiki` 块(全站统一)
+- 注:本项目 VitePress 配置 `html: false`,`.md` 中写 `<style>` / `<style scoped>` / `:deep()` / `vp-raw` 均被 markdown-it 剥除,**SQL 块级样式只能用 `custom.css` 全局方案**,无法单页覆盖
 
 ### 7.2 表格表头(紫色)
 所有 `.kb-page-content table th` 必须使用紫色表头:
