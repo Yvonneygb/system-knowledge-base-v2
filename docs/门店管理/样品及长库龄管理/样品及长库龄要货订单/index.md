@@ -1258,21 +1258,11 @@ SELECT h.INTERIM_BIINO      AS 要货单号,
 ```
 </KbCard>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">保存校验</span>
-    <h2>保存校验</h2>
-    <p>保存时 preCheckData / verifyCustomer 的 10 项校验规则</p>
-  </div>
-</div>
+<KbCard num="10" title="保存校验">
+  <p>保存时 preCheckData / verifyCustomer 的 10 项校验规则</p>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">保存校验</span>
     <h2>保存校验</h2>
     <p>保存校验校验规则明细</p>
-  </div>
-</div>
 
 <KbSubTitle>校验1：业务类型必填 —— isMakt=2时businessType不能为空</KbSubTitle>
 
@@ -1443,23 +1433,13 @@ SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
    AND (h.CUSTOMER_ID IS NULL OR h.TERMINAL_ID IS NULL OR h.TAKE_MAN_ID IS NULL
      OR h.TRADING_COMPANY_ID IS NULL OR h.ORDER_PDT_LINE_ID IS NULL)
 ```
+</KbCard>
 
+<KbCard num="11" title="提交校验">
+  <p>保存并提交时 OA 审批推送与 CRM 订单生成的校验</p>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">提交校验</span>
-    <h2>提交校验</h2>
-    <p>保存并提交时 OA 审批推送与 CRM 订单生成的校验</p>
-  </div>
-</div>
-
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">提交校验</span>
     <h2>提交校验</h2>
     <p>提交校验校验规则明细</p>
-  </div>
-</div>
 
 <KbSubTitle>校验1：OA审批推送校验 —— priceType=2时推送OA审批流程</KbSubTitle>
 
@@ -1516,16 +1496,10 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
  WHERE h.HEAD_ID = :headId
    AND l.QTY_BILL > dpl.ACTIVE_QTY
 ```
+</KbCard>
 
-
-
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">状态机</span>
-    <h2>状态机</h2>
-    <p>单据状态与 OA 审批状态的流转关系</p>
-  </div>
-</div>
+<KbCard num="12" title="状态机">
+  <p>单据状态与 OA 审批状态的流转关系</p>
 
 <p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图 排查 SQL</p>
 
@@ -1554,11 +1528,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
                                          └───────────┘
 ```
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">state</span>
-    <h2>状态机列表</h2>
-  </div>
+<h2>状态机列表</h2>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
@@ -1610,22 +1580,12 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       </tbody>
     </table>
   </div>
-</div>
+</KbCard>
 
-<p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">---</p>
+<KbCard num="13" title="数据库表详解">
+  <p>头表与行表的字段、类型与业务逻辑</p>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <h2>数据库表详解</h2>
-    <p>头表与行表的字段、类型与业务逻辑</p>
-  </div>
-</div>
-
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">表 1</span>
-    <h2>SA_OUT_BILL_HEAD（要货订单头表）</h2>
-  </div>
+<h2>SA_OUT_BILL_HEAD（要货订单头表）</h2>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
@@ -2038,13 +1998,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       </tbody>
     </table>
   </div>
-</div>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">表 2</span>
-    <h2>SA_OUT_BILL_LINE（要货订单行表）</h2>
-  </div>
+<h2>SA_OUT_BILL_LINE（要货订单行表）</h2>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
@@ -2296,7 +2251,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       </tbody>
     </table>
   </div>
-</div>
+</KbCard>
 <p style="font-size:.78rem;color:#374151;line-height:1.8;margin:0;">---</p>
 </div>
 </div>
