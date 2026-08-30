@@ -1591,51 +1591,29 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   <p>单据状态与 OA 审批状态的流转关系</p>
 
 <p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
-<div style="overflow-x:auto;padding:8px 0;">
-<svg class="bf-fc-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 180" style="display:block;margin:0 auto;width:auto;max-width:100%;height:180px;"><!--
---><defs>
-<marker id="arr-bl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563EB"/></marker>
-<marker id="arr-rd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/></marker>
-</defs>
-<!-- 第一行主流程 -->
-<rect x="10" y="8" width="70" height="34" rx="17" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.5"/>
-<text x="45" y="30" text-anchor="middle" fill="#1D4ED8" font-size="12" font-weight="600">开始</text>
-<line x1="80" y1="25" x2="100" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<rect x="100" y="8" width="90" height="34" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
-<text x="145" y="30" text-anchor="middle" fill="#334155" font-size="12" font-weight="500">新建/草稿</text>
-<line x1="190" y1="25" x2="210" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<rect x="210" y="8" width="90" height="34" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
-<text x="255" y="30" text-anchor="middle" fill="#334155" font-size="12" font-weight="500">价格类型</text>
-<line x1="300" y1="25" x2="320" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<rect x="320" y="8" width="90" height="34" rx="6" fill="#FFF7ED" stroke="#F97316" stroke-width="1"/>
-<text x="365" y="30" text-anchor="middle" fill="#C2410C" font-size="12" font-weight="500">折扣政策</text>
-<line x1="410" y1="25" x2="430" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<rect x="430" y="8" width="90" height="34" rx="6" fill="#F0FDF4" stroke="#22C55E" stroke-width="1"/>
-<text x="475" y="30" text-anchor="middle" fill="#15803D" font-size="12" font-weight="500">价目表</text>
-<line x1="520" y1="25" x2="540" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<rect x="540" y="8" width="90" height="34" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
-<text x="585" y="30" text-anchor="middle" fill="#334155" font-size="12" font-weight="500">生成CRM</text>
-<line x1="630" y1="25" x2="650" y2="25" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<rect x="650" y="8" width="80" height="34" rx="6" fill="#2563EB" stroke="#1D4ED8" stroke-width="1"/>
-<text x="690" y="30" text-anchor="middle" fill="#FFF" font-size="12" font-weight="600">ERP发货</text>
 
-<!-- 第二行：折扣政策分支 -->
-<line x1="365" y1="42" x2="365" y2="58" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<rect x="325" y="62" width="80" height="30" rx="6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
-<text x="365" y="81" text-anchor="middle" fill="#334155" font-size="11" font-weight="500">OA审批</text>
-<line x1="365" y1="92" x2="365" y2="110" stroke="#2563EB" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<rect x="320" y="112" width="90" height="30" rx="6" fill="#F0FDF4" stroke="#22C55E" stroke-width="1"/>
-<text x="365" y="131" text-anchor="middle" fill="#15803D" font-size="12" font-weight="500">通过</text>
-<line x1="410" y1="127" x2="585" y2="35" stroke="#22C55E" stroke-width="1.5" marker-end="url(#arr-bl)"/>
-<line x1="365" y1="92" x2="525" y2="92" stroke="#94A3B8" stroke-width="1"/>
-<line x1="525" y1="92" x2="525" y2="110" stroke="#DC2626" stroke-width="1.5" marker-end="url(#arr-rd)"/>
-<rect x="480" y="112" width="90" height="30" rx="6" fill="#FEF2F2" stroke="#DC2626" stroke-width="1"/>
-<text x="525" y="131" text-anchor="middle" fill="#991B1B" font-size="12" font-weight="500">拒绝</text>
-<line x1="525" y1="142" x2="525" y2="155" stroke="#DC2626" stroke-width="1.5"/>
-<line x1="525" y1="155" x2="690" y2="155" stroke="#DC2626" stroke-width="1.5"/>
-<line x1="690" y1="155" x2="690" y2="135" stroke="#DC2626" stroke-width="1.5" marker-end="url(#arr-rd)"/>
-</svg>
-</div>
+```text
+新建(stat=1) → 草稿(stat=1) → 价格类型
+                                 ↓
+                    ┌────────────┴────────────┐
+                    ↓                         ↓
+             折扣政策                       价目表
+           (走OA审批)                    (直通CRM)
+                    ↓                         ↓
+              OA审批中                    生成CRM订单
+              (NEW)                   (NO_APPROVED)
+                    ↓
+              ┌────┴────┐
+              ↓         ↓
+          审批通过    审批拒绝
+          (stat=5)   (stat=4)
+              ↓         ↓
+        生成CRM订单  退回修改
+              ↓         ↓
+              └────┬────┘
+                   ↓
+               ERP发货
+```
 
   <h4 class="kl-sub-title">状态机列表</h4>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
