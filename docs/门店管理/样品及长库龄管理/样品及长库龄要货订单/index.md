@@ -578,8 +578,8 @@
   </div>
 </div>
 </div><!-- /kl-wrap 界面模块1-5 -->
-<div class="kl-wrap">
-<div class="kl-card">
+<div class="kl-wrap" style="background:#FBFCFC;">
+<div class="kl-card" style="background:transparent;">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">选择弹窗</span>
     <h2>选择弹窗</h2>
@@ -587,9 +587,9 @@
   </div>
 </div>
 
-<div class="kl-card">
+<div class="kl-card" style="background:transparent;">
   <KbSubTitle>弹窗 1：折扣政策选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
         <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
@@ -674,9 +674,9 @@ SELECT dp.POLICY_ID          AS 政策ID,
  ORDER BY dp.POLICY_CODE
 ```
 
-<div class="kl-card">
+<div class="kl-card" style="background:transparent;">
   <KbSubTitle>弹窗 2：经销商选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
         <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
@@ -735,9 +735,9 @@ SELECT c.CUSTOMER_ID        AS 客户ID,
  ORDER BY c.CUSTOMER_CODE
 ```
 
-<div class="kl-card">
+<div class="kl-card" style="background:transparent;">
   <KbSubTitle>弹窗 3：门店选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
         <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
@@ -810,9 +810,9 @@ SELECT t.TERMINAL_ID        AS 门店ID,
  ORDER BY t.TERMINAL_CODE
 ```
 
-<div class="kl-card">
+<div class="kl-card" style="background:transparent;">
   <KbSubTitle>弹窗 4：样品产品选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
         <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
@@ -886,9 +886,9 @@ SELECT m.MATERIAL_ID        AS 产品ID,
  ORDER BY m.MATERIAL_CODE
 ```
 
-<div class="kl-card">
+<div class="kl-card" style="background:transparent;">
   <KbSubTitle>弹窗 5：收货人选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
         <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
@@ -937,9 +937,9 @@ SELECT ca.ADDRESS_ID       AS 地址ID,
  ORDER BY ca.DEFAULT_FLAG DESC, ca.ADDRESS_ID
 ```
 
-<div class="kl-card">
+<div class="kl-card" style="background:transparent;">
   <KbSubTitle>弹窗 6：交易公司选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
         <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
@@ -997,9 +997,9 @@ SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
  ORDER BY tc.TRADING_COMPANY_CODE
 ```
 
-<div class="kl-card">
+<div class="kl-card" style="background:transparent;">
   <KbSubTitle>弹窗 7：项目选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
         <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
@@ -1048,9 +1048,9 @@ SELECT p.PROJECT_ID     AS 项目ID,
  ORDER BY p.PROJECT_CODE
 ```
 
-<div class="kl-card">
+<div class="kl-card" style="background:transparent;">
   <KbSubTitle>弹窗 8：订单产品线选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
         <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
