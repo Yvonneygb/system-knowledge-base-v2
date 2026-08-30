@@ -650,7 +650,7 @@
 
 <p class="kl-blockquote">查询SQL：</p>
 
-  <div class="language-sql"><pre class="language-sql"><code>SELECT dp.POLICY_ID          AS 政策ID,       dp.POLICY_CODE        AS 政策编码,       dp.POLICY_NAME        AS 政策名称,       dp.CHANNEL            AS 销售渠道,       dp.EFFECTIVE_DATE_BEGIN AS 有效期从,       dp.EFFECTIVE_DATE_END   AS 有效期至,       dp.BUSINESS_TYPE      AS 业务类型,       dp.BILL_TYPE          AS 订单类型  FROM DISCOUNT_POLICY dp WHERE dp.IS_MAKT = 2   AND dp.PRICE_TYPE = 2   AND dp.STATUS = 'ACTIVE'   AND SYSDATE BETWEEN dp.EFFECTIVE_DATE_BEGIN AND dp.EFFECTIVE_DATE_END   AND dp.CUST_ID = :custId   AND dp.CHANNEL = :channel ORDER BY dp.POLICY_CODE</code></pre></div>
+  <pre class="kl-code"><code>SELECT dp.POLICY_ID          AS 政策ID,       dp.POLICY_CODE        AS 政策编码,       dp.POLICY_NAME        AS 政策名称,       dp.CHANNEL            AS 销售渠道,       dp.EFFECTIVE_DATE_BEGIN AS 有效期从,       dp.EFFECTIVE_DATE_END   AS 有效期至,       dp.BUSINESS_TYPE      AS 业务类型,       dp.BILL_TYPE          AS 订单类型  FROM DISCOUNT_POLICY dp WHERE dp.IS_MAKT = 2   AND dp.PRICE_TYPE = 2   AND dp.STATUS = 'ACTIVE'   AND SYSDATE BETWEEN dp.EFFECTIVE_DATE_BEGIN AND dp.EFFECTIVE_DATE_END   AND dp.CUST_ID = :custId   AND dp.CHANNEL = :channel ORDER BY dp.POLICY_CODE</code></pre>
 
   <KbSubTitle>弹窗 2：经销商选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
@@ -697,7 +697,7 @@
 
 <p class="kl-blockquote">查询SQL：</p>
 
-  <div class="language-sql"><pre class="language-sql"><code>SELECT c.CUSTOMER_ID        AS 客户ID,       c.CUSTOMER_CODE      AS 客户编码,       c.CUSTOMER_NAME      AS 客户名称,       c.CUSTOMER_SHORT_NAME AS 客户简称,       c.SALES_AREA         AS 销售区域,       c.CURRENCY           AS 币种  FROM CUSTOMER c WHERE c.USER_TYPE = 'D'   AND c.STATUS = 'ACTIVE'   AND c.DIVISION_ID = :divisionId ORDER BY c.CUSTOMER_CODE</code></pre></div>
+  <pre class="kl-code"><code>SELECT c.CUSTOMER_ID        AS 客户ID,       c.CUSTOMER_CODE      AS 客户编码,       c.CUSTOMER_NAME      AS 客户名称,       c.CUSTOMER_SHORT_NAME AS 客户简称,       c.SALES_AREA         AS 销售区域,       c.CURRENCY           AS 币种  FROM CUSTOMER c WHERE c.USER_TYPE = 'D'   AND c.STATUS = 'ACTIVE'   AND c.DIVISION_ID = :divisionId ORDER BY c.CUSTOMER_CODE</code></pre>
 
   <KbSubTitle>弹窗 3：门店选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
@@ -758,7 +758,7 @@
 
 <p class="kl-blockquote">查询SQL：</p>
 
-  <div class="language-sql"><pre class="language-sql"><code>SELECT t.TERMINAL_ID        AS 门店ID,       t.TERMINAL_CODE      AS 门店编码,       t.TERMINAL_NAME      AS 门店名称,       t.CUSTOMER_CLASS     AS 经营属性,       t.OPERATION_CENTER   AS 运营中心  FROM TERMINAL t WHERE t.USABLE = 2   AND t.TERMINAL_STAT = 1   AND t.CUST_ID = :custId   AND t.STATUS = 'ACTIVE' ORDER BY t.TERMINAL_CODE</code></pre></div>
+  <pre class="kl-code"><code>SELECT t.TERMINAL_ID        AS 门店ID,       t.TERMINAL_CODE      AS 门店编码,       t.TERMINAL_NAME      AS 门店名称,       t.CUSTOMER_CLASS     AS 经营属性,       t.OPERATION_CENTER   AS 运营中心  FROM TERMINAL t WHERE t.USABLE = 2   AND t.TERMINAL_STAT = 1   AND t.CUST_ID = :custId   AND t.STATUS = 'ACTIVE' ORDER BY t.TERMINAL_CODE</code></pre>
 
   <KbSubTitle>弹窗 4：样品产品选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
@@ -812,7 +812,7 @@
 
 <p class="kl-blockquote">查询SQL：</p>
 
-  <div class="language-sql"><pre class="language-sql"><code>SELECT m.MATERIAL_ID        AS 产品ID,       m.MATERIAL_CODE      AS 产品编码,       m.MATERIAL_NAME      AS 产品名称,       m.MODEL              AS 型号,       m.SM_STATE           AS SM状态,       m.IS_INSTALL         AS 包安装否,       m.PRICE_BILL         AS 标准单价,       m.INSTALL_UNIT_PRICE AS 安装单价,       m.PACKAGE_QTY        AS 整箱包装数,       dpl.MOQ              AS 起订量,       dpl.CAP_QTY          AS 封顶量,       dpl.ACTIVE_QTY       AS 可下单数量  FROM MATERIAL m  JOIN DISCOUNT_POLICY_LINE dpl ON dpl.MATERIAL_ID = m.MATERIAL_ID WHERE dpl.POLICY_ID = :discountPolicyId   AND m.IS_MAKT = 2   AND m.STATUS = 'ACTIVE'   AND m.SM_STATE NOT IN ('Z8') ORDER BY m.MATERIAL_CODE</code></pre></div>
+  <pre class="kl-code"><code>SELECT m.MATERIAL_ID        AS 产品ID,       m.MATERIAL_CODE      AS 产品编码,       m.MATERIAL_NAME      AS 产品名称,       m.MODEL              AS 型号,       m.SM_STATE           AS SM状态,       m.IS_INSTALL         AS 包安装否,       m.PRICE_BILL         AS 标准单价,       m.INSTALL_UNIT_PRICE AS 安装单价,       m.PACKAGE_QTY        AS 整箱包装数,       dpl.MOQ              AS 起订量,       dpl.CAP_QTY          AS 封顶量,       dpl.ACTIVE_QTY       AS 可下单数量  FROM MATERIAL m  JOIN DISCOUNT_POLICY_LINE dpl ON dpl.MATERIAL_ID = m.MATERIAL_ID WHERE dpl.POLICY_ID = :discountPolicyId   AND m.IS_MAKT = 2   AND m.STATUS = 'ACTIVE'   AND m.SM_STATE NOT IN ('Z8') ORDER BY m.MATERIAL_CODE</code></pre>
 
   <KbSubTitle>弹窗 5：收货人选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
@@ -852,7 +852,7 @@
 
 <p class="kl-blockquote">查询SQL：</p>
 
-  <div class="language-sql"><pre class="language-sql"><code>SELECT ca.ADDRESS_ID       AS 地址ID,       ca.TAKE_MAN         AS 收货人,       ca.TAKE_PHONE       AS 联系电话,       ca.TAKE_ADDRESS     AS 收货地址  FROM CUSTOMER_ADDRESS ca WHERE ca.CUST_ID = :custId   AND ca.STATUS = 'ACTIVE' ORDER BY ca.DEFAULT_FLAG DESC, ca.ADDRESS_ID</code></pre></div>
+  <pre class="kl-code"><code>SELECT ca.ADDRESS_ID       AS 地址ID,       ca.TAKE_MAN         AS 收货人,       ca.TAKE_PHONE       AS 联系电话,       ca.TAKE_ADDRESS     AS 收货地址  FROM CUSTOMER_ADDRESS ca WHERE ca.CUST_ID = :custId   AND ca.STATUS = 'ACTIVE' ORDER BY ca.DEFAULT_FLAG DESC, ca.ADDRESS_ID</code></pre>
 
   <KbSubTitle>弹窗 6：交易公司选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
@@ -899,7 +899,7 @@
 
 <p class="kl-blockquote">查询SQL：</p>
 
-  <div class="language-sql"><pre class="language-sql"><code>SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,       tc.TRADING_COMPANY_CODE AS 交易公司编码,       tc.TRADING_COMPANY_NAME AS 交易公司名称,       tc.BILLING_UNIT_ID      AS 开票单位ID,       tc.BILLING_UNIT_NAME    AS 开票单位名称  FROM TRADING_LEGAL tc WHERE tc.TRADING_SCOPE = 1   AND tc.STATUS = 'ACTIVE'   AND tc.DIVISION_ID = :divisionId ORDER BY tc.TRADING_COMPANY_CODE</code></pre></div>
+  <pre class="kl-code"><code>SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,       tc.TRADING_COMPANY_CODE AS 交易公司编码,       tc.TRADING_COMPANY_NAME AS 交易公司名称,       tc.BILLING_UNIT_ID      AS 开票单位ID,       tc.BILLING_UNIT_NAME    AS 开票单位名称  FROM TRADING_LEGAL tc WHERE tc.TRADING_SCOPE = 1   AND tc.STATUS = 'ACTIVE'   AND tc.DIVISION_ID = :divisionId ORDER BY tc.TRADING_COMPANY_CODE</code></pre>
 
   <KbSubTitle>弹窗 7：项目选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
@@ -939,7 +939,7 @@
 
 <p class="kl-blockquote">查询SQL：</p>
 
-  <div class="language-sql"><pre class="language-sql"><code>SELECT p.PROJECT_ID     AS 项目ID,       p.PROJECT_CODE   AS 项目编码,       p.PROJECT_NAME   AS 项目名称  FROM PROJECT p WHERE p.CUST_ID = :custId   AND p.STATUS = 'ACTIVE'   AND SYSDATE BETWEEN p.EFFECTIVE_DATE_BEGIN AND p.EFFECTIVE_DATE_END ORDER BY p.PROJECT_CODE</code></pre></div>
+  <pre class="kl-code"><code>SELECT p.PROJECT_ID     AS 项目ID,       p.PROJECT_CODE   AS 项目编码,       p.PROJECT_NAME   AS 项目名称  FROM PROJECT p WHERE p.CUST_ID = :custId   AND p.STATUS = 'ACTIVE'   AND SYSDATE BETWEEN p.EFFECTIVE_DATE_BEGIN AND p.EFFECTIVE_DATE_END ORDER BY p.PROJECT_CODE</code></pre>
 
   <KbSubTitle>弹窗 8：订单产品线选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
@@ -972,7 +972,7 @@
 
 <p class="kl-blockquote">查询SQL：</p>
 
-  <div class="language-sql"><pre class="language-sql"><code>SELECT pl.PDT_LINE_ID   AS 产品线ID,       pl.PDT_LINE_CODE AS 产品线编码,       pl.PDT_LINE_NAME AS 产品线名称  FROM ORDER_PDT_LINE pl WHERE pl.STATUS = 'ACTIVE'   AND pl.DIVISION_ID = :divisionId ORDER BY pl.PDT_LINE_CODE</code></pre></div>
+  <pre class="kl-code"><code>SELECT pl.PDT_LINE_ID   AS 产品线ID,       pl.PDT_LINE_CODE AS 产品线编码,       pl.PDT_LINE_NAME AS 产品线名称  FROM ORDER_PDT_LINE pl WHERE pl.STATUS = 'ACTIVE'   AND pl.DIVISION_ID = :divisionId ORDER BY pl.PDT_LINE_CODE</code></pre>
 
 
 </div>
