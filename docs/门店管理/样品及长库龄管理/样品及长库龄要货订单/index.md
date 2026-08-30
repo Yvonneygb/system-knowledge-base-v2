@@ -1592,7 +1592,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 
 <p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 540" width="100%" role="img" aria-label="状态机流转图">
+<div style="overflow-x:auto;padding:8px 0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 540" width="680" height="540" role="img" aria-label="状态机流转图">
   <title>状态机流转图</title>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -1683,7 +1683,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   <text x="500" y="324" dominant-baseline="central" font-family="sans-serif" font-size="11px" fill="#5F5E5A">通过/已完成</text>
   <rect x="452" y="338" width="40" height="16" rx="4" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="0.5"/>
   <text x="500" y="346" dominant-baseline="central" font-family="sans-serif" font-size="11px" fill="#5F5E5A">拒绝/退回</text>
-</svg>
+</svg></div>
 
 <p style="font-size:.78rem;color:#6B7280;margin:6px 0 0;">排查 SQL 见下方状态机列表</p>
 
