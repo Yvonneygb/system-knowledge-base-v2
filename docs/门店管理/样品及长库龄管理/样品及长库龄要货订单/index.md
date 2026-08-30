@@ -583,9 +583,7 @@
     <h2>选择弹窗</h2>
     <p>8 个单选 LOV 弹窗的入参与查询 SQL</p>
   </div>
-</div>
 
-<div class="kl-card">
   <KbSubTitle>弹窗 1：折扣政策选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -649,7 +647,6 @@
       </tbody>
     </table>
   </div>
-</div>
 
 > 查询SQL：
 
@@ -672,7 +669,6 @@ SELECT dp.POLICY_ID          AS 政策ID,
  ORDER BY dp.POLICY_CODE
 ```
 
-<div class="kl-card">
   <KbSubTitle>弹窗 2：经销商选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -715,7 +711,6 @@ SELECT dp.POLICY_ID          AS 政策ID,
       </tbody>
     </table>
   </div>
-</div>
 
 > 查询SQL：
 
@@ -733,7 +728,6 @@ SELECT c.CUSTOMER_ID        AS 客户ID,
  ORDER BY c.CUSTOMER_CODE
 ```
 
-<div class="kl-card">
   <KbSubTitle>弹窗 3：门店选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -790,7 +784,6 @@ SELECT c.CUSTOMER_ID        AS 客户ID,
       </tbody>
     </table>
   </div>
-</div>
 
 > 查询SQL：
 
@@ -808,7 +801,6 @@ SELECT t.TERMINAL_ID        AS 门店ID,
  ORDER BY t.TERMINAL_CODE
 ```
 
-<div class="kl-card">
   <KbSubTitle>弹窗 4：样品产品选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -858,7 +850,6 @@ SELECT t.TERMINAL_ID        AS 门店ID,
       </tbody>
     </table>
   </div>
-</div>
 
 > 查询SQL：
 
@@ -884,7 +875,6 @@ SELECT m.MATERIAL_ID        AS 产品ID,
  ORDER BY m.MATERIAL_CODE
 ```
 
-<div class="kl-card">
   <KbSubTitle>弹窗 5：收货人选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -920,7 +910,6 @@ SELECT m.MATERIAL_ID        AS 产品ID,
       </tbody>
     </table>
   </div>
-</div>
 
 > 查询SQL：
 
@@ -935,7 +924,6 @@ SELECT ca.ADDRESS_ID       AS 地址ID,
  ORDER BY ca.DEFAULT_FLAG DESC, ca.ADDRESS_ID
 ```
 
-<div class="kl-card">
   <KbSubTitle>弹窗 6：交易公司选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -978,7 +966,6 @@ SELECT ca.ADDRESS_ID       AS 地址ID,
       </tbody>
     </table>
   </div>
-</div>
 
 > 查询SQL：
 
@@ -995,7 +982,6 @@ SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
  ORDER BY tc.TRADING_COMPANY_CODE
 ```
 
-<div class="kl-card">
   <KbSubTitle>弹窗 7：项目选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -1031,7 +1017,6 @@ SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
       </tbody>
     </table>
   </div>
-</div>
 
 > 查询SQL：
 
@@ -1046,7 +1031,6 @@ SELECT p.PROJECT_ID     AS 项目ID,
  ORDER BY p.PROJECT_CODE
 ```
 
-<div class="kl-card">
   <KbSubTitle>弹窗 8：订单产品线选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
@@ -1075,7 +1059,7 @@ SELECT p.PROJECT_ID     AS 项目ID,
       </tbody>
     </table>
   </div>
-</div>
+
 > 查询SQL：
 
 ```sql
@@ -1088,6 +1072,8 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
  ORDER BY pl.PDT_LINE_CODE
 ```
 
+
+</div>
 
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
