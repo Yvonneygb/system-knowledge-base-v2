@@ -116,7 +116,7 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
 .kb-page-content div[class*="language-"] {
   background: var(--kb-code-bg) !important;
   border-radius: var(--kb-radius-sm) !important;
-  margin: 12px 0 !important;
+  margin: 20px 0 !important;
   position: relative !important;
   border: 1px solid #333 !important;
 }
