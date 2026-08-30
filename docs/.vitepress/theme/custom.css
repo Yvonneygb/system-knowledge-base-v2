@@ -116,8 +116,7 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
 .kb-page-content div[class*="language-"] {
   background: var(--kb-code-bg) !important;
   border-radius: var(--kb-radius-sm) !important;
-  margin: 20px 0 !important;
-  padding: 24px 10% !important;
+  margin: 24px 10% !important;
   position: relative !important;
   border: 1px solid #333 !important;
 }
@@ -125,7 +124,7 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
 .kb-page-content div[class*="language-"] pre {
   background: var(--kb-code-bg) !important;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 16px !important;
   border-radius: var(--kb-radius-sm) !important;
 }
 

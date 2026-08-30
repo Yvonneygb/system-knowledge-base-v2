@@ -209,12 +209,12 @@ docs/.vitepress/theme/ui/
 - 后续如有需要统一全局靠左,可将 `custom.css` 第 1941 行的 `text-align: center` 改为 `text-align: left`,自动对 141 个源页面生效
 - 涵盖场景:`biz-kl-hdr` 内的 `h2`(如「界面模块 1」「列表页查询栏」「详情页头表单」「常见问题排查思路」等模块大标题)及其下属文字
 
-### 7.1.2 SQL 代码块留白 + 内边距
-所有 SQL 代码块(渲染产物 `div[class*="language-"]`)必须遵循**卡片内边距规范**(§2「卡片内边距 24px 10%」),与 `.kb-card` / `.kl-card` 视觉一致:
-- **内边距**:`padding: 24px 10% !important`(上下 24px、左右各 10% 留白)—— 对齐设计令牌「卡片内边距 24px 10%」
-- **外间距**:`margin: 20px 0 !important`(上下各 20px,与上下文拉开节奏)
-- **实现位置**:`custom.css` 的 `.kb-page-content div[class*="language-"]` 容器(全局,全 141 页统一生效,2026-08-30 提交 e54dade 及后续)
-- **内部 `pre` 的 `padding` 必须为 `0`**(容器已提供 24px 10%,避免双层 padding 叠加导致代码离暗色块边界过远)
+### 7.1.2 SQL 代码块留白(外边距 margin)
+所有 SQL 代码块(渲染产物 `div[class*="language-"]`)必须与周围内容拉开**外边距**留白(对齐 §2「卡片内边距 24px 10%」的视觉节奏,但语义为外边距 margin,因为 SQL 是暗色块):
+- **外边距**:`margin: 24px 10% !important`(上下 24px、左右各 10% 外留白)—— 暗色块与周围卡片/内容之间留白,不撑满容器
+- **内部 `pre` 恢复 `padding: 16px !important`**(代码离暗色块边界 16px,不贴边;暗色块自身不再加 padding,避免与 margin 语义混淆)
+- **实现位置**:`custom.css` 的 `.kb-page-content div[class*="language-"]` 容器(全局,全 141 页统一生效)
+- ⚠️ 术语澄清:`padding`=内边距(元素**内部**),`margin`=外边距(元素**外部**)。SQL 块与周围的留白属于**外边距**,用 `margin`,不要用 `padding` 把暗色块内部撑开
 - 适用:Markdown ```` ```sql ```` fenced code block 渲染的 `pre.shiki` 块、FAQ 卡片/报错弹窗内的 `pre.shiki` 块(全站统一)
 - 注:本项目 VitePress 配置 `html: false`,`.md` 中写 `<style>` / `<style scoped>` / `:deep()` / `vp-raw` 均被 markdown-it 剥除,**SQL 块级样式只能用 `custom.css` 全局方案**,无法单页覆盖
 
