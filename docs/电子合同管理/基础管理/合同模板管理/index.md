@@ -185,6 +185,10 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard num="1" title="2.1 模板状态管控">
+
+<KbQuote>模板分启用/禁用状态，禁用后不再作为新合同可选模板</KbQuote>
+
+<KbQuote>模板分启用/禁用状态，禁用后不再作为新合同可选模板</KbQuote>
 **具体逻辑**：
 
 - 1、模板存在"启用"和"禁用"两种状态
@@ -195,6 +199,10 @@
 </KbCard>
 
 <KbCard num="2" title="2.2 模板版本与引用">
+
+<KbQuote>模板修改不影响已引用历史合同，新建合同引用最新启用版本</KbQuote>
+
+<KbQuote>模板修改不影响已引用历史合同，新建合同引用最新启用版本</KbQuote>
 **具体逻辑**：
 
 - 1、模板修改后不影响已引用该模板的历史合同
@@ -203,6 +211,10 @@
 </KbCard>
 
 <KbCard num="3" title="2.3 模板类型与子模板">
+
+<KbQuote>按类型组织模板并配置子模板值集，满足差异化签约需求</KbQuote>
+
+<KbQuote>按类型组织模板并配置子模板值集，满足差异化签约需求</KbQuote>
 **具体逻辑**：
 
 - 1、模板按类型区分（经销合同、装修协议、广告协议等），通过值集MBO.CONTRACT_TEMPLATE管理
@@ -350,6 +362,10 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>更换模板名称</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+```sql
+SELECT TEMPLATE_ID, TEMPLATE_NAME FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLATE_NAME = ? AND BRAND_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -360,6 +376,10 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>添加至少一条条款</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+```sql
+SELECT TEMPLATE_ID, CLAUSE_CONTENT FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLATE_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -370,6 +390,10 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>添加至少一个签署节点</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+```sql
+SELECT TEMPLATE_ID, SIGN_FLOW_CONFIG FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLATE_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -380,6 +404,10 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>禁用而非删除</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+```sql
+SELECT COUNT(*) FROM ELECTRONIC_CONTRACT WHERE TEMPLATE_ID = ?;
+```
+  
   </div>
 </div>
 </KbCard>

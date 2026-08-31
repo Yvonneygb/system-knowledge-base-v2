@@ -185,6 +185,10 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard num="1" title="2.1 Tab分类展示">
+
+<KbQuote>合同列表按4类业务类型分Tab展示，加全部Tab统览</KbQuote>
+
+<KbQuote>合同列表按4类业务类型分Tab展示，加全部Tab统览</KbQuote>
 **具体逻辑**：
 
 - 1、合同列表按类型分Tab展示，共4个类型Tab加1个全部Tab
@@ -196,6 +200,10 @@
 </KbCard>
 
 <KbCard num="2" title="2.2 经销商视角权限">
+
+<KbQuote>经销商仅可见自身合同，跨经销商数据相互隔离</KbQuote>
+
+<KbQuote>经销商仅可见自身合同，跨经销商数据相互隔离</KbQuote>
 **具体逻辑**：
 
 - 1、经销商仅能查看和管理自己作为签署方的合同
@@ -205,6 +213,10 @@
 </KbCard>
 
 <KbCard num="3" title="2.3 签署操作">
+
+<KbQuote>经销商可在线签署或填写原因拒签，签署后状态自动流转</KbQuote>
+
+<KbQuote>经销商可在线签署或填写原因拒签，签署后状态自动流转</KbQuote>
 **具体逻辑**：
 
 - 1、经销商收到待签署合同后，可在线签署或拒签

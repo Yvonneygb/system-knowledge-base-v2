@@ -128,8 +128,16 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="2.1 经销合同区域报表查询"><p><strong>业务意义</strong>：按销售区域维度展示经销合同信息，支持按事业部、合同年度、经销商、审批状态等多条件筛选，核心价值在于区域维度的合同管控与分析。</p>
+
+<KbQuote>按销售区域维度展示经销合同信息，支持多条件筛选</KbQuote>
+
+<KbQuote>按销售区域维度展示经销合同信息，支持多条件筛选</KbQuote>
 <ul><li>查询以经销合同主表为驱动表，LEFT JOIN区域表获取五级区域信息（国/省/市/区县/乡镇）</li><li>通过LISTAGG函数将排除区域关系表的多行拼接为逗号分隔的"不包含地区说明"</li><li>事业部名称通过子查询从事业部基础设置表获取</li><li>更新人姓名通过关联hzero平台用户表翻译</li><li>合同类型名称通过关联数据字典表翻译</li><li>生效状态使用DECODE(VALID, 0, NULL, VALID)处理，0值转为空不展示</li><li>外层WHERE子句对子查询结果进行二次过滤，支持日期范围筛选（开始日期&gt;=、结束日期&lt;=+1天）</li></ul></KbCard>
 <KbCard title="2.2 导出逻辑"><p><strong>业务意义</strong>：将报表查询结果按Excel模板导出，供线下分析使用。</p>
+
+<KbQuote>复用查询逻辑按Excel模板导出，值集翻译后供线下分析</KbQuote>
+
+<KbQuote>复用查询逻辑按Excel模板导出，值集翻译后供线下分析</KbQuote>
 <ul><li>导出复用查询逻辑，先调用saSaleContractHeadSearch获取数据</li><li>通过MapStruct（SaSaleContractHeadConvert）将SearchVO转为ExportVO</li><li>使用@ProcessLovValue注解自动翻译值集含义：审批状态（HWKF.APPROVE_STATUS）、生效状态（AE.VALID）、合同类型（AE.SALES_CONTRACT_TYPE）</li><li>导出Sheet标题为"经销合同销售区域报表"</li></ul></KbCard>
 </div>
 </div>

@@ -187,6 +187,10 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard num="1" title="2.1 状态机驱动">
+
+<KbQuote>合同签署全流程由状态机驱动，无独立工作流引擎</KbQuote>
+
+<KbQuote>合同签署全流程由状态机驱动，无独立工作流引擎</KbQuote>
 **具体逻辑**：
 
 - 1、合同签署全流程由状态机驱动，无独立工作流引擎
@@ -196,6 +200,10 @@
 </KbCard>
 
 <KbCard num="2" title="2.2 异常处理分类">
+
+<KbQuote>按拒签/OA驳回/用印异常/推送门户分类处置</KbQuote>
+
+<KbQuote>按拒签/OA驳回/用印异常/推送门户分类处置</KbQuote>
 **具体逻辑**：
 
 - 1、**拒签处理**：经销商拒签后，品牌方确认拒签结果，合同终止或重新发起签署
@@ -206,6 +214,10 @@
 </KbCard>
 
 <KbCard num="3" title="2.3 合同编码体系">
+
+<KbQuote>三套编码体系：合同ID、业务编码、统一合同编码</KbQuote>
+
+<KbQuote>三套编码体系：合同ID、业务编码、统一合同编码</KbQuote>
 **具体逻辑**：
 
 - 1、electronic_contract_id：合同唯一标识
@@ -399,6 +411,10 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认合同当前状态是否正确</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+```sql
+SELECT CONTRACT_STATUS FROM ELECTRONIC_CONTRACT WHERE ELECTRONIC_CONTRACT_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -409,6 +425,10 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查OA系统连通性后重试</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+```sql
+SELECT * FROM ELECTRONIC_CONTRACT WHERE CONTRACT_STATUS = chr(39)||'submitted_oa'||chr(39) AND ELECTRONIC_CONTRACT_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -419,6 +439,10 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>补充合同必填信息后重试</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+```sql
+SELECT TEMPLATE_ID, CLAUSE_CONTENT, SIGN_FLOW_CONFIG FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLATE_ID = (SELECT TEMPLATE_ID FROM ELECTRONIC_CONTRACT WHERE ELECTRONIC_CONTRACT_ID = ?);
+```
+  
   </div>
 </div>
 
@@ -429,6 +453,10 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查门户系统后使用重新推送按钮</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+```sql
+SELECT ELECTRONIC_CONTRACT_ID, PUSH_PORTAL_FLAG FROM ELECTRONIC_CONTRACT WHERE ELECTRONIC_CONTRACT_ID = ?;
+```
+  
   </div>
 </div>
 </KbCard>
