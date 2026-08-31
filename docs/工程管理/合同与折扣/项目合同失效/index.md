@@ -169,8 +169,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：失效单号自动生成 {编码规则}">
-<KbQuote>每次新建失效单时自动生成唯一单号，便于追溯和管理</KbQuote>
+<KbCard num="1" title="失效单号自动生成 {编码规则}">
+
+<KbQuote>通过ECN工程变更单流程管理合同失效，自动生成唯一单号，保留变更记录，便于追溯和管理</KbQuote>
 
 **具体逻辑**：
 
@@ -178,8 +179,9 @@
 - 2、仅在新增时生成，编辑已有失效单不会重新生成
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：重复失效校验 {防重复}">
-<KbQuote>防止同一合同重复发起失效申请</KbQuote>
+<KbCard num="2" title="重复失效校验 {防重复}">
+
+<KbQuote>防止同一合同重复发起失效申请，确保每份合同至多只有一个进行中的失效流程</KbQuote>
 
 **具体逻辑**：
 
@@ -187,8 +189,9 @@
 - 2、若已存在(count&gt;0)，阻断性报错"该项目已发起失效,请检查!"
 </KbCard>
 
-<KbCard num="3" title="重点逻辑3：审批通过后联动处理 {级联生效}">
-<KbQuote>合同失效审批通过后，需级联处理合同状态、工程作废、折扣率清理</KbQuote>
+<KbCard num="3" title="审批通过后联动处理 {级联生效}">
+
+<KbQuote>合同失效审批通过后，需级联处理合同状态变更、工程作废、折扣率清理，确保数据一致</KbQuote>
 
 **具体逻辑**：
 
@@ -198,8 +201,9 @@
 - 4、检查该合同是否存在订单，若无订单则删除项目对应的折扣预设率数据
 </KbCard>
 
-<KbCard num="4" title="重点逻辑4：删除/驳回恢复合同状态 {状态回退}">
-<KbQuote>失效单被删除或审批驳回时，需恢复合同为正常有效状态</KbQuote>
+<KbCard num="4" title="删除/驳回恢复合同状态 {状态回退}">
+
+<KbQuote>失效单被删除或审批驳回时，需恢复合同为正常有效状态，避免合同长期处于"失效申请中"的中间态</KbQuote>
 
 **具体逻辑**：
 
@@ -897,8 +901,15 @@ SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>参数不能为空！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>contractId参数未传入，检查路由传参是否正确</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <div class="detail-text" v-pre>触发条件：打开失效详情页时，路由参数或请求参数中contractId为null或空字符串。<br>逻辑分析：详情查询方法首先校验contractId参数，若为空则抛出阻断性报错"参数不能为空！"。检查是否从合同列表跳转时未正确传递合同ID。</div>
+    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续操作</div>
+    <h5>排查SQL</h5>
+    <pre><code class="language-sql">-- 检查路由/请求中是否传入了contractId
+-- 目前已无直接按contractId查询的入口，该报错属前端参数校验
+-- 如确需确认合同是否存在：
+SELECT CONTRACT_ID, CONTRACT_CODE, CONTRACT_NAME, VALID
+FROM EPM_PROJECT_CONTRACT
+WHERE CONTRACT_ID = #{contractId}</code></pre>
   </div>
 </div>
 
@@ -907,8 +918,13 @@ SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同数据不存在！未找到合同详情数据,合同ID：{contractId}</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>合同ID在数据库中不存在，检查数据是否被删除</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <div class="detail-text" v-pre>触发条件：打开失效详情页时，传入的contractId在EPM_PROJECT_CONTRACT表中查询不到记录。<br>逻辑分析：详情查询方法按contractId查询合同主表，若返回null则抛出阻断性报错。可能原因：合同数据已被物理删除，或传参的contractId有误（如跨组织数据权限问题）。</div>
+    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续操作</div>
+    <h5>排查SQL</h5>
+    <pre><code class="language-sql">SELECT CONTRACT_ID, CONTRACT_CODE, CONTRACT_NAME, VALID, PROJECT_ID
+FROM EPM_PROJECT_CONTRACT
+WHERE CONTRACT_ID = #{contractId}
+-- 若返回空，说明该合同ID在数据库中不存在</code></pre>
   </div>
 </div>
 
@@ -917,8 +933,18 @@ SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该项目已发起失效,请检查!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>该合同已存在失效记录(EPM_PROJECT_CONTRACT_ECN)，不可重复发起</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <div class="detail-text" v-pre>触发条件：保存失效单时（新增场景ecnId为空），查询EPM_PROJECT_CONTRACT_ECN表中该contractId的记录数count>0。<br>逻辑分析：保存方法首先校验该合同是否已存在失效记录（可重用的重复校验逻辑，同提交校验），若已有记录则抛出阻断性报错。同一合同至多维护一份失效单，防止重复发起。</div>
+    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续操作</div>
+    <h5>排查SQL</h5>
+    <pre><code class="language-sql">SELECT COUNT(1) AS cnt
+FROM EPM_PROJECT_CONTRACT_ECN
+WHERE CONTRACT_ID = #{contractId}
+-- 若 cnt &gt; 0，说明该合同已有失效记录
+
+-- 查看已有失效单详情：
+SELECT ECN_ID, ECN_CODE, CONTRACT_ID, HZ_APPROVE_STATUS, STAT
+FROM EPM_PROJECT_CONTRACT_ECN
+WHERE CONTRACT_ID = #{contractId}</code></pre>
   </div>
 </div>
 
@@ -927,8 +953,15 @@ SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程中objid为空，流程失败!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>流程回调时objId为空，检查流程配置</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <div class="detail-text" v-pre>触发条件：工作流引擎在审批回调（wfComplete）时，回调参数中的objId为null。<br>逻辑分析：审批回调方法首先获取流程回调参数中的objId（即ECN_ID），若objId为空则抛出阻断性报错。可能原因：工作流配置中回调参数未正确映射，或流程实例数据异常导致objId丢失。该报错会导致合同状态无法更新为失效，审批结果无法落库。</div>
+    <div class="detail-tip" v-pre>阻断性报错，需检查工作流配置后才能继续操作</div>
+    <h5>排查SQL</h5>
+    <pre><code class="language-sql">-- 检查该失效单的流程实例ID是否正常
+SELECT ECN_ID, ECN_CODE, HZ_INSTANCE_ID, HZ_APPROVE_STATUS
+FROM EPM_PROJECT_CONTRACT_ECN
+WHERE ECN_ID = #{ecnId}
+
+-- 若HZ_INSTANCE_ID为空，说明流程启动时未正确返回实例ID</code></pre>
   </div>
 </div>
 
@@ -937,8 +970,19 @@ SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程中objid为0，流程失败!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>流程回调时objId为0，数据异常</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <div class="detail-text" v-pre>触发条件：审批回调方法doContractAlteration中，工作流引擎传入的objId值为0（无效ID）。<br>逻辑分析：回调方法获取objId后校验是否等于0，若为0则抛出阻断性报错。说明工作流实例中存储的objId异常，无法定位对应的失效单记录。可能原因：流程启动时业务对象ID未正确写入工作流上下文，或数据库默认值0未被覆盖。</div>
+    <div class="detail-tip" v-pre>阻断性报错，需检查工作流配置和流程实例数据后才能继续操作</div>
+    <h5>排查SQL</h5>
+    <pre><code class="language-sql">-- 确认EPM_PROJECT_CONTRACT_ECN表中对应记录的ECN_ID是否正常
+SELECT ECN_ID, ECN_CODE, CONTRACT_ID, HZ_INSTANCE_ID, HZ_APPROVE_STATUS
+FROM EPM_PROJECT_CONTRACT_ECN
+WHERE ECN_ID = #{ecnId}
+   OR CONTRACT_ID = (SELECT CONTRACT_ID FROM EPM_PROJECT_CONTRACT_ECN WHERE ECN_ID = #{ecnId})
+
+-- 检查当前合同状态
+SELECT CONTRACT_ID, CONTRACT_CODE, VALID
+FROM EPM_PROJECT_CONTRACT
+WHERE CONTRACT_ID = (SELECT CONTRACT_ID FROM EPM_PROJECT_CONTRACT_ECN WHERE ECN_ID = #{ecnId})</code></pre>
   </div>
 </div>
 
@@ -947,8 +991,19 @@ SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该单据对应的合同【{contractCode}】已经失效</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>合同已处于失效状态(valid=3)，无需重复失效</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <div class="detail-text" v-pre>触发条件：审批回调doContractAlteration方法执行变更时，查询合同表发现VALID=3(已失效)。<br>逻辑分析：在doContractAlteration中，按CONTRACT_ID查询合同VALID状态，若为3则说明合同已被其他流程置为失效，再次执行失效变更会导致重复操作，因此抛出阻断性报错。可能原因：同一合同的多份失效单据并行审批，其中一份审批通过后合同已失效，另一份审批通过时触发此报错。</div>
+    <div class="detail-tip" v-pre>阻断性报错，需确认合同当前状态，无需重复操作</div>
+    <h5>排查SQL</h5>
+    <pre><code class="language-sql">-- 查看合同当前状态
+SELECT CONTRACT_ID, CONTRACT_CODE, CONTRACT_NAME, VALID
+FROM EPM_PROJECT_CONTRACT
+WHERE CONTRACT_ID = (SELECT CONTRACT_ID FROM EPM_PROJECT_CONTRACT_ECN WHERE ECN_ID = #{ecnId})
+
+-- 查看该合同下所有失效单
+SELECT ECN_ID, ECN_CODE, HZ_APPROVE_STATUS, STAT
+FROM EPM_PROJECT_CONTRACT_ECN
+WHERE CONTRACT_ID = (SELECT CONTRACT_ID FROM EPM_PROJECT_CONTRACT_ECN WHERE ECN_ID = #{ecnId})
+ORDER BY CREATETIME DESC</code></pre>
   </div>
 </div>
 
@@ -957,8 +1012,19 @@ SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同变更数据不存在！合同变更ecnId：{ecnId}</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>失效单数据已被删除，刷新页面</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <div class="detail-text" v-pre>触发条件：删除失效单时，按ecnId查询EPM_PROJECT_CONTRACT_ECN表返回null。<br>逻辑分析：删除方法首先按ecnId查询失效单记录，若返回null则说明该单据已被其他用户删除或数据异常，抛出阻断性报错。同时，删除成功后还会恢复合同状态为2(已生效)，若数据不存在则无法执行状态回退。</div>
+    <div class="detail-tip" v-pre>阻断性报错，需刷新页面确认数据状态</div>
+    <h5>排查SQL</h5>
+    <pre><code class="language-sql">-- 确认失效单是否存在
+SELECT ECN_ID, ECN_CODE, CONTRACT_ID, HZ_APPROVE_STATUS
+FROM EPM_PROJECT_CONTRACT_ECN
+WHERE ECN_ID = #{ecnId}
+-- 若返回空，说明数据已被物理删除
+
+-- 检查对应的合同状态
+SELECT CONTRACT_ID, CONTRACT_CODE, VALID
+FROM EPM_PROJECT_CONTRACT
+WHERE CONTRACT_ID = (SELECT CONTRACT_ID FROM EPM_PROJECT_CONTRACT_ECN WHERE ECN_ID = #{ecnId})</code></pre>
   </div>
 </div>
 
@@ -967,8 +1033,14 @@ SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同变更ID不能为空！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ecnId参数未传入</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <div class="detail-text" v-pre>触发条件：打开已保存的失效详情页或执行编辑操作时，传入的ecnId参数为null或空。<br>逻辑分析：查看详情/编辑方法首先校验ecnId参数，若为空则抛出阻断性报错。与"参数不能为空！"（contractId为空）不同，此报错是ecnId为空，发生在已有失效单的查看/编辑场景而非新建场景。可能原因：列表页跳转详情页时未正确传递失效单ID。</div>
+    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续操作</div>
+    <h5>排查SQL</h5>
+    <pre><code class="language-sql">-- 检查失效单是否存在
+SELECT ECN_ID, ECN_CODE, CONTRACT_ID, HZ_APPROVE_STATUS
+FROM EPM_PROJECT_CONTRACT_ECN
+WHERE ECN_ID = #{ecnId}
+-- 若返回空，说明该失效单ID无效或数据已被删除</code></pre>
   </div>
 </div>
 </KbCard>

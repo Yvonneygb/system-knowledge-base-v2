@@ -136,28 +136,40 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 照片类型配置">
+<KbCard num="1" title="照片类型配置">
+
+<KbQuote>配置门店装修申请时需要上传的装修前后照片项目，规范照片上传口径</KbQuote>
+
 **具体逻辑**：
 
 - 1、配置门店验收报销时需要上传的照片类型（照片项目）
 - 2、每项包含照片项目名称、照片项目说明、拍摄角度及要求
 - 3、照片分为装修前照片和装修后照片两类
+
 </KbCard>
 
-<KbCard num="2" title="2.2 照片上传要求">
+<KbCard num="2" title="照片上传要求">
+
+<KbQuote>明确装修前照片必填、装修后选填的约束，保障照片上传完整性</KbQuote>
+
 **具体逻辑**：
 
 - 1、拍摄角度及要求（shootRequire）描述该照片的拍摄规范
 - 2、装修前照片（docid/docname）为必填项
 - 3、装修后照片（afterDocId/afterDocName）为选填项
+
 </KbCard>
 
-<KbCard num="3" title="2.3 附件类型">
+<KbCard num="3" title="附件类型">
+
+<KbQuote>区分不同用途的附件类型，使照片设置可被多个下游模块引用</KbQuote>
+
 **具体逻辑**：
 
 - 1、doctype 字段标识附件类型，区分不同用途的照片
 - 2、照片设置项可被门店装修申请和验收报销两个模块引用
 - 3、--
+
 </KbCard>
 
 </div>
@@ -267,8 +279,12 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>照片项目名称不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>补充名称后保存</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+    <div class="detail-text" v-pre>照片行信息中照片项目名称字段为空时触发校验。<br>该页面为hlod低代码页面，前端C7N内置必填校验。<br>排查是否存在未填写照片项目名称的历史异常数据。</div>
+    <div class="detail-tip" v-pre>toast提醒，提示后用户补充照片项目名称保存</div>
+
+```sql
+SELECT * FROM FIN_FEE_CHECK_BX_PHOTO WHERE PHOTO_ITEM IS NULL OR TRIM(PHOTO_ITEM) = '';
+```
   </div>
 </div>
 
@@ -277,8 +293,12 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>门店装修申请ID不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确保关联有效的装修申请</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+    <div class="detail-text" v-pre>门店装修申请ID（terminalApplyId）为空时触发校验。<br>该字段为关联装修申请的外键，必须在创建照片行时正确关联。<br>排查前端传入的 terminalApplyId 参数是否缺失。</div>
+    <div class="detail-tip" v-pre>toast提醒，提示后确保关联有效的装修申请</div>
+
+```sql
+SELECT * FROM FIN_FEE_CHECK_BX_PHOTO WHERE TERMINAL_APPLY_ID IS NULL;
+```
   </div>
 </div>
 </KbCard>

@@ -140,7 +140,10 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 额度外限额管理">
+<KbCard num="1" title="额度外限额管理">
+
+<KbQuote>为每个经销商门店组合配置额度外限额预算，控制额度外可报销上限</KbQuote>
+
 **具体逻辑**：
 
 - 1、为每个经销商+门店组合配置额度外限额预算
@@ -148,7 +151,10 @@
 - 3、税率（taxRate）用于含税/不含税金额转换
 </KbCard>
 
-<KbCard num="2" title="2.2 额度使用跟踪">
+<KbCard num="2" title="额度使用跟踪">
+
+<KbQuote>按年度1~12月逐月跟踪额度外已用额度，同步预占下年度额度</KbQuote>
+
 **具体逻辑**：
 
 - 1、当月1~12月已用额度（thisOutlimitBudUsed1~12）按月跟踪使用情况
@@ -157,21 +163,30 @@
 - 4、额度外剩余（outlimitBudSur）= 额度外总额 - 累计已用额度
 </KbCard>
 
-<KbCard num="3" title="2.3 上年结转">
+<KbCard num="3" title="上年结转">
+
+<KbQuote>记录上年额度外总额、已用与剩余数据，供年度结转时计算可结转额度</KbQuote>
+
 **具体逻辑**：
 
 - 1、上年额度外总额（lastOutlimitBudTotal）、上年已用（lastOutlimitBudUsed）、上年剩余（lastOutlimitBudSur）
 - 2、用于年度结转时计算可结转额度
 </KbCard>
 
-<KbCard num="4" title="2.4 额度调整">
+<KbCard num="4" title="额度调整">
+
+<KbQuote>记录额度外调整额与核销金额，跟踪额度变动与待核销余额</KbQuote>
+
 **具体逻辑**：
 
 - 1、额度外调整额（outlimitBudAdj）和调整单号（outlimitBudAdjNo）记录调整信息
 - 2、剩余核销金额（surWriteoffAmt）跟踪待核销余额
 </KbCard>
 
-<KbCard num="5" title="2.5 批量导入">
+<KbCard num="5" title="批量导入">
+
+<KbQuote>通过导入方式批量创建经销商额度外限额数据，提升录入效率</KbQuote>
+
 **具体逻辑**：
 
 - 1、importFlag 标识数据是否通过导入产生
@@ -367,8 +382,20 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>经销商不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>选择经销商后保存</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+    <div class="detail-text" v-pre>前端保存时校验经销商字段为null或未选择，未选择经销商即触发非空校验；选择经销商后重新提交即可通过。</div>
+    <div class="detail-tip" v-pre>toast提醒，非阻断性校验；按提示补充经销商信息后重试</div>
+    <h5>定位排查</h5>
+    <div class="detail-sql" v-pre>
+```sql
+SELECT h.outlimit_bud_id AS 额度外限额ID,
+       h.customer_id     AS 经销商ID,
+       h.customer_code   AS 经销商编码,
+       h.customer_name   AS 经销商名称
+FROM   mkt_outlimit_bud_header h
+WHERE  h.customer_id IS NULL
+ORDER  BY h.create_time DESC;
+```
+    </div>
   </div>
 </div>
 
@@ -377,8 +404,20 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>门店不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>选择门店后保存</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+    <div class="detail-text" v-pre>前端保存时校验门店字段为null或未选择，未选择门店即触发非空校验；选择门店后重新提交即可通过。</div>
+    <div class="detail-tip" v-pre>toast提醒，非阻断性校验；按提示补充门店信息后重试</div>
+    <h5>定位排查</h5>
+    <div class="detail-sql" v-pre>
+```sql
+SELECT h.outlimit_bud_id AS 额度外限额ID,
+       h.terminal_id     AS 门店ID,
+       h.terminal_code   AS 门店编码,
+       h.terminal_name   AS 门店名称
+FROM   mkt_outlimit_bud_header h
+WHERE  h.terminal_id IS NULL
+ORDER  BY h.create_time DESC;
+```
+    </div>
   </div>
 </div>
 
@@ -387,8 +426,19 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>预算年度不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>选择预算年度后保存</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+    <div class="detail-text" v-pre>前端保存时校验预算年度字段为null或未选择，未选择预算年度即触发非空校验；选择预算年度后重新提交即可通过。</div>
+    <div class="detail-tip" v-pre>toast提醒，非阻断性校验；按提示补充预算年度后重试</div>
+    <h5>定位排查</h5>
+    <div class="detail-sql" v-pre>
+```sql
+SELECT h.outlimit_bud_id AS 额度外限额ID,
+       h.bud_year        AS 预算年度
+FROM   mkt_outlimit_bud_header h
+WHERE  h.bud_year IS NULL
+   OR  TRIM(h.bud_year) = ''
+ORDER  BY h.create_time DESC;
+```
+    </div>
   </div>
 </div>
 
@@ -397,8 +447,21 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据重复</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查是否已录入相同组合的数据</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+    <div class="detail-text" v-pre>前端提交或后端保存时校验同一经销商+门店+预算年度组合是否已存在记录；若存在相同组合数据（包括软删除状态），则触发重复校验异常，阻止重复录入。</div>
+    <div class="detail-tip" v-pre>toast提醒，非阻断性校验；检查是否已录入相同组合的数据后重试</div>
+    <h5>定位排查</h5>
+    <div class="detail-sql" v-pre>
+```sql
+SELECT h.customer_id   AS 经销商ID,
+       h.terminal_id   AS 门店ID,
+       h.bud_year      AS 预算年度,
+       COUNT(*)        AS 记录数
+FROM   mkt_outlimit_bud_header h
+GROUP  BY h.customer_id, h.terminal_id, h.bud_year
+HAVING COUNT(*) > 1
+ORDER  BY COUNT(*) DESC;
+```
+    </div>
   </div>
 </div>
 </KbCard>

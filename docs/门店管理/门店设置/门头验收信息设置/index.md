@@ -136,28 +136,39 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 验收信息项配置">
+<KbCard num="1" title="验收信息项配置">
+
+<KbQuote>配置门头验收时需要检查的验收项目和拍摄要求，确保门头验收口径统一</KbQuote>
+
 **具体逻辑**：
 
 - 1、配置门头验收时需要检查的信息项（验收项目）
 - 2、每项包含验收项目名称、验收结果、验收比例、是否验收申请时提供等属性
 - 3、验收申请时提供标识控制该信息项在验收申请环节是否需要填写
+
 </KbCard>
 
-<KbCard num="2" title="2.2 验收比例">
+<KbCard num="2" title="验收比例">
+
+<KbQuote>验收比例代表每个验收项目在整体验收中的权重，用于验收评分与结果汇总</KbQuote>
+
 **具体逻辑**：
 
 - 1、验收比例（decorationRate）表示该验收项目在整体验收中的权重或比例
 - 2、用于验收评分或验收结果汇总计算
+
 </KbCard>
 
-<KbCard num="3" title="2.3 数据转换逻辑">
+<KbCard num="3" title="数据转换逻辑">
+
+<KbQuote>验收报销时将验收设置行自动转换为验收报销验收行实体，保证数据一致性</KbQuote>
+
 **具体逻辑**：
 
 - 1、AcceptanceInfoSetLine 实体包含 convertEntity 方法
 - 2、验收报销时将设置行转换为 FinFeeCheckBxAcceptance 实体
 - 3、转换时自动取当前用户真实姓名作为创建人和修改人
-- 4、--
+
 </KbCard>
 
 </div>
@@ -179,17 +190,28 @@
 </KbCard>
 <KbCard title="其他按钮">
 
-| 按钮名称 | 操作说明 | 可用条件 |
-|---------|---------|---------|
-| 新增行 | 新增一条验收信息项 | 始终可用 |
-| 删除行 | 删除选中的验收信息项 | 选中行后可用 |
-| 保存 | 保存所有验收信息项 | 编辑状态 |
+<div class="kb-field-scroll">
+<table class="kb-field-tbl">
+<colgroup><col style="width:20%"><col style="width:50%"><col style="width:30%"></colgroup>
+<thead><tr><th>按钮名称</th><th>操作说明</th><th>可用条件</th></tr></thead>
+<tbody>
+<tr><td>新增行</td><td>新增一条验收信息项</td><td>始终可用</td></tr>
+<tr><td>删除行</td><td>删除选中的验收信息项</td><td>选中行后可用</td></tr>
+<tr><td>保存</td><td>保存所有验收信息项</td><td>编辑状态</td></tr>
+</tbody></table></div>
 
 </KbCard>
 <KbCard title="保存校验">
-- 验收项目不能为空
 
-- 序号不能重复
+<KbSubTitle>校验1：验收项目必填 —— 确保验收项目名称完整</KbSubTitle>
+
+- 本文为hlod低代码页面，前端C7N内置必填校验
+
+<KbTip>toast提醒"验收项目不能为空"</KbTip>
+
+```sql
+SELECT * FROM ACCEPTANCE_INFO_SET_LINE WHERE ACCEPTANCE_ITEM IS NULL
+```
 
 </KbCard>
 <KbCard title="提交校验">
@@ -254,7 +276,7 @@
             <td style="color:#DC2626;font-weight:600;">验收项目不能为空</td>
             <td style="font-size:13px;">行信息未填写验收项目</td>
             <td style="font-size:13px;">补充验收项目后保存</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
+            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">中</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
           </tr>
 </tbody></table></div>
@@ -264,8 +286,16 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>验收项目不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>补充验收项目后保存</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+    <div class="detail-text" v-pre>验收行信息中验收项目字段为空时触发校验。<br>该页面为hlod低代码页面，验收项目必填校验由C7N框架前端控制。<br>排查是否数据库中存在前序导入的历史异常数据。</div>
+    <div class="detail-tip" v-pre>toast提醒，提示后用户补充验收项目保存</div>
+
+```sql
+SELECT acceptance_item AS 验收项目
+FROM   acceptance_info_set_line
+WHERE  acceptance_item IS NULL
+   OR  TRIM(acceptance_item) = '';
+```
+
   </div>
 </div>
 </KbCard>
