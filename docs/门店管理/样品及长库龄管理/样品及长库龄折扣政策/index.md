@@ -822,7 +822,7 @@ WHERE source_type = 'YXCRM' AND discount_policy_id = #{OA回调报文中的disco
 SELECT dp.discount_policy_id, dp.discount_policy_code, dp.hz_approve_status,
        COUNT(dpi.discount_policy_item_id) AS 产品行数
 FROM epm_discount_policy dp
-LEFT JOIN epm_discount_policy_item dpi ON dpi.discount_policy_id = dp.discount_policy_id AND dpi._status <> 'delete'
+LEFT JOIN epm_discount_policy_item dpi ON dpi.discount_policy_id = dp.discount_policy_id AND dpi._status &lt;&gt; 'delete'
 WHERE dp.source_type = 'YXCRM'
 GROUP BY dp.discount_policy_id, dp.discount_policy_code, dp.hz_approve_status
 HAVING COUNT(dpi.discount_policy_item_id) = 0;
@@ -911,7 +911,7 @@ SELECT dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type,
        dpi.discount_policy_item_id, dpi.item_code, dpi.preferential_type
 FROM epm_discount_policy dp
 JOIN epm_discount_policy_item dpi ON dpi.discount_policy_id = dp.discount_policy_id
-WHERE dp.source_type = 'YXCRM' AND dp.suitable_type = 'normal' AND dpi.preferential_type <> 1;
+WHERE dp.source_type = 'YXCRM' AND dp.suitable_type = 'normal' AND dpi.preferential_type &lt;&gt; 1;
 ```
     </div>
     <div class="detail-tip" v-pre>等级：高</div>
@@ -936,7 +936,7 @@ JOIN epm_discount_policy b ON b.discount_policy_id > a.discount_policy_id
 JOIN epm_discount_policy_item ai ON ai.discount_policy_id = a.discount_policy_id
 JOIN epm_discount_policy_item bi ON bi.discount_policy_id = b.discount_policy_id AND bi.item_code = ai.item_code
 WHERE a.source_type = 'YXCRM' AND b.source_type = 'YXCRM'
-  AND a.effective_date_start <= b.effective_date_end
+  AND a.effective_date_start &lt;= b.effective_date_end
   AND a.effective_date_end >= b.effective_date_start;
 ```
     </div>
@@ -977,7 +977,7 @@ WHERE source_type = 'YXCRM' AND discount_policy_id = #{传入的discountPolicyId
 ```sql
 SELECT discount_policy_id, discount_policy_code, hz_approve_status, valid
 FROM epm_discount_policy
-WHERE source_type = 'YXCRM' AND hz_approve_status <> 'NEW';
+WHERE source_type = 'YXCRM' AND hz_approve_status &lt;&gt; 'NEW';
 ```
     </div>
     <div class="detail-tip" v-pre>等级：高</div>
@@ -1147,7 +1147,7 @@ SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty,
 FROM epm_discount_policy_item dpi
 JOIN epm_discount_policy dp ON dp.discount_policy_id = dpi.discount_policy_id
 LEFT JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
-WHERE dp.source_type = 'YXCRM' AND dpi.active_qty < dpc.remain_qty;
+WHERE dp.source_type = 'YXCRM' AND dpi.active_qty &lt; dpc.remain_qty;
 ```
     </div>
     <div class="detail-tip" v-pre>等级：高</div>
@@ -1171,7 +1171,7 @@ JOIN epm_discount_policy dp ON dp.discount_policy_id = dpi.discount_policy_id
 LEFT JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
 WHERE dp.source_type = 'YXCRM'
 GROUP BY dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty
-HAVING dpi.active_qty < SUM(dpc.remain_qty);
+HAVING dpi.active_qty &lt; SUM(dpc.remain_qty);
 ```
     </div>
     <div class="detail-tip" v-pre>等级：高</div>
