@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L14 5V11L8 14L2 11V5L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 5L8 8L14 5" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 8V14" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>建档配置</h5>
-      <small>新增特训营并配置<br/>时间·地点·讲师</small>
+      <small>新增特训营并配置<br>时间·地点·讲师</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#22C55E);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/><path d="M6.8 5.8L10.2 8L6.8 10.2V5.8Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>启动特训营</h5>
-      <small>对外开放<br/>可被点将申请选择</small>
+      <small>对外开放<br>可被点将申请选择</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#F97316,#FB923C);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/><rect x="6.2" y="6.2" width="3.6" height="3.6" rx="0.8" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>结束特训营</h5>
-      <small>培训交付完成<br/>不再接受新的点将</small>
+      <small>培训交付完成<br>不再接受新的点将</small>
     </div>
   </div>
 </div>

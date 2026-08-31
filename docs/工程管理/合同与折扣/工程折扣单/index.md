@@ -45,25 +45,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>生成折扣单</h5>
-      <small>基于政策/合同<br/>生成单头与行</small>
+      <small>基于政策/合同<br>生成单头与行</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>启动审批流<br/>通过后生效</small>
+      <small>启动审批流<br>通过后生效</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>折扣单生效</h5>
-      <small>状态置为已审批<br/>可供引用</small>
+      <small>状态置为已审批<br>可供引用</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3v10" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>下游引用</h5>
-      <small>要货/延期<br/>引用定价</small>
+      <small>要货/延期<br>引用定价</small>
     </div>
   </div>
 </div>
@@ -1086,7 +1086,7 @@ SELECT C.CONTRACT_CODE, C.VALID FROM EPM_DISCOUNT_APPLY D JOIN EPM_PROJECT_CONTR
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品未上架</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>折扣单行引用的产品已下架，需更换产品或重新上架</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>折扣单行引用的产品已下架，需更换产品或重新上架</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1096,7 +1096,7 @@ SELECT C.CONTRACT_CODE, C.VALID FROM EPM_DISCOUNT_APPLY D JOIN EPM_PROJECT_CONTR
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同无效</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>折扣单关联的合同已失效或非有效状态，需检查合同状态</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>折扣单关联的合同已失效或非有效状态，需检查合同状态</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1109,7 +1109,7 @@ SELECT C.CONTRACT_CODE, C.VALID FROM EPM_DISCOUNT_APPLY D JOIN EPM_PROJECT_CONTR
       <span style="font-size:15px;">折扣单可下单数量为0或负数</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>合同数量已被全部下单、替换或延期，导致active_qty&lt;=0；排查SQL：`SELECT DISCOUNT_APPLY_LINE_ID, ITEM_CODE, CONTRACT_QTY, ORDERED_QTY, NVL(REPLACED_QTY,0) AS REPLACED_QTY, NVL(DELAYED_QTY,0) AS DELAYED_QTY, ACTIVE_QTY FROM EPM_DISCOUNT_APPLY_LINE WHERE DISCOUNT_APPLY_ID = #{discountApplyId} AND ACTIVE_QTY &lt;= 0`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>合同数量已被全部下单、替换或延期，导致active_qty&lt;=0；排查SQL：`SELECT DISCOUNT_APPLY_LINE_ID, ITEM_CODE, CONTRACT_QTY, ORDERED_QTY, NVL(REPLACED_QTY,0) AS REPLACED_QTY, NVL(DELAYED_QTY,0) AS DELAYED_QTY, ACTIVE_QTY FROM EPM_DISCOUNT_APPLY_LINE WHERE DISCOUNT_APPLY_ID = #{discountApplyId} AND ACTIVE_QTY &lt;= 0`<br>
       <strong style="color:#7C3AED;">处理：</strong>检查已下单/已替换/已延期数量是否正确，若有误可通过SQL修正
     </div>
   </div>
@@ -1119,7 +1119,7 @@ SELECT C.CONTRACT_CODE, C.VALID FROM EPM_DISCOUNT_APPLY D JOIN EPM_PROJECT_CONTR
       <span style="font-size:15px;">要货订单释放后折扣单可下单数量未恢复</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>释放时updateApplyQty未正确执行，可能存在并发问题<br/>
+      <strong style="color:#7C3AED;">原因：</strong>释放时updateApplyQty未正确执行，可能存在并发问题<br>
       <strong style="color:#7C3AED;">处理：</strong>检查SA_OUT_BILL_LINE中该折扣单行的订单状态；排查SQL：`SELECT L.DIScount_APPLY_LINE_ID, L.ORDERED_QTY, L.ACTIVE_QTY, SUM(BL.QTY_BILL - BL.CANCEL_QTY) AS BILL_QTY FROM EPM_DISCOUNT_APPLY_LINE L LEFT JOIN SA_OUT_BILL_LINE BL ON BL.DISCOUNT_APPLY_LINE_ID = L.DISCOUNT_APPLY_LINE_ID WHERE L.DISCOUNT_APPLY_ID = #{discountApplyId} GROUP BY L.DIScount_APPLY_LINE_ID, L.ORDERED_QTY, L.ACTIVE_QTY`
     </div>
   </div>

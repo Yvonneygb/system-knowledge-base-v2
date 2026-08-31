@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><path d="M8 5V8L10 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选择条件</h5>
-      <small>选交易公司/法人<br/>定位对账记录</small>
+      <small>选交易公司/法人<br>定位对账记录</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/><path d="M4 5H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查询列表</h5>
-      <small>展示法人<br/>对账列表</small>
+      <small>展示法人<br>对账列表</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 10H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 13H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看/打印</h5>
-      <small>查看对账明细<br/>并打印对账单</small>
+      <small>查看对账明细<br>并打印对账单</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -404,7 +404,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CUSTOMER_LEGAL_ENTITY表中无匹配记录</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CUSTOMER_LEGAL_ENTITY表中无匹配记录</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -417,7 +417,7 @@
       <span style="font-size:15px;">法人关联记录显示"未审核"状态</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>客户-法人关联数据新增后尚未审核，valid=1<br/>
+      <strong style="color:#7C3AED;">原因：</strong>客户-法人关联数据新增后尚未审核，valid=1<br>
       <strong style="color:#7C3AED;">处理：</strong>在CRM模块中审核客户法人关联关系，将valid更新为2
     </div>
   </div>
@@ -427,7 +427,7 @@
       <span style="font-size:15px;">同一客户关联多个法人导致对账数据重复</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>CUSTOMER_LEGAL_ENTITY为多对多关系，一个客户可关联多个法人<br/>
+      <strong style="color:#7C3AED;">原因：</strong>CUSTOMER_LEGAL_ENTITY为多对多关系，一个客户可关联多个法人<br>
       <strong style="color:#7C3AED;">处理：</strong>按法人编码去重或按交易公司分组查询
     </div>
   </div>

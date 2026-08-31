@@ -50,19 +50,19 @@
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>查询认款</h5>
-        <small>查看 EBS 同步<br/>到款认款记录</small>
+        <small>查看 EBS 同步<br>到款认款记录</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>撤销/认缴</h5>
-        <small>撤销认款<br/>或跳转认缴申请</small>
+        <small>撤销认款<br>或跳转认缴申请</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13L6 9L9 11L13 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h5>更新状态</h5>
-        <small>更新合同缴清<br/>推送 CRM</small>
+        <small>更新合同缴清<br>推送 CRM</small>
       </div>
     </div>
     <div class="kl-tip" style="margin-top:14px;">
@@ -416,7 +416,7 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前法人不存在，请联系it处理</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>撤销认款时根据法人编码查询客户信息为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>撤销认款时根据法人编码查询客户信息为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -426,7 +426,7 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>保证金ID不能空！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>点击认缴申请时未传入保证金记录ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>点击认缴申请时未传入保证金记录ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -436,7 +436,7 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该笔认款金额已进行撤销操作，不能进行认领</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>当前认款记录状态为撤销认款</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前认款记录状态为撤销认款</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -446,7 +446,7 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该认款已转换为封顶认款，不能再进行认缴操作</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>普通认缴且已转封顶标识为Y</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>普通认缴且已转封顶标识为Y</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -456,7 +456,7 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送crm 认缴标识不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>推送CRM时认缴标识参数为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>推送CRM时认缴标识参数为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -466,7 +466,7 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>事业部id 或 经销商id 或 合同类型 不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>推送CRM时关键参数为0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>推送CRM时关键参数为0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -479,7 +479,7 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
       <span style="font-size:15px;">EBS同步后认款数据未更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>EBS最后更新时间早于本地最后更新时间，系统跳过更新。排查SQL：<br/>
+      <strong style="color:#7C3AED;">原因：</strong>EBS最后更新时间早于本地最后更新时间，系统跳过更新。排查SQL：<br>
       <strong style="color:#7C3AED;">处理：</strong>确认EBS数据是否确实更新，若EBS时间较新但仍未同步，检查同步日志
     </div>
   </div>
@@ -489,7 +489,7 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
       <span style="font-size:15px;">撤销认款后合同缴清状态未变更</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>法人下存在封顶认缴且已缴清的记录，系统跳过普通认缴的合同状态更新<br/>
+      <strong style="color:#7C3AED;">原因：</strong>法人下存在封顶认缴且已缴清的记录，系统跳过普通认缴的合同状态更新<br>
       <strong style="color:#7C3AED;">处理：</strong>确认该法人下封顶认缴的缴清状态是否正确
     </div>
   </div>

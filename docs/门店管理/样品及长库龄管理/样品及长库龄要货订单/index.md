@@ -88,31 +88,31 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 4H14V7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>新建 / 编辑</h5>
-      <small>列表页新建，进入<br/>详情页维护头信息</small>
+      <small>列表页新建，进入<br>详情页维护头信息</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="1" width="10" height="14" rx="1" stroke="white" stroke-width="1.5"/><path d="M6 5H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 8H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 11H8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选价格模式</h5>
-      <small>折扣政策(priceType=2)<br/>或价目表(priceType=3)</small>
+      <small>折扣政策(priceType=2)<br>或价目表(priceType=3)</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10b981,#059669);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L10 5" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 5H11C12.1046 5 13 5.89543 13 7V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M10 11H7C5.89543 11 5 10.1046 5 9V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>添加行 / 选样品</h5>
-      <small>校验起订量/封顶量<br/>或价格完整性</small>
+      <small>校验起订量/封顶量<br>或价格完整性</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="4" width="14" height="10" rx="1" stroke="white" stroke-width="1.5"/><path d="M1 7H12" stroke="white" stroke-width="1.5"/><circle cx="12" cy="10.5" r="1.5" fill="white"/></svg></div>
       <h5>保存并提交</h5>
-      <small>OA审批(政策) 或<br/>直接生成CRM(价目表)</small>
+      <small>OA审批(政策) 或<br>直接生成CRM(价目表)</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#3B82F6,#2563EB);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8L6 12L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>CRM / ERP</h5>
-      <small>生成CRM订单<br/>推送ERP发货</small>
+      <small>生成CRM订单<br>推送ERP发货</small>
     </div>
   </div>
 </div>
@@ -2521,7 +2521,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       <span style="font-size:15px;">折扣政策选择弹窗无数据</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>当前经销商无可用折扣政策，或折扣政策已过期，或 isMakt 参数未正确传入（应为 '2'）<br/>
+      <strong style="color:#7C3AED;">原因：</strong>当前经销商无可用折扣政策，或折扣政策已过期，或 isMakt 参数未正确传入（应为 '2'）<br>
       <strong style="color:#7C3AED;">处理：</strong>确认经销商存在可用且未过期的折扣政策；检查 lovPara 中 isMakt='2' 是否正确传入弹窗
     </div>
   </div>
@@ -2531,7 +2531,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       <span style="font-size:15px;">保存并提交按钮不可点击</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>priceType=3 时该按钮隐藏（改用“生成CRM订单”）；priceType=2 时需处于编辑状态<br/>
+      <strong style="color:#7C3AED;">原因：</strong>priceType=3 时该按钮隐藏（改用“生成CRM订单”）；priceType=2 时需处于编辑状态<br>
       <strong style="color:#7C3AED;">处理：</strong>priceType=3 改用“生成CRM订单”按钮；priceType=2 时确保单据处于编辑态再点击保存并提交
     </div>
   </div>
@@ -2541,7 +2541,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       <span style="font-size:15px;">OA审批流程未推送</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>流程编码未匹配（渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT），或 OA 接口异常<br/>
+      <strong style="color:#7C3AED;">原因：</strong>流程编码未匹配（渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT），或 OA 接口异常<br>
       <strong style="color:#7C3AED;">处理：</strong>核对渠道对应的流程编码映射；检查 OA 接口连通性与返回，必要时联系 OA 管理员
     </div>
   </div>
@@ -2551,7 +2551,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       <span style="font-size:15px;">CRM订单生成失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>businessType 映射异常（须为 3/12/16），或 CRM 接口异常<br/>
+      <strong style="color:#7C3AED;">原因：</strong>businessType 映射异常（须为 3/12/16），或 CRM 接口异常<br>
       <strong style="color:#7C3AED;">处理：</strong>确认 businessType∈{3,12,16}；查看 INTF_INFO 字段获取 CRM 返回信息定位失败原因
     </div>
   </div>
@@ -2561,7 +2561,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       <span style="font-size:15px;">可下单数量未正确扣减</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>updateActiveQty 未正确执行，或折扣政策产品行不存在<br/>
+      <strong style="color:#7C3AED;">原因：</strong>updateActiveQty 未正确执行，或折扣政策产品行不存在<br>
       <strong style="color:#7C3AED;">处理：</strong>检查 DISCOUNT_POLICY_LINE.ACTIVE_QTY 是否正确；确认折扣政策产品行存在且可下单数量充足
     </div>
   </div>
@@ -2571,7 +2571,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       <span style="font-size:15px;">期望到达日期无法选择当月之后</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>常规订单(billType=1)25号前仅允许当月；计划订单(billType=2)渠道限制范围（电商6个月/其他3个月）<br/>
+      <strong style="color:#7C3AED;">原因：</strong>常规订单(billType=1)25号前仅允许当月；计划订单(billType=2)渠道限制范围（电商6个月/其他3个月）<br>
       <strong style="color:#7C3AED;">处理：</strong>常规订单在每月25号前下单；计划订单按渠道允许范围选择（电商6个月/其他3个月）
     </div>
   </div>
@@ -2581,7 +2581,7 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
       <span style="font-size:15px;">展厅产品安装金额不为0</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>customerSubclass=5 展厅产品强制 INSTALL_UNIT_AMT=0、IS_INSTALL=0<br/>
+      <strong style="color:#7C3AED;">原因：</strong>customerSubclass=5 展厅产品强制 INSTALL_UNIT_AMT=0、IS_INSTALL=0<br>
       <strong style="color:#7C3AED;">处理：</strong>检查该订单行 customerSubclass=5 时 INSTALL_UNIT_AMT 与 IS_INSTALL 是否被正确置为 0
     </div>
   </div>

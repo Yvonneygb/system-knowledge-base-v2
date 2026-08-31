@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h5v5H2z" stroke="white" stroke-width="1.5"/><path d="M9 7h5v5H9z" stroke="white" stroke-width="1.5"/><path d="M7 6.5h2" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>选单建头</h5>
-      <small>选客户、合同、项目<br/>录入产品明细</small>
+      <small>选客户、合同、项目<br>录入产品明细</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>校验年度合同与定金<br/>启动工作流</small>
+      <small>校验年度合同与定金<br>启动工作流</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>审批通过</h5>
-      <small>生成 CRM 订单<br/>回写定金金额</small>
+      <small>生成 CRM 订单<br>回写定金金额</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3h12v4H2z" stroke="white" stroke-width="1.5"/><path d="M2 9h12v4H2z" stroke="white" stroke-width="1.5"/><path d="M5 5h.01M5 11h.01" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>推送 ERP</h5>
-      <small>发货并占用<br/>可发货余额</small>
+      <small>发货并占用<br>可发货余额</small>
     </div>
   </div>
 </div>
@@ -1223,7 +1223,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品明细行不允许为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未录入任何产品行</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未录入任何产品行</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1233,7 +1233,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能早于今天</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>inDate早于当前日期</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>inDate早于当前日期</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1243,7 +1243,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>价格类型校验失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>priceType与关联折扣单/政策不匹配</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>priceType与关联折扣单/政策不匹配</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1253,7 +1253,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>年度经销合同校验失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>客户无有效年度经销合同</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>客户无有效年度经销合同</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1263,7 +1263,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>下单数量超出限制</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>产品下单数量超过可下单数量或坎级限制</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>产品下单数量超过可下单数量或坎级限制</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1273,7 +1273,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>CRM订单创建失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CRM接口返回错误</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CRM接口返回错误</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1283,7 +1283,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>非NEW/NO_APPROVED状态不允许删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>非NEW/NO_APPROVED状态不允许删除</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1296,7 +1296,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
       <span style="font-size:15px;">审批通过后要货单号为空</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>编码规则AE.EPM_SA_OUT_BILL_HEAD未配置或已失效<br/>
+      <strong style="color:#7C3AED;">原因：</strong>编码规则AE.EPM_SA_OUT_BILL_HEAD未配置或已失效<br>
       <strong style="color:#7C3AED;">处理：</strong>检查编码规则配置
     </div>
   </div>
@@ -1306,7 +1306,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
       <span style="font-size:15px;">产品价格带出为0</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>折扣单/政策中该产品无对应行，或价目表中无该产品价格<br/>
+      <strong style="color:#7C3AED;">原因：</strong>折扣单/政策中该产品无对应行，或价目表中无该产品价格<br>
       <strong style="color:#7C3AED;">处理：</strong>检查折扣单/政策是否包含该产品
     </div>
   </div>
@@ -1316,7 +1316,7 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
       <span style="font-size:15px;">删除按钮不显示</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>订单已有正式单号(saSalebillno不为空)或OA不扣订金审批中(nodepositOaAuditStat不为0/99/null)<br/>
+      <strong style="color:#7C3AED;">原因：</strong>订单已有正式单号(saSalebillno不为空)或OA不扣订金审批中(nodepositOaAuditStat不为0/99/null)<br>
       <strong style="color:#7C3AED;">处理：</strong>确认订单状态是否允许删除
     </div>
   </div>

@@ -924,7 +924,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>失效政策行不允许为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择任何失效政策行就点击保存。解决方案：至少选择一行产品明细</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择任何失效政策行就点击保存。解决方案：至少选择一行产品明细</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -934,7 +934,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该单据</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>删除的失效单不存在，可能已被其他用户删除。解决方案：刷新列表确认数据状态</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>删除的失效单不存在，可能已被其他用户删除。解决方案：刷新列表确认数据状态</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -944,7 +944,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除.</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>非新建状态的单据不允许删除。解决方案：仅NEW状态可删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>非新建状态的单据不允许删除。解决方案：仅NEW状态可删除</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -954,7 +954,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无法获上线文信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>无法获取当前登录用户上下文信息。解决方案：确认用户已登录且会话有效</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>无法获取当前登录用户上下文信息。解决方案：确认用户已登录且会话有效</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -964,7 +964,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前折扣政策不允许失效 请检查</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>关联的折扣政策编码在EPM_DISCOUNT_POLICY表中不存在。解决方案：检查折扣政策是否已被删除或编码是否正确</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的折扣政策编码在EPM_DISCOUNT_POLICY表中不存在。解决方案：检查折扣政策是否已被删除或编码是否正确</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -974,7 +974,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策失效id不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>工作流回调时objId为空。解决方案：检查工作流配置是否正确传递了businessId</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>工作流回调时objId为空。解决方案：检查工作流配置是否正确传递了businessId</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -984,7 +984,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策明细推送crm出错,请稍后再试</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CRM接口返回null。解决方案：检查CRM服务是否可用，稍后重试</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CRM接口返回null。解决方案：检查CRM服务是否可用，稍后重试</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -994,7 +994,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策明细推送crm出错：{lineId}:{message}</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CRM接口返回success=false。解决方案：根据message信息排查CRM端问题</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CRM接口返回success=false。解决方案：根据message信息排查CRM端问题</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1004,7 +1004,7 @@ NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过─�
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择折扣政策！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择折扣政策就点击新建行按钮。解决方案：先选择折扣政策</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择折扣政策就点击新建行按钮。解决方案：先选择折扣政策</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>

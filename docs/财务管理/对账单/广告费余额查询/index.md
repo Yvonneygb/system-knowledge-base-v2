@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><path d="M8 5V8L10 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选择维度</h5>
-      <small>选法人/交易公司<br/>定位账户</small>
+      <small>选法人/交易公司<br>定位账户</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>执行查询</h5>
-      <small>读取额度内<br/>广告费余额</small>
+      <small>读取额度内<br>广告费余额</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="10" width="5" height="3" rx="1" stroke="white" stroke-width="1.5"/><path d="M9 10H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看余额</h5>
-      <small>掌握期初/本期<br/>期末余量</small>
+      <small>掌握期初/本期<br>期末余量</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -549,7 +549,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>MKT_INLIMIT_BALANCE_HEADER表中无匹配记录</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>MKT_INLIMIT_BALANCE_HEADER表中无匹配记录</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -559,7 +559,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>余额数据未同步</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>SYNC_ITEM时间过旧，营销中台未及时同步</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>SYNC_ITEM时间过旧，营销中台未及时同步</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -572,7 +572,7 @@
       <span style="font-size:15px;">期末余额与期初余额差异异常</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>扣减项或调整项数据异常<br/>
+      <strong style="color:#7C3AED;">原因：</strong>扣减项或调整项数据异常<br>
       <strong style="color:#7C3AED;">处理：</strong>逐项核对期初余额、扣减项、调整项，确认数据来源正确
     </div>
   </div>
@@ -582,7 +582,7 @@
       <span style="font-size:15px;">已占用额度与各占用明细之和不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>occupiedAmount ≠ cashout + delivery + frozen + adjustment<br/>
+      <strong style="color:#7C3AED;">原因：</strong>occupiedAmount ≠ cashout + delivery + frozen + adjustment<br>
       <strong style="color:#7C3AED;">处理：</strong>确认营销中台数据同步是否完整
     </div>
   </div>

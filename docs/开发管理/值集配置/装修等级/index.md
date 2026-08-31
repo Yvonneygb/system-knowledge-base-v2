@@ -35,8 +35,8 @@
     <div class="kl-col-box info">
       <div class="kl-col-title">📋 值集定义示例</div>
       <div class="kl-col-items">
-        <code>value = 1, meaning = '一级', tag = '123'</code><br/>
-        <code>value = 2, meaning = '二级', tag = '123'</code><br/>
+        <code>value = 1, meaning = '一级', tag = '123'</code><br>
+        <code>value = 2, meaning = '二级', tag = '123'</code><br>
         <code>value = 3, meaning = '三级', tag = '123'</code>
       </div>
     </div>
@@ -223,9 +223,9 @@
     <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 6px;">位置：<code>FinFeeApplyFinishedHeaderServiceImpl.java:629-649</code></p>
     <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 10px;">业务用途：确保该门店的装修等级在系统中有对应的补贴政策标准，否则无法提交申请。</p>
     <div class="kl-tip" style="margin-top:0;">
-      <strong>逻辑：</strong><br/>
-      1. fixupGrade 为空或 0 → 抛异常"无政策标准不能提交！"<br/>
-      2. 用 fixupGrade(value) 查询 TERMINAL_DECORATE_LINE 是否有对应标准行 → 无则抛异常"店面装修等级没有对应的政策标准！"<br/>
+      <strong>逻辑：</strong><br>
+      1. fixupGrade 为空或 0 → 抛异常"无政策标准不能提交！"<br>
+      2. 用 fixupGrade(value) 查询 TERMINAL_DECORATE_LINE 是否有对应标准行 → 无则抛异常"店面装修等级没有对应的政策标准！"<br>
       3. 用 fixupGrade(value) + 面积 + 日期 + 门店类型 + 事业部ID 精确匹配有效期内的标准行 → 无则抛异常"店面装修等级没有有效期内的政策标准！"
     </div>
   </div>
@@ -234,14 +234,14 @@
     <h4 style="font-size:14px;font-weight:700;color:#1F2937;margin:0 0 10px;">1.2 匹配装修标准行（doSearchDecorate）</h4>
     <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 6px;">位置：<code>FinFeeApplyFinishedHeaderServiceImpl.java:945 / Mapper.xml:1255-1273</code></p>
     <div class="kl-tip" style="margin-top:0;">
-      <strong>匹配条件：</strong><br/>
-      <code>WHERE fixup_grade = #{fixupGrade}</code> — 装修等级(value)<br/>
-      AND uper_area &lt; #{thisTerminalArea} — 面积下限<br/>
-      AND lower_area &gt;= #{thisTerminalArea} — 面积上限<br/>
-      AND start_date &lt;= #{startDate} — 生效开始<br/>
-      AND end_date &gt;= #{startDate} — 生效结束<br/>
-      AND rel.terminal_type_code = #{terminalType} — 门店类型<br/>
-      AND tds.HZ_APPROVE_STATUS = 'APPROVED' — 标准已审批<br/>
+      <strong>匹配条件：</strong><br>
+      <code>WHERE fixup_grade = #{fixupGrade}</code> — 装修等级(value)<br>
+      AND uper_area &lt; #{thisTerminalArea} — 面积下限<br>
+      AND lower_area &gt;= #{thisTerminalArea} — 面积上限<br>
+      AND start_date &lt;= #{startDate} — 生效开始<br>
+      AND end_date &gt;= #{startDate} — 生效结束<br>
+      AND rel.terminal_type_code = #{terminalType} — 门店类型<br>
+      AND tds.HZ_APPROVE_STATUS = 'APPROVED' — 标准已审批<br>
       AND tds.division_id = #{divisionId} — 事业部
     </div>
     <div style="background:#FFF7ED;border-radius:8px;padding:10px 14px;font-size:13px;color:#92400E;line-height:1.7;margin-top:10px;"><strong>关键：</strong>fixupGrade 的 value 是匹配 TERMINAL_DECORATE_LINE 的必要条件，直接决定补贴标准金额。</div>
@@ -312,12 +312,12 @@
     <h4 style="font-size:14px;font-weight:700;color:#1F2937;margin:0 0 10px;">3.1 标准行定义</h4>
     <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 10px;">定义不同装修等级 + 不同面积范围对应的补贴标准（额度内/额度外单价），是整个补贴体系的基础配置表。</p>
     <div class="kl-tip" style="margin-top:0;">
-      <strong>TERMINAL_DECORATE_LINE 表结构（与 fixupGrade 相关）：</strong><br/>
-      - FIXUP_GRADE: 装修等级(value) — 维度字段<br/>
-      - DECORATE_PROJECT: 装修项目<br/>
-      - UPER_AREA / LOWER_AREA: 面积范围<br/>
-      - IN_STANDARD: 额度内标准(元/m2) — 匹配后用于计算额度内补贴金额<br/>
-      - OUT_STANDARD: 额度外标准(元/m2) — 匹配后用于计算额度外补贴金额<br/>
+      <strong>TERMINAL_DECORATE_LINE 表结构（与 fixupGrade 相关）：</strong><br>
+      - FIXUP_GRADE: 装修等级(value) — 维度字段<br>
+      - DECORATE_PROJECT: 装修项目<br>
+      - UPER_AREA / LOWER_AREA: 面积范围<br>
+      - IN_STANDARD: 额度内标准(元/m2) — 匹配后用于计算额度内补贴金额<br>
+      - OUT_STANDARD: 额度外标准(元/m2) — 匹配后用于计算额度外补贴金额<br>
       - START_DATE / END_DATE: 有效期
     </div>
   </div>

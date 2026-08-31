@@ -60,25 +60,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1" stroke="white" stroke-width="1.5"/><path d="M8 2V14" stroke="white" stroke-width="1.5"/><path d="M2 8H14" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>报销已通过</h5>
-      <small>广告费报销单<br/>审批通过作为前提</small>
+      <small>广告费报销单<br>审批通过作为前提</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1" stroke="white" stroke-width="1.5"/><path d="M8 5V11" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M5 8H11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>新建兑现</h5>
-      <small>录入本次兑现金额<br/>区分额度内/额度外</small>
+      <small>录入本次兑现金额<br>区分额度内/额度外</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10b981,#059669);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 8L7.5 9.5L10.5 6.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>校验兑现金额不超可兑现总额<br/>额度外需扣除已占用金额</small>
+      <small>校验兑现金额不超可兑现总额<br>额度外需扣除已占用金额</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L5 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 10H11C12.1046 10 13 9.10457 13 8V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M10 5H7C5.89543 5 5 5.89543 5 7V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>资金推送</h5>
-      <small>通过后推送 ERP 资金池/MBO<br/>额度外同步预算更新</small>
+      <small>通过后推送 ERP 资金池/MBO<br>额度外同步预算更新</small>
     </div>
   </div>
 </div>
@@ -944,7 +944,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该单据流程信息不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>兑现单在数据库中不存在或流程信息缺失，检查数据完整性</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>兑现单在数据库中不存在或流程信息缺失，检查数据完整性</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -954,7 +954,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程中objid为0，流程失败！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>工作流回调时传入的对象ID为0，检查工作流配置</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>工作流回调时传入的对象ID为0，检查工作流配置</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -964,7 +964,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票金额异常，请检查！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>支付方式非费用转到款时，实际兑现金额≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>支付方式非费用转到款时，实际兑现金额≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -974,7 +974,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次申请兑现金额不可超过该报销单据剩余的可兑现金额：X</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>本次兑现金额超过报销单剩余可兑现金额</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>本次兑现金额超过报销单剩余可兑现金额</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -984,7 +984,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次核销金额不可超过额度内可用金额：X</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>额度内兑现时核销金额超过可用金额</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>额度内兑现时核销金额超过可用金额</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -994,7 +994,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次申请兑现金额不可超过额度外可用金额：X</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>额度外兑现时兑现金额超过可用金额</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>额度外兑现时兑现金额超过可用金额</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1004,7 +1004,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>额度外金额已占用：X,剩余：Y</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>额度外兑现时兑现金额超过扣除占用后的剩余金额</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>额度外兑现时兑现金额超过扣除占用后的剩余金额</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1014,7 +1014,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请兑现金额：X元，已超剩余未兑现总额：Y元，请检查！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>提交工作流时校验兑现金额超限</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>提交工作流时校验兑现金额超限</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1024,7 +1024,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>兑现类型异常！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>兑现类型非1或2</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>兑现类型非1或2</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1034,7 +1034,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>门店编码或预算年度不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>额度外兑现审批通过时门店编码或预算年度为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>额度外兑现审批通过时门店编码或预算年度为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1044,7 +1044,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>可兑现总额不能为零或负数</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>额度外兑现审批通过时可兑现总额≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>额度外兑现审批通过时可兑现总额≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1054,7 +1054,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>税率配置格式错误：X</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>系统配置的额度外税率格式不正确</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>系统配置的额度外税率格式不正确</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1064,7 +1064,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>额度外预算数据不存在，请检查！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>非最终兑现时查不到额度外预算数据</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>非最终兑现时查不到额度外预算数据</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1077,7 +1077,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
       <span style="font-size:15px;">额度外兑现审批通过后预算数据未更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>可能门店编码或预算年度为空，或额度外预算数据不存在。排查SQL：`SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND SAVE_TYPE = 1 AND THIS_APPLY_AMT &gt; 0 AND (TERMINAL_CODE IS NULL OR BUD_YEAR IS NULL)`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>可能门店编码或预算年度为空，或额度外预算数据不存在。排查SQL：`SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND SAVE_TYPE = 1 AND THIS_APPLY_AMT &gt; 0 AND (TERMINAL_CODE IS NULL OR BUD_YEAR IS NULL)`<br>
       <strong style="color:#7C3AED;">处理：</strong>补充门店编码和预算年度数据，或检查MKT_OUTLIMIT_BUD_HEADER中是否存在对应预算记录
     </div>
   </div>
@@ -1087,7 +1087,7 @@ SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE = 2 AND THIS_CASHOUT_AMT
       <span style="font-size:15px;">ERP资金池同步失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>兑现类型异常或ERP接口调用失败。排查SQL：`SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE NOT IN (1, 2)`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>兑现类型异常或ERP接口调用失败。排查SQL：`SELECT * FROM FIN_FEE_CASHOUT_HEADER WHERE CASHOUT_TYPE NOT IN (1, 2)`<br>
       <strong style="color:#7C3AED;">处理：</strong>检查兑现类型值是否正确，检查ERP接口连接和参数配置
     </div>
   </div>

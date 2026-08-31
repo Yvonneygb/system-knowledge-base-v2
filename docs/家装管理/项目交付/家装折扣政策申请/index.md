@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>填写申请</h5>
-      <small>录入政策头<br/>产品明细与阶梯</small>
+      <small>录入政策头<br>产品明细与阶梯</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>启动 OA 工作流<br/>多级审批</small>
+      <small>启动 OA 工作流<br>多级审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>审批通过</h5>
-      <small>同步 CRM 系统<br/>政策生效</small>
+      <small>同步 CRM 系统<br>政策生效</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3v10" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>政策生效</h5>
-      <small>家装/工程要货<br/>按政策定价</small>
+      <small>家装/工程要货<br>按政策定价</small>
     </div>
   </div>
 </div>
@@ -1751,7 +1751,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品行不能为空，请检查！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>产品明细行列表为空或全部被删除。解决方案：至少添加一条产品明细行</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>产品明细行列表为空或全部被删除。解决方案：至少添加一条产品明细行</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1761,7 +1761,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请类型："全产品类型" 与 ("型号"或"产品")类型 不能同时存在，请检查！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>产品行中同时存在申请类型=3和1或2。解决方案：统一申请类型</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>产品行中同时存在申请类型=3和1或2。解决方案：统一申请类型</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1771,7 +1771,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码:XXX 单个经销商封顶数量只能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>专项政策下封顶=否但封顶数量不为空。解决方案：封顶=否时清空封顶数量</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>专项政策下封顶=否但封顶数量不为空。解决方案：封顶=否时清空封顶数量</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1781,7 +1781,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码:XXX 单个经销商封顶数量为正整数</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>专项政策下封顶=是但封顶数量为空或≤0。解决方案：填写正整数</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>专项政策下封顶=是但封顶数量为空或≤0。解决方案：填写正整数</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1791,7 +1791,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无法获上线文信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>获取用户上下文失败。解决方案：检查登录状态</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>获取用户上下文失败。解决方案：检查登录状态</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1801,7 +1801,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>以下字段不能为空：XXX</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CRM产品查询必填字段缺失(经销商编码/币种/事业部/订单类型等)。解决方案：补充缺失字段</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CRM产品查询必填字段缺失(经销商编码/币种/事业部/订单类型等)。解决方案：补充缺失字段</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1811,7 +1811,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>折扣政策id不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>导入时discountPolicyId为空。解决方案：先保存单据再导入</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>导入时discountPolicyId为空。解决方案：先保存单据再导入</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1821,7 +1821,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程编码不能为空。</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>提交时未选择流程编码。解决方案：选择流程后提交</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>提交时未选择流程编码。解决方案：选择流程后提交</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1831,7 +1831,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先维护OA系统信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>系统配置表未维护OA账号信息。解决方案：联系运维维护SCPSYSCONF表</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>系统配置表未维护OA账号信息。解决方案：联系运维维护SCPSYSCONF表</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1841,7 +1841,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码[XXX]请求CRM获取失败原因:[XXX]</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>指定产品编码在CRM查询失败。解决方案：检查产品编码是否正确或CRM接口是否正常</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>指定产品编码在CRM查询失败。解决方案：检查产品编码是否正确或CRM接口是否正常</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1851,7 +1851,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请求CRM返回数据解析异常！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CRM接口返回数据格式异常。解决方案：检查CRM接口</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CRM接口返回数据格式异常。解决方案：检查CRM接口</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1861,7 +1861,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到客户id，请检查!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>客户ID为空。解决方案：先选择客户</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>客户ID为空。解决方案：先选择客户</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1871,7 +1871,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到订单类型，请检查!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>订单类型为空。解决方案：先选择订单类型</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>订单类型为空。解决方案：先选择订单类型</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1881,7 +1881,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数量不能为小数，请重新输入</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>起订量或封顶量输入了小数。解决方案：输入整数</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>起订量或封顶量输入了小数。解决方案：输入整数</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1891,7 +1891,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请输入大于零的数字</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>起订量或封顶量≤0。解决方案：输入正整数</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>起订量或封顶量≤0。解决方案：输入正整数</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1901,7 +1901,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>起订量需小于封顶量</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>起订量≥封顶量。解决方案：调整起订量或封顶量</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>起订量≥封顶量。解决方案：调整起订量或封顶量</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1911,7 +1911,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>封顶量需大于起订量</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>封顶量≤起订量。解决方案：调整封顶量或起订量</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>封顶量≤起订量。解决方案：调整封顶量或起订量</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1921,7 +1921,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>起订量与第X行阶梯政策区间冲突</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>起订量落在其他行区间内。解决方案：调整起订量避免区间重叠</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>起订量落在其他行区间内。解决方案：调整起订量避免区间重叠</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1931,7 +1931,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>封顶量与第X行阶梯政策区间冲突</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>封顶量落在其他行区间内。解决方案：调整封顶量避免区间重叠</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>封顶量落在其他行区间内。解决方案：调整封顶量避免区间重叠</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1941,7 +1941,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>起订量与封顶量的区间与第X行阶梯政策区间冲突</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>当前行区间与其他行区间重叠。解决方案：调整区间避免重叠</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前行区间与其他行区间重叠。解决方案：调整区间避免重叠</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1951,7 +1951,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策封顶总数量行必须大于单个经销商封顶数量</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>单个经销商封顶数量&gt;政策封顶总数量行。解决方案：调整数值</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>单个经销商封顶数量&gt;政策封顶总数量行。解决方案：调整数值</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1961,7 +1961,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择销售渠道</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>销售渠道未选择。解决方案：头表销售渠道默认3，不应出现此问题</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>销售渠道未选择。解决方案：头表销售渠道默认3，不应出现此问题</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1971,7 +1971,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择政策类型</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>政策类型未选择。解决方案：先选择政策类型</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>政策类型未选择。解决方案：先选择政策类型</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1981,7 +1981,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择币种</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>币种未选择。解决方案：先选择币种</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>币种未选择。解决方案：先选择币种</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1991,7 +1991,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>提交前请先获取零售折扣底限！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>存在申请类型=产品的行但品类字段为空。解决方案：点击"获取零售折扣底限"按钮</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>存在申请类型=产品的行但品类字段为空。解决方案：点击"获取零售折扣底限"按钮</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2001,7 +2001,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>还未维护产品明细!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>产品明细表格为空。解决方案：添加产品明细</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>产品明细表格为空。解决方案：添加产品明细</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2011,7 +2011,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>批次开始时间和批次结束时间必须同时填写或同时为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>批次日期只填了一个。解决方案：同时填写或同时清空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>批次日期只填了一个。解决方案：同时填写或同时清空</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2021,7 +2021,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>以下产品已存在：XXX</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>选择的产品编码已存在于表格中。解决方案：选择其他产品</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>选择的产品编码已存在于表格中。解决方案：选择其他产品</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2031,7 +2031,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该产品型号已存在：XXX</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>选择的型号已存在于表格中。解决方案：选择其他型号</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>选择的型号已存在于表格中。解决方案：选择其他型号</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2044,7 +2044,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
       <span style="font-size:15px;">保存时报"产品行不能为空"但界面上有产品行</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>产品行可能全部被标记为删除状态(_status=delete)，排查SQL：<br/>
+      <strong style="color:#7C3AED;">原因：</strong>产品行可能全部被标记为删除状态(_status=delete)，排查SQL：<br>
       <strong style="color:#7C3AED;">处理：</strong>检查前端DataSet中记录的_status字段，确保至少有一条非delete状态的记录
     </div>
   </div>
@@ -2054,7 +2054,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
       <span style="font-size:15px;">提交时报"提交前请先获取零售折扣底限"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>头表PROD_ATTRIBUTION_CHANNEL字段为空，说明未点击"获取零售折扣底限"按钮，排查SQL：<br/>
+      <strong style="color:#7C3AED;">原因：</strong>头表PROD_ATTRIBUTION_CHANNEL字段为空，说明未点击"获取零售折扣底限"按钮，排查SQL：<br>
       <strong style="color:#7C3AED;">处理：</strong>在详情页非编辑模式下点击"获取零售折扣底限"按钮
     </div>
   </div>
@@ -2064,7 +2064,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
       <span style="font-size:15px;">选择产品弹窗报"以下字段不能为空：经销商编码"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>政策类型=客户时需要经销商编码，但头表未选择适用客户<br/>
+      <strong style="color:#7C3AED;">原因：</strong>政策类型=客户时需要经销商编码，但头表未选择适用客户<br>
       <strong style="color:#7C3AED;">处理：</strong>先在头表选择适用客户后再选择产品
     </div>
   </div>
@@ -2074,7 +2074,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
       <span style="font-size:15px;">导入时报"折扣政策id不能为空"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>单据未保存就点击导入，且自动保存失败<br/>
+      <strong style="color:#7C3AED;">原因：</strong>单据未保存就点击导入，且自动保存失败<br>
       <strong style="color:#7C3AED;">处理：</strong>先手动保存单据，再进行导入
     </div>
   </div>
@@ -2084,7 +2084,7 @@ SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discou
       <span style="font-size:15px;">阶梯政策区间冲突无法保存</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>同一产品下多条阶梯政策的起订量-封顶量区间有重叠<br/>
+      <strong style="color:#7C3AED;">原因：</strong>同一产品下多条阶梯政策的起订量-封顶量区间有重叠<br>
       <strong style="color:#7C3AED;">处理：</strong>调整各阶梯政策的起订量和封顶量，确保区间不重叠且连续
     </div>
   </div>

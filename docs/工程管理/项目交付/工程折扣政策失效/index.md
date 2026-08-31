@@ -45,25 +45,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h10v8H3z" stroke="white" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>选行建申</h5>
-      <small>选政策行<br/>填失效原因</small>
+      <small>选政策行<br>填失效原因</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>启动 OA 审批<br/>多级审核</small>
+      <small>启动 OA 审批<br>多级审核</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>更新失效</h5>
-      <small>政策行失效<br/>专项推送 CRM</small>
+      <small>政策行失效<br>专项推送 CRM</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M6 6l4 4M10 6l-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>全失则停</h5>
-      <small>全部失效时<br/>政策头失效</small>
+      <small>全部失效时<br>政策头失效</small>
     </div>
   </div>
 </div>
@@ -953,7 +953,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>失效政策行不允许为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择任何要失效的产品行，需至少选择一行</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择任何要失效的产品行，需至少选择一行</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -963,7 +963,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前折扣政策不允许失效 请检查</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>关联的政策编码在EPM_DISCOUNT_POLICY中不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的政策编码在EPM_DISCOUNT_POLICY中不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -973,7 +973,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除.</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>非NEW状态的单据不允许删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>非NEW状态的单据不允许删除</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -983,7 +983,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该单据</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>传入的discountPolicyDisabledId在数据库中不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>传入的discountPolicyDisabledId在数据库中不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -993,7 +993,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无法获上线文信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>无法获取当前登录用户上下文信息</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>无法获取当前登录用户上下文信息</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1003,7 +1003,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策失效id不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>工作流审批回调时objId为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>工作流审批回调时objId为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1013,7 +1013,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策明细推送crm出错,请稍后再试</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CRM接口返回null</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CRM接口返回null</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1023,7 +1023,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策明细推送crm出错：{lineId}:{message}</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CRM接口返回success=false</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CRM接口返回success=false</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1036,7 +1036,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
       <span style="font-size:15px;">工程折扣政策失效提交后编码规则使用了样品编码规则</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>前端headDS.ts中submit时硬编码覆盖isMakt:2和suitableType:'special'(应为isMakt:0和suitableType:'normal')，导致后端generateCode方法走到样品分支<br/>
+      <strong style="color:#7C3AED;">原因：</strong>前端headDS.ts中submit时硬编码覆盖isMakt:2和suitableType:'special'(应为isMakt:0和suitableType:'normal')，导致后端generateCode方法走到样品分支<br>
       <strong style="color:#7C3AED;">处理：</strong>修改headDS.ts中submit覆盖参数为isMakt:0, suitableType:'normal'
     </div>
   </div>
@@ -1046,7 +1046,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
       <span style="font-size:15px;">审批通过后政策头未变为已失效</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>政策下还有未失效的产品行(validStat≠3且不属于本次失效申请)<br/>
+      <strong style="color:#7C3AED;">原因：</strong>政策下还有未失效的产品行(validStat≠3且不属于本次失效申请)<br>
       <strong style="color:#7C3AED;">处理：</strong>确认是否还有其他未失效的产品行，需对所有行分别发起失效申请
     </div>
   </div>
@@ -1056,7 +1056,7 @@ NEW ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
       <span style="font-size:15px;">政策产品选择弹窗无数据</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>该政策下所有产品行已被失效(validStat=3)或已被其他失效申请关联(discountPolicyDisabledId不为空)<br/>
+      <strong style="color:#7C3AED;">原因：</strong>该政策下所有产品行已被失效(validStat=3)或已被其他失效申请关联(discountPolicyDisabledId不为空)<br>
       <strong style="color:#7C3AED;">处理：</strong>检查政策行状态，确认是否已全部失效
     </div>
   </div>

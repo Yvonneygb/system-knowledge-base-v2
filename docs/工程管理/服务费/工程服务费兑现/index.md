@@ -45,19 +45,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新建兑现单</h5>
-      <small>关联计提<br/>填兑现金额</small>
+      <small>关联计提<br>填兑现金额</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>双轨审批</h5>
-      <small>H0 + FSCC<br/>两级审核</small>
+      <small>H0 + FSCC<br>两级审核</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="white" stroke-width="1.5"/><path d="M8 5v3l2 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>已核销付款</h5>
-      <small>置为已核销<br/>触发付款</small>
+      <small>置为已核销<br>触发付款</small>
     </div>
   </div>
 </div>
@@ -626,7 +626,7 @@ SELECT * FROM epm_expense_to_cash WHERE cashing_id = :cashingId
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到工程服务费兑现记录</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>FSCC回调时根据cashingId未找到对应记录，可能数据已被删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>FSCC回调时根据cashingId未找到对应记录，可能数据已被删除</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -639,7 +639,7 @@ SELECT * FROM epm_expense_to_cash WHERE cashing_id = :cashingId
       <span style="font-size:15px;">审批通过后FSCC推送失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>FSCC接口不可用或推送数据格式异常<br/>
+      <strong style="color:#7C3AED;">原因：</strong>FSCC接口不可用或推送数据格式异常<br>
       <strong style="color:#7C3AED;">处理：</strong>查看ERROR_COLLECTION字段中的错误信息，确认FSCC服务状态后重新推送
     </div>
   </div>
@@ -649,7 +649,7 @@ SELECT * FROM epm_expense_to_cash WHERE cashing_id = :cashingId
       <span style="font-size:15px;">兑现金额计算不准确</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>质保金、税金等扣款计算逻辑有误，或报销单数据已更新<br/>
+      <strong style="color:#7C3AED;">原因：</strong>质保金、税金等扣款计算逻辑有误，或报销单数据已更新<br>
       <strong style="color:#7C3AED;">处理：</strong>核实报销单的服务费金额和扣款配置，重新计算可兑现金额
     </div>
   </div>

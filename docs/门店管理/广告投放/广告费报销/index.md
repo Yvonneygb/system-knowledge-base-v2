@@ -60,25 +60,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1" stroke="white" stroke-width="1.5"/><path d="M8 2V14" stroke="white" stroke-width="1.5"/><path d="M2 8H14" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>申请已通过</h5>
-      <small>广告投放申请单<br/>审批通过作为前提</small>
+      <small>广告投放申请单<br>审批通过作为前提</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1" stroke="white" stroke-width="1.5"/><path d="M8 5V11" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M5 8H11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>新建报销单</h5>
-      <small>选申请单、报销类型<br/>填报销金额与支付信息</small>
+      <small>选申请单、报销类型<br>填报销金额与支付信息</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10b981,#059669);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 8L7.5 9.5L10.5 6.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>提交推送 OA</h5>
-      <small>校验金额与在途唯一性<br/>额度外推送后扣减超预算</small>
+      <small>校验金额与在途唯一性<br>额度外推送后扣减超预算</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L10 5" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 5H11C12.1046 5 13 5.89543 13 7V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M10 11H7C5.89543 11 5 10.1046 5 9V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>OA 审批结果</h5>
-      <small>通过 → 创建发票兑现单<br/>驳回 → 修改后重新提交</small>
+      <small>通过 → 创建发票兑现单<br>驳回 → 修改后重新提交</small>
     </div>
   </div>
 </div>
@@ -1002,7 +1002,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送OA失败：门店广告投放报销申请不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>报销单在数据库中不存在，检查数据是否被删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>报销单在数据库中不存在，检查数据是否被删除</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1012,7 +1012,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>费用项目未找到！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>费用项目名称为空，额度内时支付方式≠3也校验</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>费用项目名称为空，额度内时支付方式≠3也校验</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1022,7 +1022,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>ID不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>OA回调时传入的ID为空或≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OA回调时传入的ID为空或≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1032,7 +1032,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>OA回调失败：广告投放报销申请不存在！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>OA回调时查询报销单不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OA回调时查询报销单不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1042,7 +1042,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次报销金额必须大于0！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>额度内广告费报销时本次报销金额≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>额度内广告费报销时本次报销金额≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1052,7 +1052,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次报销金额不能超过申请总金额！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>本次报销金额&gt;申请总金额</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>本次报销金额&gt;申请总金额</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1062,7 +1062,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次报销金额不可超过可使用资源额度！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>本次报销金额&gt;可使用资源额度</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>本次报销金额&gt;可使用资源额度</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1072,7 +1072,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次批准金额不可超过本次报销金额！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>本次批准金额&gt;本次报销金额</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>本次批准金额&gt;本次报销金额</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1082,7 +1082,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>已有在途的广告投放申请单，单号：X</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>同一申请单下已有在途报销单</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>同一申请单下已有在途报销单</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1092,7 +1092,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>报销申请不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>校验时查询报销单不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>校验时查询报销单不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1102,7 +1102,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>主键不能为空!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>更新工作流信息时主键为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>更新工作流信息时主键为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1115,7 +1115,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
       <span style="font-size:15px;">推送OA失败但工作流继续流转</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>推送OA异常被catch捕获返回false，但不阻断工作流。排查SQL：`SELECT * FROM FIN_FEE_BX_HEADER WHERE HZ_APPROVE_STATUS = 'RUN' AND CALLBACK_SOURCE IS NULL`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>推送OA异常被catch捕获返回false，但不阻断工作流。排查SQL：`SELECT * FROM FIN_FEE_BX_HEADER WHERE HZ_APPROVE_STATUS = 'RUN' AND CALLBACK_SOURCE IS NULL`<br>
       <strong style="color:#7C3AED;">处理：</strong>检查OA接口连接和单据配置表(OA_BILL_REF)中"YXZT门店广告投放报销申请"的配置
     </div>
   </div>
@@ -1125,7 +1125,7 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
       <span style="font-size:15px;">OA回调后数据未更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>OA回调时slHFinalApprover不为"Y"，即非最终审批人审批。排查SQL：`SELECT * FROM FIN_FEE_BX_HEADER WHERE HZ_APPROVE_STATUS = 'RUN' AND CALLBACK_SOURCE IS NULL`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>OA回调时slHFinalApprover不为"Y"，即非最终审批人审批。排查SQL：`SELECT * FROM FIN_FEE_BX_HEADER WHERE HZ_APPROVE_STATUS = 'RUN' AND CALLBACK_SOURCE IS NULL`<br>
       <strong style="color:#7C3AED;">处理：</strong>确认OA审批流程是否已到最终审批节点
     </div>
   </div>

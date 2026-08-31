@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="4.2" stroke="white" stroke-width="1.5"/><path d="M10.2 10.2L13.5 13.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看生效点将</h5>
-      <small>筛出已审批生效<br/>待执行的活动点将</small>
+      <small>筛出已审批生效<br>待执行的活动点将</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/><path d="M6.8 5.8L10.2 8L6.8 10.2V5.8Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>跟踪执行</h5>
-      <small>记录进度与<br/>现场完成情况</small>
+      <small>记录进度与<br>现场完成情况</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#22C55E);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 2H9L12 5V14H4V2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 2V5H12" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 8H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 11H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>完成并回写</h5>
-      <small>更新为执行完成<br/>回写活动执行记录</small>
+      <small>更新为执行完成<br>回写活动执行记录</small>
     </div>
   </div>
 </div>

@@ -47,25 +47,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 7L8 9L10 6"/></svg></div>
       <h5>生成预提数据</h5>
-      <small>定时或手工按年月<br/>汇总出库签收数据</small>
+      <small>定时或手工按年月<br>汇总出库签收数据</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 8H10"/></svg></div>
       <h5>新建服务费预提单</h5>
-      <small>新建单据并保存<br/>生成共享单号与预提单号</small>
+      <small>新建单据并保存<br>生成共享单号与预提单号</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>执行推共享</h5>
-      <small>推送预提数据至<br/>共享系统占用预算</small>
+      <small>推送预提数据至<br>共享系统占用预算</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5V8L10 10"/></svg></div>
       <h5>共享处理成功</h5>
-      <small>共享返回成功<br/>单据状态转为审批中</small>
+      <small>共享返回成功<br>单据状态转为审批中</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -596,7 +596,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>已存在重新生成【xxx】单据，无需重复生成！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>该年月下已存在非作废状态的预提单，不可重复生成。需先作废现有预提单后再重新生成</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>该年月下已存在非作废状态的预提单，不可重复生成。需先作废现有预提单后再重新生成</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -606,7 +606,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>参数错误！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>传入的DTO对象为null</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>传入的DTO对象为null</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -616,7 +616,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据编码不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>共享单号为空，需检查预提单数据完整性</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>共享单号为空，需检查预提单数据完整性</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -626,7 +626,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>年月不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>审批通过时间为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过时间为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -636,7 +636,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>交易公司不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>交易公司编码为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>交易公司编码为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -646,7 +646,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未查询到预提单数据，单据号：xxx</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>按共享单号查询不到预提单数据，可能数据已被删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>按共享单号查询不到预提单数据，可能数据已被删除</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -656,7 +656,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>共享接口返回null,执行共享接口失败！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>共享接口调用失败，检查共享系统连通性</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>共享接口调用失败，检查共享系统连通性</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -666,7 +666,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>共享返回的错误信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>共享系统处理失败，根据具体错误信息排查</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>共享系统处理失败，根据具体错误信息排查</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -676,7 +676,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请传入正确的同步时间段</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>定时任务参数startDate/endDate格式错误或为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>定时任务参数startDate/endDate格式错误或为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -686,7 +686,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>【xxx】该时间格式错误，请输入正确的时间格式：yyyy-MM</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>时间参数格式不符合yyyy-MM</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>时间参数格式不符合yyyy-MM</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -699,7 +699,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
       <span style="font-size:15px;">定时任务执行后未生成预提数据</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>expense_withholding_view视图中无对应年月的出库签收数据，或DIVISION_BASE_SET中无对应事业部配置<br/>
+      <strong style="color:#7C3AED;">原因：</strong>expense_withholding_view视图中无对应年月的出库签收数据，或DIVISION_BASE_SET中无对应事业部配置<br>
       <strong style="color:#7C3AED;">处理：</strong>1)检查视图数据`SELECT * FROM expense_withholding_view WHERE check_time = '{年月}'`; 2)检查事业部配置`SELECT * FROM division_base_set WHERE organization_id IN (...)`
     </div>
   </div>
@@ -709,7 +709,7 @@ SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'
       <span style="font-size:15px;">执行推送共享后状态未更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>共享接口返回成功但updateBillStatus执行异常，或共享单号对应多条记录<br/>
+      <strong style="color:#7C3AED;">原因：</strong>共享接口返回成功但updateBillStatus执行异常，或共享单号对应多条记录<br>
       <strong style="color:#7C3AED;">处理：</strong>`SELECT * FROM EXPENSE_WITHHOLDING_HEAD WHERE SHARE_NO = '{共享单号}'`检查记录状态
     </div>
   </div>

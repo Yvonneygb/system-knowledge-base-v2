@@ -57,19 +57,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>新建申请</h5>
-      <small>人工录入或<br/>Excel 批量导入</small>
+      <small>人工录入或<br>Excel 批量导入</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L13 4V8C13 11 8 14 8 14C8 14 3 11 3 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>双轨审批</h5>
-      <small>系统工作流与<br/>OA 审批并行</small>
+      <small>系统工作流与<br>OA 审批并行</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>审批生效</h5>
-      <small>通过后调整余额<br/>拒绝则终止</small>
+      <small>通过后调整余额<br>拒绝则终止</small>
     </div>
   </div>
 </div>
@@ -588,7 +588,7 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>调整单号生成失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>编码规则AE_SA_ADS_FEE_ADJUST_IN_QUOTA_ADJ未配置</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>编码规则AE_SA_ADS_FEE_ADJUST_IN_QUOTA_ADJ未配置</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -598,7 +598,7 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>明细行不允许为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>无明细行记录</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>无明细行记录</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -611,7 +611,7 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
       <span style="font-size:15px;">OA审批后审核状态未更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>OA回调中判断"最终审批节点"条件不满足<br/>
+      <strong style="color:#7C3AED;">原因：</strong>OA回调中判断"最终审批节点"条件不满足<br>
       <strong style="color:#7C3AED;">处理：</strong>确认OA审批是否为最终审批节点通过
     </div>
   </div>

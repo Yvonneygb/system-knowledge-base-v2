@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>选择条件</h5>
-      <small>按发票类型/号码<br/>开票日期筛选</small>
+      <small>按发票类型/号码<br>开票日期筛选</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><path d="M8 5V8L10 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>执行查询</h5>
-      <small>检索匹配的<br/>金税发票号码</small>
+      <small>检索匹配的<br>金税发票号码</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="10" width="5" height="3" rx="1" stroke="white" stroke-width="1.5"/><path d="M9 10H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看结果</h5>
-      <small>核对发票号与税金<br/>用于对账</small>
+      <small>核对发票号与税金<br>用于对账</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -394,7 +394,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>FIN_INVOICE表中无匹配记录</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>FIN_INVOICE表中无匹配记录</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -407,7 +407,7 @@
       <span style="font-size:15px;">发票税金显示为0</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>taxRate为0时invoiceType=1(普票)，税金计算结果为0<br/>
+      <strong style="color:#7C3AED;">原因：</strong>taxRate为0时invoiceType=1(普票)，税金计算结果为0<br>
       <strong style="color:#7C3AED;">处理：</strong>确认发票类型是否为普票，普票税率为0属于正常情况
     </div>
   </div>
@@ -417,7 +417,7 @@
       <span style="font-size:15px;">OCR识别后发票号码为空</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>OCR返回的JSON中invoiceNo字段为空<br/>
+      <strong style="color:#7C3AED;">原因：</strong>OCR返回的JSON中invoiceNo字段为空<br>
       <strong style="color:#7C3AED;">处理：</strong>检查OCR识别结果，手动补录发票号码
     </div>
   </div>

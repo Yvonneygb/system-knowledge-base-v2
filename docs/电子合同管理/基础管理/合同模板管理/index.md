@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 8H10"/></svg></div>
       <h5>新增/配置</h5>
-      <small>创建模板<br/>配置类型与子项</small>
+      <small>创建模板<br>配置类型与子项</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5V8L10 10"/></svg></div>
       <h5>判断是否启用</h5>
-      <small>视业务需要<br/>决定启用与否</small>
+      <small>视业务需要<br>决定启用与否</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 7L8 9L10 6"/></svg></div>
       <h5>启用模板</h5>
-      <small>生效可供<br/>签约引用</small>
+      <small>生效可供<br>签约引用</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>禁用模板</h5>
-      <small>停用后<br/>不再新引用</small>
+      <small>停用后<br>不再新引用</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -360,7 +360,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>模板名称已存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>更换模板名称</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>更换模板名称</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 ```sql
 SELECT TEMPLATE_ID, TEMPLATE_NAME FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLATE_NAME = ? AND BRAND_ID = ?;
@@ -374,7 +374,7 @@ SELECT TEMPLATE_ID, TEMPLATE_NAME FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请至少配置一条合同条款</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>添加至少一条条款</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>添加至少一条条款</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 ```sql
 SELECT TEMPLATE_ID, CLAUSE_CONTENT FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLATE_ID = ?;
@@ -388,7 +388,7 @@ SELECT TEMPLATE_ID, CLAUSE_CONTENT FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPL
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请至少配置一个签署节点</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>添加至少一个签署节点</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>添加至少一个签署节点</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 ```sql
 SELECT TEMPLATE_ID, SIGN_FLOW_CONFIG FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLATE_ID = ?;
@@ -402,7 +402,7 @@ SELECT TEMPLATE_ID, SIGN_FLOW_CONFIG FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEM
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>模板已被引用，不可删除</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>禁用而非删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>禁用而非删除</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 ```sql
 SELECT COUNT(*) FROM ELECTRONIC_CONTRACT WHERE TEMPLATE_ID = ?;

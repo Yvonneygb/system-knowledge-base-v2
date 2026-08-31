@@ -98,25 +98,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 4H14V7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>自动抬价</h5>
-      <small>集团出库，符合条件<br/>订单自动抬价</small>
+      <small>集团出库，符合条件<br>订单自动抬价</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="1" width="10" height="14" rx="1" stroke="white" stroke-width="1.5"/><path d="M6 5H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 8H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 11H8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>发票上传</h5>
-      <small>经销商上传发票到系统<br/>财务审核发票真实性</small>
+      <small>经销商上传发票到系统<br>财务审核发票真实性</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10b981,#059669);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L10 5" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 5H11C12.1046 5 13 5.89543 13 7V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M10 11H7C5.89543 11 5 10.1046 5 9V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>一对一核销</h5>
-      <small>出库明细 ↔ 发票明细<br/>逐一对应，财务审核</small>
+      <small>出库明细 ↔ 发票明细<br>逐一对应，财务审核</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="4" width="14" height="10" rx="1" stroke="white" stroke-width="1.5"/><path d="M1 7H12" stroke="white" stroke-width="1.5"/><circle cx="12" cy="10.5" r="1.5" fill="white"/></svg></div>
       <h5>退回金额</h5>
-      <small>核销通过后<br/>按核销成功数量退还到余额池</small>
+      <small>核销通过后<br>按核销成功数量退还到余额池</small>
     </div>
   </div>
   <div style="background:#F5F3FF;padding:14px 18px;border-radius:10px;display:flex;gap:10px;align-items:flex-start;margin-top:16px;">
@@ -303,7 +303,7 @@
     <div class="biz-tl-item">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><div style="width:28px;height:28px;border-radius:8px;background:#FEE2E2;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 2V10" stroke="white" stroke-width="1.2" stroke-linecap="round"/><path d="M3 4H11" stroke="white" stroke-width="1.2" stroke-linecap="round"/><circle cx="7" cy="2" r="1.5" stroke="white" stroke-width="1.2"/><path d="M3 6L1 10H5L3 6Z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/><path d="M11 6L9 10H13L11 6Z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div><span class="biz-tl-date">2024-11-09 · 收紧考核</span></div>
       <h6>发布《关于加强经销商工程、家装发货真实性核销的通知》</h6>
-      <p>① 超过<strong>120天</strong>未核销 → 折扣抬价不予返还；超过<strong>180天</strong>未核销 → 自动扣回折扣<br/>② 核销率要求从<strong>80% → 提高到85%</strong><br/>③ 适用于发货日期为2025年1月1日及之后的发货明细</p>
+      <p>① 超过<strong>120天</strong>未核销 → 折扣抬价不予返还；超过<strong>180天</strong>未核销 → 自动扣回折扣<br>② 核销率要求从<strong>80% → 提高到85%</strong><br>③ 适用于发货日期为2025年1月1日及之后的发货明细</p>
     </div>
   </div>
 </div>
@@ -909,70 +909,70 @@
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">{invbillno}-{itemCode}对应的出库单明细不存在</td>
             <td style="font-size:13px;">提交审批时校验</td>
-            <td style="font-size:13px;"><strong>根因：</strong>出库单行被删除或关联ID为空<br/><strong>解决：</strong>确认出库单行是否仍在系统中</td>
+            <td style="font-size:13px;"><strong>根因：</strong>出库单行被删除或关联ID为空<br><strong>解决：</strong>确认出库单行是否仍在系统中</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">{invbillno}-{itemCode}对应的出库单明细可核销数量({remainingVerifiableQty})不足</td>
             <td style="font-size:13px;">提交审批时校验</td>
-            <td style="font-size:13px;"><strong>根因：</strong>出库单行被多张审批中核销单占用<br/><strong>解决：</strong>等待其他核销单审批完成后再提交</td>
+            <td style="font-size:13px;"><strong>根因：</strong>出库单行被多张审批中核销单占用<br><strong>解决：</strong>等待其他核销单审批完成后再提交</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">{invoiceNumber}本次核销数量为:{invoiceDetailsId},剩余可核销数量为:{surplusCanVeriferNumber}</td>
             <td style="font-size:13px;">提交审批时校验</td>
-            <td style="font-size:13px;"><strong>根因：</strong>发票明细剩余可核销数量不足<br/><strong>解决：</strong>减少本次核销数量或更换发票</td>
+            <td style="font-size:13px;"><strong>根因：</strong>发票明细剩余可核销数量不足<br><strong>解决：</strong>减少本次核销数量或更换发票</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">提交失败：序号:{n} 的发票明细同时核销出库单产品: {历史产品编码列表}</td>
             <td style="font-size:13px;">提交审批时校验（跨单）</td>
-            <td style="font-size:13px;"><strong>根因：</strong>该发票明细已核销过其他产品<br/><strong>解决：</strong>同一发票明细只能核销同一种产品</td>
+            <td style="font-size:13px;"><strong>根因：</strong>该发票明细已核销过其他产品<br><strong>解决：</strong>同一发票明细只能核销同一种产品</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">提交失败：序号:{n} 的发票明细同时核销本核销单下的多个出库单产品</td>
             <td style="font-size:13px;">提交审批时校验（同单）</td>
-            <td style="font-size:13px;"><strong>根因：</strong>同核销单内一张发票明细关联了不同产品<br/><strong>解决：</strong>拆分核销单或更换发票明细</td>
+            <td style="font-size:13px;"><strong>根因：</strong>同核销单内一张发票明细关联了不同产品<br><strong>解决：</strong>拆分核销单或更换发票明细</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">本次核销数量的小数位不能超过3位</td>
             <td style="font-size:13px;">保存时校验</td>
-            <td style="font-size:13px;"><strong>根因：</strong>核销数量精度超过3位小数<br/><strong>解决：</strong>调整数量精度后重新保存</td>
+            <td style="font-size:13px;"><strong>根因：</strong>核销数量精度超过3位小数<br><strong>解决：</strong>调整数量精度后重新保存</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">本次核销数量不能大于剩余可核销数量</td>
             <td style="font-size:13px;">保存时校验</td>
-            <td style="font-size:13px;"><strong>根因：</strong>本次核销数量 > 发票明细剩余可核数量<br/><strong>解决：</strong>减少本次核销数量</td>
+            <td style="font-size:13px;"><strong>根因：</strong>本次核销数量 > 发票明细剩余可核数量<br><strong>解决：</strong>减少本次核销数量</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">本次核销数量不能大于可核销数量</td>
             <td style="font-size:13px;">保存时校验</td>
-            <td style="font-size:13px;"><strong>根因：</strong>同一核销行内明细合计 > 出库单可核数量<br/><strong>解决：</strong>调整明细数量使其合计不超过可核数量</td>
+            <td style="font-size:13px;"><strong>根因：</strong>同一核销行内明细合计 > 出库单可核数量<br><strong>解决：</strong>调整明细数量使其合计不超过可核数量</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">核销明细状态异常,请刷新数据后重试</td>
             <td style="font-size:13px;">取消核销时</td>
-            <td style="font-size:13px;"><strong>根因：</strong>取消操作并发导致数据不一致<br/><strong>解决：</strong>刷新页面后重新执行取消操作</td>
+            <td style="font-size:13px;"><strong>根因：</strong>取消操作并发导致数据不一致<br><strong>解决：</strong>刷新页面后重新执行取消操作</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td>
           </tr>
           <tr>
             <td style="color:#DC2626;font-weight:600;font-size:13px;">更新失败,取消后出库单行已核销数量小于0</td>
             <td style="font-size:13px;">取消核销时</td>
-            <td style="font-size:13px;"><strong>根因：</strong>并发取消操作导致数量计算异常<br/><strong>解决：</strong>联系管理员核查并手工修正数据</td>
+            <td style="font-size:13px;"><strong>根因：</strong>并发取消操作导致数量计算异常<br><strong>解决：</strong>联系管理员核查并手工修正数据</td>
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断型</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td>
           </tr>
@@ -1155,7 +1155,7 @@ WHERE vr.truth_id = {当前核销单ID} AND vr.del_flag = 0;
       <span style="font-size:15px;">提交核销时提示"出库单明细不存在"是什么情况？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>所关联的出库单行已被物理删除或软删除（del_flag=1），系统在校验时无法找到该记录。<br/>
+      <strong style="color:#7C3AED;">原因：</strong>所关联的出库单行已被物理删除或软删除（del_flag=1），系统在校验时无法找到该记录。<br>
       <strong style="color:#7C3AED;">处理：</strong>检查核销明细中填写的出库单行ID是否正确；若出库单确实已删，需重新找可用的出库单行进行核销。
     </div>
   </div>
@@ -1165,8 +1165,8 @@ WHERE vr.truth_id = {当前核销单ID} AND vr.del_flag = 0;
       <span style="font-size:15px;">同一张出库单行的核销数量，各张核销单加总不能超过签收数量，这个限制在哪里控制？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">控制点：</strong>出库单行的<span style="color:#DC2626; font-weight:600;">已核销数量（already_verify_qty）</span>和<span style="color:#DC2626; font-weight:600;">审批中占用数量</span>。<br/>
-      <strong style="color:#7C3AED;">公式：</strong>真实剩余 = 签收确认数量 − 已核销数量 − 审批中占用数量。<br/>
+      <strong style="color:#7C3AED;">控制点：</strong>出库单行的<span style="color:#DC2626; font-weight:600;">已核销数量（already_verify_qty）</span>和<span style="color:#DC2626; font-weight:600;">审批中占用数量</span>。<br>
+      <strong style="color:#7C3AED;">公式：</strong>真实剩余 = 签收确认数量 − 已核销数量 − 审批中占用数量。<br>
       <strong style="color:#7C3AED;">注意：</strong>只要核销单提交了（未审批完成），就会冻结占用数量，不是审批通过才占用。
     </div>
   </div>
@@ -1176,8 +1176,8 @@ WHERE vr.truth_id = {当前核销单ID} AND vr.del_flag = 0;
       <span style="font-size:15px;">一张发票可以核销给不同的出库单吗？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">可以，但有限制：</strong>一张发票明细（invoice_detail）首次核销后，其关联的产品编码（item_code）就固定了。<br/>
-      <strong style="color:#7C3AED;">含义：</strong>同一张发票明细，后续核销只能关联相同的产品编码，不能再换产品。<br/>
+      <strong style="color:#7C3AED;">可以，但有限制：</strong>一张发票明细（invoice_detail）首次核销后，其关联的产品编码（item_code）就固定了。<br>
+      <strong style="color:#7C3AED;">含义：</strong>同一张发票明细，后续核销只能关联相同的产品编码，不能再换产品。<br>
       <strong style="color:#7C3AED;">跨单限制：</strong>一张发票明细可以在不同核销单中分别核销（只要产品一致），但不能在同单内分给多个不同产品。
     </div>
   </div>
@@ -1187,9 +1187,9 @@ WHERE vr.truth_id = {当前核销单ID} AND vr.del_flag = 0;
       <span style="font-size:15px;">核销截止日期怎么算？最长能拖多久？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">标准规则：</strong>出库单签收日期 + 120天 = 默认核销截止日。<br/>
-      <strong style="color:#7C3AED;">特殊规则：</strong>IS_HOME=2（家装）的项目，延期至 180天。<br/>
-      <strong style="color:#7C3AED;">延期覆盖：</strong>若项目配置了延期核销规则，以延期配置为准，不受120/180天限制。<br/>
+      <strong style="color:#7C3AED;">标准规则：</strong>出库单签收日期 + 120天 = 默认核销截止日。<br>
+      <strong style="color:#7C3AED;">特殊规则：</strong>IS_HOME=2（家装）的项目，延期至 180天。<br>
+      <strong style="color:#7C3AED;">延期覆盖：</strong>若项目配置了延期核销规则，以延期配置为准，不受120/180天限制。<br>
       <strong style="color:#7C3AED;">超期后果：</strong>超过截止日仍可提交，但会被标记为"延期核销"，触发额外审批流。
     </div>
   </div>
@@ -1199,8 +1199,8 @@ WHERE vr.truth_id = {当前核销单ID} AND vr.del_flag = 0;
       <span style="font-size:15px;">取消核销后，发票和出库单数量会回滚吗？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">会回滚：</strong>取消核销审批通过后，系统自动还原出库单行的<span style="color:#DC2626; font-weight:600;">已核销数量</span>和发票明细的<span style="color:#DC2626; font-weight:600;">已核销数量</span>。<br/>
-      <strong style="color:#7C3AED;">不回滚：</strong>渠道返点计算结果、业代补贴等下游数据需要手动处理或联系管理员回滚。<br/>
+      <strong style="color:#7C3AED;">会回滚：</strong>取消核销审批通过后，系统自动还原出库单行的<span style="color:#DC2626; font-weight:600;">已核销数量</span>和发票明细的<span style="color:#DC2626; font-weight:600;">已核销数量</span>。<br>
+      <strong style="color:#7C3AED;">不回滚：</strong>渠道返点计算结果、业代补贴等下游数据需要手动处理或联系管理员回滚。<br>
       <strong style="color:#7C3AED;">注意：</strong>取消操作必须在核销单状态为"审批通过"时才能发起；审批中或新建状态直接删除单据即可。
     </div>
   </div>
@@ -1210,11 +1210,11 @@ WHERE vr.truth_id = {当前核销单ID} AND vr.del_flag = 0;
       <span style="font-size:15px;">核销单提交流程卡在"审批中"不动了怎么办？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">Step 1：</strong>确认审核状态（auditStat）和工作流状态（hzApproveStatus）是否一致。<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;• auditStat=已提交 &amp; hzApproveStatus=RUN → 审批中，正常等待<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;• auditStat=已提交 &amp; hzApproveStatus=APPROVED → 审批通过，但状态未刷新，刷新页面<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;• auditStat=新建 &amp; hzApproveStatus=空白 → 提交失败，需检查工作流引擎（HZERO）<br/>
-      <strong style="color:#7C3AED;">Step 2：</strong>登录 HZERO 工作流管理后台，查看该实例的当前节点和审批人。<br/>
+      <strong style="color:#7C3AED;">Step 1：</strong>确认审核状态（auditStat）和工作流状态（hzApproveStatus）是否一致。<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;• auditStat=已提交 &amp; hzApproveStatus=RUN → 审批中，正常等待<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;• auditStat=已提交 &amp; hzApproveStatus=APPROVED → 审批通过，但状态未刷新，刷新页面<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;• auditStat=新建 &amp; hzApproveStatus=空白 → 提交失败，需检查工作流引擎（HZERO）<br>
+      <strong style="color:#7C3AED;">Step 2：</strong>登录 HZERO 工作流管理后台，查看该实例的当前节点和审批人。<br>
       <strong style="color:#7C3AED;">Step 3：</strong>若审批人失联或流程异常，可由系统管理员撤回或强制结束流程。
     </div>
   </div>

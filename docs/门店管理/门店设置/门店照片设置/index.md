@@ -279,7 +279,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>照片项目名称不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>照片行信息中照片项目名称字段为空时触发校验。<br/>该页面为hlod低代码页面，前端C7N内置必填校验。<br/>排查是否存在未填写照片项目名称的历史异常数据。</div>
+    <div class="detail-text" v-pre>照片行信息中照片项目名称字段为空时触发校验。<br>该页面为hlod低代码页面，前端C7N内置必填校验。<br>排查是否存在未填写照片项目名称的历史异常数据。</div>
     <div class="detail-tip" v-pre>toast提醒，提示后用户补充照片项目名称保存</div>
 
 ```sql
@@ -293,7 +293,7 @@ SELECT * FROM FIN_FEE_CHECK_BX_PHOTO WHERE PHOTO_ITEM IS NULL OR TRIM(PHOTO_ITEM
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>门店装修申请ID不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>门店装修申请ID（terminalApplyId）为空时触发校验。<br/>该字段为关联装修申请的外键，必须在创建照片行时正确关联。<br/>排查前端传入的 terminalApplyId 参数是否缺失。</div>
+    <div class="detail-text" v-pre>门店装修申请ID（terminalApplyId）为空时触发校验。<br>该字段为关联装修申请的外键，必须在创建照片行时正确关联。<br>排查前端传入的 terminalApplyId 参数是否缺失。</div>
     <div class="detail-tip" v-pre>toast提醒，提示后确保关联有效的装修申请</div>
 
 ```sql

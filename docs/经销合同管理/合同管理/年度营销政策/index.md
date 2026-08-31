@@ -599,7 +599,7 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>参数id 不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>传入的id参数为null，检查前端路由参数</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>传入的id参数为null，检查前端路由参数</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -609,7 +609,7 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>配置类型行不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>提交时lines列表为空，需至少添加一行配置</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>提交时lines列表为空，需至少添加一行配置</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -619,7 +619,7 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>执行值类型不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>违约金类型行缺少执行值类型或执行值</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>违约金类型行缺少执行值类型或执行值</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -629,7 +629,7 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据的审核状态异常，请重新核实</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>当前政策状态不是未失效(notenable)，不允许修改</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前政策状态不是未失效(notenable)，不允许修改</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -639,7 +639,7 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据的状态异常，请联系IT处理</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>当前政策状态不是未失效(notenable)，不允许生效</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前政策状态不是未失效(notenable)，不允许生效</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -652,7 +652,7 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
       <span style="font-size:15px;">生效后同事业部同年度原有政策自动失效</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>生效逻辑中会查询同事业部+同年度的已生效政策，将其状态改为disenable<br/>
+      <strong style="color:#7C3AED;">原因：</strong>生效逻辑中会查询同事业部+同年度的已生效政策，将其状态改为disenable<br>
       <strong style="color:#7C3AED;">处理：</strong>这是正常业务逻辑，如需保留原政策请确认是否真的需要生效新政策
     </div>
   </div>
@@ -662,7 +662,7 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
       <span style="font-size:15px;">修改政策后原有子表数据丢失</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>修改采用先删后插策略，原有行、合同类型、阶梯区间数据全部删除后重新插入<br/>
+      <strong style="color:#7C3AED;">原因：</strong>修改采用先删后插策略，原有行、合同类型、阶梯区间数据全部删除后重新插入<br>
       <strong style="color:#7C3AED;">处理：</strong>这是设计如此，修改前请确认数据已正确填写
     </div>
   </div>

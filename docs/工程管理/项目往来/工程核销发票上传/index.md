@@ -47,25 +47,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 7L8 9L10 6"/></svg></div>
       <h5>关联核销单</h5>
-      <small>从真实性核销单<br/>进入发票上传</small>
+      <small>从真实性核销单<br>进入发票上传</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 8H10"/></svg></div>
       <h5>新建上传单</h5>
-      <small>上传影像/录入信息<br/>保存四部分内容</small>
+      <small>上传影像/录入信息<br>保存四部分内容</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>提交审批</h5>
-      <small>走发票上传<br/>工作流审批</small>
+      <small>走发票上传<br>工作流审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 7L8 9L10 6"/></svg></div>
       <h5>审批通过</h5>
-      <small>发票明细生效<br/>可参与核销</small>
+      <small>发票明细生效<br>可参与核销</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -819,7 +819,7 @@ SELECT i.INVOICE_CODE, i.INVOICE_NUMBER, i.INVOICE_AMOUNT,
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票号码重复</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>同一核销单下存在相同发票代码+号码的记录，需删除重复项</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>同一核销单下存在相同发票代码+号码的记录，需删除重复项</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -829,7 +829,7 @@ SELECT i.INVOICE_CODE, i.INVOICE_NUMBER, i.INVOICE_AMOUNT,
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>行金额校验失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>发票明细金额合计与发票总金额不一致</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>发票明细金额合计与发票总金额不一致</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -839,7 +839,7 @@ SELECT i.INVOICE_CODE, i.INVOICE_NUMBER, i.INVOICE_AMOUNT,
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>OCR识别失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>OCR服务不可用或影像文件格式不支持</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OCR服务不可用或影像文件格式不支持</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -852,7 +852,7 @@ SELECT i.INVOICE_CODE, i.INVOICE_NUMBER, i.INVOICE_AMOUNT,
       <span style="font-size:15px;">OCR识别后发票信息不完整</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>发票影像模糊、格式不规范、OCR服务识别精度限制<br/>
+      <strong style="color:#7C3AED;">原因：</strong>发票影像模糊、格式不规范、OCR服务识别精度限制<br>
       <strong style="color:#7C3AED;">处理：</strong>手工补充修正识别结果，或重新上传清晰影像
     </div>
   </div>
@@ -862,7 +862,7 @@ SELECT i.INVOICE_CODE, i.INVOICE_NUMBER, i.INVOICE_AMOUNT,
       <span style="font-size:15px;">导入发票明细后金额校验失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>导入数据中金额字段格式错误或与发票总金额不一致<br/>
+      <strong style="color:#7C3AED;">原因：</strong>导入数据中金额字段格式错误或与发票总金额不一致<br>
       <strong style="color:#7C3AED;">处理：</strong>检查导入Excel中金额列格式，确保明细金额合计=发票总金额
     </div>
   </div>

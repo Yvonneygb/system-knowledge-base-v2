@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><path d="M8 5V8L10 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选择条件</h5>
-      <small>选事业部/经销商<br/>定位对账单</small>
+      <small>选事业部/经销商<br>定位对账单</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/><path d="M4 5H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 8H9" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查询列表</h5>
-      <small>展示待兑现<br/>对账单列表</small>
+      <small>展示待兑现<br>对账单列表</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 10H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 13H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看/打印</h5>
-      <small>查看明细并<br/>打印对账单</small>
+      <small>查看明细并<br>打印对账单</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -406,7 +406,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>对应条件下的待兑现折扣折让数据不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>对应条件下的待兑现折扣折让数据不存在</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -419,7 +419,7 @@
       <span style="font-size:15px;">查询不到待兑现的折扣折让数据</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>折扣折让政策未审批通过，或已全部兑现完成<br/>
+      <strong style="color:#7C3AED;">原因：</strong>折扣折让政策未审批通过，或已全部兑现完成<br>
       <strong style="color:#7C3AED;">处理：</strong>确认折扣折让政策审批状态，检查是否已兑现
     </div>
   </div>
@@ -429,7 +429,7 @@
       <span style="font-size:15px;">对账单金额与预期不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>折扣折让政策金额在审批后发生了调整，或兑现部分金额后未更新对账单<br/>
+      <strong style="color:#7C3AED;">原因：</strong>折扣折让政策金额在审批后发生了调整，或兑现部分金额后未更新对账单<br>
       <strong style="color:#7C3AED;">处理：</strong>核对折扣折让政策原始金额与已兑现金额
     </div>
   </div>

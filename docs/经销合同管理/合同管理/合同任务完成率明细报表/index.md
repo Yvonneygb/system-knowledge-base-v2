@@ -50,19 +50,19 @@
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>设查询条件</h5>
-        <small>年月范围/合同<br/>工程/经销商筛选</small>
+        <small>年月范围/合同<br>工程/经销商筛选</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M2 6H14M5 2V4M11 2V4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>查看结果</h5>
-        <small>三维度 Tab 切换<br/>图表趋势分析</small>
+        <small>三维度 Tab 切换<br>图表趋势分析</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V11M4.5 7.5L8 11L11.5 7.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h5>导出 Excel</h5>
-        <small>按合同/工程/明细<br/>导出报表数据</small>
+        <small>按合同/工程/明细<br>导出报表数据</small>
       </div>
     </div>
     <div class="kl-tip" style="margin-top:14px;">
@@ -857,7 +857,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>纯查询报表，无报错逻辑</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>纯查询报表，无报错逻辑</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -870,7 +870,7 @@
       <span style="font-size:15px;">查询无数据</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>查询条件(年月范围/合同编码/工程编码/经销商编码)过滤后无匹配数据<br/>
+      <strong style="color:#7C3AED;">原因：</strong>查询条件(年月范围/合同编码/工程编码/经销商编码)过滤后无匹配数据<br>
       <strong style="color:#7C3AED;">处理：</strong>放宽查询条件，检查年月范围是否正确
     </div>
   </div>
@@ -880,7 +880,7 @@
       <span style="font-size:15px;">完成率显示为0或异常值</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>有效合同数量为0时完成率无法计算，或发货数据未及时更新<br/>
+      <strong style="color:#7C3AED;">原因：</strong>有效合同数量为0时完成率无法计算，或发货数据未及时更新<br>
       <strong style="color:#7C3AED;">处理：</strong>确认出库单/发货单是否已审核确认，检查有效合同数量是否正确
     </div>
   </div>
@@ -890,7 +890,7 @@
       <span style="font-size:15px;">图表不显示</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>searchYearContractRate接口返回code不为success<br/>
+      <strong style="color:#7C3AED;">原因：</strong>searchYearContractRate接口返回code不为success<br>
       <strong style="color:#7C3AED;">处理：</strong>检查AE_REPORT服务是否正常运行，确认报表接口返回数据格式
     </div>
   </div>

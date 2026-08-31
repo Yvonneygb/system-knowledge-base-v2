@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5V8L10 10"/></svg></div>
       <h5>签署异常</h5>
-      <small>拒签/OA驳回<br/>用印/门户异常</small>
+      <small>拒签/OA驳回<br>用印/门户异常</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M8 3L14 8L8 13L2 8Z"/><path d="M8 6V8"/></svg></div>
       <h5>判断可恢复性</h5>
-      <small>区分可重试<br/>与需终止</small>
+      <small>区分可重试<br>与需终止</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M4 8L8 4L12 8"/><path d="M8 4V12"/></svg></div>
       <h5>恢复流转</h5>
-      <small>重新提交/用印<br/>推送门户</small>
+      <small>重新提交/用印<br>推送门户</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 8H10"/></svg></div>
       <h5>终止合同</h5>
-      <small>不可恢复时<br/>终止收尾</small>
+      <small>不可恢复时<br>终止收尾</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -409,7 +409,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同状态不允许此操作</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>确认合同当前状态是否正确</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认合同当前状态是否正确</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 ```sql
 SELECT CONTRACT_STATUS FROM ELECTRONIC_CONTRACT WHERE ELECTRONIC_CONTRACT_ID = ?;
@@ -423,7 +423,7 @@ SELECT CONTRACT_STATUS FROM ELECTRONIC_CONTRACT WHERE ELECTRONIC_CONTRACT_ID = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>OA提交失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>检查OA系统连通性后重试</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查OA系统连通性后重试</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 ```sql
 SELECT * FROM ELECTRONIC_CONTRACT WHERE CONTRACT_STATUS = chr(39)||'submitted_oa'||chr(39) AND ELECTRONIC_CONTRACT_ID = ?;
@@ -437,7 +437,7 @@ SELECT * FROM ELECTRONIC_CONTRACT WHERE CONTRACT_STATUS = chr(39)||'submitted_oa
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>用印前置条件不满足</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>补充合同必填信息后重试</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>补充合同必填信息后重试</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 ```sql
 SELECT TEMPLATE_ID, CLAUSE_CONTENT, SIGN_FLOW_CONFIG FROM ELECTRONIC_CONTRACT_TEMPLATE WHERE TEMPLATE_ID = (SELECT TEMPLATE_ID FROM ELECTRONIC_CONTRACT WHERE ELECTRONIC_CONTRACT_ID = ?);
@@ -451,7 +451,7 @@ SELECT TEMPLATE_ID, CLAUSE_CONTENT, SIGN_FLOW_CONFIG FROM ELECTRONIC_CONTRACT_TE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>门户推送失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>检查门户系统后使用重新推送按钮</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查门户系统后使用重新推送按钮</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 ```sql
 SELECT ELECTRONIC_CONTRACT_ID, PUSH_PORTAL_FLAG FROM ELECTRONIC_CONTRACT WHERE ELECTRONIC_CONTRACT_ID = ?;

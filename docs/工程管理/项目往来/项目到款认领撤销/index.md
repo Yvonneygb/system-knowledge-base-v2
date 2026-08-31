@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>选取认领明细</h5>
-      <small>从已认领记录<br/>选取撤销项</small>
+      <small>从已认领记录<br>选取撤销项</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 8H10"/></svg></div>
       <h5>新建撤销单</h5>
-      <small>登记撤销明细<br/>并保存</small>
+      <small>登记撤销明细<br>并保存</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>提交审批</h5>
-      <small>审批通过后<br/>推送ERP撤销</small>
+      <small>审批通过后<br>推送ERP撤销</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M4 8L8 4L12 8"/><path d="M8 4V12"/></svg></div>
       <h5>回加金额</h5>
-      <small>冲销ERP<br/>金额退回可认</small>
+      <small>冲销ERP<br>金额退回可认</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -615,7 +615,7 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销：报销单号-xxx</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>撤销后可结算兑现金额&lt;0，需减少撤销明细或撤销金额</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>撤销后可结算兑现金额&lt;0，需减少撤销明细或撤销金额</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -625,7 +625,7 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，单据id不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>传入的单据ID为null或0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>传入的单据ID为null或0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -635,7 +635,7 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，单据不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>按ID查询不到撤销单</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>按ID查询不到撤销单</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -645,7 +645,7 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，撤销明细不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>撤销单下无明细数据</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>撤销单下无明细数据</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -655,7 +655,7 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>明细中以下认领明细已被撤销，请剔除后再重新提交撤销：...</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>明细中包含CANCEL_FLAG=Y的认领明细</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>明细中包含CANCEL_FLAG=Y的认领明细</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -668,7 +668,7 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
       <span style="font-size:15px;">撤销审批通过后到款单可认领金额未回加</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>selectClaimAmtByCancelId查询结果为空，或EPM_PAYMENT_IMPORT记录不存在<br/>
+      <strong style="color:#7C3AED;">原因：</strong>selectClaimAmtByCancelId查询结果为空，或EPM_PAYMENT_IMPORT记录不存在<br>
       <strong style="color:#7C3AED;">处理：</strong>`SELECT pa.payment_import_id, pad.claim_amt FROM epm_payment_allot pa JOIN epm_payment_allot_line pal ON pa.payment_allot_id = pal.payment_allot_id JOIN epm_payment_allot_detail pad ON pal.payment_allot_line_id = pad.payment_allot_line_id JOIN epm_pad_cancel ce ON pad.payment_allot_detail_id = ce.payment_allot_detail_id WHERE ce.cancel_id = {cancelId}`
     </div>
   </div>
@@ -678,7 +678,7 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
       <span style="font-size:15px;">ERP撤销推送失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或推送数据异常，错误信息记录在SYS_EXCEPTION_MSG表<br/>
+      <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或推送数据异常，错误信息记录在SYS_EXCEPTION_MSG表<br>
       <strong style="color:#7C3AED;">处理：</strong>`SELECT * FROM sys_exception_msg WHERE objid = {cancelId} AND objtypename = '到款认领撤销'`
     </div>
   </div>

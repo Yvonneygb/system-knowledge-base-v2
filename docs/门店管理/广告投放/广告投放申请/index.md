@@ -60,25 +60,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1" stroke="white" stroke-width="1.5"/><path d="M8 5V11" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M5 8H11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>新建申请</h5>
-      <small>录入经销商、门店、投放与金额信息<br/>区分额度内/额度外</small>
+      <small>录入经销商、门店、投放与金额信息<br>区分额度内/额度外</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="6" width="12" height="8" rx="1" stroke="white" stroke-width="1.5"/><path d="M2 9H14" stroke="white" stroke-width="1.5"/><path d="M8 6V9" stroke="white" stroke-width="1.5"/><path d="M5 3H11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>提交校验</h5>
-      <small>申请总额必须大于 0<br/>校验通过才可推送</small>
+      <small>申请总额必须大于 0<br>校验通过才可推送</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10b981,#059669);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M3 8H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M3 12H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="2.5" cy="4" r="1" fill="white"/><circle cx="2.5" cy="8" r="1" fill="white"/><circle cx="2.5" cy="12" r="1" fill="white"/></svg></div>
       <h5>推送 OA 审批</h5>
-      <small>额度外推送成功后<br/>同步扣减超预算额度</small>
+      <small>额度外推送成功后<br>同步扣减超预算额度</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L10 5" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 5H11C12.1046 5 13 5.89543 13 7V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M10 11H7C5.89543 11 5 10.1046 5 9V8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>OA 审批结果</h5>
-      <small>通过 → 可创建广告费报销单<br/>驳回 → 修改后重新提交</small>
+      <small>通过 → 可创建广告费报销单<br>驳回 → 修改后重新提交</small>
     </div>
   </div>
 </div>
@@ -1068,7 +1068,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程中objid为0，流程失败！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>工作流回调时传入的对象ID为0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>工作流回调时传入的对象ID为0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1078,7 +1078,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请总金额必须大于0！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>申请总金额≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>申请总金额≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1088,7 +1088,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送OA失败：广告投放申请不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>申请单在数据库中不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>申请单在数据库中不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1098,7 +1098,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>ID不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>OA回调时传入的ID为空或≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OA回调时传入的ID为空或≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1108,7 +1108,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>OA回调失败：广告投放申请不存在！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>OA回调时查询申请单不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OA回调时查询申请单不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1118,7 +1118,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询参数不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>查询参数整体为null</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>查询参数整体为null</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1128,7 +1128,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>预算年度不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>预算年度为空或≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>预算年度为空或≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1138,7 +1138,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>部门ID不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>部门ID为空或≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>部门ID为空或≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1148,7 +1148,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>费用类型ID不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>费用类型ID为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>费用类型ID为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1158,7 +1158,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>feeCashOutNo 参数不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>feeCashOutNo参数为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>feeCashOutNo参数为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1168,7 +1168,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>参数不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>更新参数为null</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>更新参数为null</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1178,7 +1178,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>主键不能为空!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>更新工作流信息时主键为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>更新工作流信息时主键为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1191,7 +1191,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
       <span style="font-size:15px;">推送OA失败但工作流继续流转</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>推送OA异常被catch捕获返回false，但不阻断工作流。排查SQL：`SELECT * FROM FIN_FEE_APPLY_HEADER WHERE HZ_APPROVE_STATUS = 'RUN' AND CALLBACK_SOURCE IS NULL`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>推送OA异常被catch捕获返回false，但不阻断工作流。排查SQL：`SELECT * FROM FIN_FEE_APPLY_HEADER WHERE HZ_APPROVE_STATUS = 'RUN' AND CALLBACK_SOURCE IS NULL`<br>
       <strong style="color:#7C3AED;">处理：</strong>检查OA接口连接和单据配置表(OA_BILL_REF)中"YXZT广告投放申请"的配置
     </div>
   </div>
@@ -1201,7 +1201,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
       <span style="font-size:15px;">额度外申请审批驳回后预算未恢复</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>OA回调时slHFinalApprover不为"Y"，非最终审批人审批不触发预算恢复。排查SQL：`SELECT b.* FROM BUD_OVER_BUDGET b JOIN FIN_FEE_APPLY_HEADER f ON b.BUD_YEAR = f.CYEAR AND b.ENTID = f.ORGANIZATION_ID WHERE f.BX_TYPE = 2 AND f.HZ_APPROVE_STATUS = 'REJECTED' AND b.FEE_TYPE_ID = 66014602`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>OA回调时slHFinalApprover不为"Y"，非最终审批人审批不触发预算恢复。排查SQL：`SELECT b.* FROM BUD_OVER_BUDGET b JOIN FIN_FEE_APPLY_HEADER f ON b.BUD_YEAR = f.CYEAR AND b.ENTID = f.ORGANIZATION_ID WHERE f.BX_TYPE = 2 AND f.HZ_APPROVE_STATUS = 'REJECTED' AND b.FEE_TYPE_ID = 66014602`<br>
       <strong style="color:#7C3AED;">处理：</strong>确认OA审批流程是否已到最终审批节点，手动检查BUD_OVER_BUDGET的TAX_TOTAL_AMT是否正确
     </div>
   </div>
@@ -1211,7 +1211,7 @@ SELECT * FROM FIN_FEE_APPLY_HEADER WHERE TOTAL_APPLY_AMT_BX <= 0;
       <span style="font-size:15px;">额度外可用余额查询返回0</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>可用金额=0或占用金额=可用金额。排查SQL：`SELECT * FROM FIN_FEE_APPLY_HEADER WHERE BX_TYPE = 2 AND CANUSE_RESOURCE_AMT = 0`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>可用金额=0或占用金额=可用金额。排查SQL：`SELECT * FROM FIN_FEE_APPLY_HEADER WHERE BX_TYPE = 2 AND CANUSE_RESOURCE_AMT = 0`<br>
       <strong style="color:#7C3AED;">处理：</strong>检查ERP接口返回的可用金额和占用金额数据
     </div>
   </div>

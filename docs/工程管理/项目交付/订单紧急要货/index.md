@@ -45,25 +45,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新建急单</h5>
-      <small>选客户/项目<br/>录入加急明细</small>
+      <small>选客户/项目<br>录入加急明细</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>启动审批流<br/>通过后处理</small>
+      <small>启动审批流<br>通过后处理</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>预留库存</h5>
-      <small>优先锁定<br/>可用库存</small>
+      <small>优先锁定<br>可用库存</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3h12v4H2z" stroke="white" stroke-width="1.5"/><path d="M2 9h12v4H2z" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>推送 ERP</h5>
-      <small>生成出库<br/>安排发货</small>
+      <small>生成出库<br>安排发货</small>
     </div>
   </div>
 </div>
@@ -381,7 +381,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程启动校验失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>workFlowStartVolidate校验不通过</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>workFlowStartVolidate校验不通过</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -394,7 +394,7 @@
       <span style="font-size:15px;">审批通过后库存预留失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>库存不足或库存服务不可用；排查SQL：`SELECT UOL.ITEM_CODE, UOL.ORDER_QTY FROM EPM_URGENT_ORDER_LINE UOL WHERE UOL.URGENT_ORDER_ID = #{urgentOrderId}`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>库存不足或库存服务不可用；排查SQL：`SELECT UOL.ITEM_CODE, UOL.ORDER_QTY FROM EPM_URGENT_ORDER_LINE UOL WHERE UOL.URGENT_ORDER_ID = #{urgentOrderId}`<br>
       <strong style="color:#7C3AED;">处理：</strong>检查库存服务状态，确认库存数量是否充足
     </div>
   </div>

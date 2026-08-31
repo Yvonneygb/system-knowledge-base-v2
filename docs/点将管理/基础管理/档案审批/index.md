@@ -54,25 +54,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="4.2" stroke="white" stroke-width="1.5"/><path d="M10.2 10.2L13.5 13.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看待审</h5>
-      <small>按审批类型筛出<br/>待处理的三类单据</small>
+      <small>按审批类型筛出<br>待处理的三类单据</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="5.5" r="2.5" stroke="white" stroke-width="1.5"/><path d="M3 13.5C3 11 5.2 9.5 8 9.5C10.8 9.5 13 11 13 13.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>审核核对</h5>
-      <small>核对档案资质<br/>与价格合理性</small>
+      <small>核对档案资质<br>与价格合理性</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#3B82F6,#60A5FA);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="10" width="5" height="3" rx="1" stroke="white" stroke-width="1.5"/><path d="M9 10H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M9 13H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>执行审批</h5>
-      <small>选择通过或拒绝<br/>并填写审批意见</small>
+      <small>选择通过或拒绝<br>并填写审批意见</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#22C55E);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 2H9L12 5V14H4V2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 2V5H12" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 8H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 11H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>结果回写</h5>
-      <small>通过则档案/价格生效<br/>拒绝则退回修改重提</small>
+      <small>通过则档案/价格生效<br>拒绝则退回修改重提</small>
     </div>
   </div>
 </div>

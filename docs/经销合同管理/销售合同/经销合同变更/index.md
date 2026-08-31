@@ -56,25 +56,25 @@
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>选原合同</h5>
-        <small>校验是否可变更<br/>带出原合同信息</small>
+        <small>校验是否可变更<br>带出原合同信息</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
         <h5>区域校验</h5>
-        <small>信息变更类校验<br/>区域冲突提示</small>
+        <small>信息变更类校验<br>区域冲突提示</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>提交审批</h5>
-        <small>保存并提交<br/>启动工作流</small>
+        <small>保存并提交<br>启动工作流</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13L6 9L9 11L13 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h5>生成新合同</h5>
-        <small>审批通过生效<br/>推送 CRM 与 OA</small>
+        <small>审批通过生效<br>推送 CRM 与 OA</small>
       </div>
     </div>
   </div>
@@ -603,7 +603,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该记录！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>变更单ID不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>变更单ID不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -613,7 +613,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同信息不匹配</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>变更单关联的原合同不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>变更单关联的原合同不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -623,7 +623,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无法匹配合同类型与销售渠道关联关系！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>原合同的合同类型未配置渠道关联</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>原合同的合同类型未配置渠道关联</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -633,7 +633,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择审批流程编码</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择审批流程编码</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -646,7 +646,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_
       <span style="font-size:15px;">新建变更时提示原合同正在走变更</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>该原合同已存在未审核完成的变更单。排查SQL：<br/>
+      <strong style="color:#7C3AED;">原因：</strong>该原合同已存在未审核完成的变更单。排查SQL：<br>
       <strong style="color:#7C3AED;">处理：</strong>等待已有变更单审批完成后再发起新变更
     </div>
   </div>
@@ -656,7 +656,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_
       <span style="font-size:15px;">变更审批通过后未生成新合同</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>工作流回调逻辑异常或新合同保存失败<br/>
+      <strong style="color:#7C3AED;">原因：</strong>工作流回调逻辑异常或新合同保存失败<br>
       <strong style="color:#7C3AED;">处理：</strong>检查工作流回调日志和新合同生成逻辑
     </div>
   </div>

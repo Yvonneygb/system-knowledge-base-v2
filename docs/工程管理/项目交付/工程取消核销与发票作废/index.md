@@ -46,19 +46,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h10v8H3z" stroke="white" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>选择对象</h5>
-      <small>选择已核销发票<br/>或出库明细</small>
+      <small>选择已核销发票<br>或出库明细</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M6 6l4 4M10 6l-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选类型执行</h5>
-      <small>选取消/作废类型<br/>处理尾差</small>
+      <small>选取消/作废类型<br>处理尾差</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>回写生效</h5>
-      <small>更新核销与发票<br/>状态</small>
+      <small>更新核销与发票<br>状态</small>
     </div>
   </div>
 </div>
@@ -320,7 +320,7 @@ SELECT COUNT(1) FROM EPM_VERIFER_INVOICE_DETAILS WHERE VERIFER_INVOICE_DETAILS$D
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>核销数据不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>核销明细已被删除，&amp;刷新页面</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>核销明细已被删除，&amp;刷新页面</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -333,7 +333,7 @@ SELECT COUNT(1) FROM EPM_VERIFER_INVOICE_DETAILS WHERE VERIFER_INVOICE_DETAILS$D
       <span style="font-size:15px;">取消核销后出库行核销数量未回写</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>取消核销逻辑执行异常；排查SQL：`SELECT INVOICE_TRUTH_HEADER_ID, VERIFY_QTY FROM EPM_VERIFER_INVOICE_DETAILS WHERE INVOICE_TRUTH_HEADER_ID = #{invoiceTruthId}`<br/>
+      <strong style="color:#7C3AED;">原因：</strong>取消核销逻辑执行异常；排查SQL：`SELECT INVOICE_TRUTH_HEADER_ID, VERIFY_QTY FROM EPM_VERIFER_INVOICE_DETAILS WHERE INVOICE_TRUTH_HEADER_ID = #{invoiceTruthId}`<br>
       <strong style="color:#7C3AED;">处理：</strong>检查clVerifyObsInvo接口执行日志，确认回写SQL是否执行成功
     </div>
   </div>
