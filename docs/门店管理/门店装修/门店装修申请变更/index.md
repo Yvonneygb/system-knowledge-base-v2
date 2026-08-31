@@ -176,11 +176,23 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="2.1 新增逻辑（doInsert）"><ul><li>校验关联的装修申请单必须存在</li><li>生成变更单号：编码规则<code>AE.TERMINAL_CHANGE_NO</code></li><li>自动赋值：成本中心、申请人</li><li>新增变更照片明细和附件</li><li>标记原申请单isModify=2(已发起变更)</li></ul></KbCard>
+
+<KbQuote>新增变更记录时校验并初始化默认值</KbQuote>
 <KbCard title="2.2 删除逻辑（doDelete）"><ul><li>仅NEW状态可删除</li><li>删除变更单及关联照片</li><li>恢复原申请单isModify=0(未发起变更)</li></ul></KbCard>
+
+<KbQuote>仅特定状态可删除变更记录</KbQuote>
 <KbCard title="2.3 作废逻辑（operate）"><ul><li>标记变更单hzApproveStatus=INTERRUPT</li><li>标记原申请单isModify=3(变更作废)，记录作废原因</li></ul></KbCard>
+
+<KbQuote>仅NEW和REJECTED状态可作废变更</KbQuote>
 <KbCard title="2.4 审批通过回调（onWfComplete）"><ul><li>读取公司参数：<ul><li><code>Waiting_Days</code>：门店装修间隔期</li><li><code>Advance_Permissible_Period</code>：门店装修提前允许期</li><li><code>Deduct_Pro</code>：扣除比率</li><li><code>Over_Date_Limit</code>：超期天数限制</li></ul></li><li>计算超期天数和扣减比例</li><li>回写原申请单的变更后标准金额</li></ul></KbCard>
+
+<KbQuote>审批通过后更新相关业务数据</KbQuote>
 <KbCard title="2.5 变更明细查询（doSelect）"><ul><li>查询变更单基本信息</li><li>查询原申请单的额度内/额度外申请标准（旧值）</li><li>查询变更照片明细</li><li>查询当前工作流任务名称</li></ul></KbCard>
+
+<KbQuote>查询门店装修申请变更明细数据</KbQuote>
 <KbCard title="2.6 打印数据（doSelectForPrint）"><ul><li>转换词汇值含义（门店类型、装修等级、产权归属、位置类型）</li><li>查询审批历史</li><li>计算补贴明细汇总（政策标准、申请标准、差异标准）</li></ul></KbCard>
+
+<KbQuote>准备变更记录的打印数据</KbQuote>
 </div>
 </div>
 </div>

@@ -176,13 +176,27 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="2.1 保存逻辑（doSave）"><ul><li>新增(doInsert)：生成报销编码，插入主表和行表</li><li>更新(doUpdate)：更新主表和行表</li></ul></KbCard>
+
+<KbQuote>保存报销单时执行校验与默认值赋值</KbQuote>
 <KbCard title="2.2 报销分析（1bxFx）"><ul><li>查询已启动、已审批、已驳回状态的@状态的相关8的报销单据</li><li>按装修项目(de9ecorateProject)分类汇总申请金额</li><li>特殊处理灯具+灯具(五金专区)、软装+软装(整体)等合并统计</li></ul></KbCard>
+
+<KbQuote>对报销单进行费用分析计算</KbQuote>
 <KbCard title="2.3 行表金额汇总（computeLineSum）"><ul><li>汇总各门店行表的额度内/额度外申请金额、业务批准金额、财务批准金额</li></ul>
+
+<KbQuote>计算行表金额合计汇总到头表</KbQuote>
 <p>E- 计算标准金额、申请总额、业务批准总额、财务批准总额</p></KbCard>
 <KbCard title="2.4 审批人获取"><ul><li><strong>部门负责人</strong>：getUnitManageLoginNameById?ById - 根据报销单ID获取部门负责人</li><li><strong>省级负责人</strong>：getProvincialManagerLoginNameById - 根据报销单ID获取省级负责人</li><li>返回格式为ApproveUsersVO列表（工作流固定格式）</li></ul></KbCard>
+
+<KbQuote>根据业务规则获取对应审批人</KbQuote>
 <KbCard title="2.5 门头兑现查询"><ul><li>getCashoutSearch：查询门头兑现关联数据</li><li>getCashoutSearchLov：门头兑现LOV查询</li><li>生成验收人员保证书HTML内容</li></ul></KbCard>
+
+<KbQuote>查询已兑现的门头展板数据用于报销</KbQuote>
 <KbCard title="2.6 删除逻辑（doDelete）"><ul><li>删除主表数据</li></ul></KbCard>
+
+<KbQuote>执行报销单删除操作及关联数据清理</KbQuote>
 <KbCard title="2.7 打印数据（doSelectForPrint）"><ul><li>查询详情并转换词汇值含义</li></ul>
+
+<KbQuote>准备报销单打印所需数据</KbQuote>
 <p>##(2.8 提前兑现</p>
 <ul><li>根据事业部配置earlyEncashmentFlag判断是否允许提前兑现</li></ul></KbCard>
 </div>

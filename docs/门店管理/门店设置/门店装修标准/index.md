@@ -150,6 +150,8 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard num="1" title="2.1 装修标准匹配规则">
+
+<KbQuote>按装修项目+门店装修等级+面积范围匹配对应标准行明细</KbQuote>
 **具体逻辑**：
 
 - 1、每个标准头下配置多行明细，按**装修项目+门店装修等级+面积范围**进行匹配
@@ -159,6 +161,8 @@
 </KbCard>
 
 <KbCard num="2" title="2.2 有效期控制">
+
+<KbQuote>每行明细有独立生效起止日期，仅当期有效行可被引用</KbQuote>
 **具体逻辑**：
 
 - 1、每行明细有独立的生效起止日期，控制该行标准何时可用
@@ -166,6 +170,8 @@
 </KbCard>
 
 <KbCard num="3" title="2.3 补贴方式">
+
+<KbQuote>补贴方式字段控制该行标准的补贴计算方式</KbQuote>
 **具体逻辑**：
 
 - 1、补贴方式字段控制该行标准的补贴计算方式
@@ -173,6 +179,8 @@
 </KbCard>
 
 <KbCard num="4" title="2.4 事业部隔离">
+
+<KbQuote>数据按事业部隔离，不同事业部维护各自的装修标准</KbQuote>
 **具体逻辑**：
 
 - 1、数据按事业部隔离，不同事业部维护各自的装修标准
@@ -330,6 +338,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>选择事业部后保存</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM TERMINAL_DECORATE_STANDARD WHERE DECORATE_STANDARD_ID = ? AND ENTID IS NULL;
+```
+  
   </div>
 </div>
 
@@ -340,6 +353,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确保面积范围小于等于大于面积范围大于</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM TERMINAL_DECORATE_LINE WHERE (UPER_AREA >= LOWER_AREA OR LOWER_AREA IS NULL OR UPER_AREA IS NULL);
+```
+  
   </div>
 </div>
 </KbCard>

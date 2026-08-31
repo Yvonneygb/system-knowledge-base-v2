@@ -150,6 +150,8 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard num="1" title="2.1 列表查询自动填充组织与经销商">
+
+<KbQuote>未传入组织ID和经销商编码时自动从用户信息填充</KbQuote>
 **具体逻辑**：
 
 - 1、当前端未传入组织ID时，自动从当前登录用户的附加信息中获取DEPT作为组织ID
@@ -158,6 +160,8 @@
 </KbCard>
 
 <KbCard num="2" title="2.2 保存逻辑仅允许局部字段维护">
+
+<KbQuote>保存接口仅允许维护说明类字段，核心属性变更须走审批</KbQuote>
 **具体逻辑**：
 
 - 1、保存接口仅更新`otherCondition`（其他情况说明）和`terminalAreaChange`（门店面积变动说明）两个字段
@@ -166,6 +170,8 @@
 </KbCard>
 
 <KbCard num="3" title="2.3 LOV查询接口">
+
+<KbQuote>为下游模块提供门店选择LOV查询接口</KbQuote>
 **具体逻辑**：
 
 - 1、`finFeeApplyLov`：为门店装修申请与进度提供门店选择LOV，增加装修提前天数校验参数
@@ -352,6 +358,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认门店ID是否正确，数据是否已被删除</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM MKT_TERMINAL WHERE TERMINAL_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -362,6 +373,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查用户登录状态和权限配置</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT USER_ID, USER_TYPE FROM SYS_USER_ATTACH WHERE USER_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -372,6 +388,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>联系管理员配置用户所属事业部</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT USER_ID, DEPT FROM SYS_USER_ATTACH WHERE USER_ID = ?;
+```
+  
   </div>
 </div>
 </KbCard>

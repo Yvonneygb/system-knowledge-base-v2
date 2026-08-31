@@ -176,14 +176,32 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="重点逻辑"><p>###&lt;|message|&gt;重点逻辑</p></KbCard>
+
+<KbQuote>核心业务逻辑汇总，涵盖新增校验、作废、重新生成等关键操作</KbQuote>
 <KbCard title="2.1 新增校验（doInsert）"><ul><li>装修周期校验：不超过公司参数<code>Decoration_Days</code></li><li>自动赋值：成本中心、省市区名称、签章状态(0)、二次变更(0)、签呈标记(0)</li><li>默认值：isClose=1(未关闭)、isOverYear=1(未超年)、isOverStandard=1(未超标准)</li><li>单号生成：编码规则<code>AE.TERMINAL_APPLY_NO</code></li></ul></KbCard>
+
+<KbQuote>新增时校验装修周期不超过公司参数，自动赋值成本中心、单号等默认值</KbQuote>
 <KbCard title="2.2 更新校验（doUpdate）"><ul><li>装修周期校验：不超过公司参数<code>Decoration_Days</code></li><li>预算年度：根据上次装修完成时间自动计算budYear</li></ul></KbCard>
+
+<KbQuote>更新时校验装修周期，根据上次装修完成时间自动计算预算年度</KbQuote>
 <KbCard title="2.3 作废逻辑（operate）"><ul><li>仅NEW和REJECTED状态可作废</li><li>作废后标记hzApproveStatus=INTERRUPT，记录作废原因</li></ul></KbCard>
+
+<KbQuote>仅NEW和REJECTED状态可作废，标记审批状态并记录作废原因</KbQuote>
 <KbCard title="2.4 重新生成（validRegenerate）"><ul><li>校验同一门店无其他非INTERRUPT状态的申请单</li><li>校验超期天数不超过公司参数<code>Over_Date_Limit</code></li><li>校验扣减比例&lt;1（补贴金额不为0）</li><li>清空原ID/单号/流程信息，状态重置为NEW</li></ul></KbCard>
+
+<KbQuote>校验无其他未完成申请单、超期天数限制、扣减比例后重置为新申请</KbQuote>
 <KbCard title="2.5 删除校验（doDelete）"><ul><li>仅NEW状态可删除</li><li>删除主表及关联照片明细</li></ul></KbCard>
+
+<KbQuote>仅NEW状态可删除，同时删除主表及关联照片明细</KbQuote>
 <KbCard title="2.6 二次变更（doUpdateSecondChange）"><ul><li>批量更新指定申请单的isSecondChange=2</li></ul></KbCard>
+
+<KbQuote>批量更新指定申请单的二次变更标记为2</KbQuote>
 <KbCard title="2.7 装修前后照片"><ul><li>支持查询门店装修前后照片（MktStorephotoSetLine）</li></ul></KbCard>
+
+<KbQuote>支持查询门店装修前后的照片明细数据</KbQuote>
 <KbCard title="2.8 交易公司LOV"><ul><li>提供交易公司LOV查询接口getTradingCompany</li></ul></KbCard>
+
+<KbQuote>提供交易公司选择的LOV查询接口</KbQuote>
 </div>
 </div>
 </div>

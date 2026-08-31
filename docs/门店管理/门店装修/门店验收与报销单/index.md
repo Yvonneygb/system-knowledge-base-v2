@@ -177,9 +177,17 @@
 <div class="kl-wrap">
 <KbCard title="2.1 验收报销金额计算"><ul><li><strong>额度内(in)</strong>：验收面积 × 验收评分率 × 申请标准 → 可报销含税金额/不含税金额</li><li><strong>额度外(out)</strong>：同额度内计算逻辑，额外计算兑现比例和剩余未兑现金额</li><li><strong>门头(fd)</strong>：门头验收面积 × 评分率 × 标准 → 可报销金额</li><li><strong>质量扣减</strong>：checkQualityDeductionPoint影响最终可报销金额</li><li><strong>发票税率扣减</strong>：invoiceTaxRateDeduction影响兑现率</li></ul></KbCard>
 <KbCard title="2.2 CRM软装灯具交互"><ul><li><strong>查询软装订单</strong>：通过CrmSdkService调用CRM接口查询软装灯具订单</li><li><strong>绑定订单</strong>：确认绑定CRM软装灯具订单到验收报销单</li><li><strong>查询已绑定</strong>：查询当前验收单已绑定的软装灯具订单</li><li><strong>解绑订单</strong>：取消已绑定的软装灯具订单</li></ul></KbCard>
+
+<KbQuote>与CRM系统交互获取软装灯具数据用于验收报销</KbQuote>
 <KbCard title="2.3 装修标准查询"><ul><li>根据门店类型(terminalType)和装修等级(fixupGrade)查询对应的装修标准行</li><li>支持两种查询方式：doSearchDecorate和searchDecorate</li></ul></KbCard>
+
+<KbQuote>查询匹配的装修标准行明细用于补贴金额计算</KbQuote>
 <KbCard title="2.4 打印数据"><ul><li>支持验收报销单打印，包含补贴明细汇总、复核结果汇总、预算明细汇总</li></ul></KbCard>
+
+<KbQuote>准备并返回验收报销单的打印数据</KbQuote>
 <KbCard title="2.5 政策性补贴"><ul><li>通过getLovSearch接口查询政策性补贴LOV列表</li></ul></KbCard>
+
+<KbQuote>处理政策性补贴相关逻辑</KbQuote>
 </div>
 </div>
 </div>

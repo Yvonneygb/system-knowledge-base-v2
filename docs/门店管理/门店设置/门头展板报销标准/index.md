@@ -147,6 +147,8 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard num="1" title="2.1 报销标准生效管理">
+
+<KbQuote>新建标准默认未生效，审批通过后自动生效，生效后可手动作废</KbQuote>
 **具体逻辑**：
 
 - 1、新建标准默认为**未生效**状态（valid=1）
@@ -156,6 +158,8 @@
 </KbCard>
 
 <KbCard num="2" title="2.2 经销商限额控制">
+
+<KbQuote>经销商限额标识Y时表示有限额，额度类型决定计算方式</KbQuote>
 **具体逻辑**：
 
 - 1、当经销商限额标识为Y时，表示该标准对经销商有限额约束
@@ -164,6 +168,8 @@
 </KbCard>
 
 <KbCard num="3" title="2.3 单独门店申请与超额报销">
+
+<KbQuote>单独门店申请与超额报销分别控制门店申请和超金额的业务行为</KbQuote>
 **具体逻辑**：
 
 - 1、单独门店申请标识控制是否允许门店单独发起申请
@@ -172,6 +178,8 @@
 </KbCard>
 
 <KbCard num="4" title="2.4 行信息匹配规则">
+
+<KbQuote>按装修项目+门店类型+标准等级+数量范围多维度匹配行标准</KbQuote>
 **具体逻辑**：
 
 - 1、每个标准头下可配置多行明细，按装修项目+适用门店类型+标准等级+数量范围匹配
@@ -349,6 +357,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>补充政策编码后保存</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM POLICY_STANDARD_HEAD WHERE STANDARD_CODE IS NULL OR TRIM(STANDARD_CODE) = '';
+```
+  
   </div>
 </div>
 
@@ -359,6 +372,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>仅已生效状态可作废</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM POLICY_STANDARD_HEAD WHERE VALID != 2 AND POLICY_STANDARD_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -369,6 +387,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>仅未生效且未提交审批可删除</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM POLICY_STANDARD_HEAD WHERE VALID NOT IN (1) OR (VALID = 1 AND WFID IS NOT NULL);
+```
+  
   </div>
 </div>
 
@@ -379,6 +402,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>填写预算年度</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM POLICY_STANDARD_HEAD WHERE USE_EXTRA_BUDGET_FLAG = 'Y' AND YEAR IS NULL;
+```
+  
   </div>
 </div>
 </KbCard>

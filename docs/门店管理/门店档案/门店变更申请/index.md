@@ -194,6 +194,8 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard num="1" title="2.1 变更前后数据双记录">
+
+<KbQuote>变更申请表同时记录变更前和后数据，保留变更前后对比</KbQuote>
 **具体逻辑**：
 
 - 1、变更申请表同时记录变更前数据（字段名后缀_H）和变更后数据
@@ -202,6 +204,8 @@
 </KbCard>
 
 <KbCard num="2" title="2.2 撤店前校验">
+
+<KbQuote>撤店前须确保该门店无未审批完成的装修和报销流程</KbQuote>
 **具体逻辑**：
 
 - 1、当变更后门店状态为撤店(terminalStat=2)时，提交审批前执行`validTerminalStat`校验
@@ -212,6 +216,8 @@
 </KbCard>
 
 <KbCard num="3" title="2.3 审批通过更新门店档案">
+
+<KbQuote>审批通过后将变更后数据写入门店档案并记录审核信息</KbQuote>
 **具体逻辑**：
 
 - 1、审批通过后调用`onWfComplete`方法
@@ -222,6 +228,8 @@
 </KbCard>
 
 <KbCard num="4" title="2.4 变更单编码自动生成">
+
+<KbQuote>新建变更申请时通过编码规则引擎自动生成变更单编码</KbQuote>
 **具体逻辑**：
 
 - 1、新建变更申请时通过CodeRuleBuilder生成变更单编码
@@ -230,6 +238,8 @@
 </KbCard>
 
 <KbCard num="5" title="2.5 工作流提交参数构造">
+
+<KbQuote>提交工作流时传递业务参数实现按变更类型分路审批</KbQuote>
 **具体逻辑**：
 
 - 1、提交工作流时传递关键业务参数：terminalModifyId、operatCenterOrgId、salezoneOrgId、terminalStat、terminalType、tradeYear、startRealName、customerId
@@ -238,6 +248,8 @@
 </KbCard>
 
 <KbCard num="6" title="2.6 工作流回调统一处理">
+
+<KbQuote>继承抽象类统一分发审批结果，通过/驳回分别处理</KbQuote>
 **具体逻辑**：
 
 - 1、继承AbstractTerminalServiceImpl的`workFlowEvent`方法统一分发审批结果
@@ -512,6 +524,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认变更单ID是否正确，数据是否已被删除</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM MKT_TERMINAL_MODIFY WHERE TERMINAL_MODIFY_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -522,6 +539,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认关联门店是否存在</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM MKT_TERMINAL WHERE TERMINAL_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -532,6 +554,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查工作流配置，确认objId正确传递</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT HZ_INSTANCE_ID, OBJ_ID FROM WF_PROCESS WHERE HZ_INSTANCE_ID = (SELECT HZ_INSTANCE_ID FROM MKT_TERMINAL_MODIFY WHERE TERMINAL_MODIFY_ID = ?);
+```
+  
   </div>
 </div>
 
@@ -542,6 +569,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>先完成或作废该门店的装修申请单</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM MKT_TERMINAL_DECORATE WHERE TERMINAL_ID = ? AND HZ_APPROVE_STATUS NOT IN ('APPROVED', 'INTERRUPT');
+```
+  
   </div>
 </div>
 
@@ -552,6 +584,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>先完成或作废该门店的验收报销单</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM FIN_FEE_CHECK_BX_HEAD WHERE TERMINAL_ID = ? AND HZ_APPROVE_STATUS NOT IN ('APPROVED', 'INTERRUPT');
+```
+  
   </div>
 </div>
 

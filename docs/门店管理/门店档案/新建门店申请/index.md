@@ -196,6 +196,8 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard num="1" title="2.1 门店编码自动生成">
+
+<KbQuote>审批通过时自动生成唯一门店编码，规则为城市编码+事业部编码+流水号</KbQuote>
 **具体逻辑**：
 
 - 1、审批通过时调用`getMktTerminalCode`方法生成门店编码
@@ -205,6 +207,8 @@
 </KbCard>
 
 <KbCard num="2" title="2.2 审批通过自动创建门店档案">
+
+<KbQuote>审批通过后自动将申请单数据创建为门店档案并记录审核人</KbQuote>
 **具体逻辑**：
 
 - 1、审批通过后调用`syncMktTerminal`方法，将申请单数据通过MapStruct转换为门店档案实体
@@ -214,6 +218,8 @@
 </KbCard>
 
 <KbCard num="3" title="2.3 附件迁移">
+
+<KbQuote>审批通过后申请单附件自动迁移归档到门店档案</KbQuote>
 **具体逻辑**：
 
 - 1、审批通过后，将申请单的附件（attachConfId=8122）迁移到门店档案（attachConfId=8123）
@@ -223,6 +229,8 @@
 </KbCard>
 
 <KbCard num="4" title="2.4 工作流提交参数构造">
+
+<KbQuote>提交工作流时传递业务参数用于审批节点分支和路由</KbQuote>
 **具体逻辑**：
 
 - 1、提交工作流时传递关键业务参数：applyId、terminalApplyId、startRealName、custId、terminalType、terminalNameFlag、terminalStat、tradeYears、oALinkTitle
@@ -232,6 +240,8 @@
 </KbCard>
 
 <KbCard num="5" title="2.5 工作流回调统一处理">
+
+<KbQuote>继承抽象类统一分发审批结果，通过/驳回分别处理</KbQuote>
 **具体逻辑**：
 
 - 1、继承AbstractTerminalServiceImpl的`workFlowEvent`方法统一分发审批结果
@@ -453,6 +463,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认申请单ID是否正确，数据是否已被删除</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT * FROM MKT_TERMINAL_APPLY WHERE TERMINAL_APPLY_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -463,6 +478,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查工作流配置，确认objId正确传递</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT HZ_INSTANCE_ID, OBJ_ID FROM WF_PROCESS WHERE HZ_INSTANCE_ID = (SELECT HZ_INSTANCE_ID FROM MKT_TERMINAL_APPLY WHERE TERMINAL_APPLY_ID = ?);
+```
+  
   </div>
 </div>
 
@@ -473,6 +493,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查用户登录状态和权限配置</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT USER_ID, USER_TYPE FROM SYS_USER_ATTACH WHERE USER_ID = ?;
+```
+  
   </div>
 </div>
 
@@ -483,6 +508,11 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>联系管理员配置用户所属事业部</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
+
+```sql
+SELECT USER_ID, DEPT FROM SYS_USER_ATTACH WHERE USER_ID = ?;
+```
+  
   </div>
 </div>
 </KbCard>
