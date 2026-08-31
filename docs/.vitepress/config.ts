@@ -4,6 +4,7 @@ export default defineConfig({
   base: '/system-knowledge-base-v2/',
   title: '系统知识库',
   description: '家装管理系统业务逻辑梳理与排查知识库',
+  srcExclude: ['**/源MD管理/**', '**/组件库演示/**'],
   head: [
     ['link', { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css' }],
     ['link', { rel: 'icon', href: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>'}]
