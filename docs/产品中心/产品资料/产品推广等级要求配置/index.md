@@ -123,8 +123,14 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="2.1 前端路由"><table class="kl-table"><thead><tr><th>路由</th><th>说明</th></tr></thead><tbody><tr><td><code>/product/promoteGradeFieldList</code></td><td>产品推广等级要求配置列表页</td></tr></tbody></table></KbCard>
+
+<KbQuote>前端路由配置页面导航和参数传递</KbQuote>
 <KbCard title="2.2 API接口"><table class="kl-table"><thead><tr><th>接口</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGradesControls</code></td><td>GET</td><td>查询等级要求配置列表</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGradesControls/{id}</code></td><td>GET</td><td>查询配置详情</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGradesControls</code></td><td>POST</td><td>新增配置</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGradesControls/{id}</code></td><td>PUT</td><td>更新配置</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGradesControls/{id}</code></td><td>DELETE</td><td>删除配置</td></tr></tbody></table></KbCard>
+
+<KbQuote>提供产品图册增删改查API接口</KbQuote>
 <KbCard title="2.3 无工作流"><p>本菜单无审批工作流，数据直接保存生效。</p></KbCard>
+
+<KbQuote>产品图册无审批流程，提交后直接生效</KbQuote>
 </div>
 </div>
 </div>

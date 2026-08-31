@@ -177,8 +177,14 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="2.1 后端Controller"><table class="kl-table"><thead><tr><th>项目</th><th>说明</th></tr></thead><tbody><tr><td>Controller</td><td>ProductOverHeaderController</td></tr><tr><td>基础路径</td><td><code>/v1/{organizationId}/product-over-headers</code></td></tr></tbody></table></KbCard>
+
+<KbQuote>后端Controller统一处理请求参数校验和路由分发</KbQuote>
 <KbCard title="2.2 API接口"><table class="kl-table"><thead><tr><th>接口</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td><code>/v1/{organizationId}/product-over-headers</code></td><td>GET</td><td>查询变更申请列表</td></tr><tr><td><code>/v1/{organizationId}/product-over-headers/{id}</code></td><td>GET</td><td>查询变更申请详情（含行）</td></tr><tr><td><code>/v1/{organizationId}/product-over-headers</code></td><td>POST</td><td>新增变更申请</td></tr><tr><td><code>/v1/{organizationId}/product-over-headers/{id}</code></td><td>PUT</td><td>更新变更申请</td></tr><tr><td><code>/v1/{organizationId}/product-over-headers/{id}</code></td><td>DELETE</td><td>删除变更申请（仅草稿）</td></tr><tr><td><code>/v1/{organizationId}/product-over-headers/{id}/submit</code></td><td>POST</td><td>提交审批</td></tr><tr><td><code>/v1/{organizationId}/product-over-headers/{id}/approve</code></td><td>POST</td><td>审批通过</td></tr><tr><td><code>/v1/{organizationId}/product-over-headers/{id}/reject</code></td><td>POST</td><td>审批驳回</td></tr></tbody></table></KbCard>
+
+<KbQuote>提供产品图册增删改查API接口</KbQuote>
 <KbCard title="2.3 工作流"><table class="kl-table"><thead><tr><th>项目</th><th>说明</th></tr></thead><tbody><tr><td>工作流实体</td><td>PRODUCT_OVER_HEADER</td></tr><tr><td>工作流名称</td><td>产品SM状态变更</td></tr><tr><td>审批节点</td><td>根据工作流配置，支持多级审批</td></tr></tbody></table></KbCard>
+
+<KbQuote>审批通过后执行状态变更的后置处理逻辑</KbQuote>
 </div>
 </div>
 </div>

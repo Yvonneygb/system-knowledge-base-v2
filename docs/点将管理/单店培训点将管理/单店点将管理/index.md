@@ -205,6 +205,8 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="重点逻辑"><ul><li><strong>审批流程</strong>：单店培训点将仅涉及1个内置审批流程<code>trainApplyApproval</code></li><li><strong>门店维度</strong>：单店点将以门店为维度，每条申请关联一个具体门店</li><li><strong>讲师排期校验</strong>：提交时校验讲师在申请时间段内是否已有排期冲突</li><li><strong>状态联动</strong>：审批状态变更自动更新申请主状态</li></ul></KbCard>
+
+<KbQuote>点将执行流程涉及派单、签到、执行记录和结果上传等环节</KbQuote>
 </div>
 </div>
 </div>

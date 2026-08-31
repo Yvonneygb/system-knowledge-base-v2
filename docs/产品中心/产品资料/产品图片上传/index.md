@@ -163,8 +163,14 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="2.1 嵌入位置"><p>本功能嵌入在CRM产品详情页中使用，无独立路由页面。</p></KbCard>
+
+<KbQuote>在其它页面通过嵌入组件查询选择产品图册数据</KbQuote>
 <KbCard title="2.2 API接口"><table class="kl-table"><thead><tr><th>接口</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/images</code></td><td>GET</td><td>查询产品图片列表</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/images</code></td><td>POST</td><td>上传产品图片</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/images/{id}</code></td><td>DELETE</td><td>删除产品图片</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/images/sort</code></td><td>PUT</td><td>调整图片排序</td></tr></tbody></table></KbCard>
+
+<KbQuote>提供产品图册增删改查API接口</KbQuote>
 <KbCard title="2.3 无工作流"><p>本功能无审批工作流，图片上传后直接生效。</p></KbCard>
+
+<KbQuote>产品图册无审批流程，提交后直接生效</KbQuote>
 </div>
 </div>
 </div>

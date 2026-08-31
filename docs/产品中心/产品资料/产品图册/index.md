@@ -125,8 +125,14 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="2.1 嵌入位置"><p>本功能嵌入在CRM产品详情页中使用，组件标识为<code>detailImgListConfig</code>，无独立路由页面。</p></KbCard>
+
+<KbQuote>在其它页面通过嵌入组件查询选择产品图册数据</KbQuote>
 <KbCard title="2.2 API接口"><table class="kl-table"><thead><tr><th>接口</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums</code></td><td>GET</td><td>查询产品图册列表</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}</code></td><td>GET</td><td>查询图册详情（含图片）</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums</code></td><td>POST</td><td>新增图册</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}</code></td><td>PUT</td><td>更新图册</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}</code></td><td>DELETE</td><td>删除图册</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}/images</code></td><td>POST</td><td>向图册添加图片</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}/images/{imageId}</code></td><td>DELETE</td><td>从图册移除图片</td></tr></tbody></table></KbCard>
+
+<KbQuote>提供产品图册增删改查API接口</KbQuote>
 <KbCard title="2.3 无工作流"><p>本功能无审批工作流，数据直接保存生效。</p></KbCard>
+
+<KbQuote>产品图册无审批流程，提交后直接生效</KbQuote>
 </div>
 </div>
 </div>

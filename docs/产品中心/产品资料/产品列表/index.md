@@ -128,8 +128,14 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="2.1 前端路由"><table class="kl-table"><thead><tr><th>路由</th><th>说明</th></tr></thead><tbody><tr><td><code>/product/list</code></td><td>产品列表页</td></tr><tr><td><code>/product/detail/:id</code></td><td>产品详情页（:id为产品ID）</td></tr></tbody></table></KbCard>
+
+<KbQuote>前端路由配置页面导航和参数传递</KbQuote>
 <KbCard title="2.2 API接口"><table class="kl-table"><thead><tr><th>接口</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td><code>CRM_BUSINESS/v1/{orgId}/product</code></td><td>GET</td><td>查询产品列表</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{id}</code></td><td>GET</td><td>查询产品详情</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product</code></td><td>POST</td><td>新增产品</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{id}</code></td><td>PUT</td><td>更新产品</td></tr></tbody></table></KbCard>
+
+<KbQuote>提供产品图册增删改查API接口</KbQuote>
 <KbCard title="2.3 无工作流"><p>本菜单无审批工作流，数据直接保存生效。</p></KbCard>
+
+<KbQuote>产品图册无审批流程，提交后直接生效</KbQuote>
 </div>
 </div>
 </div>

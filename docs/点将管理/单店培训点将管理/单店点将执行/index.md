@@ -190,6 +190,8 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="重点逻辑"><ul><li><strong>执行状态跟踪</strong>：点将生效后进入执行阶段，需跟踪实际培训执行情况</li><li><strong>状态流转</strong>：待执行→执行中→已完成，状态变更需记录操作人和时间</li><li><strong>排期联动</strong>：执行完成后自动释放讲师排期，更新讲师可用时间</li><li><strong>数据范围</strong>：展示当前用户有权限查看的所有已生效点将记录</li></ul></KbCard>
+
+<KbQuote>点将执行流程涉及派单、签到、执行记录和结果上传等环节</KbQuote>
 </div>
 </div>
 </div>
