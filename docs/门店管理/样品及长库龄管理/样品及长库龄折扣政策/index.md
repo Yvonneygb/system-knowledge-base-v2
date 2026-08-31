@@ -165,14 +165,31 @@
   </div>
 </div>
 
-```text
-选择适用对象      新建折扣政策        保存政策          提交审批          OA审批
-(客户/区域/   →   填写政策信息   →   添加产品明细  →   校验政策    →   推送OA审批
- 分类/省份)       设置折扣率         导入产品阶梯       推送OA数据       ↓
-                                                       ↓        审批通过/驳回
-                                                    保存并提交    OA回调处理
-                                                                 有效状态=有效
-```
+<div style="overflow-x:auto;padding:12px 0;white-space:nowrap;">
+  <table style="border-collapse:collapse;margin:0 auto;">
+    <tr>
+      <td style="padding:4px 8px;">
+        <div style="background:#E6F1FB;border:2px solid #378ADD;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#185FA5;">选择适用对象<br><small style="font-weight:400;">客户/区域/分类/省份</small></div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#E6F1FB;border:2px solid #378ADD;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#185FA5;">新建折扣政策<br><small style="font-weight:400;">填写政策信息、设置折扣率</small></div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#E6F1FB;border:2px solid #378ADD;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#185FA5;">保存政策<br><small style="font-weight:400;">添加产品明细、导入产品阶梯</small></div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#FEF3C7;border:2px solid #FCD34D;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#92400E;">提交审批<br><small style="font-weight:400;">校验政策、推送OA数据</small></div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#F0FDF4;border:2px solid #86EFAC;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#166534;">OA审批<br><small style="font-weight:400;">审批通过/驳回、OA回调处理</small></div>
+      </td>
+    </tr>
+  </table>
+</div>
 
 </div>
 </div>
@@ -350,6 +367,8 @@
     <h2>CRM产品选择弹窗（多选）</h2>
   </div>
   <KbQuote>从CRM系统查询产品信息，支持多选</KbQuote>
+  <KbSubTitle>弹窗1：CRM产品选择 <KbBadge type="purple">多选</KbBadge></KbSubTitle>
+
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">中文名</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">示例</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th></tr></thead>
@@ -359,13 +378,15 @@
       </tbody>
     </table>
   </div>
-  <div style="margin-top:10px;padding:10px 12px;background:#F9FAFB;border-radius:8px;font-size:.73rem;color:#374151;">
-    <strong>查询SQL（后端接口：CRM产品查询接口 invokeCrmProd）：</strong>
-  </div>
+
+> 查询SQL（后端接口：CRM产品查询接口 invokeCrmProd）：
+
 ```sql
 -- 调用CRM系统产品查询接口
 SELECT product_id, product_code, product_name, item_model, unit_price
-FROM crm_product_info WHERE organization_id = #{organizationId} AND status = 'ACTIVE';
+  FROM crm_product_info
+ WHERE organization_id = #{organizationId}
+   AND status = 'ACTIVE';
 ```
 </div>
 
@@ -375,6 +396,8 @@ FROM crm_product_info WHERE organization_id = #{organizationId} AND status = 'AC
     <h2>产品型号选择弹窗（单选）</h2>
   </div>
   <KbQuote>查询产品型号列表，单选</KbQuote>
+  <KbSubTitle>弹窗2：产品型号选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
       <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">中文名</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">示例</th><th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th></tr></thead>
@@ -383,11 +406,13 @@ FROM crm_product_info WHERE organization_id = #{organizationId} AND status = 'AC
       </tbody>
     </table>
   </div>
-  <div style="margin-top:10px;padding:10px 12px;background:#F9FAFB;border-radius:8px;font-size:.73rem;color:#374151;">
-    <strong>查询SQL（后端接口：getModel）：</strong>
-  </div>
+
+> 查询SQL（后端接口：getModel）：
+
 ```sql
-SELECT item_model_id, item_model, model_name FROM epm_item_model WHERE item_model LIKE #{itemModel};
+SELECT item_model_id, item_model, model_name
+  FROM epm_item_model
+ WHERE item_model LIKE #{itemModel};
 ```
 </div>
 
@@ -398,14 +423,14 @@ SELECT item_model_id, item_model, model_name FROM epm_item_model WHERE item_mode
   </div>
   <KbQuote>支持通过Excel文件批量导入产品明细和阶梯政策</KbQuote>
   <div style="margin-top:10px;">
-    <strong style="font-size:.78rem;color:#1F2937;">前置约定</strong>
-    <ul style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
+    <h4 class="kl-sub-title">前置约定</h4>
+    <ol style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
       <li>文件样例：Excel文件，包含产品编码、产品名称、型号、折扣率、阶梯数量、阶梯金额等列</li>
       <li>格式与文件大小限制：标准Excel格式</li>
-    </ul>
+    </ol>
   </div>
   <div style="margin-top:10px;">
-    <strong style="font-size:.78rem;color:#1F2937;">字段映射</strong>
+    <h4 class="kl-sub-title">字段映射</h4>
     <div style="overflow-x:auto;border-radius:8px;border:1px solid #E8ECF0;background:#fff;margin-top:6px;">
       <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
         <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"><th style="padding:8px 10px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段含义</th><th style="padding:8px 10px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">是否必输</th><th style="padding:8px 10px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段格式</th><th style="padding:8px 10px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">重复判定字段</th></tr></thead>
@@ -421,27 +446,27 @@ SELECT item_model_id, item_model, model_name FROM epm_item_model WHERE item_mode
     </div>
   </div>
   <div style="margin-top:10px;">
-    <strong style="font-size:.78rem;color:#1F2937;">处理逻辑</strong>
-    <ul style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
+    <h4 class="kl-sub-title">处理逻辑</h4>
+    <ol style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
       <li><strong>校验逻辑：</strong>校验产品编码是否存在、折扣率范围是否合法</li>
       <li><strong>导入逻辑：</strong>解析Excel → 校验产品 → 生成产品行和阶梯政策行</li>
       <li><strong>重复处理策略：</strong>报错</li>
       <li><strong>性能方案：</strong>同步处理</li>
-    </ul>
+    </ol>
   </div>
   <div style="margin-top:10px;">
-    <strong style="font-size:.78rem;color:#1F2937;">异常与结果约定</strong>
-    <ul style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
+    <h4 class="kl-sub-title">异常与结果约定</h4>
+    <ol style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
       <li>部分成功/失败时回滚整个导入</li>
       <li>结果反馈：返回导入成功明细列表</li>
-    </ul>
+    </ol>
   </div>
   <div style="margin-top:10px;">
-    <strong style="font-size:.78rem;color:#1F2937;">运维保障</strong>
-    <ul style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
+    <h4 class="kl-sub-title">运维保障</h4>
+    <ol style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
       <li>日志记录：记录导入操作日志</li>
       <li>断点续传/重试机制：不支持，需重新导入</li>
-    </ul>
+    </ol>
   </div>
 </div>
 
@@ -549,24 +574,22 @@ SELECT discount_policy_id, valid FROM epm_discount_policy WHERE discount_policy_
     <h2>保存校验规则</h2>
   </div>
   <KbQuote>保存时校验政策类型与适用对象的对应关系</KbQuote>
-  <div style="margin-top:10px;padding:10px 12px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA;">
-    <strong style="font-size:.78rem;color:#DC2626;">校验1：政策类型校验</strong>
-    <p style="font-size:.73rem;color:#374151;margin:4px 0 0;">确保按政策类型填写对应适用对象</p>
-    <ul style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
-      <li>policyType=1时customerId不能为空</li>
-      <li>policyType=2时saleAreaId不能为空</li>
-      <li>policyType=3时customerClass不能为空</li>
-      <li>policyType=4时provinceId不能为空</li>
-    </ul>
-    <p style="font-size:.73rem;color:#374151;margin:6px 0 0;"><strong>系统体现：</strong>阻断性报错</p>
-  </div>
-  <div style="margin-top:8px;">
-    <strong style="font-size:.78rem;color:#1F2937;">排查SQL：</strong>
+  <KbSubTitle>校验1：政策类型校验 —— 确保按政策类型填写对应适用对象</KbSubTitle>
+
+  - policyType=1时customerId不能为空
+  - policyType=2时saleAreaId不能为空
+  - policyType=3时customerClass不能为空
+  - policyType=4时provinceId不能为空
+
+  <KbTip>系统体现：保存时阻断性报错</KbTip>
+
+> 排查SQL：
+
 ```sql
 SELECT policy_type, customer_id, sale_area_id, customer_class, province_id
-FROM epm_discount_policy WHERE discount_policy_id = {id};
+  FROM epm_discount_policy
+ WHERE discount_policy_id = {id};
 ```
-  </div>
 </div>
 
 <div class="kl-card">
@@ -575,35 +598,29 @@ FROM epm_discount_policy WHERE discount_policy_id = {id};
     <h2>提交校验规则</h2>
   </div>
   <KbQuote>提交OA审批前校验产品明细和业务类型</KbQuote>
-  <div style="margin-top:10px;padding:10px 12px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA;">
-    <strong style="font-size:.78rem;color:#DC2626;">校验1：产品明细非空校验</strong>
-    <p style="font-size:.73rem;color:#374151;margin:4px 0 0;">确保政策有产品明细行</p>
-    <ul style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
-      <li>查询EPM_DISCOUNT_POLICY_ITEM表中该政策的明细行</li>
-      <li>明细为空时不允许提交</li>
-    </ul>
-    <p style="font-size:.73rem;color:#374151;margin:6px 0 0;"><strong>系统体现：</strong>阻断性报错</p>
-  </div>
-  <div style="margin-top:8px;">
-    <strong style="font-size:.78rem;color:#1F2937;">排查SQL：</strong>
+  <KbSubTitle>校验1：产品明细非空校验 —— 确保政策有产品明细行</KbSubTitle>
+
+  - 查询EPM_DISCOUNT_POLICY_ITEM表中该政策的明细行
+  - 明细为空时不允许提交
+
+  <KbTip>系统体现：保存并提交时阻断性报错</KbTip>
+
+> 排查SQL：
+
 ```sql
 SELECT COUNT(*) FROM epm_discount_policy_item WHERE discount_policy_id = {id};
 ```
-  </div>
-  <div style="margin-top:10px;padding:10px 12px;background:#FEF2F2;border-radius:8px;border:1px solid #FECACA;">
-    <strong style="font-size:.78rem;color:#DC2626;">校验2：长库龄业务类型校验</strong>
-    <p style="font-size:.73rem;color:#374151;margin:4px 0 0;">校验业务类型合法性</p>
-    <ul style="margin:4px 0 0;padding-left:18px;font-size:.75rem;color:#374151;line-height:1.9;">
-      <li>校验计划订单业务类型不能为长库龄</li>
-    </ul>
-    <p style="font-size:.73rem;color:#374151;margin:6px 0 0;"><strong>系统体现：</strong>阻断性报错</p>
-  </div>
-  <div style="margin-top:8px;">
-    <strong style="font-size:.78rem;color:#1F2937;">排查SQL：</strong>
+  <KbSubTitle>校验2：长库龄业务类型校验 —— 校验业务类型合法性</KbSubTitle>
+
+  - 校验计划订单业务类型不能为长库龄
+
+  <KbTip>系统体现：保存并提交时阻断性报错</KbTip>
+
+> 排查SQL：
+
 ```sql
 SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
 ```
-  </div>
 </div>
 
 <div class="kl-card">
@@ -613,15 +630,40 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   </div>
   <KbQuote>政策头valid字段和hz_approve_status字段驱动状态流转</KbQuote>
   <div style="margin-top:10px;padding:12px;background:#F9FAFB;border-radius:8px;">
-```text
-未审核(valid=1) ──提交──→ RUN(审批中) ──OA审批通过──→ 有效(valid=2)
-                              │
-                              │OA审批驳回
-                              ↓
-                         未审核(valid=1)
-
-有效(valid=2) ──发起失效──→ 失效流程 ──审批通过──→ 失效(valid=3)
-```
+    <div style="overflow-x:auto;padding:4px 0;white-space:nowrap;">
+      <table style="border-collapse:collapse;margin:0 auto;">
+        <tr>
+          <td style="padding:4px 8px;">
+            <div style="background:#E6F1FB;border:2px solid #378ADD;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#185FA5;">未审核(valid=1)</div>
+          </td>
+          <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">提交→</td>
+          <td style="padding:4px 8px;">
+            <div style="background:#FEF3C7;border:2px solid #FCD34D;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#92400E;">RUN(审批中)</div>
+          </td>
+          <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">OA审批通过→</td>
+          <td style="padding:4px 8px;">
+            <div style="background:#F0FDF4;border:2px solid #86EFAC;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#166534;">有效(valid=2)</div>
+          </td>
+          <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">发起失效→</td>
+          <td style="padding:4px 8px;">
+            <div style="background:#FEF2F2;border:2px solid #FCA5A5;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#991B1B;">失效(valid=3)</div>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">OA审批驳回↓</td>
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td colspan="2"></td>
+          <td style="padding:4px 8px;">
+            <div style="background:#E6F1FB;border:2px solid #378ADD;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#185FA5;">未审核(valid=1)</div>
+          </td>
+          <td colspan="4"></td>
+        </tr>
+      </table>
+    </div>
   </div>
   <div style="margin-top:10px;">
     <strong style="font-size:.78rem;color:#1F2937;">状态机列表</strong>
@@ -1268,10 +1310,28 @@ WHERE dp.source_type = 'YXCRM' AND (c.contract_type IS NULL OR c.contract_type N
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">常见问题</span>
     <h2>其他常见问题</h2>
   </div>
-  <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
-    <li><strong>问题1：OA审批推送失败</strong><br>原因：OA系统不可用或数据组装异常<br>解决思路：检查OA系统状态和OA单据配置"YXZT样品折扣政策申请"</li>
-    <li><strong>问题2：产品导入失败</strong><br>原因：产品编码不存在或文件格式错误<br>解决思路：检查Excel文件格式和产品编码是否在CRM系统中存在</li>
-  </ul>
+  <div class="faq-qa-wrap">
+    <div class="kl-card" style="margin-bottom:20px;padding-left:12px;padding-right:12px;">
+      <div class="kl-card-title" style="margin-bottom:16px;background:#FFFFFF;">
+        <span class="kl-num">Q1</span>
+        <span style="font-size:15px;">OA审批推送失败</span>
+      </div>
+      <div class="faq-answer" style="padding:12px 16px;background:#F5F3FF;border-radius:6px;font-size:14px;color:#374151;line-height:1.8;">
+        <strong style="color:#7C3AED;">原因：</strong>OA系统不可用或数据组装异常<br>
+        <strong style="color:#7C3AED;">处理：</strong>检查OA系统状态和OA单据配置"YXZT样品折扣政策申请"
+      </div>
+    </div>
+    <div class="kl-card" style="margin-bottom:20px;padding-left:12px;padding-right:12px;">
+      <div class="kl-card-title" style="margin-bottom:16px;background:#FFFFFF;">
+        <span class="kl-num">Q2</span>
+        <span style="font-size:15px;">产品导入失败</span>
+      </div>
+      <div class="faq-answer" style="padding:12px 16px;background:#F5F3FF;border-radius:6px;font-size:14px;color:#374151;line-height:1.8;">
+        <strong style="color:#7C3AED;">原因：</strong>产品编码不存在或文件格式错误<br>
+        <strong style="color:#7C3AED;">处理：</strong>检查Excel文件格式和产品编码是否在CRM系统中存在
+      </div>
+    </div>
+  </div>
 </div>
 
 </div>
