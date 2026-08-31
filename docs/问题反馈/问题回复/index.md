@@ -51,25 +51,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M3 4H13V11H3Z" fill="none" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 2.5V5.5M10 2.5V5.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看详情</h5>
-      <small>查看经销商反馈内容<br>与历史回复</small>
+      <small>查看经销商反馈内容<br/>与历史回复</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="2.5" width="11" height="11" rx="1.5" fill="none" stroke="white" stroke-width="1.5"/><path d="M5.5 5.5H10.5M5.5 8H10.5" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>回复反馈</h5>
-      <small>填写回复内容<br>可多次追加</small>
+      <small>填写回复内容<br/>可多次追加</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L12 5V11L8 14L4 11V5Z" fill="none" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 7.5L7.5 9L10 6" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>结束反馈</h5>
-      <small>判断是否结束<br>未结束继续回复</small>
+      <small>判断是否结束<br/>未结束继续回复</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5.5" fill="none" stroke="white" stroke-width="1.5"/><path d="M6 7.5L7.5 9L10 6" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>评价关闭</h5>
-      <small>评价反馈并回写结果<br>问题关闭</small>
+      <small>评价反馈并回写结果<br/>问题关闭</small>
     </div>
   </div>
 </div>

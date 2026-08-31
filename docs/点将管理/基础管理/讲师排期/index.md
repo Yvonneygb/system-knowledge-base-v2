@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="4.2" stroke="white" stroke-width="1.5"/><path d="M10.2 10.2L13.5 13.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查询排期</h5>
-      <small>按讲师与时间范围<br>查看现有占用情况</small>
+      <small>按讲师与时间范围<br/>查看现有占用情况</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M2.5 6.5H13.5" stroke="white" stroke-width="1.5"/><path d="M5.5 2V4" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M10.5 2V4" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 9.5H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>维护排期</h5>
-      <small>添加时校验冲突<br>或取消释放时间</small>
+      <small>添加时校验冲突<br/>或取消释放时间</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#22C55E);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 14H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>供点将使用</h5>
-      <small>点将查询可用讲师<br>并统计讲师饱和度</small>
+      <small>点将查询可用讲师<br/>并统计讲师饱和度</small>
     </div>
   </div>
 </div>

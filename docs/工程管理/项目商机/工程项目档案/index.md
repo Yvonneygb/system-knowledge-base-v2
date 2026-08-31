@@ -51,25 +51,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8H13M8 3V13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>报备写入档案</h5>
-      <small>报备审核通过后<br>生成/更新项目档案</small>
+      <small>报备审核通过后<br/>生成/更新项目档案</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>进度更新</h5>
-      <small>进度变更同步写入档案<br>并记录阶段历程</small>
+      <small>进度变更同步写入档案<br/>并记录阶段历程</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f97316,#ea580c);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V9" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11" r="1.5" fill="white"/></svg></div>
       <h5>冻结 / 解冻 / 失效</h5>
-      <small>有效期超期自动冻结<br>经申请审批调整有效状态</small>
+      <small>有效期超期自动冻结<br/>经申请审批调整有效状态</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>合同回写</h5>
-      <small>合同签订确认时<br>回写合同信息至档案</small>
+      <small>合同签订确认时<br/>回写合同信息至档案</small>
     </div>
   </div>
 </div>
@@ -262,7 +262,7 @@
       <span style="font-size:15px;">报备审核时报错"项目档案表（epm_project）缺失以下字段：xxx"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT column_name 
 FROM all_tab_columns 
 WHERE table_name = 'EPM_REPORT' 
@@ -277,7 +277,7 @@ WHERE table_name = 'EPM_REPORT'
       <span style="font-size:15px;">项目进度更新报错"项目进度已变更，请驳回重审!"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT p.PROJECT_ID, p.PROJECT_CODE, p.STAGE_ID, p.STAGE_NAME, p.STAGE_DESC
 FROM EPM_PROJECT p
 WHERE p.PROJECT_ID = :projectId;</code></pre>
@@ -289,7 +289,7 @@ WHERE p.PROJECT_ID = :projectId;</code></pre>
       <span style="font-size:15px;">项目进度更新报错"阶段更新，只能前进，不能后退"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT sd.STAGE_ID, sd.STAGE_NAME, sd.SEQ
 FROM EPM_STAGE_DEF sd
 ORDER BY sd.SEQ;</code></pre>
@@ -301,7 +301,7 @@ ORDER BY sd.SEQ;</code></pre>
       <span style="font-size:15px;">项目报备审核时报错"请配置{orgId}公司参数'Proj_Effective_Cycle'"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT * FROM SYS_PARAM WHERE PARAM_CODE = 'Proj_Effective_Cycle' AND ORGANIZATION_ID = :orgId;</code></pre>
     </div>
   </div>
@@ -311,7 +311,7 @@ ORDER BY sd.SEQ;</code></pre>
       <span style="font-size:15px;">项目已冻结但无法提交解冻申请</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT p.PROJECT_ID, p.PROJECT_CODE, p.PROJECT_VALID, p.FREEZE_TYPE, p.FREEZE_TIME,
        u.PROJECT_UNFREEZE_ID, u.HZ_APPROVE_STATUS AS UNFREEZE_STATUS
 FROM EPM_PROJECT p
@@ -325,14 +325,14 @@ WHERE p.PROJECT_ID = :projectId;</code></pre>
       <span style="font-size:15px;">项目档案有效状态显示异常</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT p.PROJECT_ID, p.PROJECT_CODE, p.PROJECT_VALID, p.FREEZE_TYPE,
        u.HZ_APPROVE_STATUS AS EPU_STAT
 FROM EPM_PROJECT p
 LEFT JOIN EPM_PROJECT_UNFREEZE u ON p.PROJECT_ID = u.PROJECT_ID 
   AND u.OBJECT_VERSION_NUMBER = (SELECT MAX(OBJECT_VERSION_NUMBER) FROM EPM_PROJECT_UNFREEZE WHERE PROJECT_ID = p.PROJECT_ID)
 WHERE p.PROJECT_ID = :projectId;</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">前端转换规则：</strong>
       <ul style="margin:4px 0 0;padding-left:20px;">
         <li>PROJECT_VALID=4 + EPU_STAT=新建/1 → 显示6(解冻草稿)</li>
@@ -350,7 +350,7 @@ WHERE p.PROJECT_ID = :projectId;</code></pre>
       <span style="font-size:15px;">查询项目档案详情</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT * FROM EPM_PROJECT WHERE PROJECT_ID = :projectId;</code></pre>
     </div>
   </div>
@@ -360,7 +360,7 @@ WHERE p.PROJECT_ID = :projectId;</code></pre>
       <span style="font-size:15px;">查询项目进度历程</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT ps.*, sd.STAGE_NAME, sd.SEQ
 FROM EPM_PROJECT_STAGE ps
 LEFT JOIN EPM_STAGE_DEF sd ON ps.STAGE_ID = sd.STAGE_ID
@@ -374,7 +374,7 @@ ORDER BY ps.creation_date;</code></pre>
       <span style="font-size:15px;">查询项目授权信息</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT * FROM EPM_PROJECT_AUTH WHERE PROJECT_ID = :projectId;</code></pre>
     </div>
   </div>
@@ -384,7 +384,7 @@ ORDER BY ps.creation_date;</code></pre>
       <span style="font-size:15px;">查询项目乙方信息</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT * FROM EPM_PROJECT_PARTYB WHERE PROJECT_ID = :projectId;</code></pre>
     </div>
   </div>
@@ -394,7 +394,7 @@ ORDER BY ps.creation_date;</code></pre>
       <span style="font-size:15px;">折扣校验时项目档案标识(PROJECT_ARCHIVE)如何取值</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT p.PROJECT_ID, p.PROJECT_CODE, p.IS_LOCAL,
        c.PROJECT_ARCHIVE
 FROM EPM_PROJECT p

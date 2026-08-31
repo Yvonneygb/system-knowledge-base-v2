@@ -45,25 +45,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h5v5H2z" stroke="white" stroke-width="1.5"/><path d="M9 7h5v5H9z" stroke="white" stroke-width="1.5"/><path d="M7 6.5h2" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>选单建头</h5>
-      <small>选报备项目、价格类型<br>填写客户、收货信息</small>
+      <small>选报备项目、价格类型<br/>填写客户、收货信息</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>录入明细</h5>
-      <small>选产品、填数量<br>自动带出折扣率与金额</small>
+      <small>选产品、填数量<br/>自动带出折扣率与金额</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>驱动 OA 审批流<br>通过后方可生效</small>
+      <small>驱动 OA 审批流<br/>通过后方可生效</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3v10" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>生成 CRM 订单</h5>
-      <small>同步 CRM 创建订单<br>更新项目阶段</small>
+      <small>同步 CRM 创建订单<br/>更新项目阶段</small>
     </div>
   </div>
 </div>
@@ -2506,7 +2506,7 @@ SELECT P.PROJECT_ID, P.STAT FROM EPM_PROJECT P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请数量必须大于0，以下行不合法：第X、Y行</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 遍历所有非删除状态的明细行，检查qtyBill是否大于0<br>(2) 收集所有异常行号并提示</div>
+    <div class="detail-text" v-pre>(1) 遍历所有非删除状态的明细行，检查qtyBill是否大于0<br/>(2) 收集所有异常行号并提示</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2516,7 +2516,7 @@ SELECT P.PROJECT_ID, P.STAT FROM EPM_PROJECT P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>只有计划订单可以加紧急</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 检查billType是否为1(常规)或13(海外常规)<br>(2) 常规订单不允许加紧急标记</div>
+    <div class="detail-text" v-pre>(1) 检查billType是否为1(常规)或13(海外常规)<br/>(2) 常规订单不允许加紧急标记</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2526,7 +2526,7 @@ SELECT P.PROJECT_ID, P.STAT FROM EPM_PROJECT P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>紧急行数过多，当前有X行产品明细,可加紧急行数为Y</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 统计紧急行数(urgency=2的行数)<br>(2) 计算允许的紧急行数=向上取整(明细行数/5)<br>(3) 排查SQL见弹窗下方</div>
+    <div class="detail-text" v-pre>(1) 统计紧急行数(urgency=2的行数)<br/>(2) 计算允许的紧急行数=向上取整(明细行数/5)<br/>(3) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
@@ -2546,7 +2546,7 @@ AND L.PACKAGE_NUMBER > 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>价格类型为折扣政策、价目表,产品线为卫浴,销售渠道为家装、零售时下单数量必须是整箱包装数的倍数</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 仅经销商用户(userType=D)时校验<br>(2) 条件：价格类型为折扣政策(2)或价目表(3)，且产品线为卫浴(1)，且销售渠道为家装(1)或零售(3)<br>(3) 排查SQL见弹窗下方</div>
+    <div class="detail-text" v-pre>(1) 仅经销商用户(userType=D)时校验<br/>(2) 条件：价格类型为折扣政策(2)或价目表(3)，且产品线为卫浴(1)，且销售渠道为家装(1)或零售(3)<br/>(3) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
@@ -2566,7 +2566,7 @@ AND L.PACKAGE_NUMBER > 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>第X行,该产品生命状态为Z8不允下达订单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 调用updateSmState接口获取产品生命状态<br>(2) Z8状态不允许下达订单，阻断性报错<br>(3) 排查SQL见弹窗下方</div>
+    <div class="detail-text" v-pre>(1) 调用updateSmState接口获取产品生命状态<br/>(2) Z8状态不允许下达订单，阻断性报错<br/>(3) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
     
 
@@ -2582,7 +2582,7 @@ SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OU
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>第X行,产品【XXX】计划淘汰中，请关注</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>产品生命状态为Z6</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>产品生命状态为Z6</div>
     <div class="detail-tip" v-pre>弹窗确认提示，用户确认后可继续操作</div>
   </div>
 </div>
@@ -2592,7 +2592,7 @@ SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OU
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>第X行,产品【XXX】产品进入售后阶段，请关注！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>产品生命状态为S6</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>产品生命状态为S6</div>
     <div class="detail-tip" v-pre>弹窗确认提示，用户确认后可继续操作</div>
   </div>
 </div>
@@ -2602,7 +2602,7 @@ SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OU
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>第X行,产品【XXX】有库存数量发完即止</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>产品生命状态为Z7</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>产品生命状态为Z7</div>
     <div class="detail-tip" v-pre>弹窗确认提示，用户确认后可继续操作</div>
   </div>
 </div>
@@ -2612,7 +2612,7 @@ SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OU
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>期望到达日期必须大于等于当前日期</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 期望到达日期不能超过一年<br>(2) 常规订单：25号前下单期望到达日期需为当月；25号后仅瓷砖可下常规订单<br>(3) 计划订单：电商渠道6个月内，其他渠道3个月内<br>(4) 排查SQL见弹窗下方</div>
+    <div class="detail-text" v-pre>(1) 期望到达日期不能超过一年<br/>(2) 常规订单：25号前下单期望到达日期需为当月；25号后仅瓷砖可下常规订单<br/>(3) 计划订单：电商渠道6个月内，其他渠道3个月内<br/>(4) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
@@ -2628,7 +2628,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能晚于政策有效期</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>计划订单+折扣政策时，期望到达日期晚于政策有效期</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>计划订单+折扣政策时，期望到达日期晚于政策有效期</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2638,7 +2638,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能晚于折扣有效期</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>计划订单+折扣单时，期望到达日期晚于折扣有效期</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>计划订单+折扣单时，期望到达日期晚于折扣有效期</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2648,7 +2648,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>价格类型为折扣政策需送签OA进行生成crm订单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>折扣政策类型不能直接生成CRM订单</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>折扣政策类型不能直接生成CRM订单</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2658,7 +2658,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>"期望到达日期"不合规,只能选择一年内的时间</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 期望到达日期不能超过一年<br>(2) 常规订单：25号前下单期望到达日期需为当月；25号后仅瓷砖可下常规订单<br>(3) 计划订单：电商渠道6个月内，其他渠道3个月内<br>(4) 排查SQL见弹窗下方</div>
+    <div class="detail-text" v-pre>(1) 期望到达日期不能超过一年<br/>(2) 常规订单：25号前下单期望到达日期需为当月；25号后仅瓷砖可下常规订单<br/>(3) 计划订单：电商渠道6个月内，其他渠道3个月内<br/>(4) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
@@ -2674,7 +2674,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同没有关联折扣单或合同折扣单已过期，请重新选择!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>直销合同下无关联折扣单或折扣单已过期</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>直销合同下无关联折扣单或折扣单已过期</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2684,7 +2684,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择折扣单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>价格类型=折扣单但未选择折扣单</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>价格类型=折扣单但未选择折扣单</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2694,7 +2694,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择折扣政策</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>价格类型=折扣政策但未选择折扣政策</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>价格类型=折扣政策但未选择折扣政策</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2704,7 +2704,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择客户</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择客户</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择客户</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2714,7 +2714,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择销售渠道</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择销售渠道</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择销售渠道</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2724,7 +2724,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择业务类型</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择业务类型</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择业务类型</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2734,7 +2734,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>重新选择合同将重置所有信息，是否继续?</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>重新选择合同会清空所有关联数据</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>重新选择合同会清空所有关联数据</div>
     <div class="detail-tip" v-pre>弹窗确认提示，用户确认后可继续操作</div>
   </div>
 </div>
@@ -2744,7 +2744,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请确认订单收货地址正确，确认提交？</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>含运费订单需确认收货地址</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>含运费订单需确认收货地址</div>
     <div class="detail-tip" v-pre>弹窗确认提示，用户确认后可继续操作</div>
   </div>
 </div>
@@ -2754,7 +2754,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>折扣政策有效结束日期是XXXX-XX-XX，请修改期望到达日期小于折扣政策有效结束日期</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>期望到达日期晚于折扣政策有效期</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>期望到达日期晚于折扣政策有效期</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2764,7 +2764,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>注意：当前合同"经销定价方式"为空，目前无法选择明细</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>合同的经销定价方式为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>合同的经销定价方式为空</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -2777,7 +2777,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
       <span style="font-size:15px;">直销模式下选择合同后提示"合同没有关联折扣单"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>直销合同下没有关联的折扣单，或关联的折扣单已过期<br>
+      <strong style="color:#7C3AED;">原因：</strong>直销合同下没有关联的折扣单，或关联的折扣单已过期<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查合同关联的折扣单状态：`SELECT D.* FROM EPM_DISCOUNT_APPLYS D WHERE D.CONTRACT_ID = ? AND D.IS_HOME = 2`
     </div>
   </div>
@@ -2787,7 +2787,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
       <span style="font-size:15px;">保存时提示产品生命状态Z8不允许下单</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>明细行中存在生命状态为Z8的产品<br>
+      <strong style="color:#7C3AED;">原因：</strong>明细行中存在生命状态为Z8的产品<br/>
       <strong style="color:#7C3AED;">处理：</strong>联系产品部调整产品生命状态，或从明细行中移除该产品
     </div>
   </div>
@@ -2797,7 +2797,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
       <span style="font-size:15px;">期望到达日期变更后订单类型未自动更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>CRM编辑标记=2时，期望到达日期变更不触发订单类型自动计算<br>
+      <strong style="color:#7C3AED;">原因：</strong>CRM编辑标记=2时，期望到达日期变更不触发订单类型自动计算<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认当前订单的CRM编辑标记状态，非CRM编辑模式下才会自动计算
     </div>
   </div>
@@ -2807,7 +2807,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
       <span style="font-size:15px;">折扣政策类型无法直接生成CRM订单</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>折扣政策类型需要走OA审批流程，审批通过后由后端自动创建CRM订单<br>
+      <strong style="color:#7C3AED;">原因：</strong>折扣政策类型需要走OA审批流程，审批通过后由后端自动创建CRM订单<br/>
       <strong style="color:#7C3AED;">处理：</strong>使用"保存并提交"按钮提交OA审批
     </div>
   </div>
@@ -2817,7 +2817,7 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
       <span style="font-size:15px;">经销商登录时客户信息未自动填充</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>initCustomerData接口返回为空，或用户类型(additionInfo.userType)不是'D'<br>
+      <strong style="color:#7C3AED;">原因：</strong>initCustomerData接口返回为空，或用户类型(additionInfo.userType)不是'D'<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认当前登录用户的userType是否为D(经销商)，检查initCustomerData接口返回
     </div>
   </div>

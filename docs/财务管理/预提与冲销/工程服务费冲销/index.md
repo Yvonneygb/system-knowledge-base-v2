@@ -54,25 +54,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>汇总预提</h5>
-      <small>按时间段汇总<br>预提数据</small>
+      <small>按时间段汇总<br/>预提数据</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/><path d="M4 5H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 8H9" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>生成冲销单</h5>
-      <small>定时任务自动<br>生成冲销单</small>
+      <small>定时任务自动<br/>生成冲销单</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#F59E0B,#FBBF24);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L13 4V8C13 11 8 14 8 14C8 14 3 11 3 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>审批</h5>
-      <small>冲销单走<br>工作流审批</small>
+      <small>冲销单走<br/>工作流审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>推送共享</h5>
-      <small>推送共享系统<br>释放预算</small>
+      <small>推送共享系统<br/>释放预算</small>
     </div>
   </div>
 </div>
@@ -549,7 +549,7 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请传入冲销单号！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>headNo参数为空，需传入冲销头单号</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>headNo参数为空，需传入冲销头单号</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -559,7 +559,7 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推共享预提 时间转换异常</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>attribute2年月格式错误，无法转换为日期</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>attribute2年月格式错误，无法转换为日期</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -569,7 +569,7 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>服务费冲销推送共享异常：xxx</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>共享系统处理失败，错误信息为共享返回的processMsgData</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>共享系统处理失败，错误信息为共享返回的processMsgData</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -579,7 +579,7 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>【xxx】该时间格式错误，请输入正确的时间格式：yyyy-MM</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>时间参数格式不符合yyyy-MM</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>时间参数格式不符合yyyy-MM</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -592,7 +592,7 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
       <span style="font-size:15px;">定时任务执行后未生成冲销数据</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>generateWriteoffInQuotaQuery查询结果为空，预提数据中无未兑现的服务费<br>
+      <strong style="color:#7C3AED;">原因：</strong>generateWriteoffInQuotaQuery查询结果为空，预提数据中无未兑现的服务费<br/>
     </div>
   </div>
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
@@ -601,7 +601,7 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
       <span style="font-size:15px;">推送FSSC后状态未更新为审批中</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>共享接口返回成功但更新billStatus执行异常，或headNo对应多条记录<br>
+      <strong style="color:#7C3AED;">原因：</strong>共享接口返回成功但更新billStatus执行异常，或headNo对应多条记录<br/>
     </div>
   </div>
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
@@ -610,7 +610,7 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
       <span style="font-size:15px;">家装冲销单号前缀错误</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>isHome字段值不正确，应为2(家装)时使用了GCCX前缀而非JZCX<br>
+      <strong style="color:#7C3AED;">原因：</strong>isHome字段值不正确，应为2(家装)时使用了GCCX前缀而非JZCX<br/>
     </div>
   </div>
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
@@ -619,7 +619,7 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
       <span style="font-size:15px;">成本中心查询为空导致推送失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>Scpcostcenter表中无对应事业部+渠道(channel=4)的成本中心配置<br>
+      <strong style="color:#7C3AED;">原因：</strong>Scpcostcenter表中无对应事业部+渠道(channel=4)的成本中心配置<br/>
     </div>
   </div>
 </div>

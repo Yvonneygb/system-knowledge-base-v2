@@ -52,25 +52,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8H13M8 3V13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>新建申请</h5>
-      <small>选择申请类型(失效/恢复)<br>从报备项目带入信息</small>
+      <small>选择申请类型(失效/恢复)<br/>从报备项目带入信息</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f97316,#ea580c);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3V7H6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 13V9H10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 7C4 10 6 12 8 12C10 12 12 10 13 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>发起工作流审批<br>拒绝则修改后重提</small>
+      <small>发起工作流审批<br/>拒绝则修改后重提</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>更新有效状态</h5>
-      <small>按申请类型置为失效<br>或恢复生效</small>
+      <small>按申请类型置为失效<br/>或恢复生效</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4H14V8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>联动下游</h5>
-      <small>同步 CRM 与 ES<br>联动工程合同状态</small>
+      <small>同步 CRM 与 ES<br/>联动工程合同状态</small>
     </div>
   </div>
 </div>
@@ -589,7 +589,7 @@ SELECT EPD.PROJECT_ID, EPD.PROJ_DISABLE_CODE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>项目报备数据不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过时根据PROJECT_ID查询EPM_REPORT表无数据。解决方案：检查项目报备数据是否被删除，或PROJECT_ID是否正确</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>审批通过时根据PROJECT_ID查询EPM_REPORT表无数据。解决方案：检查项目报备数据是否被删除，或PROJECT_ID是否正确</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -599,7 +599,7 @@ SELECT EPD.PROJECT_ID, EPD.PROJ_DISABLE_CODE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送CRM数据失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过后调用EBS接口INDIVIREPORT_ADD推送报备有效状态变更到CRM失败。解决方案：检查EBS接口连通性和CRM系统状态</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>审批通过后调用EBS接口INDIVIREPORT_ADD推送报备有效状态变更到CRM失败。解决方案：检查EBS接口连通性和CRM系统状态</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -609,7 +609,7 @@ SELECT EPD.PROJECT_ID, EPD.PROJ_DISABLE_CODE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>删除es数据失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>失效审批通过后删除ES索引数据失败。解决方案：检查ES服务状态和索引配置</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>失效审批通过后删除ES索引数据失败。解决方案：检查ES服务状态和索引配置</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -619,7 +619,7 @@ SELECT EPD.PROJECT_ID, EPD.PROJ_DISABLE_CODE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送es数据失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>恢复生效审批通过后推送ES索引数据失败。解决方案：检查ES服务状态和索引配置</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>恢复生效审批通过后推送ES索引数据失败。解决方案：检查ES服务状态和索引配置</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -633,12 +633,12 @@ SELECT EPD.PROJECT_ID, EPD.PROJ_DISABLE_CODE
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>审批结果不是APPROVED，wfComplete方法中判断approveResult不等于APPROVED时直接返回true，不执行状态更新逻辑
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPD.PROJ_DISABLE_CODE, EPD.STAT, EPD.PROJECT_ID, EP.PROJECT_VALID
 FROM EPM_PROJECT_DISABLE EPD
 JOIN EPM_PROJECT EP ON EPD.PROJECT_ID = EP.PROJECT_ID
 WHERE EPD.PROJ_DISABLE_ID = {申请单ID};</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>检查审批结果是否为APPROVED，确认工作流配置正确
     </div>
   </div>
@@ -649,11 +649,11 @@ WHERE EPD.PROJ_DISABLE_ID = {申请单ID};</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>MONOMER_TYPE=2时，代码中跳过了CRM推送逻辑，这是正常业务逻辑，非异常
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPD.PROJ_DISABLE_CODE, EPD.MONOMER_TYPE
 FROM EPM_PROJECT_DISABLE EPD
 WHERE EPD.MONOMER_TYPE = 2 AND EPD.TYPE = 1;</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>确认该报备确实是家装单体类型，家装单体报备失效不推送CRM是设计如此
     </div>
   </div>
@@ -664,9 +664,9 @@ WHERE EPD.MONOMER_TYPE = 2 AND EPD.TYPE = 1;</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>两种类型使用不同的编码规则：失效使用AE.PROJECT_DISABLE_CODE，恢复生效使用AE.PROJECT_DISABLE_ENABLE_CODE（格式HFSX+YY+MM+DD+3位流水号）
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT PROJ_DISABLE_CODE, TYPE FROM EPM_PROJECT_DISABLE WHERE PROJECT_ID = {项目ID} ORDER BY CREATETIME DESC;</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>检查编码规则AE.PROJECT_DISABLE_ENABLE_CODE的配置是否正确
     </div>
   </div>
@@ -677,12 +677,12 @@ WHERE EPD.MONOMER_TYPE = 2 AND EPD.TYPE = 1;</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>仅单体报备（REPORT_TYPE=1）才会操作ES数据，战略报备等其他类型不操作ES
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPD.PROJ_DISABLE_CODE, ER.REPORT_TYPE, ER.ES_PUSH_STATUS
 FROM EPM_PROJECT_DISABLE EPD
 JOIN EPM_REPORT ER ON EPD.PROJECT_ID = ER.PROJECT_ID
 WHERE EPD.PROJ_DISABLE_ID = {申请单ID};</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>确认报备类型是否为单体报备（REPORT_TYPE=1），非单体报备不操作ES是正常逻辑
     </div>
   </div>

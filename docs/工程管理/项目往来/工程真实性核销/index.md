@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 7L8 9L10 6"/></svg></div>
       <h5>关联发票上传单</h5>
-      <small>选择已生效的<br>发票上传单</small>
+      <small>选择已生效的<br/>发票上传单</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 8H10"/></svg></div>
       <h5>新建核销单</h5>
-      <small>录入核销行与<br>发票明细并保存</small>
+      <small>录入核销行与<br/>发票明细并保存</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>提交审批</h5>
-      <small>走真实性核销<br>工作流审批</small>
+      <small>走真实性核销<br/>工作流审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 7L8 9L10 6"/></svg></div>
       <h5>审批通过生效</h5>
-      <small>更新出库行/发票<br>触发返利</small>
+      <small>更新出库行/发票<br/>触发返利</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -883,7 +883,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次核销数量的小数位不能超过3位</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>核销数量精度超限，需调整小数位</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>核销数量精度超限，需调整小数位</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -893,7 +893,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>操作类型不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>actionType参数为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>actionType参数为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -903,7 +903,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>对应列表id数组不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>idList参数为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>idList参数为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -913,7 +913,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>不支持xxx操作</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>actionType不在5种合法值范围内</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>actionType不在5种合法值范围内</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -923,7 +923,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>核销取消数据为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>按条件查询不到可取消的核销明细</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>按条件查询不到可取消的核销明细</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -933,7 +933,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>核销明细状态异常,请刷新数据后重试</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>更新canceled状态时影响行数与预期不一致</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>更新canceled状态时影响行数与预期不一致</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -943,7 +943,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>更新失败,取消后出库单行已核销数量小于0</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>取消数量大于出库单行已核销数量，数据不一致</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>取消数量大于出库单行已核销数量，数据不一致</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -956,7 +956,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
       <span style="font-size:15px;">取消核销后出库单行可核销数量未回加</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>updateClData中invLine为空(无审批通过的核销明细)，或分布式锁获取失败<br>
+      <strong style="color:#7C3AED;">原因：</strong>updateClData中invLine为空(无审批通过的核销明细)，或分布式锁获取失败<br/>
       <strong style="color:#7C3AED;">处理：</strong>`SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, ith.HZ_APPROVE_STATUS FROM epm_verifer_invoice_details vid JOIN epm_invoice_truth_line itl ON vid.invoice_truth_line_id = itl.invoice_truth_line_id JOIN epm_invoice_truth_header ith ON ith.invoice_truth_id = itl.invoice_truth_id WHERE vid.EFFECT_STATUS IN ('invalid','valid') AND ith.HZ_APPROVE_STATUS IN ('NEW','RUN','APPROVED')`
     </div>
   </div>
@@ -966,7 +966,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
       <span style="font-size:15px;">审批通过后出库单行核销数量未更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>wfComplete回调未正确执行，或核销明细有效状态更新失败<br>
+      <strong style="color:#7C3AED;">原因：</strong>wfComplete回调未正确执行，或核销明细有效状态更新失败<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查EPM_VERIFER_INVOICE_DETAILS的EFFECT_STATUS是否为valid，检查INV_OUT_BILL_LINE的USED_VERIFY_NUM/CAN_VERIFY_NUM
     </div>
   </div>
@@ -976,7 +976,7 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
       <span style="font-size:15px;">作废发票后核销明细仍为valid</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>obsInvoice操作仅更新EPM_UPLOAD_INVOICE_INFO状态为obsolete，同时通过updateEffectStatusByInvoiceInfoIds更新关联明细<br>
+      <strong style="color:#7C3AED;">原因：</strong>obsInvoice操作仅更新EPM_UPLOAD_INVOICE_INFO状态为obsolete，同时通过updateEffectStatusByInvoiceInfoIds更新关联明细<br/>
       <strong style="color:#7C3AED;">处理：</strong>`SELECT vid.* FROM epm_verifer_invoice_details vid JOIN epm_upload_invoice_details euid ON euid.invoice_details_id = vid.invoice_details_id JOIN epm_upload_invoice_info uii ON euid.invoice_verifer_id = uii.invoice_verifer_id AND euid.invoice_number = uii.invoice_number AND euid.invoice_code = uii.invoice_code WHERE uii.invoice_info_id IN ({id1},{id2},...)`
     </div>
   </div>

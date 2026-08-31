@@ -399,7 +399,7 @@ SELECT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>新开发网点月度明细任务数与新开发网点个数不相等</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>月度任务拆分之和与合同头新开发网点个数不一致</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>月度任务拆分之和与合同头新开发网点个数不一致</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -412,7 +412,7 @@ SELECT
       <span style="font-size:15px;">合同任务完成率Tab页无数据</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>该合同未配置新开发网点月度拆分数据，检查SALE_CONTRACT_TASK_SPLIT表中是否有HEAD_ID对应的记录<br>
+      <strong style="color:#7C3AED;">原因：</strong>该合同未配置新开发网点月度拆分数据，检查SALE_CONTRACT_TASK_SPLIT表中是否有HEAD_ID对应的记录<br/>
       <strong style="color:#7C3AED;">处理：</strong>在经销合同详情页编辑模式中填写月度拆分数据并保存
     </div>
   </div>

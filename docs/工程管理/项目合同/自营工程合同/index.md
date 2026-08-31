@@ -45,19 +45,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新建合同</h5>
-      <small>选自营项目<br>录合同要素</small>
+      <small>选自营项目<br/>录合同要素</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>区域审批</h5>
-      <small>按区域走<br>差异化审批</small>
+      <small>按区域走<br/>差异化审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>合同生效</h5>
-      <small>状态置生效<br>可供引用</small>
+      <small>状态置生效<br/>可供引用</small>
     </div>
   </div>
 </div>
@@ -639,7 +639,7 @@ SELECT SIGN_WAY FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>签收方式不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>自营合同签收方式为必填字段</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>自营合同签收方式为必填字段</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -649,7 +649,7 @@ SELECT SIGN_WAY FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>项目数据不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的项目已被删除或无效</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>关联的项目已被删除或无效</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -662,7 +662,7 @@ SELECT SIGN_WAY FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
       <span style="font-size:15px;">签收方式=2(签收+验收)时ERP未推送</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>signWay=2时，财务签收审核后不推送ERP，这是设计行为<br>
+      <strong style="color:#7C3AED;">原因：</strong>signWay=2时，财务签收审核后不推送ERP，这是设计行为<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认签收方式配置是否正确，如需推送ERP则签收方式应设为1
     </div>
   </div>

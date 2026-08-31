@@ -41,19 +41,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h10v8H3z" stroke="white" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>设查询条件</h5>
-      <small>选择客户/状态<br>有效期范围</small>
+      <small>选择客户/状态<br/>有效期范围</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v12M4 6l4-4 4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>查询展示</h5>
-      <small>展示头行明细<br>与汇总</small>
+      <small>展示头行明细<br/>与汇总</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M6 3v10M3 6h7" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>导出 Excel</h5>
-      <small>导出明细<br>用于审计对账</small>
+      <small>导出明细<br/>用于审计对账</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;"><strong>使用提示：</strong>该报表为只读分析，不影响折扣单状态，下游无写入动作。</div>
@@ -292,7 +292,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>-</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>-</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>-</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -305,7 +305,7 @@
       <span style="font-size:15px;">报表查询超时</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>查询条件过宽导致数据量过大<br>
+      <strong style="color:#7C3AED;">原因：</strong>查询条件过宽导致数据量过大<br/>
       <strong style="color:#7C3AED;">处理：</strong>缩小查询条件范围，增加时间筛选
     </div>
   </div>

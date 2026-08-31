@@ -51,25 +51,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8H13M8 3V13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>创建结案单</h5>
-      <small>选择结案类型(合同/项目)<br>填写说明并保存</small>
+      <small>选择结案类型(合同/项目)<br/>填写说明并保存</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f97316,#ea580c);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3V7H6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 13V9H10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 7C4 10 6 12 8 12C10 12 12 10 13 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>发起工作流审批<br>拒绝则修改后重提</small>
+      <small>发起工作流审批<br/>拒绝则修改后重提</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>执行收尾</h5>
-      <small>置失效·回写结案信息<br>更新项目进度</small>
+      <small>置失效·回写结案信息<br/>更新项目进度</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>推送联动</h5>
-      <small>同步 CRM 系统<br>供项目透视与结案查询</small>
+      <small>同步 CRM 系统<br/>供项目透视与结案查询</small>
     </div>
   </div>
 </div>
@@ -286,7 +286,7 @@ WHERE h.ORDER_STAT = 3
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>工作流审批状态未更新为APPROVED(5)，或回调接口未正确触发。
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>-- 1. 查询结案单审批状态
 SELECT ECC.CONTRACT_COMPLETED_ID, ECC.COMPLETED_CODE, ECC.ACTION_TYPE, ECC.HZ_APPROVE_STATUS, ECC.COMPLETED_TYPE
 FROM EPM_CONTRACT_COMPLETED ECC
@@ -308,7 +308,7 @@ WHERE ECC.CONTRACT_COMPLETED_ID = 结案ID;</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>项目结案(actionType=1)审批未通过，或doAudit执行异常。
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>-- 1. 查询项目当前状态
 SELECT EP.PROJECT_ID, EP.PROJECT_CODE, EP.PROJECT_VALID, EP.PROJECT_STAGE_TYPE, EP.CLOSE_PROJECT_TIME
 FROM EPM_PROJECT EP
@@ -325,7 +325,7 @@ WHERE ER.PROJECT_ID = 项目ID;</code></pre>
       <span style="font-size:15px;">合同结案后增补合同未结案？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>-- 1. 查询主合同下的增补合同
 SELECT EPC.CONTRACT_ID, EPC.CONTRACT_CODE, EPC.MAIN_CONTRACT_ID, EPC.COMPLETED_DATE, EPC.COMPLETED_TYPE, EPC.VALID
 FROM EPM_PROJECT_CONTRACT EPC
@@ -334,7 +334,7 @@ WHERE EPC.MAIN_CONTRACT_ID = 主合同ID;
 SELECT EPC.CONTRACT_ID, EPC.CONTRACT_CODE, EPC.COMPLETED_DATE, EPC.COMPLETED_TYPE
 FROM EPM_PROJECT_CONTRACT EPC
 WHERE EPC.CONTRACT_ID = 主合同ID;</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">说明：</strong>合同结案时增补合同仅更新结案日期和结案类型，不更新有效状态(VALID)，这是设计行为。
     </div>
   </div>
@@ -344,7 +344,7 @@ WHERE EPC.CONTRACT_ID = 主合同ID;</code></pre>
       <span style="font-size:15px;">结案后CRM推送失败？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>-- 1. 查询报备关联客户信息
 SELECT ER.REPORT_ID, ER.PROJECT_ID, ER.CUSTOMER_ID, ER.CUSTOMER_CODE, ER.CUSTOMER_NAME, ER.DIVISION_NAME
 FROM EPM_REPORT ER
@@ -353,7 +353,7 @@ WHERE ER.PROJECT_ID = 项目ID;
 SELECT C.CUSTOMER_ID, C.CUSTOMER_CODE, C.CUSTOMER_NAME, C.SHORT_NAME
 FROM CUSTOMER C
 WHERE C.CUSTOMER_ID = 客户ID;</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">说明：</strong>CRM推送失败不影响结案主流程，系统仅记录错误日志。检查日志搜索关键字: `将报备状态推送到CRM推送失败`。
     </div>
   </div>
@@ -364,7 +364,7 @@ WHERE C.CUSTOMER_ID = 客户ID;</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>阶段定义表中缺少STAGE_NAME='项目结案'的记录，导致查询报空指针。
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>-- 1. 查询"项目结案"阶段定义
 SELECT ESD.STAGE_ID, ESD.STAGE_NAME, ESD.ORGANIZATION_ID
 FROM EPM_STAGE_DEF ESD
@@ -378,7 +378,7 @@ WHERE ESD.STAGE_NAME = '项目结案'
       <span style="font-size:15px;">如何查询结案单关联的出库未发货明细？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT l.SA_OUT_BILL_LINE_ID, l.ITEM_ID, i.ITEM_CODE, i.ITEM_NAME,
        l.QTY_BILL, l.CONFIRM_OUT_QTY, l.CANCEL_QTY,
        (l.QTY_BILL - l.CONFIRM_OUT_QTY - l.CANCEL_QTY) AS UNDELIVERED_QTY,
@@ -397,11 +397,11 @@ WHERE h.ORDER_STAT = 3
       <span style="font-size:15px;">结案日期和状态前端显示为空？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPC.CONTRACT_ID, EPC.COMPLETED_DATE, EPC.COMPLETED_TYPE
 FROM EPM_PROJECT_CONTRACT EPC
 WHERE EPC.CONTRACT_ID = 合同ID;</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">说明：</strong>COMPLETED_TYPE值为0时，前端会转换为null不展示。结案审批通过后系统自动回写结案日期和类型，若为空说明结案审批未通过。
     </div>
   </div>

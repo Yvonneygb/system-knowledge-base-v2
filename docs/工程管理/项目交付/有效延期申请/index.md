@@ -45,19 +45,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h10v8H3z" stroke="white" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新建申请</h5>
-      <small>选订单行<br>设延期信息</small>
+      <small>选订单行<br/>设延期信息</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>H0 审批</h5>
-      <small>提交 H0 审批<br>通过后处理</small>
+      <small>提交 H0 审批<br/>通过后处理</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3h12v4H2z" stroke="white" stroke-width="1.5"/><path d="M2 9h12v4H2z" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>分情况处理</h5>
-      <small>推送 EBS<br>或标记失效</small>
+      <small>推送 EBS<br/>或标记失效</small>
     </div>
   </div>
 </div>
@@ -627,7 +627,7 @@ SELECT * FROM epm_urgent_extend WHERE urgent_extend_id = :urgentExtendId
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该紧急要货单存在有未审核完毕的延期申请单【延期单号】</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>同一紧急要货单已存在未审核完毕的延期申请，需等待其审批完成或删除后再操作</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>同一紧急要货单已存在未审核完毕的延期申请，需等待其审批完成或删除后再操作</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -637,7 +637,7 @@ SELECT * FROM epm_urgent_extend WHERE urgent_extend_id = :urgentExtendId
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>紧急要货延期申请单不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>延期申请单数据已被删除或ID不正确，刷新页面重试</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>延期申请单数据已被删除或ID不正确，刷新页面重试</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -647,7 +647,7 @@ SELECT * FROM epm_urgent_extend WHERE urgent_extend_id = :urgentExtendId
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>延期时间不能小于等于已延期的最大时间</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>输入的延期日期不大于可延期行项中最大有效期，需输入更大的日期</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>输入的延期日期不大于可延期行项中最大有效期，需输入更大的日期</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -657,7 +657,7 @@ SELECT * FROM epm_urgent_extend WHERE urgent_extend_id = :urgentExtendId
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>已审核通过的紧急要货延期申请单不能删除</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审核通过的延期单不允许删除，只能查看</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>审核通过的延期单不允许删除，只能查看</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -670,7 +670,7 @@ SELECT * FROM epm_urgent_extend WHERE urgent_extend_id = :urgentExtendId
       <span style="font-size:15px;">审批通过后部分行项EBS接口调用失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>EBS接口返回错误状态(E)，可能是EBS侧库存预留已释放或数据异常<br>
+      <strong style="color:#7C3AED;">原因：</strong>EBS接口返回错误状态(E)，可能是EBS侧库存预留已释放或数据异常<br/>
       <strong style="color:#7C3AED;">处理：</strong>查看INTF_INFO字段中的EBS返回信息，确认EBS侧数据状态后重新提交延期申请
     </div>
   </div>
@@ -680,7 +680,7 @@ SELECT * FROM epm_urgent_extend WHERE urgent_extend_id = :urgentExtendId
       <span style="font-size:15px;">审批通过后行项全部标记为不满足延期条件</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>延期日期在审批通过时已早于当前日期(审批流程耗时过长导致延期日期过期)，或所有行项已过期/已取消<br>
+      <strong style="color:#7C3AED;">原因：</strong>延期日期在审批通过时已早于当前日期(审批流程耗时过长导致延期日期过期)，或所有行项已过期/已取消<br/>
       <strong style="color:#7C3AED;">处理：</strong>重新创建延期申请，设置更远的延期日期；或确认紧急要货行项的有效性状态
     </div>
   </div>
@@ -690,7 +690,7 @@ SELECT * FROM epm_urgent_extend WHERE urgent_extend_id = :urgentExtendId
       <span style="font-size:15px;">查询详情时提示存在未审核完毕的延期申请</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>同一紧急要货单已有延期申请正在审批中<br>
+      <strong style="color:#7C3AED;">原因：</strong>同一紧急要货单已有延期申请正在审批中<br/>
       <strong style="color:#7C3AED;">处理：</strong>等待现有延期申请审批完成，或联系审批人处理(通过/拒绝)后再创建新的延期申请
     </div>
   </div>

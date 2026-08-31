@@ -47,25 +47,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 11V3M5 6l3-3 3 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选择上传</h5>
-      <small>选文件或拖拽<br>显示进度</small>
+      <small>选文件或拖拽<br/>显示进度</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="white" stroke-width="1.5"/><circle cx="6" cy="6.5" r="1" stroke="white" stroke-width="1.5"/><path d="M3 12l4-3 3 2 3-2.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>自动处理</h5>
-      <small>生成缩略图<br>设定主图</small>
+      <small>生成缩略图<br/>设定主图</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v3M8 11v3M2 8h3M11 8h3" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="8" r="1.5" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>调整排序</h5>
-      <small>拖拽重排<br>设展示顺序</small>
+      <small>拖拽重排<br/>设展示顺序</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.5L6.5 12L13 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>生效展示</h5>
-      <small>供图册/详情<br>等下游使用</small>
+      <small>供图册/详情<br/>等下游使用</small>
     </div>
   </div>
 </div>

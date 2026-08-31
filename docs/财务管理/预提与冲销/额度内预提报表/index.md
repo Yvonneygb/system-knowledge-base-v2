@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>更新预提数据</h5>
-      <small>读取上月预提<br>汇总预提记录</small>
+      <small>读取上月预提<br/>汇总预提记录</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>执行推送</h5>
-      <small>推送共享系统<br>占用预算</small>
+      <small>推送共享系统<br/>占用预算</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>结果反馈</h5>
-      <small>成功占用预算<br>失败则反馈</small>
+      <small>成功占用预算<br/>失败则反馈</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -447,7 +447,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>共享接口返回null,执行共享接口失败！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>共享接口调用失败，检查共享系统连通性</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>共享接口调用失败，检查共享系统连通性</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -457,7 +457,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>共享返回的错误信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>共享系统处理失败，根据具体错误信息排查</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>共享系统处理失败，根据具体错误信息排查</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -470,7 +470,7 @@
       <span style="font-size:15px;">更新预提数据后记录数为0</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>withholding_in_quota_new_view视图中无上月预提源数据，或organizationId&lt;=0<br>
+      <strong style="color:#7C3AED;">原因：</strong>withholding_in_quota_new_view视图中无上月预提源数据，或organizationId&lt;=0<br/>
     </div>
   </div>
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
@@ -479,7 +479,7 @@
       <span style="font-size:15px;">新旧科目分配金额异常</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>冲销兑现数据(newWriteoffInQuotaViewMap)缺失导致旧科目预提=0，全部归入新科目<br>
+      <strong style="color:#7C3AED;">原因：</strong>冲销兑现数据(newWriteoffInQuotaViewMap)缺失导致旧科目预提=0，全部归入新科目<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查DATA_LOG字段中的运算记录，核对cashOldAmt和holdingAmt
     </div>
   </div>
@@ -489,7 +489,7 @@
       <span style="font-size:15px;">成本中心为空</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>法人销售区域未配置或bxType计算结果与成本中心不匹配<br>
+      <strong style="color:#7C3AED;">原因：</strong>法人销售区域未配置或bxType计算结果与成本中心不匹配<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查LegalSalezoneEntity和CostCenter配置
     </div>
   </div>

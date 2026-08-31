@@ -53,25 +53,25 @@
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>新建申请</h5>
-        <small>选认款记录<br>带出可用金额</small>
+        <small>选认款记录<br/>带出可用金额</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>保存并提交</h5>
-        <small>按合同类型填金额<br>启动审批</small>
+        <small>按合同类型填金额<br/>启动审批</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
         <h5>审批判断</h5>
-        <small>通过则认缴生效<br>驳回回退未生效</small>
+        <small>通过则认缴生效<br/>驳回回退未生效</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13L6 9L9 11L13 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h5>生效同步</h5>
-        <small>生成认缴记录<br>更新缴清·推送CRM</small>
+        <small>生成认缴记录<br/>更新缴清·推送CRM</small>
       </div>
     </div>
   </div>
@@ -599,7 +599,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择审批流程编码</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择审批流程编码</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -609,7 +609,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无法获上线文信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>无法获取当前登录用户信息</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>无法获取当前登录用户信息</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -619,7 +619,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无法获事业部信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前用户未关联事业部</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>当前用户未关联事业部</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -629,7 +629,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>事业部id、经销商id 不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>查询认缴金额时关键参数为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>查询认缴金额时关键参数为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -639,7 +639,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同类型不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>合同类型参数为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>合同类型参数为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -649,7 +649,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>保证金ID不能空！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>认款单ID为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>认款单ID为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -659,7 +659,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该笔认款金额已进行撤销操作，不能进行认领</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的认款记录已撤销</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>关联的认款记录已撤销</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -669,7 +669,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该认款已转换为封顶认款，不能再进行认缴操作</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>普通认缴且已转封顶</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>普通认缴且已转封顶</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -682,7 +682,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
       <span style="font-size:15px;">保存后认缴申请单号未生成</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>编码规则AE.CONTRACT_PAYMENT_APPLY_NO未配置或事业部编码未设置<br>
+      <strong style="color:#7C3AED;">原因：</strong>编码规则AE.CONTRACT_PAYMENT_APPLY_NO未配置或事业部编码未设置<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查编码规则配置和事业部基础设置
     </div>
   </div>
@@ -692,7 +692,7 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY_LINE WHERE HEAD_ID = :headId AND (CONTRA
       <span style="font-size:15px;">认缴申请详情中可认缴金额为0</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>认款金额已被其他认缴申请使用完（已认缴+在途金额=认款金额）<br>
+      <strong style="color:#7C3AED;">原因：</strong>认款金额已被其他认缴申请使用完（已认缴+在途金额=认款金额）<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查该认款记录关联的其他认缴申请。排查SQL：
     </div>
   </div>

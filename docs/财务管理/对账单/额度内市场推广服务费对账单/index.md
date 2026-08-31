@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><path d="M8 5V8L10 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选择条件</h5>
-      <small>筛选账户范围<br>定位对账单</small>
+      <small>筛选账户范围<br/>定位对账单</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/><path d="M4 5H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查询列表</h5>
-      <small>展示服务费<br>对账单列表</small>
+      <small>展示服务费<br/>对账单列表</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L13 4V8C13 11 8 14 8 14C8 14 3 11 3 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>重生成/推送</h5>
-      <small>重生成对账单<br>更新推送状态</small>
+      <small>重生成对账单<br/>更新推送状态</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -610,7 +610,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>BUD_INLIMIT_BALANCE_ACCOUNT表中无匹配记录</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>BUD_INLIMIT_BALANCE_ACCOUNT表中无匹配记录</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -620,7 +620,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>重新生成失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>源数据(广告费余额)不存在或计算异常</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>源数据(广告费余额)不存在或计算异常</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -633,7 +633,7 @@
       <span style="font-size:15px;">重新生成后数据与之前不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>regenerate会基于最新源数据重新计算，源数据可能已变更<br>
+      <strong style="color:#7C3AED;">原因：</strong>regenerate会基于最新源数据重新计算，源数据可能已变更<br/>
       <strong style="color:#7C3AED;">处理：</strong>重新生成前确认源数据是否已更新，评估影响后操作
     </div>
   </div>
@@ -643,7 +643,7 @@
       <span style="font-size:15px;">推送状态一直为推送失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>外部推送系统不可用或推送报文格式异常<br>
+      <strong style="color:#7C3AED;">原因：</strong>外部推送系统不可用或推送报文格式异常<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查外部推送系统连通性，确认推送报文格式正确后重新推送
     </div>
   </div>

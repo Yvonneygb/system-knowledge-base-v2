@@ -41,19 +41,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="4.5" stroke="white" stroke-width="1.5"/><path d="M11 11l3 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>筛选查询</h5>
-      <small>按产品/类型/时间<br>范围定位记录</small>
+      <small>按产品/类型/时间<br/>范围定位记录</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M5 5h6M5 8h6M5 11h4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看详情</h5>
-      <small>查看明细中的<br>前后值差异</small>
+      <small>查看明细中的<br/>前后值差异</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>审计追溯</h5>
-      <small>支撑合规与<br>推广等级评估</small>
+      <small>支撑合规与<br/>推广等级评估</small>
     </div>
   </div>
 </div>

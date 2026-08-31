@@ -45,19 +45,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5" stroke="white" stroke-width="1.5"/><path d="M8 5v3l2 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>执行变更</h5>
-      <small>选择订单<br>修改提货时间</small>
+      <small>选择订单<br/>修改提货时间</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3h12v4H2z" stroke="white" stroke-width="1.5"/><path d="M2 9h12v4H2z" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>推送 ERP</h5>
-      <small>推送变更<br>同步 ERP</small>
+      <small>推送变更<br/>同步 ERP</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>本地更新</h5>
-      <small>更新行/库存<br>写操作日志</small>
+      <small>更新行/库存<br/>写操作日志</small>
     </div>
   </div>
 </div>
@@ -463,7 +463,7 @@ SELECT URGENT_ORDER_LINE_ID, PRE_RESERVED_QTY FROM EPM_URGENT_ORDER_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到对应的紧急要货行数据</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>传入的urgentOrderLineId在EPM_URGENT_ORDER_LINE中不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>传入的urgentOrderLineId在EPM_URGENT_ORDER_LINE中不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -473,7 +473,7 @@ SELECT URGENT_ORDER_LINE_ID, PRE_RESERVED_QTY FROM EPM_URGENT_ORDER_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到对应的要货行提货时间数据</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>queryPushData查询无结果，可能CRM行ID为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>queryPushData查询无结果，可能CRM行ID为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -483,7 +483,7 @@ SELECT URGENT_ORDER_LINE_ID, PRE_RESERVED_QTY FROM EPM_URGENT_ORDER_LINE
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数量已全部保留成功，无需进行提货时间变更，请知悉</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>preReservedQty≤0，该行已全部保留成功</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>preReservedQty≤0，该行已全部保留成功</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -496,7 +496,7 @@ SELECT URGENT_ORDER_LINE_ID, PRE_RESERVED_QTY FROM EPM_URGENT_ORDER_LINE
       <span style="font-size:15px;">提货时间变更后有效期未更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>ERP接口调用失败(success=false)，本地数据未更新<br>
+      <strong style="color:#7C3AED;">原因：</strong>ERP接口调用失败(success=false)，本地数据未更新<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查ERP接口状态，确认ERP返回的success标识
     </div>
   </div>
@@ -506,7 +506,7 @@ SELECT URGENT_ORDER_LINE_ID, PRE_RESERVED_QTY FROM EPM_URGENT_ORDER_LINE
       <span style="font-size:15px;">部分行变更成功部分失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>- 解决思路：查看processMessage了解失败原因，修正后重新提交失败行<br>
+      <strong style="color:#7C3AED;">原因：</strong>- 解决思路：查看processMessage了解失败原因，修正后重新提交失败行<br/>
     </div>
   </div>
 </div>

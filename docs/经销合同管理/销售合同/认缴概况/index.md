@@ -50,19 +50,19 @@
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>设筛选条件</h5>
-        <small>事业部/经销商<br>法人/合同类型</small>
+        <small>事业部/经销商<br/>法人/合同类型</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M2 6H14M5 2V4M11 2V4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>查看汇总</h5>
-        <small>逐行看应缴<br>与缴清标识</small>
+        <small>逐行看应缴<br/>与缴清标识</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
         <h5>核对缴清</h5>
-        <small>未缴清检查<br>认缴是否达标</small>
+        <small>未缴清检查<br/>认缴是否达标</small>
       </div>
     </div>
     <div class="kl-tip" style="margin-top:14px;">
@@ -311,7 +311,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同类型、事业部、经销商 不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>查询保证金标准金额时关键参数为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>查询保证金标准金额时关键参数为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -321,7 +321,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>保证金标准设定未配置，请先配置</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>对应合同类型未配置保证金标准</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>对应合同类型未配置保证金标准</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -334,7 +334,7 @@
       <span style="font-size:15px;">认缴概况中某记录的缴清标识始终为N</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>认缴金额未达到保证金标准金额。排查SQL：<br>
+      <strong style="color:#7C3AED;">原因：</strong>认缴金额未达到保证金标准金额。排查SQL：<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认认缴记录是否已审批通过并生成认缴记录
     </div>
   </div>
@@ -344,7 +344,7 @@
       <span style="font-size:15px;">撤销认款后认缴概况缴清标识未更新</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>撤销认款逻辑中未正确匹配到认缴概况记录<br>
+      <strong style="color:#7C3AED;">原因：</strong>撤销认款逻辑中未正确匹配到认缴概况记录<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查撤销认款时summaryIdSet是否正确收集
     </div>
   </div>

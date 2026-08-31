@@ -52,25 +52,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8H13M8 3V13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>新建解冻申请</h5>
-      <small>从冻结项目带入信息<br>填说明·设解冻后进度·传附件</small>
+      <small>从冻结项目带入信息<br/>填说明·设解冻后进度·传附件</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f97316,#ea580c);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 3V7H6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 13V9H10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 7C4 10 6 12 8 12C10 12 12 10 13 8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>发起工作流审批<br>拒绝则保持冻结可重提</small>
+      <small>发起工作流审批<br/>拒绝则保持冻结可重提</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V9" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11" r="1.5" fill="white"/></svg></div>
       <h5>项目解冻</h5>
-      <small>恢复生效·按冻结原因<br>重置有效期或更新进度</small>
+      <small>恢复生效·按冻结原因<br/>重置有效期或更新进度</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4H14V8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>联动下游</h5>
-      <small>同步 CRM 与 ES<br>更新解冻时间</small>
+      <small>同步 CRM 与 ES<br/>更新解冻时间</small>
     </div>
   </div>
 </div>
@@ -862,7 +862,7 @@ SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>附件不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CONTENT_CONFIRM=N且当前事业部在UnFreezeProjectConShow配置中，但未上传附件。解决方案：上传至少1个附件</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>CONTENT_CONFIRM=N且当前事业部在UnFreezeProjectConShow配置中，但未上传附件。解决方案：上传至少1个附件</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -872,7 +872,7 @@ SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>附件必须上传且数量不少于【N】</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>附件数量小于Redis中content_confirm_count的值。解决方案：上传足够数量的附件</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>附件数量小于Redis中content_confirm_count的值。解决方案：上传足够数量的附件</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -882,7 +882,7 @@ SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>项目进度已变更，请驳回重审!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>解冻申请单中解冻前进度大于解冻后进度，说明项目进度已被其他操作变更。解决方案：驳回解冻申请，重新提交</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>解冻申请单中解冻前进度大于解冻后进度，说明项目进度已被其他操作变更。解决方案：驳回解冻申请，重新提交</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -892,7 +892,7 @@ SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>阶段更新，只能前进，不能后退</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>解冻后阶段的序号小于解冻前阶段序号。解决方案：修改解冻后阶段为更高级阶段</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>解冻后阶段的序号小于解冻前阶段序号。解决方案：修改解冻后阶段为更高级阶段</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -902,7 +902,7 @@ SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送冻结报备到CRM时出错</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过后调用EBS接口INDIVIREPORT_ADD推送解冻信息到CRM失败。解决方案：检查EBS接口连通性和CRM系统状态</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>审批通过后调用EBS接口INDIVIREPORT_ADD推送解冻信息到CRM失败。解决方案：检查EBS接口连通性和CRM系统状态</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -916,12 +916,12 @@ SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>审批结果不是APPROVED，wfComplete方法中判断approveResult等于REJECTED时执行onUserReject，否则才执行doAudit和onWfComplete
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, EPU.STAT, EPU.AUDIT_STAT, EP.PROJECT_VALID, EP.FREEZE_TYPE
 FROM EPM_PROJECT_UNFREEZE EPU
 JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
 WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>检查审批结果是否为APPROVED，确认工作流配置正确
     </div>
   </div>
@@ -932,11 +932,11 @@ WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>MONOMER_TYPE=2时，onWfComplete方法中跳过CRM推送逻辑，这是正常业务逻辑，非异常
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, EPU.MONOMER_TYPE
 FROM EPM_PROJECT_UNFREEZE EPU
 WHERE EPU.MONOMER_TYPE = 2;</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>确认该报备确实是家装单体类型，家装单体报备解冻不推送CRM是设计如此
     </div>
   </div>
@@ -947,12 +947,12 @@ WHERE EPU.MONOMER_TYPE = 2;</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>仅FREEZE_TYPE=1或4时才重置有效期，FREEZE_TYPE=2（进度超时）不重置
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, EPU.FREEZE_TYPE, EP.VALID_START_DATE, EP.VALID_END_DATE
 FROM EPM_PROJECT_UNFREEZE EPU
 JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
 WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>检查冻结类型，FREEZE_TYPE=2不重置有效期是正常逻辑
     </div>
   </div>
@@ -963,13 +963,13 @@ WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>进度超时解冻时启用强制更新（FORCE_UPDATE=2），但若阶段和描述均未改变，doUpdate中需满足stageChanged||stageDescChanged||forceUpdate==2条件
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
        EPU.STAGE_DESC_BEFORE, EPU.STAGE_DESC_AFTER, EP.STAGE_ID, EP.STAGE_DESC
 FROM EPM_PROJECT_UNFREEZE EPU
 JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
 WHERE EPU.FREEZE_TYPE = 2 AND EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>确认解冻后阶段或描述是否有变更，FREEZE_TYPE=2时强制更新会确保进度更新执行
     </div>
   </div>
@@ -980,12 +980,12 @@ WHERE EPU.FREEZE_TYPE = 2 AND EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>附件类型（OBJ_TYPE）不匹配，工程单体报备OBJ_TYPE=8003，家装单体报备OBJ_TYPE=9009
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_ID, EPU.MONOMER_TYPE, OAR.OBJ_TYPE, OAR.OBJ_ID
 FROM EPM_PROJECT_UNFREEZE EPU
 LEFT JOIN OBJ_ATTACH_REL OAR ON OAR.OBJ_ID = EPU.PROJ_UNFREEZE_ID
 WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>确认附件的OBJ_TYPE是否正确，工程单体应为8003，家装单体应为9009
     </div>
   </div>
@@ -996,13 +996,13 @@ WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       <strong style="color:#7C3AED;">原因：</strong>仅单体报备（REPORT_TYPE=1）且项目有效结束日期小于冻结延期开始日时才操作ES
-      <br>
+      <br/>
       <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, ER.REPORT_TYPE, ER.ES_PUSH_STATUS, EP.VALID_END_DATE
 FROM EPM_PROJECT_UNFREEZE EPU
 JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
 JOIN EPM_REPORT ER ON EP.REPORT_ID = ER.REPORT_ID
 WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
+      <br/>
       <strong style="color:#7C3AED;">处理：</strong>确认报备类型是否为单体报备（REPORT_TYPE=1），且有效结束日期是否小于冻结延期开始日
     </div>
   </div>

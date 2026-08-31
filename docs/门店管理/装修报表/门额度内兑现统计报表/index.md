@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M3 8H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M3 12H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="2.5" cy="4" r="1" fill="white"/><circle cx="2.5" cy="8" r="1" fill="white"/><circle cx="2.5" cy="12" r="1" fill="white"/></svg></div>
       <h5>设定条件</h5>
-      <small>按门店、经销商、年度、<br>审批状态等条件筛选</small>
+      <small>按门店、经销商、年度、<br/>审批状态等条件筛选</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10b981,#059669);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 4H14V7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>查询展示</h5>
-      <small>兑现与复核关联统计列表<br>查看兑现情况与复核进度</small>
+      <small>兑现与复核关联统计列表<br/>查看兑现情况与复核进度</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 8H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 11H8" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M11 11L13 9L14.5 10.5L12.5 12.5L11 11Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>导出归档</h5>
-      <small>导出 Excel<br>供内部管理决策与归档使用</small>
+      <small>导出 Excel<br/>供内部管理决策与归档使用</small>
     </div>
   </div>
 </div>
@@ -423,7 +423,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>-</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>-</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -436,7 +436,7 @@
       <span style="font-size:15px;">复核单号为空</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>该兑现单尚未被绑定到任何批量复核单<br>
+      <strong style="color:#7C3AED;">原因：</strong>该兑现单尚未被绑定到任何批量复核单<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认该兑现单是否已提交批量复核，或复核单是否已删除解绑
     </div>
   </div>
@@ -446,7 +446,7 @@
       <span style="font-size:15px;">兑现金额统计与单独查看兑现页面不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>可能存在查询条件差异或数据同步延迟<br>
+      <strong style="color:#7C3AED;">原因：</strong>可能存在查询条件差异或数据同步延迟<br/>
       <strong style="color:#7C3AED;">处理：</strong>刷新页面重新查询，确认查询条件一致
     </div>
   </div>
@@ -456,7 +456,7 @@
       <span style="font-size:15px;">预算年度筛选无结果</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>兑现单的预算年度(budYear)未填写<br>
+      <strong style="color:#7C3AED;">原因：</strong>兑现单的预算年度(budYear)未填写<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查兑现单是否正确带入了预算年度信息
     </div>
   </div>

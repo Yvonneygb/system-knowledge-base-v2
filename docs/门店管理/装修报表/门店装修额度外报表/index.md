@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M3 8H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M3 12H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="2.5" cy="4" r="1" fill="white"/><circle cx="2.5" cy="8" r="1" fill="white"/><circle cx="2.5" cy="12" r="1" fill="white"/></svg></div>
       <h5>设定条件</h5>
-      <small>按门店、经销商、日期<br>等条件筛选额度外数据</small>
+      <small>按门店、经销商、日期<br/>等条件筛选额度外数据</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10b981,#059669);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 4H14V7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>查询展示</h5>
-      <small>额度外兑现汇总列表展示<br>核对兑现比例与发票税金</small>
+      <small>额度外兑现汇总列表展示<br/>核对兑现比例与发票税金</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 8H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 11H8" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M11 11L13 9L14.5 10.5L12.5 12.5L11 11Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>导出归档</h5>
-      <small>导出 Excel<br>供内部管理决策与归档使用</small>
+      <small>导出 Excel<br/>供内部管理决策与归档使用</small>
     </div>
   </div>
 </div>
@@ -390,7 +390,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>-</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>-</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -403,7 +403,7 @@
       <span style="font-size:15px;">报表数据与额度外兑现页面数据不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>可能存在缓存或查询条件差异<br>
+      <strong style="color:#7C3AED;">原因：</strong>可能存在缓存或查询条件差异<br/>
       <strong style="color:#7C3AED;">处理：</strong>刷新页面重新查询，确认查询条件一致
     </div>
   </div>
@@ -413,7 +413,7 @@
       <span style="font-size:15px;">兑现比例显示异常</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>验收报销单的额度外可兑现小计(sumOutCanNotaxBxAmt)为0导致除零<br>
+      <strong style="color:#7C3AED;">原因：</strong>验收报销单的额度外可兑现小计(sumOutCanNotaxBxAmt)为0导致除零<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查对应验收报销单的额度外可报销金额是否正确
     </div>
   </div>

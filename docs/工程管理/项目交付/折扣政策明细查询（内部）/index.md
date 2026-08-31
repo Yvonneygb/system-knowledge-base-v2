@@ -41,19 +41,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h10v8H3z" stroke="white" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>输入政策</h5>
-      <small>输入政策标识<br>选择筛选条件</small>
+      <small>输入政策标识<br/>选择筛选条件</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v12M4 6l4-4 4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>多条件筛选</h5>
-      <small>按维度过滤<br>展示明细行</small>
+      <small>按维度过滤<br/>展示明细行</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6M8 6v6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>下钻明细</h5>
-      <small>查看二级明细<br>定位问题</small>
+      <small>查看二级明细<br/>定位问题</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;"><strong>使用提示：</strong>该查询为内部只读工具，供实施与运营核查使用，不产生任何业务写入，下游无影响。</div>
@@ -375,7 +375,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策失效id不允许为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>查询折扣政策失效行时未传入政策失效ID，需传入discountPolicyDisabledId参数</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>查询折扣政策失效行时未传入政策失效ID，需传入discountPolicyDisabledId参数</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -388,7 +388,7 @@
       <span style="font-size:15px;">查询结果中部分产品明细行的拓展信息为空</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>EPM_DISCOUNT_POLICY_ITEM_EXT表中无对应记录，可能为历史数据或保存时未生成拓展数据<br>
+      <strong style="color:#7C3AED;">原因：</strong>EPM_DISCOUNT_POLICY_ITEM_EXT表中无对应记录，可能为历史数据或保存时未生成拓展数据<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认该产品明细行是否需要拓展信息，如需要可重新生成
     </div>
   </div>
@@ -398,7 +398,7 @@
       <span style="font-size:15px;">生效状态含义不明确</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>VALID_STAT字段使用数值编码，0=未生效，1=生效，3=已失效<br>
+      <strong style="color:#7C3AED;">原因：</strong>VALID_STAT字段使用数值编码，0=未生效，1=生效，3=已失效<br/>
       <strong style="color:#7C3AED;">处理：</strong>通过值集epm或前端LOV翻译显示
     </div>
   </div>

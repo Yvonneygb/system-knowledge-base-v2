@@ -53,25 +53,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="4.5" stroke="white" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>按条件筛选</h5>
-      <small>按设计师·级别<br>饱和度区间与周期查询</small>
+      <small>按设计师·级别<br/>饱和度区间与周期查询</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#F59E0B,#FBBF24);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="2" width="10" height="12" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M5 6H11M5 9H11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>下钻看明细</h5>
-      <small>查看单个设计师各<br>时间段的排期明细</small>
+      <small>查看单个设计师各<br/>时间段的排期明细</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10B981,#34D399);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><path d="M5 8L7 10L11 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>支撑点将决策</h5>
-      <small>挑选仍有余量的<br>设计师发起点将</small>
+      <small>挑选仍有余量的<br/>设计师发起点将</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#3B82F6,#60A5FA);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L2 13H14L8 2Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 6V9M8 11H8.01" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>预警服务冲突</h5>
-      <small>接近满档时提示<br>撞档与超载风险</small>
+      <small>接近满档时提示<br/>撞档与超载风险</small>
     </div>
   </div>
 </div>

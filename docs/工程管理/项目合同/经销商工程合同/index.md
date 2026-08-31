@@ -45,19 +45,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新建合同</h5>
-      <small>选经销商<br>录合同要素</small>
+      <small>选经销商<br/>录合同要素</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>区域审批</h5>
-      <small>按区域走<br>差异化审批</small>
+      <small>按区域走<br/>差异化审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>合同生效</h5>
-      <small>状态置生效<br>可供引用</small>
+      <small>状态置生效<br/>可供引用</small>
     </div>
   </div>
 </div>
@@ -772,7 +772,7 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>项目数据不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的项目已被删除或无效，重新选择项目</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>关联的项目已被删除或无效，重新选择项目</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -782,7 +782,7 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该项目已发起失效</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>合同已存在失效记录，不可重复发起</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>合同已存在失效记录，不可重复发起</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -795,7 +795,7 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
       <span style="font-size:15px;">合同审批通过但有效状态未变为"已生效"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>审批回调未正确触发；排查SQL：`SELECT CONTRACT_CODE, VALID, HZ_APPROVE_STATUS FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}`<br>
+      <strong style="color:#7C3AED;">原因：</strong>审批回调未正确触发；排查SQL：`SELECT CONTRACT_CODE, VALID, HZ_APPROVE_STATUS FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}`<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查HZ_INSTANCE_ID对应的流程实例状态，手动修正VALID=2
     </div>
   </div>

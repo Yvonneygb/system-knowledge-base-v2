@@ -50,19 +50,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>设定筛选条件</h5>
-      <small>选择事业部、合同年度、<br>经销商、审批状态等条件</small>
+      <small>选择事业部、合同年度、<br/>经销商、审批状态等条件</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="2" width="10" height="12" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M5 5H11M5 8H11M5 11H9" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看区域报表</h5>
-      <small>按五级区域与排除区域<br>核对合同销售覆盖范围</small>
+      <small>按五级区域与排除区域<br/>核对合同销售覆盖范围</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 2L5 5M8 2L11 5M8 14L5 11M8 14L11 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>导出 Excel</h5>
-      <small>按模板导出"经销合同<br>销售区域报表"离线分析</small>
+      <small>按模板导出"经销合同<br/>销售区域报表"离线分析</small>
     </div>
   </div>
 </div>

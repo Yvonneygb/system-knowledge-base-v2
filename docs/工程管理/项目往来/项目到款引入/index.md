@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>ERP接口获取</h5>
-      <small>定时或手动<br>拉取ERP到款</small>
+      <small>定时或手动<br/>拉取ERP到款</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 8H10"/></svg></div>
       <h5>新建到款引入单</h5>
-      <small>新增或更新<br>到款记录</small>
+      <small>新增或更新<br/>到款记录</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M2 12L6 8L10 10L14 4"/><path d="M11 4H14V7"/></svg></div>
       <h5>写入主表</h5>
-      <small>记录来源与状态<br>进入可认领池</small>
+      <small>记录来源与状态<br/>进入可认领池</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5V8L10 10"/></svg></div>
       <h5>下游流转</h5>
-      <small>供认领/兑付<br>虚拟单使用</small>
+      <small>供认领/兑付<br/>虚拟单使用</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -885,7 +885,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>{到款单号}对账单对应经销商信息查询异常：{crmNum}</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP返回的经销商编码在系统客户表中不存在，需先在客户主数据中维护该经销商</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP返回的经销商编码在系统客户表中不存在，需先在客户主数据中维护该经销商</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -895,7 +895,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>{到款单号}对账单对应法人信息查询异常：{payFromCust}</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP返回的汇款单位编码在系统客户表中不存在，需先在客户主数据中维护该法人</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP返回的汇款单位编码在系统客户表中不存在，需先在客户主数据中维护该法人</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -905,7 +905,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>{到款单号}对账单对应交易公司信息查询异常：{ouCode}</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP返回的交易公司编码在系统交易公司表中不存在，需先在交易公司中维护</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP返回的交易公司编码在系统交易公司表中不存在，需先在交易公司中维护</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -915,7 +915,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>{到款单号}对账单对应事业部信息查询异常：{bu}</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP返回的事业部名称在系统事业部表中不存在，需先在事业部基础设置中维护</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP返回的事业部名称在系统事业部表中不存在，需先在事业部基础设置中维护</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -925,7 +925,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该erp的到款单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP接口返回数据为空，确认ERP中是否存在该到款单</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP接口返回数据为空，确认ERP中是否存在该到款单</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -935,7 +935,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>erp的到款单业务处理异常</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP返回数据后业务处理失败，查看后台日志定位具体原因</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP返回数据后业务处理失败，查看后台日志定位具体原因</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -945,7 +945,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该到款单已撤销，不允许认领！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>到款单引入状态为"信用卡拖欠款项冲销"/"暂停付款"/"冲销付款"/"资金不足"</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>到款单引入状态为"信用卡拖欠款项冲销"/"暂停付款"/"冲销付款"/"资金不足"</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -955,7 +955,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请传入到款单id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>调用认领校验接口时未传入到款单ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>调用认领校验接口时未传入到款单ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -965,7 +965,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该到款单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>传入的到款单ID在系统中不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>传入的到款单ID在系统中不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -975,7 +975,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未指定到款单id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>调用可认领金额接口时未传入到款单ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>调用可认领金额接口时未传入到款单ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -985,7 +985,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>非商票类型到款无需兑付！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>到款单票据类型不是商业承兑或银行承兑</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>到款单票据类型不是商业承兑或银行承兑</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -995,7 +995,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该商票已兑付！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>到款单兑付状态已为success</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>到款单兑付状态已为success</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1005,7 +1005,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>已核销、未核销的到款单才能发起兑付！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>到款单引入状态不是"已核销"或"未核销"</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>到款单引入状态不是"已核销"或"未核销"</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1015,7 +1015,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>编码最大支持100个</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>按到款编码同步时传入的编码数量超过100</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>按到款编码同步时传入的编码数量超过100</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1025,7 +1025,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>开始时间-结束时间必须同时有值</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>按时间范围同步时开始时间或结束时间为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>按时间范围同步时开始时间或结束时间为空</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1038,7 +1038,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
       <span style="font-size:15px;">ERP到款数据引入后金额与ERP不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>实际到款单的剩余可认款金额在认领时会实时查ERP接口获取最新值，若ERP端数据已变更但本系统未重新同步，列表展示的金额可能不是最新。排查SQL：<br>
+      <strong style="color:#7C3AED;">原因：</strong>实际到款单的剩余可认款金额在认领时会实时查ERP接口获取最新值，若ERP端数据已变更但本系统未重新同步，列表展示的金额可能不是最新。排查SQL：<br/>
       <strong style="color:#7C3AED;">处理：</strong>通过定时任务或页面手动引入重新同步该到款单数据
     </div>
   </div>
@@ -1048,7 +1048,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
       <span style="font-size:15px;">到款引入定时任务执行失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>分布式锁(SYNC_PAYMENT_IMPORT_ERP)等待超时(5秒)，可能存在其他同步任务正在执行；或ERP接口调用超时/返回异常<br>
+      <strong style="color:#7C3AED;">原因：</strong>分布式锁(SYNC_PAYMENT_IMPORT_ERP)等待超时(5秒)，可能存在其他同步任务正在执行；或ERP接口调用超时/返回异常<br/>
       <strong style="color:#7C3AED;">处理：</strong>等待当前任务完成后重试；检查ERP接口连通性；查看后台日志ERROR信息
     </div>
   </div>
@@ -1058,7 +1058,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
       <span style="font-size:15px;">认领时提示到款单已撤销</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>到款单引入状态为"信用卡拖欠款项冲销"/"暂停付款"/"冲销付款"/"资金不足"之一。排查SQL：<br>
+      <strong style="color:#7C3AED;">原因：</strong>到款单引入状态为"信用卡拖欠款项冲销"/"暂停付款"/"冲销付款"/"资金不足"之一。排查SQL：<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认ERP端该到款单状态是否正确，若ERP端状态已恢复需重新同步引入状态
     </div>
   </div>
@@ -1068,7 +1068,7 @@ SELECT PAYMENT_IMPORT_ID, PAYMENT_IMPORT_CODE, ACCEPTANCE_TYPE, PAYMENT_STATUS, 
       <span style="font-size:15px;">商票兑付按钮不可点击</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>需同时满足三个条件：票据类型为商业承兑/银行承兑、兑付状态为未兑付、引入状态为已核销/未核销。排查SQL：<br>
+      <strong style="color:#7C3AED;">原因：</strong>需同时满足三个条件：票据类型为商业承兑/银行承兑、兑付状态为未兑付、引入状态为已核销/未核销。排查SQL：<br/>
       <strong style="color:#7C3AED;">处理：</strong>逐项检查三个条件是否满足，不满足则先处理前置条件
     </div>
   </div>

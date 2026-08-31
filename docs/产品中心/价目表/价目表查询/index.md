@@ -41,25 +41,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="4.5" stroke="white" stroke-width="1.5"/><path d="M11 11l3 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>设条件查询</h5>
-      <small>按产品/事业部<br>价格类型筛选</small>
+      <small>按产品/事业部<br/>价格类型筛选</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M5 5h6M5 8h6M5 11h4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看结果</h5>
-      <small>分页浏览<br>价格明细</small>
+      <small>分页浏览<br/>价格明细</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3v10M3 8h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M5 5l-2 3 2 3M11 5l2 3-2 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>导出文件</h5>
-      <small>导出Excel<br>供离线使用</small>
+      <small>导出Excel<br/>供离线使用</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8h12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 2v12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>报价参考</h5>
-      <small>支撑销售报价<br>与定价决策</small>
+      <small>支撑销售报价<br/>与定价决策</small>
     </div>
   </div>
 </div>

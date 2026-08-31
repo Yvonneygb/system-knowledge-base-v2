@@ -45,19 +45,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新建报销单</h5>
-      <small>关联服务费<br>附报销凭证</small>
+      <small>关联服务费<br/>附报销凭证</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>双轨审批</h5>
-      <small>H0 + FSCC<br>两级审核</small>
+      <small>H0 + FSCC<br/>两级审核</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>已核销/拒</h5>
-      <small>通过则核销<br>拒绝则退回</small>
+      <small>通过则核销<br/>拒绝则退回</small>
     </div>
   </div>
 </div>
@@ -607,7 +607,7 @@ SELECT * FROM fin_svc_exp_acc_head WHERE svc_exp_acc_id = :svcExpAccId
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到工程服务费报销记录</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>FSCC回调时根据svcExpAccId未找到对应记录，可能数据已被删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>FSCC回调时根据svcExpAccId未找到对应记录，可能数据已被删除</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -620,7 +620,7 @@ SELECT * FROM fin_svc_exp_acc_head WHERE svc_exp_acc_id = :svcExpAccId
       <span style="font-size:15px;">审批通过后FSCC推送失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>FSCC接口不可用或推送数据格式异常<br>
+      <strong style="color:#7C3AED;">原因：</strong>FSCC接口不可用或推送数据格式异常<br/>
       <strong style="color:#7C3AED;">处理：</strong>1 解决思路：查看ERROR_COLLECTION字段中的错误信息，确认FSCC服务状态后重新推送
     </div>
   </div>
@@ -630,7 +630,7 @@ SELECT * FROM fin_svc_exp_acc_head WHERE svc_exp_acc_id = :svcExpAccId
       <span style="font-size:15px;">逾期扣分率计算不准确</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>- �=原因：扣分率配置表未维护或逾期天数匹配规则有误<br>
+      <strong style="color:#7C3AED;">原因：</strong>- �=原因：扣分率配置表未维护或逾期天数匹配规则有误<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查扣分率配置表(SysConfConstants中配置的时间分割线)，确认逾期天数计算逻辑
     </div>
   </div>

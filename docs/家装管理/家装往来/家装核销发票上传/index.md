@@ -52,25 +52,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>项目报备 · 合同 · 订单 · 出库</h5>
-      <small>前置业务完成<br>产生出库明细</small>
+      <small>前置业务完成<br/>产生出库明细</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="1" width="10" height="14" rx="1" stroke="white" stroke-width="1.5"/><path d="M6 5H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 8H10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M6 11H8" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>发票上传（本业务）</h5>
-      <small>上传凭证 · OCR识别<br>录入发票信息 · 提交审批</small>
+      <small>上传凭证 · OCR识别<br/>录入发票信息 · 提交审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#10b981,#059669);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>审批通过 → 发票生效</h5>
-      <small>财务审核真实性<br>发票状态更新为 valid</small>
+      <small>财务审核真实性<br/>发票状态更新为 valid</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><circle cx="8" cy="8" r="1.5" fill="white"/><path d="M8 5V8L10 9.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>真实性核销 → 抬价返还</h5>
-      <small>发票数据被核销引用<br>按核销结果返还金额</small>
+      <small>发票数据被核销引用<br/>按核销结果返还金额</small>
     </div>
   </div>
   <div style="background:#F5F3FF;padding:14px 18px;border-radius:10px;display:flex;gap:10px;align-items:flex-start;margin-top:16px;">
@@ -1073,7 +1073,7 @@ SELECT COUNT(*) FROM EPM_UPLOAD_INVOICE_INFO WHERE INVOICE_VERIFER_ID = ?;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>明细行基本单位不能为空！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 遍历invoiceDetailTableDS所有行，检查baseUomName是否为空字符串、null或undefined<br>(2) 任一行为空则阻断保存</div>
+    <div class="detail-text" v-pre>(1) 遍历invoiceDetailTableDS所有行，检查baseUomName是否为空字符串、null或undefined<br/>(2) 任一行为空则阻断保存</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1082,7 +1082,7 @@ SELECT COUNT(*) FROM EPM_UPLOAD_INVOICE_INFO WHERE INVOICE_VERIFER_ID = ?;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>明细第X行，未存在头信息，请检查！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 构建主要信息集合：key=noucherNumber-invoiceCode-invoiceNumber<br>(2) 遍历详细信息，检查每行的key是否在集合中<br>(3) 排查SQL见下方代码块</div>
+    <div class="detail-text" v-pre>(1) 构建主要信息集合：key=noucherNumber-invoiceCode-invoiceNumber<br/>(2) 遍历详细信息，检查每行的key是否在集合中<br/>(3) 排查SQL见下方代码块</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
@@ -1105,7 +1105,7 @@ WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票详细信息中第X行转换率不能为0</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>详细信息中转换率为空或小于等于0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>详细信息中转换率为空或小于等于0</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1114,7 +1114,7 @@ WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>非发票类型主要信息以下行：第X行主要信息只能存在一行</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>非发票类型凭证号码下有多条主要信息</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>非发票类型凭证号码下有多条主要信息</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1123,7 +1123,7 @@ WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票类型主要信息的以下行：第X行发票号码或发票代码不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>发票类型的主要信息缺少发票号码或发票代码</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>发票类型的主要信息缺少发票号码或发票代码</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1132,7 +1132,7 @@ WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票代码-发票号码(xxx-xxx)已在第X行存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>同一核销单内发票代码+发票号码重复</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>同一核销单内发票代码+发票号码重复</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1141,7 +1141,7 @@ WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>xxx已被其它单进行核销.</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 调用后端check-invoice接口，传入invoiceValid(发票代码-发票号码)和invoiceVeriferId<br>(2) 后端查询EPM_UPLOAD_INVOICE_INFO中除当前核销单外是否存在相同发票代码+号码<br>(3) 排查SQL见下方代码块</div>
+    <div class="detail-text" v-pre>(1) 调用后端check-invoice接口，传入invoiceValid(发票代码-发票号码)和invoiceVeriferId<br/>(2) 后端查询EPM_UPLOAD_INVOICE_INFO中除当前核销单外是否存在相同发票代码+号码<br/>(3) 排查SQL见下方代码块</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
@@ -1159,7 +1159,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择凭证类型或附件</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>发票影像行未选择凭证类型或未上传凭证附件</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>发票影像行未选择凭证类型或未上传凭证附件</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1168,7 +1168,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先维护发票影像信息！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未添加任何发票影像行</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未添加任何发票影像行</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -1177,7 +1177,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>附件uuid:xxx未找到对应的附件</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>上传的附件UUID在文件服务中找不到</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>上传的附件UUID在文件服务中找不到</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1186,7 +1186,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>附件uuid:xxx ocr接口识别失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OCR识别接口返回失败</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>OCR识别接口返回失败</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1195,7 +1195,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票主要明细校验异常:xxx</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 遍历主要信息，检查发票代码和号码是否为空<br>(2) 检查同一单内发票代码+号码是否重复<br>(3) 调用checkInvoices校验跨单重复<br>(4) 遍历详细信息，检查发票代码+号码是否在主要信息中存在</div>
+    <div class="detail-text" v-pre>(1) 遍历主要信息，检查发票代码和号码是否为空<br/>(2) 检查同一单内发票代码+号码是否重复<br/>(3) 调用checkInvoices校验跨单重复<br/>(4) 遍历详细信息，检查发票代码+号码是否在主要信息中存在</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1204,7 +1204,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票详细明细校验异常:xxx</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>详细信息的发票代码+号码在主要信息中不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>详细信息的发票代码+号码在主要信息中不存在</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1213,7 +1213,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据[xxx],发票主要信息不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>核销单没有发票主要信息</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>核销单没有发票主要信息</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1222,7 +1222,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据[xxx],发票详细信息不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>核销单没有发票详细信息</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>核销单没有发票详细信息</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1231,7 +1231,7 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票号码[xxx],详情行计算金额[xxx]有误</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 查询详细信息，计算每行：单价×数量，与金额字段比较(允许0.01差异)<br>(2) 排查SQL见下方代码块</div>
+    <div class="detail-text" v-pre>(1) 查询详细信息，计算每行：单价×数量，与金额字段比较(允许0.01差异)<br/>(2) 排查SQL见下方代码块</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
     
 
@@ -1248,7 +1248,7 @@ WHERE INVOICE_VERIFER_ID = ?
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票号码[xxx],详情信息行汇总金额与主要总金额不一致</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 按发票号码汇总详细信息行金额，与主要信息的ALL_AMOUNT比较<br>(2) 排查SQL见下方代码块</div>
+    <div class="detail-text" v-pre>(1) 按发票号码汇总详细信息行金额，与主要信息的ALL_AMOUNT比较<br/>(2) 排查SQL见下方代码块</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
     
 
@@ -1269,7 +1269,7 @@ GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>提交流程发票详细信息不能为空!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过时发票详细信息为空</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>审批通过时发票详细信息为空</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1278,7 +1278,7 @@ GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未查找到核销信息:xxx</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>根据invoiceVeriferId查不到主表数据</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>根据invoiceVeriferId查不到主表数据</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1287,7 +1287,7 @@ GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>OCR校验异常，返回开票时间错误</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OCR返回的开票日期格式无法解析</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>OCR返回的开票日期格式无法解析</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
   </div>
 </div>
@@ -1306,7 +1306,7 @@ GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
     <span style="font-size:15px;">OCR识别后发票信息未自动填充</span>
   </div>
   <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>凭证类型为"非发票"(1)时不会返回详细信息；OCR接口返回失败(code非0)；附件UUID无效<br>
+    <strong style="color:#7C3AED;">原因：</strong>凭证类型为"非发票"(1)时不会返回详细信息；OCR接口返回失败(code非0)；附件UUID无效<br/>
     <strong style="color:#7C3AED;">处理：</strong>检查凭证类型是否为发票或收据；检查OCR返回的msg和code字段；确认附件已成功上传
   </div>
 </div>
@@ -1316,7 +1316,7 @@ GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
     <span style="font-size:15px;">保存时提示发票已被其他单核销</span>
   </div>
   <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>该发票代码+发票号码已存在于其他核销单的主要信息中<br>
+    <strong style="color:#7C3AED;">原因：</strong>该发票代码+发票号码已存在于其他核销单的主要信息中<br/>
     <strong style="color:#7C3AED;">排查SQL：</strong>
     
 
@@ -1336,7 +1336,7 @@ WHERE I.INVOICE_CODE = ?
     <span style="font-size:15px;">提交审批时提示金额不一致</span>
   </div>
   <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>详细信息行的单价×数量汇总与主要信息的总额不匹配<br>
+    <strong style="color:#7C3AED;">原因：</strong>详细信息行的单价×数量汇总与主要信息的总额不匹配<br/>
     <strong style="color:#7C3AED;">处理：</strong>检查详细信息行的金额计算是否正确，确认主要信息的总额与详细信息汇总一致
   </div>
 </div>
@@ -1346,7 +1346,7 @@ WHERE I.INVOICE_CODE = ?
     <span style="font-size:15px;">转换率默认值问题</span>
   </div>
   <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>组织ID不在[104,105,106]范围内时，新建详细信息行转换率默认为1；否则无默认值需手工填写<br>
+    <strong style="color:#7C3AED;">原因：</strong>组织ID不在[104,105,106]范围内时，新建详细信息行转换率默认为1；否则无默认值需手工填写<br/>
     <strong style="color:#7C3AED;">处理：</strong>确认当前用户的组织ID，若在特殊组织范围内需手工填写转换率
   </div>
 </div>

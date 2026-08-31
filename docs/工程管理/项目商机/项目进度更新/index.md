@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12L6 8L10 10L14 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>进度推进</h5>
-      <small>手动或事件<br>触发自动推进</small>
+      <small>手动或事件<br/>触发自动推进</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><path d="M8 4.5V8M8 9.5H8.01" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>超时冻结</h5>
-      <small>超过阶段期限<br>自动冻结</small>
+      <small>超过阶段期限<br/>自动冻结</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>解冻申请</h5>
-      <small>提交解冻并<br>填新进度</small>
+      <small>提交解冻并<br/>填新进度</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8L6 11L13 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>解冻生效</h5>
-      <small>审批通过更新<br>恢复有效</small>
+      <small>审批通过更新<br/>恢复有效</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">

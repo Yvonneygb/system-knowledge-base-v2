@@ -51,19 +51,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/><path d="M8 5V8L10 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选择条件</h5>
-      <small>选年度/经销商<br>定位预算</small>
+      <small>选年度/经销商<br/>定位预算</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/><path d="M4 5H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>执行查询</h5>
-      <small>检索预算<br>总额数据</small>
+      <small>检索预算<br/>总额数据</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查看明细</h5>
-      <small>查看预算总额<br>与使用明细</small>
+      <small>查看预算总额<br/>与使用明细</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -567,7 +567,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>MKT_OUTLIMIT_BUD_HEADER表中无匹配记录</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>MKT_OUTLIMIT_BUD_HEADER表中无匹配记录</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>
@@ -580,7 +580,7 @@
       <span style="font-size:15px;">预算剩余金额与手动计算不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>outlimitBudSur ≠ outlimitBudTotal - totalOutlimitBudUsed<br>
+      <strong style="color:#7C3AED;">原因：</strong>outlimitBudSur ≠ outlimitBudTotal - totalOutlimitBudUsed<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认预算数据导入时计算逻辑是否正确
     </div>
   </div>
@@ -590,7 +590,7 @@
       <span style="font-size:15px;">月度使用金额之和与累计已使用不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>totalOutlimitBudUsed ≠ SUM(thisOutlimitBudUsed1~12)<br>
+      <strong style="color:#7C3AED;">原因：</strong>totalOutlimitBudUsed ≠ SUM(thisOutlimitBudUsed1~12)<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认月度使用金额数据是否完整导入
     </div>
   </div>

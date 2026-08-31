@@ -44,19 +44,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 4h5v5H2z" stroke="white" stroke-width="1.5"/><path d="M9 7h5v5H9z" stroke="white" stroke-width="1.5"/><path d="M7 6.5h2" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>选单建变</h5>
-      <small>选折扣单<br>生成变更前数据</small>
+      <small>选折扣单<br/>生成变更前数据</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>改产品/价格<br>提交工作流</small>
+      <small>改产品/价格<br/>提交工作流</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>同步主数据</h5>
-      <small>更新折扣单<br>产品行与价格</small>
+      <small>更新折扣单<br/>产品行与价格</small>
     </div>
   </div>
 </div>

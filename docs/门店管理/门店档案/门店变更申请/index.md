@@ -52,7 +52,7 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="2.5" width="11" height="11" rx="1.5" fill="none" stroke="white" stroke-width="1.5"/><path d="M6 8L10 8" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>选择门店</h5>
-      <small>选择需要变更的门店<br>自动带出变更前数据</small>
+      <small>选择需要变更的门店<br/>自动带出变更前数据</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
@@ -522,7 +522,7 @@
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认变更单ID是否正确，数据是否已被删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>确认变更单ID是否正确，数据是否已被删除</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 
 ```sql
@@ -537,7 +537,7 @@ SELECT * FROM MKT_TERMINAL_MODIFY WHERE TERMINAL_MODIFY_ID = ?;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>门店档案信息不匹配</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认关联门店是否存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>确认关联门店是否存在</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 
 ```sql
@@ -552,7 +552,7 @@ SELECT * FROM MKT_TERMINAL WHERE TERMINAL_ID = ?;
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程中objid为空，流程失败!</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查工作流配置，确认objId正确传递</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>检查工作流配置，确认objId正确传递</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 
 ```sql
@@ -567,7 +567,7 @@ SELECT HZ_INSTANCE_ID, OBJ_ID FROM WF_PROCESS WHERE HZ_INSTANCE_ID = (SELECT HZ_
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先审批通过/作废未审完的门店装修申请与进度更新单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>先完成或作废该门店的装修申请单</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>先完成或作废该门店的装修申请单</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 
 ```sql
@@ -582,7 +582,7 @@ SELECT * FROM MKT_TERMINAL_DECORATE WHERE TERMINAL_ID = ? AND HZ_APPROVE_STATUS 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先审批通过/作废未审完的门店验收与报销单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>先完成或作废该门店的验收报销单</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>先完成或作废该门店的验收报销单</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
 
 ```sql
@@ -597,7 +597,7 @@ SELECT * FROM FIN_FEE_CHECK_BX_HEAD WHERE TERMINAL_ID = ? AND HZ_APPROVE_STATUS 
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未获取到部门信息</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>联系管理员配置事业部基础设置</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>联系管理员配置事业部基础设置</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
   </div>
 </div>

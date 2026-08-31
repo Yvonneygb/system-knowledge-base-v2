@@ -57,25 +57,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>签收返利</h5>
-      <small>确认返利明细<br>作为兑现依据</small>
+      <small>确认返利明细<br/>作为兑现依据</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/><path d="M4 5H12" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 8H9" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>生成兑现单</h5>
-      <small>按事业部分组<br>生成汇总单</small>
+      <small>按事业部分组<br/>生成汇总单</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#F59E0B,#FBBF24);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L13 4V8C13 11 8 14 8 14C8 14 3 11 3 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>审批</h5>
-      <small>服务费兑现走<br>工作流审批</small>
+      <small>服务费兑现走<br/>工作流审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#4ADE80);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M4 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3V7" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>推送资金池</h5>
-      <small>推送 ERP 执行<br>资金池调整</small>
+      <small>推送 ERP 执行<br/>资金池调整</small>
     </div>
   </div>
 </div>
@@ -540,7 +540,7 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次申请金额必须大于0</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>applyAmt≤0</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>applyAmt≤0</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -550,7 +550,7 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>ERP推送失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>EBS接口返回错误</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>EBS接口返回错误</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -563,7 +563,7 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
       <span style="font-size:15px;">兑现汇总单生成后无数据</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>无已签收且未兑现的返利明细<br>
+      <strong style="color:#7C3AED;">原因：</strong>无已签收且未兑现的返利明细<br/>
       <strong style="color:#7C3AED;">处理：</strong>先执行签收操作，确认有可兑现的返利数据
     </div>
   </div>
@@ -573,7 +573,7 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
       <span style="font-size:15px;">ERP推送部分成功部分失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>逐行推送，某行EBS调用失败不影响其他行<br>
+      <strong style="color:#7C3AED;">原因：</strong>逐行推送，某行EBS调用失败不影响其他行<br/>
       <strong style="color:#7C3AED;">处理：</strong>查看失败行错误信息，修正后重新推送
     </div>
   </div>

@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>选取到款数据</h5>
-      <small>从引入池选<br>未认领到款</small>
+      <small>从引入池选<br/>未认领到款</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M3 4H13V12H3Z"/><path d="M6 8H10"/></svg></div>
       <h5>新建认领单</h5>
-      <small>指定项目与<br>认领金额并保存</small>
+      <small>指定项目与<br/>认领金额并保存</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8H11"/></svg></div>
       <h5>提交审批</h5>
-      <small>审批通过后<br>推送ERP核销</small>
+      <small>审批通过后<br/>推送ERP核销</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><path d="M2 12L6 8L10 10L14 4"/><path d="M11 4H14V7"/></svg></div>
       <h5>ERP核销</h5>
-      <small>到账确认<br>完成闭环</small>
+      <small>到账确认<br/>完成闭环</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -1343,7 +1343,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>事业部信息为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>用户附加信息中DEPT字段为空，需检查用户配置</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>用户附加信息中DEPT字段为空，需检查用户配置</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1353,7 +1353,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该到款单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的到款引入单不存在，paymentImportId可能错误</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>关联的到款引入单不存在，paymentImportId可能错误</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1363,7 +1363,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次认款金额合计：【X】大于到款接口剩余认款金额：【Y】！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>认领金额超过到款单可认领余额，需减少认领金额或检查是否有其他认领单占用</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>认领金额超过到款单可认领余额，需减少认领金额或检查是否有其他认领单占用</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1373,7 +1373,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>出库单号：X，产品编码：Y，已认领金额+本次认领金额已超工程金额，请检查！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>单个出库明细行认领超额，需减少该行认领金额</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>单个出库明细行认领超额，需减少该行认领金额</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1383,7 +1383,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程发起异常，单据主键为空！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>单据ID为空，系统异常</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>单据ID为空，系统异常</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1393,7 +1393,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程发起异常，单据不存在！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>认领单已被删除或ID错误</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>认领单已被删除或ID错误</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1403,7 +1403,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程发起异常，到款单不存在！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的到款引入单不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>关联的到款引入单不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1413,7 +1413,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程完结异常，单据主键为空！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>单据ID为空，系统异常</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>单据ID为空，系统异常</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1423,7 +1423,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程完结异常，单据不存在！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>认领单已被删除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>认领单已被删除</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1433,7 +1433,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询认领数据为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>推送ERP时查询认领数据为空，认领单可能无合同行</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>推送ERP时查询认领数据为空，认领单可能无合同行</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1443,7 +1443,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>erp返回认领结果为空！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP接口返回数据为空，检查ERP接口状态</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP接口返回数据为空，检查ERP接口状态</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1453,7 +1453,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>认领推送erp异常【{错误信息}】</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP核销接口返回失败，检查ERP端错误信息</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP核销接口返回失败，检查ERP端错误信息</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1463,7 +1463,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据id(X)异常，核销接口返回信息为：Y</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>ERP核销接口返回非S状态，检查核销数据</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>ERP核销接口返回非S状态，检查核销数据</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1473,7 +1473,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>删除异常：未指定到款认领id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未传入认领单ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未传入认领单ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1483,7 +1483,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>删除异常：未查询到该认领单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>认领单不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>认领单不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1493,7 +1493,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>删除异常：新建状态下的认领才可删除，请检查！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>仅NEW和INTERRUPT状态可删除，当前状态不允许</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>仅NEW和INTERRUPT状态可删除，当前状态不允许</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1503,7 +1503,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>删除异常：未找到该到款单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的到款引入单不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>关联的到款引入单不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1513,7 +1513,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>到款认领异常，未指定到款单id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未传入认领单ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未传入认领单ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1523,7 +1523,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询到款认领单数据为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>认领单不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>认领单不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1533,7 +1533,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询项目列表异常，未指定客户id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未传入客户ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未传入客户ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1543,7 +1543,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询项目列表异常，未指定交易公司id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未传入交易公司ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未传入交易公司ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1553,7 +1553,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询项目列表异常，未指定收款公司id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未传入收款公司ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未传入收款公司ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1563,7 +1563,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询合同列表异常，未指定项目id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未传入项目ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未传入项目ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1573,7 +1573,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询可认领明细异常，未指定项目id</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未传入项目ID</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未传入项目ID</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1583,7 +1583,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>项目到款引入数据异常</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>到款引入单不存在</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>到款引入单不存在</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1593,7 +1593,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>项目合同相关信息异常</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>该项目下无审批通过的合同</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>该项目下无审批通过的合同</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1603,7 +1603,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销：报销单号-X</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>撤销后可结算工程服务费&lt;0，需减少撤销明细</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>撤销后可结算工程服务费&lt;0，需减少撤销明细</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1613,7 +1613,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>明细中以下认领明细已被撤销，请剔除后再重新提交撤销：【认领单号：X，出库单号：Y，产品编码：Z】</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>撤销明细中包含已被撤销的行，需剔除</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>撤销明细中包含已被撤销的行，需剔除</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -1626,7 +1626,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
       <span style="font-size:15px;">认领提交后ERP核销推送失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或推送数据异常，可通过以下SQL查看认领数据<br>
+      <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或推送数据异常，可通过以下SQL查看认领数据<br/>
       <strong style="color:#7C3AED;">处理：</strong>1.检查ERP接口状态；2.检查推送数据是否完整；3.修复后重新提交
     </div>
   </div>
@@ -1636,7 +1636,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
       <span style="font-size:15px;">认领金额与到款单可认领金额不一致</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>并发认领导致可认领金额被其他认领单占用，真实到款单以ERP实时数据为准<br>
+      <strong style="color:#7C3AED;">原因：</strong>并发认领导致可认领金额被其他认领单占用，真实到款单以ERP实时数据为准<br/>
       <strong style="color:#7C3AED;">处理：</strong>1.刷新页面重新获取最新可认领金额；2.减少本次认领金额；3.真实到款单会自动查ERP最新数据
     </div>
   </div>
@@ -1646,7 +1646,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
       <span style="font-size:15px;">可认领项目/合同/明细查询为空</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>差异单未审批通过、未记账、推送未成功、合同金额已全部认领等<br>
+      <strong style="color:#7C3AED;">原因：</strong>差异单未审批通过、未记账、推送未成功、合同金额已全部认领等<br/>
       <strong style="color:#7C3AED;">处理：</strong>1.检查差异单是否审批通过；2.检查出库确认是否已记账；3.检查合同是否还有剩余可认领金额
     </div>
   </div>
@@ -1656,7 +1656,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
       <span style="font-size:15px;">撤销后可结算工程服务费小于0</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>撤销的工程服务费过大，导致已兑现的工程服务费无法覆盖<br>
+      <strong style="color:#7C3AED;">原因：</strong>撤销的工程服务费过大，导致已兑现的工程服务费无法覆盖<br/>
       <strong style="color:#7C3AED;">处理：</strong>减少撤销明细中工程服务费金额，确保撤销后可结算金额≥0
     </div>
   </div>
@@ -1666,7 +1666,7 @@ SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = #{paymentIm
       <span style="font-size:15px;">删除认领单失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>仅NEW和INTERRUPT状态的认领单可删除<br>
+      <strong style="color:#7C3AED;">原因：</strong>仅NEW和INTERRUPT状态的认领单可删除<br/>
       <strong style="color:#7C3AED;">处理：</strong>确认认领单状态为新建或驳回后再删除；若已审批通过需走撤销流程
     </div>
   </div>

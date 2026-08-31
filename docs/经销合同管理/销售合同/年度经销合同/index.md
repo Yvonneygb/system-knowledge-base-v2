@@ -53,25 +53,25 @@
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>新建合同</h5>
-        <small>选经销商/交易公司<br>配置区域与任务</small>
+        <small>选经销商/交易公司<br/>配置区域与任务</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>保存并提交</h5>
-        <small>选审批流程<br>启动工作流审批</small>
+        <small>选审批流程<br/>启动工作流审批</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
         <h5>审批判断</h5>
-        <small>通过则合同生效<br>驳回可回退修改</small>
+        <small>通过则合同生效<br/>驳回可回退修改</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13L6 9L9 11L13 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h5>生效同步</h5>
-        <small>推送 CRM 合同信息<br>支撑后续认缴</small>
+        <small>推送 CRM 合同信息<br/>支撑后续认缴</small>
       </div>
     </div>
   </div>
@@ -665,7 +665,7 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SA_CONTR_HEAD_ID = :id AND VALID IS NU
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程！</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择审批流程编码</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>未选择审批流程编码</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -678,7 +678,7 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SA_CONTR_HEAD_ID = :id AND VALID IS NU
       <span style="font-size:15px;">合同提交后区域校验提示冲突</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>同经销商下其他生效合同的授权区域与当前合同存在重叠<br>
+      <strong style="color:#7C3AED;">原因：</strong>同经销商下其他生效合同的授权区域与当前合同存在重叠<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查区域配置，确认是否需要调整授权区域范围。排查SQL：
     </div>
   </div>
@@ -688,7 +688,7 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SA_CONTR_HEAD_ID = :id AND VALID IS NU
       <span style="font-size:15px;">合同审批通过后未推送CRM</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>CRM接口调用失败或网络异常<br>
+      <strong style="color:#7C3AED;">原因：</strong>CRM接口调用失败或网络异常<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查CRM推送日志和接口可用性
     </div>
   </div>

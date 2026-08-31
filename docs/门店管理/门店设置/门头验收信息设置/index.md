@@ -286,7 +286,7 @@ SELECT * FROM ACCEPTANCE_INFO_SET_LINE WHERE ACCEPTANCE_ITEM IS NULL
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>验收项目不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>验收行信息中验收项目字段为空时触发校验。<br>该页面为hlod低代码页面，验收项目必填校验由C7N框架前端控制。<br>排查是否数据库中存在前序导入的历史异常数据。</div>
+    <div class="detail-text" v-pre>验收行信息中验收项目字段为空时触发校验。<br/>该页面为hlod低代码页面，验收项目必填校验由C7N框架前端控制。<br/>排查是否数据库中存在前序导入的历史异常数据。</div>
     <div class="detail-tip" v-pre>toast提醒，提示后用户补充验收项目保存</div>
 
 ```sql

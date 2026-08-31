@@ -45,24 +45,24 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新建签收</h5>
-      <small>选合同/出库<br>录入签收明细</small>
+      <small>选合同/出库<br/>录入签收明细</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>审批通过<br>完成签收验收</small>
+      <small>审批通过<br/>完成签收验收</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>推送 ERP</h5>
-      <small>推送 ERP<br>完成入账</small>
+      <small>推送 ERP<br/>完成入账</small>
     </div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>触发预提</h5>
-      <small>触发服务费<br>预提</small>
+      <small>触发服务费<br/>预提</small>
     </div>
   </div>
 </div>
@@ -801,7 +801,7 @@ SELECT BL.SA_OUT_BILL_LINE_ID, BL.QTY AS OUT_QTY, NVL(SUM(DL.RECEIVED_QTY),0) AS
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同存在未审核完毕的签收单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>该合同下已有未完成的签收单，需先处理已有签收单</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>该合同下已有未完成的签收单，需先处理已有签收单</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -811,7 +811,7 @@ SELECT BL.SA_OUT_BILL_LINE_ID, BL.QTY AS OUT_QTY, NVL(SUM(DL.RECEIVED_QTY),0) AS
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>签收数量超过出库数量</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>签收行本次签收数量+已签收数量&gt;出库数量</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>签收行本次签收数量+已签收数量&gt;出库数量</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -824,7 +824,7 @@ SELECT BL.SA_OUT_BILL_LINE_ID, BL.QTY AS OUT_QTY, NVL(SUM(DL.RECEIVED_QTY),0) AS
       <span style="font-size:15px;">签收审批通过但ERP推送失败</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或网络问题；排查SQL：`SELECT DIFFBILL_NO, INTF_MSG FROM DRP_DIFFPROCBILL_LINE WHERE DIFFBILL_ID = #{diffbillId} AND ACCOUNT_STATUS = 'PENDING'`<br>
+      <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或网络问题；排查SQL：`SELECT DIFFBILL_NO, INTF_MSG FROM DRP_DIFFPROCBILL_LINE WHERE DIFFBILL_ID = #{diffbillId} AND ACCOUNT_STATUS = 'PENDING'`<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查ERP接口状态，修复后通过VirtualSignPushErpJob定时任务重试推送
     </div>
   </div>
@@ -834,7 +834,7 @@ SELECT BL.SA_OUT_BILL_LINE_ID, BL.QTY AS OUT_QTY, NVL(SUM(DL.RECEIVED_QTY),0) AS
       <span style="font-size:15px;">签收单状态异常（卡在启动状态）</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>工作流回调未正确触发；排查SQL：`SELECT DIFFBILL_NO, STAT, HZ_APPROVE_STATUS, HZ_INSTANCE_ID FROM DRP_DIFFPROCBILL_HEADER WHERE DIFFBILL_ID = #{diffbillId}`<br>
+      <strong style="color:#7C3AED;">原因：</strong>工作流回调未正确触发；排查SQL：`SELECT DIFFBILL_NO, STAT, HZ_APPROVE_STATUS, HZ_INSTANCE_ID FROM DRP_DIFFPROCBILL_HEADER WHERE DIFFBILL_ID = #{diffbillId}`<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查HZ_INSTANCE_ID对应的流程实例状态，手动触发回调或修正状态
     </div>
   </div>

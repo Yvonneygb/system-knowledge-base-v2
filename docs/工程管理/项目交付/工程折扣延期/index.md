@@ -45,25 +45,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 4h10v8H3z" stroke="white" stroke-width="1.5"/><path d="M5 7h6M5 10h4" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>选原单建延</h5>
-      <small>选原折扣单<br>设延期日期</small>
+      <small>选原折扣单<br/>设延期日期</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>提交审批</h5>
-      <small>变更单价<br>启动工作流</small>
+      <small>变更单价<br/>启动工作流</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>审批通过</h5>
-      <small>生成新折扣单<br>原单失效</small>
+      <small>生成新折扣单<br/>原单失效</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M8 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3v10" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新单生效</h5>
-      <small>下游要货<br>适用新折扣</small>
+      <small>下游要货<br/>适用新折扣</small>
     </div>
   </div>
 </div>
@@ -524,7 +524,7 @@ SELECT DISCOUNT_ECN_CODE, DISCOUNT_VALID_DATE FROM EPM_DISCOUNT_ECN WHERE DISCOU
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>折后单价不能低于原折扣单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>延期后折后单价低于原折扣单，修改折后单价</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>延期后折后单价低于原折扣单，修改折后单价</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -534,7 +534,7 @@ SELECT DISCOUNT_ECN_CODE, DISCOUNT_VALID_DATE FROM EPM_DISCOUNT_ECN WHERE DISCOU
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>延期至日期不能小于当前时间</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>延期日期在过去，修改延期日期</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br/>延期日期在过去，修改延期日期</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -547,7 +547,7 @@ SELECT DISCOUNT_ECN_CODE, DISCOUNT_VALID_DATE FROM EPM_DISCOUNT_ECN WHERE DISCOU
       <span style="font-size:15px;">延期审批通过后新折扣单未生成</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>审批回调wfComplete未正确触发；排查SQL：`SELECT DE.DISCOUNT_ECN_CODE, DE.HZ_APPROVE_STATUS FROM EPM_DISCOUNT_ECN DE WHERE DE.DISCOUNT_ECN_ID = #{discountEcnId}`<br>
+      <strong style="color:#7C3AED;">原因：</strong>审批回调wfComplete未正确触发；排查SQL：`SELECT DE.DISCOUNT_ECN_CODE, DE.HZ_APPROVE_STATUS FROM EPM_DISCOUNT_ECN DE WHERE DE.DISCOUNT_ECN_ID = #{discountEcnId}`<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查流程实例状态，手动触发回调
     </div>
   </div>
@@ -557,7 +557,7 @@ SELECT DISCOUNT_ECN_CODE, DISCOUNT_VALID_DATE FROM EPM_DISCOUNT_ECN WHERE DISCOU
       <span style="font-size:15px;">原折扣单未失效</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>延期审批通过后原折扣单的有效期未更新；排查SQL：`SELECT DA.DISCOUNT_APPLY_CODE, DA.DISCOUNT_VALID_DATE FROM EPM_DISCOUNT_APPLY DA JOIN EPM_DISCOUNT_ECN DE ON DE.SOURCE_DISCOUNT_APPLY_ID = DA.DISCOUNT_APPLY_ID WHERE DE.DISCOUNT_ECN_ID = #{discountEcnId}`<br>
+      <strong style="color:#7C3AED;">原因：</strong>延期审批通过后原折扣单的有效期未更新；排查SQL：`SELECT DA.DISCOUNT_APPLY_CODE, DA.DISCOUNT_VALID_DATE FROM EPM_DISCOUNT_APPLY DA JOIN EPM_DISCOUNT_ECN DE ON DE.SOURCE_DISCOUNT_APPLY_ID = DA.DISCOUNT_APPLY_ID WHERE DE.DISCOUNT_ECN_ID = #{discountEcnId}`<br/>
       <strong style="color:#7C3AED;">处理：</strong>检查审批回调逻辑，确认原折扣单有效期是否已更新
     </div>
   </div>

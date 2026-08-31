@@ -51,25 +51,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 2L7 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M14 2L10 14L7 9L2 6L14 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>提交申请</h5>
-      <small>填活动信息·选经销商<br>保存后提交审批</small>
+      <small>填活动信息·选经销商<br/>保存后提交审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="5" height="5" rx="1" stroke="white" stroke-width="1.5"/><path d="M3 6.5L4.5 8L7 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 5H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="10" width="5" height="3" rx="1" stroke="white" stroke-width="1.5"/><path d="M9 10H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M9 13H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>审批把关</h5>
-      <small>通过则继续<br>拒绝退回修改重提</small>
+      <small>通过则继续<br/>拒绝退回修改重提</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16A34A,#22C55E);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/><path d="M6.8 5.8L10.2 8L6.8 10.2V5.8Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
       <h5>进入执行</h5>
-      <small>策划师按申请<br>支持活动开展</small>
+      <small>策划师按申请<br/>支持活动开展</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#F97316,#FB923C);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/><rect x="6.2" y="6.2" width="3.6" height="3.6" rx="0.8" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>取消（可选）</h5>
-      <small>发起取消申请<br>取消审批通过后作废</small>
+      <small>发起取消申请<br/>取消审批通过后作废</small>
     </div>
   </div>
 </div>
