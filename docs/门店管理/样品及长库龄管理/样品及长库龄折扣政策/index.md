@@ -131,6 +131,56 @@
 </div>
 </div>
 
+<div id="biz-flow" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+
+<div class="kl-card">
+  <div class="biz-kl-hdr" style="text-align:left;">
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">流程图</span>
+    <h2>业务流程图</h2>
+    <p>列表查询 → 新增/编辑 → 维护头信息 → 维护行明细 → 保存/生效/失效</p>
+  </div>
+</div>
+
+```text
+┌──────────────┐     ┌───────────────┐     ┌───────────────┐
+│  进入列表页   │────▶│  点击新增     │────▶│  打开头弹窗    │
+└──────────────┘     │  /编辑       │     │  编辑头信息   │
+                     └───────────────┘     └──────┬────────┘
+                                                   │
+                                                   ▼
+                                          ┌──────────────────┐
+                                          │ 填写政策头信息    │
+                                          │ (名称/业务类型/   │
+                                          │  渠道/有效期等)   │
+                                          └────────┬─────────┘
+                                                   │
+                                                   ▼
+                                          ┌──────────────────┐
+                                          │ 点击行明细按钮    │
+                                          │ 维护品牌/分类/    │
+                                          │ 起订量/封顶量     │
+                                          └────────┬─────────┘
+                                                   │
+                                                   ▼
+                                          ┌──────────────────┐
+                                          │ 保存政策头+行     │
+                                          │ (remarkStat=DRAFT)│
+                                          └────────┬─────────┘
+                                                   │
+                                    ┌──────────────┼──────────────┐
+                                    ▼              ▼              ▼
+                              ┌──────────┐  ┌──────────┐  ┌──────────┐
+                              │ 生效     │  │ 失效     │  │ 作废     │
+                              │→EFFECTIVE│  │→INVALID  │  │→OBSOLETE│
+                              └──────────┘  └──────────┘  └──────────┘
+```
+
+</div>
+</div>
+</div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -476,6 +526,36 @@
       </tbody>
     </table>
   </div>
+</div>
+
+</div>
+</div>
+</div><div id="history" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+
+<div class="kl-card">
+  <div class="biz-kl-hdr" style="text-align:left;">
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">历史排查记录</span>
+    <h2>历史排查记录</h2>
+    <p>本菜单相关的历史问题排查留痕</p>
+  </div>
+  <p style="font-size:.78rem;color:#6B7280;margin:0;">暂无历史排查记录。</p>
+</div>
+
+</div>
+</div>
+</div><div id="manual" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+
+<div class="kl-card">
+  <div class="biz-kl-hdr" style="text-align:left;">
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">操作手册</span>
+    <h2>操作手册</h2>
+    <p>本菜单的操作指导文档</p>
+  </div>
+  <p style="font-size:.78rem;color:#6B7280;margin:0;">暂无操作手册。</p>
 </div>
 
 </div>
