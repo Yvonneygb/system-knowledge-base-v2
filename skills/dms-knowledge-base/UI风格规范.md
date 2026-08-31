@@ -490,3 +490,274 @@ SELECT *
 20. **不要在 `<KbCard>` 插槽中使用纯文本子内容的 `<KbSubTitle>` 组件**:VitePress 可能不将其解析为 Vue 组件,表现为标签名被当作普通文本输出或被 `<pre><code>` 包裹。应直接写入 `<h4 class="kl-sub-title">`(见 §7.10)。仅当 KbSubTitle 内部包含 Vue 子组件(如 `<KbBadge>`)时可用。
 21. **不要把状态机流转图写成 ` ```text ` ASCII 图或 `<svg>`**:ASCII 图在 VitePress 中无交互且不可维护;`<svg>` 标签在 KbCard 插槽中可能因 KbCard 的 `padding: 24px 10%` 被压缩到极小尺寸,且存在被转义为文本的风险。应使用 HTML `<table>` 构建流程图,外层包裹 `overflow-x:auto` 容器(见 §7.11)。
 22. **不要用 `<p class="kl-blockquote">` 写"查询SQL："引导文字**:必须用 Markdown 引用块 `> 查询SQL：`,以获得标准 blockquote 样式(紫色左边线 + 浅紫背景)。
+
+---
+
+## 8. detail-logic 区块子模块结构与样式规范
+
+> 以下规范从【样品及长库龄要货订单】参考页提炼，覆盖 detail-logic TAB 内各子模块的元素结构、CSS 样式和内容组织方式。
+
+### 8.1 选择弹窗（LOV）模块
+
+**容器**：`<KbCard num="N" title="选择弹窗">`，内部 `<p>` 一句话描述。
+
+**每个弹窗**的标题用 `<KbSubTitle>`（因含 `<KbBadge>` 子组件，能被正常解析）：
+
+```md
+<KbSubTitle>弹窗N：标题LOV <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+```
+
+**入参表格**（5 列：入参 / 中文名 / 释义 / 示例 / 数据范围），用 HTML table + 紫色表头：
+
+```html
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">入参</th>
+      <th ...>中文名</th>
+      <th ...>释义</th>
+      <th ...>示例</th>
+      <th ...>数据范围</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">字段名</td>
+        <td style="...">中文名</td>
+        ...
+      </tr>
+      <!-- 每个入参一行 -->
+    </tbody>
+  </table>
+</div>
+```
+
+**查询 SQL**：弹窗入参表下方用 Markdown 引用块引导 + fenced ```sql 代码块：
+
+```md
+> 查询SQL：
+
+```sql
+SELECT dp.POLICY_ID, dp.POLICY_CODE, dp.POLICY_NAME
+  FROM DISCOUNT_POLICY dp
+ WHERE dp.IS_MAKT = 2
+   AND dp.PRICE_TYPE = 2
+ ORDER BY dp.POLICY_CODE
+```
+```
+
+**样式要点**：
+- 表头：`linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%)` 浅紫渐变底，`#5B21B6` 深紫文字，`font-weight:800`，`border-bottom:2px solid #E8ECF0`
+- 表体单元格：`padding:9px 11px;font-size:.72rem`，字段名列 `font-weight:700;color:#111827`，其余列 `color:#374151`
+- 行分隔：`border-bottom:1px solid #E8ECF0`
+- 外层容器：`border-radius:12px;border:1px solid #E8ECF0;overflow-x:auto`
+
+---
+
+### 8.2 导入模块
+
+**容器**：`<KbCard num="N" title="导入">`，内部 `<p>` 一句话描述。
+
+**子模块结构**（每个子模块用 `<h4 class="kl-sub-title">` 标题区分）：
+
+| 子模块 | 标题 | 内容形式 |
+|--------|------|----------|
+| 前置约定 | `<h4 class="kl-sub-title">前置约定</h4>` | `<ol>` 有序列表，每条一条约定 |
+| 字段映射 | `<h4 class="kl-sub-title">字段映射</h4>` | HTML table（4 列：字段含义 / 是否必输 / 字段格式 / 重复判定字段） |
+| 处理逻辑 | `<h4 class="kl-sub-title">处理逻辑</h4>` | `<ol>` 有序列表，每条一个处理步骤 |
+| 异常与结果约定 | `<h4 class="kl-sub-title">异常与结果约定</h4>` | `<ol>` 有序列表，每条一种异常场景 |
+| 运维保障 | `<h4 class="kl-sub-title">运维保障</h4>` | `<ol>` 有序列表，每条一条运维措施 |
+
+**字段映射表格示例**：
+
+```html
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段含义</th>
+      <th ...>是否必输</th>
+      <th ...>字段格式</th>
+      <th ...>重复判定字段</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">样品编码</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">是</td>
+        <td style="...">文本，不超过50字符</td>
+        <td style="...">是，同一单内不可重复</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
+
+**前置约定/处理逻辑等有序列表示例**：
+
+```html
+<h4 class="kl-sub-title">前置约定</h4>
+<ol style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
+  <li>导入仅支持产品明细行导入，头信息需在页面上完整填写</li>
+  <li>导入文件格式为Excel(.xlsx)，首行为表头行</li>
+  <li>导入前需已选择折扣政策(priceType=2)或价目表(priceType=3)</li>
+</ol>
+```
+
+**样式要点**：
+- `<ol>` 列表：`margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9`
+- 表格单元格样式与 §8.1 一致
+- `<h4 class="kl-sub-title">` 为全局类，紫色左边线小标题
+
+---
+
+### 8.3 其他按钮模块
+
+**容器**：`<KbCard num="N" title="其他按钮">`，内部 `<p>` 一句话描述。
+
+**按钮清单表格**（5 列：按钮名称 / 按钮作用 / 所在位置 / 显隐条件 / 影响）：
+
+```html
+<h4 class="kl-sub-title">按钮清单</h4>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">按钮名称</th>
+      <th ...>按钮作用</th>
+      <th ...>所在位置</th>
+      <th ...>显隐条件/可点击条件</th>
+      <th ...>影响</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">编辑</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">进入编辑模式</td>
+        <td style="...">详情页</td>
+        <td style="...">非审批中</td>
+        <td style="...">头表单和行表格可编辑</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
+
+**每个按钮详情**用 `<h4 class="kl-sub-title">` 标题 + `<ul>` 无序列表：
+
+```html
+<h4 class="kl-sub-title">编辑（详情页）</h4>
+<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
+  <li><strong>触发条件</strong>：单据非审批中状态</li>
+  <li><strong>执行逻辑</strong>：
+    <ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
+      <li>第1点：设置editFlag=true</li>
+      <li>第2点：头表单和行表格进入可编辑状态</li>
+    </ul>
+  </li>
+  <li><strong>接口调用</strong>：无</li>
+  <li><strong>排查SQL</strong>：</li>
+</ul>
+
+```sql
+SELECT h.INTERIM_BIINO, h.HZ_APPROVE_STATUS, h.ORDER_STAT
+  FROM SA_OUT_BILL_HEAD h
+ WHERE h.HEAD_ID = :headId
+```
+```
+
+**样式要点**：
+- 按钮清单表格单元格样式与 §8.1 一致
+- 按钮详情 `<ul>` 列表：`margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9`
+- 每条 li 中用 `<strong>` 包裹字段名（触发条件/执行逻辑/接口调用/排查SQL）
+- 嵌套子列表同样用 `<ul>`，缩进 `padding-left:18px`
+- 排查 SQL 用 fenced ```sql 代码块，在 `</ul>` 后另起一行
+
+---
+
+### 8.4 保存校验模块
+
+**容器**：`<KbCard num="N" title="保存校验">`，内部 `<p>` 一句话描述。
+
+**每个校验项**用 `<KbSubTitle>` 标题区分（因含描述文本，可正常解析），内部结构：
+
+```md
+<KbSubTitle>校验N：标题 —— 描述</KbSubTitle>
+
+- 第1点：...
+- 第2点：...
+
+<KbTip>系统体现：保存时 preCheckData 校验，...toast错误提醒"..."</KbTip>
+
+```sql
+SELECT h.HEAD_ID, h.IS_MAKT, h.PRICE_TYPE, h.BUSINESS_TYPE
+  FROM SA_OUT_BILL_HEAD h
+ WHERE h.HEAD_ID = :headId
+   AND h.IS_MAKT = 2
+   AND h.BUSINESS_TYPE IS NULL
+```
+```
+
+**结构要素**：
+1. **标题**：`<KbSubTitle>校验N：标题 —— 描述</KbSubTitle>`，每个校验一个 KbSubTitle
+2. **详细逻辑**：Markdown 无序列表（`- 第1点：...`），每条 li 以"第N点："开头
+3. **系统体现**：用 `<KbTip>` 橙色提示框包裹，描述校验时机和 toast 报错信息
+4. **排查 SQL**：用 fenced ```sql 代码块
+
+**样式要点**：
+- `<KbSubTitle>` 渲染为紫色左边线小标题
+- `<KbTip>` 渲染为橙色提示框（`background:#FFF7ED;color:#C2410C`）
+- 排查 SQL 用 fenced ```sql 代码块，由 Shiki 高亮为暗色代码框
+
+---
+
+### 8.5 提交校验模块
+
+**容器**：`<KbCard num="N" title="提交校验">`，内部 `<p>` 一句话描述。
+
+**结构**与 §8.4 保存校验完全一致，区别在于：
+- 标题用"校验N：标题 —— 描述"
+- 校验时机为"保存并提交"按钮触发
+- 涉及 OA 审批推送、CRM 订单生成等提交阶段校验
+
+**示例**：
+
+```md
+<KbSubTitle>校验1：OA审批推送校验 —— priceType=2时推送OA审批流程</KbSubTitle>
+
+- 第1点：priceType=2 时设置 hzApproveStatus=NEW
+- 第2点：OA 单据名称 YPYHDD
+- 第3点：流程编码按渠道区分：渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT
+
+<KbTip>系统体现：保存并提交按钮触发；priceType=3 时跳过 OA 直接生成 CRM</KbTip>
+
+```sql
+SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS
+  FROM SA_OUT_BILL_HEAD h
+ WHERE h.HEAD_ID = :headId
+```
+```
+
+---
+
+### 8.6 通用表格样式速查
+
+所有 detail-logic 区块内的 HTML 表格统一使用以下样式：
+
+| 元素 | 样式 |
+|------|------|
+| 外层容器 | `style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;"` |
+| table 标签 | `class="kl-table" style="margin:0;width:100%;border-collapse:collapse;"` |
+| 表头 tr | `style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);"` |
+| 表头 th | `style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;"` |
+| 表体 td（字段名列） | `style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;"` |
+| 表体 td（普通列） | `style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;"` |
+| 最后一行 td | 去掉 `border-bottom` |
+
+**通用列表样式**：
+
+| 元素 | 样式 |
+|------|------|
+| `<ol>` 有序列表 | `style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"` |
+| `<ul>` 无序列表 | `style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"` |
+| 嵌套子列表 | 与父列表相同样式，通过 `padding-left:18px` 缩进 |
+
+**通用代码块样式**：
+- 所有 SQL 用 fenced ```sql 代码块
+- SQL 应格式化为多行（关键字大写、子句换行、AND/OR 缩进）
+- 代码块前后保留空行确保正确解析
