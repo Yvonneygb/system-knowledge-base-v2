@@ -1,0 +1,1060 @@
+# 产品中心-产品资料-产品SM状态变更申请
+
+---
+
+## 业务流程
+
+### 业务流程图
+
+```text
+开始
+  │
+  ▼
+★新建SM状态变更申请★
+  │  填写头表信息（申请单号、申请人、品牌、品类、是否逆向变更等）
+  │  通过产品弹窗选择产品 或 Excel导入产品行
+  │  填写每行产品的"申请变更SM状态"
+  │
+  ▼
+保存（触发保存校验）
+  │  校验：产品编码不重复
+  │
+  ▼
+提交审批（触发提交校验）
+  │  校验1：明细行不为空
+  │  校验2：产品无在途申请（HZ_APPROVE_STATUS='RUN'）
+  │
+  ▼
+推送OA审批
+  │  推送头表+行表数据到OA系统
+  │  HZ_APPROVE_STATUS = 'RUN'
+  │
+  ▼
+⚖ OA审批结果？
+  │
+  ├─ 同意 ──────────────────────────────┐
+  │                                    │
+  │  ▼                                 │
+  │  OA回调更新行表                    │
+  │  （淘汰时间、是否淘汰、SM变更状态）  │
+  │                                    │
+  │  ▼                                 │
+  │  推送ERP变更物料SM状态             │
+  │  （ERP返回结果更新行表ERP状态）     │
+  │                                    │
+  │  ▼                                 │
+  │  更新物料组织表SM状态              │
+  │  HZ_APPROVE_STATUS = 'APPROVED'    │
+  │                                    │
+  └─ 拒绝 ──────────────────────────────┤
+                                       │
+                                       ▼
+                                状态生效/驳回重提
+                                       │
+                                       ▼
+                                     结束
+```
+
+### 上游依赖
+
+| 上游模块 | 依赖类型 | 依赖说明 | 依赖成立条件 |
+|---------|---------|---------|------------|
+| 产品主档（ITEM_ORG / ITEM） | 数据依赖 | 产品弹窗从中选择需变更SM状态的产品，带出产品编码、名称、型号、当前SM状态等 | 物料类别为"成品"（item_type=5），且不存在erp_stat='未推送'的在途记录 |
+| 产品分类（ITEM_CLASS） | 数据依赖 | 行表带出产品的大类、中类、小类编码和名称 | 产品已有分类配置 |
+| 值集-事业部（AE.ITEM_ORGANIZATION） | 配置依赖 | 头表所属事业部，推送OA时取值集description作为事业部名称 | 值集已配置 |
+| 值集-SM状态角色（AE.PRODUCT_OVER_SM_STATUS_ROLE） | 配置依赖 | 根据当前用户角色（ProdSMSC/ProdSMSC_CS）和是否逆向，确定产品弹窗中可查询的SM状态范围 | 用户拥有对应角色 |
+| 值集-SM状态变更（AE.PRODUCT_OVER_SM_STATUS） | 配置依赖 | 根据当前SM状态和角色，确定可变更的目标SM状态可选值 | 值集已配置 |
+| 值集-品类（AE.PRODUCT_OVER_HEADER_CATEGORY） | 配置依赖 | 头表品类字段：1智能马桶/2浴室柜/3陶瓷洁具/4五金龙头/5浴缸淋浴房/6其他 | 值集已配置 |
+| 值集-产品定位（AE.ITEM_FIXED） | 配置依赖 | 行表产品定位字段 | 值集已配置 |
+| 值集-淘汰原因（AE.OVER_REASONS） | 配置依赖 | 行表淘汰原因字段 | 值集已配置 |
+| 值集-是否同意淘汰（IS_AGERR_OVER） | 配置依赖 | 行表是否同意淘汰字段 | 值集已配置 |
+| 工作流引擎（H0 Workflow） | 配置依赖 | 提交审批走H0工作流，审批通过/拒绝回调 | 工作流已配置 |
+| OA系统 | 数据依赖 | 推送OA审批表单，接收OA审批回调 | OA接口可用 |
+| ERP系统 | 数据依赖 | 审批通过后推送ERP变更物料SM状态，接收ERP返回结果 | ERP接口可用 |
+| 编码规则 | 配置依赖 | 申请单号自动生成 | 编码规则已配置 |
+
+### 下游影响
+
+- 影响1：产品SM状态更新
+  - 审批通过且ERP推送成功后，更新ITEM_ORG表的SM_STATE字段为目标SM状态，即时生效
+
+- 影响2：产品列表
+  - 产品SM状态变更后，产品列表中该产品的SM状态随之更新
+
+- 影响3：产品推广等级
+  - SM状态决定产品在销售管理中的可用性（正常销售/限制销售/停止/淘汰），影响推广等级维护
+
+- 影响4：CRM/订单系统
+  - SM状态变更后影响产品在CRM和订单系统中的可销售性
+
+- 影响5：钉钉通知
+  - ERP推送失败时，通过钉钉机器人发送异常通知
+
+---
+
+## 重点逻辑
+
+### 重点逻辑1：角色控制产品弹窗SM状态范围 `权限管控`
+
+- **业务意义**：不同角色（非售后ProdSMSC / 售后ProdSMSC_CS）可变更的产品SM状态范围不同，通过值集配置灵活管控
+
+- **具体逻辑描述**
+
+  - 第1点：获取当前用户的角色编码，筛选包含"ProdSMSC"或"ProdSMSC_CS"的角色
+
+  - 第2点：根据角色编码+是否逆向变更（isEliminate），从值集AE.PRODUCT_OVER_SM_STATUS_ROLE中查询对应的SM状态列表
+
+  - 第3点：产品弹窗仅展示SM状态在允许范围内的产品
+
+### 重点逻辑2：目标SM状态可选值控制 `动态值集`
+
+- **业务意义**：根据当前SM状态和角色，动态确定可变更的目标SM状态，防止非法状态流转
+
+- **具体逻辑描述**
+
+  - 第1点：从值集AE.PRODUCT_OVER_SM_STATUS中查询所有SM状态变更配置
+
+  - 第2点：根据角色编码+是否逆向，匹配值集meaning中包含对应key的记录
+
+  - 第3点：根据当前SM状态，匹配值集tag中包含当前状态的记录
+
+  - 第4点：将匹配记录的description去重后作为可选目标SM状态
+
+### 重点逻辑3：在途申请校验 `防重提交`
+
+- **业务意义**：同一产品不允许有多个在途的SM状态变更申请，避免冲突
+
+- **具体逻辑描述**
+
+  - 第1点：提交时查询所有明细行的产品编码
+
+  - 第2点：查询是否存在HZ_APPROVE_STATUS='RUN'的其他申请单包含相同产品编码
+
+  - 第3点：若存在，报错提示具体的申请单号、申请人和产品编码
+
+### 重点逻辑4：OA审批回调处理 `外部审批集成`
+
+- **业务意义**：接收OA系统审批结果，更新申请单状态和行表数据
+
+- **具体逻辑描述**
+
+  - 第1点：仅最后审核人（lHFinalApprover=Y）回调时才处理
+
+  - 第2点：审批同意时，从回调数据中解析每行的淘汰时间、是否淘汰、变更后SM状态，更新行表
+
+  - 第3点：审批拒绝时，设置回调来源为OA_REJECT
+
+  - 第4点：更新头表更新人为OA审批人
+
+### 重点逻辑5：ERP推送与结果处理 `状态生效`
+
+- **业务意义**：审批通过后推送ERP变更物料SM状态，根据ERP返回结果更新本地数据
+
+- **具体逻辑描述**
+
+  - 第1点：审批通过后，将每行的产品编码、当前SM状态、目标SM状态推送ERP
+
+  - 第2点：ERP返回成功（X_RETURN_STATUS='S'）的行，更新行表ERP状态为"已推送"，并更新ITEM_ORG表的SM_STATE
+
+  - 第3点：ERP返回失败的行，更新行表ERP状态为"推送失败"并记录返回信息
+
+  - 第4点：存在失败行时，通过钉钉机器人发送异常通知
+
+---
+
+## 详细逻辑
+
+### 界面模块1：列表查询页
+
+> 低代码页面（hlod），无独立前端源码，字段基于后端Entity和Mapper SQL梳理
+
+| 字段名 | 数据库列名 | 组件 | 业务释义 | 显隐条件 | 取值/赋值逻辑 |
+|-------|-----------|------|---------|---------|-------------|
+| 申请单号 | PRODUCT_OVER_HEADER.PRODUCT_OVER_NO | 文本框 | 产品SM状态变更申请单号 | 常显 | 系统自动生成；支持模糊查询（like前缀匹配） |
+| 申请人 | PRODUCT_OVER_HEADER.CREATED_BY | 文本框 | 创建人姓名 | 常显 | 来源IAM_USER.REAL_NAME；按姓名精确匹配用户ID查询 |
+| 申请日期 | PRODUCT_OVER_HEADER.CREATE_TIME | 日期选择框 | 申请创建日期 | 常显 | 默认当前日期；精确匹配查询 |
+| 更新人 | PRODUCT_OVER_HEADER.LAST_UPDATED_BY | 文本框 | 最后更新人姓名 | 常显 | 来源IAM_USER.REAL_NAME；按姓名精确匹配用户ID查询 |
+| 单据状态 | PRODUCT_OVER_HEADER.STAT | 下拉选择框 | 单据状态码 | 常显 | - |
+| H0流程审批状态 | PRODUCT_OVER_HEADER.HZ_APPROVE_STATUS | 下拉选择框 | H0工作流审批状态 | 常显 | RUN（审批中）/APPROVED（审批通过）/REJECTED（审批拒绝） |
+| 申请部门 | PRODUCT_OVER_HEADER.ORG_NAME | 文本框 | 申请部门名称 | 常显 | - |
+| 所属单位 | PRODUCT_OVER_HEADER.ORGANIZATION_NAME | 文本框 | 所属单位名称 | 常显 | - |
+| 交易公司 | PRODUCT_OVER_HEADER.TRADING_COMPANY_NAME | 文本框 | 交易公司名称 | 常显 | - |
+| 品牌 | PRODUCT_OVER_HEADER.BRAND | 文本框 | 品牌 | 常显 | - |
+| 是否瓷砖 | PRODUCT_OVER_HEADER.IS_TILE | 下拉选择框 | 是否瓷砖事业部 | 常显 | 2=是，其他=否 |
+| 逆向启用 | PRODUCT_OVER_HEADER.IS_ELIMINATE | 下拉选择框 | 是否逆向变更 | 常显 | 2=是 |
+| 品类 | PRODUCT_OVER_HEADER.PROD_CATEGORY | 下拉选择框 | 产品品类 | 常显 | 来源值集AE.PRODUCT_OVER_HEADER_CATEGORY：1智能马桶/2浴室柜/3陶瓷洁具/4五金龙头/5浴缸淋浴房/6其他 |
+| 产品编码 | PRODUCT_OVER_LINE.ITEM_CODE | 文本框 | 明细行产品编码 | 常显 | 支持模糊查询（like前缀匹配），关联PRODUCT_OVER_LINE表查询 |
+
+**列表查询SQL（Mapper: ProductOverHeaderMapper.selectList）：**
+
+```sql
+SELECT DISTINCT
+    POH.PRODUCT_OVER_ID, POH.PRODUCT_OVER_NO, POH.CREATOR, POH.CREATE_TIME,
+    POH.UPDATOR, POH.LAST_UPDATE_DATE AS UPDATE_TIME, POH.CHECKER, POH.CHECK_TIME,
+    POH.STAT, POH.WFID, POH.WFFLAG, POH.NOTE, POH.ENTID, POH.ORGID, POH.ORG_NAME,
+    POH.ORGANIZATION_ID, POH.ORGANIZATION_NAME, POH.TEL, POH.PUBLISH_USERS,
+    POH.TRADING_COMPANY_NAME, POH.TRADING_COMPANY_ID, POH.TRADING_COMPANY_CODE,
+    POH.BRAND, POH.IS_TILE, POH.IS_ELIMINATE, POH.PROD_CATEGORY,
+    POH.CREATION_DATE, POH.CREATED_BY, POH.LAST_UPDATED_BY, POH.LAST_UPDATE_DATE,
+    POH.OBJECT_VERSION_NUMBER, POH.HZ_INSTANCE_ID, POH.HZ_APPROVE_STATUS,
+    IU.REAL_NAME AS CREATOR_NAME,
+    CASE WHEN POH.LAST_UPDATED_BY = 0 THEN IU.REAL_NAME ELSE IU1.REAL_NAME END AS UPDATOR_NAME
+FROM PRODUCT_OVER_HEADER POH
+LEFT JOIN PRODUCT_OVER_LINE POL ON POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID
+LEFT JOIN HZERO.IAM_USER IU ON IU.ID = POH.CREATED_BY
+LEFT JOIN HZERO.IAM_USER IU1 ON IU1.ID = POH.LAST_UPDATED_BY
+WHERE 1=1
+  -- 动态条件：productOverNo、creator、stat、hzApproveStatus、itemCode等
+ORDER BY POH.PRODUCT_OVER_ID DESC
+```
+
+### 界面模块2：导出页
+
+> 列表页导出，使用@ExcelExport注解，导出VO为ProductOverHeaderExportVO
+
+| 字段名 | 数据库列名 | 组件 | 业务释义 | 显隐条件 | 取值/赋值逻辑 |
+|-------|-----------|------|---------|---------|-------------|
+| 导出数据 | - | 按钮 | 导出列表查询结果为Excel | 常显 | 调用export接口，使用ProductOverHeaderExportVO导出，@ProcessLovValue处理值集翻译 |
+
+### 界面模块3：详情页头表单
+
+> 低代码页面（hlod），字段基于后端Entity ProductOverHeader梳理
+
+| 字段名 | 数据库列名 | 组件 | 业务释义 | 显隐条件 | 取值/赋值逻辑 |
+|-------|-----------|------|---------|---------|-------------|
+| 申请单号 | PRODUCT_OVER_HEADER.PRODUCT_OVER_NO | 文本框 | 产品SM状态变更申请单号 | 常显 | 系统自动生成；必填（@NotBlank） |
+| 申请人 | PRODUCT_OVER_HEADER.CREATOR | 文本框 | 申请人姓名 | 常显 | 默认当前登录用户 |
+| 申请日期 | PRODUCT_OVER_HEADER.CREATE_TIME | 日期选择框 | 申请日期 | 常显 | 默认当前日期 |
+| 审核人 | PRODUCT_OVER_HEADER.CHECKER | 文本框 | 审核人 | 审核后显示 | 审核时赋值 |
+| 审核日期 | PRODUCT_OVER_HEADER.CHECK_TIME | 日期选择框 | 审核日期 | 审核后显示 | 审核时赋值 |
+| 单据状态 | PRODUCT_OVER_HEADER.STAT | 下拉选择框 | 单据状态码 | 常显 | - |
+| 流程ID | PRODUCT_OVER_HEADER.WFID | 隐藏 | 工作流流程ID | 隐藏 | 提交审批时赋值 |
+| 流程状态 | PRODUCT_OVER_HEADER.WFFLAG | 隐藏 | 工作流流程状态 | 隐藏 | - |
+| H0流程实例ID | PRODUCT_OVER_HEADER.HZ_INSTANCE_ID | 隐藏 | H0流程实例ID | 隐藏 | 提交审批时赋值 |
+| H0流程审批状态 | PRODUCT_OVER_HEADER.HZ_APPROVE_STATUS | 下拉选择框 | H0审批状态 | 常显 | RUN/APPROVED/REJECTED；必填 |
+| 申请陈述 | PRODUCT_OVER_HEADER.NOTE | 文本域 | 申请变更说明 | 常显 | - |
+| 申请部门ID | PRODUCT_OVER_HEADER.ORGID | 隐藏 | 申请部门ID | 隐藏 | 默认当前用户部门 |
+| 申请部门名称 | PRODUCT_OVER_HEADER.ORG_NAME | 文本框 | 申请部门名称 | 常显 | 默认当前用户部门名称 |
+| 所属单位ID | PRODUCT_OVER_HEADER.ORGANIZATION_ID | 隐藏 | 所属单位ID | 隐藏 | - |
+| 所属单位名称 | PRODUCT_OVER_HEADER.ORGANIZATION_NAME | 文本框 | 所属单位名称 | 常显 | - |
+| 联系电话 | PRODUCT_OVER_HEADER.TEL | 文本框 | 联系电话 | 常显 | - |
+| 可阅读者 | PRODUCT_OVER_HEADER.PUBLISH_USERS | 隐藏 | 可阅读该单据的用户 | 隐藏 | - |
+| 交易公司名称 | PRODUCT_OVER_HEADER.TRADING_COMPANY_NAME | 文本框 | 交易公司名称 | 常显 | - |
+| 交易公司ID | PRODUCT_OVER_HEADER.TRADING_COMPANY_ID | 隐藏 | 交易公司ID | 隐藏 | 必填（@NotNull） |
+| 交易公司编码 | PRODUCT_OVER_HEADER.TRADING_COMPANY_CODE | 文本框 | 交易公司编码 | 常显 | - |
+| 品牌 | PRODUCT_OVER_HEADER.BRAND | 文本框 | 品牌 | 常显 | - |
+| 是否瓷砖 | PRODUCT_OVER_HEADER.IS_TILE | 下拉选择框 | 是否瓷砖事业部 | 常显 | 2=是 |
+| 逆向启用 | PRODUCT_OVER_HEADER.IS_ELIMINATE | 下拉选择框 | 是否逆向变更 | 常显 | 2=是；控制产品弹窗SM状态范围和目标SM状态可选值 |
+| 品类 | PRODUCT_OVER_HEADER.PROD_CATEGORY | 下拉选择框 | 产品品类 | 常显 | 来源值集AE.PRODUCT_OVER_HEADER_CATEGORY：1智能马桶/2浴室柜/3陶瓷洁具/4五金龙头/5浴缸淋浴房/6其他 |
+| 组织ID | PRODUCT_OVER_HEADER.ENTID | 隐藏 | 组织ID（事业部） | 隐藏 | - |
+| 外部审批回调来源 | PRODUCT_OVER_HEADER.CALLBACK_SOURCE | 隐藏 | OA回调来源 | 隐藏 | OA_PASS（同意）/OA_REJECT（拒绝） |
+
+### 界面模块4：详情页行表格
+
+> 低代码页面（hlod），字段基于后端Entity ProductOverLine梳理
+
+| 字段名 | 数据库列名 | 组件 | 业务释义 | 显隐条件 | 取值/赋值逻辑 |
+|-------|-----------|------|---------|---------|-------------|
+| 序号 | PRODUCT_OVER_LINE.SEQ | 文本框 | 行序号 | 常显 | 自动生成 |
+| 产品ID | PRODUCT_OVER_LINE.ITEM_ID | 隐藏 | 产品ID | 隐藏 | 产品弹窗选择后自动带出 |
+| 产品编码 | PRODUCT_OVER_LINE.ITEM_CODE | 文本框 | 产品编码 | 常显 | 产品弹窗选择或导入；保存校验不重复 |
+| 产品名称 | PRODUCT_OVER_LINE.ITEM_NAME | 文本框 | 产品名称 | 常显 | 产品弹窗选择后自动带出 |
+| 产品型号 | PRODUCT_OVER_LINE.SPEC | 文本框 | 产品型号 | 常显 | 产品弹窗选择后自动带出（来源ITEM.ITEM_MODEL） |
+| 单位 | PRODUCT_OVER_LINE.UNIT_NAME | 文本框 | 单位名称 | 常显 | 产品弹窗选择后自动带出（来源HPFM_UOM.UOM_NAME） |
+| 产品规格 | PRODUCT_OVER_LINE.ITEM_RULE | 文本框 | 产品规格 | 常显 | 产品弹窗选择后自动带出（来源ITEM_ORG.SPECS） |
+| 大类编码 | PRODUCT_OVER_LINE.ITEM_CLASS1_CODE | 隐藏 | 产品大类编码 | 隐藏 | 产品弹窗选择后自动带出 |
+| 大类名称 | PRODUCT_OVER_LINE.ITEM_CLASS1_NAME | 文本框 | 产品大类名称 | 常显 | 产品弹窗选择后自动带出 |
+| 中类编码 | PRODUCT_OVER_LINE.ITEM_CLASS2_CODE | 隐藏 | 产品中类编码 | 隐藏 | 产品弹窗选择后自动带出 |
+| 中类名称 | PRODUCT_OVER_LINE.ITEM_CLASS2_NAME | 文本框 | 产品中类名称 | 常显 | 产品弹窗选择后自动带出 |
+| 小类编码 | PRODUCT_OVER_LINE.ITEM_CLASS3_CODE | 隐藏 | 产品小类编码 | 隐藏 | 产品弹窗选择后自动带出 |
+| 小类名称 | PRODUCT_OVER_LINE.ITEM_CLASS3_NAME | 文本框 | 产品小类名称 | 常显 | 产品弹窗选择后自动带出 |
+| 当前SM状态 | PRODUCT_OVER_LINE.SM_STATE | 文本框 | 变更前SM状态 | 常显 | 产品弹窗选择后自动带出（来源ITEM_ORG.SM_STATE） |
+| 申请变更SM状态 | PRODUCT_OVER_LINE.SM_CHANGE_STATE | 下拉选择框 | 变更后SM状态 | 常显 | 来源值集接口get-change-status-lov，根据当前SM状态和是否逆向动态过滤可选值；OA回调时更新 |
+| 立项申请单号 | PRODUCT_OVER_LINE.PRODUCT_APPROVAL_NO | 文本框 | 立项申请单号 | 常显 | 产品弹窗选择后自动带出 |
+| 标准价格(含木架费) | PRODUCT_OVER_LINE.STD_PRICE_INCLWDFM | 文本框 | 瓷砖事业部标准价格 | 常显 | - |
+| 标准价格(含安装费) | PRODUCT_OVER_LINE.STD_PRICE_INCLINSTALL | 文本框 | 卫浴事业部标准价格 | 常显 | - |
+| 木架费 | PRODUCT_OVER_LINE.WDEN_FRAME_COST | 文本框 | 瓷砖事业部木架费 | 常显 | - |
+| 安装费 | PRODUCT_OVER_LINE.INSTALL_COST | 文本框 | 卫浴事业部安装费 | 常显 | - |
+| 成本单价 | PRODUCT_OVER_LINE.COST_UNITPRICE | 文本框 | 成本单价 | 常显 | - |
+| 公司毛利率 | PRODUCT_OVER_LINE.GROSSMARG_COMP | 文本框 | 公司毛利率 | 常显 | - |
+| 上市时间 | PRODUCT_OVER_LINE.MARKET_TIME | 日期选择框 | 产品上市时间 | 常显 | - |
+| 产品定位 | PRODUCT_OVER_LINE.ITEM_FIXED | 下拉选择框 | 产品定位 | 常显 | 来源值集AE.ITEM_FIXED |
+| 前第一年销售量 | PRODUCT_OVER_LINE.SALESVOLU_PRE1 | 文本框 | 近第一年销售量 | 常显 | - |
+| 前第二年销售量 | PRODUCT_OVER_LINE.SALESVOLU_PRE2 | 文本框 | 近第二年销售量 | 常显 | - |
+| 前第三年销售量 | PRODUCT_OVER_LINE.SALESVOLU_PRE3 | 文本框 | 近第三年销售量 | 常显 | - |
+| 实际开单折扣率 | PRODUCT_OVER_LINE.ACT_DISCOUNT_RATE | 文本框 | 实际开单折扣率 | 常显 | - |
+| 实际毛利率 | PRODUCT_OVER_LINE.ACT_GROSS_MARGIN | 文本框 | 实际毛利率 | 常显 | - |
+| 淘汰原因 | PRODUCT_OVER_LINE.OVER_REASONS | 下拉选择框 | 淘汰原因 | 常显 | 来源值集AE.OVER_REASONS |
+| 申请淘汰时间 | PRODUCT_OVER_LINE.OVER_TIME | 日期选择框 | 申请淘汰时间 | 常显 | OA回调时更新 |
+| 是否同意淘汰 | PRODUCT_OVER_LINE.IS_AGERR_OVER | 下拉选择框 | 是否同意淘汰 | 常显 | 来源值集IS_AGERR_OVER；2=是，0=否；OA回调时更新 |
+| 替代品 | PRODUCT_OVER_LINE.SURROGATE | 文本框 | 替代品 | 常显 | - |
+| 替代品编码 | PRODUCT_OVER_LINE.SURROGATE_CODE | 文本框 | 替代品编码 | 常显 | - |
+| 未结工程订单总量 | PRODUCT_OVER_LINE.OPENWORK_TOTAL | 文本框 | 未结工程订单数量 | 常显 | - |
+| 未结工程订单总金额 | PRODUCT_OVER_LINE.OPENWORK_TOTAL2 | 文本框 | 未结工程订单金额 | 常显 | - |
+| 未结销售订单总量 | PRODUCT_OVER_LINE.OPENSALES_TOTAL | 文本框 | 未结销售订单数量 | 常显 | - |
+| 未结销售订单总金额 | PRODUCT_OVER_LINE.OPENSALES_TOTAL2 | 文本框 | 未结销售订单金额 | 常显 | - |
+| 仓库库存量 | PRODUCT_OVER_LINE.INV_WAREH | 文本框 | 仓库库存数量 | 常显 | - |
+| 渠道库存量 | PRODUCT_OVER_LINE.INV_CHANNEL | 文本框 | 渠道库存数量 | 常显 | - |
+| 门店样品量 | PRODUCT_OVER_LINE.SAMPLE_TOTAL | 文本框 | 门店样品数量 | 常显 | - |
+| 未结OEM采购订单总量 | PRODUCT_OVER_LINE.OPENOEM_TOTAL | 文本框 | 未结OEM采购订单数量 | 常显 | - |
+| 未结OEM采购订单总金额 | PRODUCT_OVER_LINE.OPENOEM_TOTAL2 | 文本框 | 未结OEM采购订单金额 | 常显 | - |
+| 未结生产工单总量 | PRODUCT_OVER_LINE.OPEN_PRODUCE_TOTAL | 文本框 | 未结生产工单数量 | 常显 | - |
+| 专用模具总量 | PRODUCT_OVER_LINE.SPECMOLD_TOTAL | 文本框 | 专用模具数量 | 常显 | - |
+| 专用模具单价 | PRODUCT_OVER_LINE.SPECMOLD_PRICE | 文本框 | 专用模具单价 | 常显 | - |
+| 专用模具总金额 | PRODUCT_OVER_LINE.SPECMOLD_TOTAL2 | 文本框 | 专用模具金额 | 常显 | - |
+| 专用物料总量 | PRODUCT_OVER_LINE.SPECMATER_TOTAL | 文本框 | 专用物料数量 | 常显 | - |
+| 专用物料总金额 | PRODUCT_OVER_LINE.SPECMATER_TOTAL2 | 文本框 | 专用物料金额 | 常显 | - |
+| 产品销售渠道 | PRODUCT_OVER_LINE.CHANNEL_ID | 隐藏 | 产品销售渠道ID | 隐藏 | 产品弹窗选择后自动带出 |
+| ERP审核状态 | PRODUCT_OVER_LINE.ERP_STAT | 文本框 | ERP推送状态 | 常显 | 未推送/已推送/推送失败；审批通过推送ERP后更新 |
+| 接口返回信息 | PRODUCT_OVER_LINE.RESULT_MESSAGE | 文本框 | ERP返回信息 | ERP推送失败时显示 | ERP推送失败时记录返回信息 |
+
+### 选择弹窗
+
+#### 弹窗1：产品选择弹窗（单选）
+
+| 入参 | | | | 数据范围 |
+|------|------|------|------|---------|
+| 字段名 | 中文名 | 释义 | 示例 | |
+| organizationid | 组织ID | 当前组织ID | 1 | 物料类别为"成品"（item_type=5）的产品 |
+| isEliminate | 是否逆向变更 | 否=2 是=1 | 2 | 根据角色+是否逆向从值集AE.PRODUCT_OVER_SM_STATUS_ROLE查询允许的SM状态范围 |
+| entorgid | 是否瓷砖 | 0=否 2=是 | 2 | - |
+| itemCode | 产品编码 | 精确查询 | ITM001 | - |
+| itemName | 产品名称 | 模糊查询（前缀） | 浴室柜 | - |
+| itemDesc | 产品型号 | 模糊查询（前缀） | MODEL-A | - |
+| smStates | SM状态列表 | 角色允许的SM状态 | ["正常销售"] | 由后端根据角色+是否逆向从值集计算得出 |
+
+> 数据范围：物料类别为"成品"（item_type=5），SM状态在角色允许范围内，且不存在erp_stat='未推送'的在途记录，且产品属于当前事业部或有生效的售价单
+
+> 查询SQL（Mapper: ProductOverHeaderMapper.getProductPopUp）：
+
+```sql
+SELECT t.* FROM (
+    SELECT Io.*,
+        i.Item_Code, i.Item_Name, i.Item_Desc, i.uom_id,
+        i.product_manual, i.stanard_execution, i.bottle_size,
+        i.newproducts_date, i.oldproducts_date, i.alcohol, i.sugar,
+        i.box_code, i.bottle_code, i.sales_area_id,
+        i.LENGTH, i.WIDTH, i.HEIGHT, i.ACREAGE,
+        Ic1.Item_Class_Code AS Item_Class1_Code, Ic1.Item_Class_Name AS Item_Class1_Name,
+        Ic2.Item_Class_Code AS Item_Class2_Code, Ic2.Item_Class_Name AS Item_Class2_Name,
+        Ic3.Item_Class_Code AS Item_Class3_Code, Ic3.Item_Class_Name AS Item_Class3_Name,
+        Um.Uom_Code, Um.Uom_Name,
+        er.sales_channel AS schannel, er.business_type AS btype,
+        er.item_second_channel AS second_channel,
+        '2' AS is_agerr_over
+    FROM Item_Org Io
+    LEFT JOIN Item i ON Io.Item_Id = i.Item_Id
+    LEFT JOIN hzero.hpfm_uom Um ON i.Uom_Id = Um.Uom_Id
+    LEFT JOIN Item_Class Ic1 ON Io.Item_Class1 = Ic1.Item_Class_Id
+    LEFT JOIN Item_Class Ic2 ON Io.Item_Class2 = Ic2.Item_Class_Id
+    LEFT JOIN Item_Class Ic3 ON Io.Item_Class3 = Ic3.Item_Class_Id
+    LEFT JOIN epm_second_channel_relation er ON io.second_channel_id = er.item_second_channel
+    CROSS JOIN (SELECT division_id FROM division_base_set WHERE organization_id = #{organizationid}) ds
+    WHERE Io.division_id > 0
+      AND (Io.division_id = ds.division_id OR EXISTS(
+          SELECT 1 FROM sa_saleprice_line sl
+          INNER JOIN sa_saleprice_head sh ON sl.sa_saleprice_head_id = sh.sa_saleprice_head_id
+          WHERE sl.division_id = ds.division_id AND sh.stat = 5 AND sl.item_id = Io.item_id
+      ))
+) t WHERE 1 = 1
+  AND t.item_type = 5  -- 物料类别为'成品'
+  AND t.sm_state IN (#{smStates})  -- 角色允许的SM状态
+  AND t.item_code = #{itemCode}  -- 可选
+  AND t.item_name LIKE #{itemName}||'%'  -- 可选
+  AND t.ITEM_MODEL LIKE #{itemDesc}||'%'  -- 可选
+  AND NOT EXISTS (
+      SELECT 1 FROM product_over_line pol
+      WHERE pol.erp_stat = '未推送' AND pol.item_id = t.item_id
+  )
+ORDER BY t.creation_date DESC
+```
+
+#### 弹窗2：申请变更SM状态值集弹窗（单选）
+
+| 入参 | | | | 数据范围 |
+|------|------|------|------|---------|
+| 字段名 | 中文名 | 释义 | 示例 | |
+| isEliminate | 是否逆向变更 | 2=否 1=是 | 2 | 根据角色+是否逆向匹配值集meaning |
+| smState | 当前SM状态 | 行的当前SM状态 | 正常销售 | 根据当前SM状态匹配值集tag |
+
+> 数据范围：从值集AE.PRODUCT_OVER_SM_STATUS中，根据角色编码+是否逆向（匹配meaning）和当前SM状态（匹配tag），取description去重后作为可选值
+
+> 查询SQL（LOV值集：AE.PRODUCT_OVER_SM_STATUS，存储于HZERO平台HPFM_LOV表）：
+
+```sql
+-- 值集查询（后端LovAdapter.queryLovValue）
+SELECT * FROM HZERO.HPFM_LOV_VALUE
+WHERE LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'
+  AND TENANT_ID = 0
+-- 后端逻辑：
+-- 1. 遍历值集记录，匹配meaning包含"{roleCode}_{isEliminate}"且tag包含当前smState的记录
+-- 2. 取匹配记录的description去重作为可选目标SM状态
+```
+
+### 导入
+
+#### 前置约定
+
+- 模板编码：AE.PDT_PRODUCT_OVER_LINE
+- 文件格式：Excel（.xlsx）
+- 导入方式：异步导入临时表，同步校验+同步导入
+
+#### 字段映射
+
+| 字段含义 | 是否必输 | 字段格式 | 重复判定字段 |
+|---------|---------|---------|------------|
+| 产品编码 | 是 | 文本 | 是（保存校验去重） |
+| 申请变更SM状态 | 是 | 文本 | - |
+| 其他行字段 | 否 | - | - |
+
+#### 处理逻辑
+
+- **校验逻辑**：导入时校验用户信息（userType不能为空）和事业部信息（DEPT不能为空）
+- **导入逻辑**：
+  - 第1步：解析Excel数据为ProductOverLine对象列表，设置productOverId（来自参数）
+  - 第2步：根据产品编码列表和事业部ID，查询ITEM_ORG获取产品信息（itemId、itemName、spec、smState、unitId、unitName、productApprovalNo、itemClass1-3Code/Name、channelId、itemRule）
+  - 第3步：将查询到的产品信息回填到导入行中
+  - 第4步：批量插入PRODUCT_OVER_LINE表
+- **重复处理策略**：保存时通过saveVerify校验产品编码重复，报错阻断
+- **性能方案**：同步导入，批量插入（batchInsertSelective）
+
+#### 异常与结果约定
+
+- 部分成功/失败时：导入异常抛出CommonException("导入数据异常！")，整体回滚
+- 结果反馈机制：返回成功导入的数据列表（List<JSONObject>）
+
+#### 运维保障
+
+- 日志记录：通过ImportDataService记录导入日志
+- 断点续传/重试机制：不支持断点续传，导入失败需重新上传整个文件
+
+### 其他按钮
+
+| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
+|---------|---------|---------|-------------------|------|
+| 查询 | 列表查询 | 列表页 | 常显 | 调用list接口查询申请列表 |
+| 导出 | 导出Excel | 列表页 | 常显 | 调用export接口导出列表数据 |
+| 新增 | 新建申请 | 列表页 | 常显 | 进入新建页面 |
+| 保存 | 保存申请 | 详情页 | 草稿状态 | 调用saveVerify校验后保存头行数据 |
+| 提交 | 提交审批 | 详情页 | 草稿状态 | 调用submitVerify校验后推送OA审批 |
+| 删除 | 删除申请 | 列表页 | 草稿状态 | 删除头行数据 |
+| 导入 | 导入产品行 | 详情页 | 编辑状态 | 调用data-upload接口导入Excel |
+| 产品弹窗 | 选择产品 | 详情页行表格 | 编辑状态 | 弹出产品选择弹窗 |
+| SM状态值集 | 选择目标SM状态 | 详情页行表格 | 编辑状态 | 弹出SM状态变更值集弹窗 |
+
+#### 按钮1：查询（列表页）
+
+- **触发条件**：常显
+- **执行逻辑**：
+  - 第1点：收集查询条件（申请单号、申请人、单据状态、H0审批状态、产品编码等）
+  - 第2点：调用GET /v1/{organizationId}/product-over-headers/list接口
+  - 第3点：按PRODUCT_OVER_ID倒序展示结果
+- **接口调用**：GET /v1/{organizationId}/product-over-headers/list
+- **排查SQL**：
+
+```sql
+SELECT * FROM PRODUCT_OVER_HEADER POH
+LEFT JOIN PRODUCT_OVER_LINE POL ON POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID
+WHERE POH.PRODUCT_OVER_NO LIKE '申请单号%'
+  AND POH.HZ_APPROVE_STATUS = 'RUN'
+ORDER BY POH.PRODUCT_OVER_ID DESC;
+```
+
+#### 按钮2：导出（列表页）
+
+- **触发条件**：常显
+- **执行逻辑**：
+  - 第1点：按当前查询条件查询数据
+  - 第2点：通过@ProcessLovValue翻译值集字段
+  - 第3点：通过@ExcelExport导出为Excel
+- **接口调用**：GET /v1/{organizationId}/product-over-headers/export
+- **排查SQL**：同列表查询SQL
+
+#### 按钮3：保存（详情页）
+
+- **触发条件**：草稿状态可点击
+- **执行逻辑**：
+  - 第1点：前端收集头表和行表数据
+  - 第2点：调用POST /v1/{organizationId}/product-over-headers/saveVerify校验产品编码不重复
+  - 第3点：校验通过后保存头行数据
+- **接口调用**：POST /v1/{organizationId}/product-over-headers/saveVerify
+- **排查SQL**：
+
+```sql
+-- 校验产品编码重复
+SELECT ITEM_CODE, COUNT(*) FROM PRODUCT_OVER_LINE
+WHERE PRODUCT_OVER_ID = #{productOverId}
+GROUP BY ITEM_CODE HAVING COUNT(*) > 1;
+```
+
+#### 按钮4：提交（详情页）
+
+- **触发条件**：草稿状态可点击
+- **执行逻辑**：
+  - 第1点：调用GET /v1/{organizationId}/product-over-headers/submitVerify校验
+  - 第2点：校验明细行不为空
+  - 第3点：校验产品无在途申请（HZ_APPROVE_STATUS='RUN'）
+  - 第4点：推送OA审批，设置HZ_APPROVE_STATUS='RUN'
+- **接口调用**：GET /v1/{organizationId}/product-over-headers/submitVerify
+- **排查SQL**：
+
+```sql
+-- 校验在途申请
+SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
+       LISTAGG(pol.Item_Code, ', ') AS itemCode
+FROM product_over_header pah
+LEFT JOIN product_over_line pol ON pol.product_over_id = pah.product_over_id
+LEFT JOIN HZERO.IAM_USER iu ON iu.id = pah.CREATED_BY
+WHERE pah.HZ_APPROVE_STATUS = 'RUN'
+  AND pol.Item_Code IN (#{itemCodes})
+GROUP BY pah.PRODUCT_OVER_NO, iu.REAL_NAME;
+```
+
+#### 按钮5：导入（详情页）
+
+- **触发条件**：编辑状态可点击
+- **执行逻辑**：
+  - 第1点：选择Excel文件
+  - 第2点：调用POST /v1/{organizationId}/product-over-headers/data-upload接口
+  - 第3步：后端同步上传→同步校验→同步导入，返回成功导入的数据列表
+- **接口调用**：POST /v1/{organizationId}/product-over-headers/data-upload
+- **排查SQL**：
+
+```sql
+-- 查询导入产品信息
+SELECT i.item_id, i.item_code, i.item_name, io.item_model,
+       u.uom_id, u.uom_name, io.specs, p.product_approval_no,
+       io.channel_id, io.sm_state,
+       Ic1.Item_Class_Code AS Item_Class1_Code, Ic1.Item_Class_Name AS Item_Class1_Name,
+       Ic2.Item_Class_Code AS Item_Class2_Code, Ic2.Item_Class_Name AS Item_Class2_Name,
+       Ic3.Item_Class_Code AS Item_Class3_Code, Ic3.Item_Class_Name AS Item_Class3_Name
+FROM item_org io
+LEFT JOIN item i ON i.item_id = io.item_id
+LEFT JOIN product_approval_header p ON p.item_name = i.item_name
+LEFT JOIN hzero.hpfm_uom u ON u.uom_id = i.uom_id
+LEFT JOIN Item_Class Ic1 ON Io.Item_Class1 = Ic1.Item_Class_Id
+LEFT JOIN Item_Class Ic2 ON Io.Item_Class2 = Ic2.Item_Class_Id
+LEFT JOIN Item_Class Ic3 ON Io.Item_Class3 = Ic3.Item_Class_Id
+WHERE i.item_code IN (#{itemCodes})
+  AND io.ORGANIZATION_ID = #{orgId};
+```
+
+### 保存校验
+
+- 校验1：产品编码不重复 —— 同一申请单内产品编码不能重复
+
+  - 详细逻辑
+
+    - 第1点：遍历前端传入的行列表，检测同一产品编码出现多次则记录为重复
+
+    - 第2点：若productOverId不为空，查询数据库已存在的行，检测前端行与数据库行的产品编码重复（pkId为空或pkId不同则为重复）
+
+    - 第3点：存在重复时抛出异常："以下产品编码重复，请检查！{重复编码}"
+
+  - 系统体现：阻断性报错
+
+  - 排查SQL：
+
+    ```sql
+    -- 检测同一申请单内产品编码重复
+    SELECT ITEM_CODE, COUNT(*) AS cnt
+    FROM PRODUCT_OVER_LINE
+    WHERE PRODUCT_OVER_ID = #{productOverId}
+    GROUP BY ITEM_CODE
+    HAVING COUNT(*) > 1;
+    ```
+
+### 提交校验
+
+- 校验1：明细行不为空 —— 提交时必须有至少一行产品
+
+  - 详细逻辑
+
+    - 第1点：根据productOverId查询PRODUCT_OVER_LINE表
+
+    - 第2点：行列表为空则抛出异常："产品SM状态变更申请明细行不存在！"
+
+  - 系统体现：阻断性报错
+
+  - 排查SQL：
+
+    ```sql
+    SELECT COUNT(*) FROM PRODUCT_OVER_LINE WHERE PRODUCT_OVER_ID = #{productOverId};
+    ```
+
+- 校验2：产品无在途申请 —— 同一产品不能有多个在途的SM状态变更申请
+
+  - 详细逻辑
+
+    - 第1点：获取当前申请所有明细行的产品编码（去重）
+
+    - 第2点：查询其他HZ_APPROVE_STATUS='RUN'的申请单中包含相同产品编码的记录
+
+    - 第3点：存在在途申请时抛出异常，提示具体的申请单号、申请人和产品编码
+
+  - 系统体现：阻断性报错
+
+  - 排查SQL：
+
+    ```sql
+    SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
+           LISTAGG(pol.Item_Code, ', ') AS itemCode
+    FROM product_over_header pah
+    LEFT JOIN product_over_line pol ON pol.product_over_id = pah.product_over_id
+    LEFT JOIN HZERO.IAM_USER iu ON iu.id = pah.CREATED_BY
+    WHERE pah.HZ_APPROVE_STATUS = 'RUN'
+      AND pol.Item_Code IN (#{当前申请的产品编码列表})
+      AND pah.PRODUCT_OVER_ID != #{当前申请ID}
+    GROUP BY pah.PRODUCT_OVER_NO, iu.REAL_NAME;
+    ```
+
+### 状态机
+
+#### 状态机流转图
+
+```text
+┌─────────┐  提交审批   ┌─────────┐  OA审批同意  ┌──────────┐
+│  草稿   │ ─────────→ │ 审批中   │ ──────────→ │ 审批通过  │
+│(DRAFT)  │            │(RUN)    │             │(APPROVED) │
+└─────────┘            └─────────┘             └──────────┘
+     │                      │
+     │ 删除                  │ OA审批拒绝
+     │                      ▼
+     ▼                 ┌──────────┐
+┌─────────┐            │ 审批拒绝  │
+│  已删除  │            │(REJECTED) │
+└─────────┘            └──────────┘
+                            │
+                            │ 修改后重新提交
+                            ▼
+                       ┌─────────┐
+                       │  草稿   │
+                       │(DRAFT)  │
+                       └─────────┘
+```
+
+#### 状态机列表
+
+| 状态机名称 | 状态释义 | 可执行的操作 |
+|-----------|---------|------------|
+| DRAFT（草稿） | 新建保存后的初始状态 | 编辑、保存、提交、删除 |
+| RUN（审批中） | 已提交OA审批，等待审批结果 | 无（等待OA回调） |
+| APPROVED（审批通过） | OA审批同意，ERP推送完成 | 查看 |
+| REJECTED（审批拒绝） | OA审批拒绝 | 查看、修改后重新提交 |
+
+---
+
+## 数据库表详解
+
+### 表1：PRODUCT_OVER_HEADER（产品SM状态变更申请头表）
+
+| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
+|-------|------|------|------------|------|
+| PRODUCT_OVER_ID | NUMBER | 主键ID | - | 自增主键 |
+| PRODUCT_OVER_NO | VARCHAR2 | 申请单号 | 申请单号 | 系统自动生成，必填 |
+| CREATOR | VARCHAR2 | 申请人 | 申请人 | 默认当前登录用户 |
+| CREATE_TIME | DATE | 申请日期 | 申请日期 | 默认当前日期 |
+| UPDATOR | VARCHAR2 | 更新人 | 更新人 | 更新时赋值 |
+| UPDATE_TIME | DATE | 更新日期 | 更新日期 | 更新时赋值 |
+| CHECKER | VARCHAR2 | 审核人 | 审核人 | 审核时赋值 |
+| CHECK_TIME | DATE | 审核日期 | 审核日期 | 审核时赋值 |
+| STAT | NUMBER | 单据状态 | 单据状态 | - |
+| WFID | NUMBER | 流程ID | - | 提交审批时赋值 |
+| WFFLAG | NUMBER | 流程状态 | - | - |
+| NOTE | VARCHAR2 | 申请陈述 | 申请陈述 | - |
+| ENTID | NUMBER | 组织ID（事业部） | - | - |
+| ORGID | NUMBER | 申请部门ID | - | 默认当前用户部门 |
+| ORG_NAME | VARCHAR2 | 申请部门名称 | 申请部门 | 默认当前用户部门名称 |
+| ORGANIZATION_ID | NUMBER | 所属单位ID | - | - |
+| ORGANIZATION_NAME | VARCHAR2 | 所属单位名称 | 所属单位 | - |
+| TEL | VARCHAR2 | 联系电话 | 联系电话 | - |
+| PUBLISH_USERS | VARCHAR2 | 可阅读者 | - | - |
+| TRADING_COMPANY_NAME | VARCHAR2 | 交易公司名称 | 交易公司 | - |
+| TRADING_COMPANY_ID | NUMBER | 交易公司ID | - | 必填 |
+| TRADING_COMPANY_CODE | VARCHAR2 | 交易公司编码 | - | - |
+| BRAND | VARCHAR2 | 品牌 | 品牌 | - |
+| IS_TILE | NUMBER | 是否瓷砖 | 是否瓷砖 | 2=是 |
+| IS_ELIMINATE | NUMBER | 逆向启用 | 逆向启用 | 2=是；控制产品弹窗SM状态范围 |
+| PROD_CATEGORY | VARCHAR2 | 品类 | 品类 | 来源值集：1智能马桶/2浴室柜/3陶瓷洁具/4五金龙头/5浴缸淋浴房/6其他 |
+| HZ_INSTANCE_ID | NUMBER | H0流程实例ID | - | 提交审批时赋值 |
+| HZ_APPROVE_STATUS | VARCHAR2 | H0流程审批状态 | H0流程审批状态 | RUN/APPROVED/REJECTED，必填 |
+| CALLBACK_SOURCE | VARCHAR2 | 外部审批回调来源 | - | OA_PASS（同意）/OA_REJECT（拒绝） |
+| CREATED_BY | NUMBER | 创建人ID | - | 框架自动填充 |
+| CREATION_DATE | DATE | 创建时间 | - | 框架自动填充 |
+| LAST_UPDATED_BY | NUMBER | 最后更新人ID | - | 框架自动填充 |
+| LAST_UPDATE_DATE | DATE | 最后更新时间 | - | 框架自动填充 |
+| OBJECT_VERSION_NUMBER | NUMBER | 版本号 | - | 乐观锁，框架自动填充 |
+
+### 表2：PRODUCT_OVER_LINE（产品SM状态变更申请行表）
+
+| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
+|-------|------|------|------------|------|
+| PK_ID | NUMBER | 主键ID | - | 自增主键 |
+| PRODUCT_OVER_ID | NUMBER | 头表ID | - | FK→PRODUCT_OVER_HEADER.PRODUCT_OVER_ID，必填 |
+| SEQ | NUMBER | 序号 | 序号 | 自动生成 |
+| ITEM_ID | NUMBER | 产品ID | - | 产品弹窗选择后带出 |
+| ITEM_CODE | VARCHAR2 | 产品编码 | 产品编码 | 产品弹窗选择或导入；保存校验不重复 |
+| ITEM_NAME | VARCHAR2 | 产品名称 | 产品名称 | 产品弹窗选择后带出 |
+| SPEC | VARCHAR2 | 产品型号 | 产品型号 | 产品弹窗选择后带出（来源ITEM.ITEM_MODEL） |
+| UNIT_ID | NUMBER | 单位ID | - | 产品弹窗选择后带出 |
+| UNIT_NAME | VARCHAR2 | 单位名称 | 单位 | 产品弹窗选择后带出 |
+| ITEM_RULE | VARCHAR2 | 产品规格 | 产品规格 | 产品弹窗选择后带出（来源ITEM_ORG.SPECS） |
+| ITEM_CLASS1_CODE | VARCHAR2 | 大类编码 | - | 产品弹窗选择后带出 |
+| ITEM_CLASS1_NAME | VARCHAR2 | 大类名称 | 大类名称 | 产品弹窗选择后带出 |
+| ITEM_CLASS2_CODE | VARCHAR2 | 中类编码 | - | 产品弹窗选择后带出 |
+| ITEM_CLASS2_NAME | VARCHAR2 | 中类名称 | 中类名称 | 产品弹窗选择后带出 |
+| ITEM_CLASS3_CODE | VARCHAR2 | 小类编码 | - | 产品弹窗选择后带出 |
+| ITEM_CLASS3_NAME | VARCHAR2 | 小类名称 | 小类名称 | 产品弹窗选择后带出 |
+| SM_STATE | VARCHAR2 | 当前SM状态 | 当前SM状态 | 产品弹窗选择后带出（来源ITEM_ORG.SM_STATE） |
+| SM_CHANGE_STATE | VARCHAR2 | 申请变更SM状态 | 申请变更SM状态 | 用户选择；OA回调时更新 |
+| PRODUCT_APPROVAL_ID | NUMBER | 立项申请单ID | - | - |
+| PRODUCT_APPROVAL_NO | VARCHAR2 | 立项申请单号 | 立项申请单号 | 产品弹窗选择后带出 |
+| STD_PRICE_INCLWDFM | NUMBER | 标准价格(含木架费) | 标准价格(含木架费) | 瓷砖事业部 |
+| STD_PRICE_INCLINSTALL | NUMBER | 标准价格(含安装费) | 标准价格(含安装费) | 卫浴事业部 |
+| WDEN_FRAME_COST | NUMBER | 木架费 | 木架费 | 瓷砖事业部 |
+| INSTALL_COST | NUMBER | 安装费 | 安装费 | 卫浴事业部 |
+| COST_UNITPRICE | NUMBER | 成本单价 | 成本单价 | - |
+| GROSSMARG_COMP | NUMBER | 公司毛利率 | 公司毛利率 | - |
+| MARKET_TIME | DATE | 上市时间 | 上市时间 | - |
+| ITEM_FIXED | VARCHAR2 | 产品定位 | 产品定位 | 来源值集AE.ITEM_FIXED |
+| SALESVOLU_PRE1 | NUMBER | 前第一年销售量 | 前第一年销售量 | - |
+| SALESVOLU_PRE2 | NUMBER | 前第二年销售量 | 前第二年销售量 | - |
+| SALESVOLU_PRE3 | NUMBER | 前第三年销售量 | 前第三年销售量 | - |
+| ACT_DISCOUNT_RATE | NUMBER | 实际开单折扣率 | 实际开单折扣率 | - |
+| ACT_GROSS_MARGIN | NUMBER | 实际毛利率 | 实际毛利率 | - |
+| OVER_REASONS | VARCHAR2 | 淘汰原因 | 淘汰原因 | 来源值集AE.OVER_REASONS |
+| OVER_TIME | DATE | 申请淘汰时间 | 申请淘汰时间 | OA回调时更新 |
+| IS_AGERR_OVER | NUMBER | 是否同意淘汰 | 是否同意淘汰 | 2=是，0=否；OA回调时更新 |
+| SURROGATE | VARCHAR2 | 替代品 | 替代品 | - |
+| SURROGATE_CODE | VARCHAR2 | 替代品编码 | 替代品编码 | - |
+| OPENWORK_TOTAL | NUMBER | 未结工程订单总量 | 未结工程订单总量 | - |
+| OPENWORK_TOTAL2 | NUMBER | 未结工程订单总金额 | 未结工程订单总金额 | - |
+| OPENSALES_TOTAL | NUMBER | 未结销售订单总量 | 未结销售订单总量 | - |
+| OPENSALES_TOTAL2 | NUMBER | 未结销售订单总金额 | 未结销售订单总金额 | - |
+| INV_WAREH | NUMBER | 仓库库存量 | 仓库库存量 | - |
+| INV_CHANNEL | NUMBER | 渠道库存量 | 渠道库存量 | - |
+| SAMPLE_TOTAL | NUMBER | 门店样品量 | 门店样品量 | - |
+| OPENOEM_TOTAL | NUMBER | 未结OEM采购订单总量 | 未结OEM采购订单总量 | - |
+| OPENOEM_TOTAL2 | NUMBER | 未结OEM采购订单总金额 | 未结OEM采购订单总金额 | - |
+| OPEN_PRODUCE_TOTAL | NUMBER | 未结生产工单总量 | 未结生产工单总量 | - |
+| SPECMOLD_TOTAL | NUMBER | 专用模具总量 | 专用模具总量 | - |
+| SPECMOLD_PRICE | NUMBER | 专用模具单价 | 专用模具单价 | - |
+| SPECMOLD_TOTAL2 | NUMBER | 专用模具总金额 | 专用模具总金额 | - |
+| SPECMATER_TOTAL | NUMBER | 专用物料总量 | 专用物料总量 | - |
+| SPECMATER_TOTAL2 | NUMBER | 专用物料总金额 | 专用物料总金额 | - |
+| CHANNEL_ID | NUMBER | 产品销售渠道 | - | 产品弹窗选择后带出 |
+| ERP_STAT | VARCHAR2 | ERP审核状态 | ERP审核状态 | 未推送/已推送/推送失败；审批通过推送ERP后更新 |
+| RESULT_MESSAGE | VARCHAR2 | 接口返回信息 | 接口返回信息 | ERP推送失败时记录返回信息 |
+| IS_SUCCEED | VARCHAR2 | 记录是否成功 | - | - |
+
+### 相关表：ITEM_ORG（物料组织表）
+
+| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
+|-------|------|------|------------|------|
+| ITEM_ID | NUMBER | 产品ID | - | 产品弹窗数据来源 |
+| SM_STATE | VARCHAR2 | SM状态 | 当前SM状态 | 产品弹窗带出；审批通过+ERP推送成功后更新为目标SM状态 |
+| DIVISION_ID | NUMBER | 事业部ID | - | 产品弹窗过滤条件 |
+| ITEM_CLASS1 | NUMBER | 大类ID | - | 关联ITEM_CLASS |
+| ITEM_CLASS2 | NUMBER | 中类ID | - | 关联ITEM_CLASS |
+| ITEM_CLASS3 | NUMBER | 小类ID | - | 关联ITEM_CLASS |
+
+---
+
+## 常见问题FAQ
+
+### 报错一览表
+
+| 报错信息 | 提示节点 | 根因与解决方案 | 等级 | 详细逻辑 |
+|---------|---------|-------------|------|---------|
+| 请选择逆向变更 | 产品弹窗查询时 | 入参isEliminate为空，需先选择是否逆向变更 | 阻断性报错 | [查看] |
+| 推送OA失败：产品SM状态变更申请不存在 | OA推送时 | 头表记录不存在，检查PRODUCT_OVER_HEADER表是否有对应记录 | 阻断性报错 | [查看] |
+| OA回调失败：产品SM状态变更申请不存在！ | OA回调时 | OA回调时头表记录不存在，检查数据是否被删除 | 阻断性报错 | [查看] |
+| ID不能为空 | OA回调时 | OA回调入参productOverId为空或<=0 | 阻断性报错 | [查看] |
+| 产品SM状态变更申请明细行不存在！ | 提交校验时 | PRODUCT_OVER_LINE表无对应头表ID的行记录，需先添加产品行 | 阻断性报错 | [查看] |
+| 以下产品已有在途申请，无法重复提交... | 提交校验时 | 同一产品存在HZ_APPROVE_STATUS='RUN'的其他申请单，需等待原申请流程完成 | 阻断性报错 | [查看] |
+| 以下产品编码重复，请检查！ | 保存校验时 | 同一申请单内产品编码重复，需去重后保存 | 阻断性报错 | [查看] |
+| 未获取到用户信息 | 导入时 | 用户信息userType为空，检查登录状态 | 阻断性报错 | [查看] |
+| 未获取到事业部信息 | 导入时 | 用户事业部DEPT信息为空，检查用户配置 | 阻断性报错 | [查看] |
+| 导入数据异常！ | 导入时 | 导入过程中发生异常，检查Excel格式和数据 | 阻断性报错 | [查看] |
+| 值集配置AE.PRODUCT_OVER_SM_STATUS | 导入校验时 | 值集AE.PRODUCT_OVER_SM_STATUS未配置或查询失败，检查HZERO.HPFM_LOV_VALUE表 | 阻断性报错 | [查看] |
+| 产品信息不存在或者产品品牌事业部与当前登录事业部不一致，请检查 | 导入校验时 | 导入的产品编码在ITEM_ORG表不存在，或产品事业部与当前用户事业部不一致 | 阻断性报错 | [查看] |
+| 产品状态变更申请状态有误 | 导入校验时 | 根据角色+是否逆向+当前SM状态在值集中未匹配到可变更状态配置，检查值集AE.PRODUCT_OVER_SM_STATUS | 阻断性报错 | [查看] |
+| 产品状态变更申请状态有误,产品当前状态:xxx,产品可变更状态:xxx | 导入校验时 | 导入的目标SM状态不在值集配置的允许变更范围内 | 阻断性报错 | [查看] |
+| 产品生命状态为空，不允许导入 | 导入校验时 | 产品在ITEM_ORG表的SM_STATE字段为空，需先维护产品SM状态 | 阻断性报错 | [查看] |
+| 产品编码重复:xxx | 导入校验时 | 导入的Excel中产品编码与已存在行表记录重复，需去重后重新导入 | 阻断性报错 | [查看] |
+| 推送ERP失败 | ERP推送时 | ERP接口返回空或缺少OutputParameters节点，检查ERP接口可用性 | 阻断性报错 | [查看] |
+| ERP推送失败-钉钉通知 | ERP推送时 | ERP返回部分行失败，更新行表ERP_STAT为"推送失败"并发送钉钉异常通知 | toast提醒 | [查看] |
+
+#### 报错1：请选择逆向变更
+- **触发条件**：产品弹窗查询时，入参isEliminate为空
+- **逻辑分析**：产品弹窗需根据是否逆向变更（isEliminate）筛选可查询的SM状态范围。若头表IS_ELIMINATE字段未选择（为空），则无法确定查询范围，抛出异常阻断查询。
+- **排查SQL**：
+  ```sql
+  SELECT POH.PRODUCT_OVER_ID AS 申请单ID, POH.PRODUCT_OVER_NO AS 申请单号,
+         POH.IS_ELIMINATE AS 逆向启用
+  FROM PRODUCT_OVER_HEADER POH
+  WHERE POH.PRODUCT_OVER_ID = :productOverId;
+  ```
+
+#### 报错2：推送OA失败：产品SM状态变更申请不存在
+- **触发条件**：推送OA审批时，根据PRODUCT_OVER_ID查询头表记录不存在
+- **逻辑分析**：提交审批推送OA前，后端查询PRODUCT_OVER_HEADER表获取申请单数据。若记录已被删除则推送失败，抛出异常并记录日志。常见于并发删除场景。
+- **排查SQL**：
+  ```sql
+  SELECT POH.PRODUCT_OVER_ID, POH.PRODUCT_OVER_NO, POH.HZ_APPROVE_STATUS
+  FROM PRODUCT_OVER_HEADER POH
+  WHERE POH.PRODUCT_OVER_ID = :productOverId;
+  ```
+
+#### 报错3：OA回调失败：产品SM状态变更申请不存在！
+- **触发条件**：OA审批回调时，根据productOverId查询头表记录不存在
+- **逻辑分析**：OA审批完成后回调DMS更新申请单状态。回调接口按productOverId查询PRODUCT_OVER_HEADER，若记录不存在则回调失败。常见于OA审批过程中申请单被删除。
+- **排查SQL**：
+  ```sql
+  SELECT POH.PRODUCT_OVER_ID AS 申请单ID, POH.PRODUCT_OVER_NO AS 申请单号,
+         POH.HZ_APPROVE_STATUS AS 审批状态, POH.CALLBACK_SOURCE AS 回调来源
+  FROM PRODUCT_OVER_HEADER POH
+  WHERE POH.PRODUCT_OVER_ID = :productOverId;
+  ```
+
+#### 报错4：ID不能为空
+- **触发条件**：OA回调时，入参productOverId为空或<=0
+- **逻辑分析**：OA回调接口要求productOverId必填且大于0。若OA系统配置错误导致回调未携带申请单ID，或ID值非法，则抛出异常。需检查OA流程配置的回调参数映射。
+- **排查SQL**：
+  ```sql
+  SELECT '检查OA回调请求体是否包含productOverId且大于0' AS 提示 FROM DUAL;
+  ```
+
+#### 报错5：产品SM状态变更申请明细行不存在！
+- **触发条件**：提交校验时，PRODUCT_OVER_LINE表无对应头表ID的行记录
+- **逻辑分析**：后端submitVerify接口根据PRODUCT_OVER_ID查询PRODUCT_OVER_LINE表，若COUNT为0则抛出异常。常见于用户新建申请单后未添加产品行就点击提交。
+- **排查SQL**：
+  ```sql
+  SELECT POH.PRODUCT_OVER_NO AS 申请单号,
+         (SELECT COUNT(1) FROM PRODUCT_OVER_LINE POL WHERE POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID) AS 明细行数
+  FROM PRODUCT_OVER_HEADER POH
+  WHERE POH.PRODUCT_OVER_ID = :productOverId;
+  ```
+
+#### 报错6：以下产品已有在途申请，无法重复提交...
+- **触发条件**：提交校验时，同一产品存在HZ_APPROVE_STATUS='RUN'的其他申请单
+- **逻辑分析**：后端查询当前申请所有明细行的产品编码（去重），再查询其他HZ_APPROVE_STATUS='RUN'的申请单中包含相同产品编码的记录。若存在则提示具体的申请单号、申请人和产品编码，避免同一产品被多个SM状态变更单同时审批。
+- **排查SQL**：
+  ```sql
+  SELECT POH.PRODUCT_OVER_NO AS 申请单号, IU.REAL_NAME AS 申请人,
+         LISTAGG(POL.ITEM_CODE, ', ') WITHIN GROUP (ORDER BY POL.ITEM_CODE) AS 产品编码
+  FROM PRODUCT_OVER_HEADER POH
+    LEFT JOIN PRODUCT_OVER_LINE POL ON POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID
+    LEFT JOIN HZERO.IAM_USER IU ON IU.ID = POH.CREATED_BY
+  WHERE POH.HZ_APPROVE_STATUS = 'RUN'
+    AND POH.PRODUCT_OVER_ID <> :currentId
+    AND POL.ITEM_CODE IN (
+      SELECT ITEM_CODE FROM PRODUCT_OVER_LINE WHERE PRODUCT_OVER_ID = :currentId
+    )
+  GROUP BY POH.PRODUCT_OVER_NO, IU.REAL_NAME;
+  ```
+
+#### 报错7：以下产品编码重复，请检查！
+- **触发条件**：保存校验时，同一申请单内产品编码重复
+- **逻辑分析**：后端saveVerify接口遍历前端传入的行列表检测同一产品编码出现多次，同时查询数据库已存在的行检测前端行与数据库行的产品编码重复（pkId为空或pkId不同则为重复）。存在重复时抛出异常并提示重复编码。
+- **排查SQL**：
+  ```sql
+  SELECT POL.ITEM_CODE AS 产品编码, COUNT(*) AS 重复次数
+  FROM PRODUCT_OVER_LINE POL
+  WHERE POL.PRODUCT_OVER_ID = :productOverId
+  GROUP BY POL.ITEM_CODE
+  HAVING COUNT(*) > 1;
+  ```
+
+#### 报错8：未获取到用户信息
+- **触发条件**：导入时，当前用户userType为空
+- **逻辑分析**：导入接口data-upload需根据userType确定导入权限和数据范围。若登录态丢失或用户主档USER_TYPE字段为空，则抛出异常。需重新登录或检查IAM_USER配置。
+- **排查SQL**：
+  ```sql
+  SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
+         U.USER_TYPE AS 用户类型
+  FROM HZERO.IAM_USER U
+  WHERE U.ID = :currentUserId;
+  ```
+
+#### 报错9：未获取到事业部信息
+- **触发条件**：导入时，当前用户事业部DEPT信息为空
+- **逻辑分析**：导入接口需根据用户事业部筛选可导入的产品范围。若用户未关联事业部或事业部配置为空，则抛出异常。需检查用户角色的事业部权限配置。
+- **排查SQL**：
+  ```sql
+  SELECT U.ID AS 用户ID, U.REAL_NAME AS 姓名,
+         MR.ROLE_ID, R.NAME AS 角色名称
+  FROM HZERO.IAM_USER U
+    LEFT JOIN HZERO.IAM_MEMBER_ROLE MR ON MR.USER_ID = U.ID
+    LEFT JOIN HZERO.IAM_ROLE R ON R.ID = MR.ROLE_ID
+  WHERE U.ID = :currentUserId;
+  ```
+
+#### 报错10：导入数据异常！
+- **触发条件**：导入过程中发生异常，Excel格式或数据不符合要求
+- **逻辑分析**：导入接口data-upload逐行解析Excel并校验产品编码存在性、SM状态合法性等。若Excel格式错误、产品编码不存在、SM状态值非法或数据库异常，则整体导入失败并提示"导入数据异常！"。
+- **排查SQL**：
+  ```sql
+  SELECT I.ITEM_CODE AS 产品编码, I.ITEM_NAME AS 产品名称,
+         IO.SM_STATE AS 当前SM状态, I.ITEM_TYPE AS 物料类型
+  FROM ITEM I
+    LEFT JOIN ITEM_ORG IO ON IO.ITEM_ID = I.ITEM_ID
+  WHERE I.ITEM_CODE IN (:importItemCodes)
+    AND I.ITEM_TYPE <> 5;
+  ```
+
+#### 报错11：值集配置AE.PRODUCT_OVER_SM_STATUS
+- **触发条件**：导入校验时，查询值集AE.PRODUCT_OVER_SM_STATUS返回为空或查询失败
+- **逻辑分析**：ProductOverLineValidator.validate方法中通过LovAdapter.queryLovValue查询值集AE.PRODUCT_OVER_SM_STATUS，若返回null则抛出CommonException。值集未配置或HZERO平台HPFM_LOV_VALUE表缺少对应LOV_CODE='AE.PRODUCT_OVER_SM_STATUS'的记录会导致此异常。
+- **排查SQL**：
+  ```sql
+  SELECT LV.LOV_CODE AS 值集编码, LV.MEANING AS 含义, LV.TAG AS 标签,
+         LV.DESCRIPTION AS 描述, LV.VALUE AS 值
+  FROM HZERO.HPFM_LOV_VALUE LV
+  WHERE LV.LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'
+    AND LV.TENANT_ID = 0
+  ORDER BY LV.ORDER_ID;
+  ```
+
+#### 报错12：产品信息不存在或者产品品牌事业部与当前登录事业部不一致，请检查
+- **触发条件**：导入校验时，Excel中的产品编码在ITEM_ORG表不存在，或产品事业部与当前用户事业部不一致
+- **逻辑分析**：ProductOverLineValidator.validate方法中通过productOverLineRepository.itemOrgByCodes根据产品编码列表和事业部ID查询ITEM_ORG表。若查询结果中不包含某产品编码（popUpVO为null），则通过addErrorMsg记录该行错误。常见于产品编码拼写错误、产品未在当前事业部建档。
+- **排查SQL**：
+  ```sql
+  SELECT I.ITEM_CODE AS 产品编码, I.ITEM_NAME AS 产品名称,
+         IO.DIVISION_ID AS 产品事业部ID, :userDeptId AS 当前用户事业部ID,
+         CASE WHEN IO.DIVISION_ID = :userDeptId THEN '一致' ELSE '不一致' END AS 事业部一致性
+  FROM ITEM I
+    LEFT JOIN ITEM_ORG IO ON IO.ITEM_ID = I.ITEM_ID
+  WHERE I.ITEM_CODE IN (:importItemCodes);
+  ```
+
+#### 报错13：产品状态变更申请状态有误
+- **触发条件**：导入校验时，根据角色编码+是否逆向+当前SM状态在值集中未匹配到可变更状态配置（checkState为null）
+- **逻辑分析**：ProductOverLineValidator.validate方法中构建key=roleCode+"_"+isEliminate，再拼接"_"+smState作为lovMap的key查询。若值集AE.PRODUCT_OVER_SM_STATUS中不存在meaning包含该key且tag包含当前smState的记录，则checkState为null，通过addErrorMsg记录错误。需检查值集配置是否覆盖该角色+是否逆向+SM状态组合。
+- **排查SQL**：
+  ```sql
+  SELECT LV.MEANING AS 含义, LV.TAG AS 标签, LV.DESCRIPTION AS 可变更状态
+  FROM HZERO.HPFM_LOV_VALUE LV
+  WHERE LV.LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'
+    AND LV.TENANT_ID = 0
+    AND LV.MEANING LIKE '%' || :roleCode || '_' || :isEliminate || '%'
+    AND LV.TAG LIKE '%' || :smState || '%';
+  ```
+
+#### 报错14：产品状态变更申请状态有误,产品当前状态:xxx,产品可变更状态:xxx
+- **触发条件**：导入校验时，Excel中填写的目标SM状态不在值集配置的允许变更范围内
+- **逻辑分析**：ProductOverLineValidator.validate方法中查询到checkState（可变更状态列表）后，检查item.getSmChangeState()是否包含在checkState中。若不包含则通过addErrorMsg记录错误，并提示当前SM状态和可变更状态范围。需修改Excel中的目标SM状态为值集允许的值。
+- **排查SQL**：
+  ```sql
+  SELECT IO.ITEM_CODE AS 产品编码, IO.SM_STATE AS 当前SM状态,
+         LV.DESCRIPTION AS 可变更状态列表
+  FROM ITEM_ORG IO
+    LEFT JOIN HZERO.HPFM_LOV_VALUE LV ON LV.LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'
+      AND LV.TENANT_ID = 0
+      AND LV.MEANING LIKE '%' || :roleCode || '_' || :isEliminate || '%'
+      AND LV.TAG LIKE '%' || IO.SM_STATE || '%'
+  WHERE IO.ITEM_CODE = :itemCode;
+  ```
+
+#### 报错15：产品生命状态为空，不允许导入
+- **触发条件**：导入校验时，产品在ITEM_ORG表的SM_STATE字段为空
+- **逻辑分析**：ProductOverLineValidator.validate方法中查询到产品信息后，若popUpVO.getSmState()为null，则通过addErrorMsg记录错误。产品SM状态为空无法确定可变更的目标状态范围，需先在产品主档中维护产品的SM状态。
+- **排查SQL**：
+  ```sql
+  SELECT IO.ITEM_ID AS 产品ID, I.ITEM_CODE AS 产品编码,
+         I.ITEM_NAME AS 产品名称, IO.SM_STATE AS 当前SM状态
+  FROM ITEM_ORG IO
+    LEFT JOIN ITEM I ON IO.ITEM_ID = I.ITEM_ID
+  WHERE IO.SM_STATE IS NULL
+    AND I.ITEM_CODE IN (:importItemCodes);
+  ```
+
+#### 报错16：产品编码重复:xxx
+- **触发条件**：导入校验时，导入的Excel中产品编码与已存在的行表记录重复
+- **逻辑分析**：ProductOverLineValidator.validate方法中将导入行与数据库已存在的PRODUCT_OVER_LINE记录合并后，遍历检测产品编码重复。若同一产品编码出现多次则通过addErrorMsg记录错误。与保存校验的报错7不同，此报错发生在导入校验阶段（BatchValidatorHandler），报错7发生在保存校验阶段（saveVerify接口）。
+- **排查SQL**：
+  ```sql
+  SELECT POL.ITEM_CODE AS 产品编码, COUNT(*) AS 重复次数,
+         LISTAGG(POL.PK_ID, ',') WITHIN GROUP (ORDER BY POL.PK_ID) AS 行主键ID
+  FROM PRODUCT_OVER_LINE POL
+  WHERE POL.PRODUCT_OVER_ID = :productOverId
+  GROUP BY POL.ITEM_CODE
+  HAVING COUNT(*) > 1;
+  ```
+
+#### 报错17：推送ERP失败
+- **触发条件**：审批通过后推送ERP变更物料SM状态时，ERP接口返回空或缺少OutputParameters节点
+- **逻辑分析**：ProductOverHeaderServiceImpl.wfComplete方法中调用erpSdkService.productStatusModify推送ERP。若返回结果为空字符串或JSON中不包含OutputParameters键，则errorMsg设置为"推送ERP失败"，并将所有行表的ERP_STAT更新为"推送失败"。常见于ERP接口不可用、网络异常或ERP返回格式变更。
+- **排查SQL**：
+  ```sql
+  SELECT POH.PRODUCT_OVER_NO AS 申请单号, POH.HZ_APPROVE_STATUS AS 审批状态,
+         POL.ITEM_CODE AS 产品编码, POL.ERP_STAT AS ERP状态,
+         POL.RESULT_MESSAGE AS 返回信息
+  FROM PRODUCT_OVER_HEADER POH
+    LEFT JOIN PRODUCT_OVER_LINE POL ON POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID
+  WHERE POH.PRODUCT_OVER_ID = :productOverId
+    AND POL.ERP_STAT = '推送失败';
+  ```
+
+#### 报错18：ERP推送失败-钉钉通知
+- **触发条件**：ERP返回部分行推送失败（X_RETURN_STATUS不为S）
+- **逻辑分析**：ProductOverHeaderServiceImpl.wfComplete方法中解析ERP返回的X_ITEMSM_TBL_ITEM列表，对每行检查returnStatus是否包含S。不包含S的行更新ERP_STAT为"推送失败"并记录RESULT_MESSAGE。若存在失败行（hasError=true），通过dingTalkService.robotSendTextTemplate发送钉钉机器人通知，标题"产品生命状态（SM值）变更申请"，内容包含申请单号和异常提示。运维人员收到通知后需排查ERP侧问题。
+- **排查SQL**：
+  ```sql
+  SELECT POH.PRODUCT_OVER_NO AS 申请单号, POL.ITEM_CODE AS 产品编码,
+         POL.SM_STATE AS 原SM状态, POL.SM_CHANGE_STATE AS 目标SM状态,
+         POL.ERP_STAT AS ERP状态, POL.RESULT_MESSAGE AS 失败原因
+  FROM PRODUCT_OVER_HEADER POH
+    LEFT JOIN PRODUCT_OVER_LINE POL ON POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID
+  WHERE POH.PRODUCT_OVER_ID = :productOverId
+    AND POL.ERP_STAT = '推送失败'
+  ORDER BY POL.ITEM_CODE;
+  ```
+
+### 常见问题
+
+- 问题1：SM状态有哪些值？
+  - 原因：SM状态由值集AE.PRODUCT_OVER_SM_STATUS配置，常见有正常销售、限制销售、停止销售、淘汰等
+  - 解决思路：查询值集配置 `SELECT * FROM HZERO.HPFM_LOV_VALUE WHERE LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'`
+
+- 问题2：为什么产品弹窗查不到产品？
+  - 原因：可能原因：①当前角色不在ProdSMSC/ProdSMSC_CS中；②产品SM状态不在角色允许范围内；③产品item_type不为5（非成品）；④产品存在erp_stat='未推送'的在途记录；⑤产品不属于当前事业部且无生效售价单
+  - 解决思路：
+    ```sql
+    -- 检查产品状态
+    SELECT io.item_id, io.sm_state, i.item_type, io.division_id
+    FROM item_org io LEFT JOIN item i ON io.item_id = i.item_id
+    WHERE i.item_code = '产品编码';
+    -- 检查在途记录
+    SELECT * FROM product_over_line pol
+    WHERE pol.erp_stat = '未推送' AND pol.item_code = '产品编码';
+    ```
+
+- 问题3：ERP推送失败如何处理？
+  - 原因：ERP接口返回异常，行表ERP_STAT更新为"推送失败"，RESULT_MESSAGE记录失败原因，同时发送钉钉通知
+  - 解决思路：
+    ```sql
+    SELECT pol.ITEM_CODE, pol.ERP_STAT, pol.RESULT_MESSAGE
+    FROM product_over_line pol
+    WHERE pol.PRODUCT_OVER_ID = #{申请单ID}
+      AND pol.ERP_STAT = '推送失败';
+    ```
+    根据RESULT_MESSAGE排查ERP侧问题，修复后需重新推送
+
+- 问题4：一个申请可以变更多个产品吗？
+  - 原因：可以，每个产品对应一行记录，支持通过产品弹窗逐个添加或Excel批量导入
+  - 解决思路：无需处理，正常业务流程
+
+- 问题5：审批驳回后可以重新提交吗？
+  - 原因：可以，HZ_APPROVE_STATUS='REJECTED'的申请可修改后重新提交审批
+  - 解决思路：修改申请内容后点击提交按钮重新提交
+
+---
+
+## 更新记录
+
+| 日期 | 提交ID | 提交人 | 提交内容 |
+|------|-------|-------|---------|
+| 2026-08-29 | - | AI | 按skill规范完整重写，基于后端代码梳理（Entity/ServiceImpl/Controller/Mapper），补充界面模块3/4、选择弹窗SQL、导入逻辑、按钮详细展开、保存/提交校验SQL、状态机、数据库表详解 |
+| 2026-08-03 | - | AI | 初始创建 |
