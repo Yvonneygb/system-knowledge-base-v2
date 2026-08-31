@@ -128,7 +128,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>价目表查询</strong>：查询产品价目表信息，包含产品编码、名称、价格等 2. <strong>导出功能</strong>：支持将查询结果导出为Excel等格式 3. <strong>数据只读</strong>：本页面仅查询和导出，不支持修改价目表</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>查询产品价目表信息，支持按产品编码、名称等条件筛选和导出</KbQuote>
+<p>1. <strong>价目表查询</strong>：查询产品价目表信息，包含产品编码、名称、价格等 2. <strong>导出功能</strong>：支持将查询结果导出为Excel等格式 3. <strong>数据只读</strong>：本页面仅查询和导出，不支持修改价目表</p></KbCard>
 </div>
 </div>
 </div>

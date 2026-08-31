@@ -176,12 +176,24 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="1. 合同结案(actionType=2)核心逻辑"><ul><li>将目标合同的结案日期设为当前时间，结案类型设为提交时选择的值，有效状态设为失效(3)</li><li>查询该合同下所有增补合同(主合同ID=当前合同ID)，批量更新增补合同的结案日期和结案类型</li><li><strong>增补合同不会更新有效状态</strong>，仅更新结案日期和结案类型</li></ul></KbCard>
-<KbCard title="2. 项目结案(actionType=1)核心逻辑"><ul><li>查询项目下所有审批状态为"审批通过"的合同，批量更新有效状态为失效(3)、结案日期为当前时间、结案类型为提交时选择的值</li><li>将项目报备的有效状态设为失效(3)，项目进度状态设为2，记录结案时间</li></ul></KbCard>
-<KbCard title="3. 项目进度更新"><ul><li>查询阶段定义表中阶段名称为"项目结案"的记录，获取阶段ID</li><li>调用项目阶段服务更新进度，内容格式为: <code>{日期}项目结案</code></li></ul></KbCard>
-<KbCard title="4. CRM推送"><ul><li>查询项目关联的报备记录，获取客户信息</li><li>推送数据包含: 客户编码、客户名称、客户简称、组织编码、报备编号、项目名称、有效状态(0=失效)</li><li>推送失败仅记录日志，不影响结案主流程</li></ul></KbCard>
-<KbCard title="5. 增补合同结案字段重置"><ul><li>新增增补合同时，结案日期和结案状态会被重置为空</li></ul></KbCard>
-<KbCard title="6. 前端展示逻辑"><ul><li>结案日期和结案状态字段均为只读(disabled=true)，由后端结案审批通过后自动回写</li><li>列表页支持按结案状态筛选查询</li><li>结案状态值为0时，前端转换为null不展示</li></ul></KbCard>
+<KbCard title="1. 合同结案(actionType=2)核心逻辑">
+<KbQuote>合同结案时校验合同状态、折扣政策并生成核销数据</KbQuote>
+<ul><li>将目标合同的结案日期设为当前时间，结案类型设为提交时选择的值，有效状态设为失效(3)</li><li>查询该合同下所有增补合同(主合同ID=当前合同ID)，批量更新增补合同的结案日期和结案类型</li><li><strong>增补合同不会更新有效状态</strong>，仅更新结案日期和结案类型</li></ul></KbCard>
+<KbCard title="2. 项目结案(actionType=1)核心逻辑">
+<KbQuote>项目结案时校验项目完整性和合同完成情况</KbQuote>
+<ul><li>查询项目下所有审批状态为"审批通过"的合同，批量更新有效状态为失效(3)、结案日期为当前时间、结案类型为提交时选择的值</li><li>将项目报备的有效状态设为失效(3)，项目进度状态设为2，记录结案时间</li></ul></KbCard>
+<KbCard title="3. 项目进度更新">
+<KbQuote>结案操作更新项目进度状态为已结案</KbQuote>
+<ul><li>查询阶段定义表中阶段名称为"项目结案"的记录，获取阶段ID</li><li>调用项目阶段服务更新进度，内容格式为: <code>{日期}项目结案</code></li></ul></KbCard>
+<KbCard title="4. CRM推送">
+<KbQuote>结案后将结案结果推送至CRM系统</KbQuote>
+<ul><li>查询项目关联的报备记录，获取客户信息</li><li>推送数据包含: 客户编码、客户名称、客户简称、组织编码、报备编号、项目名称、有效状态(0=失效)</li><li>推送失败仅记录日志，不影响结案主流程</li></ul></KbCard>
+<KbCard title="5. 增补合同结案字段重置">
+<KbQuote>增补合同结案后重置相关字段供重新发起结案</KbQuote>
+<ul><li>新增增补合同时，结案日期和结案状态会被重置为空</li></ul></KbCard>
+<KbCard title="6. 前端展示逻辑">
+<KbQuote>前端根据结案状态控制操作按钮的显隐和可用性</KbQuote>
+<ul><li>结案日期和结案状态字段均为只读(disabled=true)，由后端结案审批通过后自动回写</li><li>列表页支持按结案状态筛选查询</li><li>结案状态值为0时，前端转换为null不展示</li></ul></KbCard>
 </div>
 </div>
 </div>

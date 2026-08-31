@@ -197,7 +197,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>双审批流</strong>：活动点将申请提交触发activityApplyApproval审批流；取消申请触发activityCancelApplyOrgApproval审批流（组织级审批），两者独立运行 2. <strong>applyCode自动生成</strong>：提交申请时系统自动生成唯一编码applyCode 3. <strong>策划师角色</strong>：本菜单由策划师角色发起，区别于特训营点将由经销商/业务员发起 4. <strong>状态联动</strong>：活动点将申请状态与审批状态联动，审批通过后申请状态自动变更为已通过 5. <strong>取消约束</strong>：仅已审批通过且未完成执行的申请可发起取消申请 6. <strong>组织级取消审批</strong>：取消申请审批流activityCancelApplyOrgApproval为组织级审批，审批层级高于普通审批</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>活动点将管理统一调配策划师资源和执行跟踪</KbQuote>
+<p>1. <strong>双审批流</strong>：活动点将申请提交触发activityApplyApproval审批流；取消申请触发activityCancelApplyOrgApproval审批流（组织级审批），两者独立运行 2. <strong>applyCode自动生成</strong>：提交申请时系统自动生成唯一编码applyCode 3. <strong>策划师角色</strong>：本菜单由策划师角色发起，区别于特训营点将由经销商/业务员发起 4. <strong>状态联动</strong>：活动点将申请状态与审批状态联动，审批通过后申请状态自动变更为已通过 5. <strong>取消约束</strong>：仅已审批通过且未完成执行的申请可发起取消申请 6. <strong>组织级取消审批</strong>：取消申请审批流activityCancelApplyOrgApproval为组织级审批，审批层级高于普通审批</p></KbCard>
+
+<KbQuote>活动点将管理统一调配策划师资源和执行跟踪</KbQuote>
+
+<KbQuote>活动点将管理统一调配策划师资源和执行跟踪</KbQuote>
 </div>
 </div>
 </div>

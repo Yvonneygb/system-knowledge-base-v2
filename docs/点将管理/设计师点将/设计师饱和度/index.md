@@ -134,7 +134,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><ul><li><strong>饱和度计算</strong>：饱和度 = 已排期时间 / 可排期时间 × 100%，超过100%表示超负荷</li><li><strong>两种查询维度</strong>：<ul><li><code>getSaturationByCode</code>：按设计师编码查询</li><li><code>getSaturationByUser</code>：按用户编码查询</li></ul></li><li><strong>值集依赖</strong>：页面展示依赖4个值集<ul><li><code>MBO.DESIGN_APPLY_TYPE</code>：设计点将类型</li><li><code>MBO.DESIGN_STATE</code>：设计状态</li><li><code>MBO.DESIGN_LECTURER_LEVEL</code>：设计师级别</li><li><code>MBO.APPLY_APPROVAL_STATE</code>：审批状态</li></ul></li><li><strong>数据来源</strong>：饱和度数据由点将执行模块自动计算和更新</li></ul></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>设计师饱和度监控设计师工作量状态和排期可用性</KbQuote>
+<ul><li><strong>饱和度计算</strong>：饱和度 = 已排期时间 / 可排期时间 × 100%，超过100%表示超负荷</li><li><strong>两种查询维度</strong>：<ul><li><code>getSaturationByCode</code>：按设计师编码查询</li><li><code>getSaturationByUser</code>：按用户编码查询</li></ul></li><li><strong>值集依赖</strong>：页面展示依赖4个值集<ul><li><code>MBO.DESIGN_APPLY_TYPE</code>：设计点将类型</li><li><code>MBO.DESIGN_STATE</code>：设计状态</li><li><code>MBO.DESIGN_LECTURER_LEVEL</code>：设计师级别</li><li><code>MBO.APPLY_APPROVAL_STATE</code>：审批状态</li></ul></li><li><strong>数据来源</strong>：饱和度数据由点将执行模块自动计算和更新</li></ul></KbCard>
+
+<KbQuote>设计师饱和度监控设计师工作量状态和排期可用性</KbQuote>
+
+<KbQuote>设计师饱和度监控设计师工作量状态和排期可用性</KbQuote>
 </div>
 </div>
 </div>

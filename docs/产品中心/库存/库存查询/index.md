@@ -128,7 +128,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>多维度查询</strong>：支持按仓库、产品、事业部等维度查询库存 2. <strong>实时库存</strong>：查询结果为实时库存数据，直接从LNK_INVENTORYS表读取 3. <strong>分页展示</strong>：列表支持分页，避免大数据量时页面卡顿</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>查询产品库存信息，支持按库存区间和多维度条件筛选</KbQuote>
+<p>1. <strong>多维度查询</strong>：支持按仓库、产品、事业部等维度查询库存 2. <strong>实时库存</strong>：查询结果为实时库存数据，直接从LNK_INVENTORYS表读取 3. <strong>分页展示</strong>：列表支持分页，避免大数据量时页面卡顿</p></KbCard>
 </div>
 </div>
 </div>

@@ -129,7 +129,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>基础参数配置</strong>：配置责任制内结价定价的基础参数，包括定价规则、系数等 2. <strong>CRUD操作</strong>：支持新建、编辑、删除、查看配置 3. <strong>无审批流程</strong>：配置保存即生效，无需审批</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>配置责任制内结价定价基础参数，用于计算结价成本和维护定价基准</KbQuote>
+<p>1. <strong>基础参数配置</strong>：配置责任制内结价定价的基础参数，包括定价规则、系数等 2. <strong>CRUD操作</strong>：支持新建、编辑、删除、查看配置 3. <strong>无审批流程</strong>：配置保存即生效，无需审批</p></KbCard>
 </div>
 </div>
 </div>

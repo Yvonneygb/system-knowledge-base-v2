@@ -174,7 +174,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>campCode自动生成</strong>：新增特训营时，系统自动生成唯一编码campCode，作为特训营主键 2. <strong>状态流转控制</strong>：特训营状态通过值集MBO.CAMP_STATUS管理，仅允许按草稿→进行中→已结束流转，不可逆 3. <strong>启动校验</strong>：启动前需校验时间、地点、讲师等必填字段是否完整 4. <strong>结束校验</strong>：结束前需校验是否存在未完成的点将申请，若有则提示用户确认</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>特训营管理负责特训营活动的创建、审批和全过程管理</KbQuote>
+<p>1. <strong>campCode自动生成</strong>：新增特训营时，系统自动生成唯一编码campCode，作为特训营主键 2. <strong>状态流转控制</strong>：特训营状态通过值集MBO.CAMP_STATUS管理，仅允许按草稿→进行中→已结束流转，不可逆 3. <strong>启动校验</strong>：启动前需校验时间、地点、讲师等必填字段是否完整 4. <strong>结束校验</strong>：结束前需校验是否存在未完成的点将申请，若有则提示用户确认</p></KbCard>
+
+<KbQuote>特训营管理负责特训营活动的创建、审批和全过程管理</KbQuote>
+
+<KbQuote>特训营管理负责特训营活动的创建、审批和全过程管理</KbQuote>
 </div>
 </div>
 </div>

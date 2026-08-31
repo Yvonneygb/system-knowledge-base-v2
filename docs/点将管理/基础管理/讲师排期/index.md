@@ -173,9 +173,15 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 排期管理"><ul><li>讲师排期用于管理讲师的时间可用性</li><li>添加排期后，对应时间段讲师被标记为"已排期"</li><li>取消排期后，对应时间段讲师恢复为"可用"</li><li>排期信息是点将业务中查询讲师可用时间的基础数据</li></ul></KbCard>
-<KbCard title="2.2 与点将业务的关联"><ul><li>点将业务选择讲师时，需查询讲师排期判断可用性</li><li>已排期时间段不可重复排期（防冲突）</li><li>排期状态影响讲师在点将列表中的可用标识</li></ul></KbCard>
-<KbCard title="2.3 无工作流"><ul><li>讲师排期不涉及审批工作流</li><li>添加排期和取消排期均为即时生效操作</li></ul></KbCard>
+<KbCard title="2.1 排期管理">
+<KbQuote>讲师排期管理培训课程的讲师时间调度和资源分配</KbQuote>
+<ul><li>讲师排期用于管理讲师的时间可用性</li><li>添加排期后，对应时间段讲师被标记为"已排期"</li><li>取消排期后，对应时间段讲师恢复为"可用"</li><li>排期信息是点将业务中查询讲师可用时间的基础数据</li></ul></KbCard>
+<KbCard title="2.2 与点将业务的关联">
+<KbQuote>排期数据影响点将执行时讲师的可用性和任务分配</KbQuote>
+<ul><li>点将业务选择讲师时，需查询讲师排期判断可用性</li><li>已排期时间段不可重复排期（防冲突）</li><li>排期状态影响讲师在点将列表中的可用标识</li></ul></KbCard>
+<KbCard title="2.3 无工作流">
+<KbQuote>讲师排期无审批流程，维护后直接生效</KbQuote>
+<ul><li>讲师排期不涉及审批工作流</li><li>添加排期和取消排期均为即时生效操作</li></ul></KbCard>
 </div>
 </div>
 </div>

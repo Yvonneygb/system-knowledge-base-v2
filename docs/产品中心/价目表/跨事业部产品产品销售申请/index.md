@@ -176,7 +176,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>跨事业部申请</strong>：申请将产品销售给其他事业部，突破事业部销售限制 2. <strong>申请单管理</strong>：支持新建、编辑、提交、撤回等操作 3. <strong>审批流程</strong>：提交后需审批，审批通过后方可执行跨事业部销售</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>跨事业部产品销售申请提交后直接生效，无审批流程</KbQuote>
+<p>1. <strong>跨事业部申请</strong>：申请将产品销售给其他事业部，突破事业部销售限制 2. <strong>申请单管理</strong>：支持新建、编辑、提交、撤回等操作 3. <strong>审批流程</strong>：提交后需审批，审批通过后方可执行跨事业部销售</p></KbCard>
 </div>
 </div>
 </div>

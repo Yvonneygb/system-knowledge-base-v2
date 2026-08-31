@@ -177,7 +177,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>只读跟踪</strong>：本菜单为执行跟踪页面，仅提供查询和查看功能，不涉及数据修改操作 2. <strong>数据来源</strong>：复用TrainCampApply实体和mlt/trainCampApply/*接口，筛选已审批通过且进入执行阶段的申请 3. <strong>进度计算</strong>：根据CRM订单状态及子任务完成情况计算执行完成率 4. <strong>状态联动</strong>：执行状态与CRM订单状态联动，订单完成后自动更新执行状态为已完成</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>特训营点将执行涉及派单、签到、培训记录和结果上传等环节</KbQuote>
+<p>1. <strong>只读跟踪</strong>：本菜单为执行跟踪页面，仅提供查询和查看功能，不涉及数据修改操作 2. <strong>数据来源</strong>：复用TrainCampApply实体和mlt/trainCampApply/*接口，筛选已审批通过且进入执行阶段的申请 3. <strong>进度计算</strong>：根据CRM订单状态及子任务完成情况计算执行完成率 4. <strong>状态联动</strong>：执行状态与CRM订单状态联动，订单完成后自动更新执行状态为已完成</p></KbCard>
+
+<KbQuote>特训营点将执行涉及派单、签到、培训记录和结果上传等环节</KbQuote>
+
+<KbQuote>特训营点将执行涉及派单、签到、培训记录和结果上传等环节</KbQuote>
 </div>
 </div>
 </div>

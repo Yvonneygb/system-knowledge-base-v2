@@ -144,7 +144,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><ul><li><strong>数据范围隔离</strong>：经销商仅能查看自己被点将的记录，通过<code>dealer</code>路径接口自动按当前登录经销商过滤</li><li><strong>只读展示</strong>：经销商侧为被动接收方，列表页仅展示信息，不可发起点将</li><li><strong>详情页类型区分</strong>：详情路由<code>detail/:applyCode/:type</code>，通过<code>type</code>参数区分不同查看模式</li><li><strong>多级审批关联</strong>：设计师点将涉及讲师审批、门店审批等多级审批流程，经销商侧仅展示审批结果</li></ul></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>设计点将管理设计师派单和执行跟踪</KbQuote>
+<ul><li><strong>数据范围隔离</strong>：经销商仅能查看自己被点将的记录，通过<code>dealer</code>路径接口自动按当前登录经销商过滤</li><li><strong>只读展示</strong>：经销商侧为被动接收方，列表页仅展示信息，不可发起点将</li><li><strong>详情页类型区分</strong>：详情路由<code>detail/:applyCode/:type</code>，通过<code>type</code>参数区分不同查看模式</li><li><strong>多级审批关联</strong>：设计师点将涉及讲师审批、门店审批等多级审批流程，经销商侧仅展示审批结果</li></ul></KbCard>
+
+<KbQuote>设计点将管理设计师派单和执行跟踪</KbQuote>
+
+<KbQuote>设计点将管理设计师派单和执行跟踪</KbQuote>
 </div>
 </div>
 </div>

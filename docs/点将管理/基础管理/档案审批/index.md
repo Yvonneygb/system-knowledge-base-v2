@@ -187,15 +187,21 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 三类审批场景"><table class="kl-table"><thead><tr><th>审批类型</th><th>审批接口</th><th>说明</th></tr></thead><tbody><tr><td>档案审批</td><td>archivesAudit</td><td>对讲师档案基本信息的审批</td></tr><tr><td>价格审批</td><td>priceAudit</td><td>对讲师价格的首次审批</td></tr><tr><td>价格变更审批</td><td>priceChangeApproval</td><td>对讲师价格变更的审批</td></tr></tbody></table></KbCard>
+<KbCard title="2.1 三类审批场景">
+<KbQuote>档案审批涵盖新增档案、档案变更和档案失效三类审批场景</KbQuote>
+<table class="kl-table"><thead><tr><th>审批类型</th><th>审批接口</th><th>说明</th></tr></thead><tbody><tr><td>档案审批</td><td>archivesAudit</td><td>对讲师档案基本信息的审批</td></tr><tr><td>价格审批</td><td>priceAudit</td><td>对讲师价格的首次审批</td></tr><tr><td>价格变更审批</td><td>priceChangeApproval</td><td>对讲师价格变更的审批</td></tr></tbody></table></KbCard>
 <KbCard title="2.2 审批状态流转">
+
+<KbQuote>审批状态按提交→审批中→通过/驳回流转，驳回可编辑后重新提交</KbQuote>
 
 ```
 待审批 → 审批通过 / 审批拒绝
 ```
 
 <ul><li>审批状态由值集 <code>MBO.APPROVAL_RESULT</code> 定义</li><li>审批通过后自动回写讲师档案状态/价格</li><li>审批拒绝后讲师档案状态回退，允许修改重新提交</li></ul></KbCard>
-<KbCard title="2.3 与讲师档案的关联"><ul><li>通过 <code>lecturerArchivesCode</code> 关联讲师档案</li><li>审批结果直接驱动讲师档案的状态变更</li><li>审批单中可查看关联讲师档案的详细信息</li></ul></KbCard>
+<KbCard title="2.3 与讲师档案的关联">
+<KbQuote>审批通过后将审批数据自动同步至讲师档案</KbQuote>
+<ul><li>通过 <code>lecturerArchivesCode</code> 关联讲师档案</li><li>审批结果直接驱动讲师档案的状态变更</li><li>审批单中可查看关联讲师档案的详细信息</li></ul></KbCard>
 </div>
 </div>
 </div>

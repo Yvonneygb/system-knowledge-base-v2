@@ -129,7 +129,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>头行结构</strong>：配置采用头行结构，头表记录适用范围等概要信息，行表记录具体定价参数 2. <strong>瓷砖特殊定价</strong>：针对瓷砖品类的特殊定价规则，区别于通用基础参数配置 3. <strong>CRUD操作</strong>：支持新建、编辑、删除、查看配置 4. <strong>无审批流程</strong>：配置保存即生效</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>按品牌和瓷砖特性配置定价模型参数，支持多维度灵活设置</KbQuote>
+<p>1. <strong>头行结构</strong>：配置采用头行结构，头表记录适用范围等概要信息，行表记录具体定价参数 2. <strong>瓷砖特殊定价</strong>：针对瓷砖品类的特殊定价规则，区别于通用基础参数配置 3. <strong>CRUD操作</strong>：支持新建、编辑、删除、查看配置 4. <strong>无审批流程</strong>：配置保存即生效</p></KbCard>
 </div>
 </div>
 </div>

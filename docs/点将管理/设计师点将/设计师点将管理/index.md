@@ -197,7 +197,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><ul><li><strong>多级审批链路</strong>：设计师点将涉及4个内置审批流程，按顺序依次触发<ul><li><code>designApplyLecturerApproval</code>：讲师审批，确认讲师可排期</li><li><code>designApplyTerminalApproval</code>：门店审批，确认门店接受服务</li><li><code>designApplyApproval</code>：常规业务审批</li><li><code>designApplyCancelApproval</code>：取消审批，用于撤回已提交的点将</li></ul></li><li><strong>审批互斥</strong>：取消审批与常规审批互斥，已进入审批流程的申请需先完成或取消当前审批</li><li><strong>状态联动</strong>：审批状态变更自动更新申请主状态</li></ul></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>设计师点将管理统一调配设计师资源和执行跟踪</KbQuote>
+<ul><li><strong>多级审批链路</strong>：设计师点将涉及4个内置审批流程，按顺序依次触发<ul><li><code>designApplyLecturerApproval</code>：讲师审批，确认讲师可排期</li><li><code>designApplyTerminalApproval</code>：门店审批，确认门店接受服务</li><li><code>designApplyApproval</code>：常规业务审批</li><li><code>designApplyCancelApproval</code>：取消审批，用于撤回已提交的点将</li></ul></li><li><strong>审批互斥</strong>：取消审批与常规审批互斥，已进入审批流程的申请需先完成或取消当前审批</li><li><strong>状态联动</strong>：审批状态变更自动更新申请主状态</li></ul></KbCard>
+
+<KbQuote>设计师点将管理统一调配设计师资源和执行跟踪</KbQuote>
+
+<KbQuote>设计师点将管理统一调配设计师资源和执行跟踪</KbQuote>
 </div>
 </div>
 </div>

@@ -197,7 +197,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>双审批流</strong>：点将申请提交触发campApplyApproval审批流；取消申请触发cancelApplyApproval审批流，两者独立运行 2. <strong>applyCode自动生成</strong>：提交申请时系统自动生成唯一编码applyCode 3. <strong>状态联动</strong>：点将申请状态与审批状态联动，审批通过后申请状态自动变更为已通过 4. <strong>取消约束</strong>：仅已审批通过且未完成执行的申请可发起取消申请 5. <strong>CRM订单状态</strong>：点将申请关联CRM订单，通过值集MBO.CRM_ORDER_STATUS跟踪订单状态</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>特训营点将管理统一调配讲师资源和执行跟踪</KbQuote>
+<p>1. <strong>双审批流</strong>：点将申请提交触发campApplyApproval审批流；取消申请触发cancelApplyApproval审批流，两者独立运行 2. <strong>applyCode自动生成</strong>：提交申请时系统自动生成唯一编码applyCode 3. <strong>状态联动</strong>：点将申请状态与审批状态联动，审批通过后申请状态自动变更为已通过 4. <strong>取消约束</strong>：仅已审批通过且未完成执行的申请可发起取消申请 5. <strong>CRM订单状态</strong>：点将申请关联CRM订单，通过值集MBO.CRM_ORDER_STATUS跟踪订单状态</p></KbCard>
+
+<KbQuote>特训营点将管理统一调配讲师资源和执行跟踪</KbQuote>
+
+<KbQuote>特训营点将管理统一调配讲师资源和执行跟踪</KbQuote>
 </div>
 </div>
 </div>

@@ -174,13 +174,27 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 报备审核写入项目档案"><ul><li><strong>首次报备</strong>：报备审核通过后，将报备数据转换为项目档案数据INSERT到EPM_PROJECT，设置PROJECT_VALID=2(已生效)，计算有效期VALID_START_DATE=当前时间，VALID_END_DATE=VALID_START_DATE+项目有效周期天数</li><li><strong>二次报备</strong>：报备审核通过后，根据PROJECT_ID查询已有项目档案并UPDATE，更新报备时间、阶段、交易公司、甲乙方、项目名称等字段</li><li><strong>字段校验</strong>：写入前检查EPM_PROJECT表是否存在报备表缺少的字段，若缺失则抛错"项目档案表（epm_project）缺失以下字段：xxx"</li><li><strong>项目授权同步</strong>：审核通过后，先删除该项目原有授权记录，再批量插入新的授权记录</li><li><strong>乙方信息同步</strong>：审核通过后，先删除该项目原有乙方记录，再批量插入新的乙方记录</li></ul></KbCard>
-<KbCard title="2.2 项目进度更新写入档案"><ul><li><strong>阶段变更校验</strong>：新阶段序号必须大于等于旧阶段序号，否则抛错"阶段更新，只能前进，不能后退"</li><li><strong>并发校验</strong>：若单据中当前进度与项目档案中的进度不一致（即单据记录的旧进度 &lt; 档案中实际进度），抛错"项目进度已变更，请驳回重审!"</li><li><strong>更新字段</strong>：STAGE_DESC、STAGE_ID、STAGE_NAME、STAGE_NOTE</li><li><strong>阶段历程记录</strong>：每次阶段变更同时INSERT一条EPM_PROJECT_STAGE记录</li></ul></KbCard>
-<KbCard title="2.3 项目冻结机制"><ul><li><strong>自动冻结</strong>：系统定时任务检测项目有效期超期或进度更新超时，自动将PROJECT_VALID置为4(已冻结)，记录FREEZE_TYPE和FREEZE_TIME</li><li><strong>冻结类型</strong>：1=超项目有效期(有效期内未签合同)；2=进度超时更新；4=有效期内已签合同但超期</li><li><strong>有效周期</strong>：通过系统参数Proj_Effective_Cycle配置项目有效期限天数</li></ul></KbCard>
-<KbCard title="2.4 项目解冻逻辑"><ul><li>解冻申请审批通过后，更新项目档案：PROJECT_VALID=2(已生效)，FREEZE_TYPE=0，记录UNFREEZE_TIME</li><li>解冻时若进度阶段与档案不一致，同步更新档案进度</li></ul></KbCard>
-<KbCard title="2.5 项目失效/恢复逻辑"><ul><li><strong>失效</strong>：失效申请审批通过后，PROJECT_VALID=3(已失效)，记录CHANGE_VALID_USER/CHANGE_VALID_TIME/CHANGE_VALID_REASON</li><li><strong>恢复生效</strong>：恢复申请审批通过后，PROJECT_VALID=2(已生效)，重新计算有效期</li></ul></KbCard>
-<KbCard title="2.6 合同信息回写"><ul><li>项目合同签订确认时，回写以下字段至项目档案：CONTRACT_CODE、CONTRACT_AMOUNT、PERFORMANCE_SECURITY、GUARANTEE_AMOUNT、GUARANTEE_PERIOD、CONTRACT_SIGNUP_DATE、PERIOD_START_DATE、PERIOD_END_DATE</li></ul></KbCard>
-<KbCard title="2.7 折扣校验配置中的项目档案标识"><ul><li>折扣校验配置C1/C2规则中，PROJECT_ARCHIVE字段标识是否为本地项目档案(1=异地,2=本地)，影响折扣校验逻辑</li></ul></KbCard>
+<KbCard title="2.1 报备审核写入项目档案">
+<KbQuote>报备审批通过后自动将报备数据写入项目档案</KbQuote>
+<ul><li><strong>首次报备</strong>：报备审核通过后，将报备数据转换为项目档案数据INSERT到EPM_PROJECT，设置PROJECT_VALID=2(已生效)，计算有效期VALID_START_DATE=当前时间，VALID_END_DATE=VALID_START_DATE+项目有效周期天数</li><li><strong>二次报备</strong>：报备审核通过后，根据PROJECT_ID查询已有项目档案并UPDATE，更新报备时间、阶段、交易公司、甲乙方、项目名称等字段</li><li><strong>字段校验</strong>：写入前检查EPM_PROJECT表是否存在报备表缺少的字段，若缺失则抛错"项目档案表（epm_project）缺失以下字段：xxx"</li><li><strong>项目授权同步</strong>：审核通过后，先删除该项目原有授权记录，再批量插入新的授权记录</li><li><strong>乙方信息同步</strong>：审核通过后，先删除该项目原有乙方记录，再批量插入新的乙方记录</li></ul></KbCard>
+<KbCard title="2.2 项目进度更新写入档案">
+<KbQuote>项目进度更新后同步更新档案中的进度信息</KbQuote>
+<ul><li><strong>阶段变更校验</strong>：新阶段序号必须大于等于旧阶段序号，否则抛错"阶段更新，只能前进，不能后退"</li><li><strong>并发校验</strong>：若单据中当前进度与项目档案中的进度不一致（即单据记录的旧进度 &lt; 档案中实际进度），抛错"项目进度已变更，请驳回重审!"</li><li><strong>更新字段</strong>：STAGE_DESC、STAGE_ID、STAGE_NAME、STAGE_NOTE</li><li><strong>阶段历程记录</strong>：每次阶段变更同时INSERT一条EPM_PROJECT_STAGE记录</li></ul></KbCard>
+<KbCard title="2.3 项目冻结机制">
+<KbQuote>项目冻结后不可进行合同签订和要货操作</KbQuote>
+<ul><li><strong>自动冻结</strong>：系统定时任务检测项目有效期超期或进度更新超时，自动将PROJECT_VALID置为4(已冻结)，记录FREEZE_TYPE和FREEZE_TIME</li><li><strong>冻结类型</strong>：1=超项目有效期(有效期内未签合同)；2=进度超时更新；4=有效期内已签合同但超期</li><li><strong>有效周期</strong>：通过系统参数Proj_Effective_Cycle配置项目有效期限天数</li></ul></KbCard>
+<KbCard title="2.4 项目解冻逻辑">
+<KbQuote>满足条件后项目可恢复为正常状态</KbQuote>
+<ul><li>解冻申请审批通过后，更新项目档案：PROJECT_VALID=2(已生效)，FREEZE_TYPE=0，记录UNFREEZE_TIME</li><li>解冻时若进度阶段与档案不一致，同步更新档案进度</li></ul></KbCard>
+<KbCard title="2.5 项目失效/恢复逻辑">
+<KbQuote>项目超期未签合同自动失效，满足条件可恢复</KbQuote>
+<ul><li><strong>失效</strong>：失效申请审批通过后，PROJECT_VALID=3(已失效)，记录CHANGE_VALID_USER/CHANGE_VALID_TIME/CHANGE_VALID_REASON</li><li><strong>恢复生效</strong>：恢复申请审批通过后，PROJECT_VALID=2(已生效)，重新计算有效期</li></ul></KbCard>
+<KbCard title="2.6 合同信息回写">
+<KbQuote>合同签订后将合同信息回写到项目档案</KbQuote>
+<ul><li>项目合同签订确认时，回写以下字段至项目档案：CONTRACT_CODE、CONTRACT_AMOUNT、PERFORMANCE_SECURITY、GUARANTEE_AMOUNT、GUARANTEE_PERIOD、CONTRACT_SIGNUP_DATE、PERIOD_START_DATE、PERIOD_END_DATE</li></ul></KbCard>
+<KbCard title="2.7 折扣校验配置中的项目档案标识">
+<KbQuote>折扣配置中标识该项目档案信息用于校验逻辑</KbQuote>
+<ul><li>折扣校验配置C1/C2规则中，PROJECT_ARCHIVE字段标识是否为本地项目档案(1=异地,2=本地)，影响折扣校验逻辑</li></ul></KbCard>
 </div>
 </div>
 </div>

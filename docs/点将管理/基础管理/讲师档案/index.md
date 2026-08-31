@@ -154,9 +154,15 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 双Tab页签架构"><table class="kl-table"><thead><tr><th>Tab页签</th><th>说明</th><th>主要字段</th></tr></thead><tbody><tr><td>个人档案</td><td>讲师个人基本信息</td><td>姓名、手机号、邮箱、所属组织、身份证号等</td></tr><tr><td>讲师档案</td><td>讲师资质与业务信息</td><td>讲师类型、培训讲师等级、活动讲师等级、设计讲师等级、讲师价格等</td></tr></tbody></table></KbCard>
-<KbCard title="2.2 内置审批机制"><ul><li>提交审批调用内置审批接口 <code>mlt/maLecturerApproval/*</code></li><li>审批状态通过值集 <code>MBO.APPROVAL_STATUS</code> 控制</li><li>提交后档案状态变更为"审批中"，不可编辑</li><li>审批结果返回后自动更新档案状态</li></ul></KbCard>
-<KbCard title="2.3 讲师等级体系"><p>讲师等级按业务场景分为三类，分别由不同值集管控：</p>
+<KbCard title="2.1 双Tab页签架构">
+<KbQuote>讲师档案按基本信息页签和资质认证页签双Tab展示</KbQuote>
+<table class="kl-table"><thead><tr><th>Tab页签</th><th>说明</th><th>主要字段</th></tr></thead><tbody><tr><td>个人档案</td><td>讲师个人基本信息</td><td>姓名、手机号、邮箱、所属组织、身份证号等</td></tr><tr><td>讲师档案</td><td>讲师资质与业务信息</td><td>讲师类型、培训讲师等级、活动讲师等级、设计讲师等级、讲师价格等</td></tr></tbody></table></KbCard>
+<KbCard title="2.2 内置审批机制">
+<KbQuote>讲师档案数据变更需通过内置审批流程方可生效</KbQuote>
+<ul><li>提交审批调用内置审批接口 <code>mlt/maLecturerApproval/*</code></li><li>审批状态通过值集 <code>MBO.APPROVAL_STATUS</code> 控制</li><li>提交后档案状态变更为"审批中"，不可编辑</li><li>审批结果返回后自动更新档案状态</li></ul></KbCard>
+<KbCard title="2.3 讲师等级体系">
+<KbQuote>讲师按能力评级分为多个等级，等级影响点将派单权重</KbQuote>
+<p>讲师等级按业务场景分为三类，分别由不同值集管控：</p>
 <table class="kl-table"><thead><tr><th>等级类型</th><th>值集</th><th>说明</th></tr></thead><tbody><tr><td>培训讲师等级</td><td>MBO.TRAIN_LECTURER_LEVEL</td><td>培训场景下的讲师等级</td></tr><tr><td>活动讲师等级</td><td>MBO.ACTIVITY_LECTURER_LEVEL</td><td>活动场景下的讲师等级</td></tr><tr><td>设计讲师等级</td><td>MBO.DESIGN_LECTURER_LEVEL</td><td>设计场景下的讲师等级</td></tr></tbody></table></KbCard>
 </div>
 </div>

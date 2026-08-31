@@ -128,7 +128,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>跨事业部查询</strong>：可查询不同事业部下的产品销售清单，突破事业部数据隔离 2. <strong>销售清单数据</strong>：包含产品信息、销售价格、销售数量等关键字段 3. <strong>数据只读</strong>：本页面仅查询展示</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>跨事业部产品销售清单支持条件查询和导出</KbQuote>
+<p>1. <strong>跨事业部查询</strong>：可查询不同事业部下的产品销售清单，突破事业部数据隔离 2. <strong>销售清单数据</strong>：包含产品信息、销售价格、销售数量等关键字段 3. <strong>数据只读</strong>：本页面仅查询展示</p></KbCard>
 </div>
 </div>
 </div>

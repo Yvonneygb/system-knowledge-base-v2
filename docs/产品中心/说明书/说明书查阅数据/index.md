@@ -128,7 +128,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>双模式展示</strong>：列表模式展示每条查阅记录明细，汇总模式按说明书维度汇总查阅次数 2. <strong>查阅日志采集</strong>：用户每次查阅说明书时，系统自动记录查阅日志到ES_SEARCH_LOG表 3. <strong>统计维度</strong>：支持按说明书、按时间范围、按查阅人等维度统计</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>说明书查阅统计数据支持按时间段和分类进行查询导出</KbQuote>
+<p>1. <strong>双模式展示</strong>：列表模式展示每条查阅记录明细，汇总模式按说明书维度汇总查阅次数 2. <strong>查阅日志采集</strong>：用户每次查阅说明书时，系统自动记录查阅日志到ES_SEARCH_LOG表 3. <strong>统计维度</strong>：支持按说明书、按时间范围、按查阅人等维度统计</p></KbCard>
 </div>
 </div>
 </div>

@@ -128,7 +128,9 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>1. <strong>事业部维度汇总</strong>：与普通库存查询不同，本页面以事业部为维度汇总展示库存 2. <strong>汇总计算</strong>：将同一事业部下各仓库、各产品的库存数量汇总 3. <strong>数据只读</strong>：本页面仅查询展示，不支持修改</p></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>查询各事业部库存数据，支持库存明细查看和导出</KbQuote>
+<p>1. <strong>事业部维度汇总</strong>：与普通库存查询不同，本页面以事业部为维度汇总展示库存 2. <strong>汇总计算</strong>：将同一事业部下各仓库、各产品的库存数量汇总 3. <strong>数据只读</strong>：本页面仅查询展示，不支持修改</p></KbCard>
 </div>
 </div>
 </div>

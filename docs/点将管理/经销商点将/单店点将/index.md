@@ -144,7 +144,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><ul><li><strong>数据范围隔离</strong>：经销商仅能查看自己被点将的记录，通过<code>dealer</code>路径接口自动按当前登录经销商过滤</li><li><strong>只读展示</strong>：经销商侧为被动接收方，列表页仅展示信息，不可发起点将</li><li><strong>详情页类型区分</strong>：详情路由<code>detail/:applyCode/:type</code>，通过<code>type</code>参数区分不同查看模式</li><li><strong>门店维度</strong>：单店点将以门店为维度，一条点将记录关联一个具体门店</li></ul></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>单店点将管理单店培训的讲师派单和执行跟踪</KbQuote>
+<ul><li><strong>数据范围隔离</strong>：经销商仅能查看自己被点将的记录，通过<code>dealer</code>路径接口自动按当前登录经销商过滤</li><li><strong>只读展示</strong>：经销商侧为被动接收方，列表页仅展示信息，不可发起点将</li><li><strong>详情页类型区分</strong>：详情路由<code>detail/:applyCode/:type</code>，通过<code>type</code>参数区分不同查看模式</li><li><strong>门店维度</strong>：单店点将以门店为维度，一条点将记录关联一个具体门店</li></ul></KbCard>
+
+<KbQuote>单店点将管理单店培训的讲师派单和执行跟踪</KbQuote>
+
+<KbQuote>单店点将管理单店培训的讲师派单和执行跟踪</KbQuote>
 </div>
 </div>
 </div>

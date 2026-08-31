@@ -144,7 +144,13 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><ul><li><strong>数据范围隔离</strong>：经销商仅能查看自己被点将的记录，通过<code>pageForDealer</code>接口自动按当前登录经销商过滤</li><li><strong>只读展示</strong>：经销商侧为被动接收方，列表页仅展示信息，不可发起点将</li><li><strong>状态流转</strong>：特训营申请状态由总部侧驱动，经销商侧实时同步展示</li></ul></KbCard>
+<KbCard title="重点逻辑">
+<KbQuote>特训营点将管理特训营活动的派单和执行跟踪</KbQuote>
+<ul><li><strong>数据范围隔离</strong>：经销商仅能查看自己被点将的记录，通过<code>pageForDealer</code>接口自动按当前登录经销商过滤</li><li><strong>只读展示</strong>：经销商侧为被动接收方，列表页仅展示信息，不可发起点将</li><li><strong>状态流转</strong>：特训营申请状态由总部侧驱动，经销商侧实时同步展示</li></ul></KbCard>
+
+<KbQuote>特训营点将管理特训营活动的派单和执行跟踪</KbQuote>
+
+<KbQuote>特训营点将管理特训营活动的派单和执行跟踪</KbQuote>
 </div>
 </div>
 </div>
