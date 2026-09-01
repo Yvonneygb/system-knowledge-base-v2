@@ -324,22 +324,22 @@ SELECT * FROM EPM_PROJECT WHERE IS_HOME = 2
     <div class="error-detail-box" v-pre>
       <a href="#" class="close-btn">&times;</a>
       <h4><span style="color:#7C3AED;">报错：</span>{报错信息}</h4>
-      <h5>详细逻辑</h5>
-      <div class="detail-text" v-pre>{编号步骤 / 排查说明}</div>
-      <div class="detail-tip" v-pre>{等级提示}</div>
-      <!-- 可选：排查 SQL —— 用 fenced ```sql 块,前后留空行使其脱离 v-pre 被 Shiki 高亮 -->
-      
-      ```sql
-      SELECT ... FROM ... WHERE ...
-        AND ...
-      ```
-      
+      <h5>触发条件</h5>
+      <div class="detail-text" v-pre>{触发条件描述}</div>
+      <h5>逻辑分析</h5>
+      <div class="detail-text" v-pre>{逻辑分析描述}</div>
+      <h5>排查SQL</h5>
+      <pre class="detail-sql" v-pre><code>SELECT ... FROM ... WHERE ...
+  AND ...
+ORDER BY ...;
+</code></pre>
+      <div class="detail-tip" v-pre>等级：高</div>
     </div>
   </div>
   ```
   - 点击「查看」→ URL 锚点变为 `#err-detail-N` → `.error-detail-overlay:target { display:flex; align-items:center; justify-content:center }` 显示遮罩弹窗并**垂直+水平居中**;点右上角 `×`(`.close-btn`,`href="#"`)清空锚点关闭。弹窗内容高(`.error-detail-box` 限 `max-height:80vh; overflow-y:auto`),超长可滚动,始终居中。
-  - `.error-detail-overlay`(遮罩,`position:fixed; top/left/right/bottom:0; z-index:9999`)、`.error-detail-box`(白卡,`max-height:80vh; overflow-y:auto`)、`.close-btn`、`.detail-text`、`.detail-tip` 均由 `custom.css` 全局定义,**直接复用即可,无需新增样式**
-  - 弹窗内文字类内容(含 `:` 等 Vue 特殊字符)用 `v-pre` 包裹;**但 SQL 必须用 fenced ```` ```sql ```` 代码块**,并以其前后各一个空行脱离 `v-pre` 原始块作用域,交给 VitePress/Shiki 高亮为暗色 `pre.shiki` 代码框(自动换行、不超出框宽),不要写成裸 `<pre><code class="language-sql">`(不会被高亮且会横向溢出)
+  - `.error-detail-overlay`(遮罩,`position:fixed; top/left/right/bottom:0; z-index:9999`)、`.error-detail-box`(白卡,`max-height:80vh; overflow-y:auto`)、`.close-btn`、`.detail-text`、`.detail-tip`、`.detail-sql` 均由 `custom.css` 全局定义,**直接复用即可,无需新增样式**
+  - 弹窗内文字类内容(触发条件/逻辑分析)用 `<div class="detail-text" v-pre>` 包裹;**排查SQL 必须用 `<pre class="detail-sql" v-pre><code>...</code></pre>` 结构**,不能用 fenced ```` ```sql ```` 代码围栏。原因是弹窗整体在 `<div class="error-detail-box" v-pre>` 内,`v-pre` 会阻止 markdown 解析,```sql 围栏不会被 Shiki 高亮,只会显示为纯文本。`<pre class="detail-sql">` 由 `custom.css` 定义了暗色背景(`#1E293B`)、浅色文字(`#E2E8F0`)、等宽字体样式,直接呈现代码块效果。SQL 中的 `<` 比较运算符需转义为 `&lt;`。
   - **遮罩必须铺满整个视口**:`.error-detail-overlay` 用 `position:fixed`,其包含块是「最近的带 `transform`/`filter`/`perspective`/`will-change`/`contain` 的祖先」,否则遮罩只盖住该祖先而非整屏。报错一览表通常包在 `<KbCard>` 内,而 `KbCard` 的 hover 抬升带 `transform: translateY(-1px)`,会让遮罩只盖住那张卡片——**必须给该 `<KbCard>` 加 `:hover="false"` 关掉 hover transform**(`custom.css` 另有 `.kb-card:has(.error-detail-overlay:target){transform:none!important}` 兜底)。弹窗不要放在任何会动画/transform 的祖先内部。
   - **切换 TAB 时清除 `:target` 锚点**:弹窗靠 `:target` 显示,若切走 TAB 时锚点(`#err-detail-N`)残留,返回该 TAB 弹窗会"自己冒出来"。`BreadcrumbTabs` 组件已在 `watch(activeTab)` 中切 tab 时用 `history.replaceState` 清除 `#err-detail` 锚点,**不要去掉这段逻辑**,也不要让弹窗依赖"父级 `display:none` 来隐藏"——弹窗应只由 `:target` 控制显隐。
 - **等级徽标**:`toast提醒` 用紫色(`background:#F5F3FF;color:#7C3AED`)、`阻断性报错` 用红色(`background:#FEF2F2;color:#DC2626`),圆角小标签
@@ -478,7 +478,7 @@ SELECT *
 8. **不要把选择弹窗的入参与 SQL 挤在同一表格**,必须拆为「入参」+「数据范围」两个子模块。
 9. **不要把"单选/多选"放在表格里**,必须用 KbBadge 标签放弹窗标题右侧。
 10. **不要把【常见问题】写成 Markdown 无序列表**,必须用 `kl-card` Q&A 卡片(紫色 `kl-num` 编号徽标 + 浅紫 `faq-answer` 答案框,见 §7.9),与【家装真实性核销】风格对齐。
-11. **不要把 SQL 写成裸 `<pre><code class="language-sql">`**(无高亮且横向溢出),必须用 fenced ```` ```sql ```` 代码块,由 VitePress/Shiki 高亮为暗色 `pre.shiki` 代码框、自动换行不超出框宽;报错弹窗(§7.8)与常见问题卡片(§7.9)均适用。
+11. **不要把 SQL 写成裸 `<pre><code class="language-sql">`**(无高亮且横向溢出)。页面正文中的 SQL 必须用 fenced ```` ```sql ```` 代码块,由 VitePress/Shiki 高亮为暗色 `pre.shiki` 代码框、自动换行不超出框宽;**但报错弹窗(§7.8)内除外**——弹窗整体在 `v-pre` 内,markdown 不解析,必须用 `<pre class="detail-sql" v-pre><code>...</code></pre>`(由 `custom.css` 定义暗色样式)。
 12. **不要让「报错一览表」的「查看」弹窗偏离垂直居中**,必须由 `.error-detail-overlay:target { display:flex; align-items:center; justify-content:center }` 实现垂直+水平居中(弹窗本身限 `max-height:80vh; overflow-y:auto`,超长可滚动且始终居中)。
 13. **不要把报错弹窗嵌在带 `transform` 的祖先内部**(典型坑:`报错一览表` 包在 `<KbCard>` 里,其 hover 抬升 `transform` 会让遮罩只盖住那张卡片而非整屏);必须给该 `<KbCard>` 加 `:hover="false"`,或把弹窗放到无 transform 的层级。
 14. **不要让「报错一览表」弹窗的 `:target` 锚点跨 TAB 残留**:切换 TAB 时 `BreadcrumbTabs` 必须用 `history.replaceState` 清除 `#err-detail` 锚点,否则返回该 TAB 弹窗会自动冒出;弹窗只应由 `:target` 控制显隐,不要依赖"父级 `display:none` 隐藏"。
@@ -490,6 +490,8 @@ SELECT *
 20. **不要在 `<KbCard>` 插槽中使用纯文本子内容的 `<KbSubTitle>` 组件**:VitePress 可能不将其解析为 Vue 组件,表现为标签名被当作普通文本输出或被 `<pre><code>` 包裹。应直接写入 `<h4 class="kl-sub-title">`(见 §7.10)。仅当 KbSubTitle 内部包含 Vue 子组件(如 `<KbBadge>`)时可用。
 21. **不要把状态机流转图写成 ` ```text ` ASCII 图或 `<svg>`**:ASCII 图在 VitePress 中无交互且不可维护;`<svg>` 标签在 KbCard 插槽中可能因 KbCard 的 `padding: 24px 10%` 被压缩到极小尺寸,且存在被转义为文本的风险。应使用 HTML `<table>` 构建流程图,外层包裹 `overflow-x:auto` 容器(见 §7.11)。
 22. **不要用 `<p class="kl-blockquote">` 写"查询SQL："引导文字**:必须用 Markdown 引用块 `> 查询SQL：`,以获得标准 blockquote 样式(紫色左边线 + 浅紫背景)。
+23. **不要把同一模块的内容拆成多个 `kl-card`**。选择弹窗(§8.1)、导入(§8.2)、其他按钮(§8.3)、保存校验(§8.4)、提交校验(§8.5)这五个模块,每个模块的所有内容(多个弹窗/多个子模块/多个按钮/多个校验项)必须包在**同一个** `<div class="kl-card">` 内,内部用 `<KbSubTitle>` 或 `<h4 class="kl-sub-title">` 区分子项。严禁将各子项各拆成独立的 `kl-card`。
+24. **不要在报错弹窗内用 fenced ```` ```sql ```` 代码围栏写 SQL**。弹窗整体在 `<div class="error-detail-box" v-pre>` 内,`v-pre` 阻止 markdown 解析,```sql 围栏不会被渲染为代码块,只会显示为纯文本。必须用 `<pre class="detail-sql" v-pre><code>...</code></pre>` 结构(由 `custom.css` 定义暗色背景 `#1E293B`、浅色文字 `#E2E8F0`、等宽字体)。SQL 中的 `<` 比较运算符需转义为 `&lt;`。
 
 ---
 
@@ -500,6 +502,8 @@ SELECT *
 ### 8.1 选择弹窗（LOV）模块
 
 **容器**：`<KbCard num="N" title="选择弹窗">`，内部 `<p>` 一句话描述。
+
+> **关键规则：一个模块 = 一个 `kl-card`**。选择弹窗模块下有多个弹窗（如弹窗1、弹窗2），所有弹窗的入参表格、查询SQL都必须包在**同一个** `<div class="kl-card">` 内，用 `<KbSubTitle>` 在卡片内部区分子弹窗。**严禁**将每个弹窗各拆成一个独立的 `kl-card`。
 
 **每个弹窗**的标题用 `<KbSubTitle>`（因含 `<KbBadge>` 子组件，能被正常解析）：
 
@@ -557,6 +561,8 @@ SELECT dp.POLICY_ID, dp.POLICY_CODE, dp.POLICY_NAME
 
 **容器**：`<KbCard num="N" title="导入">`，内部 `<p>` 一句话描述。
 
+> **关键规则：一个模块 = 一个 `kl-card`**。导入模块下的前置约定、字段映射、处理逻辑、异常与结果约定、运维保障，所有子模块都必须包在**同一个** `<div class="kl-card">` 内，用 `<h4 class="kl-sub-title">` 在卡片内部区分子模块。**严禁**将各子模块各拆成一个独立的 `kl-card`。
+
 **子模块结构**（每个子模块用 `<h4 class="kl-sub-title">` 标题区分）：
 
 | 子模块 | 标题 | 内容形式 |
@@ -611,6 +617,8 @@ SELECT dp.POLICY_ID, dp.POLICY_CODE, dp.POLICY_NAME
 ### 8.3 其他按钮模块
 
 **容器**：`<KbCard num="N" title="其他按钮">`，内部 `<p>` 一句话描述。
+
+> **关键规则：一个模块 = 一个 `kl-card`**。其他按钮模块下的按钮清单表格、每个按钮的详情（触发条件/执行逻辑/接口调用/排查SQL），所有内容都必须包在**同一个** `<div class="kl-card">` 内，用 `<h4 class="kl-sub-title">` 在卡片内部区分每个按钮。**严禁**将按钮清单和各按钮详情各拆成一个独立的 `kl-card`。
 
 **按钮清单表格**（5 列：按钮名称 / 按钮作用 / 所在位置 / 显隐条件 / 影响）：
 
@@ -674,6 +682,8 @@ SELECT h.INTERIM_BIINO, h.HZ_APPROVE_STATUS, h.ORDER_STAT
 
 **容器**：`<KbCard num="N" title="保存校验">`，内部 `<p>` 一句话描述。
 
+> **关键规则：一个模块 = 一个 `kl-card`**。保存校验模块下有多个校验项，所有校验项的标题、详细逻辑、系统体现、排查SQL都必须包在**同一个** `<div class="kl-card">` 内，用 `<KbSubTitle>` 在卡片内部区分每个校验项。**严禁**将各校验项各拆成一个独立的 `kl-card`。
+
 **每个校验项**用 `<KbSubTitle>` 标题区分（因含描述文本，可正常解析），内部结构：
 
 ```md
@@ -709,6 +719,8 @@ SELECT h.HEAD_ID, h.IS_MAKT, h.PRICE_TYPE, h.BUSINESS_TYPE
 ### 8.5 提交校验模块
 
 **容器**：`<KbCard num="N" title="提交校验">`，内部 `<p>` 一句话描述。
+
+> **关键规则：一个模块 = 一个 `kl-card`**。提交校验模块下有多个校验项，所有校验项都必须包在**同一个** `<div class="kl-card">` 内，用 `<KbSubTitle>` 在卡片内部区分每个校验项。**严禁**将各校验项各拆成一个独立的 `kl-card`。
 
 **结构**与 §8.4 保存校验完全一致，区别在于：
 - 标题用"校验N：标题 —— 描述"
