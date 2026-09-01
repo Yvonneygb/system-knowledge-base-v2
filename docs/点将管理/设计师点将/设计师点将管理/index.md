@@ -278,7 +278,9 @@
 </tbody>
 </table>
 <p>列表查询SQL（接口 POST /mlt/designApply/page）：</p>
-<pre class="detail-sql" v-pre><code>SELECT MLA.APPLY_CODE              AS "申请编码",
+
+```sql
+SELECT MLA.APPLY_CODE              AS "申请编码",
        MLA.APPLY_USER_NAME         AS "申请人",
        MLA.APPLY_TYPE              AS "申请类型",
        MLA.STORE_NAME              AS "门店名称",
@@ -299,9 +301,10 @@ WHERE MLA.APPLY_TYPE_ONE = 'design'
   AND (:applyCode IS NULL OR MLA.APPLY_CODE LIKE '%' || :applyCode || '%')
   AND (:approvalState IS NULL OR MLA.APPROVAL_STATE = :approvalState)
   AND (:applyType IS NULL OR MLA.APPLY_TYPE = :applyType)
-  AND (:startDate IS NULL OR MLA.CREATE_DATE &gt;= TO_DATE(:startDate, 'YYYY-MM-DD'))
-  AND (:endDate IS NULL OR MLA.CREATE_DATE &lt; TO_DATE(:endDate, 'YYYY-MM-DD') + 1)
-ORDER BY MLA.CREATE_DATE DESC;</code></pre>
+  AND (:startDate IS NULL OR MLA.CREATE_DATE >= TO_DATE(:startDate, 'YYYY-MM-DD'))
+  AND (:endDate IS NULL OR MLA.CREATE_DATE < TO_DATE(:endDate, 'YYYY-MM-DD') + 1)
+ORDER BY MLA.CREATE_DATE DESC;
+```
 <h4>弹窗1：审批弹窗（单选）</h4>
 <p>弹窗标题动态：项目终止审批时为"项目终止申请审批"；取消审批时为"设计点将取消申请审批"；其他为"设计点将申请审批"。弹窗内含审批意见表单区与 DesignApplyDetail 申请详情区（type=view，showRemark）。</p>
 <p>入参表格：</p>
@@ -356,7 +359,9 @@ ORDER BY MLA.CREATE_DATE DESC;</code></pre>
 </tbody>
 </table>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT LA.LECTURER_ARCHIVES_ID   AS "讲师档案ID",
+
+```sql
+SELECT LA.LECTURER_ARCHIVES_ID   AS "讲师档案ID",
        LA.LECTURER_ARCHIVES_CODE AS "讲师档案编码",
        LA.LECTURER_NAME          AS "讲师姓名",
        LA.LECTURER_LEVEL         AS "讲师级别",
@@ -368,7 +373,8 @@ FROM LECTURER_ARCHIVES LA
 WHERE LA.PAGE_TYPE = 'design'
   AND (:lecturerName IS NULL OR LA.LECTURER_NAME LIKE '%' || :lecturerName || '%')
   AND (:lecturerLevel IS NULL OR LA.LECTURER_LEVEL = :lecturerLevel)
-ORDER BY LA.CREATION_DATE DESC;</code></pre>
+ORDER BY LA.CREATION_DATE DESC;
+```
 <h4>弹窗4：流程摘要弹窗</h4>
 <p>由列表行操作"查看流程"按钮触发（handleShowProcess）。</p>
 <table class="kb-field-tbl">
@@ -437,14 +443,17 @@ ORDER BY LA.CREATION_DATE DESC;</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>[待审批] --审批通过--&gt; [已通过] --进入执行--&gt; [执行中]
-         --驳回--&gt; [已驳回] --修改重提--&gt; [待审批]
 
-[已通过] --取消申请--&gt; [取消审批中] --审批通过--&gt; [已取消]
-                                  --审批驳回--&gt; [已通过]
+```sql
+[待审批] --审批通过--> [已通过] --进入执行--> [执行中]
+         --驳回--> [已驳回] --修改重提--> [待审批]
 
-[执行中] --终止申请--&gt; [终止审批中] --审批通过--&gt; [已终止]
-                                  --审批驳回--&gt; [执行中]</code></pre>
+[已通过] --取消申请--> [取消审批中] --审批通过--> [已取消]
+                                  --审批驳回--> [已通过]
+
+[执行中] --终止申请--> [终止审批中] --审批通过--> [已终止]
+                                  --审批驳回--> [执行中]
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>状态</th><th>状态说明</th><th>可执行操作</th></tr>
@@ -544,7 +553,9 @@ ORDER BY LA.CREATION_DATE DESC;</code></pre>
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请、审批、设计改派等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          APPLY_USER_NAME AS 申请人,
          DESIGN_NAME AS 设计名称,
          LECTURER_NAME AS 设计师,
@@ -552,10 +563,13 @@ ORDER BY LA.CREATION_DATE DESC;</code></pre>
          APPROVAL_STATE AS 审核状态
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错2：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 mlt/designApply/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM）调用失败、工作流引擎异常、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、工作流配置、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态,
@@ -564,11 +578,14 @@ ORDER BY LA.CREATION_DATE DESC;</code></pre>
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错3：审批意见不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交审批时，APPROVAL_COMMENTS 字段为空</li><li><strong>逻辑分析</strong>：前端审批弹窗对 approvalComments 字段配置 required 校验，提交前校验审批意见是否填写，为空则阻止提交并提示"审批意见不能为空"。审批意见用于记录审批人决策依据，保证审批留痕完整可追溯</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          APPROVAL_STATE AS 审核状态,
          APPROVAL_RESULT AS 审批结果,
@@ -576,10 +593,13 @@ ORDER BY LA.CREATION_DATE DESC;</code></pre>
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND APPROVAL_STATE IN ('approved', 'reject')
-    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');</code></pre>
+    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');
+```
 <h4>报错4：新设计师不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交设计改派时，LECTURER_NAME 字段为空</li><li><strong>逻辑分析</strong>：前端设计改派弹窗对 lecturerName 字段配置 required 校验，提交前校验新设计师是否选择，为空则阻止提交并提示"新设计师不能为空"。设计改派需明确新的设计师作为改派目标，否则无法完成改派</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          LECTURER_NAME AS 当前设计师,
          LECTURER_ARCHIVES_CODE AS 设计师档案编码,
@@ -587,20 +607,26 @@ ORDER BY LA.CREATION_DATE DESC;</code></pre>
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE = 'valid'
-    AND (LECTURER_NAME IS NULL OR LECTURER_ARCHIVES_CODE IS NULL);</code></pre>
+    AND (LECTURER_NAME IS NULL OR LECTURER_ARCHIVES_CODE IS NULL);
+```
 <h4>报错5：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢、接口处理时间超过 timeout 阈值等。需检查网络连通性、后端服务负载、数据库性能、工作流引擎状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错6：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请、设计改派、审批等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码（如 hzero.general_manage.design.design_general_manage.ps.show_apply、reassign、approval 等），HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名,
+
+```sql
+SELECT U.USER_NAME AS 用户名,
          R.ROLE_NAME AS 角色名,
          P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
@@ -609,19 +635,25 @@ ORDER BY LA.CREATION_DATE DESC;</code></pre>
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE 'hzero.general_manage.design.design_general_manage.ps.%'
-  ORDER BY U.USER_NAME;</code></pre>
+  ORDER BY U.USER_NAME;
+```
 <h4>报错7：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：查看申请、审批、设计改派等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 DESIGN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          APPLY_USER_NAME AS 申请人,
          ORDER_LECTURE_STATE AS 点将状态,
          DELETE_FLAG AS 删除标记
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+```
 <h4>报错8：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击审批、设计改派等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如审批要求 APPROVAL_STATE 为 to_be_approval、设计改派要求 ORDER_LECTURE_STATE 为 valid 且审批通过、取消审批要求已发起取消申请等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态,
@@ -630,27 +662,34 @@ ORDER BY LA.CREATION_DATE DESC;</code></pre>
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错9：审批人不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交审批时，前端从 getCurrentUser().realName 取审批人姓名为空</li><li><strong>逻辑分析</strong>：前端审批弹窗 beforeOpen 阶段设置 approvalUserName 为 userInfo.realName，若用户未登录或登录态失效导致 realName 为空，则审批人字段为空。需检查用户登录态、token 是否过期、用户信息接口是否正常</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名,
+
+```sql
+SELECT U.USER_NAME AS 用户名,
          U.REAL_NAME AS 真实姓名,
          U.LOGIN_FLAG AS 登录标记,
          U.STATUS_CODE AS 状态
   FROM SYS_USER U
   WHERE U.REAL_NAME IS NULL
-     OR U.STATUS_CODE &lt;&gt; 'ACTIVE';</code></pre>
+     OR U.STATUS_CODE <> 'ACTIVE';
+```
 <h4>报错10：设计师列表为空</h4>
 <ul><li><strong>触发条件</strong>：设计改派点击设计师搜索图标，弹窗 applyTableDS 查询返回空列表</li><li><strong>逻辑分析</strong>：前端通过 applyTableDS 查询讲师档案列表，返回空则无法选择新设计师。常见根因：讲师档案未配置、讲师档案已失效、查询条件过严、数据权限隔离等。需检查讲师档案配置及查询条件</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 档案编码,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 档案编码,
          LECTURER_NAME AS 讲师姓名,
          LECTURER_LEVEL AS 讲师级别,
          STATUS_CODE AS 状态,
          DELETE_FLAG AS 删除标记
   FROM LECTURER_ARCHIVES
-  WHERE STATUS_CODE &lt;&gt; 'ACTIVE'
+  WHERE STATUS_CODE <> 'ACTIVE'
      OR DELETE_FLAG = 'Y'
-  ORDER BY CREATION_DATE DESC;</code></pre>
+  ORDER BY CREATION_DATE DESC;
+```
 </KbCard>
 
 <KbCard title="常见问题">

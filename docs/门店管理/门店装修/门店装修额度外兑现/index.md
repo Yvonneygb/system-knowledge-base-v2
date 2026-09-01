@@ -288,14 +288,17 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+
+```text
+NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
                                        │              ├─ 回写验收报销单
                                        │              ├─ 同步资金池(EBS)
                                        │              └─ 分摊接口处理
                                        │
                                        └──审批驳回──→ REJECTED(已驳回)
 
-任意状态 ──删除──→ (删除)</code></pre>
+任意状态 ──删除──→ (删除)
+```
 </KbCard>
 
 <KbCard title="工作流">

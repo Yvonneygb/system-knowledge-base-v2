@@ -272,33 +272,48 @@
 
 <KbCard title="保存/提交校验">
 <ul><li>校验1：新建排期时 dateType（日期类型）必填 —— 区分排期类型便于统计</li><li><strong>详细逻辑</strong>：dateType 字段为空时阻止提交</li><li><strong>系统体现</strong>：前端表单校验，提示"日期类型不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE, START_DATE, END_DATE
+
+```sql
+SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE, START_DATE, END_DATE
     FROM MA_LECTURER_SCHEDULE
-    WHERE DATE_TYPE IS NULL OR DATE_TYPE = '';</code></pre>
+    WHERE DATE_TYPE IS NULL OR DATE_TYPE = '';
+```
 <ul><li>校验2：新建排期时 date（日期范围）必填 —— 排期时间区间是排期的核心数据</li><li><strong>详细逻辑</strong>：date 字段为空时阻止提交，提交时转换为 startDate/endDate</li><li><strong>系统体现</strong>：前端表单校验，提示"日期不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE
+
+```sql
+SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE
     FROM MA_LECTURER_SCHEDULE
-    WHERE START_DATE IS NULL OR END_DATE IS NULL;</code></pre>
+    WHERE START_DATE IS NULL OR END_DATE IS NULL;
+```
 <ul><li>校验3：取消排期时 date（日期范围）必填 —— 明确取消的时间区间</li><li><strong>详细逻辑</strong>：date 字段为空时阻止提交</li><li><strong>系统体现</strong>：前端表单校验，提示"日期不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE, STATUS
+
+```sql
+SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE, STATUS
     FROM MA_LECTURER_SCHEDULE
-    WHERE STATUS = 'cancelled' AND (START_DATE IS NULL OR END_DATE IS NULL);</code></pre>
+    WHERE STATUS = 'cancelled' AND (START_DATE IS NULL OR END_DATE IS NULL);
+```
 <ul><li>校验4：排期时间段不可与该讲师已有排期冲突 —— 避免讲师被重复点用</li><li><strong>详细逻辑</strong>：新排期时间段与已有有效排期时间段存在交集即冲突</li><li><strong>系统体现</strong>：后端 save 接口校验，冲突时返回业务异常</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT a.LECTURER_SCHEDULE_ID AS 排期1, b.LECTURER_SCHEDULE_ID AS 排期2,
+
+```sql
+SELECT a.LECTURER_SCHEDULE_ID AS 排期1, b.LECTURER_SCHEDULE_ID AS 排期2,
            a.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
            TO_CHAR(a.START_DATE,'YYYY-MM-DD') AS 排期1开始,
            TO_CHAR(a.END_DATE,'YYYY-MM-DD') AS 排期1结束,
            TO_CHAR(b.START_DATE,'YYYY-MM-DD') AS 排期2开始,
            TO_CHAR(b.END_DATE,'YYYY-MM-DD') AS 排期2结束
     FROM MA_LECTURER_SCHEDULE a
-    JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_ID
+    JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID < b.LECTURER_SCHEDULE_ID
       AND a.LECTURER_ARCHIVES_ID = b.LECTURER_ARCHIVES_ID
       AND a.STATUS = 'active' AND b.STATUS = 'active'
-      AND a.START_DATE &lt;= b.END_DATE AND a.END_DATE &gt;= b.START_DATE;</code></pre>
+      AND a.START_DATE <= b.END_DATE AND a.END_DATE >= b.START_DATE;
+```
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>有效(active) ──取消排期──→ 已取消(cancelled)</code></pre>
+
+```sql
+有效(active) ──取消排期──→ 已取消(cancelled)
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
@@ -379,7 +394,9 @@
 </KbCard>
 
 <KbCard title="排查SQL">
-<pre class="detail-sql" v-pre><code>-- 查询讲师排期列表
+
+```sql
+-- 查询讲师排期列表
 SELECT
   ls.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
   la.LECTURER_NAME     AS 讲师姓名,
@@ -402,8 +419,8 @@ SELECT DISTINCT
 FROM MA_LECTURER_SCHEDULE ls
 LEFT JOIN MA_LECTURER_ARCHIVE la ON ls.LECTURER_ARCHIVES_ID = la.LECTURER_ARCHIVES_ID
 WHERE ls.STATUS = 'active'
-  AND ls.START_DATE &lt;= TO_DATE('2026-12-31', 'YYYY-MM-DD')
-  AND ls.END_DATE &gt;= TO_DATE('2026-01-01', 'YYYY-MM-DD');
+  AND ls.START_DATE <= TO_DATE('2026-12-31', 'YYYY-MM-DD')
+  AND ls.END_DATE >= TO_DATE('2026-01-01', 'YYYY-MM-DD');
 
 -- 查询排期冲突的讲师（同一讲师排期日期重叠）
 SELECT
@@ -413,10 +430,11 @@ SELECT
   TO_CHAR(b.START_DATE, 'YYYY-MM-DD') AS 排期2开始,
   TO_CHAR(b.END_DATE, 'YYYY-MM-DD') AS 排期2结束
 FROM MA_LECTURER_SCHEDULE a
-JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_ID
+JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID < b.LECTURER_SCHEDULE_ID
   AND a.LECTURER_ARCHIVES_ID = b.LECTURER_ARCHIVES_ID
   AND a.STATUS = 'active' AND b.STATUS = 'active'
-  AND a.START_DATE &lt;= b.END_DATE AND a.END_DATE &gt;= b.START_DATE;</code></pre>
+  AND a.START_DATE <= b.END_DATE AND a.END_DATE >= b.START_DATE;
+```
 </KbCard>
 
 </div>
@@ -446,25 +464,33 @@ JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_I
 </table>
 <h4>报错1：日期类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：新建排期提交时，dateType 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 dateType 字段配置 required 校验，提交前执行字段校验，若值为空则阻止提交并提示"日期类型不能为空"。dateType 用于区分排期类型（如出差、休假、培训等），是排期统计的分类依据，必须填写</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID,
+
+```sql
+SELECT LECTURER_SCHEDULE_ID AS 排期ID,
          LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
          TO_CHAR(START_DATE,'YYYY-MM-DD') AS 开始日期,
          TO_CHAR(END_DATE,'YYYY-MM-DD') AS 结束日期
   FROM MA_LECTURER_SCHEDULE
-  WHERE DATE_TYPE IS NULL OR DATE_TYPE = '';</code></pre>
+  WHERE DATE_TYPE IS NULL OR DATE_TYPE = '';
+```
 <h4>报错2：日期不能为空</h4>
 <ul><li><strong>触发条件</strong>：新建排期或取消排期提交时，date 日期范围字段为空</li><li><strong>逻辑分析</strong>：前端 DatePicker(range) 组件对 date 字段配置 required 校验，提交前校验日期范围是否填写，为空则阻止提交并提示"日期不能为空"。日期范围是排期的核心数据，新建时用于确定占用时段，取消时用于确定释放时段，必须填写</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID,
+
+```sql
+SELECT LECTURER_SCHEDULE_ID AS 排期ID,
          LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
          DATE_TYPE AS 日期类型,
          STATUS AS 状态
   FROM MA_LECTURER_SCHEDULE
-  WHERE START_DATE IS NULL OR END_DATE IS NULL;</code></pre>
+  WHERE START_DATE IS NULL OR END_DATE IS NULL;
+```
 <h4>报错3：该讲师在指定时间段已有排期，请重新选择</h4>
 <ul><li><strong>触发条件</strong>：新建排期提交时，新排期时间段与该讲师已有有效排期（STATUS='active'）时间段存在交集</li><li><strong>逻辑分析</strong>：后端 save 接口在保存前执行冲突校验，查询 MA_LECTURER_SCHEDULE 表中同一讲师（LECTURER_ARCHIVES_ID 相同）且状态为 active 的排期记录，判断新排期的 [START_DATE, END_DATE] 与已有排期的 [START_DATE, END_DATE] 是否存在交集（新排期.START_DATE &lt;= 已有.END_DATE AND 新排期.END_DATE &gt;= 已有.START_DATE）。若存在交集则抛出业务异常，提示"该讲师在指定时间段已有排期，请重新选择"。此校验从源头避免讲师被重复点用，保证排期数据唯一性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT a.LECTURER_SCHEDULE_ID AS 排期1ID,
+
+```sql
+SELECT a.LECTURER_SCHEDULE_ID AS 排期1ID,
          b.LECTURER_SCHEDULE_ID AS 排期2ID,
          a.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          a.LECTURER_NAME AS 讲师姓名,
@@ -473,13 +499,16 @@ JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_I
          TO_CHAR(b.START_DATE,'YYYY-MM-DD') AS 排期2开始,
          TO_CHAR(b.END_DATE,'YYYY-MM-DD') AS 排期2结束
   FROM MA_LECTURER_SCHEDULE a
-  JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_ID
+  JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID < b.LECTURER_SCHEDULE_ID
     AND a.LECTURER_ARCHIVES_ID = b.LECTURER_ARCHIVES_ID
     AND a.STATUS = 'active' AND b.STATUS = 'active'
-    AND a.START_DATE &lt;= b.END_DATE AND a.END_DATE &gt;= b.START_DATE;</code></pre>
+    AND a.START_DATE <= b.END_DATE AND a.END_DATE >= b.START_DATE;
+```
 <h4>报错4：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 mlt/maLecturerSchedule/save、cancel 或 list 接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查近期异常排期记录（结合后端日志时间排查）
+
+```sql
+-- 检查近期异常排期记录（结合后端日志时间排查）
   SELECT LECTURER_SCHEDULE_ID AS 排期ID,
          LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
@@ -487,51 +516,70 @@ JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_I
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间,
          LAST_UPDATED_BY AS 最后更新人
   FROM MA_LECTURER_SCHEDULE
-  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错5：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
+
+```sql
+SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
          STATUS AS 状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM MA_LECTURER_SCHEDULE
-  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错6：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击新建、取消排期等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%lecturer_schedule%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%lecturer_schedule%' ORDER BY U.USER_NAME;
+```
 <h4>报错7：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：取消排期等操作时，接口返回数据为空或排期ID不存在</li><li><strong>逻辑分析</strong>：前端通过 lecturerScheduleId 调用接口，后端查询 MA_LECTURER_SCHEDULE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：排期ID错误、排期已被删除、跨租户查询、数据权限隔离等。需检查 LECTURER_SCHEDULE_ID 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
+
+```sql
+SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
          STATUS AS 状态, DELETE_FLAG AS 删除标记
   FROM MA_LECTURER_SCHEDULE
-  WHERE DELETE_FLAG = 'Y' OR LECTURER_SCHEDULE_ID IS NULL;</code></pre>
+  WHERE DELETE_FLAG = 'Y' OR LECTURER_SCHEDULE_ID IS NULL;
+```
 <h4>报错8：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击取消排期按钮时，排期状态不允许取消</li><li><strong>逻辑分析</strong>：后端校验状态机，如已取消（cancelled）不可重复取消、已过期不可取消等。状态不匹配时后端返回业务异常。需检查排期当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
+
+```sql
+SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
          STATUS AS 状态, ERROR_INFO AS 异常问题
   FROM MA_LECTURER_SCHEDULE
   WHERE STATUS NOT IN ('active','cancelled','expired')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错9：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或新建排期弹窗中日期类型等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.SCHEDULE_DATE_TYPE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.SCHEDULE_DATE_TYPE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 <h4>报错10：讲师不能为空</h4>
 <ul><li><strong>触发条件</strong>：新建排期提交时，LECTURER_ARCHIVES_CODE 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 lecturerArchivesCode 字段配置 required 校验，提交前校验讲师是否选择，为空则阻止提交并提示"讲师不能为空"。讲师是排期的核心对象，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
+
+```sql
+SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
          LECTURER_ARCHIVES_CODE AS 讲师档案编码, STATUS AS 状态
   FROM MA_LECTURER_SCHEDULE
-  WHERE LECTURER_ARCHIVES_CODE IS NULL OR LECTURER_NAME IS NULL;</code></pre>
+  WHERE LECTURER_ARCHIVES_CODE IS NULL OR LECTURER_NAME IS NULL;
+```
 </KbCard>
 
 <KbCard title="常见问题">

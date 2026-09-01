@@ -229,15 +229,24 @@
 </table>
 <h4>按钮1：查询（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：按期间、对账单类型、OU、客户编号、事业部等条件查询</li><li>第2点：通过EBS SDK接口实时获取对账数据</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/queryCuxCustomerStateHeaderPage</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 数据从EBS系统获取，非本地SQL
--- EBS接口查询参数: periodName, stateType, orgName, partyNumber, businessDept</code></pre>
+
+```sql
+-- 数据从EBS系统获取，非本地SQL
+-- EBS接口查询参数: periodName, stateType, orgName, partyNumber, businessDept
+```
 <h4>按钮2：查看明细（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中一条记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询选中对账单的四类明细数据</li><li>第2点：分别展示货款、未结算订单、货款调整、保证金明细</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/queryCuxCustomerStateHeaderDetail</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 明细数据从EBS系统获取，按stateType分类查询
--- stateType=1: 货款, stateType=2: 未结算订单, stateType=3: 货款调整, stateType=4: 保证金</code></pre>
+
+```sql
+-- 明细数据从EBS系统获取，按stateType分类查询
+-- stateType=1: 货款, stateType=2: 未结算订单, stateType=3: 货款调整, stateType=4: 保证金
+```
 <h4>按钮3：状态更新（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：更新对账单发送状态</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/cuxCustomerStateHeaderStatusUpd</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 更新EBS系统中的对账单发送状态</code></pre>
+
+```sql
+-- 更新EBS系统中的对账单发送状态
+```
 <h4>按钮4：导出（列表页/明细页）</h4>
 <ul><li><strong>触发条件</strong>：有数据时可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：将当前查询结果导出为Excel文件</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/cuxCustomerStateHeaderDetailExport</code></li><li><strong>排查SQL</strong>：同查询SQL</li></ul>
 </KbCard>
@@ -308,47 +317,65 @@
 </table>
 <h4>报错1：EBS接口调用失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击查询或查看明细，后端通过EBS SDK接口实时获取数据时抛出连接异常或超时</li><li><strong>逻辑分析</strong>：法人对账单数据不存储在DMS本地数据库，每次查询实时调用EBS SDK接口（queryCuxCustomerStateHeaderPage/queryCuxCustomerStateHeaderDetail）。失败根因有三类：(1)EBS系统宕机或服务不可用；(2)DMS与EBS网络中断或SDK配置错误（地址/账号/密钥）；(3)EBS接口入参异常（periodName/stateType/orgName格式不符EBS要求但DMS未做转换）。此为阻断性报错，需联系EBS运维确认系统状态及SDK连接配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- EBS数据非本地存储，以下为DMS侧EBS接口调用配置核查（具体表名以EBS适配层为准）
+
+```sql
+-- EBS数据非本地存储，以下为DMS侧EBS接口调用配置核查（具体表名以EBS适配层为准）
   -- 核查EBS接口配置是否存在及启用状态
   SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
   FROM EBS_INTERFACE_CONFIG
-  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_HEADER', 'CUX_CUSTOMER_STATE_DETAIL');</code></pre>
+  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_HEADER', 'CUX_CUSTOMER_STATE_DETAIL');
+```
 <h4>报错2：查询无数据</h4>
 <ul><li><strong>触发条件</strong>：EBS接口调用成功但返回空结果集</li><li><strong>逻辑分析</strong>：EBS接口按periodName（会计期间）、stateType（对账单类型1-4）、orgName（OU名称）、partyNumber（客户编号）、businessDept（事业部）组合过滤。无数据根因有二：(1)查询条件过窄，如选了特定期间+特定客户但EBS中该客户在该期间无往来；(2)EBS中该期间尚未结账或数据未录入。需放宽条件（如去掉客户编号只按期间+OU查询）确认是数据缺失还是条件过滤问题</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 通过EBS接口核查指定期间+OU下是否有任意往来数据（stateType=1货款为例）
+
+```sql
+-- 通过EBS接口核查指定期间+OU下是否有任意往来数据（stateType=1货款为例）
   -- 以下为EBS侧核查SQL（在EBS库执行）
   SELECT PERIOD_NAME, ORG_NAME, PARTY_NUMBER, BEGIN_BALANCE, DEBIT_AMOUNT, CREDIT_AMOUNT, END_BALANCE
   FROM CUX_CUSTOMER_STATE_HEADER_V
-  WHERE PERIOD_NAME = #&#123;periodName&#125;
-    AND (ORG_NAME = #&#123;orgName&#125; OR #&#123;orgName&#125; IS NULL)
-    AND (STATE_TYPE = #&#123;stateType&#125; OR #&#123;stateType&#125; IS NULL)
-  ORDER BY PARTY_NUMBER;</code></pre>
+  WHERE PERIOD_NAME = #{periodName}
+    AND (ORG_NAME = #{orgName} OR #{orgName} IS NULL)
+    AND (STATE_TYPE = #{stateType} OR #{stateType} IS NULL)
+  ORDER BY PARTY_NUMBER;
+```
 <h4>报错3：请传入对账单类型</h4>
 <ul><li><strong>触发条件</strong>：用户点击导出按钮但未传入对账单类型（stateType）参数</li><li><strong>逻辑分析</strong>：导出接口cuxCustomerStateHeaderDetailExport使用@ExcelExport动态导出，CuxCustomerStateHeader实体实现DynamicExportEntity接口的columns方法（CuxCustomerStateHeader.java:140）校验customData非空，若StringUtils.isBlank(customData)则抛出CommonException("请传入对账单类型")。customData中包含stateType字段用于区分四类导出列（1=货款、2=未结算订单、3=货款调整、4=保证金）。根因有二：(1)前端导出时未将stateType拼装到customData参数中；(2)customData JSON格式错误无法解析。需前端在导出请求中补充stateType参数</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查EBS侧四类对账单类型是否有数据（在EBS库执行）
+
+```sql
+-- 核查EBS侧四类对账单类型是否有数据（在EBS库执行）
   SELECT STATE_TYPE, COUNT(1) AS 记录数
   FROM CUX_CUSTOMER_STATE_HEADER_V
-  WHERE PERIOD_NAME = #&#123;periodName&#125;
+  WHERE PERIOD_NAME = #{periodName}
   GROUP BY STATE_TYPE
-  ORDER BY STATE_TYPE;</code></pre>
+  ORDER BY STATE_TYPE;
+```
 <h4>报错4：状态更新失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击"状态更新"按钮，EBS接口cuxCustomerStateHeaderStatusUpd返回失败</li><li><strong>逻辑分析</strong>：状态更新调用ArrowEbsSdkServiceImpl.cuxCustomerStateHeaderStatusUpd（ArrowEbsSdkServiceImpl.java:94），通过interfaceInvokeSdk.invoke调用EBS的CUX_CUSTOMER_UPDATE_STATE接口更新对账单发送状态（SEND_FLAG）。失败根因有三：(1)EBS接口返回returnStatus非S（业务校验失败，如对账单状态不允许更新）；(2)EBS接口入参List&lt;CuxCustomerStateHeaderDto&gt;格式不符EBS要求；(3)EBS系统内部异常（如数据库锁、约束冲突）。此为阻断性报错，需联系EBS运维确认接口返回的msgData错误信息</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查DMS侧EBS状态更新接口配置
+
+```sql
+-- 核查DMS侧EBS状态更新接口配置
   SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
   FROM EBS_INTERFACE_CONFIG
-  WHERE INTERFACE_CODE = 'CUX_CUSTOMER_UPDATE_STATE';</code></pre>
+  WHERE INTERFACE_CODE = 'CUX_CUSTOMER_UPDATE_STATE';
+```
 <h4>报错5：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击查询、查看明细、状态更新或导出，前端axios请求抛出网络异常或超时</li><li><strong>逻辑分析</strong>：前端调用/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/*系列接口时，因后端crm-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)crm-business微服务未注册到Nacos或已宕机；(2)EBS SDK调用超时（EBS系统响应慢或网络延迟）导致整体请求超时；(3)网络中断或防火墙拦截DMS与EBS的连接；(4)导出数据量大导致Excel生成超时。需联系运维确认crm-business和EBS系统状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查DMS侧EBS接口配置及启用状态
+
+```sql
+-- 核查DMS侧EBS接口配置及启用状态
   SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
   FROM EBS_INTERFACE_CONFIG
-  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_LIST_PAGE', 'CUX_CUSTOMER_STATE_DETAIL', 'CUX_CUSTOMER_UPDATE_STATE');</code></pre>
+  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_LIST_PAGE', 'CUX_CUSTOMER_STATE_DETAIL', 'CUX_CUSTOMER_UPDATE_STATE');
+```
 <h4>报错6：权限不足</h4>
 <ul><li><strong>触发条件</strong>：用户访问法人对账单页面或调用接口时，返回403或"无权限访问"提示</li><li><strong>逻辑分析</strong>：后端Controller使用@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)控制访问权限，要求用户登录且拥有当前组织（organizationId）的访问权限。根因有三：(1)用户未分配该菜单（hlod页面+自定义React详情页）的访问角色；(2)用户当前切换的组织不在其授权组织范围内；(3)用户数据权限未覆盖查询的交易公司/法人/事业部。需联系管理员分配菜单角色和数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
+
+```sql
+-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #&#123;userId&#125; AND ORGANIZATION_ID = #&#123;organizationId&#125;;</code></pre>
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};
+```
 </KbCard>
 
 <KbCard title="常见问题">

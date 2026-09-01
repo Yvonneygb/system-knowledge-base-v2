@@ -344,7 +344,9 @@
 </KbCard>
 
 <KbCard title="后端接口Mapper SQL">
-<pre class="detail-sql" v-pre><code>-- 门店装修额度外兑现报表查询
+
+```sql
+-- 门店装修额度外兑现报表查询
 SELECT
     v.audit_stat,
     v.organization_id,
@@ -392,15 +394,16 @@ SELECT
     v.no_tax_amt
 FROM epms.mkt_terminal_re_cashout_view v
 WHERE 1 = 1
-    AND v.organization_id = #&#123;organizationId&#125;                     -- 组织ID（精确）
-    AND v.terminal_code LIKE '%' || #&#123;terminalCode&#125; || '%'        -- 门店编码（模糊）
-    AND v.terminal_name LIKE '%' || #&#123;terminalName&#125; || '%'        -- 门店名称（模糊）
-    AND v.cust_code LIKE '%' || #&#123;custCode&#125; || '%'                -- 经销商编码（模糊）
-    AND v.cust_name LIKE '%' || #&#123;custName&#125; || '%'                -- 经销商名称（模糊）
-    AND v.create_time &gt;= #&#123;startTime&#125;                             -- 创建时间范围-开始
-    AND v.create_time &lt;= #&#123;endTime&#125;                               -- 创建时间范围-结束
-    AND v.billing_unit_code = #&#123;billingUnitCode&#125;                  -- 开票单位编码（精确）
-    AND v.billing_unit_name LIKE '%' || #&#123;billingUnitName&#125; || '%' -- 开票单位名称（模糊）</code></pre>
+    AND v.organization_id = #{organizationId}                     -- 组织ID（精确）
+    AND v.terminal_code LIKE '%' || #{terminalCode} || '%'        -- 门店编码（模糊）
+    AND v.terminal_name LIKE '%' || #{terminalName} || '%'        -- 门店名称（模糊）
+    AND v.cust_code LIKE '%' || #{custCode} || '%'                -- 经销商编码（模糊）
+    AND v.cust_name LIKE '%' || #{custName} || '%'                -- 经销商名称（模糊）
+    AND v.create_time >= #{startTime}                             -- 创建时间范围-开始
+    AND v.create_time <= #{endTime}                               -- 创建时间范围-结束
+    AND v.billing_unit_code = #{billingUnitCode}                  -- 开票单位编码（精确）
+    AND v.billing_unit_name LIKE '%' || #{billingUnitName} || '%' -- 开票单位名称（模糊）
+```
 </KbCard>
 
 <KbCard title="状态机">
@@ -533,41 +536,56 @@ WHERE 1 = 1
 </table>
 <h4>报错1：开始时间格式必须为YYYY-MM-DD</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，调用mktTerminalReCashoutListSearch接口时，DTO中startTime字段值不符合正则 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code></li><li><strong>逻辑分析</strong>：报表查询按创建时间范围筛选FIN_FEE_TERMINAL_RE_CASHOUT.CREATE_TIME，需用to_date转换字符串为日期。若前端日期选择器异常返回非标准格式（如YYYY/MM/DD或带时分秒）、或手工拼接参数格式错误，@Pattern注解校验失败抛出异常，查询无法执行。该格式校验确保to_date转换不会因格式不匹配抛出Oracle异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT terminal_cashout_id   AS 兑现单ID,
+
+```sql
+SELECT terminal_cashout_id   AS 兑现单ID,
          terminal_cashout_code AS 兑现单号,
          cust_name             AS 经销商名称,
          terminal_name         AS 门店名称,
          create_time           AS 创建时间
   FROM   fin_fee_terminal_re_cashout
-  WHERE  create_time &lt; SYSDATE - 365
-  ORDER  BY create_time DESC;</code></pre>
+  WHERE  create_time < SYSDATE - 365
+  ORDER  BY create_time DESC;
+```
 <h4>报错2：结束时间格式必须为YYYY-MM-DD</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，调用mktTerminalReCashoutListSearch接口时，DTO中endTime字段值不符合正则 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code></li><li><strong>逻辑分析</strong>：结束时间用于限定查询上界，SQL中通过 <code>create_time &lt;= to_date(#&#123;endTime&#125;, 'yyyy-mm-dd') + 1</code> 实现含当天查询。若endTime格式错误（如传入YYYYMMDD或带时间戳），@Pattern注解校验失败抛出异常。若绕过校验传入非法字符串，to_date转换会抛出ORA-01861等Oracle格式错误，故前置正则校验提前拦截。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT terminal_cashout_id   AS 兑现单ID,
+
+```sql
+SELECT terminal_cashout_id   AS 兑现单ID,
          terminal_cashout_code AS 兑现单号,
          cust_name             AS 经销商名称,
          terminal_name         AS 门店名称,
          create_time           AS 创建时间
   FROM   fin_fee_terminal_re_cashout
-  WHERE  create_time &gt;= SYSDATE - 30
-  ORDER  BY create_time DESC;</code></pre>
+  WHERE  create_time >= SYSDATE - 30
+  ORDER  BY create_time DESC;
+```
 <h4>报错3：网络请求失败/接口调用异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-re-cashout-list/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalReCashoutListSearch接口分页查询EPMS.MKT_TERMINAL_RE_CASHOUT_VIEW视图。若后端ae-report服务未启动、Oracle数据库连接异常、视图编译错误、SQL执行超时（如视图关联多表慢查询）、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、视图状态、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 额度外兑现单总数,
+
+```sql
+SELECT COUNT(*)            AS 额度外兑现单总数,
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
-  FROM   fin_fee_terminal_re_cashout;</code></pre>
+  FROM   fin_fee_terminal_re_cashout;
+```
 <h4>报错4：权限不足/未登录</h4>
 <ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION, permissionPublic = true)，permissionPublic=true表示公开权限接口，但仍需有效的登录态。若用户未登录（token过期/丢失）、或organizationId路径参数与用户所属组织不匹配、或前端路由未配置该报表菜单，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre>
+
+```sql
+SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;
+```
 <h4>报错5：导出失败：网络异常</h4>
 <ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口将当前查询条件下的EPMS.MKT_TERMINAL_RE_CASHOUT_VIEW视图数据全量查询后生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定时间范围、经销商）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
+
+```sql
+SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
          COUNT(*)                     AS 兑现单数量
   FROM   fin_fee_terminal_re_cashout
   GROUP  BY TO_CHAR(create_time, 'YYYY')
-  ORDER  BY 年度 DESC;</code></pre>
+  ORDER  BY 年度 DESC;
+```
 </KbCard>
 
 </div>

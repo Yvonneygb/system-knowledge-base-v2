@@ -265,13 +265,19 @@
 </table>
 <h4>按钮1：查询（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：按年月、事业部、交易公司、法人等条件查询冲销数据</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/expense-writeoff-in-quotas/list</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA 
-WHERE (YEARMONTH = #&#123;yearmonth&#125; OR #&#123;yearmonth&#125; IS NULL)
-  AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
-ORDER BY YEARMONTH DESC, WRITEOFF_NO</code></pre>
+
+```sql
+SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA 
+WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
+  AND (ENTID = #{entid} OR #{entid} IS NULL)
+ORDER BY YEARMONTH DESC, WRITEOFF_NO
+```
 <h4>按钮2：推送共享财务（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中未推送记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：将选中冲销数据推送到共享财务系统(GCCX)</li><li>第2点：更新同步时间和单据状态</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/expense-writeoff-in-quotas/doserviceWithHolding</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#&#123;ids&#125;) AND BILL_STATUS != 1;</code></pre>
+
+```sql
+SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_STATUS != 1;
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -284,7 +290,10 @@ ORDER BY YEARMONTH DESC, WRITEOFF_NO</code></pre>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>定时任务生成 ──→ 待推送 ──推送共享财务──→ 已推送</code></pre>
+
+```text
+定时任务生成 ──→ 待推送 ──推送共享财务──→ 已推送
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -348,35 +357,50 @@ ORDER BY YEARMONTH DESC, WRITEOFF_NO</code></pre>
 </table>
 <h4>报错1：推送共享财务失败</h4>
 <ul><li><strong>触发条件</strong>：用户选中未推送记录点击"推送共享财务"，doserviceWithHolding接口推送至GCCX系统时返回失败</li><li><strong>逻辑分析</strong>：推送接口将EXPENSE_WRITEOFF_IN_QUOTA冲销数据推送至共享财务系统（GCCX），单据类型在SharedBillTypeEnum中定义，编码规则在CodeRuleConstants中定义。失败根因有三类：(1)GCCX共享财务系统不可用或网络中断；(2)推送数据异常，如冲销含税/不含税金额为0、法人编码（BILLING_UNIT_CODE）在GCCX中不存在、成本中心编码不匹配；(3)GCCX侧重复推送校验。推送失败需检查SYNC_ITEM和BILL_STATUS字段，修复后重推</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILLING_UNIT_CODE, BILLING_UNIT_NAME,
+
+```sql
+SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILLING_UNIT_CODE, BILLING_UNIT_NAME,
          WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, WRITEOFF_SUMAMT, SYNC_ITEM, BILL_STATUS
   FROM EXPENSE_WRITEOFF_IN_QUOTA
-  WHERE BILL_STATUS != 1 OR SYNC_ITEM IS NULL;</code></pre>
+  WHERE BILL_STATUS != 1 OR SYNC_ITEM IS NULL;
+```
 <h4>报错2：冲销数据未生成</h4>
 <ul><li><strong>触发条件</strong>：用户按年月/事业部/交易公司查询冲销数据，EXPENSE_WRITEOFF_IN_QUOTA表返回空结果集</li><li><strong>逻辑分析</strong>：冲销数据由定时任务ExpenseWriteoffInQuotaJob定期执行生成，从工程服务费兑现（EXPENSE_TO_CASH）审批通过的数据中提取冲销信息写入EXPENSE_WRITEOFF_IN_QUOTA表。无数据根因有三类：(1)定时任务ExpenseWriteoffInQuotaJob未配置或未启动；(2)上游工程服务费兑现单未审批通过，无冲销数据来源；(3)查询的年月/事业部区间内无冲销记录。需先确认定时任务执行日志，再核查上游兑现审批状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, ENTNAME, TRADING_COMPANY_NAME,
+
+```sql
+SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, ENTNAME, TRADING_COMPANY_NAME,
          WRITEOFF_TAX_AMT, BILL_STATUS, SYNC_ITEM
   FROM EXPENSE_WRITEOFF_IN_QUOTA
-  WHERE (YEARMONTH = #&#123;yearmonth&#125; OR #&#123;yearmonth&#125; IS NULL)
-    AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
-  ORDER BY YEARMONTH DESC, WRITEOFF_NO;</code></pre>
+  WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
+    AND (ENTID = #{entid} OR #{entid} IS NULL)
+  ORDER BY YEARMONTH DESC, WRITEOFF_NO;
+```
 <h4>报错3：请传入冲销单号</h4>
 <ul><li><strong>触发条件</strong>：用户点击"推送共享财务"但未传入冲销头单号（headNo为空或空字符串）</li><li><strong>逻辑分析</strong>：doserviceWithHolding接口在ExpenseWriteoffInQuotaServiceImpl.java:93处通过StringUtils.isBlank(headNo)校验冲销单号为空时抛出CommonException("请传入冲销单号！")。该校验为前置参数校验，headNo用于查询表头数据（selectHead）和经销商明细（selectDealerDetail）。需在列表页选中有效的冲销记录后再点击推送</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, WRITEOFF_HEADNO, YEARMONTH, BILL_STATUS
+
+```sql
+SELECT WRITEOFF_ID, WRITEOFF_NO, WRITEOFF_HEADNO, YEARMONTH, BILL_STATUS
   FROM EXPENSE_WRITEOFF_IN_QUOTA
-  WHERE WRITEOFF_HEADNO = #&#123;headNo&#125;;</code></pre>
+  WHERE WRITEOFF_HEADNO = #{headNo};
+```
 <h4>报错4：推共享预提时间转换异常</h4>
 <ul><li><strong>触发条件</strong>：推送共享财务时，冲销记录的YEARMONTH（年月）字段格式错误或为空，LocalDate.parse解析失败</li><li><strong>逻辑分析</strong>：doserviceWithHolding接口在ExpenseWriteoffInQuotaServiceImpl.java:161和193处对ATTRIBUTE2（年月）和feeHappendDate进行LocalDate.parse解析，格式为yyyy-MM-dd。当YEARMONTH格式非yyyy-MM（如空值、乱码、缺少分隔符）时抛出CommonException("推共享预提 时间转换异常")。根因有二：(1)定时任务生成冲销数据时YEARMONTH字段写入异常；(2)历史数据YEARMONTH格式不规范。需核查冲销记录的YEARMONTH字段格式</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILL_STATUS
+
+```sql
+SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILL_STATUS
   FROM EXPENSE_WRITEOFF_IN_QUOTA
-  WHERE WRITEOFF_HEADNO = #&#123;headNo&#125;
-    AND (YEARMONTH IS NULL OR LENGTH(YEARMONTH) != 7 OR INSTR(YEARMONTH, '-') != 5);</code></pre>
+  WHERE WRITEOFF_HEADNO = #{headNo}
+    AND (YEARMONTH IS NULL OR LENGTH(YEARMONTH) != 7 OR INSTR(YEARMONTH, '-') != 5);
+```
 <h4>报错5：时间格式错误，请输入正确的时间格式：yyyy-MM</h4>
 <ul><li><strong>触发条件</strong>：定时任务ExpenseWriteoffInQuotaJob执行时，传入的startDate或endDate参数格式不符合yyyy-MM</li><li><strong>逻辑分析</strong>：generateExpenseWriteoffInQuota方法在ExpenseWriteoffInQuotaServiceImpl.java:351处通过checkDateFormat校验时间格式，使用SimpleDateFormat("yyyy-MM")解析，解析失败抛出CommonException("【" + dateStr + "】该时间格式错误，请输入正确的时间格式：yyyy-MM")。该异常针对定时任务参数配置，非页面操作触发。需检查定时任务参数配置中PARAM_START_DATE和PARAM_END_DATE的格式</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查定时任务参数配置（伪SQL，具体表名依定时任务框架而定）
+
+```sql
+-- 核查定时任务参数配置（伪SQL，具体表名依定时任务框架而定）
   SELECT JOB_NAME, PARAM_START_DATE, PARAM_END_DATE
   FROM JOB_CONFIG
-  WHERE JOB_NAME = 'com.arrow.dms.ae.biz.job.api.ExpenseWriteoffInQuotaJob';</code></pre>
+  WHERE JOB_NAME = 'com.arrow.dms.ae.biz.job.api.ExpenseWriteoffInQuotaJob';
+```
 </KbCard>
 
 <KbCard title="常见问题">

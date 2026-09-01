@@ -516,7 +516,9 @@
 </tbody>
 </table>
 <blockquote>查询SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT dp.POLICY_ID          AS 政策ID,
+
+```sql
+SELECT dp.POLICY_ID          AS 政策ID,
        dp.POLICY_CODE        AS 政策编码,
        dp.POLICY_NAME        AS 政策名称,
        dp.CHANNEL            AS 销售渠道,
@@ -531,7 +533,8 @@
    AND SYSDATE BETWEEN dp.EFFECTIVE_DATE_BEGIN AND dp.EFFECTIVE_DATE_END
    AND dp.CUST_ID = :custId
    AND dp.CHANNEL = :channel
- ORDER BY dp.POLICY_CODE</code></pre>
+ ORDER BY dp.POLICY_CODE
+```
 <h4>弹窗2：经销商选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -545,7 +548,9 @@
 </tbody>
 </table>
 <blockquote>查询SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT c.CUSTOMER_ID        AS 客户ID,
+
+```sql
+SELECT c.CUSTOMER_ID        AS 客户ID,
        c.CUSTOMER_CODE      AS 客户编码,
        c.CUSTOMER_NAME      AS 客户名称,
        c.CUSTOMER_SHORT_NAME AS 客户简称,
@@ -555,7 +560,8 @@
  WHERE c.USER_TYPE = 'D'
    AND c.STATUS = 'ACTIVE'
    AND c.DIVISION_ID = :divisionId
- ORDER BY c.CUSTOMER_CODE</code></pre>
+ ORDER BY c.CUSTOMER_CODE
+```
 <h4>弹窗3：门店选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -571,7 +577,9 @@
 </tbody>
 </table>
 <blockquote>查询SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT t.TERMINAL_ID        AS 门店ID,
+
+```sql
+SELECT t.TERMINAL_ID        AS 门店ID,
        t.TERMINAL_CODE      AS 门店编码,
        t.TERMINAL_NAME      AS 门店名称,
        t.CUSTOMER_CLASS     AS 经营属性,
@@ -581,7 +589,8 @@
    AND t.TERMINAL_STAT = 1
    AND t.CUST_ID = :custId
    AND t.STATUS = 'ACTIVE'
- ORDER BY t.TERMINAL_CODE</code></pre>
+ ORDER BY t.TERMINAL_CODE
+```
 <h4>弹窗4：样品产品选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -596,7 +605,9 @@
 </tbody>
 </table>
 <blockquote>查询SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT m.MATERIAL_ID        AS 产品ID,
+
+```sql
+SELECT m.MATERIAL_ID        AS 产品ID,
        m.MATERIAL_CODE      AS 产品编码,
        m.MATERIAL_NAME      AS 产品名称,
        m.MODEL              AS 型号,
@@ -614,7 +625,8 @@
    AND m.IS_MAKT = 2
    AND m.STATUS = 'ACTIVE'
    AND m.SM_STATE NOT IN ('Z8')
- ORDER BY m.MATERIAL_CODE</code></pre>
+ ORDER BY m.MATERIAL_CODE
+```
 <h4>弹窗5：收货人选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -627,14 +639,17 @@
 </tbody>
 </table>
 <blockquote>查询SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT ca.ADDRESS_ID       AS 地址ID,
+
+```sql
+SELECT ca.ADDRESS_ID       AS 地址ID,
        ca.TAKE_MAN         AS 收货人,
        ca.TAKE_PHONE       AS 联系电话,
        ca.TAKE_ADDRESS     AS 收货地址
   FROM CUSTOMER_ADDRESS ca
  WHERE ca.CUST_ID = :custId
    AND ca.STATUS = 'ACTIVE'
- ORDER BY ca.DEFAULT_FLAG DESC, ca.ADDRESS_ID</code></pre>
+ ORDER BY ca.DEFAULT_FLAG DESC, ca.ADDRESS_ID
+```
 <h4>弹窗6：交易公司选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -648,7 +663,9 @@
 </tbody>
 </table>
 <blockquote>查询SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
+
+```sql
+SELECT tc.TRADING_COMPANY_ID   AS 交易公司ID,
        tc.TRADING_COMPANY_CODE AS 交易公司编码,
        tc.TRADING_COMPANY_NAME AS 交易公司名称,
        tc.BILLING_UNIT_ID      AS 开票单位ID,
@@ -657,7 +674,8 @@
  WHERE tc.TRADING_SCOPE = 1
    AND tc.STATUS = 'ACTIVE'
    AND tc.DIVISION_ID = :divisionId
- ORDER BY tc.TRADING_COMPANY_CODE</code></pre>
+ ORDER BY tc.TRADING_COMPANY_CODE
+```
 <h4>弹窗7：项目选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -670,14 +688,17 @@
 </tbody>
 </table>
 <blockquote>查询SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT p.PROJECT_ID     AS 项目ID,
+
+```sql
+SELECT p.PROJECT_ID     AS 项目ID,
        p.PROJECT_CODE   AS 项目编码,
        p.PROJECT_NAME   AS 项目名称
   FROM PROJECT p
  WHERE p.CUST_ID = :custId
    AND p.STATUS = 'ACTIVE'
    AND SYSDATE BETWEEN p.EFFECTIVE_DATE_BEGIN AND p.EFFECTIVE_DATE_END
- ORDER BY p.PROJECT_CODE</code></pre>
+ ORDER BY p.PROJECT_CODE
+```
 <h4>弹窗8：订单产品线选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -689,13 +710,16 @@
 </tbody>
 </table>
 <blockquote>查询SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT pl.PDT_LINE_ID   AS 产品线ID,
+
+```sql
+SELECT pl.PDT_LINE_ID   AS 产品线ID,
        pl.PDT_LINE_CODE AS 产品线编码,
        pl.PDT_LINE_NAME AS 产品线名称
   FROM ORDER_PDT_LINE pl
  WHERE pl.STATUS = 'ACTIVE'
    AND pl.DIVISION_ID = :divisionId
- ORDER BY pl.PDT_LINE_CODE</code></pre>
+ ORDER BY pl.PDT_LINE_CODE
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -763,42 +787,62 @@
 </table>
 <h4>按钮1：编辑（详情页）</h4>
 <ul><li><strong>触发条件</strong>：单据非审批中状态</li><li><strong>执行逻辑</strong>：</li><li>第1点：设置editFlag=true</li><li>第2点：头表单和行表格进入可编辑状态</li><li>第3点：根据priceType、stat、hzApproveStatus动态设置各字段disabled状态</li><li><strong>接口调用</strong>：无</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.INTERIM_BIINO, h.HZ_APPROVE_STATUS, h.ORDER_STAT
+
+```sql
+SELECT h.INTERIM_BIINO, h.HZ_APPROVE_STATUS, h.ORDER_STAT
   FROM SA_OUT_BILL_HEAD h
- WHERE h.HEAD_ID = :headId</code></pre>
+ WHERE h.HEAD_ID = :headId
+```
 <h4>按钮2：取消编辑（详情页）</h4>
 <ul><li><strong>触发条件</strong>：editFlag=true</li><li><strong>执行逻辑</strong>：</li><li>第1点：设置editFlag=false</li><li>第2点：重新加载原始数据，放弃当前编辑内容</li><li>第3点：头表单和行表格恢复disabled状态</li><li><strong>接口调用</strong>：GET /list-detail重新加载详情</li><li><strong>排查SQL</strong>：无</li></ul>
 <h4>按钮3：删除（详情页）</h4>
 <ul><li><strong>触发条件</strong>：roleList含'AE20250907'且backEditFlag且saSalebillno为空且hzApproveStatus='NEW'</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验hzApproveStatus≠APPROVED且stat≠5，否则提示"单据已经审核，不允许删除"</li><li>第2点：校验isAuditingWh≠2，否则提示"单据已经审核，不允许删除"</li><li>第3点：校验saSalebillno为空，否则提示"具备了订单号的订单，不允许删除"</li><li>第4点：调用updateActiveQty返还折扣政策可下单数量</li><li>第5点：删除SA_OUT_BILL_HEAD和SA_OUT_BILL_LINE数据</li><li><strong>接口调用</strong>：DELETE /sa-out-bill-heads</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.HZ_APPROVE_STATUS, h.IS_AUDITING_WH, h.SA_SALEBILLNO, h.ORDER_STAT
+
+```sql
+SELECT h.HEAD_ID, h.HZ_APPROVE_STATUS, h.IS_AUDITING_WH, h.SA_SALEBILLNO, h.ORDER_STAT
   FROM SA_OUT_BILL_HEAD h
- WHERE h.HEAD_ID = :headId</code></pre>
+ WHERE h.HEAD_ID = :headId
+```
 <h4>按钮4：新建（详情页）</h4>
 <ul><li><strong>触发条件</strong>：始终可点击</li><li><strong>执行逻辑</strong>：</li><li>第1点：跳转空白新建页</li><li>第2点：头表单初始化默认值：订单日期=当前日期、申请人=当前用户、事业部=当前用户deptName、签约方式='2'、IS_MAKT=2</li><li>第3点：设置editFlag=true、backEditFlag=true</li><li><strong>接口调用</strong>：无</li><li><strong>排查SQL</strong>：无</li></ul>
 <h4>按钮5：保存（详情页）</h4>
 <ul><li><strong>触发条件</strong>：editFlag且(backEditFlag或新建)</li><li><strong>执行逻辑</strong>：</li><li>第1点：执行preCheckData校验紧急行数、业务类型必填、折扣政策一致性、起订量、封顶量</li><li>第2点：执行verifyCustomer校验客户信息</li><li>第3点：执行updateActiveQty返还旧的可下单数量</li><li>第4点：执行saveHeadData保存头信息</li><li>第5点：执行saveLineData保存行信息</li><li>第6点：执行updateActiveQty扣减新的可下单数量</li><li><strong>接口调用</strong>：POST /sa-out-bill-heads</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.PRICE_TYPE, h.BUSINESS_TYPE, h.HZ_APPROVE_STATUS
+
+```sql
+SELECT h.HEAD_ID, h.PRICE_TYPE, h.BUSINESS_TYPE, h.HZ_APPROVE_STATUS
   FROM SA_OUT_BILL_HEAD h
- WHERE h.HEAD_ID = :headId</code></pre>
+ WHERE h.HEAD_ID = :headId
+```
 <h4>按钮6：保存并提交（详情页）</h4>
 <ul><li><strong>触发条件</strong>：(backEditFlag或新建)且priceType≠3</li><li><strong>执行逻辑</strong>：</li><li>第1点：执行保存全部校验逻辑</li><li>第2点：priceType=2时，设置hzApproveStatus=NEW，调用doOaRequestOrderAudit推送OA审批</li><li>第3点：OA流程编码根据渠道区分：渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT</li><li>第4点：OA单据名称YPYHDD</li><li>第5点：priceType=3时，设置hzApproveStatus=NO_APPROVED，直接生成CRM订单</li><li><strong>接口调用</strong>：POST /sa-out-bill-heads/save-and-submit</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS
+
+```sql
+SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS
   FROM SA_OUT_BILL_HEAD h
- WHERE h.HEAD_ID = :headId</code></pre>
+ WHERE h.HEAD_ID = :headId
+```
 <h4>按钮7：查看下单数量及坎级（详情页）</h4>
 <ul><li><strong>触发条件</strong>：editFlag且priceType=2</li><li><strong>执行逻辑</strong>：</li><li>第1点：设置viewQty=true</li><li>第2点：行表格显示折扣信息和政策可下单数列</li><li>第3点：查询折扣政策产品行的可下单数量和坎级信息</li><li><strong>接口调用</strong>：无（前端联动显示）</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dpl.MATERIAL_CODE, dpl.ACTIVE_QTY, dpl.MOQ, dpl.CAP_QTY, dpl.CAP_LEVEL
+
+```sql
+SELECT dpl.MATERIAL_CODE, dpl.ACTIVE_QTY, dpl.MOQ, dpl.CAP_QTY, dpl.CAP_LEVEL
   FROM DISCOUNT_POLICY_LINE dpl
  WHERE dpl.POLICY_ID = :discountPolicyId
- ORDER BY dpl.MATERIAL_CODE</code></pre>
+ ORDER BY dpl.MATERIAL_CODE
+```
 <h4>按钮8：生成CRM订单（详情页）</h4>
 <ul><li><strong>触发条件</strong>：backEditFlag且有interimBiino且priceType=3</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验单据信息完整性</li><li>第2点：根据businessType映射CRM类型：3→Sample、12→HomeDecorationSample、16→Long_Inv_Age</li><li>第3点：调用CRM接口生成订单</li><li>第4点：CRM订单号回写至SA_OUT_BILL_HEAD.SA_SALEBILLNO</li><li><strong>接口调用</strong>：POST /sa-out-bill-heads/update-create-crm</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.INTERIM_BIINO, h.PRICE_TYPE, h.BUSINESS_TYPE, h.SA_SALEBILLNO
+
+```sql
+SELECT h.HEAD_ID, h.INTERIM_BIINO, h.PRICE_TYPE, h.BUSINESS_TYPE, h.SA_SALEBILLNO
   FROM SA_OUT_BILL_HEAD h
- WHERE h.HEAD_ID = :headId</code></pre>
+ WHERE h.HEAD_ID = :headId
+```
 <h4>按钮9：批量获取当月报送总量（详情页）</h4>
 <ul><li><strong>触发条件</strong>：backEditFlag且billType=2</li><li><strong>执行逻辑</strong>：</li><li>第1点：遍历行表格所有产品</li><li>第2点：查询每个产品全国当月报送总量</li><li>第3点：回写至行MONTH_SUBMIT_QTY字段</li><li><strong>接口调用</strong>：POST /sa-out-bill-heads/get-cur-month-submit-qty</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT m.MATERIAL_CODE,
+
+```sql
+SELECT m.MATERIAL_CODE,
        NVL(SUM(l.QTY_BILL), 0) AS 当月报送总量
   FROM SA_OUT_BILL_HEAD h
   JOIN SA_OUT_BILL_LINE l ON l.HEAD_ID = h.HEAD_ID
@@ -807,17 +851,23 @@
    AND h.BILL_TYPE = 2
    AND TRUNC(h.DATE_INVBILL, 'MM') = TRUNC(SYSDATE, 'MM')
    AND m.MATERIAL_ID = :materialId
- GROUP BY m.MATERIAL_CODE</code></pre>
+ GROUP BY m.MATERIAL_CODE
+```
 <h4>按钮10：同步地址信息（详情页）</h4>
 <ul><li><strong>触发条件</strong>：有customerCode</li><li><strong>执行逻辑</strong>：</li><li>第1点：调用接口获取经销商最新收货地址信息</li><li>第2点：更新头表单收货人、联系电话、收货地址</li><li>第3点：记录地址变更历史至地址变更历史Tab</li><li><strong>接口调用</strong>：POST /sa-out-bill-heads/async-address</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ca.TAKE_MAN, ca.TAKE_PHONE, ca.TAKE_ADDRESS
+
+```sql
+SELECT ca.TAKE_MAN, ca.TAKE_PHONE, ca.TAKE_ADDRESS
   FROM CUSTOMER_ADDRESS ca
  WHERE ca.CUST_ID = :custId
    AND ca.STATUS = 'ACTIVE'
-   AND ca.DEFAULT_FLAG = 2</code></pre>
+   AND ca.DEFAULT_FLAG = 2
+```
 <h4>按钮11：导出（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可点击</li><li><strong>执行逻辑</strong>：</li><li>第1点：根据当前查询条件导出列表数据</li><li>第2点：生成Excel文件并下载</li><li><strong>接口调用</strong>：GET /sa-out-bill-heads/sample-order-export</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.INTERIM_BIINO      AS 要货单号,
+
+```sql
+SELECT h.INTERIM_BIINO      AS 要货单号,
        h.HZ_APPROVE_STATUS  AS 单据状态,
        h.SA_SALEBILLNO      AS CRM订单号,
        h.PRICE_TYPE         AS 价格类型,
@@ -833,7 +883,8 @@
   FROM SA_OUT_BILL_HEAD h
  WHERE h.IS_MAKT = 2
    AND h.SEARCH_FLAG = 1
- ORDER BY h.CREATION_DATE DESC</code></pre>
+ ORDER BY h.CREATION_DATE DESC
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -842,57 +893,74 @@
 <p>- 第2点：priceType=3时businessType必填，priceType=2时非必填</p>
 <p>- 第3点：businessType取值范围：3=样品、12=家装样品、16=长库龄</p>
 <ul><li>系统体现：保存时preCheckData校验，businessType为空则提示"业务类型不能为空"</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.IS_MAKT, h.PRICE_TYPE, h.BUSINESS_TYPE
+
+```sql
+SELECT h.HEAD_ID, h.IS_MAKT, h.PRICE_TYPE, h.BUSINESS_TYPE
   FROM SA_OUT_BILL_HEAD h
  WHERE h.HEAD_ID = :headId
    AND h.IS_MAKT = 2
-   AND h.BUSINESS_TYPE IS NULL</code></pre>
+   AND h.BUSINESS_TYPE IS NULL
+```
 <ul><li>校验2：折扣政策一致性 —— businessType/channel/billType需与折扣政策一致</li><li>详细逻辑</li></ul>
 <p>- 第1点：头表单BUSINESS_TYPE需与折扣政策BUSINESS_TYPE一致</p>
 <p>- 第2点：头表单CHANNEL需与折扣政策CHANNEL一致</p>
 <p>- 第3点：头表单BILL_TYPE需与折扣政策BILL_TYPE一致</p>
 <ul><li>系统体现：保存时preCheckData校验，不一致则提示"折扣政策与单据信息不一致"</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.BUSINESS_TYPE AS 单据业务类型, h.CHANNEL AS 单据渠道, h.BILL_TYPE AS 单据订单类型,
+
+```sql
+SELECT h.HEAD_ID, h.BUSINESS_TYPE AS 单据业务类型, h.CHANNEL AS 单据渠道, h.BILL_TYPE AS 单据订单类型,
        dp.BUSINESS_TYPE AS 政策业务类型, dp.CHANNEL AS 政策渠道, dp.BILL_TYPE AS 政策订单类型
   FROM SA_OUT_BILL_HEAD h
   JOIN DISCOUNT_POLICY dp ON dp.POLICY_ID = h.DISCOUNT_POLICY_ID
  WHERE h.HEAD_ID = :headId
-   AND (h.BUSINESS_TYPE &lt;&gt; dp.BUSINESS_TYPE OR h.CHANNEL &lt;&gt; dp.CHANNEL OR h.BILL_TYPE &lt;&gt; dp.BILL_TYPE)</code></pre>
+   AND (h.BUSINESS_TYPE <> dp.BUSINESS_TYPE OR h.CHANNEL <> dp.CHANNEL OR h.BILL_TYPE <> dp.BILL_TYPE)
+```
 <ul><li>校验3：起订量校验 —— 订单行数量≥折扣政策产品行起订量</li><li>详细逻辑</li></ul>
 <p>- 第1点：每行QTY_BILL≥折扣政策产品行MOQ</p>
 <p>- 第2点：低于起订量拦截，提示"样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;"</p>
 <ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.MOQ
+
+```sql
+SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.MOQ
   FROM SA_OUT_BILL_LINE l
   JOIN SA_OUT_BILL_HEAD h ON h.HEAD_ID = l.HEAD_ID
   JOIN DISCOUNT_POLICY_LINE dpl ON dpl.POLICY_ID = h.DISCOUNT_POLICY_ID AND dpl.MATERIAL_ID = l.MATERIAL_ID
  WHERE h.HEAD_ID = :headId
-   AND l.QTY_BILL &lt; dpl.MOQ</code></pre>
+   AND l.QTY_BILL < dpl.MOQ
+```
 <ul><li>校验4：封顶量校验 —— 订单行数量≤折扣政策坎级封顶量</li><li>详细逻辑</li></ul>
 <p>- 第1点：每行QTY_BILL≤折扣政策产品行CAP_QTY</p>
 <p>- 第2点：超过封顶量拦截，提示"样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;"</p>
 <ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.CAP_QTY
+
+```sql
+SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.CAP_QTY
   FROM SA_OUT_BILL_LINE l
   JOIN SA_OUT_BILL_HEAD h ON h.HEAD_ID = l.HEAD_ID
   JOIN DISCOUNT_POLICY_LINE dpl ON dpl.POLICY_ID = h.DISCOUNT_POLICY_ID AND dpl.MATERIAL_ID = l.MATERIAL_ID
  WHERE h.HEAD_ID = :headId
-   AND l.QTY_BILL &gt; dpl.CAP_QTY</code></pre>
+   AND l.QTY_BILL > dpl.CAP_QTY
+```
 <ul><li>校验5：期望有效期校验 —— 期望到达日期不能晚于政策有效期</li><li>详细逻辑</li></ul>
 <p>- 第1点：头表单IN_DATE≤折扣政策EFFECTIVE_DATE_END</p>
 <p>- 第2点：超过政策有效期拦截，提示"期望到达日期不能晚于政策有效期"</p>
 <ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.IN_DATE, dp.EFFECTIVE_DATE_END
+
+```sql
+SELECT h.HEAD_ID, h.IN_DATE, dp.EFFECTIVE_DATE_END
   FROM SA_OUT_BILL_HEAD h
   JOIN DISCOUNT_POLICY dp ON dp.POLICY_ID = h.DISCOUNT_POLICY_ID
  WHERE h.HEAD_ID = :headId
-   AND h.IN_DATE &gt; dp.EFFECTIVE_DATE_END</code></pre>
+   AND h.IN_DATE > dp.EFFECTIVE_DATE_END
+```
 <ul><li>校验6：紧急行数校验 —— 仅计划订单可加急，上限=ceil(总行数/5)</li><li>详细逻辑</li></ul>
 <p>- 第1点：仅billType=2或14时可加急，常规订单(billType=1)不允许有紧急行</p>
 <p>- 第2点：紧急行数(urgency=2)≤ceil(总行数/5)</p>
 <p>- 第3点：超过上限拦截，提示"紧急行数超过上限&#123;maxQty&#125;"</p>
 <ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID,
+
+```sql
+SELECT h.HEAD_ID,
        COUNT(l.LINE_ID) AS 总行数,
        SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) AS 紧急行数,
        CEIL(COUNT(l.LINE_ID) / 5) AS 紧急上限
@@ -900,44 +968,54 @@
   JOIN SA_OUT_BILL_LINE l ON l.HEAD_ID = h.HEAD_ID
  WHERE h.HEAD_ID = :headId
  GROUP BY h.HEAD_ID
-HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID) / 5)</code></pre>
+HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) > CEIL(COUNT(l.LINE_ID) / 5)
+```
 <ul><li>校验7：期望到达日期范围校验 —— 根据订单类型和渠道限制日期范围</li><li>详细逻辑</li></ul>
 <p>- 第1点：常规订单(billType=1)每月25号前下单，期望到达日期需为当月</p>
 <p>- 第2点：25号后仅瓷砖产品线可下常规订单</p>
 <p>- 第3点：计划订单(billType=2)电商渠道可选当月往后6个月内，其他渠道3个月内</p>
 <ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.BILL_TYPE, h.CHANNEL, h.IN_DATE, h.ORDER_PDT_LINE_ID
+
+```sql
+SELECT h.HEAD_ID, h.BILL_TYPE, h.CHANNEL, h.IN_DATE, h.ORDER_PDT_LINE_ID
   FROM SA_OUT_BILL_HEAD h
  WHERE h.HEAD_ID = :headId
-   AND h.IN_DATE &gt; ADD_MONTHS(TRUNC(SYSDATE, 'MM'),
+   AND h.IN_DATE > ADD_MONTHS(TRUNC(SYSDATE, 'MM'),
        CASE WHEN h.BILL_TYPE = 2 AND h.CHANNEL = :ecommerceChannel THEN 6
             WHEN h.BILL_TYPE = 2 THEN 3
-            ELSE 0 END)</code></pre>
+            ELSE 0 END)
+```
 <ul><li>校验8：价格校验 —— 明细行价格字段不能为空且不能≤0</li><li>详细逻辑</li></ul>
 <p>- 第1点：每行PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL不能为空</p>
 <p>- 第2点：每行PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL不能≤0</p>
 <ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.LINE_ID, l.MATERIAL_CODE, l.PRICE_BILL, l.STANDARD_PRICE, l.DISCOUNT_RATE,
+
+```sql
+SELECT l.LINE_ID, l.MATERIAL_CODE, l.PRICE_BILL, l.STANDARD_PRICE, l.DISCOUNT_RATE,
        l.DISCOUNT_INSTALLATION, l.DISCOUNTED_PRICE, l.WTAMOUNT_BILL
   FROM SA_OUT_BILL_LINE l
  WHERE l.HEAD_ID = :headId
-   AND (l.PRICE_BILL IS NULL OR l.PRICE_BILL &lt;= 0
-     OR l.STANDARD_PRICE IS NULL OR l.STANDARD_PRICE &lt;= 0
-     OR l.DISCOUNT_RATE IS NULL OR l.DISCOUNT_RATE &lt;= 0
-     OR l.DISCOUNT_INSTALLATION IS NULL OR l.DISCOUNT_INSTALLATION &lt;= 0
-     OR l.DISCOUNTED_PRICE IS NULL OR l.DISCOUNTED_PRICE &lt;= 0
-     OR l.WTAMOUNT_BILL IS NULL OR l.WTAMOUNT_BILL &lt;= 0)</code></pre>
+   AND (l.PRICE_BILL IS NULL OR l.PRICE_BILL <= 0
+     OR l.STANDARD_PRICE IS NULL OR l.STANDARD_PRICE <= 0
+     OR l.DISCOUNT_RATE IS NULL OR l.DISCOUNT_RATE <= 0
+     OR l.DISCOUNT_INSTALLATION IS NULL OR l.DISCOUNT_INSTALLATION <= 0
+     OR l.DISCOUNTED_PRICE IS NULL OR l.DISCOUNTED_PRICE <= 0
+     OR l.WTAMOUNT_BILL IS NULL OR l.WTAMOUNT_BILL <= 0)
+```
 <ul><li>校验9：产品SM状态校验 —— 根据产品生命周期状态控制下单</li><li>详细逻辑</li></ul>
 <p>- 第1点：smState='Z8'禁止下单，硬拦截</p>
 <p>- 第2点：smState='Z6'计划淘汰中，提示关注但允许下单</p>
 <p>- 第3点：smState='S6'进入售后阶段，提示关注但允许下单</p>
 <p>- 第4点：smState='Z7'有库存数量发完即止，限制下单数量不超过库存</p>
 <ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.LINE_ID, l.MATERIAL_CODE, m.SM_STATE
+
+```sql
+SELECT l.LINE_ID, l.MATERIAL_CODE, m.SM_STATE
   FROM SA_OUT_BILL_LINE l
   JOIN MATERIAL m ON m.MATERIAL_ID = l.MATERIAL_ID
  WHERE l.HEAD_ID = :headId
-   AND m.SM_STATE = 'Z8'</code></pre>
+   AND m.SM_STATE = 'Z8'
+```
 <ul><li>校验10：客户信息校验 —— 校验客户信息完整性</li><li>详细逻辑</li></ul>
 <p>- 第1点：经销商必填，CUSTOMER_OBJ不能为空</p>
 <p>- 第2点：门店必填，TERMINAL_OBJ不能为空</p>
@@ -945,12 +1023,15 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
 <p>- 第4点：交易公司必填，TRADING_COMPANY_OBJ不能为空</p>
 <p>- 第5点：订单产品线必填，ORDER_PDT_LINE_OBJ不能为空</p>
 <ul><li>系统体现：保存时verifyCustomer校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
+
+```sql
+SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
        h.TRADING_COMPANY_ID, h.ORDER_PDT_LINE_ID
   FROM SA_OUT_BILL_HEAD h
  WHERE h.HEAD_ID = :headId
    AND (h.CUSTOMER_ID IS NULL OR h.TERMINAL_ID IS NULL OR h.TAKE_MAN_ID IS NULL
-     OR h.TRADING_COMPANY_ID IS NULL OR h.ORDER_PDT_LINE_ID IS NULL)</code></pre>
+     OR h.TRADING_COMPANY_ID IS NULL OR h.ORDER_PDT_LINE_ID IS NULL)
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -961,11 +1042,14 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
 <p>- 第4点：调用doOaRequestOrderAudit推送OA审批</p>
 <p>- 第5点：OA审批通过后生成CRM订单</p>
 <ul><li>系统体现：保存并提交按钮触发，priceType=3时跳过OA直接生成CRM</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS,
+
+```sql
+SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS,
        CASE WHEN h.CHANNEL = 4 THEN 'SAMPLE_ORDER_REQUEST_PROJECT'
             ELSE 'SAMPLE_ORDER_REQUEST_NO_ROJECT' END AS 流程编码
   FROM SA_OUT_BILL_HEAD h
- WHERE h.HEAD_ID = :headId</code></pre>
+ WHERE h.HEAD_ID = :headId
+```
 <ul><li>校验2：CRM订单生成校验 —— 生成CRM订单前校验</li><li>详细逻辑</li></ul>
 <p>- 第1点：businessType映射：3→Sample、12→HomeDecorationSample、16→Long_Inv_Age</p>
 <p>- 第2点：校验头行信息完整性</p>
@@ -973,28 +1057,36 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
 <p>- 第4点：priceType=2时OA审批通过后生成CRM</p>
 <p>- 第5点：CRM订单号回写至SA_SALEBILLNO</p>
 <ul><li>系统体现：保存并提交或生成CRM订单按钮触发</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.HEAD_ID, h.BUSINESS_TYPE, h.PRICE_TYPE, h.HZ_APPROVE_STATUS, h.SA_SALEBILLNO,
+
+```sql
+SELECT h.HEAD_ID, h.BUSINESS_TYPE, h.PRICE_TYPE, h.HZ_APPROVE_STATUS, h.SA_SALEBILLNO,
        CASE h.BUSINESS_TYPE WHEN 3 THEN 'Sample'
             WHEN 12 THEN 'HomeDecorationSample'
             WHEN 16 THEN 'Long_Inv_Age' END AS CRM业务类型
   FROM SA_OUT_BILL_HEAD h
- WHERE h.HEAD_ID = :headId</code></pre>
+ WHERE h.HEAD_ID = :headId
+```
 <ul><li>校验3：可下单数量扣减校验 —— 提交前校验可下单数量充足</li><li>详细逻辑</li></ul>
 <p>- 第1点：每行QTY_BILL≤折扣政策产品行ACTIVE_QTY</p>
 <p>- 第2点：提交时调用updateActiveQty扣减可下单数量</p>
 <p>- 第3点：可下单数量不足拦截，提示"样品&#123;code&#125;可下单数量不足"</p>
 <ul><li>系统体现：保存并提交时updateActiveQty校验</li><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
+
+```sql
+SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   FROM SA_OUT_BILL_LINE l
   JOIN SA_OUT_BILL_HEAD h ON h.HEAD_ID = l.HEAD_ID
   JOIN DISCOUNT_POLICY_LINE dpl ON dpl.POLICY_ID = h.DISCOUNT_POLICY_ID AND dpl.MATERIAL_ID = l.MATERIAL_ID
  WHERE h.HEAD_ID = :headId
-   AND l.QTY_BILL &gt; dpl.ACTIVE_QTY</code></pre>
+   AND l.QTY_BILL > dpl.ACTIVE_QTY
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>┌───────────┐  保存   ┌───────────┐  提交(折扣政策)  ┌───────────┐
+
+```text
+┌───────────┐  保存   ┌───────────┐  提交(折扣政策)  ┌───────────┐
 │  新建     │────────▶│  草稿     │─────────────────▶│ OA审批中  │
 │  stat=1   │         │ stat=1    │                  │ NEW       │
 └───────────┘         └─────┬─────┘                  └─────┬─────┘
@@ -1015,7 +1107,8 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
                             │                  ▼
                             │            ┌───────────┐
                             └───────────▶│ ERP发货   │
-                                         └───────────┘</code></pre>
+                                         └───────────┘
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -1188,7 +1281,9 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
 </table>
 <h4>报错1：业务类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"或"保存并提交"按钮，preCheckData校验时，IS_MAKT=2且BUSINESS_TYPE为空</li><li><strong>逻辑分析</strong>：样品及长库龄要货订单需明确业务类型以区分样品(3)/家装样品(12)/长库龄(16)，并驱动后续CRM订单类型映射。校验逻辑读取SA_OUT_BILL_HEAD.BUSINESS_TYPE，当IS_MAKT=2且BUSINESS_TYPE为空时抛异常。priceType=3（价目表）时必填，priceType=2（折扣政策）时由折扣政策带入但若政策未选也会为空。常见根因：用户未选择业务类型、折扣政策未带入业务类型、或前端未做必填校验。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.is_makt            AS 样品标识,
          h.price_type         AS 价格类型,
@@ -1197,10 +1292,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
   AND    h.business_type IS NULL
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错2：折扣政策与单据信息不一致</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，头表BUSINESS_TYPE/CHANNEL/BILL_TYPE与关联折扣政策对应字段任一不一致</li><li><strong>逻辑分析</strong>：折扣政策限定了业务类型、销售渠道、订单类型范围，要货订单必须与所选政策保持一致才能享受折扣。校验逻辑关联SA_OUT_BILL_HEAD与DISCOUNT_POLICY，比对BUSINESS_TYPE、CHANNEL、BILL_TYPE三个字段，任一不一致即抛异常。常见根因：用户先选政策后改单据字段、或先填单据后选不匹配的政策、或政策被修改后单据未同步。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.business_type      AS 单据业务类型,
          h.channel            AS 单据销售渠道,
@@ -1211,13 +1309,16 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   FROM   sa_out_bill_head h
   JOIN   discount_policy dp ON dp.policy_id = h.discount_policy_id
   WHERE  h.is_makt = 2
-  AND    (h.business_type &lt;&gt; dp.business_type
-          OR h.channel &lt;&gt; dp.channel
-          OR h.bill_type &lt;&gt; dp.bill_type)
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    (h.business_type <> dp.business_type
+          OR h.channel <> dp.channel
+          OR h.bill_type <> dp.bill_type)
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错3：样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData逐行校验时，某行QTY_BILL&lt;折扣政策产品行MOQ</li><li><strong>逻辑分析</strong>：折扣政策对每个产品设定了全国生产起订量，下单数量低于起订量无法享受折扣价且影响生产排期。校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对每行QTY_BILL与MOQ，低于则抛异常并提示具体产品编码、下单数量、起订量。常见根因：用户输入数量过小、未注意起订量提示、或折扣政策起订量配置过高。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.line_id           AS 行ID,
+
+```sql
+SELECT l.line_id           AS 行ID,
          l.material_code     AS 样品编码,
          l.material_name     AS 样品名称,
          l.qty_bill          AS 下单数量,
@@ -1228,11 +1329,14 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   JOIN   discount_policy_line dpl ON dpl.policy_id = h.discount_policy_id
                                 AND dpl.material_id = l.material_id
   WHERE  h.is_makt = 2
-  AND    l.qty_bill &lt; dpl.moq
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    l.qty_bill < dpl.moq
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错4：样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData逐行校验时，某行QTY_BILL&gt;折扣政策产品行CAP_QTY（坎级封顶量）</li><li><strong>逻辑分析</strong>：折扣政策对每个产品设定了坎级封顶量，下单数量超过封顶量无法享受折扣优惠。校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对每行QTY_BILL与CAP_QTY，超过则抛异常并提示具体产品编码、下单数量、封顶量。常见根因：用户输入数量过大、未注意封顶量提示、或折扣政策封顶量配置过低。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.line_id           AS 行ID,
+
+```sql
+SELECT l.line_id           AS 行ID,
          l.material_code     AS 样品编码,
          l.material_name     AS 样品名称,
          l.qty_bill          AS 下单数量,
@@ -1243,11 +1347,14 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   JOIN   discount_policy_line dpl ON dpl.policy_id = h.discount_policy_id
                                 AND dpl.material_id = l.material_id
   WHERE  h.is_makt = 2
-  AND    l.qty_bill &gt; dpl.cap_qty
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    l.qty_bill > dpl.cap_qty
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错5：期望到达日期不能晚于政策有效期</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，头表IN_DATE&gt;折扣政策EFFECTIVE_DATE_END</li><li><strong>逻辑分析</strong>：折扣政策有有效期限，期望到达日期超过政策有效期则该订单无法享受政策折扣。校验逻辑关联SA_OUT_BILL_HEAD与DISCOUNT_POLICY，比对IN_DATE与EFFECTIVE_DATE_END，超过则抛异常。常见根因：用户选择期望到达日期过晚、折扣政策即将到期、或前端未做日期范围限制。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.in_date            AS 期望到达日期,
          h.effective_date_end AS 政策有效期至,
@@ -1255,11 +1362,14 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   FROM   sa_out_bill_head h
   JOIN   discount_policy dp ON dp.policy_id = h.discount_policy_id
   WHERE  h.is_makt = 2
-  AND    h.in_date &gt; dp.effective_date_end
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    h.in_date > dp.effective_date_end
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错6：紧急行数超过上限&#123;maxQty&#125;</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，紧急行数（URGENCY=2的行数）&gt;ceil(总行数/5)</li><li><strong>逻辑分析</strong>：为避免大量加急订单冲击正常生产排期，限制紧急行数比例不超过总行数的20%（ceil(总行数/5)）。仅计划订单（billType=2或14）允许加急，常规订单不允许有紧急行。校验逻辑统计SA_OUT_BILL_LINE中URGENCY=2的行数，超过上限则抛异常。常见根因：用户标记过多紧急行、或前端未做紧急行数限制提示。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id                              AS 头表ID,
+
+```sql
+SELECT h.head_id                              AS 头表ID,
          h.interim_biino                        AS 要货单号,
          h.bill_type                            AS 订单类型,
          COUNT(l.line_id)                       AS 总行数,
@@ -1270,10 +1380,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   WHERE  h.is_makt = 2
   AND    h.bill_type IN (2, 14)
   GROUP  BY h.head_id, h.interim_biino, h.bill_type
-  HAVING SUM(CASE WHEN l.urgency = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.line_id) / 5);</code></pre>
+  HAVING SUM(CASE WHEN l.urgency = 2 THEN 1 ELSE 0 END) > CEIL(COUNT(l.line_id) / 5);
+```
 <h4>报错7：样品&#123;code&#125;已停产，禁止下单</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData逐行校验时，某行产品SM_STATE='Z8'（已停产）</li><li><strong>逻辑分析</strong>：产品生命周期状态为Z8表示已停产，禁止下单以避免库存积压和交付风险。校验逻辑关联SA_OUT_BILL_LINE与MATERIAL，比对SM_STATE，为Z8则抛异常并提示具体产品编码。常见根因：用户选择已停产产品、产品在选品后被标记停产、或前端产品选择列表未过滤停产产品。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.line_id           AS 行ID,
+
+```sql
+SELECT l.line_id           AS 行ID,
          l.material_code     AS 样品编码,
          l.material_name     AS 样品名称,
          l.sm_state          AS SM状态,
@@ -1282,10 +1395,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   JOIN   sa_out_bill_head h ON h.head_id = l.head_id
   WHERE  h.is_makt = 2
   AND    l.sm_state = 'Z8'
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错8：样品&#123;code&#125;可下单数量不足</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，updateActiveQty校验时，某行QTY_BILL&gt;折扣政策产品行ACTIVE_QTY（可下单数量）</li><li><strong>逻辑分析</strong>：折扣政策对每个产品设定了可下单数量上限，多个订单共享同一政策时需扣减可下单数量。提交时校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对QTY_BILL与ACTIVE_QTY，超过则抛异常并提示具体产品编码。常见根因：并发提交导致可下单数量被其他订单扣减、或用户下单数量超过剩余可下单数量。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.line_id           AS 行ID,
+
+```sql
+SELECT l.line_id           AS 行ID,
          l.material_code     AS 样品编码,
          l.material_name     AS 样品名称,
          l.qty_bill          AS 下单数量,
@@ -1296,11 +1412,14 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   JOIN   discount_policy_line dpl ON dpl.policy_id = h.discount_policy_id
                                 AND dpl.material_id = l.material_id
   WHERE  h.is_makt = 2
-  AND    l.qty_bill &gt; dpl.active_qty
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    l.qty_bill > dpl.active_qty
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错9：单据已经审核，不允许删除</h4>
 <ul><li><strong>触发条件</strong>：点击"删除"按钮，删除前校验时，HZ_APPROVE_STATUS='APPROVED'或ORDER_STAT=5或IS_AUDITING_WH=2</li><li><strong>逻辑分析</strong>：已审核单据已进入下游业务流程（可能已生成CRM订单或推送ERP发货），删除会导致数据不一致。校验逻辑读取SA_OUT_BILL_HEAD的HZ_APPROVE_STATUS、ORDER_STAT、IS_AUDITING_WH，任一满足已审核条件则抛异常阻止删除。常见根因：用户尝试删除已审批通过的单据、或单据已进入发货流程。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id              AS 头表ID,
+
+```sql
+SELECT h.head_id              AS 头表ID,
          h.interim_biino        AS 要货单号,
          h.hz_approve_status    AS OA审批状态,
          h.order_stat           AS 订单状态,
@@ -1311,10 +1430,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   AND    (h.hz_approve_status = 'APPROVED'
           OR h.order_stat = 5
           OR h.is_auditing_wh = 2)
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错10：具备了订单号的订单，不允许删除</h4>
 <ul><li><strong>触发条件</strong>：点击"删除"按钮，删除前校验时，SA_SALEBILLNO（CRM订单号）不为空</li><li><strong>逻辑分析</strong>：单据已生成CRM订单（SA_SALEBILLNO有值）表示已进入CRM系统流转，删除会导致DMS与CRM数据不一致。校验逻辑读取SA_OUT_BILL_HEAD.SA_SALEBILLNO，不为空则抛异常阻止删除。常见根因：用户尝试删除已生成CRM订单的单据、或CRM订单已生成但前端未禁用删除按钮。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id              AS 头表ID,
+
+```sql
+SELECT h.head_id              AS 头表ID,
          h.interim_biino        AS 要货单号,
          h.sa_salebillno        AS CRM订单号,
          h.hz_approve_status    AS OA审批状态,
@@ -1322,10 +1444,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
   AND    h.sa_salebillno IS NOT NULL
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错11：价格不能为空或小于等于0</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData逐行校验时，某行价格字段（PRICE_BILL/STANDARD_PRICE/DISCOUNT_RATE/DISCOUNT_INSTALLATION/DISCOUNTED_PRICE/WTAMOUNT_BILL）为空或&lt;=0</li><li><strong>逻辑分析</strong>：要货订单行需有有效价格才能正确计算金额并生成CRM订单。校验逻辑读取SA_OUT_BILL_LINE的PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL六个价格字段，任一为空或&lt;=0则抛异常。常见根因：产品未正确带出价格、折扣政策折扣率异常、价目表未配置该产品价格、或价格计算逻辑异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.line_id              AS 行ID,
+
+```sql
+SELECT l.line_id              AS 行ID,
          l.material_code        AS 样品编码,
          l.material_name        AS 样品名称,
          l.price_bill           AS 标准单价,
@@ -1338,16 +1463,19 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   FROM   sa_out_bill_line l
   JOIN   sa_out_bill_head h ON h.head_id = l.head_id
   WHERE  h.is_makt = 2
-  AND    (l.price_bill IS NULL OR l.price_bill &lt;= 0
-          OR l.standard_price IS NULL OR l.standard_price &lt;= 0
-          OR l.discount_rate IS NULL OR l.discount_rate &lt;= 0
-          OR l.discount_installation IS NULL OR l.discount_installation &lt;= 0
-          OR l.discounted_price IS NULL OR l.discounted_price &lt;= 0
-          OR l.wtamount_bill IS NULL OR l.wtamount_bill &lt;= 0)
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    (l.price_bill IS NULL OR l.price_bill <= 0
+          OR l.standard_price IS NULL OR l.standard_price <= 0
+          OR l.discount_rate IS NULL OR l.discount_rate <= 0
+          OR l.discount_installation IS NULL OR l.discount_installation <= 0
+          OR l.discounted_price IS NULL OR l.discounted_price <= 0
+          OR l.wtamount_bill IS NULL OR l.wtamount_bill <= 0)
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错12：只有计划订单可以加紧急</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，常规订单(BILL_TYPE=1)存在URGENCY=2(紧急)的行</li><li><strong>逻辑分析</strong>：仅计划订单(BILL_TYPE=2或14)允许加急，常规订单不允许有紧急行，避免加急订单冲击正常生产排期。校验逻辑读取SA_OUT_BILL_HEAD.BILL_TYPE和SA_OUT_BILL_LINE.URGENCY，常规订单存在紧急行则抛异常。常见根因：用户在常规订单中误标记紧急行、或前端未做订单类型与加急的联动限制。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.bill_type          AS 订单类型,
          l.line_id            AS 行ID,
@@ -1358,10 +1486,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   WHERE  h.is_makt = 2
   AND    h.bill_type = 1
   AND    l.urgency = 2
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错13：存在重复下单的产品：&#123;code&#125;</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，同一单据存在MATERIAL_CODE重复的行</li><li><strong>逻辑分析</strong>：同一要货订单不允许存在重复产品行，避免重复下单和金额计算错误。校验逻辑统计SA_OUT_BILL_LINE中MATERIAL_CODE重复的行，重复则抛异常并提示具体产品编码。常见根因：用户重复添加同一产品、或导入文件包含重复产品编码。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          l.material_code      AS 样品编码,
          COUNT(l.line_id)     AS 重复行数
@@ -1369,11 +1500,14 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   JOIN   sa_out_bill_line l ON l.head_id = h.head_id
   WHERE  h.is_makt = 2
   GROUP  BY h.head_id, h.interim_biino, l.material_code
-  HAVING COUNT(l.line_id) &gt; 1
-  ORDER  BY h.creation_date DESC;</code></pre>
+  HAVING COUNT(l.line_id) > 1
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错14：价格类型为折扣政策的订单，政策id不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，PRICE_TYPE=2(折扣政策)且DISCOUNT_POLICY_ID为空</li><li><strong>逻辑分析</strong>：价格类型为折扣政策的订单必须关联折扣政策，否则无法计算折扣价格和校验起订量/封顶量。校验逻辑读取PRICE_TYPE和DISCOUNT_POLICY_ID，PRICE_TYPE=2且DISCOUNT_POLICY_ID为空则抛异常。常见根因：用户未选择折扣政策、折扣政策选择后未正确传ID、或前端联动异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.price_type         AS 价格类型,
          h.discount_policy_id AS 折扣政策ID,
@@ -1382,10 +1516,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    h.discount_policy_id IS NULL
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错15：明细行不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，SA_OUT_BILL_LINE中该单据的明细行为空</li><li><strong>逻辑分析</strong>：要货订单必须包含至少一行产品明细才能保存，否则订单无意义。校验逻辑查询SA_OUT_BILL_LINE中HEAD_ID对应的行，为空则抛异常。常见根因：用户未添加产品行、产品行被全部删除、或导入失败后误点保存。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.order_stat         AS 订单状态,
          COUNT(l.line_id)     AS 明细行数
@@ -1393,10 +1530,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   LEFT   JOIN sa_out_bill_line l ON l.head_id = h.head_id
   WHERE  h.is_makt = 2
   GROUP  BY h.head_id, h.interim_biino, h.order_stat
-  HAVING COUNT(l.line_id) = 0;</code></pre>
+  HAVING COUNT(l.line_id) = 0;
+```
 <h4>报错16：您当前的经销合作合同已失效，暂无法正常下单，请联系业务员处理。</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"或"保存并提交"按钮，校验经销商合作合同时，关联的经销合同已失效</li><li><strong>逻辑分析</strong>：经销商需有有效合作合同才能下单，合同失效则无法正常下单。校验逻辑查询经销商关联的经销合同状态，已失效则抛异常。常见根因：经销商合同到期未续签、合同被失效处理、或合同数据异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.customer_id        AS 经销商ID,
          h.customer_code      AS 经销商编码,
@@ -1407,10 +1547,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   LEFT   JOIN customer_contract c ON c.customer_id = h.customer_id
   WHERE  h.is_makt = 2
   AND    c.valid_stat = 3
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错17：价目表或者折扣单要货，不需要送签OA，请选择生成crm订单</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验时，PRICE_TYPE=3(价目表)但仍尝试推送OA审批</li><li><strong>逻辑分析</strong>：价目表(priceType=3)或折扣单要货无需OA审批，直接生成CRM订单即可。校验逻辑读取PRICE_TYPE，为3且尝试推送OA则抛异常提示改用生成CRM订单按钮。常见根因：用户误点保存并提交、或前端未根据priceType隐藏保存并提交按钮。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.price_type         AS 价格类型,
          h.hz_approve_status  AS OA审批状态
@@ -1418,10 +1561,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   WHERE  h.is_makt = 2
   AND    h.price_type = 3
   AND    h.hz_approve_status = 'NEW'
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错18：该单据已经审核</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验时，单据HZ_APPROVE_STATUS=APPROVED或ORDER_STAT=5</li><li><strong>逻辑分析</strong>：已审核单据不允许重复提交审批，避免重复推送OA和生成CRM订单。校验逻辑读取HZ_APPROVE_STATUS和ORDER_STAT，已审核则抛异常。常见根因：用户重复点击保存并提交、或前端未做审核状态判断。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.hz_approve_status  AS OA审批状态,
          h.order_stat         AS 订单状态,
@@ -1429,10 +1575,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
   AND    (h.hz_approve_status = 'APPROVED' OR h.order_stat = 5)
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错19：折扣政策不存在，请联系管理员</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验折扣政策时，按DISCOUNT_POLICY_ID查询DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：提交时需校验折扣政策存在性，政策不存在则无法享受折扣。校验逻辑查询DISCOUNT_POLICY，返回空则抛异常。常见根因：折扣政策被并发删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.discount_policy_id AS 折扣政策ID,
          h.discount_policy_code AS 折扣政策编码,
@@ -1442,10 +1591,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    dp.policy_id IS NULL
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错20：折扣政策【&#123;code&#125;】已失效，请联系区域经理</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验折扣政策时，DISCOUNT_POLICY.VALID=3(失效)</li><li><strong>逻辑分析</strong>：已失效折扣政策(VALID=3)不允许用于下单，避免享受已失效的折扣。校验逻辑读取DISCOUNT_POLICY.VALID，为3则抛异常并提示联系区域经理。常见根因：折扣政策被失效处理、政策过期被批量失效、或前端政策选择列表未实时刷新。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.discount_policy_id AS 折扣政策ID,
          h.discount_policy_code AS 折扣政策编码,
@@ -1455,10 +1607,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    dp.valid = 3
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错21：折扣政策【&#123;code&#125;】不在有效期内，请联系区域经理</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验折扣政策时，SYSDATE不在EFFECTIVE_DATE_START和EFFECTIVE_DATE_END区间内</li><li><strong>逻辑分析</strong>：折扣政策有有效期限，当前日期不在有效期内则不允许下单。校验逻辑比对SYSDATE与EFFECTIVE_DATE_START/EFFECTIVE_DATE_END，不在区间内则抛异常。常见根因：折扣政策已过期、政策未到生效日期、或系统时间异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.discount_policy_id AS 折扣政策ID,
          h.discount_policy_code AS 折扣政策编码,
@@ -1469,11 +1624,14 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   JOIN   discount_policy dp ON dp.policy_id = h.discount_policy_id
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
-  AND    (SYSDATE &lt; dp.effective_date_begin OR SYSDATE &gt; dp.effective_date_end)
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    (SYSDATE < dp.effective_date_begin OR SYSDATE > dp.effective_date_end)
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错22：流程编码缺失，请选择流程！</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，推送OA前校验流程编码(FlowCode)为空</li><li><strong>逻辑分析</strong>：推送OA审批需指定流程编码，流程编码为空则OA无法匹配审批流程。校验逻辑读取FlowCode，为空则抛异常。常见根因：前端未传FlowCode、流程编码配置缺失、或销售渠道与流程编码映射未配置。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.price_type         AS 价格类型,
          h.channel            AS 销售渠道,
@@ -1485,10 +1643,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    h.hz_instance_id IS NULL
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错23：地址不存在或数据异常，请点击右上角【同步地址信息】按钮后，重新选择地址!</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，校验收货地址时，TAKE_MAN_ID对应地址记录不存在或数据异常</li><li><strong>逻辑分析</strong>：要货订单需有有效收货地址，地址不存在或数据异常则无法发货。校验逻辑查询CUSTOMER_ADDRESS中TAKE_MAN_ID对应记录，不存在或异常则抛异常并提示同步地址。常见根因：经销商地址档案变更、地址被删除、或地址数据不一致。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.customer_id        AS 经销商ID,
          h.take_man_id        AS 收货地址ID,
@@ -1498,11 +1659,14 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   FROM   sa_out_bill_head h
   LEFT   JOIN customer_address ca ON ca.address_id = h.take_man_id
   WHERE  h.is_makt = 2
-  AND    (ca.address_id IS NULL OR ca.status &lt;&gt; 'ACTIVE')
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    (ca.address_id IS NULL OR ca.status <> 'ACTIVE')
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错24：当前折扣政策已失效，请重新选择！</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，updateActiveQty校验时，折扣政策在提交期间被失效(VALID变为3)</li><li><strong>逻辑分析</strong>：折扣政策在用户编辑期间有效，但提交时被其他用户失效处理，导致政策无法使用。校验逻辑重新读取DISCOUNT_POLICY.VALID，为3则抛异常。常见根因：并发操作导致政策在提交前被失效、或政策过期被批量失效。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.discount_policy_id AS 折扣政策ID,
          h.discount_policy_code AS 折扣政策编码,
@@ -1513,10 +1677,13 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    dp.valid = 3
-  ORDER  BY h.creation_date DESC;</code></pre>
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错25：您当前的要货订单已超有效期，请联系业务员处理。</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验时，单据IN_DATE(期望到达日期)超过允许的有效期范围</li><li><strong>逻辑分析</strong>：要货订单有有效期限制，期望到达日期超过有效期则无法正常下单。校验逻辑比对IN_DATE与允许的有效期范围，超过则抛异常。常见根因：用户选择期望到达日期过晚、订单编辑时间过长导致超期、或有效期配置过短。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.in_date            AS 期望到达日期,
          h.date_invbill       AS 订单日期,
@@ -1524,18 +1691,22 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
          h.order_stat         AS 订单状态
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
-  AND    h.in_date &gt; h.effective_date_end
-  ORDER  BY h.creation_date DESC;</code></pre>
+  AND    h.in_date > h.effective_date_end
+  ORDER  BY h.creation_date DESC;
+```
 <h4>报错26：未查询到业务单据，请检查</h4>
 <ul><li><strong>触发条件</strong>：点击"删除"、"生成CRM订单"等操作按钮，按HEAD_ID查询SA_OUT_BILL_HEAD返回null</li><li><strong>逻辑分析</strong>：操作前需查询单据确认存在，单据不存在则无法执行后续操作。校验逻辑查询SA_OUT_BILL_HEAD，返回空则抛异常。常见根因：单据被并发删除、HEAD_ID传值错误、或单据从未存在。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT h.head_id            AS 头表ID,
+
+```sql
+SELECT h.head_id            AS 头表ID,
          h.interim_biino      AS 要货单号,
          h.hz_approve_status  AS OA审批状态,
          h.order_stat         AS 订单状态,
          h.sa_salebillno      AS CRM订单号
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
-  AND    h.head_id = #&#123;传入的headId&#125;;</code></pre>
+  AND    h.head_id = #{传入的headId};
+```
 </KbCard>
 
 <KbCard title="常见问题">

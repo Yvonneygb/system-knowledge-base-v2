@@ -199,13 +199,16 @@
 </tbody>
 </table>
 <blockquote>查询SQL（后端接口search-project）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT PROJECT_ID, PROJECT_CODE, PROJECT_NAME, CUSTOMER_CODE, CUSTOMER_NAME, 
+
+```sql
+SELECT PROJECT_ID, PROJECT_CODE, PROJECT_NAME, CUSTOMER_CODE, CUSTOMER_NAME, 
        CONTRACT_CODE, CONTRACT_NAME, TRADING_COMPANY_NAME
 FROM EPM_PROJECT 
-WHERE ORGANIZATION_ID = #&#123;organizationId&#125;
-  AND (PROJECT_CODE LIKE '%' || #&#123;projectCode&#125; || '%' OR #&#123;projectCode&#125; IS NULL)
-  AND (PROJECT_NAME LIKE '%' || #&#123;projectName&#125; || '%' OR #&#123;projectName&#125; IS NULL)
-ORDER BY CREATION_DATE DESC</code></pre>
+WHERE ORGANIZATION_ID = #{organizationId}
+  AND (PROJECT_CODE LIKE '%' || #{projectCode} || '%' OR #{projectCode} IS NULL)
+  AND (PROJECT_NAME LIKE '%' || #{projectName} || '%' OR #{projectName} IS NULL)
+ORDER BY CREATION_DATE DESC
+```
 <h4>弹窗2：交易公司选择弹窗（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -217,9 +220,12 @@ ORDER BY CREATION_DATE DESC</code></pre>
 </tbody>
 </table>
 <blockquote>查询SQL（后端接口do-search-trading-company）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT TRADING_COMPANY_ID, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME
+
+```sql
+SELECT TRADING_COMPANY_ID, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME
 FROM EPM_TRADING_COMPANY 
-WHERE CUSTOMER_CODE = #&#123;customerCode&#125;</code></pre>
+WHERE CUSTOMER_CODE = #{customerCode}
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -239,15 +245,21 @@ WHERE CUSTOMER_CODE = #&#123;customerCode&#125;</code></pre>
 </table>
 <h4>按钮1：查询（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：按输入条件（项目、合同、经销商、发票号码等）查询发票核销记录</li><li>第2点：支持分页查询和排序</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/epm-invoice-truth-headers/invoice-truth/list</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM EPM_INVOICE_TRUTH_HEADER 
-WHERE ORGANIZATION_ID = #&#123;organizationId&#125;
-  AND (PROJECT_CODE = #&#123;projectCode&#125; OR #&#123;projectCode&#125; IS NULL)
-  AND (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
+
+```sql
+SELECT * FROM EPM_INVOICE_TRUTH_HEADER 
+WHERE ORGANIZATION_ID = #{organizationId}
+  AND (PROJECT_CODE = #{projectCode} OR #{projectCode} IS NULL)
+  AND (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
   AND HZ_APPROVE_STATUS = 'APPROVED'
-ORDER BY CREATE_TIME DESC</code></pre>
+ORDER BY CREATE_TIME DESC
+```
 <h4>按钮2：查看明细（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中一条记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询选中记录的出库单与发票核对明细</li><li>第2点：展示出库单列表和发票信息进行交叉核对</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/epm-invoice-truth-headers/invoice-truth/detail</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;;</code></pre>
+
+```sql
+SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #{invoiceTruthId};
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -328,43 +340,61 @@ ORDER BY CREATE_TIME DESC</code></pre>
 </table>
 <h4>报错1：查询无数据</h4>
 <ul><li><strong>触发条件</strong>：用户在列表页输入查询条件（项目/合同/经销商/发票号码）点击查询，返回结果集为空</li><li><strong>逻辑分析</strong>：查询接口invoice-truth/list基于EPM_INVOICE_TRUTH_HEADER表过滤，要求HZ_APPROVE_STATUS='APPROVED'（H0流程审批通过）。无数据的根因有三类：(1)查询条件过窄，多条件AND过滤导致空集；(2)上游发票真实性核销流程尚未审批通过，HZ_APPROVE_STATUS仍为RUN或NEW；(3)INVOICE_VERIFER_NO（核销单号）与查询的发票号码不匹配。需逐一放宽条件确认是数据缺失还是条件过滤问题</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT INVOICE_TRUTH_NO, PROJECT_CODE, CUSTOMER_CODE, INVOICE_VERIFER_NO,
+
+```sql
+SELECT INVOICE_TRUTH_NO, PROJECT_CODE, CUSTOMER_CODE, INVOICE_VERIFER_NO,
          HZ_APPROVE_STATUS, AUDIT_STAT, CREATE_TIME
   FROM EPM_INVOICE_TRUTH_HEADER
-  WHERE ORGANIZATION_ID = #&#123;organizationId&#125;
-    AND (PROJECT_CODE = #&#123;projectCode&#125; OR #&#123;projectCode&#125; IS NULL)
-    AND (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
-    AND (INVOICE_VERIFER_NO = #&#123;invoiceNo&#125; OR #&#123;invoiceNo&#125; IS NULL)
-  ORDER BY CREATE_TIME DESC;</code></pre>
+  WHERE ORGANIZATION_ID = #{organizationId}
+    AND (PROJECT_CODE = #{projectCode} OR #{projectCode} IS NULL)
+    AND (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
+    AND (INVOICE_VERIFER_NO = #{invoiceNo} OR #{invoiceNo} IS NULL)
+  ORDER BY CREATE_TIME DESC;
+```
 <h4>报错2：项目不存在</h4>
 <ul><li><strong>触发条件</strong>：用户在项目选择弹窗中输入项目编码或名称模糊查询，弹窗返回空列表</li><li><strong>逻辑分析</strong>：项目选择弹窗调用search-project接口查询EPM_PROJECT表，按PROJECT_CODE/PROJECT_NAME模糊匹配并受当前用户数据权限控制。根因有二：(1)用户输入的项目编码/名称拼写错误，LIKE '%xxx%'无法匹配；(2)当前用户对该项目无数据权限（权限组未分配），导致权限过滤后为空。需核对EPM_PROJECT是否存在该项目及用户权限配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT PROJECT_ID, PROJECT_CODE, PROJECT_NAME, ENABLED
+
+```sql
+SELECT PROJECT_ID, PROJECT_CODE, PROJECT_NAME, ENABLED
   FROM EPM_PROJECT
-  WHERE ORGANIZATION_ID = #&#123;organizationId&#125;
-    AND (PROJECT_CODE LIKE '%' || #&#123;keyword&#125; || '%' OR PROJECT_NAME LIKE '%' || #&#123;keyword&#125; || '%');</code></pre>
+  WHERE ORGANIZATION_ID = #{organizationId}
+    AND (PROJECT_CODE LIKE '%' || #{keyword} || '%' OR PROJECT_NAME LIKE '%' || #{keyword} || '%');
+```
 <h4>报错3：交易公司不存在</h4>
 <ul><li><strong>触发条件</strong>：用户在交易公司选择弹窗中根据经销商查询交易公司，弹窗返回空列表</li><li><strong>逻辑分析</strong>：交易公司选择弹窗调用do-search-trading-company接口，按CUSTOMER_CODE查询EPM_TRADING_COMPANY关联表。根因有三：(1)所选经销商编码在交易公司关联表中无记录，经销商主数据未维护交易公司关联；(2)经销商编码CUSTOMER_CODE拼写错误或与EPM_INVOICE_TRUTH_HEADER.CUSTOMER_CODE不一致；(3)交易公司关联表EPM_TRADING_COMPANY中TRADING_COMPANY_ID被禁用（ENABLED=0）。需先在经销商主数据中维护交易公司关联</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT TC.TRADING_COMPANY_ID, TC.TRADING_COMPANY_CODE, TC.TRADING_COMPANY_NAME, TC.ENABLED
+
+```sql
+SELECT TC.TRADING_COMPANY_ID, TC.TRADING_COMPANY_CODE, TC.TRADING_COMPANY_NAME, TC.ENABLED
   FROM EPM_TRADING_COMPANY TC
-  WHERE TC.CUSTOMER_CODE = #&#123;customerCode&#125;;</code></pre>
+  WHERE TC.CUSTOMER_CODE = #{customerCode};
+```
 <h4>报错4：发票明细不存在</h4>
 <ul><li><strong>触发条件</strong>：用户在列表页选中一条核销记录点击"查看明细"，明细页返回空或抛出记录不存在</li><li><strong>逻辑分析</strong>：查看明细调用invoice-truth/detail/&#123;invoiceTruthId&#125;接口，按INVOICE_TRUTH_ID查询EPM_INVOICE_TRUTH_HEADER头表和EPM_INVOICE_TRUTH_LINE行表。根因有三：(1)并发场景下他人已删除该核销单，头表记录不存在；(2)核销单头表存在但行表EPM_INVOICE_TRUTH_LINE无关联明细（INVOICE_TRUTH_ID外键失效或行数据未生成）；(3)传入的invoiceTruthId参数格式错误或为null。需核对头行表数据一致性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.INVOICE_TRUTH_ID, H.INVOICE_TRUTH_NO, H.AUDIT_STAT,
+
+```sql
+SELECT H.INVOICE_TRUTH_ID, H.INVOICE_TRUTH_NO, H.AUDIT_STAT,
          (SELECT COUNT(1) FROM EPM_INVOICE_TRUTH_LINE L WHERE L.INVOICE_TRUTH_ID = H.INVOICE_TRUTH_ID) AS 行明细数
   FROM EPM_INVOICE_TRUTH_HEADER H
-  WHERE H.INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;;</code></pre>
+  WHERE H.INVOICE_TRUTH_ID = #{invoiceTruthId};
+```
 <h4>报错5：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击查询或查看明细，前端axios请求抛出网络异常或超时</li><li><strong>逻辑分析</strong>：前端调用/v1/&#123;organizationId&#125;/epm-invoice-truth-headers/invoice-truth/list等接口时，因后端ae-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)ae-business微服务未注册到Nacos或已宕机；(2)网关路由配置错误找不到服务；(3)网络中断或防火墙拦截；(4)SQL执行超时（EPM_INVOICE_TRUTH_HEADER数据量大且未走索引）。需联系运维确认服务状态及网络连通性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查核销头表数据量是否异常增长导致查询超时
+
+```sql
+-- 核查核销头表数据量是否异常增长导致查询超时
   SELECT COUNT(1) AS 核销单总数, MAX(CREATE_TIME) AS 最新创建时间
   FROM EPM_INVOICE_TRUTH_HEADER
-  WHERE ORGANIZATION_ID = #&#123;organizationId&#125;;</code></pre>
+  WHERE ORGANIZATION_ID = #{organizationId};
+```
 <h4>报错6：权限不足</h4>
 <ul><li><strong>触发条件</strong>：用户访问客户金税发票号码查询页面或调用接口时，返回403或"无权限访问"提示</li><li><strong>逻辑分析</strong>：后端Controller使用@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)控制访问权限，要求用户登录且拥有当前组织（organizationId）的访问权限。根因有三：(1)用户未分配该菜单（hlod页面）的访问角色；(2)用户当前切换的组织不在其授权组织范围内；(3)用户数据权限组未覆盖查询的项目/经销商数据。需联系管理员分配菜单角色和数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
+
+```sql
+-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #&#123;userId&#125; AND ORGANIZATION_ID = #&#123;organizationId&#125;;</code></pre>
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};
+```
 </KbCard>
 
 <KbCard title="常见问题">

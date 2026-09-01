@@ -441,195 +441,270 @@
 </table>
 <h4>报错1：折扣单号不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存工程合同产品变更单时，未选择折扣单(DISCOUNT_APPLY_OBJ为空)</li><li><strong>逻辑分析</strong>：保存校验中检查DISCOUNT_APPLY_OBJ非空，因变更必须关联原折扣单。需选择折扣单后保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
          edec.DISCOUNT_APPLY_CODE, edec.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.DISCOUNT_APPLY_OBJ IS NULL OR edec.DISCOUNT_APPLY_OBJ = 0)
-  -- 查出折扣单号为空的变更单</code></pre>
+  -- 查出折扣单号为空的变更单
+```
 <h4>报错2：变更说明不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存工程合同产品变更单时，变更说明(ECN_REASON)为空</li><li><strong>逻辑分析</strong>：保存校验中检查ECN_REASON非空，因变更说明记录变更原因。需填写变更说明后保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.ECN_REASON, edec.HZ_APPROVE_STATUS
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.ECN_REASON, edec.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.ECN_REASON IS NULL OR TRIM(edec.ECN_REASON) = '')
-  -- 查出变更说明为空的变更单</code></pre>
+  -- 查出变更说明为空的变更单
+```
 <h4>报错3：变更单不存在</h4>
 <ul><li><strong>触发条件</strong>：查询工程合同产品变更单详情时，按ID查询EPM_DISCOUNT_ECN返回null</li><li><strong>逻辑分析</strong>：详情方法中按DISCOUNT_ECN_ID查询变更单，若返回null则抛出阻断性报错。需检查变更单ID有效性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS, edec.VALID
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS, edec.VALID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 若返回空，说明变更单不存在</code></pre>
+  -- 若返回空，说明变更单不存在
+```
 <h4>报错4：仅新建状态单据允许删除</h4>
 <ul><li><strong>触发条件</strong>：删除工程合同产品变更单时，单据HZ_APPROVE_STATUS非NEW</li><li><strong>逻辑分析</strong>：删除方法中校验单据状态为NEW，其他状态不允许删除。该报错为阻断性报错</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS, edec.VALID
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS, edec.VALID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre>
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'
+```
 <h4>报错5：折扣单已存在变更中申请</h4>
 <ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，该折扣单已存在审批中(HZ_APPROVE_STATUS='RUN')的变更单</li><li><strong>逻辑分析</strong>：提交校验中按DISCOUNT_APPLY_OBJ查询EPM_DISCOUNT_ECN筛选HZ_APPROVE_STATUS='RUN'，若存在则抛出阻断性报错。需等原变更审批完成</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
          edec.DISCOUNT_APPLY_CODE, edec.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_APPLY_OBJ = :discountApplyObj
     AND edec.HZ_APPROVE_STATUS = 'RUN'
-    AND edec.DISCOUNT_ECN_ID &lt;&gt; :currentEcnId
-  -- 查出审批中的变更单</code></pre>
+    AND edec.DISCOUNT_ECN_ID <> :currentEcnId
+  -- 查出审批中的变更单
+```
 <h4>报错6：数据不存在或无该数据权限</h4>
 <ul><li><strong>触发条件</strong>：查询工程合同产品变更单详情时，按ID查询EPM_DISCOUNT_ECN返回null或当前用户无该数据权限</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl.selectedHeader方法中按DISCOUNT_ECN_ID查询变更单，若返回null则抛出"数据不存在或无该数据权限"。可能原因：单据已被删除、ID传递错误、用户无该事业部数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS,
          edec.ORGANIZATION_ID, edec.VALID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 若返回空，说明单据不存在或无权限</code></pre>
+  -- 若返回空，说明单据不存在或无权限
+```
 <h4>报错7：折扣类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存或提交工程合同产品变更单时，头表折扣类型(DISCOUNT_TYPE)为空</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验DISCOUNT_TYPE非空，因折扣类型决定折扣计算逻辑。需选择折扣类型后保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_TYPE,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_TYPE,
          edec.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.DISCOUNT_TYPE IS NULL OR edec.DISCOUNT_TYPE = 0)
-  -- 查出折扣类型为空的变更单</code></pre>
+  -- 查出折扣类型为空的变更单
+```
 <h4>报错8：折扣变更单明细数据为空</h4>
 <ul><li><strong>触发条件</strong>：保存或提交工程合同产品变更单时，变更单明细行(epmDiscountEcnLines)为空</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验明细行列表非空，因变更单必须包含变更产品明细。需添加变更产品明细行</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE,
          (SELECT COUNT(*) FROM EPM_DISCOUNT_ECN_LINE edl
           WHERE edl.DISCOUNT_ECN_ID = edec.DISCOUNT_ECN_ID) AS 明细行数
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 若明细行数为0，则触发该报错</code></pre>
+  -- 若明细行数为0，则触发该报错
+```
 <h4>报错9：产品不存在或已被删除</h4>
 <ul><li><strong>触发条件</strong>：保存或取价时，明细行产品在产品主档中不存在或已删除</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中按ITEM_ID/ITEM_CODE查询产品主档，若返回null则抛出阻断性报错。需检查产品编码有效性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.ITEM_NAME, edl.ITEM_ID
+
+```sql
+SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.ITEM_NAME, edl.ITEM_ID
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND NOT EXISTS (SELECT 1 FROM IAM_PRODUCT ip WHERE ip.ITEM_ID = edl.ITEM_ID)
-  -- 查出产品不存在或已删除的明细行</code></pre>
+  -- 查出产品不存在或已删除的明细行
+```
 <h4>报错10：折后单价不可少于0，不允许发起变更</h4>
 <ul><li><strong>触发条件</strong>：保存或提交时，明细行折后单价(DISCOUNTED_PRICE)&lt;0</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验折后单价非负，因折后单价为实际成交价格不能为负。需调整折后单价</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.DISCOUNTED_PRICE,
+
+```sql
+SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.DISCOUNTED_PRICE,
          edl.EXTRA_DISCOUNT_RATE, edl.STANDARD_PRICE
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
-    AND edl.DISCOUNTED_PRICE &lt; 0
-  -- 查出折后单价&lt;0的明细行</code></pre>
+    AND edl.DISCOUNTED_PRICE < 0
+  -- 查出折后单价<0的明细行
+```
 <h4>报错11：一口价折扣率不能小于1</h4>
 <ul><li><strong>触发条件</strong>：保存或提交时，一口价定位产品的折扣率&lt;1</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验一口价产品的折扣率≥1，因一口价产品折扣率不能低于1。需调整折扣率≥1</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.PROD_POSITIONING,
+
+```sql
+SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.PROD_POSITIONING,
          edl.EXTRA_DISCOUNT_RATE, edl.DISCOUNT_RATE
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND edl.PROD_POSITIONING = '一口价'
-    AND edl.EXTRA_DISCOUNT_RATE &lt; 1
-  -- 查出一口价折扣率&lt;1的明细行</code></pre>
+    AND edl.EXTRA_DISCOUNT_RATE < 1
+  -- 查出一口价折扣率<1的明细行
+```
 <h4>报错12：存在合同数量为0的产品明细，提交流程失败</h4>
 <ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，明细行CONTRACT_QTY=0</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl提交校验中检查明细行合同数量非0，因合同数量为0无法生成订单。需修改合同数量&gt;0后提交</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY
+
+```sql
+SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND edl.CONTRACT_QTY = 0
-  -- 查出合同数量为0的明细行</code></pre>
+  -- 查出合同数量为0的明细行
+```
 <h4>报错13：当前报备下已有合同(或合同变更)在审批，请先将审核流程通过后再提交！</h4>
 <ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，同一报备下已有合同或合同变更单在审批中</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl提交校验中按PROJECT_CODE查询关联合同/变更单的审批状态，若存在审批中的单据则抛出阻断性报错。需等原审批完成</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.PROJECT_CODE,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.PROJECT_CODE,
          edec.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.PROJECT_CODE = :projectCode
     AND edec.HZ_APPROVE_STATUS = 'RUN'
-    AND edec.DISCOUNT_ECN_ID &lt;&gt; :currentEcnId
-  -- 查出同报备下审批中的变更单</code></pre>
+    AND edec.DISCOUNT_ECN_ID <> :currentEcnId
+  -- 查出同报备下审批中的变更单
+```
 <h4>报错14：工程方单价不能为空或0，产品编码：&#123;itemCode&#125;</h4>
 <ul><li><strong>触发条件</strong>：保存或提交时，明细行工程方单价(CONTRACT_PRICE)为空或0</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验工程方单价非空且非0，因工程方单价为合同价格基础。需填写工程方单价</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_PRICE
+
+```sql
+SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_PRICE
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND (edl.CONTRACT_PRICE IS NULL OR edl.CONTRACT_PRICE = 0)
-  -- 查出工程方单价为空或0的明细行</code></pre>
+  -- 查出工程方单价为空或0的明细行
+```
 <h4>报错15：对应的合同已失效</h4>
 <ul><li><strong>触发条件</strong>：保存或提交工程合同产品变更单时，关联合同状态已失效</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中按CONTRACT_CODE查询合同状态，若已失效则抛出阻断性报错。需重新选择有效合同</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.CONTRACT_CODE, edec.CONTRACT_NAME,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.CONTRACT_CODE, edec.CONTRACT_NAME,
          ec.VALID AS 合同状态
   FROM EPM_DISCOUNT_ECN edec
   LEFT JOIN EPM_CONTRACT ec ON edec.CONTRACT_CODE = ec.CONTRACT_CODE
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND ec.VALID = 3
-  -- 查出合同已失效的变更单</code></pre>
+  -- 查出合同已失效的变更单
+```
 <h4>报错16：该单据未存在有效的标准折扣设置，请联系管理员。</h4>
 <ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，事业部未配置标准折扣设置</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl提交校验中查询事业部标准折扣配置，若不存在则抛出阻断性报错。需联系管理员配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DIVISION_NAME, edec.ORGANIZATION_ID
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DIVISION_NAME, edec.ORGANIZATION_ID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 检查事业部标准折扣配置</code></pre>
+  -- 检查事业部标准折扣配置
+```
 <h4>报错17：合同关联的单体报备未生效</h4>
 <ul><li><strong>触发条件</strong>：保存或提交工程合同产品变更单时，合同关联的报备单未生效</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验合同关联的报备单状态为已生效，若未生效则抛出阻断性报错。需先生效报备单</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.CONTRACT_CODE, edec.PROJECT_CODE,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.CONTRACT_CODE, edec.PROJECT_CODE,
          ep.PROJECT_VALID AS 报备状态
   FROM EPM_DISCOUNT_ECN edec
   LEFT JOIN EPM_PROJECT ep ON edec.PROJECT_CODE = ep.PROJECT_CODE
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-    AND ep.PROJECT_VALID &lt;&gt; 2
-  -- 查出报备未生效的变更单</code></pre>
+    AND ep.PROJECT_VALID <> 2
+  -- 查出报备未生效的变更单
+```
 <h4>报错18：当前事业部未设置主要销售主体，暂无法正常下单，请联系业务员处理。</h4>
 <ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，事业部未配置主要销售主体</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中查询事业部主要销售主体配置，若不存在则抛出阻断性报错。需联系业务员配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DIVISION_NAME, edec.ORGANIZATION_ID
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DIVISION_NAME, edec.ORGANIZATION_ID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 检查事业部主要销售主体配置</code></pre>
+  -- 检查事业部主要销售主体配置
+```
 <h4>报错19：必输信息未填写完成！</h4>
 <ul><li><strong>触发条件</strong>：保存或提交时，头表或明细行必填字段未填写</li><li><strong>逻辑分析</strong>：前端validCheck方法中调用headDs.validate()和lineDs.validate()校验必填字段，若有未填写的必填字段则弹出提示。需完善必填字段</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
          edec.ECN_REASON, edec.DISCOUNT_TYPE, edec.DISCOUNT_VALID_DATE
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 检查头表必填字段是否完整</code></pre>
+  -- 检查头表必填字段是否完整
+```
 <h4>报错20：申请数量必须大于0，以下行不合法：第X行</h4>
 <ul><li><strong>触发条件</strong>：保存或提交时，明细行CONTRACT_QTY≤0</li><li><strong>逻辑分析</strong>：前端validCheck方法中遍历明细行校验CONTRACT_QTY&gt;0，若≤0则收集行号拼接报错信息。需修改申请数量&gt;0</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY
+
+```sql
+SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
-    AND edl.CONTRACT_QTY &lt;= 0
-  -- 查出申请数量≤0的明细行</code></pre>
+    AND edl.CONTRACT_QTY <= 0
+  -- 查出申请数量≤0的明细行
+```
 <h4>报错21：产品的预提货数量不能大于合同数量，以下行不合法：第X行</h4>
 <ul><li><strong>触发条件</strong>：保存或提交时，提货计划数量&gt;合同数量</li><li><strong>逻辑分析</strong>：前端validCheck方法中校验提货计划数量不超过合同数量，若超过则收集行号拼接报错信息。需调整提货计划数量</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY,
+
+```sql
+SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY,
          (SELECT SUM(eep.PLAN_QTY) FROM EPM_DISCOUNT_ECN_PLAN eep
           WHERE eep.DISCOUNT_ECN_LINE_ID = edl.DISCOUNT_ECN_LINE_ID) AS 预提货合计
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND (SELECT SUM(eep.PLAN_QTY) FROM EPM_DISCOUNT_ECN_PLAN eep
-         WHERE eep.DISCOUNT_ECN_LINE_ID = edl.DISCOUNT_ECN_LINE_ID) &gt; edl.CONTRACT_QTY
-  -- 查出预提货数量&gt;合同数量的明细行</code></pre>
+         WHERE eep.DISCOUNT_ECN_LINE_ID = edl.DISCOUNT_ECN_LINE_ID) > edl.CONTRACT_QTY
+  -- 查出预提货数量>合同数量的明细行
+```
 <h4>报错22：请先选择折扣类型！</h4>
 <ul><li><strong>触发条件</strong>：审批节点提交时，头表折扣类型(DISCOUNT_TYPE)为空</li><li><strong>逻辑分析</strong>：前端handleApprovalNodeCheck方法中校验discountType非空，若为空则弹出提示。需选择折扣类型</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_TYPE, edec.HZ_APPROVE_STATUS
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_TYPE, edec.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.DISCOUNT_TYPE IS NULL OR edec.DISCOUNT_TYPE = 0)
-  -- 查出折扣类型为空的变更单</code></pre>
+  -- 查出折扣类型为空的变更单
+```
 <h4>报错23：请先获取零售折扣底限！</h4>
 <ul><li><strong>触发条件</strong>：审批节点提交时，未获取零售折扣底限(prodAttributionChannel为空)</li><li><strong>逻辑分析</strong>：前端handleApprovalNodeCheck方法中校验prodAttributionChannel非空，若为空则弹出提示。需先点击"获取零售折扣底限"按钮</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.PROD_ATTRIBUTION_CHANNEL,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.PROD_ATTRIBUTION_CHANNEL,
          edec.POLICY_ANALYSIS_DESCRIPTION
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.PROD_ATTRIBUTION_CHANNEL IS NULL OR edec.PROD_ATTRIBUTION_CHANNEL = '')
-  -- 查出未获取零售折扣底限的变更单</code></pre>
+  -- 查出未获取零售折扣底限的变更单
+```
 <h4>报错24：一口价定位的产品，通过折后单价反算的审批折扣率不能小于1</h4>
 <ul><li><strong>触发条件</strong>：编辑明细行折后单价时，一口价产品折后单价反算的审批折扣率&lt;1</li><li><strong>逻辑分析</strong>：前端LineInfo.tsx中编辑折后单价时计算审批折扣率=折后单价/标准单价/出厂折扣率，若一口价产品且审批折扣率&lt;1则弹出提示。需调整折后单价</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.PROD_POSITIONING,
+
+```sql
+SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.PROD_POSITIONING,
          edl.DISCOUNTED_PRICE, edl.STANDARD_PRICE, edl.EXTRA_DISCOUNT_RATE
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND edl.PROD_POSITIONING = '一口价'
-    AND edl.EXTRA_DISCOUNT_RATE &lt; 1
-  -- 查出一口价反算折扣率&lt;1的明细行</code></pre>
+    AND edl.EXTRA_DISCOUNT_RATE < 1
+  -- 查出一口价反算折扣率<1的明细行
+```
 <h4>报错25：保存失败，请检查数据</h4>
 <ul><li><strong>触发条件</strong>：保存时后端校验失败或数据异常</li><li><strong>逻辑分析</strong>：前端saveAndRefresh方法中调用headDs.submit()，若返回false则弹出"保存失败，请检查数据"。需检查数据后重试</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS,
+
+```sql
+SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS,
          edec.OBJECT_VERSION_NUMBER
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 检查变更单状态和版本号</code></pre>
+  -- 检查变更单状态和版本号
+```
 </KbCard>
 
 <KbCard title="常见问题">

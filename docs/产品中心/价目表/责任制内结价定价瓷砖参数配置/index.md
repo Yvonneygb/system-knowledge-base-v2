@@ -314,29 +314,41 @@
 <p>- 第1点：后端validateRequiredFields方法校验category非空</p>
 <ul><li>系统体现：后端阻断性报错"瓷砖品类不能为空"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE CATEGORY IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE CATEGORY IS NULL;
+```
 <ul><li>校验2：头表-规格非空 —— 确保指定规格</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：后端validateRequiredFields方法校验standard非空</p>
 <ul><li>系统体现：后端阻断性报错"规格不能为空"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE STANDARD IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE STANDARD IS NULL;
+```
 <ul><li>校验3：头表-生产基地非空 —— 确保指定生产基地</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：后端validateRequiredFields方法校验productionBaseCode非空</p>
 <ul><li>系统体现：后端阻断性报错"生产基地不能为空"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE PRODUCTION_BASE_CODE IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE PRODUCTION_BASE_CODE IS NULL;
+```
 <ul><li>校验4：头表-重复规格校验 —— 避免重复配置</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：后端checkRepeatRecord方法查询相同standard+category+productionBaseCode的记录</p>
 <p>- 第2点：如果存在，抛出"该规格已存在，请核对数据！"</p>
 <ul><li>系统体现：后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT STANDARD, CATEGORY, PRODUCTION_BASE_CODE, COUNT(*) AS cnt
+
+```sql
+SELECT STANDARD, CATEGORY, PRODUCTION_BASE_CODE, COUNT(*) AS cnt
     FROM LNK_RSP_STM_PORC_CFG_HEAD
     GROUP BY STANDARD, CATEGORY, PRODUCTION_BASE_CODE
-    HAVING COUNT(*) &gt; 1;</code></pre>
+    HAVING COUNT(*) > 1;
+```
 <ul><li>校验5：行表-大类非空 —— 确保指定大类</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：后端saveData方法校验type1非空</p>
@@ -355,10 +367,13 @@
 <p>- 第2点：如果存在，抛出"该头表下已存在相同大类和中类的配置，请勿重复新增"</p>
 <ul><li>系统体现：后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT HEAD_ID, TYPE_1, TYPE_2, COUNT(*) AS cnt
+
+```sql
+SELECT HEAD_ID, TYPE_1, TYPE_2, COUNT(*) AS cnt
     FROM LNK_RSP_STM_PORC_CFG_LINE
     GROUP BY HEAD_ID, TYPE_1, TYPE_2
-    HAVING COUNT(*) &gt; 1;</code></pre>
+    HAVING COUNT(*) > 1;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -367,9 +382,12 @@
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>[新建头表] → valid（生效） → 编辑时改为invalid → invalid（失效）
 
-[自动生成明细行] → valid（生效） → 编辑时改为invalid → invalid（失效）</code></pre>
+```text
+[新建头表] → valid（生效） → 编辑时改为invalid → invalid（失效）
+
+[自动生成明细行] → valid（生效） → 编辑时改为invalid → invalid（失效）
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -464,110 +482,170 @@
 <blockquote><strong>"该规格已存在，请核对数据！"详细逻辑</strong>：
 后端checkRepeatRecord方法查询相同standard+category+productionBaseCode的记录，存在则抛出异常。
 排查SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT STANDARD, CATEGORY, PRODUCTION_BASE_CODE, COUNT(*) AS cnt
+
+```sql
+SELECT STANDARD, CATEGORY, PRODUCTION_BASE_CODE, COUNT(*) AS cnt
 FROM LNK_RSP_STM_PORC_CFG_HEAD
 GROUP BY STANDARD, CATEGORY, PRODUCTION_BASE_CODE
-HAVING COUNT(*) &gt; 1;</code></pre>
+HAVING COUNT(*) > 1;
+```
 <blockquote><strong>"该头表下已存在相同大类和中类的配置，请勿重复新增"详细逻辑</strong>：
 后端saveData方法中，新增行时查询同一headId下相同type1+type2的记录，存在则抛出异常。
 排查SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT HEAD_ID, TYPE_1, TYPE_2, COUNT(*) AS cnt
+
+```sql
+SELECT HEAD_ID, TYPE_1, TYPE_2, COUNT(*) AS cnt
 FROM LNK_RSP_STM_PORC_CFG_LINE
 GROUP BY HEAD_ID, TYPE_1, TYPE_2
-HAVING COUNT(*) &gt; 1;</code></pre>
+HAVING COUNT(*) > 1;
+```
 <h4>报错1：瓷砖品类不能为空</h4>
 <ul><li><strong>触发条件</strong>：头表保存时，未填写瓷砖品类（CATEGORY字段）</li><li><strong>逻辑分析</strong>：后端保存头表前校验CATEGORY非空。瓷砖品类是瓷砖参数配置的核心维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类,
+
+```sql
+SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类,
          H.PRODUCTION_BASE_CODE AS 生产基地
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  WHERE H.ID = :headId AND H.CATEGORY IS NULL;</code></pre>
+  WHERE H.ID = :headId AND H.CATEGORY IS NULL;
+```
 <h4>报错2：规格不能为空</h4>
 <ul><li><strong>触发条件</strong>：头表保存时，未填写规格（STANDARD字段）</li><li><strong>逻辑分析</strong>：后端校验STANDARD非空。规格是瓷砖参数配置的核心维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类
+
+```sql
+SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  WHERE H.ID = :headId AND H.STANDARD IS NULL;</code></pre>
+  WHERE H.ID = :headId AND H.STANDARD IS NULL;
+```
 <h4>报错3：生产基地不能为空</h4>
 <ul><li><strong>触发条件</strong>：头表保存时，未选择生产基地（PRODUCTION_BASE_CODE字段）</li><li><strong>逻辑分析</strong>：后端校验PRODUCTION_BASE_CODE非空。生产基地是瓷砖参数配置的核心维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.ID, H.STANDARD AS 规格, H.PRODUCTION_BASE_CODE AS 生产基地
+
+```sql
+SELECT H.ID, H.STANDARD AS 规格, H.PRODUCTION_BASE_CODE AS 生产基地
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  WHERE H.ID = :headId AND H.PRODUCTION_BASE_CODE IS NULL;</code></pre>
+  WHERE H.ID = :headId AND H.PRODUCTION_BASE_CODE IS NULL;
+```
 <h4>报错4：大类不能为空</h4>
 <ul><li><strong>触发条件</strong>：行表保存时，未选择大类（TYPE_1字段）</li><li><strong>逻辑分析</strong>：后端保存行表前校验TYPE_1非空。大类是瓷砖定价的分类维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
+
+```sql
+SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
-  WHERE L.HEAD_ID = :headId AND L.TYPE_1 IS NULL;</code></pre>
+  WHERE L.HEAD_ID = :headId AND L.TYPE_1 IS NULL;
+```
 <h4>报错5：中类不能为空</h4>
 <ul><li><strong>触发条件</strong>：行表保存时，未选择中类（TYPE_2字段）</li><li><strong>逻辑分析</strong>：后端校验TYPE_2非空。中类级联大类，必须先选择大类后选择中类，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
+
+```sql
+SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
-  WHERE L.HEAD_ID = :headId AND L.TYPE_2 IS NULL;</code></pre>
+  WHERE L.HEAD_ID = :headId AND L.TYPE_2 IS NULL;
+```
 <h4>报错6：定价不能为空</h4>
 <ul><li><strong>触发条件</strong>：行表保存时，未填写定价（PRICE字段）</li><li><strong>逻辑分析</strong>：后端校验PRICE非空。定价是瓷砖参数配置的核心输出值，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
+
+```sql
+SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
          L.PRICE AS 定价
   FROM LNK_RSP_STM_PORC_CFG_LINE L
-  WHERE L.HEAD_ID = :headId AND L.PRICE IS NULL;</code></pre>
+  WHERE L.HEAD_ID = :headId AND L.PRICE IS NULL;
+```
 <h4>报错7：保存明细行失败</h4>
 <ul><li><strong>触发条件</strong>：行表保存弹窗点击确认按钮，后端保存接口返回失败</li><li><strong>逻辑分析</strong>：后端saveData方法校验必填项（大类、中类、定价）和唯一性（同一HEAD_ID下TYPE_1+TYPE_2不重复）后插入LNK_RSP_STM_PORC_CFG_LINE表。若校验失败或数据库异常则返回失败，前端提示"保存明细行失败"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
+
+```sql
+SELECT L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
          L.PRICE AS 定价, L.STATUS AS 状态
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.HEAD_ID = :headId
-  ORDER BY L.TYPE_1, L.TYPE_2;</code></pre>
+  ORDER BY L.TYPE_1, L.TYPE_2;
+```
 <h4>报错8：头表ID不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增明细行保存时，headId字段为空</li><li><strong>逻辑分析</strong>：后端RspStmPorcCfgLineServiceImpl.saveData方法中，对新增行校验line.getHeadId()是否为空，为空则抛出CommonException。常见于前端未正确传入头表ID或头表尚未保存就操作明细行。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.ROW_ID AS 头表ID, H.RSP_STM_HEAD_CODE AS 配置编码, H.STANDARD AS 规格
+
+```sql
+SELECT H.ROW_ID AS 头表ID, H.RSP_STM_HEAD_CODE AS 配置编码, H.STANDARD AS 规格
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  WHERE H.ROW_ID = :headId;</code></pre>
+  WHERE H.ROW_ID = :headId;
+```
 <h4>报错9：更新行ID不能为空</h4>
 <ul><li><strong>触发条件</strong>：更新明细行时，行id字段为空</li><li><strong>逻辑分析</strong>：后端RspStmPorcCfgLineServiceImpl.saveData方法中，对更新列表校验line.getId()是否为空，为空则抛出CommonException。常见于前端编辑弹窗未带出明细行ID。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT L.ROW_ID AS 行ID, L.HEAD_ID AS 头表ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
+
+```sql
+SELECT L.ROW_ID AS 行ID, L.HEAD_ID AS 头表ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
-  WHERE L.ROW_ID = :lineId;</code></pre>
+  WHERE L.ROW_ID = :lineId;
+```
 <h4>报错10：大类和小类必须同时传入</h4>
 <ul><li><strong>触发条件</strong>：更新明细行时，type1与type2仅传入其中一个</li><li><strong>逻辑分析</strong>：后端RspStmPorcCfgLineServiceImpl.saveData方法中，对更新行校验type1Present与type2Present是否一致，不一致则抛出CommonException。确保大类中类成对修改。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT L.ROW_ID AS 行ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
+
+```sql
+SELECT L.ROW_ID AS 行ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.ROW_ID = :lineId
-    AND (L.TYPE_1 IS NULL OR L.TYPE_2 IS NULL);</code></pre>
+    AND (L.TYPE_1 IS NULL OR L.TYPE_2 IS NULL);
+```
 <h4>报错11：该头表下已存在相同大类和中类的配置，请勿重复设置</h4>
 <ul><li><strong>触发条件</strong>：编辑明细行时，修改大类或中类后与同一头表下其他行重复</li><li><strong>逻辑分析</strong>：后端RspStmPorcCfgLineServiceImpl.saveData方法中，更新行时若type1或type2发生变化，查询同一headId下是否已存在相同type1+type2的记录（排除自身），存在则抛出CommonException。与新增校验的区别在于排除自身ID。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类, COUNT(*) AS 重复数
+
+```sql
+SELECT L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类, COUNT(*) AS 重复数
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.HEAD_ID = :headId
   GROUP BY L.HEAD_ID, L.TYPE_1, L.TYPE_2
-  HAVING COUNT(*) &gt; 1;</code></pre>
+  HAVING COUNT(*) > 1;
+```
 <h4>报错12：保存失败</h4>
 <ul><li><strong>触发条件</strong>：头表保存按钮点击时，后端接口返回res.failed=true</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleSave调用rspStmPorcCfgHeadApi.save后，若res.failed为true则通过commonFn_showErrMsg展示后端错误信息。常见于头表重复校验（该规格已存在）或必填校验被前端捕获。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.ROW_ID AS 头表ID, H.RSP_STM_HEAD_CODE AS 配置编码,
+
+```sql
+SELECT H.ROW_ID AS 头表ID, H.RSP_STM_HEAD_CODE AS 配置编码,
          H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类,
          H.PRODUCTION_BASE_CODE AS 生产基地, H.STATUS AS 状态
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  ORDER BY H.LAST_UPDATE_DATE DESC;</code></pre>
+  ORDER BY H.LAST_UPDATE_DATE DESC;
+```
 <h4>报错13：保存异常，请稍后重试</h4>
 <ul><li><strong>触发条件</strong>：头表保存按钮点击时，请求抛出异常进入catch块</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;</code></pre>
+
+```sql
+SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;
+```
 <h4>报错14：查询失败</h4>
 <ul><li><strong>触发条件</strong>：列表页查询或详情页加载时，接口请求异常</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmPorcCfgHead或rspStmPorcCfgLine接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD;</code></pre>
+
+```sql
+SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD;
+```
 <h4>报错15：权限不足</h4>
 <ul><li><strong>触发条件</strong>：用户访问页面或点击按钮时，未拥有对应权限编码</li><li><strong>逻辑分析</strong>：前端Button组件通过permissionList配置权限编码（如hzero.product_data.rsp_stm.porc_cfg.ps.add、import、export），HZERO平台校验当前用户角色是否包含该权限编码。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
+
+```sql
+SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
   FROM HZERO.IAM_USER U
     JOIN HZERO.IAM_MEMBER M ON U.ID = M.MEMBER_ID
     JOIN HZERO.IAM_ROLE R ON M.ROLE_ID = R.ID
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
-  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.porc_cfg.ps.%';</code></pre>
+  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.porc_cfg.ps.%';
+```
 <h4>报错16：暂无数据</h4>
 <ul><li><strong>触发条件</strong>：列表页查询结果为空集或明细行表格无数据</li><li><strong>逻辑分析</strong>：前端Table组件查询后端返回content为空数组时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE STATUS = 'valid';</code></pre>
+
+```sql
+SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE STATUS = 'valid';
+```
 <h4>报错17：会话过期</h4>
 <ul><li><strong>触发条件</strong>：任意操作时，登录态失效或Token过期</li><li><strong>逻辑分析</strong>：HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;</code></pre>
+
+```sql
+SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
+```
 <h4>报错18：当前有未保存的更改，确定要离开吗？</h4>
 <ul><li><strong>触发条件</strong>：编辑模式下点击返回按钮</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;</code></pre>
+
+```sql
+SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
+```
 </KbCard>
 
 <KbCard title="常见问题">

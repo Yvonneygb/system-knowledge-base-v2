@@ -403,33 +403,45 @@
 <KbCard title="保存校验">
 <h4>校验1：本次核销数量不可超过剩余可核销数量 —— 防止超额核销</h4>
 <ul><li><strong>详细逻辑</strong>：每行的本次核销数量(THIS_VERIFER_NUMBER)不可大于剩余可核销数量(SURPLUS_CAN_VERIFER_NUMBER)，小数位≤3</li><li><strong>系统体现</strong>：保存时逐行校验</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT INVBILLNO, ITEM_CODE, SURPLUS_CAN_VERIFER_NUMBER, THIS_VERIFER_NUMBER
+
+```sql
+SELECT INVBILLNO, ITEM_CODE, SURPLUS_CAN_VERIFER_NUMBER, THIS_VERIFER_NUMBER
 FROM EPM_INVOICE_TRUTH_LINE
-WHERE INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;
-  AND THIS_VERIFER_NUMBER &gt; SURPLUS_CAN_VERIFER_NUMBER;</code></pre>
+WHERE INVOICE_TRUTH_ID = #{invoiceTruthId}
+  AND THIS_VERIFER_NUMBER > SURPLUS_CAN_VERIFER_NUMBER;
+```
 <h4>校验2：发货日期和产品编码校验 —— 确保核销行与出库单行匹配</h4>
 <ul><li><strong>详细逻辑</strong>：校验核销行的发货日期和产品编码与出库单行一致</li><li><strong>系统体现</strong>：checkDateAndItemCode方法校验</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.INVBILLNO, l.DATE_INVBILL, l.ITEM_CODE, iobl.INV_OUT_BILL_LINE_ID
+
+```sql
+SELECT l.INVBILLNO, l.DATE_INVBILL, l.ITEM_CODE, iobl.INV_OUT_BILL_LINE_ID
 FROM EPM_INVOICE_TRUTH_LINE l
 JOIN INV_OUT_BILL_LINE iobl ON l.INV_OUT_BILL_LINE_ID = iobl.INV_OUT_BILL_LINE_ID
-WHERE l.INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;;</code></pre>
+WHERE l.INVOICE_TRUTH_ID = #{invoiceTruthId};
+```
 </KbCard>
 
 <KbCard title="提交校验">
 <h4>校验1：核销单必须存在有效明细行 —— 确保有核销数据可提交</h4>
 <ul><li><strong>详细逻辑</strong>：检查核销单下是否存在核销行数据且存在本次核销数量&gt;0的记录</li><li><strong>系统体现</strong>：提交前查询EPM_INVOICE_TRUTH_LINE，无数据或无本次核销数量&gt;0的行则报错</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
-WHERE INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;
-  AND THIS_VERIFER_NUMBER &gt; 0;</code></pre>
+
+```sql
+SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
+WHERE INVOICE_TRUTH_ID = #{invoiceTruthId}
+  AND THIS_VERIFER_NUMBER > 0;
+```
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="lang-text" v-pre><code>[新建stat=1] ──提交──&gt; [审批中stat=3] ──审批通过──&gt; [已审批stat=5]
+
+```text
+[新建stat=1] ──提交──> [审批中stat=3] ──审批通过──> [已审批stat=5]
                          │
-                         └──审批驳回──&gt; [已中断]
-[任意状态] ──终止──&gt; [已终止]
-[已终止] ──撤回终止──&gt; [原状态]
-[审批中] ──取消核销──&gt; [新建stat=1] (中断审批)</code></pre>
+                         └──审批驳回──> [已中断]
+[任意状态] ──终止──> [已终止]
+[已终止] ──撤回终止──> [原状态]
+[审批中] ──取消核销──> [新建stat=1] (中断审批)
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>状态值</th><th>状态名称</th><th>可执行操作</th></tr>
@@ -510,11 +522,14 @@ WHERE INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;
 </tbody>
 </table>
 <p><strong>查询SQL</strong>：</p>
-<pre class="detail-sql" v-pre><code>SELECT * FROM EPM_INVOICE_TRUTH_HEADER
-WHERE ORGANIZATION_ID = #&#123;organizationId&#125;
-  AND NVL(INVOICE_TRUTH_NO, '') LIKE '%' || #&#123;invoiceTruthNo&#125; || '%'
-  AND NVL(PROJECT_CODE, '') LIKE '%' || #&#123;projectCode&#125; || '%'
-ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+
+```sql
+SELECT * FROM EPM_INVOICE_TRUTH_HEADER
+WHERE ORGANIZATION_ID = #{organizationId}
+  AND NVL(INVOICE_TRUTH_NO, '') LIKE '%' || #{invoiceTruthNo} || '%'
+  AND NVL(PROJECT_CODE, '') LIKE '%' || #{projectCode} || '%'
+ORDER BY LAST_UPDATE_DATE DESC;
+```
 </KbCard>
 
 <KbCard title="EPM_INVOICE_TRUTH_LINE（真实性核销行表）">
@@ -581,12 +596,15 @@ ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
 </tbody>
 </table>
 <p><strong>取消核销更新SQL</strong>：</p>
-<pre class="detail-sql" v-pre><code>UPDATE EPM_VERIFER_INVOICE_DETAILS
+
+```sql
+UPDATE EPM_VERIFER_INVOICE_DETAILS
 SET EFFECT_STATUS = 'canceled',
-    CANCEL_OPERATOR = #&#123;cancelOperator&#125;,
+    CANCEL_OPERATOR = #{cancelOperator},
     CANCEL_TIME = SYSDATE,
-    CANCEL_TYPE = #&#123;cancelType&#125;
-WHERE VERIFER_INVOICE_DETAILS_ID IN (#&#123;detailIdList&#125;);</code></pre>
+    CANCEL_TYPE = #{cancelType}
+WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
+```
 </KbCard>
 
 </div>
@@ -624,128 +642,178 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#&#123;detailIdList&#125;);</code></pre>
 </table>
 <h4>报错1：本次核销数量的小数位不能超过3位</h4>
 <ul><li><strong>触发条件</strong>：保存核销时，本次核销数量(THIS_VERIFER_NUMBER)小数位超过3位</li><li><strong>逻辑分析</strong>：保存校验中检查THIS_VERIFER_NUMBER的小数位数，超过3位则抛出阻断性报错。需调整小数位至≤3位</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUTH_LINE_ID
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUTH_LINE_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
-    AND LENGTH(TO_CHAR(vid.THIS_VERIFER_NUMBER - TRUNC(vid.THIS_VERIFER_NUMBER))) - 1 &gt; 3
-  -- 查出小数位超过3位的核销明细</code></pre>
+    AND LENGTH(TO_CHAR(vid.THIS_VERIFER_NUMBER - TRUNC(vid.THIS_VERIFER_NUMBER))) - 1 > 3
+  -- 查出小数位超过3位的核销明细
+```
 <h4>报错2：参数不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存核销时，核销参数(如核销单ID、明细ID等)未填写</li><li><strong>逻辑分析</strong>：保存方法中校验关键参数非空，缺失则抛出阻断性报错。需补全核销参数后保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_INVOICE_ID, vid.INVOICE_TRUTH_LINE_ID,
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_INVOICE_ID, vid.INVOICE_TRUTH_LINE_ID,
          vid.THIS_VERIFER_NUMBER, vid.SA_OUT_BILL_HEAD_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_ID IS NULL
      OR vid.INVOICE_TRUTH_LINE_ID IS NULL
      OR vid.THIS_VERIFER_NUMBER IS NULL
-  -- 查出关键参数为空的核销明细</code></pre>
+  -- 查出关键参数为空的核销明细
+```
 <h4>报错3：核销数量必须大于0</h4>
 <ul><li><strong>触发条件</strong>：保存核销时，本次核销数量(THIS_VERIFER_NUMBER)≤0</li><li><strong>逻辑分析</strong>：保存校验中检查THIS_VERIFER_NUMBER&gt;0，因核销数量必须为正数。需调整核销数量大于0</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUTH_LINE_ID
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUTH_LINE_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
-  WHERE vid.THIS_VERIFER_NUMBER &lt;= 0
-  -- 查出核销数量≤0的异常数据</code></pre>
+  WHERE vid.THIS_VERIFER_NUMBER <= 0
+  -- 查出核销数量≤0的异常数据
+```
 <h4>报错4：核销数量超过剩余可核销数量</h4>
 <ul><li><strong>触发条件</strong>：保存核销时，本次核销数量(THIS_VERIFER_NUMBER)超过剩余可核销数量(SURPLUS_CAN_VERIFER_NUMBER)</li><li><strong>逻辑分析</strong>：保存校验中按INVOICE_TRUTH_LINE_ID查询剩余可核销数量，若THIS_VERIFER_NUMBER&gt;SURPLUS_CAN_VERIFER_NUMBER则抛出阻断性报错。需调整至剩余可核销范围内</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER,
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER,
          itl.SURPLUS_CAN_VERIFER_NUMBER, itl.CAN_VERIFER_NUMBER, itl.VERIFERED_NUMBER
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   JOIN EPM_INVOICE_TRUTH_LINE itl ON vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID
-  WHERE vid.THIS_VERIFER_NUMBER &gt; itl.SURPLUS_CAN_VERIFER_NUMBER
-  -- 查出核销数量超限的明细</code></pre>
+  WHERE vid.THIS_VERIFER_NUMBER > itl.SURPLUS_CAN_VERIFER_NUMBER
+  -- 查出核销数量超限的明细
+```
 <h4>报错5：发票必须上传</h4>
 <ul><li><strong>触发条件</strong>：保存核销时，未上传核销发票(发票关联为空)</li><li><strong>逻辑分析</strong>：保存校验中检查发票关联非空，因核销必须关联已上传的发票。需先上传核销发票再保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_INVOICE_ID, vid.INVOICE_TRUTH_LINE_ID,
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_INVOICE_ID, vid.INVOICE_TRUTH_LINE_ID,
          ith.INVOICE_TRUTH_ID, ith.INVOICE_NO
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   LEFT JOIN EPM_INVOICE_TRUTH_HEADER ith ON vid.INVOICE_TRUTH_ID = ith.INVOICE_TRUTH_ID
   WHERE vid.VERIFER_INVOICE_ID IS NULL OR ith.INVOICE_TRUTH_ID IS NULL
-  -- 查出未关联发票的核销明细</code></pre>
+  -- 查出未关联发票的核销明细
+```
 <h4>报错6：核销行不存在</h4>
 <ul><li><strong>触发条件</strong>：保存核销时，INVOICE_TRUTH_LINE_ID对应的核销行不存在</li><li><strong>逻辑分析</strong>：保存校验中按INVOICE_TRUTH_LINE_ID查询EPM_INVOICE_TRUTH_LINE，若返回null则抛出阻断性报错。需确认核销行有效性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_TRUTH_LINE_ID,
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_TRUTH_LINE_ID,
          itl.INVOICE_TRUTH_LINE_ID AS 核销行存在性, itl.CAN_VERIFER_NUMBER
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   LEFT JOIN EPM_INVOICE_TRUTH_LINE itl ON vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID
   WHERE itl.INVOICE_TRUTH_LINE_ID IS NULL
-  -- 查出核销行不存在的明细</code></pre>
+  -- 查出核销行不存在的明细
+```
 <h4>报错7：操作类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：取消核销时，actionType参数为空</li><li><strong>逻辑分析</strong>：cancel方法中校验actionType非空，因需根据操作类型确定取消范围。需传入合法actionType(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.ACTION_TYPE
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.ACTION_TYPE
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.ACTION_TYPE IS NULL
-  -- 查出操作类型为空的核销明细</code></pre>
+  -- 查出操作类型为空的核销明细
+```
 <h4>报错8：对应列表id数组不能为空</h4>
 <ul><li><strong>触发条件</strong>：取消核销时，idList参数为空</li><li><strong>逻辑分析</strong>：cancel方法中校验idList非空，因需指定要取消的核销明细ID列表。需传入需取消的ID列表</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
-  -- 校验传入的ID列表对应数据是否存在</code></pre>
+  -- 校验传入的ID列表对应数据是否存在
+```
 <h4>报错9：不支持xxx操作</h4>
 <ul><li><strong>触发条件</strong>：取消核销时，actionType不在5种合法值(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)范围内</li><li><strong>逻辑分析</strong>：cancel方法中校验actionType合法性，不在5种合法值内则抛出阻断性报错。需传入合法actionType</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.ACTION_TYPE, vid.EFFECT_STATUS
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.ACTION_TYPE, vid.EFFECT_STATUS
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.ACTION_TYPE NOT IN ('invoice', 'invoiceDetail', 'invLine', 'veriferDetail', 'obsInvoice')
-  -- 查出操作类型不合法的核销明细</code></pre>
+  -- 查出操作类型不合法的核销明细
+```
 <h4>报错10：核销取消数据为空</h4>
 <ul><li><strong>触发条件</strong>：取消核销时，按条件查询不到可取消的核销明细</li><li><strong>逻辑分析</strong>：cancel方法中按actionType和idList查询受影响的核销明细，若为空则抛出阻断性报错。需确认数据状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID,
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID,
          vid.INVOICE_TRUTH_LINE_ID, vid.SA_OUT_BILL_HEAD_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
     AND vid.EFFECT_STATUS IN ('valid', 'invalid')
-  -- 若返回空，说明无可取消的核销明细</code></pre>
+  -- 若返回空，说明无可取消的核销明细
+```
 <h4>报错11：核销明细状态异常,请刷新数据后重试</h4>
 <ul><li><strong>触发条件</strong>：取消核销时，更新canceled状态时影响行数与预期不一致</li><li><strong>逻辑分析</strong>：cancel方法中更新EFFECT_STATUS为canceled，若更新影响行数与预期不一致(并发修改或数据已被其他操作变更)则抛出阻断性报错。需刷新数据后重试</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.LAST_UPDATE_DATE, vid.OBJECT_VERSION_NUMBER
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.LAST_UPDATE_DATE, vid.OBJECT_VERSION_NUMBER
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
-  -- 检查核销明细当前状态和版本号，判断是否被并发修改</code></pre>
+  -- 检查核销明细当前状态和版本号，判断是否被并发修改
+```
 <h4>报错12：更新失败,取消后出库单行已核销数量小于0</h4>
 <ul><li><strong>触发条件</strong>：取消核销时，取消数量大于出库单行已核销数量</li><li><strong>逻辑分析</strong>：cancel方法中更新INV_OUT_BILL_LINE的已核销数量(原已核销数量-取消数量)，若结果&lt;0则抛出阻断性报错。需检查数据一致性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.VERIFERED_NUMBER, iobl.CAN_VERIFER_NUMBER,
+
+```sql
+SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.VERIFERED_NUMBER, iobl.CAN_VERIFER_NUMBER,
          vid.THIS_VERIFER_NUMBER, vid.VERIFER_INVOICE_DETAILS_ID,
          iobl.VERIFERED_NUMBER - vid.THIS_VERIFER_NUMBER AS 取消后已核销数量
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   JOIN INV_OUT_BILL_LINE iobl ON vid.INV_OUT_BILL_LINE_ID = iobl.INV_OUT_BILL_LINE_ID
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
-    AND iobl.VERIFERED_NUMBER - vid.THIS_VERIFER_NUMBER &lt; 0
-  -- 查出取消后已核销数量&lt;0的异常数据</code></pre>
+    AND iobl.VERIFERED_NUMBER - vid.THIS_VERIFER_NUMBER < 0
+  -- 查出取消后已核销数量<0的异常数据
+```
 <h4>报错13：请选择核销类型</h4>
 <ul><li><strong>触发条件</strong>：查询出库单(doSearchOutbillReport)或查询发票信息(doGetInvoiceInfo)时，未选择核销类型(VERIFER_TYPE为空)</li><li><strong>逻辑分析</strong>：doSearchOutbillReport和doGetInvoiceInfo方法中校验veriferType非空，因核销类型决定查询出库单的SQL逻辑(工程方queryProjectOutbillReportForInvoiceTruth/经销商方queryDealerOutbillReportForInvoiceTruth)。需先选择核销类型再查询</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.VERIFER_TYPE
+
+```sql
+SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.VERIFER_TYPE
   FROM EPM_INVOICE_TRUTH_HEADER ith
   WHERE ith.VERIFER_TYPE IS NULL
-  -- 查出核销类型为空的核销单</code></pre>
+  -- 查出核销类型为空的核销单
+```
 <h4>报错14：核销出库单明细不可为空</h4>
 <ul><li><strong>触发条件</strong>：提交审批时，核销单下无核销行数据(EPM_INVOICE_TRUTH_LINE为空)</li><li><strong>逻辑分析</strong>：checkWorkFlowData方法中按INVOICE_TRUTH_ID查询核销行列表，若为空则抛出阻断性报错。需先添加核销行再提交</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.HZ_APPROVE_STATUS,
+
+```sql
+SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.HZ_APPROVE_STATUS,
          (SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE itl
           WHERE itl.INVOICE_TRUTH_ID = ith.INVOICE_TRUTH_ID) AS 核销行数
   FROM EPM_INVOICE_TRUTH_HEADER ith
   WHERE ith.INVOICE_TRUTH_ID = :invoiceTruthId
-  -- 若核销行数为0，则触发该报错</code></pre>
+  -- 若核销行数为0，则触发该报错
+```
 <h4>报错15：本次核销数量不能大于可核销数量</h4>
 <ul><li><strong>触发条件</strong>：保存核销时，核销行下所有发票明细的本次核销数量合计超过出库单行可核销数量(CAN_VERIFY_NUM)</li><li><strong>逻辑分析</strong>：checkVeriferInvoice方法中累计核销行下所有发票明细的本次核销数量(sumThisVeriferNumber)，若超过出库单行可核销数量(canVerifyNum)则抛出阻断性报错。与"核销数量超过剩余可核销数量"不同，该校验针对单行发票明细，本校验针对核销行合计</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT itl.INVOICE_TRUTH_LINE_ID, itl.INVBILLNO, itl.ITEM_CODE,
+
+```sql
+SELECT itl.INVOICE_TRUTH_LINE_ID, itl.INVBILLNO, itl.ITEM_CODE,
          itl.CAN_VERIFER_NUMBER, itl.SUR_VERIFY_NUM,
          (SELECT SUM(vid.THIS_VERIFER_NUMBER) FROM EPM_VERIFER_INVOICE_DETAILS vid
           WHERE vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID) AS 合计核销数量
   FROM EPM_INVOICE_TRUTH_LINE itl
   WHERE (SELECT SUM(vid.THIS_VERIFER_NUMBER) FROM EPM_VERIFER_INVOICE_DETAILS vid
-         WHERE vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID) &gt; itl.SUR_VERIFY_NUM
-  -- 查出合计核销数量超过可核销数量的核销行</code></pre>
+         WHERE vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID) > itl.SUR_VERIFY_NUM
+  -- 查出合计核销数量超过可核销数量的核销行
+```
 <h4>报错16：对应的出库单明细不存在</h4>
 <ul><li><strong>触发条件</strong>：提交审批时，核销行关联的出库单行(INV_OUT_BILL_LINE_ID)不存在或为空</li><li><strong>逻辑分析</strong>：checkWorkFlowData方法中遍历核销行，若invOutBillLineId为空则收集错误信息并抛出阻断性报错。需确认出库单行有效性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT itl.INVOICE_TRUTH_LINE_ID, itl.INVBILLNO, itl.ITEM_CODE, itl.INV_OUT_BILL_LINE_ID
+
+```sql
+SELECT itl.INVOICE_TRUTH_LINE_ID, itl.INVBILLNO, itl.ITEM_CODE, itl.INV_OUT_BILL_LINE_ID
   FROM EPM_INVOICE_TRUTH_LINE itl
   WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
     AND (itl.INV_OUT_BILL_LINE_ID IS NULL
          OR NOT EXISTS (SELECT 1 FROM INV_OUT_BILL_LINE iobl
                         WHERE iobl.INV_OUT_BILL_LINE_ID = itl.INV_OUT_BILL_LINE_ID))
-  -- 查出出库单行不存在的核销行</code></pre>
+  -- 查出出库单行不存在的核销行
+```
 <h4>报错17：对应的出库单明细可核销数量不足</h4>
 <ul><li><strong>触发条件</strong>：提交审批时，出库单行可核销数量(selectCanVerifyNumOfLine)&lt;0</li><li><strong>逻辑分析</strong>：checkWorkFlowData方法中按invOutBillLineId查询出库单行可核销数量，若&lt;0则收集错误信息并抛出阻断性报错。可能原因：并发核销导致可核销数量被占用。需检查出库单行可核销数量</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.INV_BILL_NO, iobl.ITEM_CODE,
+
+```sql
+SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.INV_BILL_NO, iobl.ITEM_CODE,
          iobl.CAN_VERIFY_NUM, iobl.USED_VERIFY_NUM,
          iobl.CAN_VERIFY_NUM - NVL(iobl.USED_VERIFY_NUM, 0) AS 剩余可核销数量
   FROM INV_OUT_BILL_LINE iobl
@@ -753,11 +821,14 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#&#123;detailIdList&#125;);</code></pre>
     SELECT itl.INV_OUT_BILL_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
     WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
   )
-    AND iobl.CAN_VERIFY_NUM - NVL(iobl.USED_VERIFY_NUM, 0) &lt; 0
-  -- 查出可核销数量不足的出库单行</code></pre>
+    AND iobl.CAN_VERIFY_NUM - NVL(iobl.USED_VERIFY_NUM, 0) < 0
+  -- 查出可核销数量不足的出库单行
+```
 <h4>报错18：发票核销数量超过剩余可核销数量</h4>
 <ul><li><strong>触发条件</strong>：提交审批时，发票明细的本次核销数量合计超过发票明细剩余可核销数量(SURPLUS_CAN_VERIFER_NUMBER&lt;0)</li><li><strong>逻辑分析</strong>：checkWorkFlowData方法中按发票明细ID汇总本次核销数量，查询发票明细剩余可核销数量，若剩余可核销数量&lt;0则收集错误信息并抛出阻断性报错。需调整核销数量</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT uid.INVOICE_DETAILS_ID, uid.INVOICE_NUMBER, uid.SERVICES_NAME,
+
+```sql
+SELECT uid.INVOICE_DETAILS_ID, uid.INVOICE_NUMBER, uid.SERVICES_NAME,
          uid.SURPLUS_CAN_VERIFER_NUMBER,
          (SELECT SUM(vid.THIS_VERIFER_NUMBER) FROM EPM_VERIFER_INVOICE_DETAILS vid
           WHERE vid.INVOICE_DETAILS_ID = uid.INVOICE_DETAILS_ID) AS 本次核销合计
@@ -767,8 +838,9 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#&#123;detailIdList&#125;);</code></pre>
     JOIN EPM_INVOICE_TRUTH_LINE itl ON vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID
     WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
   )
-    AND uid.SURPLUS_CAN_VERIFER_NUMBER &lt; 0
-  -- 查出剩余可核销数量&lt;0的发票明细</code></pre>
+    AND uid.SURPLUS_CAN_VERIFER_NUMBER < 0
+  -- 查出剩余可核销数量<0的发票明细
+```
 </KbCard>
 
 <KbCard title="常见问题">
@@ -780,12 +852,15 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#&#123;detailIdList&#125;);</code></pre>
 <p>A: 发票购买方与工程采购单位名称一致性(UNIT_NAME_IS_AGREEMENT)、发票销售方与经销商法人名称一致性(BILLING_NAME_IS_AGREEMENT)、发票日期是否在发货日期之前(DATE_IS_AGREEMENT)，用于验证发票真实性。</p>
 <p><strong>Q4: 取消核销后出库单行可核销数量未回加</strong></p>
 <ul><li><strong>原因</strong>：updateClData中invLine为空(无审批通过的核销明细)，或分布式锁获取失败</li><li><strong>处理</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, ith.HZ_APPROVE_STATUS
+
+```sql
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, ith.HZ_APPROVE_STATUS
 FROM EPM_VERIFER_INVOICE_DETAILS vid
 JOIN EPM_INVOICE_TRUTH_LINE itl ON vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID
 JOIN EPM_INVOICE_TRUTH_HEADER ith ON ith.INVOICE_TRUTH_ID = itl.INVOICE_TRUTH_ID
 WHERE vid.EFFECT_STATUS IN ('invalid','valid')
-  AND ith.HZ_APPROVE_STATUS IN ('NEW','RUN','APPROVED');</code></pre>
+  AND ith.HZ_APPROVE_STATUS IN ('NEW','RUN','APPROVED');
+```
 <p><strong>Q5: 审批通过后出库单行核销数量未更新</strong></p>
 <ul><li><strong>原因</strong>：wfComplete回调未正确执行，或核销明细有效状态更新失败</li><li><strong>处理</strong>：检查EPM_VERIFER_INVOICE_DETAILS的EFFECT_STATUS是否为valid，检查INV_OUT_BILL_LINE的已核销数量/可核销数量</li></ul>
 <p><strong>Q6: 单位转换率的作用？</strong></p>

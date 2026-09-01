@@ -198,7 +198,10 @@
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>到款 ──认缴申请──→ 已认缴 ──撤销认款──→ 已撤销</code></pre>
+
+```text
+到款 ──认缴申请──→ 已认缴 ──撤销认款──→ 已撤销
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -283,61 +286,91 @@
 </table>
 <h4>报错1：撤销认款失败</h4>
 <ul><li><strong>触发条件</strong>：用户选中认款记录点击"撤销认款"，cancelPayById接口通过EPM_PAYMENT_ALLOT_CANCEL工作流撤销时返回失败</li><li><strong>逻辑分析</strong>：撤销认款通过EPM_PAYMENT_ALLOT_CANCEL工作流执行，撤销后恢复认款状态并回退保证金余额。失败根因有三类：(1)认款已被使用，如已关联保证金减免申请（CM_DEPOSITS_REDUCTION_HEAD）或已汇总到认缴概况（CM_CONTRACT_PAYMENT_SUMMARY），不可撤销；(2)认款状态不可撤销，STATUS非"已认缴"（如已撤销或已到款未认缴）；(3)工作流EPM_PAYMENT_ALLOT_CANCEL配置缺失或OA系统不可用。需核查认款使用情况及状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.CUSTOMER_NAME, P.PAYMENT_AMT, P.PAYMENT_DATE, P.STATUS,
+
+```sql
+SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.CUSTOMER_NAME, P.PAYMENT_AMT, P.PAYMENT_DATE, P.STATUS,
          (SELECT SUM(R.REDUCTION_AMT) FROM CM_DEPOSITS_REDUCTION_HEAD R
           WHERE R.CONTRACT_ID = P.CONTRACT_ID AND R.HZ_APPROVE_STATUS = 'APPROVED') AS 已减免金额
   FROM CM_DEPOSITS_PAYMENT P
-  WHERE P.PAYMENT_ID = #&#123;paymentId&#125;;</code></pre>
+  WHERE P.PAYMENT_ID = #{paymentId};
+```
 <h4>报错2：保证金ID不能空</h4>
 <ul><li><strong>触发条件</strong>：用户在列表页未选中记录或选中记录ID丢失，直接点击"撤销认款"或"认缴申请"按钮</li><li><strong>逻辑分析</strong>：cancelPayById与respectively接口在CmDepositsPaymentServiceImpl中前置校验PAYMENT_ID非空。保证金ID是到款记录的主键，未传入将导致后续查询、状态更新、工作流发起均无法定位记录。校验在Service层拦截，toast提示后阻断操作</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, PAYMENT_AMT, PAYMENT_DATE, STATUS
+
+```sql
+SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, PAYMENT_AMT, PAYMENT_DATE, STATUS
   FROM CM_DEPOSITS_PAYMENT
-  WHERE PAYMENT_ID IS NULL OR PAYMENT_ID = 0;</code></pre>
+  WHERE PAYMENT_ID IS NULL OR PAYMENT_ID = 0;
+```
 <h4>报错3：该笔认款金额已进行撤销操作，不能进行认领</h4>
 <ul><li><strong>触发条件</strong>：用户对已撤销的认款记录再次点击"认缴申请"按钮</li><li><strong>逻辑分析</strong>：认缴申请(respectively)接口校验认款状态，若该笔认款已执行过撤销操作（STATUS='CANCELLED'或已记录撤销历史），则不允许再发起认领。撤销操作会写入CmDepositsPaymentHistory历史表，再次认领将导致认款金额重复使用，破坏保证金余额一致性。需选择状态为"已到款"或"已认缴"的有效记录</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.PAYMENT_AMT, P.STATUS,
+
+```sql
+SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.PAYMENT_AMT, P.STATUS,
          H.OPERATION_TYPE, H.OPERATION_DATE
   FROM CM_DEPOSITS_PAYMENT P
   LEFT JOIN CM_DEPOSITS_PAYMENT_HISTORY H ON P.PAYMENT_ID = H.PAYMENT_ID
   WHERE P.STATUS = 'CANCELLED'
-    AND H.OPERATION_TYPE = 'CANCEL';</code></pre>
+    AND H.OPERATION_TYPE = 'CANCEL';
+```
 <h4>报错4：该认款已转换为封顶认款，不能再进行认缴操作</h4>
 <ul><li><strong>触发条件</strong>：用户对已用于封顶认缴的认款记录点击"认缴申请"按钮</li><li><strong>逻辑分析</strong>：认款记录存在CONVERT_CEILING_FLAG字段标识是否已转换为封顶认款。当CONVERT_CEILING_FLAG='Y'时，该认款已纳入封顶认缴流程，再次发起普通认缴将导致同一笔款项被双重认缴。封顶认缴与普通认缴互斥，需先撤销封顶认缴再发起普通认缴</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, PAYMENT_AMT,
+
+```sql
+SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, PAYMENT_AMT,
          PAYMENT_STATUS, CONVERT_CEILING_FLAG, PAYMENT_TYPE
   FROM CM_DEPOSITS_PAYMENT
   WHERE CONVERT_CEILING_FLAG = 'Y'
-    AND PAYMENT_STATUS = 'SHARE_COMPLETE_PAY';</code></pre>
+    AND PAYMENT_STATUS = 'SHARE_COMPLETE_PAY';
+```
 <h4>报错5：当前法人不存在，请联系it处理</h4>
 <ul><li><strong>触发条件</strong>：用户发起认缴申请，respectively接口根据经销商查询法人主数据返回空</li><li><strong>逻辑分析</strong>：认缴申请需关联法人信息用于资金流向确认。CmDepositsPaymentServiceImpl根据经销商CUSTOMER_ID查询法人主数据表，若经销商未配置法人关联或法人主数据已失效，将抛出此异常。需联系IT在经销商主数据中维护法人关联关系</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CUSTOMER_NAME, P.BILLING_UNIT_CODE,
+
+```sql
+SELECT P.PAYMENT_ID, P.CUSTOMER_NAME, P.BILLING_UNIT_CODE,
          C.CUSTOMER_ID, C.CORPORATE_CODE, C.CORPORATE_NAME
   FROM CM_DEPOSITS_PAYMENT P
   LEFT JOIN CUSTOMER_CORPORATE_REL C ON P.BILLING_UNIT_CODE = C.CUSTOMER_CODE
-  WHERE C.CORPORATE_CODE IS NULL;</code></pre>
+  WHERE C.CORPORATE_CODE IS NULL;
+```
 <h4>报错6：法人编码不能为空</h4>
 <ul><li><strong>触发条件</strong>：认缴申请或保证金同步时，经销商对应的法人编码（CORPORATE_CODE）为空</li><li><strong>逻辑分析</strong>：法人编码是保证金认缴推送CRM、资金流向确认的关键标识。CmDepositsPaymentServiceImpl在同步保证金或发起认缴前校验法人编码非空。法人编码缺失将导致CRM侧无法匹配法人主体，资金流向无法确认。需在经销商主数据中维护法人编码</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.CUSTOMER_NAME, P.BILLING_UNIT_CODE,
+
+```sql
+SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.CUSTOMER_NAME, P.BILLING_UNIT_CODE,
          C.CUSTOMER_CODE, C.CORPORATE_CODE
   FROM CM_DEPOSITS_PAYMENT P
   LEFT JOIN CUSTOMER C ON P.BILLING_UNIT_CODE = C.CUSTOMER_CODE
-  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_CODE = '';</code></pre>
+  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_CODE = '';
+```
 <h4>报错7：事业部id、经销商id不能为空</h4>
 <ul><li><strong>触发条件</strong>：查询保证金到款或发起认缴申请时，ENTID（事业部ID）或CUSTOMER_ID（经销商ID）参数为空</li><li><strong>逻辑分析</strong>：事业部和经销商是保证金数据隔离的核心维度。CmDepositsPaymentServiceImpl在查询、认缴、撤销等操作前校验ENTID和CUSTOMER_ID非空。参数为空将导致查询无数据范围或认缴无法定位保证金归属。通常由前端未正确传入当前事业部或未选择经销商导致</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, ENTID, BILLING_UNIT_CODE, CUSTOMER_NAME, PAYMENT_AMT
+
+```sql
+SELECT PAYMENT_ID, CONTRACT_NO, ENTID, BILLING_UNIT_CODE, CUSTOMER_NAME, PAYMENT_AMT
   FROM CM_DEPOSITS_PAYMENT
-  WHERE ENTID IS NULL OR BILLING_UNIT_CODE IS NULL;</code></pre>
+  WHERE ENTID IS NULL OR BILLING_UNIT_CODE IS NULL;
+```
 <h4>报错8：合同类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：查询保证金或发起认缴申请时，CONTRACT_TYPE（合同类型）参数为空</li><li><strong>逻辑分析</strong>：合同类型区分年度经销合同、临时合同等不同类型，影响保证金标准和封顶配置的匹配。CmDepositsPaymentServiceImpl在查询和认缴前校验CONTRACT_TYPE非空。合同类型为空将导致保证金标准（CM_DEPOSITS_PAY_STANDARD）无法匹配，认缴金额计算无依据。需前端正确传入合同类型参数</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, PAYMENT_AMT
+
+```sql
+SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, PAYMENT_AMT
   FROM CM_DEPOSITS_PAYMENT
-  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';</code></pre>
+  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';
+```
 <h4>报错9：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：前端调用cm-deposits-payments相关接口时，后端服务不可达或请求超时</li><li><strong>逻辑分析</strong>：前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre>
+
+```sql
+SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
+```
 <h4>报错10：权限不足，无法操作</h4>
 <ul><li><strong>触发条件</strong>：当前用户对撤销认款、认缴申请等操作无对应功能权限或数据权限</li><li><strong>逻辑分析</strong>：后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre>
+
+```sql
+SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
+```
 </KbCard>
 
 <KbCard title="常见问题">

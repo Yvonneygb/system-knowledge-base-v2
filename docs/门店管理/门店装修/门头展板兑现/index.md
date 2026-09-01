@@ -598,36 +598,47 @@
 </table>
 <h4>报错1：报销单号不存在或未完成审核</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验时按reimburseHeadId查询CUST_DH_REIMBURSE_HEAD返回null，或返回记录的hzApproveStatus≠APPROVED</li><li><strong>逻辑分析</strong>：门头展板兑现必须基于已审批通过的门头报销申请单发起，确保兑现有据可依。若报销单在兑现前被删除、reimburseHeadId传值错误（如LOV缓存失效）、或报销单仍处于RUN/NEW/REBUT等中间状态，校验不通过抛异常阻断保存。需核查报销单是否存在且已APPROVED。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT r.id                 AS 报销单ID,
+
+```sql
+SELECT r.id                 AS 报销单ID,
          r.reimburse_code     AS 报销单号,
          r.hz_approve_status  AS 审批状态,
          r.last_update_date   AS 最后更新时间
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #&#123;传入的reimburseHeadId&#125;;</code></pre>
+  WHERE  r.id = #{传入的reimburseHeadId};
+```
 <h4>报错2：该报销单存在未审批结束的兑现单X，请勿重复创建</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验时查询同一REIMBURSE_HEAD_ID下CUST_DH_CASHOUT_HEAD存在hzApproveStatus非APPROVED的记录</li><li><strong>逻辑分析</strong>：同一报销单下同一时间只允许存在一个未审批完成的兑现单，避免并发兑现造成额度重复占用。校验逻辑按reimburseHeadId查询CUST_DH_CASHOUT_HEAD，若存在状态在(NEW,RUN,REBUT,WITHDRAW)的记录即抛异常。常见根因：用户重复点击新增、前一笔兑现单未提交或被驳回未处理。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id                 AS 兑现单ID,
+
+```sql
+SELECT c.id                 AS 兑现单ID,
          c.cashout_no         AS 兑现单号,
          c.reimburse_head_id  AS 报销单ID,
          c.hz_approve_status  AS 审批状态,
          c.creation_date      AS 创建时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.reimburse_head_id = #&#123;传入的reimburseHeadId&#125;
-  AND    c.hz_approve_status &lt;&gt; 'APPROVED'
-  ORDER  BY c.creation_date DESC;</code></pre>
+  WHERE  c.reimburse_head_id = #{传入的reimburseHeadId}
+  AND    c.hz_approve_status <> 'APPROVED'
+  ORDER  BY c.creation_date DESC;
+```
 <h4>报错3：额度外兑现比例必须在0到1之间</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验outCashoutRatio &lt; 0 或 outCashoutRatio &gt; 1</li><li><strong>逻辑分析</strong>：额度外兑现比例用于计算额度外申请兑现金额（=额度外实际报销金额×比例），业务上比例应为0~1之间的百分数（如0.5表示兑现50%）。若用户输入负数、大于1的值、或前端NumberField精度控制失效，校验不通过。需修正兑现比例至合法区间。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id                   AS 兑现单ID,
+
+```sql
+SELECT c.id                   AS 兑现单ID,
          c.cashout_no           AS 兑现单号,
          c.out_cashout_ratio    AS 额度外兑现比例,
          c.out_cashout_apply_amt AS 额度外申请兑现金额
   FROM   cust_dh_cashout_head c
-  WHERE  (c.out_cashout_ratio &lt; 0 OR c.out_cashout_ratio &gt; 1)
+  WHERE  (c.out_cashout_ratio < 0 OR c.out_cashout_ratio > 1)
   AND    c.hz_approve_status = 'NEW'
-  ORDER  BY c.creation_date DESC;</code></pre>
+  ORDER  BY c.creation_date DESC;
+```
 <h4>报错4：行表不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验从报销单行表CUST_DH_REIMBURSE_LINE带入的lines集合为空</li><li><strong>逻辑分析</strong>：兑现单需关联门店装修信息行表（含门店编码、面积、装修前后照片等），行表数据从报销单行表联动带入。若报销单行表为空（报销单未维护门店明细）、LOV选择报销单后未触发联动查询、或前端terminalTableDS数据源未正确绑定，lines为空抛异常。需核查报销单行表数据完整性。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT r.id              AS 报销单ID,
+
+```sql
+SELECT r.id              AS 报销单ID,
          r.reimburse_code  AS 报销单号,
          (SELECT COUNT(1)
           FROM   cust_dh_reimburse_line l
@@ -635,10 +646,13 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'APPROVED'
   AND    NOT EXISTS (SELECT 1 FROM cust_dh_reimburse_line l WHERE l.head_id = r.id)
-  ORDER  BY r.last_update_date DESC;</code></pre>
+  ORDER  BY r.last_update_date DESC;
+```
 <h4>报错5：兑现金额为0，保存失败</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验inCashoutApplyAmt=0且outCashoutApplyAmt=0</li><li><strong>逻辑分析</strong>：兑现单需有实际兑现金额才有业务意义。额度内申请兑现金额=额度内业务批准金额-已兑现金额，额度外申请兑现金额=兑现比例×额度外实际报销金额。若报销单额度内金额已全部兑现完且额度外比例为0（或额度外金额为0），两者均为0抛异常。常见根因：报销单已全额兑现、用户未填写兑现比例、或报销单金额异常为0。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id                    AS 兑现单ID,
+
+```sql
+SELECT c.id                    AS 兑现单ID,
          c.cashout_no            AS 兑现单号,
          c.in_cashout_apply_amt  AS 额度内申请兑现金额,
          c.out_cashout_apply_amt AS 额度外申请兑现金额,
@@ -649,10 +663,13 @@
   WHERE  c.hz_approve_status = 'NEW'
   AND    NVL(c.in_cashout_apply_amt, 0) = 0
   AND    NVL(c.out_cashout_apply_amt, 0) = 0
-  ORDER  BY c.creation_date DESC;</code></pre>
+  ORDER  BY c.creation_date DESC;
+```
 <h4>报错6：额度外预算不足，有疑问请联系财务</h4>
 <ul><li><strong>触发条件</strong>：点击"提交"按钮，firstSubmitVerify校验兑现单额度外申请金额&gt;0且政策useExtraBudgetFlag=Y时，已使用金额+本次兑现金额&gt;当前年份总预算金额(viewOverBudgetAmt)</li><li><strong>逻辑分析</strong>：额度外兑现占用年度预算总额，需确保预算充足。校验逻辑汇总当前年份同事业部下其他兑现单的outCashoutApplyAmt之和（已使用金额），加上本次申请金额，若超过FIN_FEE_CHECK_BX_HEADER中该年份总预算金额即抛异常。常见根因：年度预算配置不足、历史兑现单占用过多、或本次申请金额过大。需联系财务确认预算或减少申请金额。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT b.bud_year              AS 预算年度,
+
+```sql
+SELECT b.bud_year              AS 预算年度,
          b.division_id           AS 事业部ID,
          b.total_amt             AS 年度总预算,
          NVL((SELECT SUM(c.out_cashout_apply_amt)
@@ -662,23 +679,29 @@
               AND    c.hz_approve_status IN ('RUN','APPROVED','RETURN','INTERRUPT')), 0) AS 已使用金额
   FROM   fin_fee_check_bx_header b
   WHERE  b.fee_type_id = 66014602
-  AND    b.bud_year = #&#123;当前年份&#125;
-  ORDER  BY b.division_id;</code></pre>
+  AND    b.bud_year = #{当前年份}
+  ORDER  BY b.division_id;
+```
 <h4>报错7：额度外申请金额需≤剩余可报销限额</h4>
 <ul><li><strong>触发条件</strong>：点击"提交"按钮，firstSubmitVerify校验政策custLimitFlag=Y（启用经销商限额）时，经销商限额-已报销金额+当前报销单实际额度外报销金额-当前申请金额&lt;0</li><li><strong>逻辑分析</strong>：启用经销商限额控制时，需确保经销商累计额度外报销金额不超过限额。校验逻辑计算：经销商限额-已报销金额+当前报销单额度外金额-本次申请金额，若结果&lt;0说明超额。常见根因：经销商历史报销金额接近限额、本次申请金额过大、或限额配置过低。需减少申请金额或联系业务部调整限额。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.customer_id            AS 经销商ID,
+
+```sql
+SELECT c.customer_id            AS 经销商ID,
          c.customer_code          AS 经销商编码,
          c.year                   AS 预算年度,
          SUM(c.out_cashout_apply_amt) AS 累计申请金额
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status IN ('RUN','APPROVED','RETURN','INTERRUPT')
-  AND    c.year = #&#123;当前年份&#125;
+  AND    c.year = #{当前年份}
   GROUP  BY c.customer_id, c.customer_code, c.year
-  HAVING SUM(c.out_cashout_apply_amt) &gt; 0
-  ORDER  BY SUM(c.out_cashout_apply_amt) DESC;</code></pre>
+  HAVING SUM(c.out_cashout_apply_amt) > 0
+  ORDER  BY SUM(c.out_cashout_apply_amt) DESC;
+```
 <h4>报错8：申请金额需≤剩余未申请金额</h4>
 <ul><li><strong>触发条件</strong>：点击"提交"按钮，firstSubmitVerify校验同一报销单下，本次额度外申请金额&gt;报销单实际额度外报销金额-已提交或已审批的sum(各兑现单本次额度外申请金额)</li><li><strong>逻辑分析</strong>：同一报销单下可分多次兑现，但累计额度外申请金额不得超过报销单实际额度外报销金额。校验逻辑计算：报销单实际额度外报销金额-已有兑现单(状态RUN/APPROVED/RETURN/INTERRUPT)的outCashoutApplyAmt之和，若本次申请金额超过该余额即抛异常。常见根因：已有兑现单占用大部分金额、本次申请金额过大、或报销单金额被错误调整。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT r.id                       AS 报销单ID,
+
+```sql
+SELECT r.id                       AS 报销单ID,
          r.reimburse_code           AS 报销单号,
          r.out_fin_amt              AS 额度外实际报销金额,
          NVL((SELECT SUM(c.out_cashout_apply_amt)
@@ -691,10 +714,13 @@
               AND    c.hz_approve_status IN ('RUN','APPROVED','RETURN','INTERRUPT')), 0) AS 剩余未申请金额
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'APPROVED'
-  ORDER  BY r.last_update_date DESC;</code></pre>
+  ORDER  BY r.last_update_date DESC;
+```
 <h4>报错9：验收方式不能为空</h4>
 <ul><li><strong>触发条件</strong>：审批节点保存（区域经理/设计师），bizNodeUpdate/designerNodeUpdate校验bzsBizMethod/bzsDesMethod为空</li><li><strong>逻辑分析</strong>：保证书要求区域经理和设计师签署验收方式（1-视频验收/2-现场验收），确认门头展板已真实验收，防止虚假兑现。若审批人未勾选验收方式即保存，校验不通过抛异常。需在保证书CheckBox中勾选至少一种验收方式。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.bzs_biz_method  AS 区域经理验收方式,
          c.bzs_des_method  AS 设计师验收方式,
@@ -702,10 +728,13 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    (c.bzs_biz_method IS NULL OR c.bzs_des_method IS NULL)
-  ORDER  BY c.last_update_date DESC;</code></pre>
+  ORDER  BY c.last_update_date DESC;
+```
 <h4>报错10：区域经理名字不能为空</h4>
 <ul><li><strong>触发条件</strong>：审批节点保存（区域经理/设计师），bizNodeUpdate/designerNodeUpdate校验bzsBizName/bzsDesName为空</li><li><strong>逻辑分析</strong>：保证书需记录验收人姓名以明确责任主体。若审批人未填写保证人姓名即保存，校验不通过抛异常。需在保证书TextField中填写保证人姓名（应为当前审批人真实姓名）。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.bzs_biz_name    AS 区域经理保证人,
          c.bzs_des_name    AS 设计师保证人,
@@ -713,20 +742,26 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    (c.bzs_biz_name IS NULL OR c.bzs_des_name IS NULL)
-  ORDER  BY c.last_update_date DESC;</code></pre>
+  ORDER  BY c.last_update_date DESC;
+```
 <h4>报错11：额度外兑现有效期不能为空</h4>
 <ul><li><strong>触发条件</strong>：销售会计审批节点保存，salesFinUpdate校验outValidDate为空</li><li><strong>逻辑分析</strong>：额度外兑现有效期用于控制兑现资金的有效期限，销售会计需在审批时填写。若未填写outValidDate即保存，校验不通过抛异常。需在销售会计审批节点的DatePicker中选择有效期日期。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.out_valid_date  AS 额度外兑现有效期,
          c.hz_approve_status AS 审批状态
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    c.out_valid_date IS NULL
-  ORDER  BY c.last_update_date DESC;</code></pre>
+  ORDER  BY c.last_update_date DESC;
+```
 <h4>报错12：报销单非首次兑现，不允许编辑额度外兑现有效期</h4>
 <ul><li><strong>触发条件</strong>：销售会计审批节点保存，salesFinUpdate校验报销单已存在firstOutValidDate（首次兑现已锁定有效期）且本次输入值与firstOutValidDate不一致</li><li><strong>逻辑分析</strong>：同一报销单下多次兑现时，额度外兑现有效期由首次兑现锁定，后续兑现沿用首次有效期，确保有效期一致性。若非首次兑现且销售会计修改了outValidDate，校验不通过抛异常。需保持有效期与首次兑现一致。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id                 AS 兑现单ID,
+
+```sql
+SELECT c.id                 AS 兑现单ID,
          c.cashout_no         AS 兑现单号,
          c.reimburse_head_id  AS 报销单ID,
          c.out_valid_date     AS 额度外兑现有效期,
@@ -737,55 +772,73 @@
          FROM   cust_dh_cashout_head
          WHERE  hz_approve_status = 'APPROVED'
          GROUP  BY reimburse_head_id
-         HAVING COUNT(1) &gt; 1)
-  ORDER  BY c.reimburse_head_id, c.creation_date;</code></pre>
+         HAVING COUNT(1) > 1)
+  ORDER  BY c.reimburse_head_id, c.creation_date;
+```
 <h4>报错13：当前审批节点不能修改</h4>
 <ul><li><strong>触发条件</strong>：审批节点保存，nodeEditSave根据taskName未匹配到区域经理/设计师/销售会计/运营专员任一节点</li><li><strong>逻辑分析</strong>：审批节点保存需根据当前taskName分发到对应更新方法。若taskName未配置、工作流节点名称与代码预期不一致、或当前用户不在审批节点上，无法匹配到处理方法即抛异常。需确认当前taskName是否为预期值（区域经理审批/设计师审批/销售会计审批/运营专员审批）。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id               AS 兑现单ID,
+
+```sql
+SELECT c.id               AS 兑现单ID,
          c.cashout_no       AS 兑现单号,
          c.hz_instance_id   AS 工作流实例ID,
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
-  ORDER  BY c.last_update_date DESC;</code></pre>
+  ORDER  BY c.last_update_date DESC;
+```
 <h4>报错14：单据id 不能为空</h4>
 <ul><li><strong>触发条件</strong>：更新/删除操作，checkUpOrDelete校验传入的id参数为null</li><li><strong>逻辑分析</strong>：更新和删除操作需按单据ID定位兑现单。若前端未传id（如列表行未绑定ID、操作上下文丢失）、或id字段名拼写错误，后端校验id为空即抛异常。需确认请求参数中包含有效的单据ID。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.hz_approve_status AS 审批状态
   FROM   cust_dh_cashout_head c
   WHERE  c.id IS NULL
-  ORDER  BY c.creation_date DESC;</code></pre>
+  ORDER  BY c.creation_date DESC;
+```
 <h4>报错15：当前数据异常，请稍后再试</h4>
 <ul><li><strong>触发条件</strong>：更新/删除/查询操作，checkUpOrDelete/doSelect按id查询CUST_DH_CASHOUT_HEAD返回null</li><li><strong>逻辑分析</strong>：更新、删除、查询操作需先校验兑现单存在。若兑现单在操作期间被其他用户删除、id传值错误（如前端缓存了已失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #&#123;传入的id&#125;;</code></pre>
+  WHERE  c.id = #{传入的id};
+```
 <h4>报错16：数据异常，请稍后再试</h4>
 <ul><li><strong>触发条件</strong>：查询详情，doSelect按id查询兑现单VO返回null</li><li><strong>逻辑分析</strong>：详情页加载需查询兑现单完整信息（含行表、附件等）。若兑现单被删除、id传值错误、或关联数据被清理导致VO组装失败返回null，抛异常。需返回列表页重新进入详情。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.hz_approve_status AS 审批状态,
          (SELECT COUNT(1)
           FROM   cust_dh_cashout_line l
           WHERE  l.head_id = c.id) AS 行表记录数
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #&#123;传入的id&#125;;</code></pre>
+  WHERE  c.id = #{传入的id};
+```
 <h4>报错17：门头兑现数据不存在</h4>
 <ul><li><strong>触发条件</strong>：doSelect查询详情时，按dto.getObjId()查询CUST_DH_CASHOUT_HEAD返回null</li><li><strong>逻辑分析</strong>：详情页加载需查询兑现单完整信息。若兑现单在操作期间被删除、objId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #&#123;传入的objId&#125;;</code></pre>
+  WHERE  c.id = #{传入的objId};
+```
 <h4>报错18：申请兑现比例需≤X</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验outCashoutRatio&gt;1-sumOutCashoutRatio（已提报的申请兑现比例合计）</li><li><strong>逻辑分析</strong>：同一报销单下可分多次兑现，各兑现单的额度外兑现比例之和不得超过1(100%)。校验逻辑汇总同一REIMBURSE_HEAD_ID下已提报兑现单的outCashoutRatio之和(sumOutCashoutRatio)，若本次比例&gt;1-sumOutCashoutRatio即抛异常。常见根因：已有兑现单占用大部分比例、本次比例输入过大。需修改比例至≤剩余可申请比例。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id                 AS 兑现单ID,
+
+```sql
+SELECT c.id                 AS 兑现单ID,
          c.cashout_no         AS 兑现单号,
          c.reimburse_head_id  AS 报销单ID,
          c.out_cashout_ratio  AS 额度外兑现比例,
@@ -793,35 +846,44 @@
               FROM   cust_dh_cashout_head t
               WHERE  t.reimburse_head_id = c.reimburse_head_id
               AND    t.hz_approve_status IN ('RUN','APPROVED','RETURN','INTERRUPT')
-              AND    t.id &lt;&gt; c.id), 0) AS 已提报比例,
+              AND    t.id <> c.id), 0) AS 已提报比例,
          1 - NVL((SELECT SUM(t.out_cashout_ratio)
               FROM   cust_dh_cashout_head t
               WHERE  t.reimburse_head_id = c.reimburse_head_id
               AND    t.hz_approve_status IN ('RUN','APPROVED','RETURN','INTERRUPT')
-              AND    t.id &lt;&gt; c.id), 0) AS 剩余可申请比例
+              AND    t.id <> c.id), 0) AS 剩余可申请比例
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'NEW'
-  ORDER  BY c.creation_date DESC;</code></pre>
+  ORDER  BY c.creation_date DESC;
+```
 <h4>报错19：报销单号不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验reimburseHeadId为空</li><li><strong>逻辑分析</strong>：门头展板兑现必须关联已审批通过的门头报销申请单。若用户未通过LOV选择报销单、reimburseHeadId传值丢失、或前端联动查询未正确赋值，reimburseHeadId为空抛异常。需通过LOV选择已审批通过的报销申请单。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.reimburse_head_id AS 报销单ID,
          c.hz_approve_status AS 审批状态
   FROM   cust_dh_cashout_head c
   WHERE  c.reimburse_head_id IS NULL
-  ORDER  BY c.creation_date DESC;</code></pre>
+  ORDER  BY c.creation_date DESC;
+```
 <h4>报错20：单据信息不存在</h4>
 <ul><li><strong>触发条件</strong>：提交审批firstSubmitVerify/审批节点保存nodeEditSave时，按id查询CUST_DH_CASHOUT_HEAD返回null</li><li><strong>逻辑分析</strong>：提交审批和审批节点保存需查询兑现单校验额度和更新数据。若兑现单在操作期间被删除、id传值错误、或并发场景下被清理，查询返回空抛异常。需刷新页面重新获取有效数据。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #&#123;传入的id&#125;;</code></pre>
+  WHERE  c.id = #{传入的id};
+```
 <h4>报错21：政策信息不存在</h4>
 <ul><li><strong>触发条件</strong>：提交审批firstSubmitVerify校验额度外预算时，按报销单关联的policyStandardId查询POLICY_STANDARD_HEAD返回null</li><li><strong>逻辑分析</strong>：额度外预算校验需查询政策获取useExtraBudgetFlag和预算配置。若报销单关联的政策被删除、policyStandardId传值错误、或政策数据被清理，查询返回空抛异常。需核查报销单关联政策是否存在。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT r.id                 AS 报销单ID,
+
+```sql
+SELECT r.id                 AS 报销单ID,
          r.reimburse_code     AS 报销单号,
          r.policy_standard_id AS 政策ID,
          NVL((SELECT h.policy_name
@@ -830,10 +892,13 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'APPROVED'
   AND    NOT EXISTS (SELECT 1 FROM policy_standard_head h WHERE h.id = r.policy_standard_id)
-  ORDER  BY r.last_update_date DESC;</code></pre>
+  ORDER  BY r.last_update_date DESC;
+```
 <h4>报错22：额度外财务批准金额为0，不允许编辑</h4>
 <ul><li><strong>触发条件</strong>：销售会计审批节点保存salesFinUpdate时，outFinAmt=0且销售会计修改了outValidDate</li><li><strong>逻辑分析</strong>：额度外财务批准金额为0说明该报销单无额度外金额，不应有额度外兑现有效期。若销售会计在outFinAmt=0的兑现单上修改outValidDate，校验不通过抛异常。需确认报销单额度外金额是否正确。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.out_fin_amt     AS 额度外财务批准金额,
          c.out_valid_date  AS 额度外兑现有效期,
@@ -842,19 +907,25 @@
   WHERE  c.hz_approve_status = 'RUN'
   AND    NVL(c.out_fin_amt, 0) = 0
   AND    c.out_valid_date IS NOT NULL
-  ORDER  BY c.last_update_date DESC;</code></pre>
+  ORDER  BY c.last_update_date DESC;
+```
 <h4>报错23：年度不能为空</h4>
 <ul><li><strong>触发条件</strong>：审批节点保存nodeEditSave时，year为空</li><li><strong>逻辑分析</strong>：审批节点保存需按年度定位预算和配置数据。若兑现单year字段未正确赋值（新增时未取当前年份、或数据迁移遗漏），year为空抛异常。需核查兑现单year字段完整性。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.year            AS 预算年度,
          c.hz_approve_status AS 审批状态
   FROM   cust_dh_cashout_head c
   WHERE  c.year IS NULL
-  ORDER  BY c.creation_date DESC;</code></pre>
+  ORDER  BY c.creation_date DESC;
+```
 <h4>报错24：请填写【验收人员保证书】区域经理相关信息</h4>
 <ul><li><strong>触发条件</strong>：区域经理审批节点保存，前端saveValid校验taskName匹配"区域经理"时，bzsBizMethod为空或bzsBizName≠当前用户realName</li><li><strong>逻辑分析</strong>：保证书要求区域经理签署验收方式和保证人姓名，确认门头展板已真实验收。若区域经理未勾选验收方式(bzsBizMethod为空)或保证人姓名与当前登录用户不一致(bzsBizName≠realName，防止代签)，前端notification.error提示。需在保证书Tab勾选验收方式并确认保证人为当前用户。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.bzs_biz_method  AS 区域经理验收方式,
          c.bzs_biz_name    AS 区域经理保证人,
@@ -862,10 +933,13 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    (c.bzs_biz_method IS NULL OR c.bzs_biz_name IS NULL)
-  ORDER  BY c.last_update_date DESC;</code></pre>
+  ORDER  BY c.last_update_date DESC;
+```
 <h4>报错25：请填写【验收人员保证书】展示设计师相关信息</h4>
 <ul><li><strong>触发条件</strong>：设计师审批节点保存，前端saveValid校验taskName=="设计师审批"时，bzsDesMethod为空或bzsDesName≠当前用户realName</li><li><strong>逻辑分析</strong>：保证书要求设计师签署验收方式和保证人姓名，确认门头展板已真实验收。若设计师未勾选验收方式(bzsDesMethod为空)或保证人姓名与当前登录用户不一致(bzsDesName≠realName，防止代签)，前端notification.error提示。需在保证书Tab勾选验收方式并确认保证人为当前用户。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.bzs_des_method  AS 设计师验收方式,
          c.bzs_des_name    AS 设计师保证人,
@@ -873,10 +947,13 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    (c.bzs_des_method IS NULL OR c.bzs_des_name IS NULL)
-  ORDER  BY c.last_update_date DESC;</code></pre>
+  ORDER  BY c.last_update_date DESC;
+```
 <h4>报错26：请至少添加一条门店信息</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"或"提交"按钮，前端handleSave/handleSaveWithWorkflow校验terminalData为空或length=0</li><li><strong>逻辑分析</strong>：兑现单需关联门店装修信息行表，前端通过terminalTableDSRef管理行数据。若用户未添加门店行、行数据被误清空、或从报销单联动带入行表失败，terminalData为空前端message.error提示。需确保至少有一条门店装修信息。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          (SELECT COUNT(1)
           FROM   cust_dh_cashout_line l
@@ -884,10 +961,13 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'NEW'
   AND    NOT EXISTS (SELECT 1 FROM cust_dh_cashout_line l WHERE l.head_id = c.id)
-  ORDER  BY c.creation_date DESC;</code></pre>
+  ORDER  BY c.creation_date DESC;
+```
 <h4>报错27：额度外财务批准金额大于0时，必须填写兑现有效期</h4>
 <ul><li><strong>触发条件</strong>：保存时前端validateOutValidDate校验outFinAmt&gt;0且outValidDate为空且firstOutValidDate为空(首次兑现)</li><li><strong>逻辑分析</strong>：额度外财务批准金额大于0时需设置兑现有效期约束兑现资金使用期限。若outFinAmt&gt;0但未填写outValidDate且为首次兑现(firstOutValidDate为空)，前端message.error提示。需在额度外兑现有效期字段填写日期。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
+
+```sql
+SELECT c.id              AS 兑现单ID,
          c.cashout_no      AS 兑现单号,
          c.out_fin_amt     AS 额度外财务批准金额,
          c.out_valid_date  AS 额度外兑现有效期,
@@ -895,10 +975,11 @@
          c.hz_approve_status AS 审批状态
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'NEW'
-  AND    NVL(c.out_fin_amt, 0) &gt; 0
+  AND    NVL(c.out_fin_amt, 0) > 0
   AND    c.out_valid_date IS NULL
   AND    c.first_out_valid_date IS NULL
-  ORDER  BY c.creation_date DESC;</code></pre>
+  ORDER  BY c.creation_date DESC;
+```
 </KbCard>
 
 </div>

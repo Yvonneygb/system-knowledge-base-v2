@@ -234,8 +234,11 @@
 </tbody>
 </table>
 <blockquote>查询SQL（后端接口）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT TRADING_COMPANY_ID, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME
-FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
+
+```sql
+SELECT TRADING_COMPANY_ID, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME
+FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -258,10 +261,16 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：打开新建页面，自动带出申请人和申请时间</li><li><strong>接口调用</strong>：无，仅前端操作</li></ul>
 <h4>按钮2：保存（编辑页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：保存调整头信息和明细行到ADS_FEE_ADJUST_IN_QUOTA</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/ads-quotas/save</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #&#123;id&#125;;</code></pre>
+
+```sql
+SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id};
+```
 <h4>按钮3：删除（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中未提交记录</li><li><strong>执行逻辑</strong>：批量删除选中的调整申请单</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/ads-quotas/batchDelete</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID IN (#&#123;ids&#125;) AND HZ_APPROVE_STATUS NOT IN ('RUN','APPROVED');</code></pre>
+
+```sql
+SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID IN (#{ids}) AND HZ_APPROVE_STATUS NOT IN ('RUN','APPROVED');
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -270,13 +279,19 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 <p>- 第1点：保存时校验交易公司ID不为空</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE TRADING_COMPANY_ID IS NULL;</code></pre>
+
+```sql
+SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE TRADING_COMPANY_ID IS NULL;
+```
 <ul><li>校验2：调整类型不能为空 —— 确保调整类型明确</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：保存时校验调整类型不为空</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_TYPE IS NULL;</code></pre>
+
+```sql
+SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_TYPE IS NULL;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -285,14 +300,20 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 <p>- 第1点：提交前执行保存校验全部规则</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #&#123;id&#125; AND (TRADING_COMPANY_ID IS NULL OR ADJUST_TYPE IS NULL);</code></pre>
+
+```sql
+SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADING_COMPANY_ID IS NULL OR ADJUST_TYPE IS NULL);
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──提交──→ 审批中(RUN) ──OA审批通过──→ 已审核(APPROVED)
+
+```text
+新建 ──保存──→ 已保存 ──提交──→ 审批中(RUN) ──OA审批通过──→ 已审核(APPROVED)
                                 │
-                                └──OA审批拒绝──→ 已拒绝(REJECTED)</code></pre>
+                                └──OA审批拒绝──→ 已拒绝(REJECTED)
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -368,53 +389,77 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 </table>
 <h4>报错1：交易公司不能为空</h4>
 <ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择交易公司直接点击保存</li><li><strong>逻辑分析</strong>：保存接口ads-quotas/save在写入ADS_FEE_ADJUST_IN_QUOTA前校验TRADING_COMPANY_ID非空。交易公司是广告费调整关联额度内余额和法人的前置条件，未选择交易公司将导致调整无法定位到具体余额账户，后续审批通过后也无法回写余额。校验在Controller层前置拦截，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
+
+```sql
+SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
          ADJUST_TYPE, HZ_APPROVE_STATUS
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE TRADING_COMPANY_ID IS NULL OR TRADING_COMPANY_NAME IS NULL;</code></pre>
+  WHERE TRADING_COMPANY_ID IS NULL OR TRADING_COMPANY_NAME IS NULL;
+```
 <h4>报错2：调整类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：用户未选择调整类型（来源词汇adjust_type）直接点击保存</li><li><strong>逻辑分析</strong>：调整类型决定调整的业务场景和扣减逻辑，不同ADJUST_TYPE对应不同处理分支。未选择调整类型将导致后续扣减比例（DEDUCTION_RATIO）应用逻辑无法确定，审批通过后余额调整方向和金额计算无依据。校验ADJUST_TYPE非空，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, TRADING_COMPANY_NAME, ADJUST_TYPE,
+
+```sql
+SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, TRADING_COMPANY_NAME, ADJUST_TYPE,
          ADJUST_YEAR, DEDUCTION_RATIO, HZ_APPROVE_STATUS
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE ADJUST_TYPE IS NULL;</code></pre>
+  WHERE ADJUST_TYPE IS NULL;
+```
 <h4>报错3：推送OA失败：广告费调整申请不存在</h4>
 <ul><li><strong>触发条件</strong>：用户提交调整单后，doOaAudit方法中adsFeeAdjustInQuotaMapper.selectList查询返回空集合</li><li><strong>逻辑分析</strong>：提交后系统调用AdsFeeAdjustInQuotaServiceImpl.doOaAudit推送OA，先通过adsFeeAdjustInQuotaMapper.selectList按adjustHeaderId查询调整单数据。返回空集合（CollectionUtils.isEmpty(quotaList)）时抛出CommonException("推送OA失败：广告费调整申请不存在")。根因有三类：(1)调整单在提交后被其他用户删除；(2)adjustHeaderId传参错误；(3)数据权限过滤导致查询不到。需刷新列表确认调整单存在后重试</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_NAME,
+
+```sql
+SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_NAME,
          ADJUST_TYPE, HZ_APPROVE_STATUS, WFID, HZ_INSTANCE_ID
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE ADJUST_HEADER_ID = #&#123;adjustHeaderId&#125;;</code></pre>
+  WHERE ADJUST_HEADER_ID = #{adjustHeaderId};
+```
 <h4>报错4：OA回传单号为空，请检查！</h4>
 <ul><li><strong>触发条件</strong>：OA审批完成后回调doProcessOA方法，回传报文中adjustHeaderNo字段为空</li><li><strong>逻辑分析</strong>：doProcessOA方法接收OABillCallbackDTO，从中获取adjustHeaderNo（OA回传单号）。若StringUtils.isBlank(adjustHeaderNo)为true则抛出CommonException("OA回传单号为空，请检查！")。根因有二：(1)OA流程表单配置缺少"调整单号"字段映射；(2)OA回传报文格式异常。需检查OA流程SUB_ADJ_FEES_QUOTA的表单字段配置及单据映射关系</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查OA单据映射配置
+
+```sql
+-- 核查OA单据映射配置
   SELECT OABILL_ID, BILL_NAME, ENABLED
   FROM OA_BILL_REF
-  WHERE BILL_NAME = '广告费调整申请';</code></pre>
+  WHERE BILL_NAME = '广告费调整申请';
+```
 <h4>报错5：OA回传单号不存在，请检查！</h4>
 <ul><li><strong>触发条件</strong>：OA审批回调时，按adjustHeaderNo查询ADS_FEE_ADJUST_IN_QUOTA表返回null</li><li><strong>逻辑分析</strong>：doProcessOA方法中通过adsFeeAdjustInQuotaMapper.selectByCondition按ADJUST_HEADER_NO查询调整单。若结果为空（adsFeeAdjustInQuota == null）则抛出CommonException("OA回传单号不存在，请检查！")。根因有三类：(1)OA回传的单号在系统中不存在（如测试环境OA回调到生产）；(2)调整单已被物理删除；(3)单号格式不匹配（如OA传带前缀的单号，系统中存储无前缀）。需核对OA回传单号与系统ADJUST_HEADER_NO字段</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
+
+```sql
+SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
          CALLBACK_SOURCE, HZ_INSTANCE_ID
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE ADJUST_HEADER_NO = #&#123;adjustHeaderNo&#125;;</code></pre>
+  WHERE ADJUST_HEADER_NO = #{adjustHeaderNo};
+```
 <h4>报错6：请选择要删除的记录！</h4>
 <ul><li><strong>触发条件</strong>：用户未选中任何调整单直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：batchDelete方法接收adjustHeaderIds列表，若CollectionUtils.isEmpty(adjustHeaderIds)为true则抛出CommonException("请选择要删除的记录！")。前端列表页需选中至少一条记录才可触发删除操作。需在列表中勾选目标记录后重试</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查可删除的调整单（未提交或已拒绝状态）
+
+```sql
+-- 核查可删除的调整单（未提交或已拒绝状态）
   SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, HZ_APPROVE_STATUS
   FROM ADS_FEE_ADJUST_IN_QUOTA
   WHERE HZ_APPROVE_STATUS NOT IN ('RUN', 'APPROVED')
-  ORDER BY APPLICANT_TIME DESC;</code></pre>
+  ORDER BY APPLICANT_TIME DESC;
+```
 <h4>报错7：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击保存/提交/删除按钮，前端调用对应接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面通过AdsFeeAdjustInQuotaController提供save/batchDelete接口，提交时通过oaSdkService.toDataOA推送OA系统。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)OA系统不可达，toDataOA调用超时或失败；(3)数据库连接异常；(4)网关或网络层故障。需先确认ae-business服务和OA系统连通性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查调整单数据量
+
+```sql
+-- 核查调整单数据量
   SELECT HZ_APPROVE_STATUS, COUNT(*) AS 记录数
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  GROUP BY HZ_APPROVE_STATUS;</code></pre>
+  GROUP BY HZ_APPROVE_STATUS;
+```
 <h4>报错8：权限不足</h4>
 <ul><li><strong>触发条件</strong>：用户登录后进入广告费调整申请单页面，当前用户无对应交易公司的数据权限</li><li><strong>逻辑分析</strong>：本页面按交易公司维度查询，数据权限通过用户上下文控制可见交易公司范围。权限不足根因有二：(1)用户未分配对应交易公司的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应交易公司数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查用户可访问的交易公司
+
+```sql
+-- 核查用户可访问的交易公司
   SELECT USER_ID, TRADING_COMPANY_ID, TRADING_COMPANY_NAME, ENABLED
   FROM USER_TRADING_COMPANY_AUTH
-  WHERE USER_ID = #&#123;userId&#125;;</code></pre>
+  WHERE USER_ID = #{userId};
+```
 </KbCard>
 
 <KbCard title="常见问题">

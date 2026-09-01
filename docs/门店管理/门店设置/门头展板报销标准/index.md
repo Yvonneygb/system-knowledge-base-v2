@@ -240,12 +240,15 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+
+```text
+NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
                                        │
                                        └──审批驳回──→ REJECTED(已驳回)
 
 APPROVED ──失效──→ (已失效)
-NEW ──删除──→ (删除)</code></pre>
+NEW ──删除──→ (删除)
+```
 </KbCard>
 
 <KbCard title="工作流">
@@ -293,7 +296,7 @@ NEW ──删除──→ (删除)</code></pre>
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：装修申请提交时报"没有有效期内的政策标准"">
+<KbCard title="Q1：装修申请提交时报&quot;没有有效期内的政策标准&quot;">
 <p><strong>根因</strong>：当前日期不在任何政策标准的有效期内</p>
 <p><strong>解决方案</strong>：延长政策标准的有效期或新增覆盖当前日期的政策标准</p>
 </KbCard>

@@ -431,10 +431,12 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+
+```text
+NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
                                        │              ├─ 计算超期/扣减
                                        │              ├─ 门店状态→1(正常)
-                                       │              └─ 超期&gt;限制时自动发起关闭申请
+                                       │              └─ 超期>限制时自动发起关闭申请
                                        │
                                        ├──审批驳回──→ REJECTED(已驳回)
                                        │              └─ 恢复门店原始状态
@@ -444,7 +446,8 @@
 
 NEW/REJECTED ──作废──→ INTERRUPT(已作废) ──→ 解绑CRM软装订单
 APPROVED ──重新生成──→ NEW(新建)
-APPROVED ──发起签呈──→ isSecondChange=2</code></pre>
+APPROVED ──发起签呈──→ isSecondChange=2
+```
 </KbCard>
 
 <KbCard title="工作流">
@@ -637,27 +640,27 @@ APPROVED ──发起签呈──→ isSecondChange=2</code></pre>
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：装修申请提交时报"预算剩余可用额度不足"">
+<KbCard title="Q1：装修申请提交时报&quot;预算剩余可用额度不足&quot;">
 <p><strong>根因</strong>：该预算年度的额度外预算(feeTypeId=66014601)剩余可用额度&lt;0</p>
 <p><strong>解决方案</strong>：联系财务确认预算额度是否已用完，或调整申请金额</p>
 </KbCard>
 
-<KbCard title="Q2：装修申请提交时报"店面装修等级没有有效期内的政策标准"">
+<KbCard title="Q2：装修申请提交时报&quot;店面装修等级没有有效期内的政策标准&quot;">
 <p><strong>根因</strong>：该装修等级在当前时间范围内没有有效的装修标准政策(START_DATE~END_DATE未覆盖当前日期)</p>
 <p><strong>解决方案</strong>：在门店装修标准设置中新增或延长该等级的政策有效期</p>
 </KbCard>
 
-<KbCard title="Q3：作废时报"新建、审核拒绝的单据才能作废"">
+<KbCard title="Q3：作废时报&quot;新建、审核拒绝的单据才能作废&quot;">
 <p><strong>根因</strong>：单据状态非NEW或REJECTED，可能已在审批中(RUN)或已审批(APPROVED)</p>
 <p><strong>解决方案</strong>：已审批单据不可作废，如需关闭请走关闭申请流程</p>
 </KbCard>
 
-<KbCard title="Q4：重新生成时报"该门店已有其它装修申请单"">
+<KbCard title="Q4：重新生成时报&quot;该门店已有其它装修申请单&quot;">
 <p><strong>根因</strong>：同一门店存在其他非INTERRUPT状态的装修申请单</p>
 <p><strong>解决方案</strong>：先作废其他申请单，再重新生成</p>
 </KbCard>
 
-<KbCard title="Q5：重新生成时报"超期天数大于限制或补贴金额为0"">
+<KbCard title="Q5：重新生成时报&quot;超期天数大于限制或补贴金额为0&quot;">
 <p><strong>根因</strong>：超期天数&gt;公司参数Over_Date_Limit，或扣减比例≥1(补贴金额已全部扣减)</p>
 <p><strong>解决方案</strong>：超期严重的申请单不可重新生成，需新建申请</p>
 </KbCard>
@@ -667,7 +670,7 @@ APPROVED ──发起签呈──→ isSecondChange=2</code></pre>
 <p><strong>解决方案</strong>：这是系统正常逻辑，需在关闭申请流程中处理扣减额度</p>
 </KbCard>
 
-<KbCard title="Q7：提交时报"单据正在申请变更中，不可提交"">
+<KbCard title="Q7：提交时报&quot;单据正在申请变更中，不可提交&quot;">
 <p><strong>根因</strong>：isModify=2，单据已发起变更申请</p>
 <p><strong>解决方案</strong>：先完成或撤销变更申请，再提交</p>
 </KbCard>

@@ -169,7 +169,9 @@
 </tbody>
 </table>
 <blockquote>列表查询SQL（Mapper: LnkProdPromoteGradeControlMapper.xml → selectList）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
     LPPGC.ID,
     LPPGC.DEPT_CODE AS deptCode,
     LPPGC.GRADE,
@@ -188,7 +190,8 @@ FROM LNK_PROD_PROMOTE_GRADE_CONTROL LPPGC
     LEFT JOIN HZERO.IAM_USER us2 ON LPPGC.Last_Updated_By = us2.id
 WHERE 1=1
     -- 动态条件：deptCode(=)、grade(=)、prodSign(=)、reqColumnType(=)、reqColumn(=)、status(=)、remark(=)
-ORDER BY LPPGC.Creation_Date DESC, LPPGC.ID DESC</code></pre>
+ORDER BY LPPGC.Creation_Date DESC, LPPGC.ID DESC
+```
 </KbCard>
 
 <KbCard title="界面模块2：新增/编辑弹窗">
@@ -243,48 +246,66 @@ ORDER BY LPPGC.Creation_Date DESC, LPPGC.ID DESC</code></pre>
 <p>- 第2点：后端Entity的deptCode字段标注@NotBlank</p>
 <ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE DEPT_CODE IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE DEPT_CODE IS NULL;
+```
 <ul><li>校验2：等级非空 —— 确保配置绑定到具体等级</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端弹窗grade字段required=true，commonFn_formValid校验</p>
 <p>- 第2点：后端Entity的grade字段标注@NotBlank</p>
 <ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE GRADE IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE GRADE IS NULL;
+```
 <ul><li>校验3：物料类型非空 —— 确保配置绑定到具体物料类型</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端弹窗prodSign字段required=true，commonFn_formValid校验</p>
 <p>- 第2点：后端Entity的prodSign字段标注@NotBlank</p>
 <ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE PROD_SIGN IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE PROD_SIGN IS NULL;
+```
 <ul><li>校验4：必填字段类型非空 —— 确保指定字段分类</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端弹窗reqColumnType字段required=true，commonFn_formValid校验</p>
 <p>- 第2点：后端Entity的reqColumnType字段标注@NotBlank</p>
 <ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE REQ_COLUMN_TYPE IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE REQ_COLUMN_TYPE IS NULL;
+```
 <ul><li>校验5：必填字段非空 —— 确保指定具体必填字段</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端弹窗reqColumn字段required=true，commonFn_formValid校验</p>
 <p>- 第2点：后端Entity的reqColumn字段标注@NotBlank</p>
 <ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE REQ_COLUMN IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE REQ_COLUMN IS NULL;
+```
 <ul><li>校验6：重复配置校验 —— 避免重复添加</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：后端saveData方法中，对每条status=valid的记录，查询是否已存在相同deptCode+grade+prodSign+reqColumn+reqColumnType且status=valid的记录</p>
 <p>- 第2点：如果存在，抛出CommonException("产品已存在相同的产品推广等级字段要求配置,无需重复添加!")</p>
 <ul><li>系统体现：后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL
-    WHERE DEPT_CODE = #&#123;deptCode&#125;
-      AND GRADE = #&#123;grade&#125;
-      AND PROD_SIGN = #&#123;prodSign&#125;
-      AND REQ_COLUMN = #&#123;reqColumn&#125;
-      AND REQ_COLUMN_TYPE = #&#123;reqColumnType&#125;
-      AND STATUS = 'valid';</code></pre>
+
+```sql
+SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL
+    WHERE DEPT_CODE = #{deptCode}
+      AND GRADE = #{grade}
+      AND PROD_SIGN = #{prodSign}
+      AND REQ_COLUMN = #{reqColumn}
+      AND REQ_COLUMN_TYPE = #{reqColumnType}
+      AND STATUS = 'valid';
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -293,9 +314,12 @@ ORDER BY LPPGC.Creation_Date DESC, LPPGC.ID DESC</code></pre>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>[新建] → valid（有效） → 失效操作 → invalid（失效）
+
+```text
+[新建] → valid（有效） → 失效操作 → invalid（失效）
                                       ↓
-                              不可再失效（行内失效按钮隐藏）</code></pre>
+                              不可再失效（行内失效按钮隐藏）
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -330,7 +354,9 @@ ORDER BY LPPGC.Creation_Date DESC, LPPGC.ID DESC</code></pre>
 </tbody>
 </table>
 <blockquote>下游查询SQL（被产品变更上架校验调用，Mapper: queryControlByProdCodeList）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
     LPPGC.ID,
     LPPGC.DEPT_CODE AS deptCode,
     LPPGC.GRADE,
@@ -351,7 +377,8 @@ FROM LNK_PROD_PROMOTE_GRADE_CONTROL LPPGC
         AND l.lov_code = 'CRM.PROD_PROMOTE_REQ_COLUMN'
         AND l.ENABLED_FLAG = 1
 WHERE LPPGC.STATUS = 'valid'
-    AND p.prod_code IN (#&#123;prodCodeList&#125;)</code></pre>
+    AND p.prod_code IN (#{prodCodeList})
+```
 </KbCard>
 
 </div>
@@ -386,66 +413,95 @@ WHERE LPPGC.STATUS = 'valid'
 <blockquote><strong>"产品已存在相同的产品推广等级字段要求配置,无需重复添加!"详细逻辑</strong>：
 后端saveData方法中，对每条status=valid的记录，使用deptCode+grade+prodSign+reqColumn+reqColumnType查询是否已存在有效记录，存在则抛出CommonException。
 排查SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT DEPT_CODE, GRADE, PROD_SIGN, REQ_COLUMN_TYPE, REQ_COLUMN, COUNT(*) AS cnt
+
+```sql
+SELECT DEPT_CODE, GRADE, PROD_SIGN, REQ_COLUMN_TYPE, REQ_COLUMN, COUNT(*) AS cnt
 FROM LNK_PROD_PROMOTE_GRADE_CONTROL
 WHERE STATUS = 'valid'
 GROUP BY DEPT_CODE, GRADE, PROD_SIGN, REQ_COLUMN_TYPE, REQ_COLUMN
-HAVING COUNT(*) &gt; 1;</code></pre>
+HAVING COUNT(*) > 1;
+```
 <h4>报错3：保存失败</h4>
 <ul><li><strong>触发条件</strong>：新增弹窗点击确认按钮，后端保存接口返回失败</li><li><strong>逻辑分析</strong>：前端onOkFn方法调用POST保存接口，后端saveData方法逐条校验唯一性（deptCode+grade+prodSign+reqColumn+reqColumnType）后插入LNK_PROD_PROMOTE_GRADE_CONTROL表。若校验失败或数据库异常则返回failed=true，前端提示"保存失败"并显示后端错误信息。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型,
+
+```sql
+SELECT C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型,
          C.REQ_COLUMN_TYPE AS 字段类型, C.REQ_COLUMN AS 必填字段,
          C.STATUS AS 状态, C.CREATION_DATE AS 创建时间
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
   WHERE C.DEPT_CODE = :deptCode
     AND C.GRADE = :grade
     AND C.PROD_SIGN = :prodSign
-  ORDER BY C.CREATION_DATE DESC;</code></pre>
+  ORDER BY C.CREATION_DATE DESC;
+```
 <h4>报错4：操作失败！</h4>
 <ul><li><strong>触发条件</strong>：失效确认框确认后，后端保存接口返回失败</li><li><strong>逻辑分析</strong>：前端调用失效接口将LNK_PROD_PROMOTE_GRADE_CONTROL记录状态置为invalid。若记录已被他人操作或数据库异常则返回失败，前端提示"操作失败！"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
+
+```sql
+SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.PROD_SIGN AS 物料类型, C.STATUS AS 状态,
          C.LAST_UPDATED_BY, C.LAST_UPDATE_DATE
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.ID = :recordId;</code></pre>
+  WHERE C.ID = :recordId;
+```
 <h4>报错5：品牌事业部不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增弹窗中未选择品牌事业部就点击确认按钮</li><li><strong>逻辑分析</strong>：前端onOkFn方法中commonFn_formValid校验deptCode字段required=true（listConfig.tsx第86行），校验不通过时弹窗提示"品牌事业部不能为空"并阻止提交。后端Controller的validObject校验LnkProdPromoteGradeControl实体deptCode字段的@NotBlank注解，抛出阻断性异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查存在品牌事业部为空的配置记录（异常数据）
+
+```sql
+-- 检查存在品牌事业部为空的配置记录（异常数据）
   SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.DEPT_CODE IS NULL OR TRIM(C.DEPT_CODE) IS NULL;</code></pre>
+  WHERE C.DEPT_CODE IS NULL OR TRIM(C.DEPT_CODE) IS NULL;
+```
 <h4>报错6：等级不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增弹窗中未选择等级就点击确认按钮</li><li><strong>逻辑分析</strong>：前端commonFn_formValid校验grade字段required=true（listConfig.tsx第87行），校验不通过时弹窗提示。后端Entity的grade字段标注@NotBlank，validObject校验失败抛出异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
+
+```sql
+SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.GRADE IS NULL OR TRIM(C.GRADE) IS NULL;</code></pre>
+  WHERE C.GRADE IS NULL OR TRIM(C.GRADE) IS NULL;
+```
 <h4>报错7：物料类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增弹窗中未选择物料类型就点击确认按钮</li><li><strong>逻辑分析</strong>：前端commonFn_formValid校验prodSign字段required=true（listConfig.tsx第91行），校验不通过时弹窗提示。后端Entity的prodSign字段标注@NotBlank，validObject校验失败抛出异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
+
+```sql
+SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.PROD_SIGN IS NULL OR TRIM(C.PROD_SIGN) IS NULL;</code></pre>
+  WHERE C.PROD_SIGN IS NULL OR TRIM(C.PROD_SIGN) IS NULL;
+```
 <h4>报错8：必填字段类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增弹窗中未选择必填字段类型就点击确认按钮</li><li><strong>逻辑分析</strong>：前端commonFn_formValid校验reqColumnType字段required=true（listConfig.tsx第98行），校验不通过时弹窗提示。后端Entity的reqColumnType字段标注@NotBlank，validObject校验失败抛出异常。此外reqColumnType变更时会自动清空reqColumn（listConfig.tsx第133-135行）。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
+
+```sql
+SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.REQ_COLUMN_TYPE AS 字段类型, C.REQ_COLUMN AS 必填字段
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.REQ_COLUMN_TYPE IS NULL OR TRIM(C.REQ_COLUMN_TYPE) IS NULL;</code></pre>
+  WHERE C.REQ_COLUMN_TYPE IS NULL OR TRIM(C.REQ_COLUMN_TYPE) IS NULL;
+```
 <h4>报错9：必填字段不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增弹窗中未选择必填字段就点击确认按钮</li><li><strong>逻辑分析</strong>：前端commonFn_formValid校验reqColumn字段required=true（listConfig.tsx第106行），且reqColumn通过cascadeMap级联reqColumnType（listConfig.tsx第108行），若未先选择必填字段类型则必填字段选项为空。校验不通过时弹窗提示。后端Entity的reqColumn字段标注@NotBlank，validObject校验失败抛出异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
+
+```sql
+SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.REQ_COLUMN_TYPE AS 字段类型, C.REQ_COLUMN AS 必填字段
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.REQ_COLUMN IS NULL OR TRIM(C.REQ_COLUMN) IS NULL;</code></pre>
+  WHERE C.REQ_COLUMN IS NULL OR TRIM(C.REQ_COLUMN) IS NULL;
+```
 <h4>报错10：查询失败</h4>
 <ul><li><strong>触发条件</strong>：列表页加载或点击查询按钮时，后端列表查询接口返回失败</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/prodPromoteGradesControls接口，后端selectList方法通过LnkProdPromoteGradeControlMapper.selectList查询LNK_PROD_PROMOTE_GRADE_CONTROL关联HZERO.IAM_USER表。若数据库连接异常或SQL执行超时则返回失败，前端DataSet自动提示查询失败。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查配置表数据完整性
+
+```sql
+-- 检查配置表数据完整性
   SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.PROD_SIGN AS 物料类型, C.STATUS AS 状态
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.STATUS IS NULL;</code></pre>
+  WHERE C.STATUS IS NULL;
+```
 <h4>报错11：权限不足</h4>
 <ul><li><strong>触发条件</strong>：当前用户无对应操作权限时点击新增/批量失效/行内失效按钮</li><li><strong>逻辑分析</strong>：前端按钮配置permissionList权限编码（新增/批量失效：hzero.product_data.product_info.promote_grade-list.ps.edit；行内失效：hzero.product_data.product_info.product_change_detail.ps.delete），无权限时按钮不显示。若通过API直接调用，后端@Permission注解校验组织级权限，无权限时抛出403异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查用户角色权限配置
+
+```sql
+-- 检查用户角色权限配置
   SELECT R.CODE AS 角色编码, R.NAME AS 角色名称,
          P.CODE AS 权限编码, P.NAME AS 权限名称
   FROM HZERO.IAM_ROLE R
@@ -455,16 +511,20 @@ HAVING COUNT(*) &gt; 1;</code></pre>
     'hzero.product_data.product_info.promote_grade-list.ps.edit',
     'hzero.product_data.product_info.product_change_detail.ps.delete'
   )
-  ORDER BY P.CODE;</code></pre>
+  ORDER BY P.CODE;
+```
 <h4>报错12：会话过期</h4>
 <ul><li><strong>触发条件</strong>：用户登录会话已失效时执行任意操作（查询/新增/失效）</li><li><strong>逻辑分析</strong>：前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查用户登录会话状态
+
+```sql
+-- 检查用户登录会话状态
   SELECT U.LOGIN_NAME AS 登录名, T.TOKEN, T.EXPIRE_TIME AS 过期时间,
          T.LAST_CLIENT_TIME AS 最后活跃时间
   FROM HZERO.OAUTH_ACCESS_TOKEN T
     JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
   WHERE U.LOGIN_NAME = :loginName
-  ORDER BY T.EXPIRE_TIME DESC;</code></pre>
+  ORDER BY T.EXPIRE_TIME DESC;
+```
 </KbCard>
 
 <KbCard title="常见问题">

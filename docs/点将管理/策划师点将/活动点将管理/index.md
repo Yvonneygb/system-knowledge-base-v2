@@ -361,7 +361,9 @@
 <p>提交数据（settleForPlan接口）：applyCode、saleTarget、collectionTarget、orderTarget、saleComplete、collectionComplete、orderComplete、completeRate、realStartDate（取realStartDate，为空取preStartDate，格式YYYY-MM-DD）、realEndDate（取realEndDate，为空取preEndDate，格式YYYY-MM-DD）、lecturerPrice、settlementAmount、signerId、signerName、signerPhone。</p>
 <p>校验：targetFormData非空、completeFormData非空、signerValid（申请详情表单generalFormDS签订人校验通过）。</p>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   aa.APPLY_CODE    AS 申请编码,
   aa.ACTIVITY_NAME AS 活动名称,
   aa.LECTURER_PRICE AS 讲师牌价,
@@ -369,7 +371,8 @@
   aa.SETTLEMENT_CONFIRM_STATE AS 结算确认状态
 FROM TRAIN_APPLY aa
 WHERE aa.APPLY_CODE = :applyCode
-  AND aa.APPLY_TYPE_ONE = 'activity';</code></pre>
+  AND aa.APPLY_TYPE_ONE = 'activity';
+```
 <h4>弹窗2：特殊取消弹窗（单选）</h4>
 <p>弹窗配置：title=<code>活动点将取消申请</code>，宽度1000，确认按钮=<code>提交</code>，取消按钮=<code>关闭</code>。弹窗打开前置校验：timeDiff（计划开始时间与当前时间差值）在1-7天内且approvalState=<code>fdd_sign</code>，且cancelApprovalState为空或为<code>reject</code>/<code>oa_reject</code>，否则提示并阻止。</p>
 <p>入参：</p>
@@ -393,14 +396,17 @@ WHERE aa.APPLY_CODE = :applyCode
 </table>
 <p>弹窗内容还包含申请详情（ActivityApplyDetail组件），展示选中行申请明细。提交时调用specialCancel接口，data=&#123;cancelReason, applyCode&#125;。</p>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   aa.APPLY_CODE    AS 申请编码,
   TO_CHAR(aa.ACTIVITY_START_DATE, 'YYYY-MM-DD') AS 活动开始时间,
   aa.APPROVAL_STATE AS 审核状态,
   ROUND((aa.ACTIVITY_START_DATE - SYSDATE)) AS 距开始天数
 FROM TRAIN_APPLY aa
 WHERE aa.APPLY_CODE = :applyCode
-  AND aa.APPLY_TYPE_ONE = 'activity';</code></pre>
+  AND aa.APPLY_TYPE_ONE = 'activity';
+```
 <h4>弹窗3：审批弹窗（单选）</h4>
 <p>弹窗配置：title=<code>活动点将申请审批</code>（cancelApproval模式为<code>活动点将取消申请审批</code>），宽度1000，确认按钮=<code>审批通过</code>，取消按钮=<code>关闭</code>，底部增加<code>驳回</code>按钮。审批人、审批时间在弹窗打开时自动赋值（审批人=当前用户realName，审批时间=当前时间）。</p>
 <p>入参：</p>
@@ -433,13 +439,16 @@ WHERE aa.APPLY_CODE = :applyCode
 </table>
 <p>弹窗内容还包含申请详情（ActivityApplyDetail组件，type=view，actionType=activityApproval）。提交时approval模式调用activityApplyApproval接口，cancelApproval模式调用activityCancelApplyOrgApproval接口。</p>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   aa.APPLY_CODE    AS 申请编码,
   aa.APPROVAL_STATE AS 当前审核状态,
   aa.SIGNER_NAME   AS 签订人
 FROM TRAIN_APPLY aa
 WHERE aa.APPLY_CODE = :applyCode
-  AND aa.APPLY_TYPE_ONE = 'activity';</code></pre>
+  AND aa.APPLY_TYPE_ONE = 'activity';
+```
 <h4>弹窗4：流程摘要弹窗（单选）</h4>
 <p>弹窗配置：title=<code>流程摘要</code>，宽度1000，无确认按钮（okButton=false），取消按钮=<code>关闭</code>。弹窗内容为ProcessDetail组件，展示申请applyCode对应的审批流程历史。</p>
 <p>入参：</p>
@@ -452,10 +461,13 @@ WHERE aa.APPLY_CODE = :applyCode
 </tbody>
 </table>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT *
+
+```sql
+SELECT *
 FROM TRAIN_APPLY aa
 WHERE aa.APPLY_CODE = :applyCode
-  AND aa.APPLY_TYPE_ONE = 'activity';</code></pre>
+  AND aa.APPLY_TYPE_ONE = 'activity';
+```
 </KbCard>
 
 <KbCard title="其他按钮">
@@ -500,10 +512,13 @@ WHERE aa.APPLY_CODE = :applyCode
 
 <KbCard title="状态机">
 <p>流转图：</p>
-<pre class="detail-sql" v-pre><code>draft(草稿) → submitted(已提交) → approved(审批通过) → valid(生效)
+
+```sql
+draft(草稿) → submitted(已提交) → approved(审批通过) → valid(生效)
    → executing(执行中) → end(已完成)
 rejected(审批驳回) → 可修改重提
-valid → cancel_applied(取消申请中) → cancel_approved(已取消)</code></pre>
+valid → cancel_applied(取消申请中) → cancel_approved(已取消)
+```
 <p>状态列表：</p>
 <table class="kb-field-tbl">
 <thead>
@@ -580,7 +595,9 @@ valid → cancel_applied(取消申请中) → cancel_approved(已取消)</code><
 </KbCard>
 
 <KbCard title="排查SQL">
-<pre class="detail-sql" v-pre><code>-- 查询活动点将申请列表
+
+```sql
+-- 查询活动点将申请列表
 SELECT
   aa.APPLY_CODE    AS 申请编码,
   aa.DISTRIBUTOR_NAME AS 申请人,
@@ -615,10 +632,11 @@ SELECT
 FROM TRAIN_APPLY aa
 WHERE aa.APPLY_TYPE_ONE = 'activity'
   AND aa.APPROVAL_STATE = 'fdd_sign'
-  AND aa.ACTIVITY_START_DATE &gt; SYSDATE
-  AND aa.ACTIVITY_START_DATE &lt;= SYSDATE + 7
+  AND aa.ACTIVITY_START_DATE > SYSDATE
+  AND aa.ACTIVITY_START_DATE <= SYSDATE + 7
   AND (aa.CANCEL_APPROVAL_STATE IS NULL
-       OR aa.CANCEL_APPROVAL_STATE IN ('reject', 'oa_reject'));</code></pre>
+       OR aa.CANCEL_APPROVAL_STATE IN ('reject', 'oa_reject'));
+```
 </KbCard>
 
 </div>
@@ -650,17 +668,22 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击按计划结算、查看申请、同步CRM、特殊取消、审批、同步OA、同步FDD等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DISTRIBUTOR_NAME AS 申请人,
          ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错2：只有在培训开始前七天内且已生效的单据才可以发起取消申请！</h4>
 <ul><li><strong>触发条件</strong>：点击特殊取消按钮时，不满足"活动开始前1-7天内且已法大大签约"条件</li><li><strong>逻辑分析</strong>：前端执行多重校验：①计算时间差值 timeDiff = (ACTIVITY_START_DATE - nowTime) / (24*60*60*1000)，校验 1 &lt;= timeDiff &lt;= 7（活动开始前1-7天内）；②校验 APPROVAL_STATE = 'fdd_sign'（已法大大签约生效）。任一校验不通过则提示"只有在培训开始前七天内且已生效的单据才可以发起取消申请！"。此校验限制取消时机，避免临近开课取消造成资源浪费，同时要求单据已生效具备业务合法性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          TO_CHAR(ACTIVITY_START_DATE,'YYYY-MM-DD') AS 活动开始时间,
          APPROVAL_STATE AS 审核状态,
@@ -668,12 +691,15 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'approved'
-    AND (ACTIVITY_START_DATE &lt;= SYSDATE
-         OR ACTIVITY_START_DATE &gt; SYSDATE + 7
-         OR APPROVAL_STATE &lt;&gt; 'fdd_sign');</code></pre>
+    AND (ACTIVITY_START_DATE <= SYSDATE
+         OR ACTIVITY_START_DATE > SYSDATE + 7
+         OR APPROVAL_STATE <> 'fdd_sign');
+```
 <h4>报错3：该单据已发起取消申请，不可重复发起！</h4>
 <ul><li><strong>触发条件</strong>：点击特殊取消按钮时，该单据已存在进行中的取消申请</li><li><strong>逻辑分析</strong>：前端校验 CANCEL_APPROVAL_STATE 字段，若不为空且不等于 'reject' 和 'oa_reject'，说明已有进行中的取消申请（如待审批、审批中），提示"该单据已发起取消申请，不可重复发起！"。避免重复发起取消审批导致流程冲突</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          APPROVAL_STATE AS 审核状态,
          CANCEL_APPROVAL_STATE AS 取消审核状态
@@ -681,20 +707,26 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'fdd_sign'
     AND CANCEL_APPROVAL_STATE IS NOT NULL
-    AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject');</code></pre>
+    AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject');
+```
 <h4>报错4：审批意见不能为空</h4>
 <ul><li><strong>触发条件</strong>：审批提交时，approvalComments 字段为空</li><li><strong>逻辑分析</strong>：前端 applyApprovalFormDS.validate() 对 approvalComments 字段配置 required 校验，提交前校验审批意见是否填写，为空则阻止提交并提示"审批意见不能为空"。审批意见用于记录审批人决策依据，保证审批留痕完整可追溯</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          APPROVAL_STATE AS 审核状态,
          APPROVAL_COMMENTS AS 审批意见
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE IN ('approved', 'reject')
-    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');</code></pre>
+    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');
+```
 <h4>报错5：签订人不能为空</h4>
 <ul><li><strong>触发条件</strong>：审批通过（approvalResult=approved）提交时，signerName/signerId 字段为空</li><li><strong>逻辑分析</strong>：前端在审批结果为 approved 时对 signerId 字段配置 required 校验，提交前校验签订人是否选择，为空则阻止提交并提示"签订人不能为空"。签订人用于后续法大大签约流程，审批通过后需明确签订人身份</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          APPROVAL_STATE AS 审核状态,
          SIGNER_ID AS 签订人ID,
@@ -702,10 +734,13 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'approved'
-    AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);</code></pre>
+    AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);
+```
 <h4>报错6：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 mlt/activityApply/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM）调用失败、工作流引擎异常、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、工作流配置、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态,
@@ -714,60 +749,79 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错7：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错8：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击按计划结算、查看申请、同步CRM、特殊取消、审批、同步OA、同步FDD等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%activity_general_manage%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%activity_general_manage%' ORDER BY U.USER_NAME;
+```
 <h4>报错9：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：查看申请、审批等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 TRAIN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+```
 <h4>报错10：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击审批、特殊取消等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如审批要求 APPROVAL_STATE 为 to_be_approval、特殊取消要求审批通过且活动开始前7天内等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态, APPROVAL_STATE AS 审核状态,
          CANCEL_APPROVAL_STATE AS 取消审核状态, ERROR_INFO AS 异常问题
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject','fdd_sign')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错11：同步外部系统失败</h4>
 <ul><li><strong>触发条件</strong>：点击同步CRM/同步OA/同步FDD按钮，对应推送接口返回失败</li><li><strong>逻辑分析</strong>：前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
          CRM_ORDER_CODE AS CRM单号, CRM_ORDER_STATUS AS CRM订单状态,
          ERROR_INFO AS 异常问题,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 7
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错12：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或列表中审核状态、点将状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.APPLY_APPROVAL_STATE、MBO.ORDER_LECTURE_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.APPLY_APPROVAL_STATE','MBO.ORDER_LECTURE_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 </KbCard>
 
 <KbCard title="常见问题">

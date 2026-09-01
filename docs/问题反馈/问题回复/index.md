@@ -346,11 +346,14 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>[已提交] ──事业部受理──→ [处理中] ──事业部回答──→ [已回答] ──完成──→ [已完成]
+
+```sql
+[已提交] ──事业部受理──→ [处理中] ──事业部回答──→ [已回答] ──完成──→ [已完成]
                               |
                               └──经销商追评──→ [处理中]
 
-[已回答] ──事业部追评──→ [处理中] ──事业部回答──→ [已回答]</code></pre>
+[已回答] ──事业部追评──→ [处理中] ──事业部回答──→ [已回答]
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>当前状态</th><th>触发动作</th><th>目标状态</th></tr>
@@ -420,7 +423,9 @@
 </table>
 <h4>报错1：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 <code>feedback/*</code> 系列接口（查询/回答/追评/完成/评价/导出）时，接口返回非成功状态或网络异常</li><li><strong>逻辑分析</strong>：前端 axios 请求未捕获到成功响应，可能原因：①mbo-business 微服务未启动或不可用；②当前用户登录态过期（TOKEN 失效）；③接口入参格式错误（如 id 为 null、回答内容超长）；④数据库连接异常导致服务端 500。需查看浏览器 Network 面板中对应请求的 Response Body 获取具体错误消息，再针对性排查。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询近期被操作但回答内容异常（超长或为空）的反馈单，定位入参问题
+
+```sql
+-- 查询近期被操作但回答内容异常（超长或为空）的反馈单，定位入参问题
   SELECT 反馈单.QUESTIONID    AS 问题编号,
          反馈单.TITLE         AS 问题标题,
          反馈单.STATE         AS 问题状态,
@@ -428,14 +433,20 @@
          反馈单.LAST_UPDATE_DATE AS 最后更新时间
   FROM FEEDBACK 反馈单
   WHERE 反馈单.ANSWER_CONTENT IS NULL
-     OR LENGTH(反馈单.ANSWER_CONTENT) &gt; 2000
-  ORDER BY 反馈单.LAST_UPDATE_DATE DESC;</code></pre>
+     OR LENGTH(反馈单.ANSWER_CONTENT) > 2000
+  ORDER BY 反馈单.LAST_UPDATE_DATE DESC;
+```
 <h4>报错2：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：在列表未选中任何行的情况下，点击"回答/追评/完成/评价"等行操作按钮</li><li><strong>逻辑分析</strong>：前端在执行行操作前校验当前选中行集合，若 <code>selectedRows</code> 为空数组则弹出该警告，属于前端纯校验，不调用后端接口。解决方案：先点击列表某一行选中后再执行对应操作。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 无（纯前端选中行校验，不涉及数据库操作）</code></pre>
+
+```sql
+-- 无（纯前端选中行校验，不涉及数据库操作）
+```
 <h4>报错3：回答内容不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"回答"或"追评"提交时，<code>ANSWER_CONTENT</code> 字段为空或仅含空白字符</li><li><strong>逻辑分析</strong>：前端表单校验 <code>evaluateFormDs.validate()</code> / answerForm 校验 <code>ANSWER_CONTENT</code> 必填，trim 后为空则阻止提交；后端 <code>feedback/answer</code>、<code>feedback/comment</code> 接口同样对 <code>ANSWER_CONTENT</code> 做 <code>@NotBlank</code> 校验，双重保障。解决方案：填写回答内容后重新提交。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询历史回答内容为空但状态已变更为已回答的异常反馈单
+
+```sql
+-- 查询历史回答内容为空但状态已变更为已回答的异常反馈单
   SELECT 反馈单.QUESTIONID      AS 问题编号,
          反馈单.TITLE           AS 问题标题,
          反馈单.STATE           AS 问题状态,
@@ -444,10 +455,13 @@
   FROM FEEDBACK 反馈单
   WHERE 反馈单.STATE = 3
     AND (反馈单.ANSWER_CONTENT IS NULL OR TRIM(反馈单.ANSWER_CONTENT) = '')
-  ORDER BY 反馈单.ANSWER_TIME DESC;</code></pre>
+  ORDER BY 反馈单.ANSWER_TIME DESC;
+```
 <h4>报错4：确定完结该反馈单吗？</h4>
 <ul><li><strong>触发条件</strong>：选择已回答状态的反馈单点击"完成"按钮</li><li><strong>逻辑分析</strong>：此为二次确认提示而非报错。前端弹出 <code>Modal.confirm</code> 确认框，用户点击"确定"后调用 <code>POST feedback/end/$&#123;id&#125;</code> 接口将状态置为已完成(4)，点击"取消"则不执行。目的是防止误操作完结反馈单导致流程不可逆。解决方案：确认无误后点击"确定"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询当前可完结（已回答）的反馈单，确认完结前状态正确
+
+```sql
+-- 查询当前可完结（已回答）的反馈单，确认完结前状态正确
   SELECT 反馈单.QUESTIONID      AS 问题编号,
          反馈单.TITLE           AS 问题标题,
          反馈单.STATE           AS 问题状态,
@@ -455,10 +469,13 @@
          反馈单.ANSWER_TIME     AS 回答时间
   FROM FEEDBACK 反馈单
   WHERE 反馈单.STATE = 3
-  ORDER BY 反馈单.ANSWER_TIME DESC;</code></pre>
+  ORDER BY 反馈单.ANSWER_TIME DESC;
+```
 <h4>报错5：该反馈单不可回答</h4>
 <ul><li><strong>触发条件</strong>：对状态非"已提交/处理中"的反馈单点击"回答"按钮</li><li><strong>逻辑分析</strong>：后端 <code>feedback/answer</code> 接口校验 <code>FEEDBACK.STATE</code> 必须为已提交(1)或处理中(2)，若为已回答(3)/已完成(4)则抛出该错误。常见场景：①列表数据未刷新，反馈单已被他人回答；②并发操作，两个事业部用户同时回答同一反馈单；③经销商已追评将状态改为处理中后又再次追评。解决方案：刷新列表确认反馈单当前状态后再操作。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询反馈单当前状态，确认是否处于可回答状态（已提交=1 / 处理中=2）
+
+```sql
+-- 查询反馈单当前状态，确认是否处于可回答状态（已提交=1 / 处理中=2）
   SELECT 反馈单.QUESTIONID      AS 问题编号,
          反馈单.TITLE           AS 问题标题,
          反馈单.STATE           AS 问题状态,
@@ -466,10 +483,13 @@
          反馈单.LAST_UPDATE_DATE AS 最后更新时间
   FROM FEEDBACK 反馈单
   WHERE 反馈单.QUESTIONID = :问题编号
-    AND 反馈单.STATE NOT IN (1, 2);</code></pre>
+    AND 反馈单.STATE NOT IN (1, 2);
+```
 <h4>报错6：该反馈单不可完结</h4>
 <ul><li><strong>触发条件</strong>：对状态非"已回答"的反馈单点击"完成"按钮</li><li><strong>逻辑分析</strong>：后端 <code>feedback/end/$&#123;id&#125;</code> 接口校验 <code>FEEDBACK.STATE</code> 必须为已回答(3)，若为已提交(1)/处理中(2)/已完成(4)则抛出该错误。常见场景：①反馈单尚在处理中未回答；②已被他人完结；③列表未刷新导致状态显示滞后。解决方案：刷新列表确认状态为已回答后再完结。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询反馈单当前状态，确认是否处于可完结状态（已回答=3）
+
+```sql
+-- 查询反馈单当前状态，确认是否处于可完结状态（已回答=3）
   SELECT 反馈单.QUESTIONID      AS 问题编号,
          反馈单.TITLE           AS 问题标题,
          反馈单.STATE           AS 问题状态,
@@ -477,10 +497,13 @@
          反馈单.LAST_UPDATE_DATE AS 最后更新时间
   FROM FEEDBACK 反馈单
   WHERE 反馈单.QUESTIONID = :问题编号
-    AND 反馈单.STATE &lt;&gt; 3;</code></pre>
+    AND 反馈单.STATE <> 3;
+```
 <h4>报错7：导出无数据</h4>
 <ul><li><strong>触发条件</strong>：点击"导出"按钮时，当前查询条件下列表结果为空</li><li><strong>逻辑分析</strong>：前端先调用 <code>POST feedback/division/page</code> 查询总数，若 total=0 则弹出该警告，不调用导出接口；或后端导出接口查询结果为空返回空文件。常见场景：①查询条件过严（时间范围/问题类型/问题状态组合无数据）；②事业部视角下无可见反馈单；③提交时间范围默认近一个月但该时段无数据。解决方案：放宽查询条件（如扩大时间范围、清空问题类型筛选）后重试。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询当前查询条件下反馈单数量，确认是否真的无数据
+
+```sql
+-- 查询当前查询条件下反馈单数量，确认是否真的无数据
   SELECT COUNT(*)              AS 反馈单总数,
          SUM(CASE WHEN 反馈单.STATE = 1 THEN 1 ELSE 0 END) AS 已提交数,
          SUM(CASE WHEN 反馈单.STATE = 2 THEN 1 ELSE 0 END) AS 处理中数,
@@ -490,53 +513,72 @@
   WHERE 反馈单.CREATE_TIME BETWEEN :开始时间 AND :结束时间
     AND (:问题类型 IS NULL OR 反馈单.TYPE_CODE = :问题类型)
     AND (:问题状态 IS NULL OR 反馈单.STATE = :问题状态)
-    AND (:提交人   IS NULL OR 反馈单.CREATE_NAME LIKE '%' || :提交人 || '%');</code></pre>
+    AND (:提交人   IS NULL OR 反馈单.CREATE_NAME LIKE '%' || :提交人 || '%');
+```
 <h4>报错8：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
+
+```sql
+SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
          反馈单.STATE AS 问题状态,
          TO_CHAR(反馈单.LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM FEEDBACK 反馈单
-  WHERE 反馈单.LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY 反馈单.LAST_UPDATE_DATE DESC;</code></pre>
+  WHERE 反馈单.LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY 反馈单.LAST_UPDATE_DATE DESC;
+```
 <h4>报错9：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击回答、追评、完成、评价等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%feedback_answer%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%feedback_answer%' ORDER BY U.USER_NAME;
+```
 <h4>报错10：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：回答、完结、评价等操作时，接口返回数据为空或问题编号不存在</li><li><strong>逻辑分析</strong>：前端通过 questionId 调用接口，后端查询 FEEDBACK 表无对应记录或记录已逻辑删除，返回空数据。常见根因：问题编号错误、反馈单已被删除、跨租户查询、数据权限隔离等。需检查 QUESTIONID 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
+
+```sql
+SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
          反馈单.STATE AS 问题状态, 反馈单.DELETE_FLAG AS 删除标记
   FROM FEEDBACK 反馈单
-  WHERE 反馈单.DELETE_FLAG = 'Y' OR 反馈单.QUESTIONID IS NULL;</code></pre>
+  WHERE 反馈单.DELETE_FLAG = 'Y' OR 反馈单.QUESTIONID IS NULL;
+```
 <h4>报错11：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或列表中问题类型、问题状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.FEEDBACK_TYPE、MBO.FEEDBACK_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.FEEDBACK_TYPE','MBO.FEEDBACK_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 <h4>报错12：评价星级不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交评价时，STAR_LEVEL 字段为空</li><li><strong>逻辑分析</strong>：前端评价弹窗对 starLevel 字段配置 required 校验，提交前校验评价星级是否选择，为空则阻止提交并提示"评价星级不能为空"。评价星级用于量化反馈处理质量，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
+
+```sql
+SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
          反馈单.STATE AS 问题状态, 反馈单.STAR_LEVEL AS 评价星级,
          反馈单.EVALUATE_CONTENT AS 评价内容
   FROM FEEDBACK 反馈单
   WHERE 反馈单.STATE = 4
-    AND 反馈单.STAR_LEVEL IS NULL;</code></pre>
+    AND 反馈单.STAR_LEVEL IS NULL;
+```
 <h4>报错13：评价内容不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交评价时，EVALUATE_CONTENT 字段为空</li><li><strong>逻辑分析</strong>：前端评价弹窗对 evaluateContent 字段配置 required 校验，提交前校验评价内容是否填写，为空则阻止提交并提示"评价内容不能为空"。评价内容用于记录反馈处理满意度，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
+
+```sql
+SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
          反馈单.STATE AS 问题状态, 反馈单.STAR_LEVEL AS 评价星级,
          反馈单.EVALUATE_CONTENT AS 评价内容
   FROM FEEDBACK 反馈单
   WHERE 反馈单.STATE = 4
-    AND (反馈单.EVALUATE_CONTENT IS NULL OR TRIM(反馈单.EVALUATE_CONTENT) = '');</code></pre>
+    AND (反馈单.EVALUATE_CONTENT IS NULL OR TRIM(反馈单.EVALUATE_CONTENT) = '');
+```
 </KbCard>
 
 </div>
@@ -547,7 +589,9 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="排查SQL汇总">
-<pre class="detail-sql" v-pre><code>-- 1. 查询待回复的反馈单
+
+```sql
+-- 1. 查询待回复的反馈单
 SELECT QUESTIONID, TITLE, TYPE_CODE, CONTENT,
        CREATE_TIME, CREATE_NAME, DISTRIBUTOR_NAME
 FROM FEEDBACK
@@ -572,7 +616,8 @@ SELECT QUESTIONID, TITLE, ANSWER_CONTENT, ANSWER_TIME, CREATE_NAME
 FROM FEEDBACK
 WHERE STATE = :completedState
   AND GRADE IS NULL
-ORDER BY ANSWER_TIME DESC;</code></pre>
+ORDER BY ANSWER_TIME DESC;
+```
 </KbCard>
 
 </div>

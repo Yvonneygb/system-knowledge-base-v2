@@ -241,7 +241,10 @@
 <p>- 第1点：保存时校验减免金额大于0</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM CM_DEPOSITS_REDUCTION_HEAD WHERE REDUCTION_AMT &lt;= 0;</code></pre>
+
+```sql
+SELECT * FROM CM_DEPOSITS_REDUCTION_HEAD WHERE REDUCTION_AMT <= 0;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -250,15 +253,21 @@
 <p>- 第1点：提交时校验减免金额不超过已缴保证金余额</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.REDUCTION_AMT, P.PAYMENT_AMT FROM CM_DEPOSITS_REDUCTION_HEAD H, CM_DEPOSITS_PAYMENT P
-    WHERE H.CONTRACT_ID = P.CONTRACT_ID AND H.REDUCTION_AMT &gt; P.PAYMENT_AMT;</code></pre>
+
+```sql
+SELECT H.REDUCTION_AMT, P.PAYMENT_AMT FROM CM_DEPOSITS_REDUCTION_HEAD H, CM_DEPOSITS_PAYMENT P
+    WHERE H.CONTRACT_ID = P.CONTRACT_ID AND H.REDUCTION_AMT > P.PAYMENT_AMT;
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审核
+
+```text
+新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审核
                                 │
-                                └──OA审批拒绝──→ 已拒绝</code></pre>
+                                └──OA审批拒绝──→ 已拒绝
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -325,46 +334,67 @@
 </table>
 <h4>报错1：减免金额必须大于0</h4>
 <ul><li><strong>触发条件</strong>：用户在减免金额输入框填写0、负数或留空后点击保存</li><li><strong>逻辑分析</strong>：保证金减免金额（REDUCTION_AMT）代表实际减免的保证金金额，必须为正数。0或负数无业务意义，且审批通过后扣减保证金余额（CM_DEPOSITS_PAYMENT）将出现异常（扣减0或反向增加余额）。校验REDUCTION_AMT &gt; 0，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT REDUCTION_HEAD_ID, REDUCTION_NO, CUSTOMER_NAME, CONTRACT_NO,
+
+```sql
+SELECT REDUCTION_HEAD_ID, REDUCTION_NO, CUSTOMER_NAME, CONTRACT_NO,
          REDUCTION_AMT, HZ_APPROVE_STATUS
   FROM CM_DEPOSITS_REDUCTION_HEAD
-  WHERE REDUCTION_AMT IS NULL OR REDUCTION_AMT &lt;= 0;</code></pre>
+  WHERE REDUCTION_AMT IS NULL OR REDUCTION_AMT <= 0;
+```
 <h4>报错2：减免金额超过保证金余额</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，提交校验发现REDUCTION_AMT &gt; 已缴保证金余额（PAYMENT_AMT）</li><li><strong>逻辑分析</strong>：提交时校验减免金额不超过关联合同的已缴保证金余额，通过关联CM_DEPOSITS_REDUCTION_HEAD.CONTRACT_ID与CM_DEPOSITS_PAYMENT.CONTRACT_ID比对。超出余额意味着减免无充足保证金来源，审批通过后保证金余额将出现负数。此为阻断性报错，阻止OA流程（DEPOSITS_REDUCTION_HEAD_MCS_AW）发起，需调减减免金额或先确认保证金到款</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, H.CONTRACT_NO, H.REDUCTION_AMT,
+
+```sql
+SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, H.CONTRACT_NO, H.REDUCTION_AMT,
          P.PAYMENT_AMT AS 已缴保证金, (H.REDUCTION_AMT - P.PAYMENT_AMT) AS 超额金额
   FROM CM_DEPOSITS_REDUCTION_HEAD H
   JOIN CM_DEPOSITS_PAYMENT P ON H.CONTRACT_ID = P.CONTRACT_ID
-  WHERE H.REDUCTION_AMT &gt; P.PAYMENT_AMT
-    AND H.HZ_APPROVE_STATUS IN ('NEW', 'RUN');</code></pre>
+  WHERE H.REDUCTION_AMT > P.PAYMENT_AMT
+    AND H.HZ_APPROVE_STATUS IN ('NEW', 'RUN');
+```
 <h4>报错3：流程编码缺失</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，dto.getFlowCode()为空字符串或null</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.saveAndSubmit方法首行校验flowCode非空，保证金减免需通过工作流DEPOSITS_REDUCTION_HEAD_MCS_AW审批，flowCode为空无法启动工作流。根因是前端未选择审批流程或流程配置缺失。需在提交前选择OA审批流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WORKFLOW_CODE, WORKFLOW_NAME FROM WORKFLOW_CONFIG
-  WHERE WORKFLOW_CODE = 'DEPOSITS_REDUCTION_HEAD_MCS_AW';</code></pre>
+
+```sql
+SELECT WORKFLOW_CODE, WORKFLOW_NAME FROM WORKFLOW_CONFIG
+  WHERE WORKFLOW_CODE = 'DEPOSITS_REDUCTION_HEAD_MCS_AW';
+```
 <h4>报错4：请选择需要删除的数据</h4>
 <ul><li><strong>触发条件</strong>：用户未选中任何减免申请记录直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.remove方法校验cCmDepositsReductionHeadList非空，空集合时抛CommonException。前端列表页未勾选记录时删除按钮应禁用，此报错为前置校验。需先在列表勾选待删除的未提交记录再点击删除</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT REDUCTION_HEAD_ID, REDUCTION_NO, HZ_APPROVE_STATUS, STATUS
+
+```sql
+SELECT REDUCTION_HEAD_ID, REDUCTION_NO, HZ_APPROVE_STATUS, STATUS
   FROM CM_DEPOSITS_REDUCTION_HEAD
-  WHERE HZ_APPROVE_STATUS = 'NEW' AND STATUS = 'pending';</code></pre>
+  WHERE HZ_APPROVE_STATUS = 'NEW' AND STATUS = 'pending';
+```
 <h4>报错5：无法获取上下文信息</h4>
 <ul><li><strong>触发条件</strong>：保存减免申请生成减免单号时，DetailsHelper.getUserDetails()返回空</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.generateCode方法通过DetailsHelper.getUserDetails()获取用户上下文，customUserDetails为空时抛CommonException。根因是用户登录态失效（Token过期、会话超时）或未登录调用接口。需重新登录后再次保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 验证用户登录态（示意，实际依会话框架）
+
+```sql
+-- 验证用户登录态（示意，实际依会话框架）
   SELECT USER_ID, USER_NAME, LAST_LOGIN_TIME FROM USER_SESSION
-  WHERE USER_ID = #&#123;userId&#125; AND SESSION_STATUS = 'ACTIVE';</code></pre>
+  WHERE USER_ID = #{userId} AND SESSION_STATUS = 'ACTIVE';
+```
 <h4>报错6：无法获取事业部信息</h4>
 <ul><li><strong>触发条件</strong>：保存减免申请生成减免单号时，epmDivisionService.getCurrentDivision()返回null</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.generateCode方法获取当前用户所属事业部，currentDivision为null时抛CommonException。事业部用于生成减免单号前缀（DIVISION_CODE）和关联ENTID。根因是用户未关联事业部或事业部主数据缺失。需联系管理员为用户配置事业部关联</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_ID, U.USER_NAME, D.DIVISION_ID, D.DIVISION_CODE, D.DIVISION_NAME
+
+```sql
+SELECT U.USER_ID, U.USER_NAME, D.DIVISION_ID, D.DIVISION_CODE, D.DIVISION_NAME
   FROM USER U
   LEFT JOIN USER_DIVISION UD ON U.USER_ID = UD.USER_ID
   LEFT JOIN DIVISION_BASE_SET D ON UD.DIVISION_ID = D.DIVISION_ID
-  WHERE U.USER_ID = #&#123;userId&#125; AND D.DIVISION_ID IS NULL;</code></pre>
+  WHERE U.USER_ID = #{userId} AND D.DIVISION_ID IS NULL;
+```
 <h4>报错7：请先维护明细信息</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，前端校验lineDs.records为空（未添加任何减免明细行）</li><li><strong>逻辑分析</strong>：前端DetailPage.hadleChcek方法校验lineDs.records非空，明细行缺失时notification.error提示。减免申请需关联具体的保证金缴纳明细（CM_DEPOSITS_REDUCTION_LINE），无明细行意味着减免无具体来源。需在明细页点击"新建"添加减免明细行后提交</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, COUNT(L.REDUCTION_LINE_ID) AS 明细行数
+
+```sql
+SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, COUNT(L.REDUCTION_LINE_ID) AS 明细行数
   FROM CM_DEPOSITS_REDUCTION_HEAD H
   LEFT JOIN CM_DEPOSITS_REDUCTION_LINE L ON H.REDUCTION_HEAD_ID = L.HEAD_ID
   GROUP BY H.REDUCTION_HEAD_ID, H.REDUCTION_NO
-  HAVING COUNT(L.REDUCTION_LINE_ID) = 0;</code></pre>
+  HAVING COUNT(L.REDUCTION_LINE_ID) = 0;
+```
 </KbCard>
 
 <KbCard title="常见问题">

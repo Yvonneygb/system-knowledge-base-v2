@@ -299,14 +299,17 @@
 </table>
 <blockquote>审批弹窗包含审批意见Form和申请详情展示，审批通过时需选择签订人</blockquote>
 <blockquote>查询SQL（签订人列表，根据法人主体查询）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   su.USER_ID   AS 签订人ID,
   su.REAL_NAME AS 签订人姓名,
   su.PHONE     AS 签订人电话
 FROM SYS_USER su
 WHERE su.ORG_ID = :orgId
   AND su.STATUS = 'active'
-ORDER BY su.REAL_NAME;</code></pre>
+ORDER BY su.REAL_NAME;
+```
 <h4>弹窗2：流程摘要弹窗（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -319,7 +322,9 @@ ORDER BY su.REAL_NAME;</code></pre>
 </table>
 <blockquote>流程摘要弹窗通过ProcessDetail组件展示流程审批历史，弹窗宽度1000px，仅显示关闭按钮</blockquote>
 <blockquote>查询SQL（流程审批历史，工作流引擎查询）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   ph.NODE_NAME     AS 审批节点,
   ph.APPROVER_NAME AS 审批人,
   ph.APPROVE_RESULT AS 审批结果,
@@ -327,7 +332,8 @@ ORDER BY su.REAL_NAME;</code></pre>
   TO_CHAR(ph.APPROVE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS 审批时间
 FROM PROCESS_HISTORY ph
 WHERE ph.BUSINESS_CODE = :applyCode
-ORDER BY ph.APPROVE_TIME;</code></pre>
+ORDER BY ph.APPROVE_TIME;
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -346,15 +352,21 @@ ORDER BY ph.APPROVE_TIME;</code></pre>
 </table>
 <h4>按钮1：查看申请（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选择一条数据，始终显示</li><li><strong>执行逻辑</strong>：</li><li>第1点：通过openTab打开新标签页</li><li>第2点：跳转路由为/general/distributorGeneral/distributorGeneralSingleStore/detail/&#123;applyCode&#125;/view</li><li>第3点：参数isCrm在pageType=manage时为true，否则为false（控制详情页是否显示CRM相关操作）</li><li><strong>接口调用</strong>：无，仅前端页面跳转</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+
+```sql
+SELECT * FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;
+```
 <h4>按钮2：审批（列表页）</h4>
 <ul><li><strong>触发条件</strong>：pageType不等于manage且选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：打开审批弹窗，填写审批意见、签订人</li><li>第2点：校验审批意见必填，审批通过时签订人必填</li><li>第3点：调用审批接口提交审批结果</li><li>第4点：审批通过后推送OA/法大大/CRM</li><li><strong>接口调用</strong>：POST /mlt/trainApply/trainApplyApproval</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   ta.APPLY_CODE,
   ta.APPROVAL_STATE,
   ta.ORDER_LECTURE_STATE
 FROM TRAIN_APPLY ta
-WHERE ta.APPLY_CODE = :applyCode;</code></pre>
+WHERE ta.APPLY_CODE = :applyCode;
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -368,28 +380,37 @@ WHERE ta.APPLY_CODE = :applyCode;</code></pre>
 <p>- 第2点：审批意见字段为必填，TextArea组件</p>
 <ul><li>系统体现：toast提醒"审批意见不能为空"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, APPROVAL_COMMENTS
+
+```sql
+SELECT APPLY_CODE, APPROVAL_COMMENTS
     FROM TRAIN_APPLY
     WHERE APPLY_CODE = :applyCode
-      AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');</code></pre>
+      AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');
+```
 <ul><li>校验2：审批通过时签订人必填 —— 确保审批通过后有签订人用于后续合同签署</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：当approvalResult为approved时，签订人字段必填</p>
 <p>- 第2点：签订人通过signerDS根据法人主体动态查询</p>
 <ul><li>系统体现：toast提醒"签订人不能为空"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
+
+```sql
+SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
     FROM TRAIN_APPLY
     WHERE APPLY_CODE = :applyCode
       AND APPROVAL_STATE = 'approved'
-      AND SIGNER_ID IS NULL;</code></pre>
+      AND SIGNER_ID IS NULL;
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>新建(NEW) → 提交(SUBMITTED) → 审批通过(APPROVED) → 生效(EFFECTIVE) → 执行中(EXECUTING) → 已完成(COMPLETED)
+
+```text
+新建(NEW) → 提交(SUBMITTED) → 审批通过(APPROVED) → 生效(EFFECTIVE) → 执行中(EXECUTING) → 已完成(COMPLETED)
                 |
-                └→ 审批驳回(REJECTED) → 可修改重新提交</code></pre>
+                └→ 审批驳回(REJECTED) → 可修改重新提交
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -478,84 +499,117 @@ WHERE ta.APPLY_CODE = :applyCode;</code></pre>
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请/审批按钮前未选择列表行或选择多行</li><li><strong>逻辑分析</strong>：前端校验选中行数量=1，不满足时toast提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.TRAIN_NAME AS 培训名称,
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.TRAIN_NAME AS 培训名称,
          ta.APPROVAL_STATE AS 审核状态, ta.ORDER_LECTURE_STATE AS 点将状态
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_TYPE_ONE = 'train' AND ta.APPLY_TYPE_TWO = 'apply'
-  ORDER BY ta.CREATE_DATE DESC;</code></pre>
+  ORDER BY ta.CREATE_DATE DESC;
+```
 <h4>报错2：请求失败</h4>
 <ul><li><strong>触发条件</strong>：查询/审批接口调用时</li><li><strong>逻辑分析</strong>：后端 mbo-business 微服务异常或网络错误，HTTP 状态码非 2xx</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY7S 申请编码, ta.ERROR_INFO AS 异常信息
+
+```sql
+SELECT ta.APPLY7S 申请编码, ta.ERROR_INFO AS 异常信息
   FROM TRAIN_APPLY ta
-  WHERE ta.ERROR_INFO IS NOT NULL;</code></pre>
+  WHERE ta.ERROR_INFO IS NOT NULL;
+```
 <h4>报错3：审批意见不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交审批时未填写审批意见</li><li><strong>逻辑分析</strong>：前端 applyApprovalFormDS.validate() 校验 APPROVAL_COMMENTS 必填，TextArea 组件</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
-    AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = '');</code></pre>
+    AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = '');
+```
 <h4>报错4：签订人不能为空</h4>
 <ul><li><strong>触发条件</strong>：审批通过时未选择签订人</li><li><strong>逻辑分析</strong>：approvalResult=approved 时 signerId 必填，签订人通过 signerDS 根据法人主体动态查询</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.SIGNER_ID AS 签订人ID, ta.SIGNER_NAME AS 签订人姓名
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.SIGNER_ID AS 签订人ID, ta.SIGNER_NAME AS 签订人姓名
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
     AND ta.APPROVAL_STATE = 'approved'
-    AND ta.SIGNER_ID IS NULL;</code></pre>
+    AND ta.SIGNER_ID IS NULL;
+```
 <h4>报错5：数据校验失败</h4>
 <ul><li><strong>触发条件</strong>：审批提交时表单校验未通过</li><li><strong>逻辑分析</strong>：前端表单校验（审批意见、签订人等必填项）未通过时阻止提交</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见,
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见,
          ta.SIGNER_NAME AS 签订人, ta.APPROVAL_STATE AS 审核状态
   FROM TRAIN_APPLY ta
   WHERE ta.APPROVAL_STATE = 'approving'
     AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = ''
-         OR (ta.SIGNER_ID IS NULL));</code></pre>
+         OR (ta.SIGNER_ID IS NULL));
+```
 <h4>报错6：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错7：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请、审批等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%single_store_general_manage%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%single_store_general_manage%' ORDER BY U.USER_NAME;
+```
 <h4>报错8：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：查看申请、审批等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 TRAIN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+```
 <h4>报错9：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击审批按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如审批要求 APPROVAL_STATE 为 to_be_approval。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态, APPROVAL_STATE AS 审核状态,
          ERROR_INFO AS 异常问题
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错10：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或列表中点将状态、审核状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.APPLY_APPROVAL_STATE、MBO.ORDER_LECTURE_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.APPLY_APPROVAL_STATE','MBO.ORDER_LECTURE_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 <h4>报错11：审批人不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交审批时，前端从 getCurrentUser().realName 取审批人姓名为空</li><li><strong>逻辑分析</strong>：前端审批弹窗 beforeOpen 阶段设置 approvalUserName 为 userInfo.realName，若用户未登录或登录态失效导致 realName 为空，则审批人字段为空。需检查用户登录态、token 是否过期、用户信息接口是否正常</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, U.REAL_NAME AS 真实姓名,
+
+```sql
+SELECT U.USER_NAME AS 用户名, U.REAL_NAME AS 真实姓名,
          U.LOGIN_FLAG AS 登录标记, U.STATUS_CODE AS 状态
   FROM SYS_USER U
-  WHERE U.REAL_NAME IS NULL OR U.STATUS_CODE &lt;&gt; 'ACTIVE';</code></pre>
+  WHERE U.REAL_NAME IS NULL OR U.STATUS_CODE <> 'ACTIVE';
+```
 </KbCard>
 
 <KbCard title="常见问题">

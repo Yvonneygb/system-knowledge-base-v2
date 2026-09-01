@@ -88,7 +88,6 @@
         <marker id="arr-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><polygon points="0,0 10,5 0,10" fill="#7C3AED"/></marker>
         <filter id="shadow2" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"/></filter>
       </defs>
-
       <!-- 上游支撑 -->
       <rect x="50" y="20" width="1100" height="80" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="6,4"/>
       <text x="600" y="42" text-anchor="middle" fill="#1D4ED8" font-size="13" font-weight="600">上游支撑</text>
@@ -98,51 +97,41 @@
       <text x="520" y="74" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">HZERO 低代码平台（hlod）</text>
       <rect x="680" y="52" width="240" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"/>
       <text x="800" y="74" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">HZERO 组织服务</text>
-
       <line x1="600" y1="100" x2="600" y2="130" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-blue)"/>
-
       <!-- 开始 -->
       <rect x="540" y="130" width="120" height="40" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
       <text x="600" y="156" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">开始</text>
       <line x1="600" y1="170" x2="600" y2="200" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
-
       <!-- 进入LOV配置页面 -->
       <rect x="430" y="200" width="340" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
       <text x="600" y="227" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">进入 HZERO 平台 LOV 值集配置页面</text>
       <line x1="600" y1="244" x2="600" y2="274" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
-
       <!-- 查询值项列表 -->
       <rect x="430" y="274" width="340" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
       <text x="600" y="301" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">查询装修等级值项列表（按编码/名称/状态）</text>
       <line x1="600" y1="318" x2="600" y2="348" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
-
       <!-- 操作分支判断 -->
       <polygon points="600,348 700,398 600,448 500,398" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
       <text x="600" y="402" text-anchor="middle" fill="#7C3AED" font-size="12" font-weight="600">选择操作</text>
-
       <!-- 四个操作分支 -->
       <!-- 新建 -->
       <line x1="500" y1="398" x2="340" y2="398" stroke="#16A34A" stroke-width="2"/>
       <line x1="340" y1="398" x2="340" y2="470" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
       <rect x="260" y="470" width="160" height="40" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
       <text x="340" y="495" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">新建值项</text>
-
       <!-- 编辑 -->
       <line x1="550" y1="448" x2="550" y2="470" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
       <rect x="470" y="470" width="160" height="40" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
       <text x="550" y="495" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">编辑值项</text>
-
       <!-- 删除 -->
       <line x1="650" y1="448" x2="650" y2="470" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
       <rect x="570" y="470" width="160" height="40" rx="6" fill="#FEF2F2" stroke="#EF4444" stroke-width="1.5"/>
       <text x="650" y="495" text-anchor="middle" fill="#DC2626" font-size="11" font-weight="600">删除值项</text>
-
       <!-- 启用/禁用 -->
       <line x1="700" y1="398" x2="860" y2="398" stroke="#16A34A" stroke-width="2"/>
       <line x1="860" y1="398" x2="860" y2="470" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
       <rect x="780" y="470" width="160" height="40" rx="6" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
       <text x="860" y="495" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">启用/禁用值项</text>
-
       <!-- 汇合到保存校验 -->
       <line x1="340" y1="510" x2="340" y2="540" stroke="#16A34A" stroke-width="2"/>
       <line x1="550" y1="510" x2="550" y2="540" stroke="#16A34A" stroke-width="2"/>
@@ -151,17 +140,14 @@
       <rect x="430" y="540" width="340" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
       <text x="600" y="567" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">保存校验（编码唯一/必填/排序号）</text>
       <line x1="600" y1="584" x2="600" y2="614" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
-
       <!-- 写入HPFM_LOV_VALUE -->
       <rect x="400" y="614" width="400" height="44" rx="6" fill="#16A34A" stroke="#15803D" stroke-width="2" filter="url(#shadow2)"/>
       <text x="600" y="641" text-anchor="middle" fill="#FFFFFF" font-size="12" font-weight="700">写入 HPFM_LOV_VALUE 表（HZERO 平台 LOV 服务）</text>
       <line x1="600" y1="658" x2="600" y2="688" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
-
       <!-- 业务引用翻译 -->
       <rect x="380" y="688" width="440" height="44" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"/>
       <text x="600" y="715" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">业务引用：lovService.getMeaning / getValue 翻译</text>
       <line x1="600" y1="732" x2="600" y2="762" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"/>
-
       <!-- 结束 -->
       <rect x="540" y="762" width="120" height="40" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"/>
       <text x="600" y="788" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">结束</text>
@@ -292,8 +278,11 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>[新建] ──保存──→ [启用(ENABLE_FLAG=1)] ──禁用──→ [禁用(ENABLE_FLAG=0)]
-                                              └──启用──→ [启用]</code></pre>
+
+```sql
+[新建] ──保存──→ [启用(ENABLE_FLAG=1)] ──禁用──→ [禁用(ENABLE_FLAG=0)]
+                                              └──启用──→ [启用]
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>当前状态</th><th>触发动作</th><th>目标状态</th></tr>
@@ -414,36 +403,47 @@
 </table>
 <h4>报错1：等级编码已存在</h4>
 <ul><li><strong>触发条件</strong>：新增或编辑保存装修等级值项时，同一 LOV（AE.FIXUP_GRADE）下 VALUE 字段与已有值项重复</li><li><strong>逻辑分析</strong>：后端保存前查询 HPFM_LOV_VALUE 表，校验同一 LOV_CODE='AE.FIXUP_GRADE' 下 VALUE 唯一性，若存在重复则提示"等级编码已存在"。确保值编码唯一，避免业务引用歧义</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT VALUE AS 值编码,
+
+```sql
+SELECT VALUE AS 值编码,
          COUNT(*) AS 重复数量,
          LISTAGG(MEANING, ',') WITHIN GROUP (ORDER BY LOV_VALUE_ID) AS 值名称列表
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
   GROUP BY VALUE
-  HAVING COUNT(*) &gt; 1;</code></pre>
+  HAVING COUNT(*) > 1;
+```
 <h4>报错2：值编码不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增或编辑保存时，VALUE 字段未填写</li><li><strong>逻辑分析</strong>：前端表单对 VALUE 字段配置 required 校验，提交前校验值编码是否填写，为空则阻止提交并提示"值编码不能为空"。值编码是值项的唯一标识，业务表存储此值，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID,
+
+```sql
+SELECT LOV_VALUE_ID AS 值项ID,
          LOV_CODE AS LOV编码,
          VALUE AS 值编码,
          MEANING AS 值名称,
          ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (VALUE IS NULL OR VALUE = '');</code></pre>
+    AND (VALUE IS NULL OR VALUE = '');
+```
 <h4>报错3：值名称不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增或编辑保存时，MEANING 字段未填写</li><li><strong>逻辑分析</strong>：前端表单对 MEANING 字段配置 required 校验，提交前校验值名称是否填写，为空则阻止提交并提示"值名称不能为空"。值名称用于界面展示，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID,
+
+```sql
+SELECT LOV_VALUE_ID AS 值项ID,
          LOV_CODE AS LOV编码,
          VALUE AS 值编码,
          MEANING AS 值名称,
          ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (MEANING IS NULL OR MEANING = '');</code></pre>
+    AND (MEANING IS NULL OR MEANING = '');
+```
 <h4>报错4：店面装修等级没有对应的政策标准</h4>
 <ul><li><strong>触发条件</strong>：门店装修申请提交时，所选装修等级在 TERMINAL_DECORATE_LINE 表中无对应的标准行</li><li><strong>逻辑分析</strong>：后端提交校验查询 TERMINAL_DECORATE_LINE 表，根据 FIXUP_GRADE 匹配装修标准行，若无对应标准行则提示"店面装修等级没有对应的政策标准"。确保装修等级有对应的报销标准，避免提交后无法计算补贴金额</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT lv.VALUE AS 装修等级编码,
+
+```sql
+SELECT lv.VALUE AS 装修等级编码,
          lv.MEANING AS 装修等级名称,
          lv.ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE lv
@@ -452,19 +452,25 @@
     AND NOT EXISTS (
       SELECT 1 FROM TERMINAL_DECORATE_LINE tdl
       WHERE tdl.FIXUP_GRADE = lv.VALUE
-    );</code></pre>
+    );
+```
 <h4>报错5：无政策标准不能提交！</h4>
 <ul><li><strong>触发条件</strong>：门店装修申请提交时，FIXUP_GRADE 字段为空或为 0</li><li><strong>逻辑分析</strong>：后端提交校验 FIXUP_GRADE 字段非空非 0，若为空或为 0 则提示"无政策标准不能提交！"。装修等级是匹配报销标准的必要字段，必须选择有效值</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ACCEPTANCE_ID AS 验收ID,
+
+```sql
+SELECT ACCEPTANCE_ID AS 验收ID,
          STORE_NAME AS 门店名称,
          FIXUP_GRADE AS 店面装修等级,
          FRONTDOOR_FIXUP_GRADE AS 门头装修等级
   FROM FIN_FEE_CHECK_BX_HEADER
   WHERE FIXUP_GRADE IS NULL
-     OR FIXUP_GRADE = 0;</code></pre>
+     OR FIXUP_GRADE = 0;
+```
 <h4>报错6：店面装修等级没有有效期内的政策标准！</h4>
 <ul><li><strong>触发条件</strong>：门店装修申请提交时，装修等级在有效期内无对应标准行</li><li><strong>逻辑分析</strong>：后端提交校验精确匹配有效期内标准行，查询 TERMINAL_DECORATE_LINE 表中 FIXUP_GRADE 匹配且 START_DATE &lt;= 当前日期 &lt;= END_DATE 的标准行，若无结果则提示"店面装修等级没有有效期内的政策标准！"。确保装修等级在当前时间有有效的报销标准</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT lv.VALUE AS 装修等级编码,
+
+```sql
+SELECT lv.VALUE AS 装修等级编码,
          lv.MEANING AS 装修等级名称,
          lv.START_DATE AS 值项开始日期,
          lv.END_DATE AS 值项结束日期
@@ -476,58 +482,80 @@
       SELECT 1 FROM TERMINAL_DECORATE_LINE tdl
       WHERE tdl.FIXUP_GRADE = lv.VALUE
         AND SYSDATE BETWEEN tdl.START_DATE AND tdl.END_DATE
-    );</code></pre>
+    );
+```
 <h4>报错7：值集编码不存在</h4>
 <ul><li><strong>触发条件</strong>：查询装修等级值集时，HPFM_LOV 表中无 LOV_CODE='AE.FIXUP_GRADE' 的记录</li><li><strong>逻辑分析</strong>：后端查询 HPFM_LOV 表，若不存在 LOV_CODE='AE.FIXUP_GRADE' 的值集定义则提示"值集编码不存在"。需先在 HZERO 值集管理中创建值集 AE.FIXUP_GRADE，再配置值项</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOV_ID, LOV_CODE, LOV_TYPE_CODE, DESCRIPTION
+
+```sql
+SELECT LOV_ID, LOV_CODE, LOV_TYPE_CODE, DESCRIPTION
   FROM HPFM_LOV
-  WHERE LOV_CODE = 'AE.FIXUP_GRADE';</code></pre>
+  WHERE LOV_CODE = 'AE.FIXUP_GRADE';
+```
 <h4>报错8：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、hzero-platform 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
+
+```sql
+SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错9：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击新增、编辑、删除、启用/禁用等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%fixup_grade%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%fixup_grade%' ORDER BY U.USER_NAME;
+```
 <h4>报错10：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：编辑、删除等操作时，接口返回数据为空或值项ID不存在</li><li><strong>逻辑分析</strong>：前端通过 lovValueId 调用接口，后端查询 HPFM_LOV_VALUE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：值项ID错误、值项已被删除、跨租户查询、数据权限隔离等。需检查 LOV_VALUE_ID 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, LOV_CODE AS LOV编码, VALUE AS 值编码,
+
+```sql
+SELECT LOV_VALUE_ID AS 值项ID, LOV_CODE AS LOV编码, VALUE AS 值编码,
          MEANING AS 值名称, ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (LOV_VALUE_ID IS NULL OR ENABLE_FLAG IS NULL);</code></pre>
+    AND (LOV_VALUE_ID IS NULL OR ENABLE_FLAG IS NULL);
+```
 <h4>报错11：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击启用/禁用按钮时，值项状态不允许该操作</li><li><strong>逻辑分析</strong>：后端校验状态机，如已启用（ENABLE_FLAG=1）不可重复启用、已禁用（ENABLE_FLAG=0）不可重复禁用等。状态不匹配时后端返回业务异常。需检查值项当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
+
+```sql
+SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
          ENABLE_FLAG AS 状态, ERROR_INFO AS 异常问题
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
     AND ENABLE_FLAG NOT IN (0, 1)
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错12：描述不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存时，DESCRIPTION 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 DESCRIPTION 字段'段配置 required 校验，提交前校验描述是否填写，为空则阻止提交并提示"描述不能为空"。描述用于记录值项的业务含义，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
+
+```sql
+SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
          DESCRIPTION AS 描述
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (DESCRIPTION IS NULL OR DESCRIPTION = '');</code></pre>
+    AND (DESCRIPTION IS NULL OR DESCRIPTION = '');
+```
 <h4>报错13：排序号不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存时，ORDER_SEQ 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 ORDER_SEQ 字段配置 required 校验，提交前校验排序号是否填写，为空则阻止提交并提示"排序号不能为空"。排序号用于值项在下拉列表中的展示顺序，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
+
+```sql
+SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
          ORDER_SEQ AS 排序号
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND ORDER_SEQ IS NULL;</code></pre>
+    AND ORDER_SEQ IS NULL;
+```
 </KbCard>
 
 </div>
@@ -538,7 +566,9 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="排查SQL汇总">
-<pre class="detail-sql" v-pre><code>-- 1. 查询装修等级值集定义
+
+```sql
+-- 1. 查询装修等级值集定义
 SELECT LOV_ID, LOV_CODE, LOV_TYPE_CODE, DESCRIPTION
 FROM HPFM_LOV
 WHERE LOV_CODE = 'AE.FIXUP_GRADE';
@@ -556,7 +586,7 @@ SELECT VALUE, COUNT(*) AS cnt
 FROM HPFM_LOV_VALUE
 WHERE LOV_CODE = 'AE.FIXUP_GRADE'
 GROUP BY VALUE
-HAVING COUNT(*) &gt; 1;
+HAVING COUNT(*) > 1;
 
 -- 4. 查询使用装修等级的门店验收报销
 SELECT ACCEPTANCE_ID, STORE_NAME,
@@ -571,7 +601,8 @@ SELECT LINE_ID, FIXUP_GRADE, DECORATE_PROJECT,
        UPER_AREA, LOWER_AREA, IN_STANDARD, OUT_STANDARD,
        START_DATE, END_DATE
 FROM TERMINAL_DECORATE_LINE
-WHERE FIXUP_GRADE = :fixupGrade;</code></pre>
+WHERE FIXUP_GRADE = :fixupGrade;
+```
 </KbCard>
 
 </div>

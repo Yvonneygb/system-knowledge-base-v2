@@ -296,46 +296,70 @@
 </table>
 <h4>报错1：查询失败，请稍后重试</h4>
 <ul><li><strong>触发条件</strong>：点击查询按钮时，前端调用后端接口失败（HTTP非200或网络超时）</li><li><strong>逻辑分析</strong>：前端通过低代码页面（hlod）发起查询请求，后端走selectList/selectListDMS接口查询LNK_INVENTORY表。若后端服务不可用、数据库连接超时、Oracle函数cux_inv_convert_ex_pub.inv_um_convert执行异常等，均会导致请求失败。前端捕获异常后toast提示。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查库存表是否有数据
+
+```sql
+-- 检查库存表是否有数据
   SELECT COUNT(1) AS 库存记录数 FROM LNK_INVENTORY WHERE ORG_ID = :organizationId;
   -- 检查产品主档是否存在
-  SELECT COUNT(1) AS 产品数 FROM LNK_PROD WHERE ORG_ID = :organizationId;</code></pre>
+  SELECT COUNT(1) AS 产品数 FROM LNK_PROD WHERE ORG_ID = :organizationId;
+```
 <h4>报错2：权限不足，无法查询库存数据</h4>
 <ul><li><strong>触发条件</strong>：页面加载时，当前用户无组织ID或事业部权限</li><li><strong>逻辑分析</strong>：后端自动注入当前用户的事业部ID（deptId）作为查询条件。DMS用户额外通过DEPT_STOCK_S和DEPT_STOCK_P值集过滤可见事业部。若用户未配置事业部权限或值集为空，则查询不到任何库存数据。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查用户事业部权限值集
+
+```sql
+-- 检查用户事业部权限值集
   SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_S' AND ORGANIZATION_ID = :organizationId;
-  SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_P' AND ORGANIZATION_ID = :organizationId;</code></pre>
+  SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_P' AND ORGANIZATION_ID = :organizationId;
+```
 <h4>报错3：暂无数据</h4>
 <ul><li><strong>触发条件</strong>：查询成功但结果集为空</li><li><strong>逻辑分析</strong>：查询条件无匹配结果，或LNK_INVENTORY表中无当前事业部/产品的库存数据。属正常提示，非异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS 匹配数
+
+```sql
+SELECT COUNT(1) AS 匹配数
   FROM LNK_INVENTORY I
   WHERE I.DEPT_ID = :deptId
-    AND I.LH_PROD_ID LIKE :prodCode;</code></pre>
+    AND I.LH_PROD_ID LIKE :prodCode;
+```
 <h4>报错4：用户未登录或会话已过期</h4>
 <ul><li><strong>触发条件</strong>：页面加载或查询时，前端请求携带的token已失效</li><li><strong>逻辑分析</strong>：前端请求头中携带的Authorization token过期或无效，后端拦截器返回401状态码。前端跳转登录页。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查用户是否存在且有效
-  SELECT USER_ID, USER_NAME, STATUS FROM HPFM_USER WHERE USER_ID = :userId;</code></pre>
+
+```sql
+-- 检查用户是否存在且有效
+  SELECT USER_ID, USER_NAME, STATUS FROM HPFM_USER WHERE USER_ID = :userId;
+```
 </KbCard>
 
 <KbCard title="常见问题">
 <ul><li>问题1：查询结果中库存数量为0或低于实际库存</li><li>原因：库存上限配置（LNK_INV_MAX）限制了展示数量。排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT lim.PROD_ID, lim.DEPT_ID, lim.MAXIMUN, lim.TYPE
+
+```sql
+SELECT lim.PROD_ID, lim.DEPT_ID, lim.MAXIMUN, lim.TYPE
     FROM LNK_INV_MAX lim
-    WHERE lim.PROD_ID = (SELECT ROW_ID FROM LNK_PROD WHERE PROD_CODE = #&#123;prodCode&#125;);</code></pre>
+    WHERE lim.PROD_ID = (SELECT ROW_ID FROM LNK_PROD WHERE PROD_CODE = #{prodCode});
+```
 <ul><li>解决思路：检查LNK_INV_MAX表是否配置了过低的库存上限，或调整上限值</li></ul>
 <ul><li>问题2：DMS用户查询不到某些事业部的库存</li><li>原因：DMS用户的事业部可见范围由DEPT_STOCK_S/DEPT_STOCK_P值集控制。排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_INVENTORY 
-    WHERE DEPT_ID = #&#123;事业部ID&#125; 
-      AND LH_PROD_ID = #&#123;产品编码&#125;;</code></pre>
+
+```sql
+SELECT * FROM LNK_INVENTORY 
+    WHERE DEPT_ID = #{事业部ID} 
+      AND LH_PROD_ID = #{产品编码};
+```
 <ul><li>解决思路：检查值集DEPT_STOCK_S和DEPT_STOCK_P是否包含目标事业部</li></ul>
 <ul><li>问题3：瓷砖产品线库存换算数量不正确</li><li>原因：转换率计算异常或Oracle函数cux_inv_convert_ex_pub.inv_um_convert返回错误。排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT cux_inv_convert_ex_pub.inv_um_convert(#&#123;from_uom&#125;, #&#123;to_uom&#125;, #&#123;prod_code&#125;) AS conversion_rate
-    FROM DUAL;</code></pre>
+
+```sql
+SELECT cux_inv_convert_ex_pub.inv_um_convert(#{from_uom}, #{to_uom}, #{prod_code}) AS conversion_rate
+    FROM DUAL;
+```
 <ul><li>解决思路：检查Oracle转换率函数是否正确部署，确认产品的单位配置</li></ul>
 <ul><li>问题4：生产基地字段为空</li><li>原因：LNK_PROD_BASE_CFG中IS_ACTIVE不为1。排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT lpbc.DEPT_NAME, lpbc.PROD_LINE, lpbc.IS_ACTIVE
+
+```sql
+SELECT lpbc.DEPT_NAME, lpbc.PROD_LINE, lpbc.IS_ACTIVE
     FROM LNK_PROD_BASE_CFG lpbc
-    WHERE lpbc.DEPT_NAME = #&#123;事业部名称&#125; AND lpbc.PROD_LINE = #&#123;产品线&#125;;</code></pre>
+    WHERE lpbc.DEPT_NAME = #{事业部名称} AND lpbc.PROD_LINE = #{产品线};
+```
 <ul><li>解决思路：在生产基地配置中将IS_ACTIVE设置为1</li></ul>
 </KbCard>
 

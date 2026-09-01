@@ -392,7 +392,9 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+
+```text
+NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
                                        │              ├─ 计算超期/扣减比例
                                        │              └─ 回写原申请单(changeValue)
                                        │
@@ -401,7 +403,8 @@
                                        └──退回──→ REBUT(已退回)
 
 任意非APPROVED ──作废──→ INTERRUPT(已作废) ──→ 原申请单isModify=3
-NEW ──删除──→ (删除) ──→ 原申请单isModify=0</code></pre>
+NEW ──删除──→ (删除) ──→ 原申请单isModify=0
+```
 </KbCard>
 
 <KbCard title="工作流">
@@ -546,27 +549,27 @@ NEW ──删除──→ (删除) ──→ 原申请单isModify=0</code></pre>
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：新增变更时报"未获取到门店申请信息"">
+<KbCard title="Q1：新增变更时报&quot;未获取到门店申请信息&quot;">
 <p><strong>根因</strong>：关联的装修申请单(terminalApplyId)不存在或已被删除</p>
 <p><strong>解决方案</strong>：重新选择有效的已审批装修申请单</p>
 </KbCard>
 
-<KbCard title="Q2：提交时报"门店装修申请与进度更新单据预算年度大于当前年度"">
+<KbCard title="Q2：提交时报&quot;门店装修申请与进度更新单据预算年度大于当前年度&quot;">
 <p><strong>根因</strong>：变更单的预算年度(budYear)大于当前年份</p>
 <p><strong>解决方案</strong>：确认原申请单的预算年度是否正确，或联系财务调整</p>
 </KbCard>
 
-<KbCard title="Q3：审批通过时报"装修完成时间为空"或"交付设计时间为空"">
+<KbCard title="Q3：审批通过时报&quot;装修完成时间为空&quot;或&quot;交付设计时间为空&quot;">
 <p><strong>根因</strong>：变更单未填写装修完成时间或交付设计时间</p>
 <p><strong>解决方案</strong>：在变更单中补填装修完成时间和交付设计时间</p>
 </KbCard>
 
-<KbCard title="Q4：删除时报"不能删除非制单状态的单据"">
+<KbCard title="Q4：删除时报&quot;不能删除非制单状态的单据&quot;">
 <p><strong>根因</strong>：变更单状态非NEW，可能已提交审批</p>
 <p><strong>解决方案</strong>：仅NEW状态可删除，已提交的需通过审批驳回后才能删除</p>
 </KbCard>
 
-<KbCard title="Q5：原申请单提交时报"单2据正在申请变更中，不可提交"">
+<KbCard title="Q5：原申请单提交时报&quot;单2据正在申请变更中，不可提交&quot;">
 <p><strong>根因</strong>：原申请单isModify=2，已有进行中的变更申请</p>
 <p><strong>解决方案</strong>：先完成或删除/作废变更申请，再提交原申请单</p>
 </KbCard>

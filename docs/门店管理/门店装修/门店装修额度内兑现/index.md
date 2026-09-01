@@ -276,7 +276,9 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="lang-text" v-pre><code>NEW(新建) ──批量提交──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+
+```text
+NEW(新建) ──批量提交──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
                                        │              ├─ 回写验收报销单
                                        │              ├─ 同步资金池(EBS)
                                        │              └─ 推送MBO
@@ -284,7 +286,8 @@
                                        └──审批驳回──→ REJECTED(已驳回)
 
 NEW ──删除──→ (删除)
-APPROVED ──入账──→ (已入账)</code></pre>
+APPROVED ──入账──→ (已入账)
+```
 </KbCard>
 
 <KbCard title="工作流">

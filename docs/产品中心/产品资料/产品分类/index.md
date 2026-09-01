@@ -184,7 +184,9 @@
 </tbody>
 </table>
 <p><strong>列表查询SQL（Mapper: ItemClassMapper.selectList）：</strong></p>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
     IC.ITEM_CLASS_ID, IC.ITEM_CLASS_CODE, IC.ITEM_CLASS_NAME, IC.ITEM_CLASS_LEVEL,
     IC.ITEM_ID, IC.ITEM_CLASS_PID, IC.ITEM_CLASS_IDPATH, IC.IDPATH,
     IC.IS_END, IC.ITEM_USABLE, IC.REMARK, IC.ATTRIBUTE11, IC.ATTRIBUTE21,
@@ -195,8 +197,9 @@
     IC.OBJECT_VERSION_NUMBER
 FROM ITEM_CLASS IC
 WHERE 1=1
-  AND IC.ORGANIZATION_ID = #&#123;organizationId&#125;
-  -- 动态条件：itemClassCode、itemClassName、itemClassLevel、itemClassPid等</code></pre>
+  AND IC.ORGANIZATION_ID = #{organizationId}
+  -- 动态条件：itemClassCode、itemClassName、itemClassLevel、itemClassPid等
+```
 </KbCard>
 
 <KbCard title="界面模块2：新增分类表单">
@@ -238,12 +241,14 @@ WHERE 1=1
 </table>
 <h4>按钮1：新增（分类树页面）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：填写分类名称、选择父级分类和分类级别</li><li>第2点：按"编码+组织ID+父级ID"查询是否已存在（getItemClass）</li><li>第3点：若已存在则静默跳过，不执行新增</li><li>第4点：若不存在，设置isEnd=2、生成itemClassIdpath=\&#123;分类ID&#125;\</li><li>第5点：插入ITEM_CLASS表（序列ITEM_CLASS_S.NEXTVAL生成主键）</li><li>第6点：更新父分类isEnd=1（否，表示有子节点）</li><li>第7点：同步插入ITEM_CLASS_IO表（组织ID+分类ID）</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/manual-classification/save-item-class</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 新增前重复校验
+
+```sql
+-- 新增前重复校验
 SELECT ITEM_CLASS_ID, ITEM_CLASS_CODE, ITEM_CLASS_NAME, ITEM_CLASS_LEVEL, ITEM_USABLE
 FROM ITEM_CLASS
-WHERE ITEM_CLASS_CODE = #&#123;itemClassCode&#125;
-  AND ORGANIZATION_ID = #&#123;organizationId&#125;
-  AND ITEM_CLASS_PID = #&#123;itemClassPid&#125;;
+WHERE ITEM_CLASS_CODE = #{itemClassCode}
+  AND ORGANIZATION_ID = #{organizationId}
+  AND ITEM_CLASS_PID = #{itemClassPid};
 
 -- 新增SQL
 INSERT INTO ITEM_CLASS (
@@ -252,19 +257,23 @@ INSERT INTO ITEM_CLASS (
     CREATED_BY, LAST_UPDATED_BY, ORGANIZATION_ID, IS_RETAIL,
     RESOURCE_ENTORGID, DEPT_ID, IS_INIT, ITEM_CLASS_IDPATH
 ) VALUES (
-    ITEM_CLASS_S.NEXTVAL, #&#123;itemClassCode&#125;, #&#123;itemClassName&#125;, #&#123;itemClassLevel&#125;,
-    0, #&#123;itemClassPid&#125;, '\', #&#123;isEnd&#125;, #&#123;itemUsable&#125;, NULL,
-    'admin', 'admin', #&#123;organizationId&#125;, 0, 0, 0, 0, #&#123;itemClassIdPath&#125;
+    ITEM_CLASS_S.NEXTVAL, #{itemClassCode}, #{itemClassName}, #{itemClassLevel},
+    0, #{itemClassPid}, '\', #{isEnd}, #{itemUsable}, NULL,
+    'admin', 'admin', #{organizationId}, 0, 0, 0, 0, #{itemClassIdPath}
 );
 
 -- 更新父分类是否明细
-UPDATE ITEM_CLASS SET IS_END = 1 WHERE ITEM_CLASS_ID = #&#123;itemClassPid&#125;;</code></pre>
+UPDATE ITEM_CLASS SET IS_END = 1 WHERE ITEM_CLASS_ID = #{itemClassPid};
+```
 <h4>按钮2：删除（分类树页面）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：根据分类ID直接物理删除ITEM_CLASS记录</li><li>第2点：无子分类校验、无引用校验（直接删除）</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/manual-classification/deleta-item-class</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 删除前检查子分类
-SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #&#123;itemClassId&#125;;
+
+```sql
+-- 删除前检查子分类
+SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #{itemClassId};
 -- 删除SQL
-DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></pre>
+DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #{itemClassId};
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -274,10 +283,13 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></p
 <p>- 第2点：若查询结果不为空，则不执行新增（静默跳过）</p>
 <ul><li>系统体现：静默跳过（不报错，不插入）</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM ITEM_CLASS
-    WHERE ITEM_CLASS_CODE = #&#123;itemClassCode&#125;
-      AND ORGANIZATION_ID = #&#123;organizationId&#125;
-      AND ITEM_CLASS_PID = #&#123;itemClassPid&#125;;</code></pre>
+
+```sql
+SELECT COUNT(*) FROM ITEM_CLASS
+    WHERE ITEM_CLASS_CODE = #{itemClassCode}
+      AND ORGANIZATION_ID = #{organizationId}
+      AND ITEM_CLASS_PID = #{itemClassPid};
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -287,7 +299,9 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></p
 <KbCard title="状态机">
 <blockquote>本菜单无状态机，分类数据只有"有效/无效"两种状态，通过ITEM_USABLE字段控制。</blockquote>
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>┌─────────┐  新增   ┌──────────┐
+
+```text
+┌─────────┐  新增   ┌──────────┐
 │  无     │ ──────→ │ 有效(2)  │
 └─────────┘         └──────────┘
                          │
@@ -301,7 +315,8 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></p
                          ▼
                     ┌──────────┐
                     │ 有效(2)  │
-                    └──────────┘</code></pre>
+                    └──────────┘
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -390,7 +405,9 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></p
 </table>
 <h4>报错1：产品分类新增成功</h4>
 <ul><li><strong>触发条件</strong>：新增分类保存成功后，前端toast提示</li><li><strong>逻辑分析</strong>：后端saveItemClass方法按"编码+组织ID+父级ID"查询ITEM_CLASS表，若已存在则静默跳过；若不存在则插入新记录（ITEM_CLASS_S.NEXTVAL生成主键），并更新父分类IS_END=1。前端根据接口返回成功标识显示toast。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
+
+```sql
+SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
          IC.ITEM_CLASS_NAME AS 分类名称, IC.ITEM_CLASS_LEVEL AS 分类级别,
          IC.ITEM_CLASS_PID AS 父级ID, IC.IS_END AS 是否明细,
          IC.CREATION_DATE AS 创建时间
@@ -398,19 +415,25 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></p
   WHERE IC.ITEM_CLASS_CODE = :itemClassCode
     AND IC.ORGANIZATION_ID = :organizationId
     AND IC.ITEM_CLASS_PID = :itemClassPid
-  ORDER BY IC.CREATION_DATE DESC;</code></pre>
+  ORDER BY IC.CREATION_DATE DESC;
+```
 <h4>报错2：产品分类删除成功</h4>
 <ul><li><strong>触发条件</strong>：删除分类成功后，前端toast提示</li><li><strong>逻辑分析</strong>：后端deletaItemClass方法根据ITEM_CLASS_ID直接物理删除ITEM_CLASS记录，无子分类校验、无引用校验。删除成功后前端toast提示并刷新分类树。注意：若父分类被删除，子分类的ITEM_CLASS_PID将指向不存在的记录（孤儿节点）。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 删除前检查是否存在子分类（避免孤儿节点）
+
+```sql
+-- 删除前检查是否存在子分类（避免孤儿节点）
   SELECT IC.ITEM_CLASS_ID AS 子分类ID, IC.ITEM_CLASS_CODE AS 子分类编码,
          IC.ITEM_CLASS_NAME AS 子分类名称
   FROM ITEM_CLASS IC
   WHERE IC.ITEM_CLASS_PID = :itemClassId;
   -- 删除后确认记录已不存在
-  SELECT COUNT(1) AS 剩余记录数 FROM ITEM_CLASS WHERE ITEM_CLASS_ID = :itemClassId;</code></pre>
+  SELECT COUNT(1) AS 剩余记录数 FROM ITEM_CLASS WHERE ITEM_CLASS_ID = :itemClassId;
+```
 <h4>报错3：分类编码已存在，新增静默跳过</h4>
 <ul><li><strong>触发条件</strong>：新增分类时，编码+组织ID+父级ID在ITEM_CLASS表已存在</li><li><strong>逻辑分析</strong>：后端ManualClassificationServiceImpl.saveItemClass方法中，先通过manualClassificationMapper.getItemClass(dto)按"编码+组织ID+父级ID"查询ITEM_CLASS表。若查询结果不为空（CollectionUtils.isEmpty(list)为false），则不执行新增逻辑，直接返回。Controller层统一返回"产品分类新增成功"，前端显示成功提示但实际未新增数据。用户需检查ITEM_CLASS表确认是否已存在相同编码的分类。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
+
+```sql
+SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
          IC.ITEM_CLASS_NAME AS 分类名称, IC.ITEM_CLASS_LEVEL AS 分类级别,
          IC.ITEM_CLASS_PID AS 父级ID, IC.ORGANIZATION_ID AS 组织ID,
          IC.CREATION_DATE AS 创建时间, IC.CREATED_BY AS 创建人
@@ -418,10 +441,13 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></p
   WHERE IC.ITEM_CLASS_CODE = :itemClassCode
     AND IC.ORGANIZATION_ID = :organizationId
     AND IC.ITEM_CLASS_PID = :itemClassPid
-  ORDER BY IC.CREATION_DATE DESC;</code></pre>
+  ORDER BY IC.CREATION_DATE DESC;
+```
 <h4>报错4：删除父分类产生孤儿节点</h4>
 <ul><li><strong>触发条件</strong>：删除有子分类的父分类时，后端直接物理删除不校验子分类</li><li><strong>逻辑分析</strong>：后端ManualClassificationServiceImpl.deletaItemClass方法根据ITEM_CLASS_ID直接物理删除ITEM_CLASS记录，无子分类校验、无引用校验。若被删除的分类有子分类（ITEM_CLASS_PID指向被删除的分类ID），子分类将变成孤儿节点，查询分类树时无法挂载到父节点下。建议删除前先检查子分类，若有子分类应先删除所有子分类再删除父分类。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 删除前检查是否存在子分类
+
+```sql
+-- 删除前检查是否存在子分类
   SELECT IC.ITEM_CLASS_ID AS 子分类ID, IC.ITEM_CLASS_CODE AS 子分类编码,
          IC.ITEM_CLASS_NAME AS 子分类名称, IC.ITEM_CLASS_LEVEL AS 子分类级别
   FROM ITEM_CLASS IC
@@ -435,44 +461,63 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></p
     AND IC.ITEM_CLASS_PID IS NOT NULL
     AND NOT EXISTS (
       SELECT 1 FROM ITEM_CLASS P WHERE P.ITEM_CLASS_ID = IC.ITEM_CLASS_PID
-    );</code></pre>
+    );
+```
 <h4>报错5：分类树查询失败</h4>
 <ul><li><strong>触发条件</strong>：查询分类树时，ITEM_CLASS表查询异常</li><li><strong>逻辑分析</strong>：前端调用AE微服务接口/v1/&#123;organizationId&#125;/manual-classification/查询分类列表，后端ManualClassificationMapper.selectList按组织ID查询ITEM_CLASS表。若组织ID参数为空、数据库连接异常或SQL执行错误，则查询失败返回错误信息。常见于用户未正确登录导致组织ID丢失、数据库连接超时。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS 分类总数
+
+```sql
+SELECT COUNT(1) AS 分类总数
   FROM ITEM_CLASS IC
-  WHERE IC.ORGANIZATION_ID = :organizationId;</code></pre>
+  WHERE IC.ORGANIZATION_ID = :organizationId;
+```
 <h4>报错6：权限不足，无法操作分类</h4>
 <ul><li><strong>触发条件</strong>：用户未登录或无当前组织ID的访问权限时，新增/删除分类</li><li><strong>逻辑分析</strong>：Controller层@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)要求用户登录且具有组织级权限。若用户未登录或token过期，HZERO平台拦截器返回401/403错误。若用户无当前组织ID的访问权限，则无法操作分类数据。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
+
+```sql
+SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
          MR.ROLE_ID AS 角色ID, R.NAME AS 角色名称
   FROM HZERO.IAM_USER U
     LEFT JOIN HZERO.IAM_MEMBER_ROLE MR ON MR.USER_ID = U.ID
     LEFT JOIN HZERO.IAM_ROLE R ON R.ID = MR.ROLE_ID
-  WHERE U.ID = :currentUserId;</code></pre>
+  WHERE U.ID = :currentUserId;
+```
 <h4>报错7：会话过期，请重新登录</h4>
 <ul><li><strong>触发条件</strong>：任意操作时，登录态丢失或token过期</li><li><strong>逻辑分析</strong>：HZERO平台基于JWT token进行会话管理，token过期后所有接口请求返回401状态码。前端axios拦截器捕获401错误后提示"会话过期，请重新登录"并跳转登录页。常见于长时间未操作、token过期时间到达、服务端重启导致token失效。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '检查用户登录态和token有效期，重新登录获取新token' AS 提示 FROM DUAL;</code></pre>
+
+```sql
+SELECT '检查用户登录态和token有效期，重新登录获取新token' AS 提示 FROM DUAL;
+```
 <h4>报错8：暂无分类数据</h4>
 <ul><li><strong>触发条件</strong>：查询分类树时，当前组织下无分类数据</li><li><strong>逻辑分析</strong>：后端按组织ID查询ITEM_CLASS表，若查询结果为空则前端分类树显示"暂无数据"。常见于新组织未初始化分类数据、分类数据被全部删除。需先通过新增按钮创建大类分类。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT IC.ITEM_CLASS_LEVEL AS 分类级别, COUNT(1) AS 数量
+
+```sql
+SELECT IC.ITEM_CLASS_LEVEL AS 分类级别, COUNT(1) AS 数量
   FROM ITEM_CLASS IC
   WHERE IC.ORGANIZATION_ID = :organizationId
   GROUP BY IC.ITEM_CLASS_LEVEL
-  ORDER BY IC.ITEM_CLASS_LEVEL;</code></pre>
+  ORDER BY IC.ITEM_CLASS_LEVEL;
+```
 </KbCard>
 
 <KbCard title="常见问题">
 <ul><li>问题1：分类层级最多支持几级？</li><li>原因：系统支持3级分类（大类→中类→小类），由ITEM_CLASS_LEVEL字段控制（1/2/3）</li><li>解决思路：查询现有分类层级 <code>SELECT DISTINCT ITEM_CLASS_LEVEL FROM ITEM_CLASS ORDER BY ITEM_CLASS_LEVEL</code></li></ul>
 <ul><li>问题2：删除有子分类的节点会怎样？</li><li>原因：后端删除接口直接物理删除，不校验子分类。若父分类被删除，子分类的ITEM_CLASS_PID将指向不存在的记录（孤儿节点）</li><li>解决思路：删除前应先检查子分类</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #&#123;要删除的分类ID&#125;;</code></pre>
+
+```sql
+SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #{要删除的分类ID};
+```
 <p>若有子分类，应先删除所有子分类再删除父分类</p>
 <ul><li>问题3：分类编码可以修改吗？</li><li>原因：分类编码自动生成，新增后不支持修改。分类编码被产品引用后修改会影响关联关系</li><li>解决思路：不支持修改，如需调整请删除后重新新增</li></ul>
 <ul><li>问题4：本菜单在CRM前端如何使用？</li><li>原因：作为嵌入式组件嵌入在CRM产品详情页中，通过AE微服务接口获取分类数据</li><li>解决思路：前端在arrow-crm包中调用AE微服务接口 <code>/v1/&#123;organizationId&#125;/manual-classification/</code></li></ul>
 <ul><li>问题5：新增分类时编码已存在为什么不报错？</li><li>原因：后端saveItemClass方法中，若编码+组织ID+父级ID已存在，则静默跳过不执行新增，也不报错</li><li>解决思路：新增前可先查询确认</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ITEM_CLASS
-    WHERE ITEM_CLASS_CODE = #&#123;编码&#125;
-      AND ORGANIZATION_ID = #&#123;组织ID&#125;
-      AND ITEM_CLASS_PID = #&#123;父级ID&#125;;</code></pre>
+
+```sql
+SELECT * FROM ITEM_CLASS
+    WHERE ITEM_CLASS_CODE = #{编码}
+      AND ORGANIZATION_ID = #{组织ID}
+      AND ITEM_CLASS_PID = #{父级ID};
+```
 </KbCard>
 
 </div>

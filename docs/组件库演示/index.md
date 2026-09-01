@@ -1,4 +1,4 @@
-<KbHero num="UI" title="知识库 UI 组件库 · 实时演示" desc="从 custom.css 设计系统提炼的 Vue 3 通用组件,统一紫色 #7C3AED 风格。以下均为实际渲染效果。" />
+<KbHero num="UI" title="知识库 UI 组件库 · 实时演示&quot; desc=&quot;从 custom.css 设计系统提炼的 Vue 3 通用组件,统一紫色 #7C3AED 风格。以下均为实际渲染效果。" />
 
 <KbCard num="1" title="基础展示 · 卡片 KbCard">
 <KbSubTitle>普通卡片 / alt 强调变体</KbSubTitle>
@@ -77,14 +77,14 @@
 </KbCard>
 
 <KbCard num="10" title="业务介绍大卡 KbHero">
-<KbHero num="03" title="家装真实性核销" desc="家装订单真实性核验业务说明,此处为嵌套 Hero 示例(实际页面通常页头仅一个)。" />
+<KbHero num="03" title="家装真实性核销&quot; desc=&quot;家装订单真实性核验业务说明,此处为嵌套 Hero 示例(实际页面通常页头仅一个)。" />
 </KbCard>
 
 <KbCard num="11" title="角色卡 KbRoleCard">
 <KbSubTitle>多角色并排(可配合网格布局)</KbSubTitle>
-<KbRoleCard badge="业" title="业务员" desc="发起与跟进核销单" color="purple"></KbRoleCard>
-<KbRoleCard badge="主" title="主管" desc="审批与异常处理" color="blue"></KbRoleCard>
-<KbRoleCard badge="财" title="财务" desc="金额核销与对账" color="green"></KbRoleCard>
+<KbRoleCard badge="业" title="业务员&quot; desc=&quot;发起与跟进核销单&quot; color=&quot;purple"></KbRoleCard>
+<KbRoleCard badge="主" title="主管&quot; desc=&quot;审批与异常处理&quot; color=&quot;blue"></KbRoleCard>
+<KbRoleCard badge="财" title="财务&quot; desc=&quot;金额核销与对账&quot; color=&quot;green"></KbRoleCard>
 </KbCard>
 
 <KbCard num="12" title="两栏对比 KbTwoCol">

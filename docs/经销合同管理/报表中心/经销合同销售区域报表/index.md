@@ -217,31 +217,46 @@
 </table>
 <h4>报错1：查询无数据</h4>
 <ul><li><strong>触发条件</strong>：用户按年度/经销商/事业部/销售区域查询经销合同销售区域报表，saSaleContractHeadSearch接口返回空结果集</li><li><strong>逻辑分析</strong>：报表基于SA_SALE_CONTRACT_HEAD表按销售区域（SALE_AREA）维度统计经销合同数据。无数据根因有三类：(1)查询条件（CONTRACT_YEAR+CUSTOMER_NAME+ENTNAME+SALE_AREA）组合过窄，无匹配合同；(2)合同未审批通过（HZ_APPROVE_STATUS != 'APPROVED'），报表仅展示已审批合同；(3)合同销售区域（SALE_AREA）未配置，字段为空导致按区域筛选时被过滤。需先放宽条件（去掉销售区域）确认是否有合同数据，再核查SALE_AREA配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR, SALE_AREA, ENTNAME, HZ_APPROVE_STATUS
+
+```sql
+SELECT CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR, SALE_AREA, ENTNAME, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
   WHERE HZ_APPROVE_STATUS = 'APPROVED'
-    AND (CONTRACT_YEAR = #&#123;contractYear&#125; OR #&#123;contractYear&#125; IS NULL)
-    AND (CUSTOMER_NAME = #&#123;customerName&#125; OR #&#123;customerName&#125; IS NULL)
-    AND (SALE_AREA = #&#123;saleArea&#125; OR #&#123;saleArea&#125; IS NULL)
-  ORDER BY CONTRACT_YEAR DESC, CONTRACT_NO;</code></pre>
+    AND (CONTRACT_YEAR = #{contractYear} OR #{contractYear} IS NULL)
+    AND (CUSTOMER_NAME = #{customerName} OR #{customerName} IS NULL)
+    AND (SALE_AREA = #{saleArea} OR #{saleArea} IS NULL)
+  ORDER BY CONTRACT_YEAR DESC, CONTRACT_NO;
+```
 <h4>报错2：导出失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击"导出"按钮，saSaleContractHeadExport接口返回空数据集或抛出异常</li><li><strong>逻辑分析</strong>：导出接口saSaleContractHeadExport基于saSaleContractHeadSearch同一查询逻辑，通过SaSaleContractHeadConvert.INSTANCE.convert转换导出VO。若查询结果集为空则导出文件无内容；若导出过程中LOV翻译失败（@ProcessLovValue注解处理）或内存溢出也会失败。需先执行查询确认有数据再导出</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*) AS 可导出记录数
+
+```sql
+SELECT COUNT(*) AS 可导出记录数
   FROM SA_SALE_CONTRACT_HEAD
   WHERE HZ_APPROVE_STATUS = 'APPROVED'
-    AND (CONTRACT_YEAR = #&#123;contractYear&#125; OR #&#123;contractYear&#125; IS NULL);</code></pre>
+    AND (CONTRACT_YEAR = #{contractYear} OR #{contractYear} IS NULL);
+```
 <h4>报错3：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：前端调用contractReport/sa-sale-contract-head/search或export接口时，axios请求超时或返回非2xx状态码</li><li><strong>逻辑分析</strong>：报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。SaSaleContractHeadServiceImpl.saSaleContractHeadSearch通过PageHelper.doPageAndSort分页查询，服务异常时无法返回数据。需确认ae-report服务状态及网关配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*) AS 合同总记录数 FROM SA_SALE_CONTRACT_HEAD
-  WHERE HZ_APPROVE_STATUS = 'APPROVED';</code></pre>
+
+```sql
+SELECT COUNT(*) AS 合同总记录数 FROM SA_SALE_CONTRACT_HEAD
+  WHERE HZ_APPROVE_STATUS = 'APPROVED';
+```
 <h4>报错4：权限不足</h4>
 <ul><li><strong>触发条件</strong>：当前用户角色未配置报表查询权限，访问页面时被拦截</li><li><strong>逻辑分析</strong>：报表页面通过permissionList控制访问权限，用户无对应权限码时无法进入页面或调用接口。需在角色管理中为用户分配"经销合同销售区域报表"查询权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
-  WHERE USER_ID = #&#123;userId&#125; AND PERMISSION_CODE LIKE '%saSaleContractHead%';</code></pre>
+
+```sql
+SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
+  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%saSaleContractHead%';
+```
 <h4>报错5：必填查询条件为空</h4>
 <ul><li><strong>触发条件</strong>：用户未填写年度（CONTRACT_YEAR）等必填查询条件直接点击查询</li><li><strong>逻辑分析</strong>：SaSaleContractHeadSearchDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端查询DS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT DISTINCT CONTRACT_YEAR FROM SA_SALE_CONTRACT_HEAD
-  WHERE CONTRACT_YEAR IS NOT NULL ORDER BY CONTRACT_YEAR DESC;</code></pre>
+
+```sql
+SELECT DISTINCT CONTRACT_YEAR FROM SA_SALE_CONTRACT_HEAD
+  WHERE CONTRACT_YEAR IS NOT NULL ORDER BY CONTRACT_YEAR DESC;
+```
 </KbCard>
 
 <KbCard title="常见问题">

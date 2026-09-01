@@ -238,9 +238,12 @@
 </tbody>
 </table>
 <blockquote>查询SQL（事业部LOV）：</blockquote>
-<pre class="detail-sql" v-pre><code>-- 事业部数据来源于HZERO平台事业部配置
+
+```sql
+-- 事业部数据来源于HZERO平台事业部配置
 -- 查询当前用户有权限的事业部列表
-SELECT ENT_ID, ENT_NAME FROM HPFM_DIVISION WHERE ENABLED = 1</code></pre>
+SELECT ENT_ID, ENT_NAME FROM HPFM_DIVISION WHERE ENABLED = 1
+```
 <h4>弹窗2：装修项目选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -252,10 +255,13 @@ SELECT ENT_ID, ENT_NAME FROM HPFM_DIVISION WHERE ENABLED = 1</code></pre>
 </tbody>
 </table>
 <blockquote>查询SQL（LOV值集mkt.decorate_project）：</blockquote>
-<pre class="detail-sql" v-pre><code>-- 装修项目来源于HZERO平台LOV值集
+
+```sql
+-- 装修项目来源于HZERO平台LOV值集
 SELECT LOV_VALUE, LOV_NAME FROM HPFM_LOV 
 WHERE LOV_CODE = 'mkt.decorate_project' 
-  AND ENABLED_FLAG = 1</code></pre>
+  AND ENABLED_FLAG = 1
+```
 <h4>弹窗3：装修等级选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -267,10 +273,13 @@ WHERE LOV_CODE = 'mkt.decorate_project'
 </tbody>
 </table>
 <blockquote>查询SQL（LOV值集fixup_grade）：</blockquote>
-<pre class="detail-sql" v-pre><code>-- 装修等级来源于HZERO平台LOV值集
+
+```sql
+-- 装修等级来源于HZERO平台LOV值集
 SELECT LOV_VALUE, LOV_NAME FROM HPFM_LOV 
 WHERE LOV_CODE = 'fixup_grade' 
-  AND ENABLED_FLAG = 1</code></pre>
+  AND ENABLED_FLAG = 1
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -294,9 +303,12 @@ WHERE LOV_CODE = 'fixup_grade'
 <ul><li><strong>接口调用</strong>：无，仅前端操作</li></ul>
 <h4>按钮2：保存（详情页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验头信息和行信息</li><li>第2点：按主键ID是否为空区分新增和更新列表</li><li>第3点：新增列表批量插入TERMINAL_DECORATE_STANDARD和TERMINAL_DECORATE_LINE</li><li>第4点：更新列表批量更新TERMINAL_DECORATE_STANDARD和TERMINAL_DECORATE_LINE</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/terminal-decorate-standards/save</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询保存后的数据
-SELECT * FROM TERMINAL_DECORATE_STANDARD WHERE DECORATE_STANDARD_ID = #&#123;id&#125;;
-SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #&#123;id&#125;;</code></pre>
+
+```sql
+-- 查询保存后的数据
+SELECT * FROM TERMINAL_DECORATE_STANDARD WHERE DECORATE_STANDARD_ID = #{id};
+SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #{id};
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -305,32 +317,47 @@ SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #&#123;id&#125
 <p>- 第1点：保存时校验头信息中事业部ID不为空</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM TERMINAL_DECORATE_STANDARD WHERE ENTID IS NULL;</code></pre>
+
+```sql
+SELECT * FROM TERMINAL_DECORATE_STANDARD WHERE ENTID IS NULL;
+```
 <ul><li>校验2：行信息不能为空 —— 确保至少配置一行明细</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：保存时校明明细行列表不为空且至少一行</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT TDS.DECORATE_STANDARD_ID FROM TERMINAL_DECORATE_STANDARD TDS
-    WHERE NOT EXISTS (SELECT 1 FROM TERMINAL_DECORATE_LINE TDL WHERE TDL.DECORATE_STANDARD_ID = TDS.DECORATE_STANDARD_ID);</code></pre>
+
+```sql
+SELECT TDS.DECORATE_STANDARD_ID FROM TERMINAL_DECORATE_STANDARD TDS
+    WHERE NOT EXISTS (SELECT 1 FROM TERMINAL_DECORATE_LINE TDL WHERE TDL.DECORATE_STANDARD_ID = TDS.DECORATE_STANDARD_ID);
+```
 <ul><li>校验3：面积范围合法性 —— 确保面积区间下限小于上限</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：校验每行面积范围小于等于(LOWER_AREA)需大于面积范围大于(UPER_AREA)</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE LOWER_AREA &lt;= UPER_AREA;</code></pre>
+
+```sql
+SELECT * FROM TERMINAL_DECORATE_LINE WHERE LOWER_AREA <= UPER_AREA;
+```
 <ul><li>校验4：有效日期合法性 —— 确保结束日期不早于开始日期</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：校验每行有效结束日期(END_DATE)需大于等于有效开始日期(START_DATE)</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE END_DATE &lt; START_DATE;</code></pre>
+
+```sql
+SELECT * FROM TERMINAL_DECORATE_LINE WHERE END_DATE < START_DATE;
+```
 <ul><li>校验5：金额标准必须大于0 —— 确保补贴单价有效</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：校验每行额度内标准(IN_STANDARD)和额度外标准(OUT_STANDARD)均大于0</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE IN_STANDARD &lt;= 0 OR OUT_STANDARD &lt;= 0;</code></pre>
+
+```sql
+SELECT * FROM TERMINAL_DECORATE_LINE WHERE IN_STANDARD <= 0 OR OUT_STANDARD <= 0;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -340,16 +367,22 @@ SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #&#123;id&#125
 <p>- 第2点：校验头信息和所有行信息完整无空值</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM TERMINAL_DECORATE_LINE 
-    WHERE DECORATE_STANDARD_ID = #&#123;id&#125;
-      AND (DECORATE_PROJECT IS NULL OR FIXUP_GRADE IS NULL OR IN_STANDARD IS NULL OR OUT_STANDARD IS NULL);</code></pre>
+
+```sql
+SELECT * FROM TERMINAL_DECORATE_LINE 
+    WHERE DECORATE_STANDARD_ID = #{id}
+      AND (DECORATE_PROJECT IS NULL OR FIXUP_GRADE IS NULL OR IN_STANDARD IS NULL OR OUT_STANDARD IS NULL);
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──提交──→ 审批中 ──审批通过──→ 已审核
+
+```text
+新建 ──保存──→ 已保存 ──提交──→ 审批中 ──审批通过──→ 已审核
                                     │
-                                    └──审批拒绝──→ 已拒绝(可修改重新提交)</code></pre>
+                                    └──审批拒绝──→ 已拒绝(可修改重新提交)
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -419,18 +452,24 @@ SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #&#123;id&#125
 
 <KbCard title="相关查询SQL">
 <p><strong>按事业部和装修等级查询装修标准（selectFixupGradeList）：</strong></p>
-<pre class="detail-sql" v-pre><code>SELECT TDL.*
+
+```sql
+SELECT TDL.*
 FROM TERMINAL_DECORATE_LINE TDL
 JOIN TERMINAL_DECORATE_STANDARD TDS ON TDL.DECORATE_STANDARD_ID = TDS.DECORATE_STANDARD_ID
-WHERE TDS.ENTID = #&#123;entid&#125;
-  AND TDL.FIXUP_GRADE = #&#123;fixupGrade&#125;
+WHERE TDS.ENTID = #{entid}
+  AND TDL.FIXUP_GRADE = #{fixupGrade}
   AND SYSDATE BETWEEN TDL.START_DATE AND TDL.END_DATE
-ORDER BY TDL.DECORATE_PROJECT</code></pre>
+ORDER BY TDL.DECORATE_PROJECT
+```
 <p><strong>下游引用接口：</strong></p>
-<pre class="detail-sql" v-pre><code>-- 门店装修申请查询装修标准(do-search-decorate)
+
+```sql
+-- 门店装修申请查询装修标准(do-search-decorate)
 -- 门店验收报销查询装修标准(doSearchDecorate/searchDecorate)
 -- 传入参数: entid(事业部ID), fixupGrade(装修等级)
--- 返回: 匹配当前有效期的装修标准明细行列表</code></pre>
+-- 返回: 匹配当前有效期的装修标准明细行列表
+```
 </KbCard>
 
 </div>
@@ -455,17 +494,22 @@ ORDER BY TDL.DECORATE_PROJECT</code></pre>
 </table>
 <h4>报错1：事业部不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验头信息中TERMINAL_DECORATE_STANDARD.ENTID(事业部ID)为null</li><li><strong>逻辑分析</strong>：装修标准按事业部隔离维护，不同事业部装修政策和补贴标准不同，事业部ID是数据隔离和下游匹配的关键字段。若用户新建装修标准时未选择事业部即点击保存，或事业部LOV选择后未正确回传ENTID，后端校验ENTID为空即抛出toast提醒"事业部不能为空"，保存被拦截。该异常为非阻断性提示，用户选择事业部后可重新保存。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT s.decorate_standard_id   AS 装修标准ID,
+
+```sql
+SELECT s.decorate_standard_id   AS 装修标准ID,
          s.decorate_standard_no   AS 装修标准单号,
          s.entid                   AS 事业部ID,
          s.entname                 AS 事业部名称,
          s.hz_approve_status       AS 审批状态
   FROM   terminal_decorate_standard s
   WHERE  s.entid IS NULL
-  ORDER  BY s.create_time DESC;</code></pre>
+  ORDER  BY s.create_time DESC;
+```
 <h4>报错2：行信息不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验明细行列表为空或行数为0</li><li><strong>逻辑分析</strong>：装修标准以头行结构维护，头表记录归属事业部，明细行记录具体装修项目+装修等级+面积范围+补贴单价。若无任何明细行，头表记录无实际补贴配置，下游装修申请/验收报销查询时匹配不到任何标准行，无法计算补贴金额。后端校验明细行列表非空且至少一行，若为空即抛出toast提醒"行信息不能为空"，保存被拦截。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT s.decorate_standard_id   AS 装修标准ID,
+
+```sql
+SELECT s.decorate_standard_id   AS 装修标准ID,
          s.decorate_standard_no   AS 装修标准单号,
          s.entname                 AS 事业部名称,
          s.hz_approve_status       AS 审批状态
@@ -475,41 +519,51 @@ ORDER BY TDL.DECORATE_PROJECT</code></pre>
     FROM   terminal_decorate_line l
     WHERE  l.decorate_standard_id = s.decorate_standard_id
   )
-  ORDER  BY s.create_time DESC;</code></pre>
+  ORDER  BY s.create_time DESC;
+```
 <h4>报错3：面积范围不合法</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验某行明细的LOWER_AREA(面积范围小于等于)不大于UPER_AREA(面积范围大于)</li><li><strong>逻辑分析</strong>：面积范围通过UPER_AREA(下限，不含)和LOWER_AREA(上限，含)定义左开右闭区间，门店面积A匹配条件为UPER_AREA &lt; A &lt;= LOWER_AREA，要求LOWER_AREA &gt; UPER_AREA。若用户配置时误将下限填大于上限（如UPER_AREA=100、LOWER_AREA=50），区间为空集，任何门店面积都无法匹配该行，导致下游装修申请/验收报销匹配不到对应面积区间的补贴单价。后端校验LOWER_AREA &lt;= UPER_AREA即抛出toast提醒"面积范围不合法"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.decorate_line_id      AS 明细行ID,
+
+```sql
+SELECT l.decorate_line_id      AS 明细行ID,
          l.decorate_standard_id  AS 装修标准ID,
          l.decorate_project      AS 装修项目,
          l.fixup_grade           AS 装修等级,
          l.uper_area             AS 面积范围大于,
          l.lower_area            AS 面积范围小于等于
   FROM   terminal_decorate_line l
-  WHERE  l.lower_area &lt;= l.uper_area
-  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre>
+  WHERE  l.lower_area <= l.uper_area
+  ORDER  BY l.decorate_standard_id, l.decorate_project;
+```
 <h4>报错4：有效日期不合法</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验某行明细的END_DATE(有效结束日期)早于START_DATE(有效开始日期)</li><li><strong>逻辑分析</strong>：每行明细有独立的有效期，下游单据引用时仅匹配当前日期在START_DATE至END_DATE之间的行。要求END_DATE &gt;= START_DATE，确保有效期内有可被引用的时间段。若用户选择日期时误将结束日期早于开始日期（如跨年配置时年份选错），该行有效期为空区间，任何日期都无法匹配，下游装修申请/验收报销查询时该行永不生效。后端校验END_DATE &lt; START_DATE即抛出toast提醒"有效日期不合法"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.decorate_line_id      AS 明细行ID,
+
+```sql
+SELECT l.decorate_line_id      AS 明细行ID,
          l.decorate_standard_id  AS 装修标准ID,
          l.decorate_project      AS 装修项目,
          l.fixup_grade           AS 装修等级,
          l.start_date            AS 有效开始日期,
          l.end_date              AS 有效结束日期
   FROM   terminal_decorate_line l
-  WHERE  l.end_date &lt; l.start_date
-  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre>
+  WHERE  l.end_date < l.start_date
+  ORDER  BY l.decorate_standard_id, l.decorate_project;
+```
 <h4>报错5：金额标准必须大于0</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验某行明细的IN_STANDARD(额度内标准)或OUT_STANDARD(额度外标准)小于等于0</li><li><strong>逻辑分析</strong>：IN_STANDARD和OUT_STANDARD分别为额度内和额度外的补贴单价(元/m²)，下游装修申请预估补贴和验收报销计算实际报销金额时按"面积×单价"计算，要求单价大于0才有业务意义。若用户误填0或负数（如未输入默认0、或误填负值），会导致补贴金额计算为0或负数，造成经销商利益受损或财务数据异常。后端校验IN_STANDARD &lt;= 0或OUT_STANDARD &lt;= 0即抛出toast提醒"金额标准必须大于0"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT l.decorate_line_id      AS 明细行ID,
+
+```sql
+SELECT l.decorate_line_id      AS 明细行ID,
          l.decorate_standard_id  AS 装修标准ID,
          l.decorate_project      AS 装修项目,
          l.fixup_grade           AS 装修等级,
          l.in_standard           AS 额度内标准,
          l.out_standard          AS 额度外标准
   FROM   terminal_decorate_line l
-  WHERE  l.in_standard &lt;= 0
-  OR     l.out_standard &lt;= 0
-  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre>
+  WHERE  l.in_standard <= 0
+  OR     l.out_standard <= 0
+  ORDER  BY l.decorate_standard_id, l.decorate_project;
+```
 </KbCard>
 
 <KbCard title="常见问题">

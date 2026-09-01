@@ -270,7 +270,9 @@
 </tbody>
 </table>
 <ul><li><strong>查询SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
     lap.APPROVAL_TYPE        AS 申请类型,
     TO_CHAR(lap.SUBMIT_DATE, 'YYYY-MM-DD HH24:MI:SS') AS 时间,
     lap.APPROVER             AS 审批人,
@@ -278,7 +280,8 @@
     lap.APPROVAL_REMARK      AS 审批意见
   FROM MA_LECTURER_APPROVAL lap
   WHERE lap.LECTURER_ARCHIVES_CODE = :lecturerArchivesCode
-  ORDER BY lap.SUBMIT_DATE DESC;</code></pre>
+  ORDER BY lap.SUBMIT_DATE DESC;
+```
 <ul><li><strong>展示字段</strong>：序号、时间、申请类型、审批人、审批结果、审批意见</li><li><strong>弹窗宽度</strong>：1000px，仅关闭按钮</li></ul>
 <h4>弹窗2：查看日程（单选）</h4>
 <ul><li><strong>触发</strong>：点击"查看日程"按钮，选择一条数据</li><li><strong>入参</strong>：lecturerArchivesCode（讲师档案编码）</li><li><strong>展示</strong>：LecturerCalendar 日历组件，展示该讲师排期</li></ul>
@@ -328,38 +331,59 @@
 
 <KbCard title="保存/提交校验">
 <ul><li>校验1：baseFormDS.validate() 必填项校验 —— 保证档案基本信息完整</li><li><strong>详细逻辑</strong>：必填项包括讲师名称、讲师类型、所属部门、负责事业部、负责区域、讲师标签；培训类型在讲师类型为 train 时必填</li><li><strong>系统体现</strong>：前端表单校验，未通过阻止保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, LECTURER_TYPE, ORG_NAME,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, LECTURER_TYPE, ORG_NAME,
            RESPONSIBLE_DEPARTMENT_NAME, COVER_AREA, LECTURER_LABEL
     FROM MA_LECTURER_ARCHIVE
     WHERE LECTURER_NAME IS NULL OR LECTURER_TYPE IS NULL OR ORG_NAME IS NULL
        OR RESPONSIBLE_DEPARTMENT_NAME IS NULL OR COVER_AREA IS NULL
-       OR LECTURER_LABEL IS NULL;</code></pre>
+       OR LECTURER_LABEL IS NULL;
+```
 <ul><li>校验2：讲师简历非空 —— 保证讲师资质信息完整</li><li><strong>详细逻辑</strong>：保存时校验讲师简历字段非空</li><li><strong>系统体现</strong>：前端校验，提示补充简历</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
     FROM MA_LECTURER_ARCHIVE
-    WHERE RESUME IS NULL OR RESUME = '';</code></pre>
+    WHERE RESUME IS NULL OR RESUME = '';
+```
 <ul><li>校验3：讲师案例资料非空 —— 保证讲师案例信息完整</li><li><strong>详细逻辑</strong>：保存时校验讲师案例资料字段非空</li><li><strong>系统体现</strong>：前端校验，提示补充案例资料</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
     FROM MA_LECTURER_ARCHIVE
-    WHERE CASE_INFO IS NULL OR CASE_INFO = '';</code></pre>
+    WHERE CASE_INFO IS NULL OR CASE_INFO = '';
+```
 <ul><li>校验4：讲师照片非空 —— 保证讲师身份可视化</li><li><strong>详细逻辑</strong>：保存时校验讲师照片字段非空</li><li><strong>系统体现</strong>：前端校验，提示上传照片</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
     FROM MA_LECTURER_ARCHIVE
-    WHERE PHOTO IS NULL OR PHOTO = '';</code></pre>
+    WHERE PHOTO IS NULL OR PHOTO = '';
+```
 <ul><li>校验5：牌价变更申请时档案状态必须为 valid —— 仅生效档案可发起变更</li><li><strong>详细逻辑</strong>：点击牌价变更申请按钮时校验 ARCHIVES_STATUS=valid</li><li><strong>系统体现</strong>：前端校验，提示"只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！"</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, ARCHIVES_STATUS, TRAIN_TYPE
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, ARCHIVES_STATUS, TRAIN_TYPE
     FROM MA_LECTURER_ARCHIVE
-    WHERE ARCHIVES_STATUS &lt;&gt; 'valid' OR TRAIN_TYPE = 'camp';</code></pre>
+    WHERE ARCHIVES_STATUS <> 'valid' OR TRAIN_TYPE = 'camp';
+```
 <ul><li>校验6：牌价变更申请时培训类型不能为 camp —— 特训营讲师不适用牌价变更</li><li><strong>详细逻辑</strong>：点击牌价变更申请按钮时校验 TRAIN_TYPE≠camp</li><li><strong>系统体现</strong>：前端校验，提示信息同上</li><li><strong>排查SQL</strong>：同校验5</li><li>校验7：生效/失效时审批状态必须为 approved —— 仅审批通过档案可切换状态</li><li><strong>详细逻辑</strong>：点击生效/失效按钮时校验 APPROVAL_STATUS=approved</li><li><strong>系统体现</strong>：前端校验，提示"只能对【审批通过】的档案进行操作！"</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, APPROVAL_STATUS, ARCHIVES_STATUS
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, APPROVAL_STATUS, ARCHIVES_STATUS
     FROM MA_LECTURER_ARCHIVE
-    WHERE APPROVAL_STATUS &lt;&gt; 'approved' AND ARCHIVES_STATUS IN ('valid', 'invalid');</code></pre>
+    WHERE APPROVAL_STATUS <> 'approved' AND ARCHIVES_STATUS IN ('valid', 'invalid');
+```
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>草稿(draft) ──提交──→ 审批中(approving) ──审批通过──→ 审批通过(approved)
+
+```sql
+草稿(draft) ──提交──→ 审批中(approving) ──审批通过──→ 审批通过(approved)
                                           ──审批拒绝──→ 审批拒绝(reject) ──重新提交──→ 审批中(approving)
-审批通过(approved) ──生效──→ 生效(valid) ──失效──→ 失效(invalid) ──生效──→ 生效(valid)</code></pre>
+审批通过(approved) ──生效──→ 生效(valid) ──失效──→ 失效(invalid) ──生效──→ 生效(valid)
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
@@ -480,7 +504,9 @@
 </KbCard>
 
 <KbCard title="排查SQL">
-<pre class="detail-sql" v-pre><code>-- 查询讲师档案列表
+
+```sql
+-- 查询讲师档案列表
 SELECT
   la.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
   la.LECTURER_NAME     AS 讲师姓名,
@@ -502,7 +528,7 @@ SELECT
   la.PRICE             AS 当前报价
 FROM MA_LECTURER_ARCHIVE la
 WHERE la.ARCHIVES_STATUS = 'valid'
-  AND la.TRAIN_TYPE &lt;&gt; 'camp'
+  AND la.TRAIN_TYPE <> 'camp'
   AND la.APPROVAL_STATUS = 'approved';
 
 -- 查询审批未通过的档案
@@ -511,7 +537,8 @@ SELECT
   la.LECTURER_NAME     AS 讲师姓名,
   la.APPROVAL_STATUS   AS 审批状态
 FROM MA_LECTURER_ARCHIVE la
-WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');</code></pre>
+WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
+```
 </KbCard>
 
 </div>
@@ -544,107 +571,146 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');</code></pre
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击编辑、提交、牌价变更申请、查看审批、生效、失效、查看日程、查看饱和度等单选操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标档案，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态,
          APPROVAL_STATUS AS 审批状态
   FROM MA_LECTURER_ARCHIVE
   WHERE ARCHIVES_STATUS IN ('draft', 'reject', 'valid', 'invalid', 'approved')
-  ORDER BY UPDATE_DATE DESC;</code></pre>
+  ORDER BY UPDATE_DATE DESC;
+```
 <h4>报错2：请选择至少一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击删除按钮时，未选择任何数据</li><li><strong>逻辑分析</strong>：前端在执行删除操作前校验选中行数量，若 selectedRows.length &lt; 1 则阻止操作并提示"请选择至少一条数据"。删除支持批量操作，但至少需要一条目标数据</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
-  WHERE ARCHIVES_STATUS = 'draft';</code></pre>
+  WHERE ARCHIVES_STATUS = 'draft';
+```
 <h4>报错3：请选择讲师类型</h4>
 <ul><li><strong>触发条件</strong>：在讲师档案 Tab（activeTab=other）下查询时，未选择讲师类型</li><li><strong>逻辑分析</strong>：讲师档案 Tab 的查询依赖讲师类型（lecturerType）作为 pageType 参数，未选择讲师类型时 pageType 为空，无法确定查询的讲师业务方向，前端校验阻止查询并提示"请选择讲师类型"。讲师类型决定讲师级别值集（TRAIN/ACTIVITY/DESIGN_LECTURER_LEVEL）的切换</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
          LECTURER_TYPE AS 讲师类型
   FROM MA_LECTURER_ARCHIVE
-  WHERE LECTURER_TYPE IS NULL OR LECTURER_TYPE = '';</code></pre>
+  WHERE LECTURER_TYPE IS NULL OR LECTURER_TYPE = '';
+```
 <h4>报错4：只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！</h4>
 <ul><li><strong>触发条件</strong>：点击牌价变更申请按钮时，档案状态不为 valid 或培训类型为 camp</li><li><strong>逻辑分析</strong>：前端执行双重校验：①校验 ARCHIVES_STATUS = 'valid'（仅生效档案可发起牌价变更，草稿/审批中/失效档案不允许）；②校验 TRAIN_TYPE ≠ 'camp'（特训营讲师不适用牌价变更流程）。任一校验不通过则提示"只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！"。牌价变更涉及讲师报价调整，需在档案生效后进行，特训营讲师价格由特训营统一管理</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态,
          TRAIN_TYPE AS 培训类型,
          PRICE AS 当前报价
   FROM MA_LECTURER_ARCHIVE
-  WHERE ARCHIVES_STATUS &lt;&gt; 'valid' OR TRAIN_TYPE = 'camp';</code></pre>
+  WHERE ARCHIVES_STATUS <> 'valid' OR TRAIN_TYPE = 'camp';
+```
 <h4>报错5：只能对【审批通过】的档案进行操作！</h4>
 <ul><li><strong>触发条件</strong>：点击生效或失效按钮时，档案审批状态不为 approved</li><li><strong>逻辑分析</strong>：前端校验 APPROVAL_STATUS = 'approved'，仅审批通过的档案才允许执行生效/失效状态切换。审批未通过（草稿/审批中/审批拒绝）的档案不具备业务合法性，不应进入生效/失效流转。校验不通过提示"只能对【审批通过】的档案进行操作！"</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
          LECTURER_NAME AS 讲师姓名,
          APPROVAL_STATUS AS 审批状态,
          ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
-  WHERE APPROVAL_STATUS &lt;&gt; 'approved'
-    AND ARCHIVES_STATUS IN ('valid', 'invalid');</code></pre>
+  WHERE APPROVAL_STATUS <> 'approved'
+    AND ARCHIVES_STATUS IN ('valid', 'invalid');
+```
 <h4>报错6：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 mlt/maLecturerArchive/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态,
          APPROVAL_STATUS AS 审批状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间,
          LAST_UPDATED_BY AS 最后更新人
   FROM MA_LECTURER_ARCHIVE
-  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错7：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM MA_LECTURER_ARCHIVE
-  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错8：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击新建、编辑、删除、提交、生效/失效、牌价变更等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%lecturer_archive%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%lecturer_archive%' ORDER BY U.USER_NAME;
+```
 <h4>报错9：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：编辑、生效/失效等操作时，接口返回数据为空或档案编码不存在</li><li><strong>逻辑分析</strong>：前端通过 lecturerArchivesCode 调用详情接口，后端查询 MA_LECTURER_ARCHIVE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：档案编码错误、档案已被删除、跨租户查询、数据权限隔离等。需检查 LECTURER_ARCHIVES_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态, DELETE_FLAG AS 删除标记
   FROM MA_LECTURER_ARCHIVE
-  WHERE DELETE_FLAG = 'Y' OR LECTURER_ARCHIVES_CODE IS NULL;</code></pre>
+  WHERE DELETE_FLAG = 'Y' OR LECTURER_ARCHIVES_CODE IS NULL;
+```
 <h4>报错10：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击提交、编辑等按钮时，档案状态不允许该操作</li><li><strong>逻辑分析</strong>：后端校验状态机，如审批中（approving）不可编辑、已生效不可重复生效等。状态不匹配时后端返回业务异常。需检查档案当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态, APPROVAL_STATUS AS 审批状态,
          ERROR_INFO AS 异常问题
   FROM MA_LECTURER_ARCHIVE
   WHERE ARCHIVES_STATUS NOT IN ('draft','valid','invalid','approved','reject')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错11：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或列表中讲师类型、讲师级别等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.TRAIN_LECTURER_LEVEL、MBO.ACTIVITY_LECTURER_LEVEL、MBO.DESIGN_LECTURER_LEVEL 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.TRAIN_LECTURER_LEVEL','MBO.ACTIVITY_LECTURER_LEVEL','MBO.DESIGN_LECTURER_LEVEL','MBO.LECTURER_TYPE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 <h4>报错12：讲师姓名不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存或提交时，LECTURER_NAME 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 lecturerName 字段配置 required 校验，提交前校验讲师姓名是否填写，为空则阻止提交并提示"讲师姓名不能为空"。讲师姓名是档案核心信息，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, LECTURER_NAME AS 讲师姓名,
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, LECTURER_NAME AS 讲师姓名,
          LECTURER_TYPE AS 讲师类型, ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
-  WHERE LECTURER_NAME IS NULL OR LECTURER_NAME = '';</code></pre>
+  WHERE LECTURER_NAME IS NULL OR LECTURER_NAME = '';
+```
 <h4>报错13：档案编码已存在</h4>
 <ul><li><strong>触发条件</strong>：新建讲师档案保存时，LECTURER_ARCHIVES_CODE 已存在于 MA_LECTURER_ARCHIVE 表</li><li><strong>逻辑分析</strong>：后端校验 LECTURER_ARCHIVES_CODE 唯一性，若已存在则返回业务异常。需更换档案编码后保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, COUNT(*) AS 重复数
+
+```sql
+SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, COUNT(*) AS 重复数
   FROM MA_LECTURER_ARCHIVE
   WHERE DELETE_FLAG = 'N'
   GROUP BY LECTURER_ARCHIVES_CODE
-  HAVING COUNT(*) &gt; 1;</code></pre>
+  HAVING COUNT(*) > 1;
+```
 </KbCard>
 
 <KbCard title="常见问题">

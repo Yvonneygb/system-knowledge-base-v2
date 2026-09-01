@@ -242,13 +242,19 @@
 </table>
 <h4>按钮1：查询（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：按年月、事业部、交易公司、法人等条件查询预提数据</li><li><strong>接口调用</strong>：查询FIN_FEE_WITHHOLDING_IN_QUOTA表</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM FIN_FEE_WITHHOLDING_IN_QUOTA 
-WHERE (YEARMONTH = #&#123;yearmonth&#125; OR #&#123;yearmonth&#125; IS NULL)
-  AND (DIVISION_ID = #&#123;divisionId&#125; OR #&#123;divisionId&#125; IS NULL)
-ORDER BY YEARMONTH DESC, WITHHOLDING_NO</code></pre>
+
+```sql
+SELECT * FROM FIN_FEE_WITHHOLDING_IN_QUOTA 
+WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
+  AND (DIVISION_ID = #{divisionId} OR #{divisionId} IS NULL)
+ORDER BY YEARMONTH DESC, WITHHOLDING_NO
+```
 <h4>按钮2：更新预提数据（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：通过Repository层queryNewWriteoffInQuotaView方法查询预提视图数据</li><li>第2点：更新FIN_FEE_WITHHOLDING_IN_QUOTA表数据</li><li>第3点：推送至共享财务系统（单据类型fin_fee_withholding_in_quota）</li><li>第4点：更新同步时间、单据状态和共享单号</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/withholding-in-quotas/updateAccrualData</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM FIN_FEE_WITHHOLDING_IN_QUOTA WHERE YEARMONTH = #&#123;yearmonth&#125; AND SYNC_ITEM IS NULL;</code></pre>
+
+```sql
+SELECT * FROM FIN_FEE_WITHHOLDING_IN_QUOTA WHERE YEARMONTH = #{yearmonth} AND SYNC_ITEM IS NULL;
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -261,7 +267,10 @@ ORDER BY YEARMONTH DESC, WITHHOLDING_NO</code></pre>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>数据生成 ──更新预提数据──→ 已更新(已推送)</code></pre>
+
+```text
+数据生成 ──更新预提数据──→ 已更新(已推送)
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -333,53 +342,77 @@ ORDER BY YEARMONTH DESC, WITHHOLDING_NO</code></pre>
 </table>
 <h4>报错1：预提数据为空</h4>
 <ul><li><strong>触发条件</strong>：用户按年月/事业部/交易公司查询预提数据，FIN_FEE_WITHHOLDING_IN_QUOTA表返回空结果集</li><li><strong>逻辑分析</strong>：预提数据需通过"更新预提数据"按钮（updateAccrualData接口）主动生成，Repository层通过queryNewWriteoffInQuotaView方法查询预提视图数据并写入FIN_FEE_WITHHOLDING_IN_QUOTA表。无数据根因有三类：(1)从未执行过更新预提数据操作，表为空；(2)上游出库单预提数据未生成或额度内兑现数据未同步，预提视图无数据；(3)查询的年月/事业部区间内无预提记录。需先执行更新预提数据，再查询确认</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WITHHOLDING_ID, WITHHOLDING_NO, YEARMONTH, DIVISION_NAME, TRADING_COMPANY_NAME,
+
+```sql
+SELECT WITHHOLDING_ID, WITHHOLDING_NO, YEARMONTH, DIVISION_NAME, TRADING_COMPANY_NAME,
          CORPORATE_NAME, WITHHOLDING_TAX_AMT, WITHHOLDING_ETAX_AMT, SUMAMT,
          SYNC_ITEM, BILL_STATUS, GENERATED_TIMES
   FROM FIN_FEE_WITHHOLDING_IN_QUOTA
-  WHERE (YEARMONTH = #&#123;yearmonth&#125; OR #&#123;yearmonth&#125; IS NULL)
-    AND (DIVISION_ID = #&#123;divisionId&#125; OR #&#123;divisionId&#125; IS NULL)
-  ORDER BY YEARMONTH DESC, WITHHOLDING_NO;</code></pre>
+  WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
+    AND (DIVISION_ID = #{divisionId} OR #{divisionId} IS NULL)
+  ORDER BY YEARMONTH DESC, WITHHOLDING_NO;
+```
 <h4>报错2：推送共享财务失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击"更新预提数据"，updateAccrualData接口推送至共享财务系统时返回失败</li><li><strong>逻辑分析</strong>：更新预提数据接口在更新FIN_FEE_WITHHOLDING_IN_QUOTA表后，通过FsscApiController推送至共享财务系统，单据类型fin_fee_withholding_in_quota（额度内预提）。失败根因有三类：(1)共享财务系统不可用或网络中断；(2)推送数据异常，如预提含税/不含税金额为0、法人编码（CORPORATE_CODE）在共享系统中不存在、成本中心编码（COST_CENTER_CODE）不匹配、科目名称（SUBJECT_NAME）未配置；(3)共享侧重复推送校验。推送失败需检查SHARE_NO和SYNC_ITEM字段，重新执行更新预提数据</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WITHHOLDING_ID, WITHHOLDING_NO, SHARE_NO, CORPORATE_CODE, COST_CENTER_CODE,
+
+```sql
+SELECT WITHHOLDING_ID, WITHHOLDING_NO, SHARE_NO, CORPORATE_CODE, COST_CENTER_CODE,
          SUBJECT_NAME, WITHHOLDING_TAX_AMT, WITHHOLDING_ETAX_AMT, SYNC_ITEM, BILL_STATUS
   FROM FIN_FEE_WITHHOLDING_IN_QUOTA
-  WHERE YEARMONTH = #&#123;yearmonth&#125; AND (SHARE_NO IS NULL OR SYNC_ITEM IS NULL OR BILL_STATUS != 1);</code></pre>
+  WHERE YEARMONTH = #{yearmonth} AND (SHARE_NO IS NULL OR SYNC_ITEM IS NULL OR BILL_STATUS != 1);
+```
 <h4>报错3：预提视图数据为空</h4>
 <ul><li><strong>触发条件</strong>：用户点击"更新预提数据"，updateAccrualData接口查询queryWithholdingInQuotaNewView返回空集合</li><li><strong>逻辑分析</strong>：updateAccrualData方法在FinFeeWithholdingInQuotaServiceImpl.java:58处校验withholdingInQuotaNewViewList为空时直接return 0，不抛异常但前端无数据更新。queryWithholdingInQuotaNewView从预提视图查询数据，视图数据来源于出库单预提和额度内兑现。无数据根因有三类：(1)上游出库单预提数据未生成；(2)额度内兑现数据未同步；(3)查询的起始时间（startDate，默认上个月）内无预提记录。需核查上游出库单预提和兑现数据</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WITHHOLDING_ID, WITHHOLDING_NO, YEARMONTH, DIVISION_NAME, TRADING_COMPANY_NAME,
+
+```sql
+SELECT WITHHOLDING_ID, WITHHOLDING_NO, YEARMONTH, DIVISION_NAME, TRADING_COMPANY_NAME,
          CORPORATE_NAME, WITHHOLDING_TAX_AMT, BILL_STATUS, GENERATED_TIMES
   FROM FIN_FEE_WITHHOLDING_IN_QUOTA
-  WHERE YEARMONTH = #&#123;yearmonth&#125;;</code></pre>
+  WHERE YEARMONTH = #{yearmonth};
+```
 <h4>报错4：找不到符合的预提/冲销单号信息</h4>
 <ul><li><strong>触发条件</strong>：共享财务系统回调更新预提/冲销单据状态时，传入的预提/冲销单号在FIN_FEE_WITHHOLDING_IN_QUOTA表中不存在</li><li><strong>逻辑分析</strong>：FsscApiServiceImpl.java:324/339/354/369/384/399处校验finFeeWithholdingInQuotaRepository.selectByCondition查询结果为空时抛出CommonException("找不到符合的预提/冲销单号【%s】的信息")。该异常在共享财务系统回调时触发，表示共享侧传入的actualHeaderCode（预提头单号）在本地表中不存在。根因有三类：(1)预提单号已被删除；(2)共享侧传入单号错误；(3)数据不一致。需核查预提头单号是否存在</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WITHHOLDING_ID, WITHHOLDING_NO, WITHHOLDING_HEADER_NO, SHARE_NO,
+
+```sql
+SELECT WITHHOLDING_ID, WITHHOLDING_NO, WITHHOLDING_HEADER_NO, SHARE_NO,
          YEARMONTH, BILL_STATUS, SYNC_ITEM
   FROM FIN_FEE_WITHHOLDING_IN_QUOTA
-  WHERE WITHHOLDING_HEADER_NO = #&#123;actualHeaderCode&#125;;</code></pre>
+  WHERE WITHHOLDING_HEADER_NO = #{actualHeaderCode};
+```
 <h4>报错5：请确认该单据号是预提/冲销头单号</h4>
 <ul><li><strong>触发条件</strong>：共享财务系统回调时，传入的headerCode无法匹配到预提头单号或冲销头单号</li><li><strong>逻辑分析</strong>：FsscApiServiceImpl.java:311处校验headerCode匹配失败时抛出CommonException("请确认该单据号【%s】是预提/冲销头单号！")。该异常表示共享侧回调传入的单号既不是预提头单号也不是冲销头单号，单据类型不匹配。需确认共享侧传入的单号类型和单号有效性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WITHHOLDING_ID, WITHHOLDING_NO, WITHHOLDING_HEADER_NO, BILL_STATUS
+
+```sql
+SELECT WITHHOLDING_ID, WITHHOLDING_NO, WITHHOLDING_HEADER_NO, BILL_STATUS
   FROM FIN_FEE_WITHHOLDING_IN_QUOTA
-  WHERE WITHHOLDING_HEADER_NO = #&#123;headerCode&#125;
-     OR WITHHOLDING_NO = #&#123;headerCode&#125;;</code></pre>
+  WHERE WITHHOLDING_HEADER_NO = #{headerCode}
+     OR WITHHOLDING_NO = #{headerCode};
+```
 <h4>报错6：未知的单据类型</h4>
 <ul><li><strong>触发条件</strong>：共享财务系统回调时，传入的单据类型不在系统支持的类型范围内</li><li><strong>逻辑分析</strong>：FsscApiServiceImpl.java:408处校验单据类型未匹配到任何已知类型时抛出CommonException("未知的单据类型")。该异常表示共享侧回调传入的单据类型未在系统中配置，系统无法识别该单据类型对应的处理逻辑。需检查共享侧单据类型配置和本地单据类型枚举</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WITHHOLDING_ID, WITHHOLDING_NO, WITHHOLDING_HEADER_NO, BILL_STATUS
+
+```sql
+SELECT WITHHOLDING_ID, WITHHOLDING_NO, WITHHOLDING_HEADER_NO, BILL_STATUS
   FROM FIN_FEE_WITHHOLDING_IN_QUOTA
-  WHERE WITHHOLDING_HEADER_NO = #&#123;headerCode&#125;;</code></pre>
+  WHERE WITHHOLDING_HEADER_NO = #{headerCode};
+```
 <h4>报错7：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：前端调用updateAccrualData接口或共享财务系统回调时网络中断</li><li><strong>逻辑分析</strong>：前端handleExecute方法在ListPage/index.tsx:28处通过axios调用execute接口，catch块中注释"error handled by interceptor"由全局拦截器处理。网络请求失败根因有三类：(1)AE业务服务不可用；(2)网络连接中断；(3)请求超时。需检查网络连通性和AE业务服务状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT WITHHOLDING_ID, WITHHOLDING_NO, YEARMONTH, BILL_STATUS, SYNC_ITEM
+
+```sql
+SELECT WITHHOLDING_ID, WITHHOLDING_NO, YEARMONTH, BILL_STATUS, SYNC_ITEM
   FROM FIN_FEE_WITHHOLDING_IN_QUOTA
-  WHERE YEARMONTH = #&#123;yearmonth&#125;;</code></pre>
+  WHERE YEARMONTH = #{yearmonth};
+```
 <h4>报错8：权限不足</h4>
 <ul><li><strong>触发条件</strong>：当前用户无"更新预提数据"或"执行"或"作废"按钮的操作权限</li><li><strong>逻辑分析</strong>：前端按钮通过PermissionButton组件配置permissionList进行权限校验，无权限时按钮不显示或点击报错。需联系管理员为当前用户分配相应权限编码（PERMISSION_PREFIX.button.execute等）</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 权限校验（伪SQL，具体表名依权限框架而定）
+
+```sql
+-- 权限校验（伪SQL，具体表名依权限框架而定）
   SELECT ROLE_CODE, PERMISSION_CODE
   FROM USER_ROLE_PERMISSION
-  WHERE USER_ID = #&#123;userId&#125; AND PERMISSION_CODE LIKE '%withholding-in-quotas%';</code></pre>
+  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%withholding-in-quotas%';
+```
 </KbCard>
 
 <KbCard title="常见问题">

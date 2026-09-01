@@ -251,7 +251,9 @@
 </KbCard>
 
 <KbCard title="后端接口Mapper SQL">
-<pre class="detail-sql" v-pre><code>-- 户外广告投放分布报表查询
+
+```sql
+-- 户外广告投放分布报表查询
 SELECT * FROM (
     SELECT
         f.fee_apply_no AS fee_Apply_No,
@@ -281,16 +283,17 @@ SELECT * FROM (
       AND f.HZ_APPROVE_STATUS = 'APPROVED'
 ) t
 WHERE 1 = 1
-    AND t.organization_Id = #&#123;organizationId&#125;                                        -- 组织ID（精确）
-    AND t.division_Id = #&#123;divisionId&#125;                                                -- 事业部ID（精确）
-    AND t.sale_zone_Org_Name = (SELECT s.orgname FROM epms.scporg s WHERE s.orgid = #&#123;salezoneOrgId&#125;)  -- 销售区域（子查询）
-    AND t.operat_Center_Org_Name = (SELECT orgname FROM epms.scporg s WHERE s.orgid = #&#123;operatCenterOrgId&#125;)  -- 运营中心（子查询）
-    AND t.cust_Code = #&#123;custCode&#125;                                                    -- 经销商编码（精确）
-    AND t.cust_Name LIKE '%' || #&#123;custName&#125; || '%'                                   -- 经销商名称（模糊）
-    AND t.province_Area_name = #&#123;provinceName&#125;                                       -- 省份名称（精确）
-    AND t.fee_Apply_No = #&#123;feeApplyNo&#125;                                               -- 费用申请单号（精确）
-    AND to_date(t.publish_from_date, 'YYYY-MM-DD') = to_date(#&#123;startDate&#125;, 'YYYY-MM-DD')  -- 合同有效期起（精确）
-    AND to_date(t.publish_To_Date, 'YYYY-MM-DD') = to_date(#&#123;endDate&#125;, 'YYYY-MM-DD')      -- 合同有效期止（精确）</code></pre>
+    AND t.organization_Id = #{organizationId}                                        -- 组织ID（精确）
+    AND t.division_Id = #{divisionId}                                                -- 事业部ID（精确）
+    AND t.sale_zone_Org_Name = (SELECT s.orgname FROM epms.scporg s WHERE s.orgid = #{salezoneOrgId})  -- 销售区域（子查询）
+    AND t.operat_Center_Org_Name = (SELECT orgname FROM epms.scporg s WHERE s.orgid = #{operatCenterOrgId})  -- 运营中心（子查询）
+    AND t.cust_Code = #{custCode}                                                    -- 经销商编码（精确）
+    AND t.cust_Name LIKE '%' || #{custName} || '%'                                   -- 经销商名称（模糊）
+    AND t.province_Area_name = #{provinceName}                                       -- 省份名称（精确）
+    AND t.fee_Apply_No = #{feeApplyNo}                                               -- 费用申请单号（精确）
+    AND to_date(t.publish_from_date, 'YYYY-MM-DD') = to_date(#{startDate}, 'YYYY-MM-DD')  -- 合同有效期起（精确）
+    AND to_date(t.publish_To_Date, 'YYYY-MM-DD') = to_date(#{endDate}, 'YYYY-MM-DD')      -- 合同有效期止（精确）
+```
 </KbCard>
 
 <KbCard title="状态机">
@@ -360,7 +363,9 @@ WHERE 1 = 1
 </table>
 <h4>报错1：查询结果为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，按当前查询条件（事业部、销售区域、运营中心、经销商、省份、费用申请单号、合同有效期等）查询FIN_FEE_APPLY_HEADER返回空结果集</li><li><strong>逻辑分析</strong>：报表查询FIN_FEE_APPLY_HEADER，筛选Apply_Type=2（广告投放申请）且HZ_APPROVE_STATUS='APPROVED'（已审批通过），关联DIVISION_BASE_SET、CUSTOMER_ORG获取补充信息。若查询条件过严（如经销商编码拼写错误、事业部ID不匹配）、或户外广告投放申请未审批通过（HZ_APPROVE_STATUS非APPROVED）、或申请类型非广告投放（Apply_Type非2）、或用户组织ID与数据不匹配，均会返回空结果。该报错为提示性，不影响系统。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          cust_name           AS 经销商名称,
          total_apply_amt_bx  AS 申请金额,
@@ -370,29 +375,39 @@ WHERE 1 = 1
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
   AND    hz_approve_status = 'APPROVED'
-  AND    organization_id = #&#123;当前用户组织ID&#125;
-  ORDER  BY create_time DESC;</code></pre>
+  AND    organization_id = #{当前用户组织ID}
+  ORDER  BY create_time DESC;
+```
 <h4>报错2：网络请求失败/接口调用异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/outdoor-advertising-distribution/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.outdoorAdvertisingDistributionSearch接口分页查询FIN_FEE_APPLY_HEADER（Apply_Type=2且HZ_APPROVE_STATUS='APPROVED'），关联DIVISION_BASE_SET、CUSTOMER_ORG，子查询HPFM_LOV_VALUE翻译广告媒介项目。若后端ae-report服务未启动、Oracle数据库连接异常、子查询scporg返回多行触发ORA-01427、to_date转换失败、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 广告投放申请总数,
+
+```sql
+SELECT COUNT(*)            AS 广告投放申请总数,
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
-  AND    hz_approve_status = 'APPROVED';</code></pre>
+  AND    hz_approve_status = 'APPROVED';
+```
 <h4>报错3：权限不足/未登录</h4>
 <ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre>
+
+```sql
+SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;
+```
 <h4>报错4：导出失败：网络异常</h4>
 <ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口将当前查询条件下的户外广告分布数据全量查询后生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定事业部、经销商）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
+
+```sql
+SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
          COUNT(*)                     AS 广告申请数量
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
   AND    hz_approve_status = 'APPROVED'
   GROUP  BY TO_CHAR(create_time, 'YYYY')
-  ORDER  BY 年度 DESC;</code></pre>
+  ORDER  BY 年度 DESC;
+```
 </KbCard>
 
 </div>

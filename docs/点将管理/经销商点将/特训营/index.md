@@ -320,7 +320,9 @@
 <p>行操作：</p>
 <ul><li>查看介绍：弹出特训营详情弹窗（CampDetail组件，type='camp'）</li><li>报名：调用 <code>handleSendApply</code>，弹出报名信息弹窗</li></ul>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   tc.CAMP_CODE    AS 特训营编码,
   tc.CAMP_NAME    AS 特训营名称,
   tc.CAMP_TYPE    AS 特训营类型,
@@ -331,7 +333,8 @@
 FROM TRAIN_CAMP tc
 WHERE tc.CAMP_STATUS = 'valid'
   AND (:campName IS NULL OR tc.CAMP_NAME LIKE '%' || :campName || '%')
-ORDER BY tc.CREATE_DATE DESC;</code></pre>
+ORDER BY tc.CREATE_DATE DESC;
+```
 <h4>弹窗2：特训营详情弹窗（申请点将弹窗行操作"查看介绍"或列表"特训营名称"点击触发）</h4>
 <blockquote>数据来源：<code>list.tsx</code> 的 <code>handleShowDetail</code>，组件 <code>components/CampDetail</code>，入参 rowData + type（'camp'查看介绍/'apply'申请详情/'cancel'取消详情）。无确定按钮，cancelText='关闭'。</blockquote>
 <p>入参：</p>
@@ -378,13 +381,16 @@ ORDER BY tc.CREATE_DATE DESC;</code></pre>
 <p>列表列：开票单位编码(legalEntityCode)、开票单位名称(legalEntityName)、交易公司ID(tradingCompanyId)、交易公司名称(tradingCompanyName)。</p>
 <p>选择后回写：tradingCompanyName、tradingCompanyId、legalEntityName、legalEntityCode。</p>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   tc.LEGAL_ENTITY_CODE    AS 开票单位编码,
   tc.LEGAL_ENTITY_NAME    AS 开票单位名称,
   tc.TRADING_COMPANY_ID   AS 交易公司ID,
   tc.TRADING_COMPANY_NAME AS 交易公司名称
 FROM MBO_TRADING_COMPANY tc
-WHERE tc.DISTRIBUTOR_CODE = :distributorCode;</code></pre>
+WHERE tc.DISTRIBUTOR_CODE = :distributorCode;
+```
 <h4>弹窗5：门店选择弹窗（参训人员列表"所属门店"字段搜索图标触发）</h4>
 <blockquote>数据来源：<code>components/ApplyInfo/config.tsx</code> 的 <code>handleShowStoreList</code> + <code>storeDS</code>/<code>storeListDSColumns</code>。接口 <code>campApi.storePage</code>，单选。</blockquote>
 <p>入参：</p>
@@ -412,13 +418,16 @@ WHERE tc.DISTRIBUTOR_CODE = :distributorCode;</code></pre>
 </tbody>
 </table>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   tca.APPLY_CODE    AS 申请编码,
   TO_CHAR(tca.PLAN_START_TIME, 'YYYY-MM-DD') AS 培训开始时间,
   tca.APPROVAL_STATE AS 审核状态,
   ROUND((tca.PLAN_START_TIME - SYSDATE)) AS 距开始天数
 FROM TRAIN_CAMP_APPLY tca
-WHERE tca.APPLY_CODE = :applyCode;</code></pre>
+WHERE tca.APPLY_CODE = :applyCode;
+```
 <h4>弹窗7：结算前确认弹窗（列表行"结算前确认"按钮触发）</h4>
 <blockquote>数据来源：<code>list.tsx</code> 的 <code>handleSettlementConfirm</code>，组件 <code>components/CampSettleDetail</code>，入参 rowData。弹窗含自定义footer：确认（onOk）、驳回（自定义按钮）。</blockquote>
 <p>入参：</p>
@@ -433,13 +442,16 @@ WHERE tca.APPLY_CODE = :applyCode;</code></pre>
 </table>
 <p>提交接口：<code>campApplyApi.settleBeforeConfirm</code>，data=&#123; applyCode, beforeSettlementConfirmState &#125;。</p>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   tca.APPLY_CODE    AS 申请编码,
   tca.CAMP_NAME     AS 特训营名称,
   tca.BEFORE_SETTLEMENT_CONFIRM_STATE AS 结算前确认状态
 FROM TRAIN_CAMP_APPLY tca
 WHERE tca.APPLY_CODE = :applyCode
-  AND tca.BEFORE_SETTLEMENT_CONFIRM_STATE = 'to_be_confirm';</code></pre>
+  AND tca.BEFORE_SETTLEMENT_CONFIRM_STATE = 'to_be_confirm';
+```
 <h4>弹窗8：流程摘要弹窗（列表行"查看流程"按钮触发）</h4>
 <blockquote>数据来源：<code>list.tsx</code> 的 <code>handleShowProcess</code>，组件 <code>components/ProcessDetail</code>，入参 applyCode。无确定按钮，cancelText='关闭'。</blockquote>
 <p>入参：</p>
@@ -498,11 +510,14 @@ WHERE tca.APPLY_CODE = :applyCode
 
 <KbCard title="状态机">
 <p>流转图：</p>
-<pre class="detail-sql" v-pre><code>draft(新建) → submitted(已提交) → approved(审批通过) → valid(生效)
+
+```sql
+draft(新建) → submitted(已提交) → approved(审批通过) → valid(生效)
    → executing(执行中) → end(已完成)
 rejected(审批驳回) → 可修改重提
 valid → cancel_applied(取消申请中) → cancel_approved(已取消)
-valid → to_be_confirm(待结算前确认) → confirm(已确认) → 结算</code></pre>
+valid → to_be_confirm(待结算前确认) → confirm(已确认) → 结算
+```
 <p>状态列表：</p>
 <table class="kb-field-tbl">
 <thead>
@@ -571,7 +586,9 @@ valid → to_be_confirm(待结算前确认) → confirm(已确认) → 结算</c
 </KbCard>
 
 <KbCard title="排查SQL">
-<pre class="detail-sql" v-pre><code>-- 查询经销商特训营点将申请
+
+```sql
+-- 查询经销商特训营点将申请
 SELECT
   tca.APPLY_CODE    AS 申请编码,
   tca.CAMP_NAME     AS 特训营名称,
@@ -592,7 +609,7 @@ SELECT
   ROUND((tca.PLAN_START_TIME - SYSDATE)) AS 距开始天数
 FROM TRAIN_CAMP_APPLY tca
 WHERE tca.APPROVAL_STATE = 'fdd_sign'
-  AND tca.PLAN_START_TIME &gt; SYSDATE + 7
+  AND tca.PLAN_START_TIME > SYSDATE + 7
   AND (tca.CANCEL_APPROVAL_STATE IS NULL
        OR tca.CANCEL_APPROVAL_STATE IN ('reject', 'oa_reject'));
 
@@ -613,8 +630,9 @@ SELECT
 FROM TRAIN_CAMP_APPLY tca
 WHERE tca.LECTURER_CODE = :lecturerCode
   AND tca.APPLY_STATE IN ('valid', 'executing')
-  AND tca.PLAN_START_TIME &lt;= :planEndTime
-  AND tca.PLAN_END_TIME &gt;= :planStartTime;</code></pre>
+  AND tca.PLAN_START_TIME <= :planEndTime
+  AND tca.PLAN_END_TIME >= :planStartTime;
+```
 </KbCard>
 
 </div>
@@ -653,82 +671,111 @@ WHERE tca.LECTURER_CODE = :lecturerCode
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击编辑、删除、取消申请、结算前确认、查看流程等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          LECTURER AS 培训师,
          APPLY_STATE AS 申请状态,
          APPROVAL_STATE AS 审核状态
   FROM TRAIN_CAMP_APPLY
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错2：只有培训时间开始前7天的流程可以发起点将取消申请！</h4>
 <ul><li><strong>触发条件</strong>：点击取消申请按钮时，不满足"培训开始前7天"条件</li><li><strong>逻辑分析</strong>：前端计算时间差值 timeDiff = (PLAN_START_TIME - nowTime) / (24*60*60*1000)，校验 timeDiff &gt;= 7（培训开始前至少7天）。校验不通过则提示"只有培训时间开始前7天的流程可以发起点将取消申请！"。此校验确保有充足时间通知讲师和参训人员调整安排，避免临时取消造成资源浪费</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          TO_CHAR(PLAN_START_TIME,'YYYY-MM-DD') AS 培训开始时间,
          APPROVAL_STATE AS 审核状态,
          ROUND(PLAN_START_TIME - SYSDATE) AS 距开始天数
   FROM TRAIN_CAMP_APPLY
-  WHERE PLAN_START_TIME &lt; SYSDATE + 7;</code></pre>
+  WHERE PLAN_START_TIME < SYSDATE + 7;
+```
 <h4>报错3：该状态单据无法发起取消申请！</h4>
 <ul><li><strong>触发条件</strong>：点击取消申请按钮时，审批状态不为 fdd_sign 或已有进行中的取消申请</li><li><strong>逻辑分析</strong>：前端执行多重校验：①校验 APPROVAL_STATE = 'fdd_sign'（已法大大签约）；②校验 CANCEL_APPROVAL_STATE 为空或为 reject/oa_reject（未取消或已驳回）。任一校验不通过则提示"该状态单据无法发起取消申请！"。确保仅已签约生效且未重复取消的单据可发起取消</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          APPROVAL_STATE AS 审核状态,
          CANCEL_APPROVAL_STATE AS 取消审核状态
   FROM TRAIN_CAMP_APPLY
-  WHERE APPROVAL_STATE &lt;&gt; 'fdd_sign'
+  WHERE APPROVAL_STATE <> 'fdd_sign'
     OR (CANCEL_APPROVAL_STATE IS NOT NULL
-        AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject'));</code></pre>
+        AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject'));
+```
 <h4>报错4：当前状态数据无法编辑！</h4>
 <ul><li><strong>触发条件</strong>：点击编辑按钮时，状态非草稿且非各类驳回状态</li><li><strong>逻辑分析</strong>：前端校验 APPLY_STATE = 'draft'（草稿）或 APPROVAL_STATE 为 reject/oa_reject（各种驳回），任一条件满足才允许编辑。已生效（valid）、审批中（approving）等状态的申请已被下游引用，编辑可能影响数据一致性，故限制编辑。校验不通过提示"当前状态数据无法编辑！"</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          APPLY_STATE AS 申请状态,
          APPROVAL_STATE AS 审核状态
   FROM TRAIN_CAMP_APPLY
-  WHERE APPLY_STATE &lt;&gt; 'draft'
-    AND APPROVAL_STATE NOT IN ('reject', 'oa_reject');</code></pre>
+  WHERE APPLY_STATE <> 'draft'
+    AND APPROVAL_STATE NOT IN ('reject', 'oa_reject');
+```
 <h4>报错5：经销商不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存或保存并提交时，dealerName 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 dealerName 字段配置 required 校验，提交前校验经销商是否选择，为空则阻止提交并提示"经销商不能为空"。经销商是点将申请的发起主体，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          DEALER_CODE AS 经销商编码,
          DEALER_NAME AS 经销商名称
   FROM TRAIN_CAMP_APPLY
-  WHERE DEALER_NAME IS NULL OR DEALER_CODE IS NULL;</code></pre>
+  WHERE DEALER_NAME IS NULL OR DEALER_CODE IS NULL;
+```
 <h4>报错6：特训营不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存或保存并提交时，campName 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 campName 字段配置 required 校验，提交前校验特训营是否选择，为空则阻止提交并提示"特训营不能为空"。特训营是点将的参训营次来源，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_CODE AS 特训营编码,
          CAMP_NAME AS 特训营名称
   FROM TRAIN_CAMP_APPLY
-  WHERE CAMP_NAME IS NULL OR CAMP_CODE IS NULL;</code></pre>
+  WHERE CAMP_NAME IS NULL OR CAMP_CODE IS NULL;
+```
 <h4>报错7：法人主体不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存或保存并提交时，legalEntityName 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 legalEntityName 字段配置 required 校验，提交前校验法人主体是否选择，为空则阻止提交并提示"法人主体不能为空"。法人主体用于后续合同签订与结算，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          LEGAL_ENTITY_CODE AS 法人主体编码,
          LEGAL_ENTITY_NAME AS 法人主体名称
   FROM TRAIN_CAMP_APPLY
-  WHERE LEGAL_ENTITY_NAME IS NULL OR LEGAL_ENTITY_CODE IS NULL;</code></pre>
+  WHERE LEGAL_ENTITY_NAME IS NULL OR LEGAL_ENTITY_CODE IS NULL;
+```
 <h4>报错8：讲师不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存或保存并提交时，lecturer 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 lecturer 字段配置 required 校验，提交前校验讲师是否选择，为空则阻止提交并提示"讲师不能为空"。讲师是点将的核心对象，必须明确被点将人</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          LECTURER_CODE AS 讲师编码,
          LECTURER AS 讲师姓名
   FROM TRAIN_CAMP_APPLY
-  WHERE LECTURER IS NULL OR LECTURER_CODE IS NULL;</code></pre>
+  WHERE LECTURER IS NULL OR LECTURER_CODE IS NULL;
+```
 <h4>报错9：拟点将天数不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存或保存并提交时，preOrdLecturerDays 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 preOrdLecturerDays 字段配置 required 校验，提交前校验拟点将天数是否填写，为空则阻止提交并提示"拟点将天数不能为空"。拟点将天数用于费用计算与讲师排期，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          PRE_ORD_LECTURER_DAYS AS 拟点将天数
   FROM TRAIN_CAMP_APPLY
-  WHERE PRE_ORD_LECTURER_DAYS IS NULL;</code></pre>
+  WHERE PRE_ORD_LECTURER_DAYS IS NULL;
+```
 <h4>报错10：讲师排期冲突</h4>
 <ul><li><strong>触发条件</strong>：保存或保存并提交时，所选讲师在拟定时间段内已有生效点将记录</li><li><strong>逻辑分析</strong>：后端保存前校验讲师排期冲突，查询 TRAIN_CAMP_APPLY 表中同一讲师（LECTURER_CODE 相同）且状态为 valid 或 executing 的点将记录，判断新申请的 [PLAN_START_TIME, PLAN_END_TIME] 与已有记录的时间段是否存在交集。若存在交集则提示"讲师排期冲突"并阻止保存。此校验避免同一讲师在同一时间段被重复点将，保障讲师档期合理性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT a.APPLY_CODE AS 申请1编码,
+
+```sql
+SELECT a.APPLY_CODE AS 申请1编码,
          b.APPLY_CODE AS 申请2编码,
          a.LECTURER AS 培训师,
          TO_CHAR(a.PLAN_START_TIME,'YYYY-MM-DD') AS 申请1开始,
@@ -736,15 +783,18 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          TO_CHAR(b.PLAN_START_TIME,'YYYY-MM-DD') AS 申请2开始,
          TO_CHAR(b.PLAN_END_TIME,'YYYY-MM-DD') AS 申请2结束
   FROM TRAIN_CAMP_APPLY a
-  JOIN TRAIN_CAMP_APPLY b ON a.APPLY_CODE &lt; b.APPLY_CODE
+  JOIN TRAIN_CAMP_APPLY b ON a.APPLY_CODE < b.APPLY_CODE
     AND a.LECTURER_CODE = b.LECTURER_CODE
     AND a.APPLY_STATE IN ('valid', 'executing')
     AND b.APPLY_STATE IN ('valid', 'executing')
-    AND a.PLAN_START_TIME &lt;= b.PLAN_END_TIME
-    AND a.PLAN_END_TIME &gt;= b.PLAN_START_TIME;</code></pre>
+    AND a.PLAN_START_TIME <= b.PLAN_END_TIME
+    AND a.PLAN_END_TIME >= b.PLAN_START_TIME;
+```
 <h4>报错11：手机号格式不正确</h4>
 <ul><li><strong>触发条件</strong>：报名人员明细中手机号字段不符合正则 /^1[3456789]\d&#123;9&#125;$/</li><li><strong>逻辑分析</strong>：前端对报名人员明细中手机号字段配置正则校验，提交前校验手机号格式是否匹配 /^1[3456789]\d&#123;9&#125;$/（1开头，第二位3-9，共11位数字）。校验不通过则提示"手机号格式不正确"。确保参训人员联系方式有效，便于后续通知</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称
   FROM TRAIN_CAMP_APPLY tca
   WHERE EXISTS (
@@ -752,73 +802,98 @@ WHERE tca.LECTURER_CODE = :lecturerCode
     WHERE u.APPLY_CODE = tca.APPLY_CODE
       AND (u.PHONE IS NULL
            OR u.PHONE NOT LIKE '1[3456789]________'
-           OR LENGTH(u.PHONE) &lt;&gt; 11
+           OR LENGTH(u.PHONE) <> 11
            OR REGEXP_LIKE(u.PHONE, '[^0-9]'))
-  );</code></pre>
+  );
+```
 <h4>报错12：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 mlt/trainCampApply/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM）调用失败、工作流引擎异常、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、工作流配置、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          CAMP_NAME AS 特训营名称,
          APPLY_STATE AS 申请状态,
          APPROVAL_STATE AS 审核状态,
          CRM_ORDER_CODE AS CRM单号,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_CAMP_APPLY
-  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错13：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
          APPLY_STATE AS 申请状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_CAMP_APPLY
-  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错14：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击编辑、删除、取消申请、结算前确认等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%camp_general%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%camp_general%' ORDER BY U.USER_NAME;
+```
 <h4>报错15：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：查看、编辑、删除等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 TRAIN_CAMP_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
          APPLY_STATE AS 申请状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_CAMP_APPLY
-  WHERE DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL;</code></pre>
+  WHERE DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL;
+```
 <h4>报错16：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击取消申请、结算前确认等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如取消申请要求 approvalState 为 fdd_sign 且提前7天、结算确认要求状态为执行完成等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
          APPLY_STATE AS 申请状态, APPROVAL_STATE AS 审核状态,
          CANCEL_APPROVAL_STATE AS 取消审核状态, ERROR_INFO AS 异常问题
   FROM TRAIN_CAMP_APPLY
   WHERE APPLY_STATE NOT IN ('draft','valid','executing','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错17：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或列表中申请状态、审核状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.ORDER_LECTURE_STATE、MBO.APPLY_APPROVAL_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.ORDER_LECTURE_STATE','MBO.APPLY_APPROVAL_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 <h4>报错18：报名人员明细不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存或保存并提交时，报名人员明细行数据为空</li><li><strong>逻辑分析</strong>：后端校验报名人员明细行非空，特训营点将需明确报名人员列表。若明细行为空则返回业务异常。需添加报名人员明细后保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_CODE AS 申请编码, A.CAMP_NAME AS 特训营名称,
+
+```sql
+SELECT A.APPLY_CODE AS 申请编码, A.CAMP_NAME AS 特训营名称,
          COUNT(B.LINE_ID) AS 报名人员数
   FROM TRAIN_CAMP_APPLY A
   LEFT JOIN TRAIN_CAMP_APPLY_LINE B ON A.APPLY_CODE = B.APPLY_CODE
   WHERE A.APPLY_STATE IN ('draft','valid')
   GROUP BY A.APPLY_CODE, A.CAMP_NAME
-  HAVING COUNT(B.LINE_ID) = 0;</code></pre>
+  HAVING COUNT(B.LINE_ID) = 0;
+```
 <h4>报错19：拟点将天数必须大于0</h4>
 <ul><li><strong>触发条件</strong>：保存或保存并提交时，PRE_ORD_LECTURER_DAYS 字段非正数</li><li><strong>逻辑分析</strong>：后端校验 PRE_ORD_LECTURER_DAYS &gt; 0，拟点将天数用于费用计算与讲师排期，必须为正数。若为0或负数则返回业务异常。需检查拟点将天数输入是否正确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
          PRE_ORD_LECTURER_DAYS AS 拟点将天数
   FROM TRAIN_CAMP_APPLY
-  WHERE PRE_ORD_LECTURER_DAYS IS NOT NULL AND PRE_ORD_LECTURER_DAYS &lt;= 0;</code></pre>
+  WHERE PRE_ORD_LECTURER_DAYS IS NOT NULL AND PRE_ORD_LECTURER_DAYS <= 0;
+```
 </KbCard>
 
 <KbCard title="常见问题">

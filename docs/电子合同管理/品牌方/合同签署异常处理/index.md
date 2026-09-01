@@ -257,7 +257,9 @@
 </tbody>
 </table>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT EC.UNIFY_CONTRACT_CODE       AS "合同统一编号",
+
+```sql
+SELECT EC.UNIFY_CONTRACT_CODE       AS "合同统一编号",
        EC.ELECTRONIC_CONTRACT_CODE  AS "合同编号",
        EC.SOURCE_DOCUMENT_CODE      AS "来源合同编号",
        EC.CONTRACT_TYPE_NAME        AS "合同类型",
@@ -282,7 +284,8 @@ WHERE (:sourceDocumentCode IS NULL OR EC.SOURCE_DOCUMENT_CODE LIKE '%' || :sourc
   AND (:contractType IS NULL OR EC.CONTRACT_TYPE = :contractType)
   AND (:contractSubType IS NULL OR EC.CONTRACT_SUB_TYPE = :contractSubType)
   AND (:status IS NULL OR EC.CONTRACT_STATUS = :status)
-ORDER BY EC.CREATE_TIME DESC;</code></pre>
+ORDER BY EC.CREATE_TIME DESC;
+```
 </KbCard>
 
 <KbCard title="选择弹窗">
@@ -356,15 +359,18 @@ ORDER BY EC.CREATE_TIME DESC;</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>[签署超时] --重发短信--&gt; [待签署] --签署成功--&gt; [已完成]
-                                    --签署失败--&gt; [签署失败]
 
-[签署失败] --修改状态--&gt; [目标状态]
-           --合同同步--&gt; [正常状态]
+```sql
+[签署超时] --重发短信--> [待签署] --签署成功--> [已完成]
+                                    --签署失败--> [签署失败]
 
-[归档失败] --重新归档--&gt; [已归档]
+[签署失败] --修改状态--> [目标状态]
+           --合同同步--> [正常状态]
 
-[回调失败] --合同同步--&gt; [正常状态]</code></pre>
+[归档失败] --重新归档--> [已归档]
+
+[回调失败] --合同同步--> [正常状态]
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>状态</th><th>状态说明</th><th>可执行操作</th></tr>
@@ -442,7 +448,9 @@ ORDER BY EC.CREATE_TIME DESC;</code></pre>
 </table>
 <h4>报错1：合同状态不允许此操作</h4>
 <ul><li><strong>触发条件</strong>：执行重新归档、修改合同状态、重发签署短信、合同同步等操作时，当前合同状态不允许该操作</li><li><strong>逻辑分析</strong>：后端校验合同状态与操作匹配性，如归档失败状态才允许重新归档、签署超时/签署失败状态才允许重发短信、回调失败状态才允许合同同步。若当前状态与操作不匹配则提示"合同状态不允许此操作"。确保操作合法性，避免在错误状态下执行操作导致数据混乱</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+
+```sql
+SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          EXCEPTION_TYPE AS 异常类型,
@@ -451,10 +459,13 @@ ORDER BY EC.CREATE_TIME DESC;</code></pre>
   WHERE EXCEPTION_TYPE IS NOT NULL
     AND CONTRACT_STATUS NOT IN ('signing_timeout', 'signing_failed',
                                 'filing_failed', 'callback_failed',
-                                'pending_sign', 'completed', 'filed');</code></pre>
+                                'pending_sign', 'completed', 'filed');
+```
 <h4>报错2：重新归档失败</h4>
 <ul><li><strong>触发条件</strong>：调用 fddContractFiling 接口重新归档时，法大大接口调用异常</li><li><strong>逻辑分析</strong>：后端调用法大大归档接口 fddContractFiling，若法大大服务不可用、网络异常、归档参数错误、合同已归档等则接口返回失败，提示"重新归档失败"。需检查法大大服务连通性、合同归档参数、法大大服务日志</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+
+```sql
+SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          EXCEPTION_TYPE AS 异常类型,
@@ -462,10 +473,13 @@ ORDER BY EC.CREATE_TIME DESC;</code></pre>
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE = 'filing_failed'
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错3：重发短信失败</h4>
 <ul><li><strong>触发条件</strong>：调用 noticeDistributor/rePush 接口重发签署短信时，短信平台接口异常</li><li><strong>逻辑分析</strong>：后端调用短信平台接口 noticeDistributor/rePush，若短信平台服务不可用、网络异常、经销商手机号缺失或错误、短信模板配置错误等则接口返回失败，提示"重发短信失败"。需检查短信平台服务状态、经销商手机号、短信模板配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+
+```sql
+SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          CONTRACT_NAME AS 合同名称,
          AGENT_NAME AS 经销商,
          CONTRACT_STATUS AS 签署状态,
@@ -473,10 +487,13 @@ ORDER BY EC.CREATE_TIME DESC;</code></pre>
          EXCEPTION_INFO AS 异常信息
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE IN ('signing_timeout', 'signing_failed')
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错4：合同同步失败</h4>
 <ul><li><strong>触发条件</strong>：调用 callback/retry/update-signature 接口合同同步时，回调接口异常</li><li><strong>逻辑分析</strong>：后端调用回调接口 callback/retry/update-signature，若外部系统（法大大/OA）不可用、网络异常、unifyContractCode 无效、签署状态不匹配等则接口返回失败，提示"合同同步失败"。需检查外部系统状态、unifyContractCode 有效性、外部系统签署状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+
+```sql
+SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          UNIFY_CONTRACT_CODE AS 统一合同编码,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
@@ -484,69 +501,91 @@ ORDER BY EC.CREATE_TIME DESC;</code></pre>
          EXCEPTION_INFO AS 异常信息
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE = 'callback_failed'
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错5：合同不存在</h4>
 <ul><li><strong>触发条件</strong>：执行异常处理操作时，传入的 electronicContractId 或 unifyContractCode 在数据库中不存在</li><li><strong>逻辑分析</strong>：后端校验合同存在性，根据传入的 electronicContractId 或 unifyContractCode 查询 ELECTRONIC_CONTRACT 表，若不存在则提示"合同不存在"。常见根因包括：合同ID被删除、合同ID传参错误、合同编码被修改等</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_ID AS 合同ID,
+
+```sql
+SELECT ELECTRONIC_CONTRACT_ID AS 合同ID,
          ELECTRONIC_CONTRACT_CODE AS 合同编号,
          UNIFY_CONTRACT_CODE AS 统一合同编码,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态
   FROM ELECTRONIC_CONTRACT
   WHERE ELECTRONIC_CONTRACT_ID IS NULL
-     OR UNIFY_CONTRACT_CODE IS NULL;</code></pre>
+     OR UNIFY_CONTRACT_CODE IS NULL;
+```
 <h4>报错6：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、法大大/短信平台响应慢等。需检查网络连通性、后端服务负载、外部系统状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
+
+```sql
+SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
-  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错7：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击重新归档、修改合同状态、重发短信、合同同步等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%contract_exception%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%contract_exception%' ORDER BY U.USER_NAME;
+```
 <h4>报错8：法大大服务不可用</h4>
 <ul><li><strong>触发条件</strong>：调用重新归档、合同同步等涉及法大大的接口时，法大大服务异常</li><li><strong>逻辑分析</strong>：后端调用法大大接口，若法大大服务不可用、网络异常、接口超时等则接口返回失败。需检查法大大服务运行状态、网络连通性、法大大接口配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
+
+```sql
+SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态, EXCEPTION_TYPE AS 异常类型,
          EXCEPTION_INFO AS 异常信息,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE IN ('filing_failed','callback_failed')
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 7
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错9：短信平台不可用</h4>
 <ul><li><strong>触发条件</strong>：调用重发短信接口时，短信平台服务异常</li><li><strong>逻辑分析</strong>：后端调用短信平台接口，若短信平台服务不可用、网络异常、接口超时等则接口返回失败。需检查短信平台服务状态、网络连通性、短信平台配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, AGENT_NAME AS 经销商,
+
+```sql
+SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, AGENT_NAME AS 经销商,
          CONTRACT_STATUS AS 签署状态, EXCEPTION_TYPE AS 异常类型,
          EXCEPTION_INFO AS 异常信息
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE IN ('signing_timeout','signing_failed')
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 7
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错10：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或列表中异常类型等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.CONTRACT_EXCEPTION_TYPE、MBO.CONTRACT_STATUS 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.CONTRACT_EXCEPTION_TYPE','MBO.CONTRACT_STATUS')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 <h4>报错11：经销商手机号缺失</h4>
 <ul><li><strong>触发条件</strong>：重发签署短信时，经销商手机号为空或格式错误</li><li><strong>逻辑分析</strong>：后端校验经销商手机号非空且格式正确，若手机号为空或格式错误则返回业务异常。需检查经销商档案中的手机号字段</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ELECTRONIC_CONTRACT_CODE AS 合同编号, C.AGENT_NAME AS 经销商,
+
+```sql
+SELECT C.ELECTRONIC_CONTRACT_CODE AS 合同编号, C.AGENT_NAME AS 经销商,
          D.MOBILE AS 手机号, D.CONTACT_PHONE AS 联系电话
   FROM ELECTRONIC_CONTRACT C
   LEFT JOIN DISTRIBUTOR D ON C.AGENT_CODE = D.DISTRIBUTOR_CODE
   WHERE C.CONTRACT_STATUS IN ('signing_timeout','signing_failed')
     AND (D.MOBILE IS NULL OR D.MOBILE = ''
-         OR REGEXP_LIKE(D.MOBILE, '^[^1][^3-9]') = FALSE);</code></pre>
+         OR REGEXP_LIKE(D.MOBILE, '^[^1][^3-9]') = FALSE);
+```
 </KbCard>
 
 <KbCard title="常见问题">

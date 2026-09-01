@@ -329,7 +329,9 @@
 
 <KbCard title="后端接口Mapper SQL">
 <p><strong>主查询SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>-- 额度内兑现统计报表主查询
+
+```sql
+-- 额度内兑现统计报表主查询
 SELECT
     v.CHECK_BX_ID,
     v.CHECK_BX_CODE,
@@ -351,18 +353,21 @@ SELECT
     TO_CHAR(v.NO_CASHOUT_AMT, '999999999990.99') AS NO_CASHOUT_AMT
 FROM epms.FIN_FEE_TERMINAL_CASHOUT_VIEW v
 WHERE 1 = 1
-    AND v.check_bx_code LIKE '%' || #&#123;checkBxCode&#125; || '%'       -- 验收报销单号（模糊）
-    AND v.division_id = #&#123;divisionId&#125;                           -- 事业部ID（精确）
-    AND v.division_name LIKE '%' || #&#123;divisionName&#125; || '%'      -- 事业部名称（模糊）
-    AND v.billing_unit_code = #&#123;billingUnitCode&#125;                -- 开票单位编码（精确）
-    AND v.billing_unit_name LIKE '%' || #&#123;billingUnitName&#125; || '%' -- 开票单位名称（模糊）
-    AND v.trading_company_name LIKE '%' || #&#123;tradingCompanyName&#125; || '%' -- 交易公司名称（模糊）
-    AND v.terminal_code = #&#123;terminalCode&#125;                       -- 门店编码（精确）
-    AND v.cust_code = #&#123;custCode&#125;                               -- 经销商编码（精确）
-    AND v.cust_name LIKE '%' || #&#123;custName&#125; || '%'              -- 经销商名称（模糊）
-ORDER BY v.CHECK_BX_ID DESC</code></pre>
+    AND v.check_bx_code LIKE '%' || #{checkBxCode} || '%'       -- 验收报销单号（模糊）
+    AND v.division_id = #{divisionId}                           -- 事业部ID（精确）
+    AND v.division_name LIKE '%' || #{divisionName} || '%'      -- 事业部名称（模糊）
+    AND v.billing_unit_code = #{billingUnitCode}                -- 开票单位编码（精确）
+    AND v.billing_unit_name LIKE '%' || #{billingUnitName} || '%' -- 开票单位名称（模糊）
+    AND v.trading_company_name LIKE '%' || #{tradingCompanyName} || '%' -- 交易公司名称（模糊）
+    AND v.terminal_code = #{terminalCode}                       -- 门店编码（精确）
+    AND v.cust_code = #{custCode}                               -- 经销商编码（精确）
+    AND v.cust_name LIKE '%' || #{custName} || '%'              -- 经销商名称（模糊）
+ORDER BY v.CHECK_BX_ID DESC
+```
 <p><strong>明细查询SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>-- 额度内兑现统计报表明细查询
+
+```sql
+-- 额度内兑现统计报表明细查询
 SELECT m.*
 FROM (
     SELECT
@@ -411,15 +416,16 @@ FROM (
     WHERE h.audit_stat != '超额作废'
 ) m
 WHERE 1 = 1
-    AND m.check_bx_code LIKE '%' || #&#123;checkBxCode&#125; || '%'
-    AND m.division_id = #&#123;divisionId&#125;
-    AND m.division_name LIKE '%' || #&#123;divisionName&#125; || '%'
-    AND m.billing_unit_code = #&#123;billingUnitCode&#125;
-    AND m.billing_unit_name LIKE '%' || #&#123;billingUnitName&#125; || '%'
-    AND m.trading_company_name LIKE '%' || #&#123;tradingCompanyName&#125; || '%'
-    AND m.terminal_code = #&#123;terminalCode&#125;
-    AND m.cust_code = #&#123;custCode&#125;
-    AND m.cust_name LIKE '%' || #&#123;custName&#125; || '%'</code></pre>
+    AND m.check_bx_code LIKE '%' || #{checkBxCode} || '%'
+    AND m.division_id = #{divisionId}
+    AND m.division_name LIKE '%' || #{divisionName} || '%'
+    AND m.billing_unit_code = #{billingUnitCode}
+    AND m.billing_unit_name LIKE '%' || #{billingUnitName} || '%'
+    AND m.trading_company_name LIKE '%' || #{tradingCompanyName} || '%'
+    AND m.terminal_code = #{terminalCode}
+    AND m.cust_code = #{custCode}
+    AND m.cust_name LIKE '%' || #{custName} || '%'
+```
 </KbCard>
 
 <KbCard title="状态机">
@@ -531,19 +537,24 @@ WHERE 1 = 1
 </table>
 <h4>报错1：查询结果为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，按当前查询条件（验收报销单号、事业部、交易公司、经销商、门店、开票单位等）查询EPMS.FIN_FEE_TERMINAL_CASHOUT_VIEW视图返回空结果集</li><li><strong>逻辑分析</strong>：主查询从FIN_FEE_TERMINAL_CASHOUT_VIEW视图汇总额度内兑现数据，明细查询从FIN_FEE_TERMINAL_CASHOUT表查询并排除"超额作废"记录。若查询条件过严（如经销商编码拼写错误、事业部ID不匹配）、或验收报销单尚未生成兑现单、或兑现单全部为"超额作废"被排除、或用户组织ID与数据不匹配，均会返回空结果。该报错为提示性，不影响系统。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT check_bx_id          AS 验收报销单ID,
+
+```sql
+SELECT check_bx_id          AS 验收报销单ID,
          check_bx_code        AS 验收报销单号,
          cust_name            AS 经销商名称,
          terminal_name        AS 门店名称,
          audit_stat           AS 审核状态,
          organization_id      AS 组织ID
   FROM   fin_fee_terminal_cashout
-  WHERE  organization_id = #&#123;当前用户组织ID&#125;
+  WHERE  organization_id = #{当前用户组织ID}
   AND    audit_stat != '超额作废'
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错2：支付方式翻译为空</h4>
 <ul><li><strong>触发条件</strong>：查询结果展示时，子查询 <code>(SELECT meaning FROM HZERO.HPFM_LOV_VALUE WHERE LOV_CODE = 'AE.PAY_TYPE' AND value = v.PAY_TYPE)</code> 返回空</li><li><strong>逻辑分析</strong>：报表通过子查询关联HZERO.HPFM_LOV_VALUE值集表翻译支付方式编码为可读含义（如"现金"、"银行转账"）。若值集配置缺失（LOV_CODE='AE.PAY_TYPE'未配置）、或兑现单的PAY_TYPE值未在值集中维护（如新增支付方式未同步值集）、或值表数据被误删，子查询返回空，支付方式列显示空白，影响报表可读性但不阻断查询。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT v.pay_type                AS 支付方式编码,
+
+```sql
+SELECT v.pay_type                AS 支付方式编码,
          COUNT(*)                  AS 兑现单数量
   FROM   fin_fee_terminal_cashout v
   WHERE  v.pay_type IS NOT NULL
@@ -554,26 +565,36 @@ WHERE 1 = 1
            AND    lv.value = v.pay_type
          )
   GROUP  BY v.pay_type
-  ORDER  BY 兑现单数量 DESC;</code></pre>
+  ORDER  BY 兑现单数量 DESC;
+```
 <h4>报错3：网络请求失败/接口调用异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/fin_fee_terminal_cashout_list/search或/getCashoutLine接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，主查询依赖TerminalReportController.finFeeTerminalCashoutListSearch接口查询EPMS.FIN_FEE_TERMINAL_CASHOUT_VIEW视图，明细查询依赖finFeeTerminalCashoutListGetCashoutLine接口查询FIN_FEE_TERMINAL_CASHOUT关联FIN_FEE_CHECK_BX_HEADER、DIVISION_BASE_SET。若后端ae-report服务未启动、Oracle数据库连接异常、视图编译错误、子查询HPFM_LOV_VALUE返回多行触发ORA-01427、SQL执行超时、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、视图状态、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 额度内兑现单总数,
+
+```sql
+SELECT COUNT(*)            AS 额度内兑现单总数,
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
   FROM   fin_fee_terminal_cashout
-  WHERE  audit_stat != '超额作废';</code></pre>
+  WHERE  audit_stat != '超额作废';
+```
 <h4>报错4：权限不足/未登录</h4>
 <ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre>
+
+```sql
+SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;
+```
 <h4>报错5：导出失败：网络异常</h4>
 <ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口将当前查询条件下的额度内兑现数据全量查询后生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定验收报销单号、事业部）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
+
+```sql
+SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
          COUNT(*)                     AS 兑现单数量
   FROM   fin_fee_terminal_cashout
   WHERE  audit_stat != '超额作废'
   GROUP  BY TO_CHAR(create_time, 'YYYY')
-  ORDER  BY 年度 DESC;</code></pre>
+  ORDER  BY 年度 DESC;
+```
 </KbCard>
 
 </div>

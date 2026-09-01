@@ -206,7 +206,10 @@
 </tbody>
 </table>
 <blockquote>查询SQL（经销商主数据）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT CUSTOMER_CODE, CUSTOMER_NAME FROM CUSTOMER_ORG WHERE ENABLED = 1</code></pre>
+
+```sql
+SELECT CUSTOMER_CODE, CUSTOMER_NAME FROM CUSTOMER_ORG WHERE ENABLED = 1
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -225,20 +228,26 @@
 </table>
 <h4>按钮1：查询（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：按年度、经销商、事业部、交易公司等条件查询额度外预算总额</li><li>第2点：返回预算总额、各月使用明细、累计已用、预算剩余</li><li><strong>接口调用</strong>：查询MKT_OUTLIMIT_BUD_HEADER表（通过FinFeeApplyHeaderController间接查询）</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM MKT_OUTLIMIT_BUD_HEADER 
-WHERE BUD_YEAR = #&#123;budYear&#125;
-  AND (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
-  AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
-ORDER BY CUSTOMER_CODE, BUD_YEAR</code></pre>
+
+```sql
+SELECT * FROM MKT_OUTLIMIT_BUD_HEADER 
+WHERE BUD_YEAR = #{budYear}
+  AND (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
+  AND (ENTID = #{entid} OR #{entid} IS NULL)
+ORDER BY CUSTOMER_CODE, BUD_YEAR
+```
 <h4>按钮2：查询可用余额（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：汇总额度外费用申请单已审批未冲销金额</li><li>第2点：返回可用余额</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/fin-fee-apply-headers/query-amt</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 汇总额度外费用申请单已审批未冲销金额
+
+```sql
+-- 汇总额度外费用申请单已审批未冲销金额
 SELECT SUM(APPLY_AMT - CASHOUT_AMT) AS AVAILABLE_AMT
 FROM FIN_FEE_APPLY_HEADER 
-WHERE CUSTOMER_CODE = #&#123;customerCode&#125;
-  AND BUD_YEAR = #&#123;budYear&#125;
+WHERE CUSTOMER_CODE = #{customerCode}
+  AND BUD_YEAR = #{budYear}
   AND HZ_APPROVE_STATUS = 'APPROVED'
-  AND CASHOUT_AMT &lt; APPLY_AMT;</code></pre>
+  AND CASHOUT_AMT < APPLY_AMT;
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -328,26 +337,34 @@ WHERE CUSTOMER_CODE = #&#123;customerCode&#125;
 </table>
 <h4>报错1：查询无数据</h4>
 <ul><li><strong>触发条件</strong>：用户按年度/经销商/事业部/交易公司查询额度外预算总额，MKT_OUTLIMIT_BUD_HEADER表返回空结果集</li><li><strong>逻辑分析</strong>：预算总额数据由"预算导入"功能写入MKT_OUTLIMIT_BUD_HEADER表，IMPORT_FLAG标记导入来源。无数据根因有三类：(1)该年度（BUD_YEAR）预算从未导入，头表无对应记录；(2)用户选择的年度与预算实际导入年度不符（如选2025但只导入了2024）；(3)经销商/事业部/交易公司组合条件与预算记录不匹配。需先确认预算是否已导入，再核对年度和经销商维度</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, ENTNAME, CUSTOMER_CODE, CUSTOMER_NAME,
+
+```sql
+SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, ENTNAME, CUSTOMER_CODE, CUSTOMER_NAME,
          TRADING_COMPANY_NAME, OUTLIMIT_BUD_TOTAL, OUTLIMIT_BUD_ADJ, TOTAL_OUTLIMIT_BUD_USED,
          OUTLIMIT_BUD_SUR, IMPORT_FLAG
   FROM MKT_OUTLIMIT_BUD_HEADER
-  WHERE BUD_YEAR = #&#123;budYear&#125;
-    AND (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
-    AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
-  ORDER BY CUSTOMER_CODE, BUD_YEAR;</code></pre>
+  WHERE BUD_YEAR = #{budYear}
+    AND (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
+    AND (ENTID = #{entid} OR #{entid} IS NULL)
+  ORDER BY CUSTOMER_CODE, BUD_YEAR;
+```
 <h4>报错2：可用余额查询失败</h4>
 <ul><li><strong>触发条件</strong>：用户选中预算记录后点击"查询可用余额"按钮，POST /v1/&#123;organizationId&#125;/fin-fee-apply-headers/query-amt接口执行失败</li><li><strong>逻辑分析</strong>：可用余额通过汇总额度外费用申请单（FIN_FEE_APPLY_HEADER）已审批未冲销金额计算，公式为SUM(APPLY_AMT - CASHOUT_AMT)，条件为HZ_APPROVE_STATUS='APPROVED'且CASHOUT_AMT &lt; APPLY_AMT。失败根因有三类：(1)FIN_FEE_APPLY_HEADER表数据量过大，汇总超时；(2)费用申请单状态异常（HZ_APPROVE_STATUS字段值不规范）；(3)FinFeeApplyHeaderController服务异常。需确认费用申请单数据正常后重试</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查费用申请单汇总数据
+
+```sql
+-- 核查费用申请单汇总数据
   SELECT COUNT(*) AS 申请单数, SUM(APPLY_AMT - CASHOUT_AMT) AS 可用余额合计
   FROM FIN_FEE_APPLY_HEADER
-  WHERE CUSTOMER_CODE = #&#123;customerCode&#125;
-    AND BUD_YEAR = #&#123;budYear&#125;
+  WHERE CUSTOMER_CODE = #{customerCode}
+    AND BUD_YEAR = #{budYear}
     AND HZ_APPROVE_STATUS = 'APPROVED'
-    AND CASHOUT_AMT &lt; APPLY_AMT;</code></pre>
+    AND CASHOUT_AMT < APPLY_AMT;
+```
 <h4>报错3：预算剩余为负数</h4>
 <ul><li><strong>触发条件</strong>：用户查询预算总额，返回的OUTLIMIT_BUD_SUR字段值小于0</li><li><strong>逻辑分析</strong>：预算剩余计算公式为OUTLIMIT_BUD_SUR = OUTLIMIT_BUD_TOTAL + OUTLIMIT_BUD_ADJ - TOTAL_OUTLIMIT_BUD_USED，其中TOTAL_OUTLIMIT_BUD_USED为1~12月已使用金额之和（THIS_OUTLIMIT_BUD_USED_1~12）。负数意味着累计已用金额超过预算总额+调整，存在超支。根因有二：(1)额度外兑现审批通过后同步更新预算表时未校验剩余预算，导致超额兑现；(2)预算调整（OUTLIMIT_BUD_ADJ）未及时同步。需核查兑现同步逻辑及调整单审批回写</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, CUSTOMER_CODE,
+
+```sql
+SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, CUSTOMER_CODE,
          OUTLIMIT_BUD_TOTAL AS 预算总额, OUTLIMIT_BUD_ADJ AS 预算调整,
          TOTAL_OUTLIMIT_BUD_USED AS 累计已用, OUTLIMIT_BUD_SUR AS 预算剩余,
          THIS_OUTLIMIT_BUD_USED_1 AS 一月, THIS_OUTLIMIT_BUD_USED_2 AS 二月,
@@ -357,27 +374,37 @@ WHERE CUSTOMER_CODE = #&#123;customerCode&#125;
          THIS_OUTLIMIT_BUD_USED_9 AS 九月, THIS_OUTLIMIT_BUD_USED_10 AS 十月,
          THIS_OUTLIMIT_BUD_USED_11 AS 十一月, THIS_OUTLIMIT_BUD_USED_12 AS 十二月
   FROM MKT_OUTLIMIT_BUD_HEADER
-  WHERE OUTLIMIT_BUD_SUR &lt; 0
-    AND BUD_YEAR = #&#123;budYear&#125;;</code></pre>
+  WHERE OUTLIMIT_BUD_SUR < 0
+    AND BUD_YEAR = #{budYear};
+```
 <h4>报错4：年度查询条件为空</h4>
 <ul><li><strong>触发条件</strong>：用户未选择预算年度直接点击查询</li><li><strong>逻辑分析</strong>：预算年度（BUD_YEAR）是查询额度外预算总额的关键条件，预算数据按年度划分。未选择年度将导致跨年度全表查询，可能因数据量过大引起超时或返回无关数据。低代码页面查询栏配置年度为建议必填条件，未填写时toast提示后阻断查询</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查各年度数据分布
+
+```sql
+-- 核查各年度数据分布
   SELECT BUD_YEAR, COUNT(*) AS 记录数
   FROM MKT_OUTLIMIT_BUD_HEADER
   GROUP BY BUD_YEAR
-  ORDER BY BUD_YEAR;</code></pre>
+  ORDER BY BUD_YEAR;
+```
 <h4>报错5：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击查询或查询可用余额按钮，前端调用对应接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面为hlod低代码页面，数据通过后端FinFeeApplyHeaderController的query-amt接口及MKT_OUTLIMIT_BUD_HEADER表查询提供。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)数据库连接异常；(3)query-amt接口汇总FIN_FEE_APPLY_HEADER表超时；(4)网关或网络层故障。需先确认ae-business服务健康状态</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查预算表数据量
+
+```sql
+-- 核查预算表数据量
   SELECT BUD_YEAR, COUNT(*) AS 记录数
   FROM MKT_OUTLIMIT_BUD_HEADER
-  GROUP BY BUD_YEAR;</code></pre>
+  GROUP BY BUD_YEAR;
+```
 <h4>报错6：权限不足</h4>
 <ul><li><strong>触发条件</strong>：用户登录后进入额度外预算总额页面，当前用户无对应经销商或事业部的数据权限</li><li><strong>逻辑分析</strong>：本页面按经销商和事业部维度查询，数据权限通过用户上下文CustomUserDetails的additionInfo控制可见经销商范围。权限不足根因有二：(1)用户未分配对应经销商的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应经销商/事业部数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查用户是否有该经销商的数据权限
+
+```sql
+-- 核查用户是否有该经销商的数据权限
   SELECT USER_ID, USER_NAME, CUSTOMER_CODE, ENABLED
   FROM USER_CUSTOMER_AUTH
-  WHERE USER_ID = #&#123;userId&#125; AND CUSTOMER_CODE = #&#123;customerCode&#125;;</code></pre>
+  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};
+```
 </KbCard>
 
 <KbCard title="常见问题">

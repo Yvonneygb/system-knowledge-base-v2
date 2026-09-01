@@ -323,29 +323,38 @@
 
 <KbCard title="保存校验">
 <ul><li>校验1：结束执行实际时间必填 —— 确保执行结果可留痕</li><li><strong>详细逻辑</strong>：<code>realStartDate</code>、<code>realEndDate</code>、<code>endExecuteRemark</code> 必填，任一为空提示对应报错信息。</li><li><strong>系统体现</strong>：前端 <code>endExecuteFormDS.validate()</code> 校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_START_DATE AS 实际开始时间,
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_START_DATE AS 实际开始时间,
            ta.REAL_END_DATE AS 实际结束时间, ta.END_EXECUTE_REMARK AS 结束备注
     FROM TRAIN_APPLY ta
     WHERE ta.ORDER_LECTURE_STATE = 'executed'
       AND (ta.REAL_START_DATE IS NULL OR ta.REAL_END_DATE IS NULL
-           OR ta.END_EXECUTE_REMARK IS NULL);</code></pre>
+           OR ta.END_EXECUTE_REMARK IS NULL);
+```
 </KbCard>
 
 <KbCard title="提交校验">
 <ul><li>校验1：特殊取消时机校验 —— 防止临近开课取消造成资源浪费</li><li><strong>详细逻辑</strong>：校验 <code>1 &lt;= timeDiff &lt;= 7</code> 且 <code>approvalState === 'fdd_sign'</code> 且未重复发起取消。</li><li><strong>系统体现</strong>：前端时间差值计算与状态校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_STATE AS 审核状态,
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_STATE AS 审核状态,
            ROUND(ta.ACTIVITY_START_DATE - SYSDATE) AS 距开始天数
     FROM TRAIN_APPLY ta
     WHERE ta.APPLY_TYPE_ONE = 'activity'
       AND ta.APPROVAL_STATE = 'fdd_sign'
-      AND ta.ACTIVITY_START_DATE &gt; SYSDATE
-      AND ta.ACTIVITY_START_DATE &lt;= SYSDATE + 7;</code></pre>
+      AND ta.ACTIVITY_START_DATE > SYSDATE
+      AND ta.ACTIVITY_START_DATE <= SYSDATE + 7;
+```
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>待执行 ──开始执行──→ 执行中 ──结束执行──→ 已执行
+
+```sql
+待执行 ──开始执行──→ 执行中 ──结束执行──→ 已执行
                         |
-                        └──特殊取消──→ 已取消</code></pre>
+                        └──特殊取消──→ 已取消
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>当前状态</th><th>触发动作</th><th>目标状态</th></tr>
@@ -396,7 +405,9 @@
 </KbCard>
 
 <KbCard title="排查SQL">
-<pre class="detail-sql" v-pre><code>-- 查询活动点将执行列表
+
+```sql
+-- 查询活动点将执行列表
 SELECT
   ta.APPLY_CODE    AS 申请编码,
   ta.DISTRIBUTOR_NAME AS 申请人,
@@ -434,10 +445,11 @@ SELECT
 FROM TRAIN_APPLY ta
 WHERE ta.APPLY_TYPE_ONE = 'activity'
   AND ta.APPROVAL_STATE = 'fdd_sign'
-  AND ta.ACTIVITY_START_DATE &gt; SYSDATE
-  AND ta.ACTIVITY_START_DATE &lt;= SYSDATE + 7
+  AND ta.ACTIVITY_START_DATE > SYSDATE
+  AND ta.ACTIVITY_START_DATE <= SYSDATE + 7
   AND (ta.CANCEL_APPROVAL_STATE IS NULL
-       OR ta.CANCEL_APPROVAL_STATE IN ('reject', 'oa_reject'));</code></pre>
+       OR ta.CANCEL_APPROVAL_STATE IN ('reject', 'oa_reject'));
+```
 </KbCard>
 
 </div>
@@ -470,7 +482,9 @@ WHERE ta.APPLY_TYPE_ONE = 'activity'
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请、查看确认书、特殊取消、结束执行、同步OA、同步FDD、同步CRM等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DISTRIBUTOR_NAME AS 申请人,
          ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
@@ -478,10 +492,13 @@ WHERE ta.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'approved'
-  ORDER BY UPDATE_DATE DESC;</code></pre>
+  ORDER BY UPDATE_DATE DESC;
+```
 <h4>报错2：只有在培训开始前七天内且已生效的单据才可以发起取消申请！</h4>
 <ul><li><strong>触发条件</strong>：点击特殊取消按钮时，不满足"培训开始前1-7天内且已法大大签约"条件</li><li><strong>逻辑分析</strong>：前端执行多重校验：①计算时间差值 timeDiff = (ACTIVITY_START_DATE - nowTime) / (24*60*60*1000)，校验 1 &lt;= timeDiff &lt;= 7（培训开始前1-7天内）；②校验 APPROVAL_STATE = 'fdd_sign'（已法大大签约生效）。任一校验不通过则提示"只有在培训开始前七天内且已生效的单据才可以发起取消申请！"。此校验限制取消时机，避免临近开课取消造成资源浪费，同时要求单据已生效具备业务合法性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          TO_CHAR(ACTIVITY_START_DATE,'YYYY-MM-DD') AS 活动开始时间,
          APPROVAL_STATE AS 审核状态,
@@ -489,12 +506,15 @@ WHERE ta.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'approved'
-    AND (ACTIVITY_START_DATE &lt;= SYSDATE
-         OR ACTIVITY_START_DATE &gt; SYSDATE + 7
-         OR APPROVAL_STATE &lt;&gt; 'fdd_sign');</code></pre>
+    AND (ACTIVITY_START_DATE <= SYSDATE
+         OR ACTIVITY_START_DATE > SYSDATE + 7
+         OR APPROVAL_STATE <> 'fdd_sign');
+```
 <h4>报错3：该单据已发起取消申请，不可重复发起！</h4>
 <ul><li><strong>触发条件</strong>：点击特殊取消按钮时，该单据已存在进行中的取消申请</li><li><strong>逻辑分析</strong>：前端校验 CANCEL_APPROVAL_STATE 字段，若不为空且不等于 'reject' 和 'oa_reject'，说明已有进行中的取消申请（如待审批、审批中），提示"该单据已发起取消申请，不可重复发起！"。避免重复发起取消审批导致流程冲突</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          APPROVAL_STATE AS 审核状态,
          CANCEL_APPROVAL_STATE AS 取消审核状态
@@ -502,40 +522,52 @@ WHERE ta.APPLY_TYPE_ONE = 'activity'
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'fdd_sign'
     AND CANCEL_APPROVAL_STATE IS NOT NULL
-    AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject');</code></pre>
+    AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject');
+```
 <h4>报错4：实际开始时间不能为空</h4>
 <ul><li><strong>触发条件</strong>：结束执行提交时，realStartDate 字段为空</li><li><strong>逻辑分析</strong>：前端 endExecuteFormDS.validate() 对 realStartDate 字段配置 required 校验，提交前校验实际开始时间是否填写，为空则阻止提交并提示"实际开始时间不能为空"。实际开始时间用于记录活动真实交付时间，作为执行留痕的核心数据</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
          REAL_START_DATE AS 实际开始时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND ORDER_LECTURE_STATE = 'executed'
-    AND REAL_START_DATE IS NULL;</code></pre>
+    AND REAL_START_DATE IS NULL;
+```
 <h4>报错5：实际结束时间不能为空</h4>
 <ul><li><strong>触发条件</strong>：结束执行提交时，realEndDate 字段为空</li><li><strong>逻辑分析</strong>：前端 endExecuteFormDS.validate() 对 realEndDate 字段配置 required 校验，提交前校验实际结束时间是否填写，为空则阻止提交并提示"实际结束时间不能为空"。实际结束时间用于记录活动真实完成时间，作为执行留痕的核心数据</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
          REAL_END_DATE AS 实际结束时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND ORDER_LECTURE_STATE = 'executed'
-    AND REAL_END_DATE IS NULL;</code></pre>
+    AND REAL_END_DATE IS NULL;
+```
 <h4>报错6：结束备注不能为空</h4>
 <ul><li><strong>触发条件</strong>：结束执行提交时，endExecuteRemark 字段为空</li><li><strong>逻辑分析</strong>：前端 endExecuteFormDS.validate() 对 endExecuteRemark 字段配置 required 校验，提交前校验结束备注是否填写，为空则阻止提交并提示"结束备注不能为空"。结束备注用于记录执行结果说明，作为活动交付的最终留痕</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
          END_EXECUTE_REMARK AS 结束备注
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND ORDER_LECTURE_STATE = 'executed'
-    AND (END_EXECUTE_REMARK IS NULL OR END_EXECUTE_REMARK = '');</code></pre>
+    AND (END_EXECUTE_REMARK IS NULL OR END_EXECUTE_REMARK = '');
+```
 <h4>报错7：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 mlt/activityApply/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM）调用失败、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
          CRM_ORDER_STATUS AS CRM订单状态,
@@ -543,60 +575,79 @@ WHERE ta.APPLY_TYPE_ONE = 'activity'
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错8：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、外部系统响应慢等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错9：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请、特殊取消、结束执行、同步OA/FDD/CRM等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%activity_general_execute%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%activity_general_execute%' ORDER BY U.USER_NAME;
+```
 <h4>报错10：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：查看申请、结束执行等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 TRAIN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+```
 <h4>报错11：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击结束执行、特殊取消等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如结束执行要求状态为执行中、特殊取消要求审批通过且培训开始前7天内等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
          ORDER_LECTURE_STATE AS 点将状态, APPROVAL_STATE AS 审核状态,
          CANCEL_APPROVAL_STATE AS 取消审核状态, ERROR_INFO AS 异常问题
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND ORDER_LECTURE_STATE NOT IN ('valid','executing','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错12：同步外部系统失败</h4>
 <ul><li><strong>触发条件</strong>：点击同步CRM/同步OA/同步FDD按钮，对应推送接口返回失败</li><li><strong>逻辑分析</strong>：前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
          CRM_ORDER_CODE AS CRM单号, CRM_ORDER_STATUS AS CRM订单状态,
          ERROR_INFO AS 异常问题,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 7
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错13：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或列表中点将状态、审核状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.ORDER_LECTURE_STATE、MBO.APPLY_APPROVAL_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.ORDER_LECTURE_STATE','MBO.APPLY_APPROVAL_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 </KbCard>
 
 <KbCard title="常见问题">

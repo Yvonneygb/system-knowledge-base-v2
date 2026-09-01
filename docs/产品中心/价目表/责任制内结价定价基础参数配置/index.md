@@ -201,7 +201,9 @@
 </tbody>
 </table>
 <blockquote>列表查询SQL（Mapper: RspStmCfgMapper.xml → queryByExamplePage）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT id, rsp_stm_code AS rspStmCode, status,
+
+```sql
+SELECT id, rsp_stm_code AS rspStmCode, status,
        top_category AS topCategory, sec_category AS secCategory,
        thr_category AS thrCategory, four_category AS fourCategory,
        prod_unit AS prodUnit, price_type AS priceType,
@@ -224,8 +226,9 @@ FROM (
         LEFT JOIN HZERO.IAM_USER T3 ON T1.CREATED_BY = T3.id
         LEFT JOIN HZERO.IAM_USER T4 ON T1.LAST_UPDATED_BY = T4.id
     WHERE 1=1
-        -- 动态条件：rspStmCode(like)、status(=)、topCategory(=)、secCategory(=)、thrCategory(=)、fourCategory(=)、priceType(=)、proportion(=)、createdName(like)、creationDateStart(&gt;=)、creationDateEnd(&lt;=)
-)</code></pre>
+        -- 动态条件：rspStmCode(like)、status(=)、topCategory(=)、secCategory(=)、thrCategory(=)、fourCategory(=)、priceType(=)、proportion(=)、createdName(like)、creationDateStart(>=)、creationDateEnd(<=)
+)
+```
 </KbCard>
 
 <KbCard title="界面模块2：新建/编辑详情页">
@@ -306,37 +309,52 @@ FROM (
 <p>- 第2点：后端validateRequiredFields方法校验topCategory非空</p>
 <ul><li>系统体现：前端必填提示+后端阻断性报错"一级分类不能为空！"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PM_RSP_STM_CFG WHERE TOP_CATEGORY IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PM_RSP_STM_CFG WHERE TOP_CATEGORY IS NULL;
+```
 <ul><li>校验2：二级分类非空 —— 确保配置绑定到具体二级分类</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端表单secCategory字段required=true</p>
 <p>- 第2点：后端validateRequiredFields方法校验secCategory非空</p>
 <ul><li>系统体现：前端必填提示+后端阻断性报错"二级分类不能为空！"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PM_RSP_STM_CFG WHERE SEC_CATEGORY IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PM_RSP_STM_CFG WHERE SEC_CATEGORY IS NULL;
+```
 <ul><li>校验3：三级分类非空 —— 确保配置绑定到具体三级分类</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端表单thrCategory字段required=true</p>
 <p>- 第2点：后端validateRequiredFields方法校验thrCategory非空</p>
 <ul><li>系统体现：前端必填提示+后端阻断性报错"三级分类不能为空！"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PM_RSP_STM_CFG WHERE THR_CATEGORY IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PM_RSP_STM_CFG WHERE THR_CATEGORY IS NULL;
+```
 <ul><li>校验4：定价类型非空 —— 确保指定定价类型</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端表单priceType字段required=true</p>
 <p>- 第2点：后端validateRequiredFields方法校验priceType非空</p>
 <ul><li>系统体现：前端必填提示+后端阻断性报错"定价类型不能为空！"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PM_RSP_STM_CFG WHERE PRICE_TYPE IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PM_RSP_STM_CFG WHERE PRICE_TYPE IS NULL;
+```
 <ul><li>校验5：定价比例条件必填 —— 确保比例型定价类型有比例值</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端proportion字段dynamicProps根据priceType动态设置required</p>
 <p>- 第2点：后端validateProportion方法：当priceType为base_gross_margin或standard_price_ratio时，proportion不能为null</p>
 <ul><li>系统体现：前端条件必填提示+后端阻断性报错"当前定价类型下，定价比例不能为空！"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PM_RSP_STM_CFG
+
+```sql
+SELECT * FROM LNK_PM_RSP_STM_CFG
     WHERE PRICE_TYPE IN ('base_gross_margin', 'standard_price_ratio')
-      AND PROPORTION IS NULL;</code></pre>
+      AND PROPORTION IS NULL;
+```
 <ul><li>校验6：分类唯一性校验 —— 避免重复配置</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：后端checkRepeatCategory方法，仅当status=valid时触发</p>
@@ -344,11 +362,14 @@ FROM (
 <p>- 第3点：如果存在，抛出"一二三级分类/一二三四级分类生效数据已存在，请核对数据！"</p>
 <ul><li>系统体现：后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT TOP_CATEGORY, SEC_CATEGORY, THR_CATEGORY, FOUR_CATEGORY, COUNT(*) AS cnt
+
+```sql
+SELECT TOP_CATEGORY, SEC_CATEGORY, THR_CATEGORY, FOUR_CATEGORY, COUNT(*) AS cnt
     FROM LNK_PM_RSP_STM_CFG
     WHERE STATUS = 'valid'
     GROUP BY TOP_CATEGORY, SEC_CATEGORY, THR_CATEGORY, FOUR_CATEGORY
-    HAVING COUNT(*) &gt; 1;</code></pre>
+    HAVING COUNT(*) > 1;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -357,9 +378,12 @@ FROM (
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>[新建] → valid（生效） → 编辑时改为invalid → invalid（失效）
+
+```text
+[新建] → valid（生效） → 编辑时改为invalid → invalid（失效）
                                               ↓
-                                      不可再改为valid（状态下拉可选但通常仅改为invalid）</code></pre>
+                                      不可再改为valid（状态下拉可选但通常仅改为invalid）
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -397,15 +421,18 @@ FROM (
 </tbody>
 </table>
 <blockquote>重复分类校验SQL（Mapper: queryRepeatCategory）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT T1.ROW_ID AS id, T1.STATUS AS status, ...
+
+```sql
+SELECT T1.ROW_ID AS id, T1.STATUS AS status, ...
 FROM LNK_PM_RSP_STM_CFG T1
-WHERE T1.TOP_CATEGORY = #&#123;topCategory&#125;
-    AND T1.SEC_CATEGORY = #&#123;secCategory&#125;
-    AND T1.THR_CATEGORY = #&#123;thrCategory&#125;
+WHERE T1.TOP_CATEGORY = #{topCategory}
+    AND T1.SEC_CATEGORY = #{secCategory}
+    AND T1.THR_CATEGORY = #{thrCategory}
     AND T1.STATUS = 'valid'
-    AND T1.FOUR_CATEGORY = #&#123;fourCategory&#125;  -- fourCategory非空时
+    AND T1.FOUR_CATEGORY = #{fourCategory}  -- fourCategory非空时
     -- OR T1.FOUR_CATEGORY IS NULL          -- fourCategory为空时
-    AND T1.ROW_ID != #&#123;id&#125;                  -- 排除自身</code></pre>
+    AND T1.ROW_ID != #{id}                  -- 排除自身
+```
 </KbCard>
 
 </div>
@@ -440,71 +467,110 @@ WHERE T1.TOP_CATEGORY = #&#123;topCategory&#125;
 后端validateRequiredFields方法逐一检查topCategory、secCategory、thrCategory、priceType是否为空，为空则抛出对应异常。</blockquote>
 <h4>报错1：一级分类不能为空！</h4>
 <ul><li><strong>触发条件</strong>：保存按钮点击时，未选择一级分类（TOP_CATEGORY字段）</li><li><strong>逻辑分析</strong>：后端validateRequiredFields方法校验TOP_CATEGORY非空。一级分类是定价配置的基础维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
+
+```sql
+SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
          C.THR_CATEGORY AS 三级分类, C.PRICE_TYPE AS 定价类型
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.TOP_CATEGORY IS NULL;</code></pre>
+  WHERE C.ID = :configId AND C.TOP_CATEGORY IS NULL;
+```
 <h4>报错2：二级分类不能为空！</h4>
 <ul><li><strong>触发条件</strong>：保存按钮点击时，未选择二级分类（SEC_CATEGORY字段）</li><li><strong>逻辑分析</strong>：后端校验SEC_CATEGORY非空。二级分类级联一级分类，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类
+
+```sql
+SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.SEC_CATEGORY IS NULL;</code></pre>
+  WHERE C.ID = :configId AND C.SEC_CATEGORY IS NULL;
+```
 <h4>报错3：三级分类不能为空！</h4>
 <ul><li><strong>触发条件</strong>：保存按钮点击时，未选择三级分类（THR_CATEGORY字段）</li><li><strong>逻辑分析</strong>：后端校验THR_CATEGORY非空。三级分类级联二级分类，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.SEC_CATEGORY AS 二级分类, C.THR_CATEGORY AS 三级分类
+
+```sql
+SELECT C.ID, C.SEC_CATEGORY AS 二级分类, C.THR_CATEGORY AS 三级分类
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.THR_CATEGORY IS NULL;</code></pre>
+  WHERE C.ID = :configId AND C.THR_CATEGORY IS NULL;
+```
 <h4>报错4：定价类型不能为空！</h4>
 <ul><li><strong>触发条件</strong>：保存按钮点击时，未选择定价类型（PRICE_TYPE字段）</li><li><strong>逻辑分析</strong>：后端校验PRICE_TYPE非空。定价类型决定定价计算方式，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.PRICE_TYPE AS 定价类型
+
+```sql
+SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.PRICE_TYPE AS 定价类型
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.PRICE_TYPE IS NULL;</code></pre>
+  WHERE C.ID = :configId AND C.PRICE_TYPE IS NULL;
+```
 <blockquote><strong>"当前定价类型下，定价比例不能为空！"详细逻辑</strong>：
 后端validateProportion方法，当priceType为base_gross_margin或standard_price_ratio且proportion为null时抛出异常。
 排查SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PM_RSP_STM_CFG
+
+```sql
+SELECT * FROM LNK_PM_RSP_STM_CFG
 WHERE PRICE_TYPE IN ('base_gross_margin', 'standard_price_ratio')
-    AND PROPORTION IS NULL;</code></pre>
+    AND PROPORTION IS NULL;
+```
 <blockquote><strong>"一二三级分类/一二三四级分类生效数据已存在，请核对数据！"详细逻辑</strong>：
 后端checkRepeatCategory方法，当status=valid时查询相同分类组合的有效记录，存在则抛出异常。
 排查SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT TOP_CATEGORY, SEC_CATEGORY, THR_CATEGORY, FOUR_CATEGORY, COUNT(*) AS cnt
+
+```sql
+SELECT TOP_CATEGORY, SEC_CATEGORY, THR_CATEGORY, FOUR_CATEGORY, COUNT(*) AS cnt
 FROM LNK_PM_RSP_STM_CFG
 WHERE STATUS = 'valid'
 GROUP BY TOP_CATEGORY, SEC_CATEGORY, THR_CATEGORY, FOUR_CATEGORY
-HAVING COUNT(*) &gt; 1;</code></pre>
+HAVING COUNT(*) > 1;
+```
 <h4>报错7：保存失败</h4>
 <ul><li><strong>触发条件</strong>：保存按钮点击时，后端接口返回res.failed=true或抛出CommonException</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleSave调用rspStmCfgApi.save后，若res.failed为true则通过commonFn_showErrMsg展示后端错误信息。常见于后端校验异常（分类唯一性、必填校验）被前端捕获并展示。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT C.ROW_ID AS 配置ID, C.RSP_STM_CODE AS 配置编码, C.STATUS AS 状态,
+
+```sql
+SELECT C.ROW_ID AS 配置ID, C.RSP_STM_CODE AS 配置编码, C.STATUS AS 状态,
          C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
          C.THR_CATEGORY AS 三级分类, C.FOUR_CATEGORY AS 四级分类
   FROM LNK_PM_RSP_STM_CFG C
   WHERE C.STATUS = 'valid'
-  ORDER BY C.LAST_UPDATE_DATE DESC;</code></pre>
+  ORDER BY C.LAST_UPDATE_DATE DESC;
+```
 <h4>报错8：保存异常，请稍后重试</h4>
 <ul><li><strong>触发条件</strong>：保存按钮点击时，请求抛出异常进入catch块</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;</code></pre>
+
+```sql
+SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;
+```
 <h4>报错9：查询失败</h4>
 <ul><li><strong>触发条件</strong>：列表页查询或详情页加载时，接口请求异常</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmCfg接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。常见于数据库连接异常、SQL执行错误。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS 总记录数 FROM LNK_PM_RSP_STM_CFG;</code></pre>
+
+```sql
+SELECT COUNT(1) AS 总记录数 FROM LNK_PM_RSP_STM_CFG;
+```
 <h4>报错10：权限不足</h4>
 <ul><li><strong>触发条件</strong>：用户访问页面或点击按钮时，未拥有对应权限编码</li><li><strong>逻辑分析</strong>：前端Button组件通过permissionList配置权限编码（如hzero.product_data.rsp_stm.cfg.ps.add、hzero.product_data.rsp_stm.cfg.ps.import、hzero.product_data.rsp_stm.cfg.ps.export），HZERO平台校验当前用户角色是否包含该权限编码，未包含则按钮不可见或不可点击。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
+
+```sql
+SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
   FROM HZERO.IAM_USER U
     JOIN HZERO.IAM_MEMBER M ON U.ID = M.MEMBER_ID
     JOIN HZERO.IAM_ROLE R ON M.ROLE_ID = R.ID
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
-  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.cfg.ps.%';</code></pre>
+  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.cfg.ps.%';
+```
 <h4>报错11：暂无数据</h4>
 <ul><li><strong>触发条件</strong>：列表页查询结果为空集</li><li><strong>逻辑分析</strong>：前端Table组件查询后端返回content为空数组或totalElements=0时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS 记录数 FROM LNK_PM_RSP_STM_CFG WHERE STATUS = 'valid';</code></pre>
+
+```sql
+SELECT COUNT(1) AS 记录数 FROM LNK_PM_RSP_STM_CFG WHERE STATUS = 'valid';
+```
 <h4>报错12：会话过期</h4>
 <ul><li><strong>触发条件</strong>：任意操作时，登录态失效或Token过期</li><li><strong>逻辑分析</strong>：HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。常见于长时间未操作或单点登录会话超时。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;</code></pre>
+
+```sql
+SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
+```
 <h4>报错13：当前有未保存的更改，确定要离开吗？</h4>
 <ul><li><strong>触发条件</strong>：编辑模式下点击返回按钮</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;</code></pre>
+
+```sql
+SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
+```
 </KbCard>
 
 <KbCard title="常见问题">

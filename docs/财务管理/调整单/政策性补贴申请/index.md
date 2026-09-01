@@ -287,7 +287,10 @@
 </tbody>
 </table>
 <blockquote>查询SQL（经销商主数据）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT CUST_ID, CUST_CODE, CUST_NAME, SHORT_NAME FROM CUSTOMER_ORG WHERE ENABLED = 1</code></pre>
+
+```sql
+SELECT CUST_ID, CUST_CODE, CUST_NAME, SHORT_NAME FROM CUSTOMER_ORG WHERE ENABLED = 1
+```
 <h4>弹窗2：余额账户选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -299,8 +302,11 @@
 </tbody>
 </table>
 <blockquote>查询SQL（后端接口select-account）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT ACCOUNT_ID, ACCOUNT_NAME, CAPITAL_POOL FROM CAPITAL_ACCOUNT 
-WHERE TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125; AND ENABLED = 1</code></pre>
+
+```sql
+SELECT ACCOUNT_ID, ACCOUNT_NAME, CAPITAL_POOL FROM CAPITAL_ACCOUNT 
+WHERE TRADING_COMPANY_ID = #{tradingCompanyId} AND ENABLED = 1
+```
 <h4>弹窗3：交易公司选择（单选，编辑页明细行）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -363,7 +369,10 @@ WHERE TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125; AND ENABLED = 1</code><
 </table>
 <h4>按钮1：保存并提交（编辑页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：</li><li>第1点：先执行保存校验</li><li>第2点：保存数据到SA_POLICY_SPECIAL_HEADER</li><li>第3点：通过workFlowStart发起OA审批流程(SA_POLICY_SPECIAL_MCS_AW)</li><li>第4点：更新审核状态为RUN</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/sa-policy-special-headers/save-and-submit</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #&#123;id&#125; AND AUDIT_STAT = 'RUN';</code></pre>
+
+```sql
+SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #{id} AND AUDIT_STAT = 'RUN';
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -372,13 +381,19 @@ WHERE TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125; AND ENABLED = 1</code><
 <p>- 第1点：保存时校验经销商ID不为空</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE CUST_ID IS NULL;</code></pre>
+
+```sql
+SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE CUST_ID IS NULL;
+```
 <ul><li>校验2：申请金额必须大于0 —— 确保申请金额有效</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：保存时校验申请金额大于0</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE APPLY_AMT &lt;= 0;</code></pre>
+
+```sql
+SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE APPLY_AMT <= 0;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -387,16 +402,22 @@ WHERE TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125; AND ENABLED = 1</code><
 <p>- 第1点：提交时校验申请金额不超过资金池可用余额</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.POLICY_SPECIAL_ID, H.APPLY_AMT, C.CAPITAL_POOL 
+
+```sql
+SELECT H.POLICY_SPECIAL_ID, H.APPLY_AMT, C.CAPITAL_POOL 
     FROM SA_POLICY_SPECIAL_HEADER H, CAPITAL_ACCOUNT C
-    WHERE H.EXT_ACCOUNT_ID = C.ACCOUNT_ID AND H.APPLY_AMT &gt; C.CAPITAL_POOL;</code></pre>
+    WHERE H.EXT_ACCOUNT_ID = C.ACCOUNT_ID AND H.APPLY_AMT > C.CAPITAL_POOL;
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存(NEW) ──保存并提交──→ 审批中(RUN) ──OA审批通过──→ 已审核(APPROVED)
+
+```text
+新建 ──保存──→ 已保存(NEW) ──保存并提交──→ 审批中(RUN) ──OA审批通过──→ 已审核(APPROVED)
                                               │
-                                              └──OA审批拒绝──→ 已拒绝(REJECTED)</code></pre>
+                                              └──OA审批拒绝──→ 已拒绝(REJECTED)
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -470,99 +491,144 @@ WHERE TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125; AND ENABLED = 1</code><
 </table>
 <h4>报错1：经销商不能为空</h4>
 <ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择经销商直接点击保存</li><li><strong>逻辑分析</strong>：本菜单与菜单97共用SA_POLICY_SPECIAL_HEADER表及SaPolicySpecialHeaderController。保存校验CUST_ID非空，经销商是关联交易公司、法人、余额账户的前置条件。未选择经销商将导致资金池余额校验无执行对象。校验在Controller层前置拦截，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_ID, CUST_NAME, APPLY_AMT, AUDIT_STAT
+
+```sql
+SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_ID, CUST_NAME, APPLY_AMT, AUDIT_STAT
   FROM SA_POLICY_SPECIAL_HEADER
-  WHERE CUST_ID IS NULL OR CUST_NAME IS NULL;</code></pre>
+  WHERE CUST_ID IS NULL OR CUST_NAME IS NULL;
+```
 <h4>报错2：申请金额必须大于0</h4>
 <ul><li><strong>触发条件</strong>：用户在申请金额输入框填写0、负数或留空后点击保存</li><li><strong>逻辑分析</strong>：F：补贴申请金额APPLY_AMT代表实际发放金额，必须为正数。0或负数无业务意义，且审批通过后扣减资金池将出现异常（扣减0或反向增加余额）。校验APPLY_AMT &gt; 0，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT, AUDIT_STAT
+
+```sql
+SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT, AUDIT_STAT
   FROM SA_POLICY_SPECIAL_HEADER
-  WHERE APPLY_AMT IS NULL OR APPLY_AMT &lt;= 0;</code></pre>
+  WHERE APPLY_AMT IS NULL OR APPLY_AMT <= 0;
+```
 <h4>报错3：申请金额超过资金池余额</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，提交校验发现APPLY_AMT &gt; 资金池可用余额（CAPITAL_POOL）</li><li><strong>逻辑分析</strong>：提交时通过select-capital接口查询关联余额账户（CAPITAL_ACCOUNT）的CAPITAL_POOL，校验APPLY_AMT &lt;= CAPITAL_POOL。超出余额意味着补贴无充足资金来源，审批通过后扣减资金池将出现负数。此为阻断性报错，阻止OA流程（SA_POLICY_SPECIAL_MCS_AW）发起，需调减申请金额或先补充资金池</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, H.CUST_NAME, H.APPLY_AMT,
+
+```sql
+SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, H.CUST_NAME, H.APPLY_AMT,
          C.ACCOUNT_NAME, C.CAPITAL_POOL, (H.APPLY_AMT - C.CAPITAL_POOL) AS 超额金额
   FROM SA_POLICY_SPECIAL_HEADER H
   JOIN CAPITAL_ACCOUNT C ON H.EXT_ACCOUNT_ID = C.ACCOUNT_ID
-  WHERE H.APPLY_AMT &gt; C.CAPITAL_POOL
-    AND H.AUDIT_STAT IN ('NEW', 'RUN');</code></pre>
+  WHERE H.APPLY_AMT > C.CAPITAL_POOL
+    AND H.AUDIT_STAT IN ('NEW', 'RUN');
+```
 <h4>报错4：资金池来源类型为空</h4>
 <ul><li><strong>触发条件</strong>：用户在详情页未选择"资金池来源类型"（capitalType）直接点击导入明细</li><li><strong>逻辑分析</strong>：前端DetailPage/index.tsx的beforeImportUpload回调中校验headDs.current?.get('capitalType')，若为空则notification.error提示"资金池来源类型为空，请检查！"并返回false阻断导入。资金池来源类型（lookupCode: AE.CAPITAL_TYPE）决定资金池查询的業務类型，HeadDS中配置为required: true。需先选择资金池来源类型再导入明细</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CAPITAL_TYPE, AUDIT_STAT
+
+```sql
+SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CAPITAL_TYPE, AUDIT_STAT
   FROM SA_POLICY_SPECIAL_HEADER
   WHERE CAPITAL_TYPE IS NULL
-    AND AUDIT_STAT IN ('NEW', 'REJECTED');</code></pre>
+    AND AUDIT_STAT IN ('NEW', 'REJECTED');
+```
 <h4>报错5：申请原因为空</h4>
 <ul><li><strong>触发条件</strong>：用户未填写"申请原因"（note）直接点击保存</li><li><strong>逻辑分析</strong>：前端HeadDS.ts中note字段配置为required: true，DataSet提交时自动校验必填。申请原因记录补贴申请的业务背景，是OA审批的重要参考信息。未填写时DataSet校验失败，前端表单标红提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, NOTE, AUDIT_STAT
+
+```sql
+SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, NOTE, AUDIT_STAT
   FROM SA_POLICY_SPECIAL_HEADER
   WHERE NOTE IS NULL
-    AND AUDIT_STAT IN ('NEW', 'REJECTED');</code></pre>
+    AND AUDIT_STAT IN ('NEW', 'REJECTED');
+```
 <h4>报错6：交易公司不能为空</h4>
 <ul><li><strong>触发条件</strong>：用户在明细行未选择交易公司直接点击保存</li><li><strong>逻辑分析</strong>：前端LineDS.ts中tradingCompanyObj字段配置为required: true，DataSet提交时自动校验必填。交易公司是关联法人、余额账户的前置条件，未选择交易公司将导致资金池查询无执行对象（handleSelectCapital中校验tradingCompanyCode）。校验失败时前端表单标红提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, L.POLICY_SPECIAL_LINE_ID,
+
+```sql
+SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, L.POLICY_SPECIAL_LINE_ID,
          L.CUST_NAME, L.TRADING_COMPANY_ID, L.TRADING_COMPANY_NAME
   FROM SA_POLICY_SPECIAL_HEADER H
   JOIN SA_POLICY_SPECIAL_LINE L ON H.POLICY_SPECIAL_ID = L.POLICY_SPECIAL_ID
   WHERE L.TRADING_COMPANY_ID IS NULL
-    AND H.AUDIT_STAT IN ('NEW', 'REJECTED');</code></pre>
+    AND H.AUDIT_STAT IN ('NEW', 'REJECTED');
+```
 <h4>报错7：法人不能为空</h4>
 <ul><li><strong>触发条件</strong>：用户在明细行未选择法人直接点击保存</li><li><strong>逻辑分析</strong>：前端LineDS.ts中legalEntityObj字段配置为required: true，DataSet提交时自动校验必填。法人是关联余额账户（CAPITAL_ACCOUNT）和资金池查询的关键字段，select-capital接口入参legalEntityCode即来自法人选择。未选择法人将导致资金池余额无法查询，提交校验无法执行。校验失败时前端表单标红提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, L.POLICY_SPECIAL_LINE_ID,
+
+```sql
+SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, L.POLICY_SPECIAL_LINE_ID,
          L.CUST_NAME, L.LEGAL_ENTITY_ID, L.LEGAL_ENTITY_CODE
   FROM SA_POLICY_SPECIAL_HEADER H
   JOIN SA_POLICY_SPECIAL_LINE L ON H.POLICY_SPECIAL_ID = L.POLICY_SPECIAL_ID
   WHERE L.LEGAL_ENTITY_ID IS NULL
-    AND H.AUDIT_STAT IN ('NEW', 'REJECTED');</code></pre>
+    AND H.AUDIT_STAT IN ('NEW', 'REJECTED');
+```
 <h4>报错8：流程编码缺失，请选择流程！</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"按钮，dto.getFlowCode()为空</li><li><strong>逻辑分析</strong>：saveAndSubmit方法中校验StringUtils.isEmpty(dto.getFlowCode())，若为空则抛出CommonException("流程编码缺失，请选择流程！")。流程编码（flowCode）是发起OA审批流程（SA_POLICY_SPECIAL_MCS_AW）的必要参数，缺失将导致workFlowStart无法启动流程。需在详情页选择审批流程后再次提交</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, HZ_APPROVE_STATUS, HZ_INSTANCE_ID, AUDIT_STAT
+
+```sql
+SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, HZ_APPROVE_STATUS, HZ_INSTANCE_ID, AUDIT_STAT
   FROM SA_POLICY_SPECIAL_HEADER
   WHERE HZ_APPROVE_STATUS = 'NEW'
-    AND HZ_INSTANCE_ID IS NULL;</code></pre>
+    AND HZ_INSTANCE_ID IS NULL;
+```
 <h4>报错9：请先选择经销商或交易公司</h4>
 <ul><li><strong>触发条件</strong>：用户在明细行点击"查询资金池"按钮，但custCode或tradingCompanyCode为空</li><li><strong>逻辑分析</strong>：前端handleSelectCapital回调中校验record?.get('custCode')和record?.get('tradingCompanyCode')，若任一为空则notification.error提示"请先选择经销商 或 交易公司"并return。资金池查询（select-capital接口）需要legalEntityCode和tradingCompanyCode作为入参，二者分别来自经销商和交易公司选择。需先选择经销商和交易公司再查询资金池</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_LINE_ID, CUST_CODE, CUST_NAME, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME
+
+```sql
+SELECT POLICY_SPECIAL_LINE_ID, CUST_CODE, CUST_NAME, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME
   FROM SA_POLICY_SPECIAL_LINE
-  WHERE CUST_CODE IS NULL OR TRADING_COMPANY_CODE IS NULL;</code></pre>
+  WHERE CUST_CODE IS NULL OR TRADING_COMPANY_CODE IS NULL;
+```
 <h4>报错10：行数据重复</h4>
 <ul><li><strong>触发条件</strong>：用户保存时，明细行中存在相同的"经销商编码+交易公司名称+法人编码"组合</li><li><strong>逻辑分析</strong>：前端DetailPage/index.tsx的校验逻辑中，按custCode + '-' + tradingCompanyName + '-' + legalEntityCode生成唯一键，若重复则notification.error提示"第X行数据重复"并返回false阻断保存。同一申请单中不允许相同经销商+交易公司+法人组合重复，避免资金池重复扣减。需去重后保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT CUST_CODE, TRADING_COMPANY_NAME, LEGAL_ENTITY_CODE, COUNT(*) AS 重复行数
+
+```sql
+SELECT CUST_CODE, TRADING_COMPANY_NAME, LEGAL_ENTITY_CODE, COUNT(*) AS 重复行数
   FROM SA_POLICY_SPECIAL_LINE
-  WHERE POLICY_SPECIAL_ID = #&#123;policySpecialId&#125;
+  WHERE POLICY_SPECIAL_ID = #{policySpecialId}
   GROUP BY CUST_CODE, TRADING_COMPANY_NAME, LEGAL_ENTITY_CODE
-  HAVING COUNT(*) &gt; 1;</code></pre>
+  HAVING COUNT(*) > 1;
+```
 <h4>报错11：请选择需要删除的数据！</h4>
 <ul><li><strong>触发条件</strong>：用户未选中任何申请单直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：remove方法接收cmContractPaymentApplyList列表，若CollectionUtils.isEmpty为true则抛出CommonException("请选择需要删除的数据！")。前端列表页需选中至少一条记录才可触发删除操作。需在列表中勾选目标记录后重试</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查可删除的申请单（未提交或已拒绝状态）
+
+```sql
+-- 核查可删除的申请单（未提交或已拒绝状态）
   SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CREATOR, AUDIT_STAT, HZ_APPROVE_STATUS
   FROM SA_POLICY_SPECIAL_HEADER
   WHERE HZ_APPROVE_STATUS IN ('NEW', 'REJECTED')
-  ORDER BY CREATE_TIME DESC;</code></pre>
+  ORDER BY CREATE_TIME DESC;
+```
 <h4>报错12：单据未在OA审核节点</h4>
 <ul><li><strong>触发条件</strong>：OA审批回调doProcessOA方法时，单据的AUDIT_STAT不等于"已送签OA"</li><li><strong>逻辑分析</strong>：doProcessOA方法中按policySpecialId查询单据，若saPolicySpecialHeaderVO.getAuditStat()不等于"已送签OA"则抛出CommonException("单据【&#123;&#125;】未在oa审核节点", policySpecialId)。根因有三类：(1)OA回调时序异常，单据尚未推送OA即收到回调；(2)单据已被其他回调处理更新状态；(3)人工修改了AUDIT_STAT字段。需核查OA回调时序及单据状态流转</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, AUDIT_STAT, HZ_APPROVE_STATUS,
+
+```sql
+SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, AUDIT_STAT, HZ_APPROVE_STATUS,
          HZ_INSTANCE_ID, CALLBACK_SOURCE
   FROM SA_POLICY_SPECIAL_HEADER
-  WHERE POLICY_SPECIAL_ID = #&#123;policySpecialId&#125;;</code></pre>
+  WHERE POLICY_SPECIAL_ID = #{policySpecialId};
+```
 <h4>报错13：未查询到业务单据</h4>
 <ul><li><strong>触发条件</strong>：OA审批回调doProcessOA方法时，按policySpecialId查询SA_POLICY_SPECIAL_HEADER返回空集合</li><li><strong>逻辑分析</strong>：doProcessOA方法中校验policySpecialId非空且大于0，然后通过saPolicySpecialHeaderRepository.search查询。若返回空集合则抛出CommonException("未查询到业务单据，请检查")。根因有三类：(1)OA回传的ID在系统中不存在（如测试环境OA回调到生产）；(2)申请单已被物理删除；(3)数据权限过滤导致查询不到。需核对OA回传ID与系统POLICY_SPECIAL_ID字段</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT,
+
+```sql
+SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT,
          AUDIT_STAT, HZ_APPROVE_STATUS
   FROM SA_POLICY_SPECIAL_HEADER
-  WHERE POLICY_SPECIAL_ID = #&#123;policySpecialId&#125;;</code></pre>
+  WHERE POLICY_SPECIAL_ID = #{policySpecialId};
+```
 <h4>报错14：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击保存/保存并提交/删除按钮，前端调用对应接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面通过SaPolicySpecialHeaderController提供save/save-and-submit/remove等接口，提交时通过workFlowStart发起OA流程，doOaAudit中通过oaService.toDataOA推送OA系统。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)OA系统不可达，toDataOA调用超时或失败；(3)数据库连接异常；(4)网关或网络层故障。需先确认ae-business服务和OA系统连通性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查申请单状态分布
+
+```sql
+-- 核查申请单状态分布
   SELECT HZ_APPROVE_STATUS, COUNT(*) AS 记录数
   FROM SA_POLICY_SPECIAL_HEADER
-  GROUP BY HZ_APPROVE_STATUS;</code></pre>
+  GROUP BY HZ_APPROVE_STATUS;
+```
 <h4>报错15：权限不足</h4>
 <ul><li><strong>触发条件</strong>：用户登录后进入政策性补贴申请页面，当前用户无对应经销商的数据权限</li><li><strong>逻辑分析</strong>：本页面按经销商维度查询，数据权限通过用户上下文CustomUserDetails的additionInfo控制可见经销商范围。前端LineDS.ts中customerObj的lovCode为BASIC_CUSTOM_ORG_LOV_2，通过lovPara的searchFlag: 146过滤当前用户有权限的经销商。权限不足根因有二：(1)用户未分配对应经销商的数据权限，LOV查询返回空；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应经销商数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查用户是否有该经销商的数据权限
+
+```sql
+-- 核查用户是否有该经销商的数据权限
   SELECT USER_ID, USER_NAME, CUSTOMER_CODE, ENABLED
   FROM USER_CUSTOMER_AUTH
-  WHERE USER_ID = #&#123;userId&#125; AND CUSTOMER_CODE = #&#123;customerCode&#125;;</code></pre>
+  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};
+```
 </KbCard>
 
 <KbCard title="常见问题">

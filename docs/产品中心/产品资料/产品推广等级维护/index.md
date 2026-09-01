@@ -180,7 +180,9 @@
 </tbody>
 </table>
 <blockquote>列表查询SQL（Mapper: LnkProdPromoteGradeMapper.xml → selectList）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
     LPPG.ID,
     LPPG.PROD_CODE AS prodCode,
     LPPG.GRADE,
@@ -202,7 +204,8 @@ FROM LNK_PROD_PROMOTE_GRADE LPPG
     LEFT JOIN HZERO.IAM_USER us2 ON LPPG.Last_Updated_By = us2.id
 WHERE 1=1
     -- 动态条件：prodCode(=)、prodName(like)、lhProdModel(like)、deptName(=)、grade(=)、smState(=)、status(=)
-ORDER BY LPPG.Creation_Date DESC, LPPG.ID DESC</code></pre>
+ORDER BY LPPG.Creation_Date DESC, LPPG.ID DESC
+```
 </KbCard>
 
 <KbCard title="界面模块2：新增/编辑弹窗">
@@ -240,12 +243,15 @@ ORDER BY LPPG.Creation_Date DESC, LPPG.ID DESC</code></pre>
 <blockquote>弹窗展示字段：序号、产品编码、产品名称、型号、渠道、上/下架、生命状态、产品定位</blockquote>
 <blockquote>查询前置条件：必须至少输入"产品编码、产品名称、型号"中的一个条件才能查询，否则查询不执行</blockquote>
 <blockquote>查询SQL（后端接口：GET /v1/&#123;organizationId&#125;/prod）：</blockquote>
-<pre class="detail-sql" v-pre><code>-- 产品列表查询（LNK_PROD表）
+
+```sql
+-- 产品列表查询（LNK_PROD表）
 SELECT * FROM LNK_PROD
 WHERE 1=1
-    AND organization_id = #&#123;organizationId&#125;
+    AND organization_id = #{organizationId}
     AND selectType = 'all'
-    -- 动态条件：prodCode(like)、prodName(like)、lhProdModel(like)、lhProdChannel(=)、prodStatus(=)、smState(=)、prodPositioning(like)</code></pre>
+    -- 动态条件：prodCode(like)、prodName(like)、lhProdModel(like)、lhProdChannel(=)、prodStatus(=)、smState(=)、prodPositioning(like)
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -288,7 +294,9 @@ WHERE 1=1
 <h4>按钮2：导出（列表页）</h4>
 <ul><li><strong>触发条件</strong>：拥有权限hzero.product_data.product_info.promote_grade-list.ps.export</li><li><strong>执行逻辑</strong>：</li><li>第1点：按当前查询条件导出全部数据</li><li>第2点：调用导出接口，下载Excel文件</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/prodPromoteGrades/export</li></ul>
 <blockquote>导出查询SQL（Mapper: LnkProdPromoteGradeMapper.xml → exportList）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
     LPPG.ID,
     LPPG.PROD_CODE AS prodCode,
     LPPG.GRADE,
@@ -310,7 +318,8 @@ FROM LNK_PROD_PROMOTE_GRADE LPPG
     LEFT JOIN HZERO.IAM_USER us2 ON LPPG.Last_Updated_By = us2.id
 WHERE 1=1
     -- 动态条件同selectList
-ORDER BY LPPG.Creation_Date DESC</code></pre>
+ORDER BY LPPG.Creation_Date DESC
+```
 <h4>按钮3：导入（列表页）</h4>
 <ul><li><strong>触发条件</strong>：拥有权限hzero.product_data.product_info.promote_grade-list.ps.import</li><li><strong>执行逻辑</strong>：</li><li>第1点：打开通用导入组件，模板编码CRM.PROD_PROMOTE_GRADE</li><li>第2点：上传Excel文件后由后端处理，最终调用saveData方法</li><li><strong>接口调用</strong>：通用导入框架接口</li></ul>
 <h4>按钮4：批量失效（列表页）</h4>
@@ -326,25 +335,34 @@ ORDER BY LPPG.Creation_Date DESC</code></pre>
 <p>- 第2点：后端Entity的prodCode字段标注@NotBlank</p>
 <ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE WHERE PROD_CODE IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PROD_PROMOTE_GRADE WHERE PROD_CODE IS NULL;
+```
 <ul><li>校验2：等级非空 —— 确保指定推广等级</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：前端弹窗等级字段required=true，commonFn_formValid校验</p>
 <p>- 第2点：后端Entity的grade字段标注@NotBlank</p>
 <ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE WHERE GRADE IS NULL;</code></pre>
+
+```sql
+SELECT * FROM LNK_PROD_PROMOTE_GRADE WHERE GRADE IS NULL;
+```
 <ul><li>校验3：同一产品唯一有效等级 —— 避免等级冲突</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：后端saveData方法中，对每条status=valid的记录，查询该prodCode是否已存在valid记录</p>
 <p>- 第2点：如果存在，将旧记录status置为invalid后再插入/更新新记录</p>
 <ul><li>系统体现：后端自动处理，无前端提示</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT PROD_CODE, COUNT(*) AS cnt
+
+```sql
+SELECT PROD_CODE, COUNT(*) AS cnt
     FROM LNK_PROD_PROMOTE_GRADE
     WHERE STATUS = 'valid'
     GROUP BY PROD_CODE
-    HAVING COUNT(*) &gt; 1;</code></pre>
+    HAVING COUNT(*) > 1;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -353,9 +371,12 @@ ORDER BY LPPG.Creation_Date DESC</code></pre>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>[新建] → valid（有效） → 失效操作 → invalid（失效）
+
+```text
+[新建] → valid（有效） → 失效操作 → invalid（失效）
                                       ↓
-                              不可再失效（行内失效按钮隐藏）</code></pre>
+                              不可再失效（行内失效按钮隐藏）
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -400,10 +421,13 @@ ORDER BY LPPG.Creation_Date DESC</code></pre>
 </tbody>
 </table>
 <blockquote>联动更新SQL（ServiceImpl.saveData中调用lnkProdRepository.updateByPrimaryCode）：</blockquote>
-<pre class="detail-sql" v-pre><code>UPDATE LNK_PROD
-SET PROD_PROMOTE_GRADE = #&#123;grade&#125;,
-    LAST_UPDATED_BY = #&#123;userId&#125;
-WHERE PROD_CODE = #&#123;prodCode&#125;</code></pre>
+
+```sql
+UPDATE LNK_PROD
+SET PROD_PROMOTE_GRADE = #{grade},
+    LAST_UPDATED_BY = #{userId}
+WHERE PROD_CODE = #{prodCode}
+```
 </KbCard>
 
 </div>
@@ -434,54 +458,75 @@ WHERE PROD_CODE = #&#123;prodCode&#125;</code></pre>
 <blockquote><strong>"保存失败"详细逻辑</strong>：
 前端onOkFn方法中，调用POST保存接口后检查res.failed，如果失败则调用commonFn_showErrMsg显示后端错误信息。
 排查SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>-- 检查产品编码是否存在
-SELECT * FROM LNK_PROD WHERE PROD_CODE = #&#123;prodCode&#125;;</code></pre>
+
+```sql
+-- 检查产品编码是否存在
+SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};
+```
 <h4>报错3：操作失败！</h4>
 <ul><li><strong>触发条件</strong>：点击失效确认框确认后，后端保存接口返回失败</li><li><strong>逻辑分析</strong>：前端onDisabledFn方法调用POST /v1/&#123;organizationId&#125;/prodPromoteGrade/disable接口，后端将LNK_PROD_PROMOTE_GRADE记录状态置为invalid，同时将LNK_PROD.PROD_PROMOTE_GRADE重置为C。若产品编码不存在或数据库异常则返回失败，前端提示"操作失败！"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
+
+```sql
+SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
          PG.STATUS AS 状态, P.PROD_PROMOTE_GRADE AS 产品当前等级
   FROM LNK_PROD_PROMOTE_GRADE PG
     LEFT JOIN LNK_PROD P ON P.PROD_CODE = PG.PROD_CODE
-  WHERE PG.ID = :recordId;</code></pre>
+  WHERE PG.ID = :recordId;
+```
 <h4>报错4：产品编码不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增弹窗中未选择产品编码就点击确认按钮</li><li><strong>逻辑分析</strong>：前端onOkFn方法中先调用commonFn_formValid(ds)进行表单校验，产品编码字段配置required=true（listConfig.tsx第74行），校验不通过时弹窗提示"产品编码不能为空"并阻止提交。后端Controller的validObject方法校验LnkProdPromoteGrade实体prodCode字段的@NotBlank注解，若前端校验被绕过则后端抛出校验异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查是否存在产品编码为空的推广等级记录（异常数据）
+
+```sql
+-- 检查是否存在产品编码为空的推广等级记录（异常数据）
   SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级, PG.STATUS AS 状态
   FROM LNK_PROD_PROMOTE_GRADE PG
-  WHERE PG.PROD_CODE IS NULL OR TRIM(PG.PROD_CODE) IS NULL;</code></pre>
+  WHERE PG.PROD_CODE IS NULL OR TRIM(PG.PROD_CODE) IS NULL;
+```
 <h4>报错5：等级不能为空</h4>
 <ul><li><strong>触发条件</strong>：新增弹窗中未选择等级就点击确认按钮</li><li><strong>逻辑分析</strong>：前端onOkFn方法中commonFn_formValid校验等级字段required=true（listConfig.tsx第91行），校验不通过时弹窗提示"等级不能为空"。后端Entity的grade字段标注@NotBlank，validObject校验失败时抛出阻断性异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查是否存在等级为空的推广等级记录（异常数据）
+
+```sql
+-- 检查是否存在等级为空的推广等级记录（异常数据）
   SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级, PG.STATUS AS 状态
   FROM LNK_PROD_PROMOTE_GRADE PG
-  WHERE PG.GRADE IS NULL OR TRIM(PG.GRADE) IS NULL;</code></pre>
+  WHERE PG.GRADE IS NULL OR TRIM(PG.GRADE) IS NULL;
+```
 <h4>报错6：查询失败</h4>
 <ul><li><strong>触发条件</strong>：列表页加载或点击查询按钮时，后端列表查询接口返回失败</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/prodPromoteGrades接口，后端selectList方法通过LnkProdPromoteGradeMapper.selectList查询LNK_PROD_PROMOTE_GRADE关联LNK_PROD、LNK_ORG_EXT、HZERO.IAM_USER表。若数据库连接异常、SQL执行超时或关联的产品资料不存在（INNER JOIN导致数据丢失）则返回失败，前端DataSet自动提示查询失败。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查推广等级记录关联的产品资料是否存在
+
+```sql
+-- 检查推广等级记录关联的产品资料是否存在
   SELECT PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
          P.PROD_NAME AS 产品名称
   FROM LNK_PROD_PROMOTE_GRADE PG
     LEFT JOIN LNK_PROD P ON P.PROD_CODE = PG.PROD_CODE
-  WHERE P.PROD_CODE IS NULL;</code></pre>
+  WHERE P.PROD_CODE IS NULL;
+```
 <h4>报错7：权限不足</h4>
 <ul><li><strong>触发条件</strong>：当前用户无对应操作权限时点击新增/批量失效/行内失效/导出/导入按钮</li><li><strong>逻辑分析</strong>：前端按钮配置permissionList权限编码（新增/失效：hzero.product_data.product_info.promote_grade-list.ps.edit；导出：hzero.product_data.product_info.promote_grade-list.ps.export；导入：hzero.product_data.product_info.promote_grade-list.ps.import），无权限时按钮不显示。若通过API直接调用，后端@Permission(level=ResourceLevel.ORGANIZATION)注解校验组织级权限，无权限时抛出403异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查用户角色权限配置（HZERO平台权限表）
+
+```sql
+-- 检查用户角色权限配置（HZERO平台权限表）
   SELECT R.CODE AS 角色编码, R.NAME AS 角色名称,
          P.CODE AS 权限编码, P.NAME AS 权限名称
   FROM HZERO.IAM_ROLE R
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.CODE LIKE 'hzero.product_data.product_info.promote_grade-list.ps.%'
-  ORDER BY P.CODE;</code></pre>
+  ORDER BY P.CODE;
+```
 <h4>报错8：会话过期</h4>
 <ul><li><strong>触发条件</strong>：用户登录会话已失效时执行任意操作（查询/新增/失效/导出/导入）</li><li><strong>逻辑分析</strong>：前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查用户登录会话状态（HZERO平台Token表）
+
+```sql
+-- 检查用户登录会话状态（HZERO平台Token表）
   SELECT U.LOGIN_NAME AS 登录名, T.TOKEN, T.EXPIRE_TIME AS 过期时间,
          T.LAST_CLIENT_TIME AS 最后活跃时间
   FROM HZERO.OAUTH_ACCESS_TOKEN T
     JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
   WHERE U.LOGIN_NAME = :loginName
-  ORDER BY T.EXPIRE_TIME DESC;</code></pre>
+  ORDER BY T.EXPIRE_TIME DESC;
+```
 </KbCard>
 
 <KbCard title="常见问题">

@@ -270,10 +270,13 @@
 </tbody>
 </table>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT SIGNER_ID, SIGNER_NAME, SIGNER_PHONE
+
+```sql
+SELECT SIGNER_ID, SIGNER_NAME, SIGNER_PHONE
 FROM MA_SIGNER
 WHERE LEGAL_ENTITY_NAME = :legalEntityName
-  AND STATUS = 'ACTIVE';</code></pre>
+  AND STATUS = 'ACTIVE';
+```
 <h4>弹窗2：图纸验收弹窗（单选）</h4>
 <p>由 Header 按钮"图纸验收"触发，调用 handleConfirmDrawing，弹窗标题"图纸验收"。打开前通过 getSigners(rowData.legalEntityName) 查询签订人列表。提交前校验 drawingConfirmFormDS.current.validate()，提交参数：applyCode、signerId(accountId)、signerName(name)、signerPhone(mobile)，调用 drawingConfirm 接口（POST mlt/designApply/startDrawingConfirm），成功后刷新列表。</p>
 <p>入参表格：</p>
@@ -329,13 +332,16 @@ WHERE LEGAL_ENTITY_NAME = :legalEntityName
 </tbody>
 </table>
 <p>查询SQL：</p>
-<pre class="detail-sql" v-pre><code>SELECT MDF.OPERATION_TIME   AS "时间",
+
+```sql
+SELECT MDF.OPERATION_TIME   AS "时间",
        MDF.DISTRIBUTOR_NAME AS "反馈人",
        MDF.FEEDBACK_RESULT  AS "反馈结果",
        MDF.FEEDBACK_COMMENTS AS "反馈内容"
 FROM MA_DESIGN_FEEDBACK MDF
 WHERE MDF.APPLY_CODE = :applyCode
-ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
+ORDER BY MDF.OPERATION_TIME DESC;
+```
 <h4>弹窗6：流程摘要弹窗（单选）</h4>
 <p>由行操作按钮"查看流程"触发，调用 handleShowProcess，弹窗标题"流程摘要"，宽度 1000，无确定按钮（okButton=false），cancelText="关闭"。展示 ProcessDetail 组件，传入 applyCode。</p>
 <p>入参表格：</p>
@@ -410,14 +416,17 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>[待执行] --开始设计--&gt; [执行中] --上传图纸--&gt; [图纸已上传]
-                                              --图纸确认--&gt; [图纸已确认]
-                                              --下单--&gt; [已下单]
-                                              --区域确认--&gt; [区域已确认]
-                                              --结束执行--&gt; [已完成]
 
-[执行中] --终止--&gt; [终止审批中] --审批通过--&gt; [已终止]
-                              --审批驳回--&gt; [执行中]</code></pre>
+```sql
+[待执行] --开始设计--> [执行中] --上传图纸--> [图纸已上传]
+                                              --图纸确认--> [图纸已确认]
+                                              --下单--> [已下单]
+                                              --区域确认--> [区域已确认]
+                                              --结束执行--> [已完成]
+
+[执行中] --终止--> [终止审批中] --审批通过--> [已终止]
+                              --审批驳回--> [执行中]
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>状态</th><th>状态说明</th><th>可执行操作</th></tr>
@@ -540,7 +549,9 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请、查看确认书、特殊取消、结束执行、同步OA/FDD/CRM、下载图纸、设计改派、查看反馈、上传图纸、下单、区域确认、开始设计、图纸确认、终止等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          APPLY_USER_NAME AS 申请人,
          DESIGN_NAME AS 设计名称,
          LECTURER_NAME AS 设计师,
@@ -548,10 +559,13 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
          APPROVAL_STATE AS 审核状态
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错2：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 mlt/designApply/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM/文件存储）调用失败、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、文件存储服务、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态,
@@ -560,31 +574,40 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错3：当前进展不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交终止项目时，CURRENT_PROGRESS 字段为空</li><li><strong>逻辑分析</strong>：前端终止项目弹窗对 currentProgress 字段配置 required 校验，提交前校验当前进展是否填写，为空则阻止提交并提示"当前进展不能为空"。当前进展用于记录终止时的项目状态，便于追溯终止原因</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          RELATION_APPLY_CODE AS 关联原申请,
          APPLY_USER_NAME AS 申请人,
          CURRENT_PROGRESS AS 当前进展,
          TERMINATION_REASON AS 终止原因
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE = 'termination'
-    AND (CURRENT_PROGRESS IS NULL OR CURRENT_PROGRESS = '');</code></pre>
+    AND (CURRENT_PROGRESS IS NULL OR CURRENT_PROGRESS = '');
+```
 <h4>报错4：终止原因不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交终止项目时，TERMINATION_REASON 字段为空</li><li><strong>逻辑分析</strong>：前端终止项目弹窗对 terminationReason 字段配置 required 校验，提交前校验终止原因是否填写，为空则阻止提交并提示"终止原因不能为空"。终止原因用于记录项目终止的具体原因，是终止审批的核心依据</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          RELATION_APPLY_CODE AS 关联原申请,
          APPLY_USER_NAME AS 申请人,
          CURRENT_PROGRESS AS 当前进展,
          TERMINATION_REASON AS 终止原因
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE = 'termination'
-    AND (TERMINATION_REASON IS NULL OR TERMINATION_REASON = '');</code></pre>
+    AND (TERMINATION_REASON IS NULL OR TERMINATION_REASON = '');
+```
 <h4>报错5：签订人不能为空</h4>
 <ul><li><strong>触发条件</strong>：提交图纸确认时，SIGNER 字段为空</li><li><strong>逻辑分析</strong>：前端图纸确认弹窗对 signer 字段配置 required 校验，提交前校验签订人是否选择，为空则阻止提交并提示"签订人不能为空"。签订人用于法大大电子签署，必须明确签署责任主体</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态,
          SIGNER_ID AS 签订人ID,
@@ -592,10 +615,13 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE = 'drawing_uploaded'
-    AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);</code></pre>
+    AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);
+```
 <h4>报错6：面积确认校验失败</h4>
 <ul><li><strong>触发条件</strong>：提交区域确认时，generalFormDS.validate() 校验未通过，SCALE_AREA 等必填字段为空</li><li><strong>逻辑分析</strong>：前端区域确认弹窗通过 generalFormDS.validate() 校验表单，对 SCALE_AREA（确认面积）等字段配置 required 校验，提交前校验完整性，校验不通过则提示"面积确认校验失败"。面积用于计算设计费用，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态,
          SCALE_AREA AS 确认面积,
@@ -603,29 +629,38 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE = 'ordered'
-    AND (SCALE_AREA IS NULL OR SIGNER_NAME IS NULL);</code></pre>
+    AND (SCALE_AREA IS NULL OR SIGNER_NAME IS NULL);
+```
 <h4>报错7：单个文件不能大于30MB</h4>
 <ul><li><strong>触发条件</strong>：上传图纸时，所选文件 file.size &gt; 30 * 1024 * 1024（30MB）</li><li><strong>逻辑分析</strong>：前端 UploadDrawing 组件 beforeUpload 钩子校验文件大小，超过30MB则阻止上传并提示"单个文件不能大于30MB"。限制源于OSS存储和后端解析性能考虑，大文件需压缩或拆分后上传</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          FILE_NAME AS 文件名,
          FILE_SIZE AS 文件大小,
          FILE_URL AS 文件地址
   FROM DESIGN_DRAWING_FILE
-  WHERE FILE_SIZE &gt; 30 * 1024 * 1024
-  ORDER BY CREATION_DATE DESC;</code></pre>
+  WHERE FILE_SIZE > 30 * 1024 * 1024
+  ORDER BY CREATION_DATE DESC;
+```
 <h4>报错8：上传失败</h4>
 <ul><li><strong>触发条件</strong>：上传图纸时，OSS 上传抛错（onUploadError）或上传成功但响应无 fileUrl（onUploadSuccess res.fileUrl 为空）</li><li><strong>逻辑分析</strong>：前端 UploadDrawing 组件 onUploadError 钩子捕获上传异常提示"上传失败：&#123;err.message&#125;"，onUploadSuccess 钩子校验响应 fileUrl 字段，为空则提示"上传失败：&#123;res.message&#125;"。常见根因：OSS 存储服务不可用、bucketName/bucketDirectory 配置错误、storageCode 未配置、文件格式不被接受、网络中断等</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          FILE_NAME AS 文件名,
          FILE_URL AS 文件地址,
          ERROR_INFO AS 异常信息
   FROM DESIGN_DRAWING_FILE
   WHERE FILE_URL IS NULL
      OR ERROR_INFO IS NOT NULL
-  ORDER BY CREATION_DATE DESC;</code></pre>
+  ORDER BY CREATION_DATE DESC;
+```
 <h4>报错9：同步外部系统失败</h4>
 <ul><li><strong>触发条件</strong>：点击同步CRM/同步OA/同步FDD按钮，调用 pushCrm/pushOa/pushFdd 接口返回失败</li><li><strong>逻辑分析</strong>：前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          CRM_ORDER_CODE AS CRM单号,
          CRM_ORDER_STATUS AS CRM订单状态,
@@ -634,20 +669,26 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 7
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错10：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、后端服务假死、数据库慢查询、接口处理时间超过 timeout 阈值等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          ORDER_LECTURE_STATE AS 点将状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错11：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请、开始接单、面积确认、开始设计、图纸验收、终止项目、同步CRM/OA/FDD等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码（如 hzero.general_manage.design.design_general_execute.ps.show_apply 等），HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名,
+
+```sql
+SELECT U.USER_NAME AS 用户名,
          R.ROLE_NAME AS 角色名,
          P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
@@ -656,19 +697,25 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE 'hzero.general_manage.design.design_general_execute.ps.%'
-  ORDER BY U.USER_NAME;</code></pre>
+  ORDER BY U.USER_NAME;
+```
 <h4>报错12：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：查看申请、查看反馈、上传图纸等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 DESIGN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          APPLY_USER_NAME AS 申请人,
          ORDER_LECTURE_STATE AS 点将状态,
          DELETE_FLAG AS 删除标记
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+```
 <h4>报错13：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击开始接单、开始设计、图纸验收、终止项目等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如开始接单要求 ORDER_LECTURE_STATE 为待接单、开始设计要求为已接单、图纸验收要求图纸已上传、终止项目要求非已完成等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+
+```sql
+SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态,
          DESIGN_STATE AS 设计状态,
@@ -677,7 +724,8 @@ ORDER BY MDF.OPERATION_TIME DESC;</code></pre>
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE NOT IN ('pending_order','ordered','designing','drawing_uploaded','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 </KbCard>
 
 <KbCard title="常见问题">

@@ -310,9 +310,12 @@
 </tbody>
 </table>
 <blockquote>查询SQL（后端接口：门店档案查询）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT terminal_id, terminal_name, cust_name, salezone_org_name, operat_center_org_name,
+
+```sql
+SELECT terminal_id, terminal_name, cust_name, salezone_org_name, operat_center_org_name,
        trading_company_name, billing_unit_name
-FROM fin_terminal_info WHERE organization_id = #&#123;organizationId&#125; AND stat = 1;</code></pre>
+FROM fin_terminal_info WHERE organization_id = #{organizationId} AND stat = 1;
+```
 </KbCard>
 
 <KbCard title="其他按钮">
@@ -330,12 +333,18 @@ FROM fin_terminal_info WHERE organization_id = #&#123;organizationId&#125; AND s
 </table>
 <h4>按钮1：提交（详情页）</h4>
 <ul><li><strong>触发条件</strong>：审批状态为NEW</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验申请总金额(totalApplyAmtBx)&gt;0</li><li>第2点：组装广告投放数据（申请单号、广告项目、媒介类型、经销商等）推送OA</li><li>第3点：额度外(bxType=2)审批通过时扣减BUD_OVER_BUDGET预算表TAX_TOTAL_AMT</li><li>第4点：发起工作流SUB_ADJ_PLACEMENT_APPLY</li><li><strong>接口调用</strong>：OA推送接口 + 工作流发起接口</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id, fee_apply_no, apply_type, bx_type, total_apply_amt_bx, hz_approve_status
-FROM fin_fee_apply_header WHERE fee_apply_id = &#123;id&#125;;</code></pre>
+
+```sql
+SELECT fee_apply_id, fee_apply_no, apply_type, bx_type, total_apply_amt_bx, hz_approve_status
+FROM fin_fee_apply_header WHERE fee_apply_id = {id};
+```
 <h4>按钮2：查询可用余额（详情页）</h4>
 <ul><li><strong>触发条件</strong>：费用类型为额度外(bxType=2)</li><li><strong>执行逻辑</strong>：</li><li>第1点：传入预算年度、部门ID、费用类型ID</li><li>第2点：可用余额=可用金额-占用金额</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/fin-fee-apply-headers/query-amt</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT available_amt, occupy_amt FROM bud_over_budget
-WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fee_type_id = #&#123;feeTypeId&#125;;</code></pre>
+
+```sql
+SELECT available_amt, occupy_amt FROM bud_over_budget
+WHERE bud_year = #{budYear} AND entid = #{divisionId} AND fee_type_id = #{feeTypeId};
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -345,7 +354,10 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
 <p>- 第2点：金额&lt;=0时报错"申请总金额必须大于0！"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT total_apply_amt_bx FROM fin_fee_apply_header WHERE fee_apply_id = &#123;id&#125;;</code></pre>
+
+```sql
+SELECT total_apply_amt_bx FROM fin_fee_apply_header WHERE fee_apply_id = {id};
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -355,16 +367,22 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
 <p>- 第2点：objid为0时报错"流程中objid为0，流程失败！"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT total_apply_amt_bx FROM fin_fee_apply_header WHERE fee_apply_id = &#123;id&#125;;</code></pre>
+
+```sql
+SELECT total_apply_amt_bx FROM fin_fee_apply_header WHERE fee_apply_id = {id};
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ APPROVED(已审核)
+
+```text
+NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ APPROVED(已审核)
                         │                        │
                         │OA审批驳回               │
                         ↓                        ↓
-                   REJECTED(已驳回)          可发起报销/完工验收</code></pre>
+                   REJECTED(已驳回)          可发起报销/完工验收
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -472,46 +490,60 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
 </table>
 <h4>报错1：申请总金额必须大于0！</h4>
 <ul><li><strong>触发条件</strong>：点击"提交"按钮，OA推送前调用doCheckAdvertiseAmt校验时，totalApplyAmtBx&lt;=0</li><li><strong>逻辑分析</strong>：提交审批前需确保申请总金额有效。校验逻辑读取FIN_FEE_APPLY_HEADER.TOTAL_APPLY_AMT_BX，若该值&lt;=0则抛出阻断性异常，阻止OA推送和工作流发起。常见根因：用户未填写金额、金额被错误置0、或前端未做必填校验直接提交空单。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          total_apply_amt_bx  AS 申请总金额,
          hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
-  AND    total_apply_amt_bx &lt;= 0
-  ORDER  BY create_time DESC;</code></pre>
+  AND    total_apply_amt_bx <= 0
+  ORDER  BY create_time DESC;
+```
 <h4>报错2：流程中objid为0，流程失败！</h4>
 <ul><li><strong>触发条件</strong>：点击"提交"按钮，发起工作流SUB_ADJ_PLACEMENT_APPLY时，传入的objid（单据主键FEE_APPLY_ID）为0或null</li><li><strong>逻辑分析</strong>：工作流引擎需用objid关联业务单据。若保存时未正确回写FEE_APPLY_ID（如自增序列未取回、事务未提交即发起流程），或前端未传id字段，会导致objid=0。工作流无法定位单据，流程发起失败。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          hz_instance_id      AS 工作流实例ID,
          hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
   AND    (fee_apply_id = 0 OR fee_apply_id IS NULL)
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错3：推送OA失败：广告投放申请不存在</h4>
 <ul><li><strong>触发条件</strong>：点击"提交"按钮推送OA时，按feeApplyId查询FIN_FEE_APPLY_HEADER返回null</li><li><strong>逻辑分析</strong>：OA推送前需查询申请单组装数据。若单据在推送前被其他用户删除（物理删除），或feeApplyId传值错误，查询返回空，无法组装OA数据导致推送失败。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          stat                AS 单据状态,
          hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
-  AND    fee_apply_id = #&#123;传入的feeApplyId&#125;;</code></pre>
+  AND    fee_apply_id = #{传入的feeApplyId};
+```
 <h4>报错4：OA回调失败：广告投放申请不存在！</h4>
 <ul><li><strong>触发条件</strong>：OA审批完成回调DMS时，按回调报文中的feeApplyId查询FIN_FEE_APPLY_HEADER返回null</li><li><strong>逻辑分析</strong>：OA回调处理需更新申请单审批状态、可用金额、审批总金额等。若回调期间单据被删除，或OA回调报文的单据ID与DMS不一致（如OA配置错误、ID映射异常），查询返回空，回调处理失败，审批状态无法更新。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          hz_approve_status   AS 审批状态,
          hz_instance_id      AS 工作流实例ID,
          callback_source     AS 回调来源
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
-  AND    fee_apply_id = #&#123;OA回调报文中的feeApplyId&#125;;</code></pre>
+  AND    fee_apply_id = #{OA回调报文中的feeApplyId};
+```
 <h4>报错5：ID不能为空</h4>
 <ul><li><strong>触发条件</strong>：OA回调处理方法接收到的feeApplyId参数为null或空字符串</li><li><strong>逻辑分析</strong>：OA回调接口需用feeApplyId定位单据。若OA系统未正确配置回调用单据ID字段，或回调报文丢失ID字段，DMS接收到的ID为空，无法执行后续更新逻辑。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          hz_instance_id      AS 工作流实例ID,
          hz_approve_status   AS 审批状态
@@ -519,10 +551,13 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
   WHERE  apply_type = 2
   AND    hz_approve_status = 'RUN'
   AND    fee_apply_id IS NULL
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错6：预算年度不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询可用余额"按钮（额度外bxType=2时），传入的budYear参数为null</li><li><strong>逻辑分析</strong>：额度外可用余额查询依赖预算年度定位BUD_OVER_BUDGET记录。若前端未选择年度、年度字段未默认赋值，或传参丢失，后端校验budYear为空即抛异常，无法查询预算。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          cyear               AS 预算年度,
          bx_type             AS 费用类型
@@ -530,10 +565,13 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
   WHERE  apply_type = 2
   AND    bx_type = 2
   AND    cyear IS NULL
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错7：部门ID不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询可用余额"按钮（额度外bxType=2时），传入的divisionId（事业部ID）参数为null</li><li><strong>逻辑分析</strong>：额度外可用余额查询需用部门ID（事业部ID）定位BUD_OVER_BUDGET记录。若申请单未关联事业部、事业部字段为空，或前端传参丢失，后端校验divisionId为空即抛异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          cyear               AS 预算年度,
          organization_id     AS 事业部ID
@@ -541,20 +579,26 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
   WHERE  apply_type = 2
   AND    bx_type = 2
   AND    organization_id IS NULL
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错8：费用类型ID不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询可用余额"按钮（额度外bxType=2时），传入的feeTypeId参数为null</li><li><strong>逻辑分析</strong>：额度外可用余额查询需用费用类型ID定位BUD_OVER_BUDGET记录（广告投放费用类型ID=66014602）。若前端未传feeTypeId、或费用类型配置缺失，后端校验为空即抛异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT bud_year           AS 预算年度,
+
+```sql
+SELECT bud_year           AS 预算年度,
          entid              AS 事业部ID,
          fee_type_id        AS 费用类型ID,
          tax_total_amt      AS 预算总额,
          available_amt      AS 可用金额
   FROM   bud_over_budget
   WHERE  fee_type_id = 66014602
-  ORDER  BY bud_year DESC;</code></pre>
+  ORDER  BY bud_year DESC;
+```
 <h4>报错9：主键不能为空!</h4>
 <ul><li><strong>触发条件</strong>：工作流回调更新单据时，传入的feeApplyId（主键）为null或0</li><li><strong>逻辑分析</strong>：工作流回调处理需用主键feeApplyId更新FIN_FEE_APPLY_HEADER的审批状态、审批人、审批时间等字段。若工作流配置未正确映射单据ID到主键参数，或回调报文丢失主键，updateByPrimaryKey操作无法执行，抛出主键为空异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          hz_instance_id      AS 工作流实例ID,
          hz_approve_status   AS 审批状态,
@@ -564,20 +608,26 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
   WHERE  apply_type = 2
   AND    hz_approve_status = 'RUN'
   AND    (fee_apply_id IS NULL OR fee_apply_id = 0)
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错10：feeCashOutNo 参数不能为空</h4>
 <ul><li><strong>触发条件</strong>：调用getByFeeCashOutNo方法按兑现单号查询广告投放申请单时，传入的feeCashOutNo参数为null或空字符串</li><li><strong>逻辑分析</strong>：该方法通过兑现单号（feeCashOutNo）关联查询FIN_FEE_APPLY_HEADER申请单，供发票兑现模块回写申请单交易公司等场景调用。若调用方（如发票兑现Service）未传入兑现单号、兑现单号字段在流转中丢失、或前端未正确赋值，后端校验feeCashOutNo为空即抛异常，无法定位关联的申请单。常见根因：跨模块调用传参丢失、兑现单未保存即触发回写、或字段映射错误。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_cashout_id      AS 兑现单ID,
+
+```sql
+SELECT fee_cashout_id      AS 兑现单ID,
          fee_cashout_no      AS 兑现单号,
          bx_no               AS 报销单号,
          hz_approve_status   AS 审批状态
   FROM   fin_fee_cashout_header
   WHERE  save_type = 2
   AND    (fee_cashout_no IS NULL OR fee_cashout_no = '')
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错11：参数不能为空</h4>
 <ul><li><strong>触发条件</strong>：调用updateByFinFeeApplyNo方法按申请单号更新广告投放申请单时，传入的FinFeeApplyHeader对象为null</li><li><strong>逻辑分析</strong>：该方法通过申请单号（feeApplyNo）更新FIN_FEE_APPLY_HEADER的指定字段，供OA回调回写交易公司、审批信息等场景调用。若调用方构造的更新对象为null、对象序列化失败、或跨服务调用时JSON解析为空，后端校验finFeeApplyHeader为null即抛异常，无法执行更新逻辑。常见根因：调用方未构造更新对象、对象传递丢失、或Feign客户端序列化异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          hz_approve_status   AS 审批状态,
          trading_company_name AS 交易公司,
@@ -586,10 +636,13 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
   WHERE  apply_type = 2
   AND    hz_approve_status = 'APPROVED'
   AND    (trading_company_name IS NULL OR checker IS NULL)
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错12：查询参数不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询可用余额"按钮（额度外bxType=2时），调用queryResourceAmt方法传入的BudgetQueryDTO header对象为null</li><li><strong>逻辑分析</strong>：额度外可用余额查询需用BudgetQueryDTO封装预算年度、部门ID、费用类型ID等参数定位BUD_OVER_BUDGET记录。若前端未构造查询参数对象、请求体序列化失败、或接口传参为空JSON，后端校验header为null即抛异常，无法继续后续的预算年度、部门ID、费用类型ID校验和余额查询。常见根因：前端未选择任何条件直接调用、请求体格式异常、或接口参数映射错误。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          cyear               AS 预算年度,
          organization_id     AS 事业部ID,
@@ -598,14 +651,18 @@ WHERE bud_year = #&#123;budYear&#125; AND entid = #&#123;divisionId&#125; AND fe
   WHERE  apply_type = 2
   AND    bx_type = 2
   AND    (cyear IS NULL OR organization_id IS NULL)
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 </KbCard>
 
 <KbCard title="常见问题">
 <ul><li>问题1：OA审批推送失败</li><li>原因：OA系统不可用或数据组装异常</li><li>解决思路：1.检查OA系统状态；2.检查OA单据配置"YXZT广告投放申请"；3.检查申请数据完整性</li></ul>
 <ul><li>问题2：额度外可用余额不正确</li><li>原因：预算表BUD_OVER_BUDGET数据异常或占用金额未正确更新</li><li>解决思路：检查预算表数据</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT available_amt, occupy_amt, tax_total_amt FROM bud_over_budget
-WHERE bud_year = #&#123;year&#125; AND entid = #&#123;orgId&#125; AND fee_type_id = 66014602;</code></pre>
+
+```sql
+SELECT available_amt, occupy_amt, tax_total_amt FROM bud_over_budget
+WHERE bud_year = #{year} AND entid = #{orgId} AND fee_type_id = 66014602;
+```
 <ul><li>问题3：OA回调后审批状态未更新</li><li>原因：callbackSource变量未正确设置或工作流分支条件异常</li><li>解决思路：检查工作流配置中callbackSource变量的分支条件</li></ul>
 </KbCard>
 

@@ -186,7 +186,10 @@
 </tbody>
 </table>
 <blockquote>查询SQL（经销商主数据）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT CUSTOMER_CODE, CUSTOMER_NAME FROM CUSTOMER_ORG WHERE ENABLED = 1</code></pre>
+
+```sql
+SELECT CUSTOMER_CODE, CUSTOMER_NAME FROM CUSTOMER_ORG WHERE ENABLED = 1
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -205,11 +208,14 @@
 </table>
 <h4>按钮1：查询（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：按经销商、事业部、年月等条件查询余额明细</li><li>第2点：返回各来源的余额变动明细记录</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/inlimit-balance-header/query</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM MKT_INLIMIT_BALANCE_DETAILS 
-WHERE (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
-  AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
-  AND CREATE_TIME BETWEEN #&#123;startTime&#125; AND #&#123;endTime&#125;
-ORDER BY CREATE_TIME DESC</code></pre>
+
+```sql
+SELECT * FROM MKT_INLIMIT_BALANCE_DETAILS 
+WHERE (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
+  AND (ENTID = #{entid} OR #{entid} IS NULL)
+  AND CREATE_TIME BETWEEN #{startTime} AND #{endTime}
+ORDER BY CREATE_TIME DESC
+```
 <h4>按钮2：导出（列表页）</h4>
 <ul><li><strong>触发条件</strong>：有查询结果时可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：将当前查询结果导出为Excel文件</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/inlimit-balance-header/exportBalance</code></li><li><strong>排查SQL</strong>：同查询SQL</li></ul>
 </KbCard>
@@ -269,38 +275,53 @@ ORDER BY CREATE_TIME DESC</code></pre>
 </table>
 <h4>报错1：查询无数据</h4>
 <ul><li><strong>触发条件</strong>：用户按经销商/事业部/年月查询余额明细，MKT_INLIMIT_BALANCE_DETAILS表返回空结果集</li><li><strong>逻辑分析</strong>：明细数据由定时任务AdvertDetailJob定期调用executeDetailLine方法生成，汇总扣减金额、额度内兑现、装修申请兑现、到期调整、其他调整、出库占用、门头额度内兑现7个来源。无数据根因有三类：(1)定时任务AdvertDetailJob未配置或未启动，MKT_INLIMIT_BALANCE_DETAILS表为空；(2)查询的年月区间（CREATE_TIME BETWEEN startTime AND endTime）内无明细记录；(3)指定经销商/事业部在区间内无余额变动。需先确认定时任务执行日志，再核查表中是否有该经销商任何数据</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT INLIMIT_BALANCE_DETAILS_ID, CUSTOMER_CODE, CUSTOMER_NAME, ENTNAME,
+
+```sql
+SELECT INLIMIT_BALANCE_DETAILS_ID, CUSTOMER_CODE, CUSTOMER_NAME, ENTNAME,
          ORDER_TYPE, SOURCE_SYSTEM, ORDER_NUMBER, AMOUNT, CREATE_TIME
   FROM MKT_INLIMIT_BALANCE_DETAILS
-  WHERE (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
-    AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
-    AND CREATE_TIME BETWEEN #&#123;startTime&#125; AND #&#123;endTime&#125;
-  ORDER BY CREATE_TIME DESC;</code></pre>
+  WHERE (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
+    AND (ENTID = #{entid} OR #{entid} IS NULL)
+    AND CREATE_TIME BETWEEN #{startTime} AND #{endTime}
+  ORDER BY CREATE_TIME DESC;
+```
 <h4>报错2：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击查询或导出按钮，前端调用GET /v1/&#123;organizationId&#125;/inlimit-balance-header/query或/exportBalance接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面为hlod低代码页面，数据通过后端MktInlimitBalanceHeaderService提供。网络请求失败根因有四类：(1)ae-business服务未启动或宕机，接口无法访问；(2)数据库连接异常，MKT_INLIMIT_BALANCE_DETAILS表查询超时；(3)查询条件导致SQL执行计划退化（如未带索引的全表扫描）；(4)网关或网络层故障。需先确认ae-business服务健康状态，再核查接口响应时间</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查表数据量是否异常增长导致查询超时
+
+```sql
+-- 核查表数据量是否异常增长导致查询超时
   SELECT COUNT(*) AS 总记录数, MIN(CREATE_TIME) AS 最早时间, MAX(CREATE_TIME) AS 最晚时间
-  FROM MKT_INLIMIT_BALANCE_DETAILS;</code></pre>
+  FROM MKT_INLIMIT_BALANCE_DETAILS;
+```
 <h4>报错3：权限不足</h4>
 <ul><li><strong>触发条件</strong>：用户登录后进入经销商余额明细查询页面，当前用户无该经销商或事业部的数据权限</li><li><strong>逻辑分析</strong>：本页面按经销商和事业部维度查询，数据权限通过用户上下文CustomUserDetails的additionInfo控制可见经销商范围。权限不足根因有二：(1)用户未分配对应经销商的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应经销商/事业部数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查用户是否有该经销商的数据权限（具体权限表视系统配置而定）
+
+```sql
+-- 核查用户是否有该经销商的数据权限（具体权限表视系统配置而定）
   SELECT USER_ID, USER_NAME, CUSTOMER_CODE, ENABLED
   FROM USER_CUSTOMER_AUTH
-  WHERE USER_ID = #&#123;userId&#125; AND CUSTOMER_CODE = #&#123;customerCode&#125;;</code></pre>
+  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};
+```
 <h4>报错4：年月查询条件为空</h4>
 <ul><li><strong>触发条件</strong>：用户未选择年月区间直接点击查询</li><li><strong>逻辑分析</strong>：年月区间是查询余额明细的关键条件，CREATE_TIME BETWEEN startTime AND endTime用于限定明细记录的时间范围。未选择年月将导致查询全表数据，可能因数据量过大引起超时或返回无关数据。低代码页面查询栏配置年月为建议必填条件，未填写时toast提示后阻断查询</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查未带时间条件的全表数据量
+
+```sql
+-- 核查未带时间条件的全表数据量
   SELECT COUNT(*) AS 全表记录数
   FROM MKT_INLIMIT_BALANCE_DETAILS
-  WHERE CUSTOMER_CODE = #&#123;customerCode&#125;;</code></pre>
+  WHERE CUSTOMER_CODE = #{customerCode};
+```
 <h4>报错5：导出失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击"导出"按钮，GET /v1/&#123;organizationId&#125;/inlimit-balance-header/exportBalance接口执行失败</li><li><strong>逻辑分析</strong>：导出接口基于当前查询条件导出MKT_INLIMIT_BALANCE_DETAILS数据为Excel。导出失败根因有三类：(1)查询结果集过大，超过导出限制（如单次导出超过10万行）；(2)服务内存不足，Excel生成时OOM；(3)查询条件未先执行，导出空结果。需缩小查询范围（限定经销商+年月）后重试</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 核查导出数据量是否超限
+
+```sql
+-- 核查导出数据量是否超限
   SELECT COUNT(*) AS 待导出行数
   FROM MKT_INLIMIT_BALANCE_DETAILS
-  WHERE (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
-    AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
-    AND CREATE_TIME BETWEEN #&#123;startTime&#125; AND #&#123;endTime&#125;;</code></pre>
+  WHERE (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
+    AND (ENTID = #{entid} OR #{entid} IS NULL)
+    AND CREATE_TIME BETWEEN #{startTime} AND #{endTime};
+```
 </KbCard>
 
 <KbCard title="常见问题">

@@ -244,7 +244,10 @@
 </KbCard>
 
 <KbCard title="审批状态流转">
-<pre class="detail-sql" v-pre><code>待审批 → 审批通过 / 审批拒绝</code></pre>
+
+```sql
+待审批 → 审批通过 / 审批拒绝
+```
 <ul><li>审批状态由值集 <code>MBO.APPROVAL_RESULT</code> 定义</li><li>审批通过后自动回写讲师档案状态/价格</li><li>审批拒绝后讲师档案状态回退，允许修改重新提交</li></ul>
 </KbCard>
 
@@ -342,26 +345,38 @@
 
 <KbCard title="保存/提交校验">
 <ul><li>校验1：审批意见 approvalComments 必填 —— 保证审批拒绝时有可追溯的拒绝理由</li><li><strong>详细逻辑</strong>：审批结果为"拒绝"时，approvalComments 必填；通过时可选</li><li><strong>系统体现</strong>：前端表单校验，未填写时阻止提交</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LECTURER_APPROVAL_ID, LECTURER_APPROVAL_CODE, APPROVAL_RESULT, APPROVAL_REMARK
+
+```sql
+SELECT LECTURER_APPROVAL_ID, LECTURER_APPROVAL_CODE, APPROVAL_RESULT, APPROVAL_REMARK
     FROM MA_LECTURER_APPROVAL
-    WHERE APPROVAL_RESULT = 'reject' AND (APPROVAL_REMARK IS NULL OR APPROVAL_REMARK = '');</code></pre>
+    WHERE APPROVAL_RESULT = 'reject' AND (APPROVAL_REMARK IS NULL OR APPROVAL_REMARK = '');
+```
 <ul><li>校验2：档案审批通过时讲师级别 lecturerLevel 必填 —— 保证生效档案具备完整等级信息</li><li><strong>详细逻辑</strong>：approvalType=archives 且结果=通过时，校验关联档案的 lecturerLevel 非空</li><li><strong>系统体现</strong>：后端 archivesAudit 接口校验，不通过返回业务异常</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT la.LECTURER_APPROVAL_CODE, la.LECTURER_ARCHIVES_CODE
+
+```sql
+SELECT la.LECTURER_APPROVAL_CODE, la.LECTURER_ARCHIVES_CODE
     FROM MA_LECTURER_APPROVAL la
     LEFT JOIN MA_LECTURER_ARCHIVE ar ON la.LECTURER_ARCHIVES_CODE = ar.LECTURER_ARCHIVES_CODE
     WHERE la.APPROVAL_TYPE = 'archives' AND la.APPROVAL_RESULT = 'pass'
-      AND (ar.LECTURER_LEVEL IS NULL OR ar.LECTURER_LEVEL = '');</code></pre>
+      AND (ar.LECTURER_LEVEL IS NULL OR ar.LECTURER_LEVEL = '');
+```
 <ul><li>校验3：档案审批通过时牌价 priceInfo 必填 —— 保证生效档案可参与点将计价</li><li><strong>详细逻辑</strong>：approvalType=archives 且结果=通过时，校验关联档案的 priceInfo 非空</li><li><strong>系统体现</strong>：后端 archivesAudit 接口校验</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT la.LECTURER_APPROVAL_CODE, la.LECTURER_ARCHIVES_CODE
+
+```sql
+SELECT la.LECTURER_APPROVAL_CODE, la.LECTURER_ARCHIVES_CODE
     FROM MA_LECTURER_APPROVAL la
     LEFT JOIN MA_LECTURER_ARCHIVE ar ON la.LECTURER_ARCHIVES_CODE = ar.LECTURER_ARCHIVES_CODE
     WHERE la.APPROVAL_TYPE = 'archives' AND la.APPROVAL_RESULT = 'pass'
-      AND (ar.PRICE IS NULL OR ar.PRICE = 0);</code></pre>
+      AND (ar.PRICE IS NULL OR ar.PRICE = 0);
+```
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="detail-sql" v-pre><code>待审批(approving) ──审批通过──→ 审批通过(pass)
-待审批(approving) ──审批拒绝──→ 审批拒绝(reject)</code></pre>
+
+```sql
+待审批(approving) ──审批通过──→ 审批通过(pass)
+待审批(approving) ──审批拒绝──→ 审批拒绝(reject)
+```
 <table class="kb-field-tbl">
 <thead>
 <tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
@@ -448,7 +463,9 @@
 </KbCard>
 
 <KbCard title="排查SQL">
-<pre class="detail-sql" v-pre><code>-- 查询待审批的讲师档案
+
+```sql
+-- 查询待审批的讲师档案
 SELECT
   la.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
   la.LECTURER_NAME     AS 讲师姓名,
@@ -479,7 +496,8 @@ SELECT
   la.APPROVAL_REASON   AS 审批意见
 FROM MA_LECTURER_APPROVAL la
 WHERE la.APPROVAL_TYPE = 'price'
-ORDER BY la.APPROVAL_TIME DESC;</code></pre>
+ORDER BY la.APPROVAL_TIME DESC;
+```
 </KbCard>
 
 </div>
@@ -508,12 +526,17 @@ ORDER BY la.APPROVAL_TIME DESC;</code></pre>
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：点击审批按钮前未选择列表行或选择多行</li><li><strong>逻辑分析</strong>：前端校验选中行数量=1，不满足时提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>2  FROM MA_LECTURER_APPROVAL la
+
+```sql
+2  FROM MA_LECTURER_APPROVAL la
   WHERE la.APPROVAL_RESULT = 'approving'
-  ORDER BY la.CREATE_DATE DESC;</code></pre>
+  ORDER BY la.CREATE_DATE DESC;
+```
 <h4>报错2：请选择讲师类型</h4>
 <ul><li><strong>触发条件</strong>：查询时未选择讲师类型</li><li><strong>逻辑分析</strong>：查询参数 pageType 取自讲师类型值，未选择时阻止查询并提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询存在审批数据但无讲师类型的异常记录
+
+```sql
+-- 查询存在审批数据但无讲师类型的异常记录
   SELECT la.LECTURER_APPROVAL_CODE AS 审批单号, la.LECTURER_TYPE AS 讲师类型
   FROM MA_LECTURER_APPROVAL la
   WHERE la.LECTURER_TYPE IS NULL OR la7) ```
@@ -521,25 +544,32 @@ ORDER BY la.APPROVAL_TIME DESC;</code></pre>
 #### 报错3：请求失败
 - **触发条件**：调用 list/page/archivesAudit/priceAudit/priceChangeApproval 等接口时
 - **逻辑分析**：后端 mbo-business 微服务异常，HTTP 状态码非 2xx
-- **排查SQL**：</code></pre>
+- **排查SQL**：
+```
 <p>SELECT la.LECTURER_APPROVAL_CODE AS 审批单号, la.APPROVAL_RESULT AS 审批状态,</p>
 <p>la.APPROVER AS 审批人, la.APPROVAL_DATE AS 审批时间</p>
 <p>FROM MA_LECTURER_APPROVAL la</p>
 <p>WHERE la.APPROVAL_RESULT = 'approving'</p>
 <p>ORDER BY la.CREATE_DATE DESC;</p>
-<pre class="detail-sql" v-pre><code>#### 报错4：网络异常/接口超时
+
+```sql
+#### 报错4：网络异常/接口超时
 - **触发条件**：任意接口调用时，网络中断或接口响应超过 axios timeout 配置
 - **逻辑分析**：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢等。需检查网络连通性、后端服务负载、数据库性能
-- **排查SQL**：</code></pre>
+- **排查SQL**：
+```
 <p>SELECT LECTURER_APPROVAL_CODE AS 审批单号, APPROVAL_RESULT AS 审批状态,</p>
 <p>TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间</p>
 <p>FROM MA_LECTURER_APPROVAL</p>
 <p>WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1</p>
 <p>ORDER BY LAST_UPDATE_DATE DESC;</p>
-<pre class="detail-sql" v-pre><code>#### 报错5：权限不足
+
+```sql
+#### 报错5：权限不足
 - **触发条件**：点击审批按钮时，当前用户无对应 permissionList 权限码
 - **逻辑分析**：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限
-- **排查SQL**：</code></pre>
+- **排查SQL**：
+```
 <p>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码</p>
 <p>FROM SYS_USER U</p>
 <p>LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID</p>
@@ -547,36 +577,48 @@ ORDER BY la.APPROVAL_TIME DESC;</code></pre>
 <p>LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID</p>
 <p>LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID</p>
 <p>WHERE P.PERMISSION_CODE LIKE '%lecturer_approval%' ORDER BY U.USER_NAME;</p>
-<pre class="detail-sql" v-pre><code>#### 报错6：数据不存在
+
+```sql
+#### 报错6：数据不存在
 - **触发条件**：审批操作时，接口返回数据为空或审批单号不存在
 - **逻辑分析**：前端通过 lecturerApprovalCode 调用详情接口，后端查询 MA_LECTURER_APPROVAL 表无对应记录或记录已逻辑删除，返回空数据。常见根因：审批单号错误、审批已被删除、跨租户查询、数据权限隔离等。需检查 LECTURER_APPROVAL_CODE 有效性及数据权限
-- **排查SQL**：</code></pre>
+- **排查SQL**：
+```
 <p>SELECT LECTURER_APPROVAL_CODE AS 审批单号, LECTURER_TYPE AS 讲师类型,</p>
 <p>APPROVAL_RESULT AS 审批状态, DELETE_FLAG AS 删除标记</p>
 <p>FROM MA_LECTURER_APPROVAL</p>
 <p>WHERE DELETE_FLAG = 'Y' OR LECTURER_APPROVAL_CODE IS NULL;</p>
-<pre class="detail-sql" v-pre><code>#### 报错7：状态不允许操作
+
+```sql
+#### 报错7：状态不允许操作
 - **触发条件**：点击审批按钮时，审批状态不在允许操作的状态范围内
 - **逻辑分析**：后端校验审批状态机，如审批要求 APPROVAL_RESULT 为 approaching（审批中）。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查审批当前状态及操作流程
-- **排查SQL**：</code></pre>
+- **排查SQL**：
+```
 <p>SELECT LECTURER_APPROVAL_CODE AS 审批单号, LECTURER_TYPE AS 讲师类型,</p>
 <p>APPROVAL_RESULT AS 审批状态, ERROR_INFO AS 异常问题</p>
 <p>FROM MA_LECTURER_APPROVAL</p>
 <p>WHERE APPROVAL_RESULT NOT IN ('approving','approved','reject')</p>
 <p>ORDER BY CREATE_DATE DESC;</p>
-<pre class="detail-sql" v-pre><code>#### 报错8：审批意见不能为空
+
+```sql
+#### 报错8：审批意见不能为空
 - **触发条件**：提交审批时，APPROVAL_COMMENTS 字段为空
 - **逻辑分析**：前端审批弹窗对 approvalComments 字段配置 required 校验，提交前校验审批意见是否填写，为空则阻止提交并提示"审批意见不能为空"。审批意见用于记录审批人决策依据，保证审批留痕完整可追溯
-- **排查SQL**：</code></pre>
+- **排查SQL**：
+```
 <p>SELECT LECTURER_APPROVAL_CODE AS 审批单号, APPROVAL_RESULT AS 审批结果,</p>
 <p>APPROVAL_COMMENTS AS 审批意见</p>
 <p>FROM MA_LECTURER_APPROVAL</p>
 <p>WHERE APPROVAL_RESULT IN ('approved','reject')</p>
 <p>AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');</p>
-<pre class="detail-sql" v-pre><code>#### 报错9：值集数据不显示
+
+```sql
+#### 报错9：值集数据不显示
 - **触发条件**：查询条件或列表中讲师类型等下拉选项为空
 - **逻辑分析**：前端通过 lookupCode 查询值集 MBO.LECTURER_TYPE、MBO.APPROVAL_RESULT 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集
-- **排查SQL**：</code></pre>
+- **排查SQL**：
+```
 <p>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,</p>
 <p>LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记</p>
 <p>FROM SYS_LOOKUP_VALUE</p>

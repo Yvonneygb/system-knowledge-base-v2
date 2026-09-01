@@ -243,12 +243,17 @@
 </table>
 <h4>报错1：查询失败，请稍后重试</h4>
 <ul><li><strong>触发条件</strong>：列表页点击"查询"按钮时，后端接口<code>GET /v1/&#123;orgId&#125;/crossBuSalesList</code>返回非200状态码或响应超时</li><li><strong>逻辑分析</strong>：前端DataSet transport.read发起GET请求至CRM服务<code>crossBuSalesList</code>接口，后端<code>LnkCrossBuSalesListServiceImpl.selectList</code>通过<code>PageHelper.doPageAndSort</code>分页查询<code>LnkCrossBuSalesListMapper.selectList</code>。当数据库连接异常、SQL执行超时或服务不可用时，HZERO框架捕获异常并返回错误响应，前端axios拦截器统一提示"查询失败"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查销售清单表是否可正常访问及数据量
+
+```sql
+-- 检查销售清单表是否可正常访问及数据量
   SELECT COUNT(1) AS 销售清单总记录数
-  FROM LNK_CROSS_BU_SALES_LIST;</code></pre>
+  FROM LNK_CROSS_BU_SALES_LIST;
+```
 <h4>报错2：权限不足，无法访问</h4>
 <ul><li><strong>触发条件</strong>：用户访问跨事业部产品销售清单菜单或点击导出按钮时，当前角色未配置对应权限编码</li><li><strong>逻辑分析</strong>：前端页面通过<code>PERMISSION_PREFIX=hzero.c.crm.cross-bu-sales-list</code>配置权限，导出按钮权限编码为<code>hzero.c.crm.cross-bu-sales-list.button.export</code>。HZERO权限拦截器校验用户角色权限，未配置时返回403，前端路由守卫或按钮权限指令拦截访问。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询当前用户角色是否分配了销售清单菜单权限
+
+```sql
+-- 查询当前用户角色是否分配了销售清单菜单权限
   SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码, P.TYPE AS 权限类型
   FROM HZERO.IAM_USER U
   JOIN HZERO.IAM_MEMBER M ON M.MEMBER_ID = U.ID
@@ -256,57 +261,76 @@
   JOIN HZERO.IAM_ROLE_PERMISSION RP ON RP.ROLE_ID = R.ID
   JOIN HZERO.IAM_PERMISSION P ON P.ID = RP.PERMISSION_ID
   WHERE U.REAL_NAME = :用户名
-    AND P.CODE LIKE 'hzero.c.crm.cross-bu-sales-list%';</code></pre>
+    AND P.CODE LIKE 'hzero.c.crm.cross-bu-sales-list%';
+```
 <h4>报错3：登录已过期，请重新登录</h4>
 <ul><li><strong>触发条件</strong>：用户在页面操作时，HZERO Token过期或被踢出登录</li><li><strong>逻辑分析</strong>：前端axios请求携带Authorization Token访问后端接口，后端网关校验Token有效性。Token过期时返回401状态码，前端axios响应拦截器捕获401并跳转登录页。常见于长时间未操作或单点登录会话超时。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询用户最近登录会话状态（HZERO OAuth Token表）
+
+```sql
+-- 查询用户最近登录会话状态（HZERO OAuth Token表）
   SELECT U.REAL_NAME AS 用户名, T.TOKEN_VALUE AS 令牌, T.EXPIRES_IN AS 有效期秒,
          T.CREATE_TIME AS 创建时间
   FROM HZERO.OAUTH_ACCESS_TOKEN T
   JOIN HZERO.IAM_USER U ON U.ID = T.USER_ID
   WHERE U.REAL_NAME = :用户名
-  ORDER BY T.CREATE_TIME DESC;</code></pre>
+  ORDER BY T.CREATE_TIME DESC;
+```
 <h4>报错4：暂无数据</h4>
 <ul><li><strong>触发条件</strong>：列表页查询返回空列表，前端DataSet无数据渲染</li><li><strong>逻辑分析</strong>：前端<code>crossBuSalesList</code>接口返回<code>content</code>为空数组，<code>totalElements</code>为0。根因可能为：1）查询条件过严无匹配数据；2）上游跨事业部产品销售申请单未审批通过，<code>syncFromApprovedForm</code>未写入销售清单；3）定时任务已将所有记录置为失效。前端FilterTableCom展示"暂无数据"占位。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查是否有审批通过的申请单及其明细行数、销售清单同步数
+
+```sql
+-- 检查是否有审批通过的申请单及其明细行数、销售清单同步数
   SELECT F.FORM_CODE AS 申请单号, F.STATUS AS 申请单状态,
          (SELECT COUNT(1) FROM LNK_CROSS_BU_APP_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 明细行数,
          (SELECT COUNT(1) FROM LNK_CROSS_BU_SALES_LIST S WHERE S.FORM_CODE = F.FORM_CODE) AS 清单同步数
   FROM LNK_CROSS_BU_APP_FORM F
   WHERE F.STATUS = 'APPROVED'
-  ORDER BY F.CREATION_DATE DESC;</code></pre>
+  ORDER BY F.CREATION_DATE DESC;
+```
 <h4>报错5：导出失败，请稍后重试</h4>
 <ul><li><strong>触发条件</strong>：点击"导出"按钮时，导出接口<code>GET /v1/&#123;orgId&#125;/crossBuSalesList/export</code>返回异常或导出文件生成失败</li><li><strong>逻辑分析</strong>：前端<code>ExcelExportPro</code>组件调用导出接口，后端<code>LnkCrossBuSalesListController.export</code>通过<code>@ExcelExport</code>注解导出<code>LnkCrossBuSalesListExport</code>类型数据。<code>exportList</code>方法先分页查询再通过<code>PageUtil.convert</code>转换为导出VO。失败原因可能为：1）查询数据量过大导致内存溢出；2）<code>@ProcessLovValue</code>值集翻译异常；3）Excel生成组件异常。前端异步导出，失败时notification.error提示。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查当前查询条件下数据量是否过大
+
+```sql
+-- 检查当前查询条件下数据量是否过大
   SELECT COUNT(1) AS 待导出记录数,
          MIN(S.CREATION_DATE) AS 最早记录时间,
          MAX(S.CREATION_DATE) AS 最晚记录时间
   FROM LNK_CROSS_BU_SALES_LIST S
   WHERE S.STATUS = 'valid'
-    AND TRUNC(S.CREATION_DATE) BETWEEN TRUNC(SYSDATE) - 30 AND TRUNC(SYSDATE);</code></pre>
+    AND TRUNC(S.CREATION_DATE) BETWEEN TRUNC(SYSDATE) - 30 AND TRUNC(SYSDATE);
+```
 </KbCard>
 
 <KbCard title="常见问题">
 <ul><li>问题1：销售清单中查不到审批通过的申请单数据</li><li>原因：申请单审批回调未成功执行或明细行为空。排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT f.FORM_CODE, f.STATUS, 
+
+```sql
+SELECT f.FORM_CODE, f.STATUS, 
            (SELECT COUNT(1) FROM LNK_CROSS_BU_APP_FORM_ITEM i WHERE i.HEAD_ID = f.ID) AS item_count,
            (SELECT COUNT(1) FROM LNK_CROSS_BU_SALES_LIST s WHERE s.FORM_CODE = f.FORM_CODE) AS sales_count
     FROM LNK_CROSS_BU_APP_FORM f
-    WHERE f.STATUS = 'APPROVED';</code></pre>
+    WHERE f.STATUS = 'APPROVED';
+```
 <ul><li>解决思路：确认申请单状态为APPROVED且明细行不为空，检查OA审批回调日志</li></ul>
 <ul><li>问题2：销售清单状态为有效但产品在价目表中查不到有效价格</li><li>原因：定时任务已将价目表有效价格明细失效但销售清单记录尚未更新，或价目表本身无有效价格。排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT s.PROD_CODE, s.SALES_DEPT_CODE, s.STATUS, s.EFF_END_DATE,
+
+```sql
+SELECT s.PROD_CODE, s.SALES_DEPT_CODE, s.STATUS, s.EFF_END_DATE,
            (SELECT COUNT(1) FROM LNK_PRICE_LIST_ITEM pl 
             WHERE pl.PROD_CODE = s.PROD_CODE 
-              AND pl.EFF_END_DATE &gt;= TRUNC(SYSDATE)) AS valid_price_count
+              AND pl.EFF_END_DATE >= TRUNC(SYSDATE)) AS valid_price_count
     FROM LNK_CROSS_BU_SALES_LIST s
-    WHERE s.STATUS = 'valid';</code></pre>
+    WHERE s.STATUS = 'valid';
+```
 <ul><li>解决思路：检查定时任务执行日志，确认价目表是否有对应产品的有效价格</li></ul>
 <ul><li>问题3：定时任务未自动失效过期记录</li><li>原因：定时任务crossBuSalesListExpireJob未在调度平台配置或执行异常。排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ID, PROD_CODE, SALES_DEPT_CODE, STATUS, EFF_END_DATE
+
+```sql
+SELECT ID, PROD_CODE, SALES_DEPT_CODE, STATUS, EFF_END_DATE
     FROM LNK_CROSS_BU_SALES_LIST
     WHERE STATUS = 'valid'
-      AND TRUNC(EFF_END_DATE) &lt;= TRUNC(SYSDATE);</code></pre>
+      AND TRUNC(EFF_END_DATE) <= TRUNC(SYSDATE);
+```
 <ul><li>解决思路：检查HZERO调度平台任务配置，确认任务crossBuSalesListExpireJob已启用且每天执行</li></ul>
 </KbCard>
 

@@ -582,7 +582,9 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+
+```text
+NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
                                        │              ├─ 生成额度内/外兑现记录
                                        │              ├─ 回写装修申请单
                                        │              └─ 同步资金池
@@ -592,7 +594,8 @@
                                        └──退回──→ REBUT(已退回)
 
 NEW/REJECTED ──作废──→ INTERRUPT(已作废)
-NEW ──删除──→ (删除)</code></pre>
+NEW ──删除──→ (删除)
+```
 </KbCard>
 
 <KbCard title="工作流">

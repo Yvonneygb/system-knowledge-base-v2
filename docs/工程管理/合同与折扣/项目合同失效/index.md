@@ -261,31 +261,43 @@
 </table>
 <h4>报错1：失效单不存在</h4>
 <ul><li><strong>触发条件</strong>：查询项目合同失效单详情时，按DISABLE_NO查询EPM_PROJECT_DISABLE返回null</li><li><strong>逻辑分析</strong>：详情方法中按DISABLE_NO查询失效单，若返回null则抛出阻断性报错。需检查失效单号有效性</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_CODE, epd.CONTRACT_CODE, epd.HZ_APPROVE_STATUS
+
+```sql
+SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_CODE, epd.CONTRACT_CODE, epd.HZ_APPROVE_STATUS
   FROM EPM_PROJECT_DISABLE epd
   WHERE epd.DISABLE_NO = :disableNo
-  -- 若返回空，说明失效单不存在</code></pre>
+  -- 若返回空，说明失效单不存在
+```
 <h4>报错2：合同已失效，不可重复失效</h4>
 <ul><li><strong>触发条件</strong>：提交项目合同失效申请时，合同VALID=3(已失效)</li><li><strong>逻辑分析</strong>：提交校验中按CONTRACT_CODE查询EPM_PROJECT_CONTRACT，若VALID=3则抛出阻断性报错。无需重复操作</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.VALID, epc.HZ_APPROVE_STATUS
+
+```sql
+SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.VALID, epc.HZ_APPROVE_STATUS
   FROM EPM_PROJECT_CONTRACT epc
   WHERE epc.CONTRACT_CODE = :contractCode
     AND epc.VALID = 3
-  -- 查出已失效的合同</code></pre>
+  -- 查出已失效的合同
+```
 <h4>报错3：仅新建状态单据允许删除</h4>
 <ul><li><strong>触发条件</strong>：删除项目合同失效单时，单据HZ_APPROVE_STATUS非NEW</li><li><strong>逻辑分析</strong>：删除方法中校验单据状态为NEW，其他状态(审批中/已通过/已拒绝)不允许删除。该报错为阻断性报错</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.HZ_APPROVE_STATUS, epd.VALID
+
+```sql
+SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.HZ_APPROVE_STATUS, epd.VALID
   FROM EPM_PROJECT_DISABLE epd
   WHERE epd.DISABLE_ID = :disableId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre>
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'
+```
 <h4>报错4：项目报备数据不存在</h4>
 <ul><li><strong>触发条件</strong>：项目合同失效审批通过后推送CRM时，按PROJECT_ID查询EPM_REPORT为空</li><li><strong>逻辑分析</strong>：在EpmProjectDisableServiceImpl审批回调方法中(line 133)，审批通过后按PROJECT_ID查询EPM_REPORT项目报备表，若返回空集合则抛出CommonException("项目报备数据不存在")。该报错发生在审批通过后的CRM推送环节，需检查项目报备数据是否完整</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_ID, epd.PROJECT_CODE,
+
+```sql
+SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_ID, epd.PROJECT_CODE,
          epd.HZ_APPROVE_STATUS,
          (SELECT COUNT(1) FROM EPM_REPORT er WHERE er.PROJECT_ID = epd.PROJECT_ID) AS 报备数据数
   FROM EPM_PROJECT_DISABLE epd
   WHERE epd.DISABLE_ID = :disableId
-  -- 期望 报备数据数 &gt; 0</code></pre>
+  -- 期望 报备数据数 > 0
+```
 </KbCard>
 
 <KbCard title="常见问题">

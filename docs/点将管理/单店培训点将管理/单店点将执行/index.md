@@ -291,14 +291,17 @@
 </table>
 <blockquote>结束执行弹窗包含实际开始/结束时间和备注，结束执行人自动填充当前用户</blockquote>
 <blockquote>查询SQL（结束执行后更新申请状态）：</blockquote>
-<pre class="detail-sql" v-pre><code>UPDATE TRAIN_APPLY
+
+```sql
+UPDATE TRAIN_APPLY
 SET REAL_START_DATE = TO_DATE(:realStartDate, 'YYYY-MM-DD'),
     REAL_END_DATE = TO_DATE(:realEndDate, 'YYYY-MM-DD'),
     END_EXECUTE_USER_NAME = :currentUserName,
     END_REMARK = :endExecuteRemark,
     ORDER_LECTURE_STATE = 'completed',
     LAST_UPDATE_DATE = SYSDATE
-WHERE APPLY_CODE = :applyCode;</code></pre>
+WHERE APPLY_CODE = :applyCode;
+```
 <h4>弹窗2：特殊取消弹窗（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -312,11 +315,14 @@ WHERE APPLY_CODE = :applyCode;</code></pre>
 </table>
 <blockquote>特殊取消弹窗同时展示申请详情（type=view）</blockquote>
 <blockquote>查询SQL（特殊取消后更新申请状态）：</blockquote>
-<pre class="detail-sql" v-pre><code>UPDATE TRAIN_APPLY
+
+```sql
+UPDATE TRAIN_APPLY
 SET CANCEL_REASON = :cancelReason,
     ORDER_LECTURE_STATE = 'cancelled',
     LAST_UPDATE_DATE = SYSDATE
-WHERE APPLY_CODE = :applyCode;</code></pre>
+WHERE APPLY_CODE = :applyCode;
+```
 <h4>弹窗3：流程摘要弹窗（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -329,7 +335,9 @@ WHERE APPLY_CODE = :applyCode;</code></pre>
 </table>
 <blockquote>流程摘要弹窗通过ProcessDetail组件展示流程审批历史</blockquote>
 <blockquote>查询SQL（流程审批历史）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT
+
+```sql
+SELECT
   ph.NODE_NAME,
   ph.APPROVER_NAME,
   ph.APPROVE_RESULT,
@@ -337,7 +345,8 @@ WHERE APPLY_CODE = :applyCode;</code></pre>
   TO_CHAR(ph.APPROVE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS APPROVE_TIME
 FROM PROCESS_HISTORY ph
 WHERE ph.BUSINESS_CODE = :applyCode
-ORDER BY ph.APPROVE_TIME;</code></pre>
+ORDER BY ph.APPROVE_TIME;
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -361,26 +370,47 @@ ORDER BY ph.APPROVE_TIME;</code></pre>
 </table>
 <h4>按钮1：查看申请（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：通过openTab打开新标签页</li><li>第2点：跳转经销商单店点将详情页，传入isExecute=true</li><li><strong>接口调用</strong>：无，仅前端页面跳转</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+
+```sql
+SELECT * FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;
+```
 <h4>按钮2：查看确认书（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：调用queryPDF接口查询法大大确认书PDF</li><li>第2点：参数为applyCode、applyTypeOne=train、applyTypeTwo=apply</li><li>第3点：成功返回PDF URL后通过window.open新窗口打开</li><li>第4点：未查询到时提示"未查询到对应的确认书"</li><li><strong>接口调用</strong>：GET queryPDF</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, FDD_PDF_URL FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+
+```sql
+SELECT APPLY_CODE, FDD_PDF_URL FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;
+```
 <h4>按钮3：特殊取消（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：打开特殊取消弹窗，展示申请详情</li><li>第2点：填写取消原因（必填）</li><li>第3点：提交调用POST /mlt/trainApply/specialCancel接口</li><li><strong>接口调用</strong>：POST /mlt/trainApply/specialCancel</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, ORDER_LECTURE_STATE, CANCEL_REASON FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+
+```sql
+SELECT APPLY_CODE, ORDER_LECTURE_STATE, CANCEL_REASON FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;
+```
 <h4>按钮4：结束执行（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：打开结束执行弹窗</li><li>第2点：填写实际开始时间、实际结束时间（均必填）</li><li>第3点：结束执行人自动填充当前登录用户</li><li>第4点：填写结束备注（必填）</li><li>第5点：提交调用POST /mlt/trainApply/endExecute接口</li><li><strong>接口调用</strong>：POST /mlt/trainApply/endExecute</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, REAL_START_DATE, REAL_END_DATE, END_EXECUTE_USER_NAME, END_REMARK
-FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+
+```sql
+SELECT APPLY_CODE, REAL_START_DATE, REAL_END_DATE, END_EXECUTE_USER_NAME, END_REMARK
+FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;
+```
 <h4>按钮5：同步OA（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：调用pushOa接口推送OA流程</li><li>第2点：同步成功后刷新当前页列表</li><li><strong>接口调用</strong>：POST /mlt/trainApply/pushOa</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, OA_PUSH_STATUS, ERROR_INFO FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+
+```sql
+SELECT APPLY_CODE, OA_PUSH_STATUS, ERROR_INFO FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;
+```
 <h4>按钮6：同步FDD（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：调用pushFdd接口推送法大大</li><li>第2点：同步成功后刷新当前页列表</li><li><strong>接口调用</strong>：POST /mlt/trainApply/pushFdd</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, FDD_PUSH_STATUS, FDD_PDF_URL FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+
+```sql
+SELECT APPLY_CODE, FDD_PUSH_STATUS, FDD_PDF_URL FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;
+```
 <h4>按钮7：同步CRM（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：调用sendCrmOrder接口推送CRM</li><li>第2点：同步成功后刷新当前页列表</li><li><strong>接口调用</strong>：POST /mlt/trainApply/sendCrmOrder</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, CRM_ORDER_CODE, CRM_ORDER_STATUS FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+
+```sql
+SELECT APPLY_CODE, CRM_ORDER_CODE, CRM_ORDER_STATUS FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -391,19 +421,25 @@ FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
 <p>- 第3点：结束备注endExecuteRemark必填</p>
 <ul><li>系统体现：toast提醒对应字段不能为空</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE
+
+```sql
+SELECT APPLY_CODE
     FROM TRAIN_APPLY
     WHERE APPLY_CODE = :applyCode
-      AND (REAL_START_DATE IS NULL OR REAL_END_DATE IS NULL OR END_REMARK IS NULL);</code></pre>
+      AND (REAL_START_DATE IS NULL OR REAL_END_DATE IS NULL OR END_REMARK IS NULL);
+```
 <ul><li>校验2：特殊取消原因必填 —— 确保取消操作有明确原因记录</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：取消原因cancelReason必填</p>
 <ul><li>系统体现：toast提醒"取消原因不能为空"</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE
+
+```sql
+SELECT APPLY_CODE
     FROM TRAIN_APPLY
     WHERE APPLY_CODE = :applyCode
-      AND CANCEL_REASON IS NULL;</code></pre>
+      AND CANCEL_REASON IS NULL;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -412,9 +448,12 @@ FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>待执行(PENDING) → 执行中(EXECUTING) → 已完成(COMPLETED)
+
+```text
+待执行(PENDING) → 执行中(EXECUTING) → 已完成(COMPLETED)
                       |
-                      └→ 特殊取消(CANCELLED)</code></pre>
+                      └→ 特殊取消(CANCELLED)
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -493,101 +532,140 @@ FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
 </table>
 <h4>报错1：请选择一条数据</h4>
 <ul><li><strong>触发条件</strong>：单选行操作（查看申请/查看确认书/特殊取消/结束执行/同步OA/同步FDD/同步CRM）前未选择列表行，或选择了多行</li><li><strong>逻辑分析</strong>：前端校验选中行数量=1，不满足时toast提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 本校验为前端选中行校验，无对应SQL；如需确认列表数据可执行：
+
+```sql
+-- 本校验为前端选中行校验，无对应SQL；如需确认列表数据可执行：
   SELECT ta.APPLY_CODE AS 申请编码, ta.TRAIN_NAME AS 培训名称, ta.ORDER_LECTURE_STATE AS 点将状态
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_TYPE_ONE = 'train' AND ta.APPROVAL_STATE = 'approved'
-  ORDER BY ta.UPDATE_DATE DESC;</code></pre>
+  ORDER BY ta.UPDATE_DATE DESC;
+```
 <h4>报错2：请求失败</h4>
 <ul><li><strong>触发条件</strong>：调用 page/queryPDF/specialCancel/endExecute/pushOa/pushFdd/sendCrmOrder 等接口时</li><li><strong>逻辑分析</strong>：后端 mbo-business 微服务异常、网络中断或接口返回非2xx状态码</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.ERROR_INFO AS 异常信息,
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.ERROR_INFO AS 异常信息,
          ta.CRM_ORDER_STATUS AS CRM状态, ta.UPDATE_DATE AS 更新时间
   FROM TRAIN_APPLY ta
   WHERE ta.ERROR_INFO IS NOT NULL
-  ORDER BY ta.UPDATE_DATE DESC;</code></pre>
+  ORDER BY ta.UPDATE_DATE DESC;
+```
 <h4>报错3：实际开始时间不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"结束执行"提交时，实际开始时间 realStartDate 为空</li><li><strong>逻辑分析</strong>：结束执行弹窗 realStartDate 字段必填，前端 endExecuteFormDS.validate() 校验不通过时提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_START_DATE AS 实际开始时间
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_START_DATE AS 实际开始时间
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND ta.REAL_START_DATE IS NULL;</code></pre>
+    AND ta.REAL_START_DATE IS NULL;
+```
 <h4>报错4：实际结束时间不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"结束执行"提交时，实际结束时间 realEndDate 为空</li><li><strong>逻辑分析</strong>：结束执行弹窗 realEndDate 字段必填，前端校验不通过时提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_END_DATE AS 实际结束时间
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_END_DATE AS 实际结束时间
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND ta.REAL_END_DATE IS NULL;</code></pre>
+    AND ta.REAL_END_DATE IS NULL;
+```
 <h4>报错5：结束备注不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"结束执行"提交时，结束备注 endExecuteRemark 为空</li><li><strong>逻辑分析</strong>：结束执行弹窗 endExecuteRemark 字段必填（TextArea），前端校验不通过时提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.END_REMARK AS 结束备注
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.END_REMARK AS 结束备注
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND (ta.END_REMARK IS NULL OR ta.END_REMARK = '');</code></pre>
+    AND (ta.END_REMARK IS NULL OR ta.END_REMARK = '');
+```
 <h4>报错6：取消原因不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"特殊取消"提交时，取消原因 cancelReason 为空</li><li><strong>逻辑分析</strong>：特殊取消弹窗 cancelReason 字段必填（TextArea），前端校验不通过时提示</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.CANCEL_REASON AS 取消原因
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.CANCEL_REASON AS 取消原因
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'cancelled'
-    AND (ta.CANCEL_REASON IS NULL OR ta.CANCEL_REASON = '');</code></pre>
+    AND (ta.CANCEL_REASON IS NULL OR ta.CANCEL_REASON = '');
+```
 <h4>报错7：未查询到对应的确认书</h4>
 <ul><li><strong>触发条件</strong>：点击"查看确认书"时，queryPDF 接口返回的 PDF URL 为空</li><li><strong>逻辑分析</strong>：调用 GET queryPDF 接口（参数 applyCode、applyTypeOne=train、applyTypeTwo=apply）未返回 PDF URL，可能因 FDD 推送未完成或失败</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.FDD_PDF_URL AS 确认书URL,
+
+```sql
+SELECT ta.APPLY_CODE AS 申请编码, ta.FDD_PDF_URL AS 确认书URL,
          ta.FDD_PUSH_STATUS AS FDD推送状态, ta.ERROR_INFO AS 异常信息
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
-    AND (ta.FDD_PDF_URL IS NULL OR ta.FDD_PDF_URL = '');</code></pre>
+    AND (ta.FDD_PDF_URL IS NULL OR ta.FDD_PDF_URL = '');
+```
 <h4>报错8：网络异常/接口超时</h4>
 <ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、外部系统响应慢等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错9：权限不足</h4>
 <ul><li><strong>触发条件</strong>：点击查看申请、特殊取消、结束执行、同步OA/FDD/CRM等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+
+```sql
+SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%single_store_general_execute%' ORDER BY U.USER_NAME;</code></pre>
+  WHERE P.PERMISSION_CODE LIKE '%single_store_general_execute%' ORDER BY U.USER_NAME;
+```
 <h4>报错10：数据不存在</h4>
 <ul><li><strong>触发条件</strong>：查看申请、结束执行等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 TRAIN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+```
 <h4>报错11：状态不允许操作</h4>
 <ul><li><strong>触发条件</strong>：点击结束执行、特殊取消等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如结束执行要求状态为执行中、特殊取消要求审批通过且培训开始前7天内等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态, APPROVAL_STATE AS 审核状态,
          CANCEL_APPROVAL_STATE AS 取消审核状态, ERROR_INFO AS 异常问题
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND ORDER_LECTURE_STATE NOT IN ('valid','executing','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre>
+  ORDER BY CREATE_DATE DESC;
+```
 <h4>报错12：同步外部系统失败</h4>
 <ul><li><strong>触发条件</strong>：点击同步CRM/同步OA/同步FDD按钮，对应推送接口返回失败</li><li><strong>逻辑分析</strong>：前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+
+```sql
+SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          CRM_ORDER_CODE AS CRM单号, CRM_ORDER_STATUS AS CRM订单状态,
          ERROR_INFO AS 异常问题,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
-    AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+    AND LAST_UPDATE_DATE >= SYSDATE - 7
+  ORDER BY LAST_UPDATE_DATE DESC;
+```
 <h4>报错13：值集数据不显示</h4>
 <ul><li><strong>触发条件</strong>：查询条件或列表中点将状态、审核状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.ORDER_LECTURE_STATE、MBO.APPLY_APPROVAL_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+
+```sql
+SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.ORDER_LECTURE_STATE','MBO.APPLY_APPROVAL_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+```
 </KbCard>
 
 <KbCard title="常见问题">

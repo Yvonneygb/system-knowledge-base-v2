@@ -294,13 +294,16 @@
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>NEW（新建） ──提交──→ RUN（审批中） ──审批通过──→ APPROVED（已审核）
+
+```text
+NEW（新建） ──提交──→ RUN（审批中） ──审批通过──→ APPROVED（已审核）
                          │
                          ├──审核拒绝──→ REJECTED（审核拒绝） ──提交──→ RUN（审批中）
                          │
                          └──撤回──→ NEW（新建）
 
-APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）</code></pre>
+APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -412,20 +415,28 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）</
 </table>
 <h4>报错1：说明书名称不能为空！</h4>
 <ul><li><strong>触发条件</strong>：详情页点击"保存"按钮时，说明书名称字段为空</li><li><strong>逻辑分析</strong>：前端DataSet.validate()校验说明书名称必填字段未通过，或后端实体注解@NotBlank校验失败。说明书名称是产品说明书的唯一标识，必填。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
+
+```sql
+SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
          S.STATUS AS 状态, S.HISTORY AS 是否历史版本
   FROM LNK_PROD_MANUAL S
-  WHERE S.ID = :manualId AND S.NAME IS NULL;</code></pre>
+  WHERE S.ID = :manualId AND S.NAME IS NULL;
+```
 <h4>报错2：产品编码不能为空</h4>
 <ul><li><strong>触发条件</strong>：调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，请求参数EsSpecDTO的itemCode字段为空</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>方法首先校验esSpec参数及itemCode，当<code>StringUtils.isEmpty(esSpec.getItemCode())</code>为true时，抛出<code>CommonException("产品编码不能为空")</code>。该接口供产品前端展示说明书PDF时调用，itemCode为必传参数。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查产品是否关联了说明书
+
+```sql
+-- 检查产品是否关联了说明书
   SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
          (SELECT COUNT(1) FROM ES_SPEC_MODEL M WHERE M.ITEM_CODE = P.PROD_CODE) AS 关联说明书数
   FROM LNK_PROD P
-  WHERE P.PROD_CODE = :产品编码;</code></pre>
+  WHERE P.PROD_CODE = :产品编码;
+```
 <h4>报错3：说明书不存在</h4>
 <ul><li><strong>触发条件</strong>：调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，根据itemCode、manualItemCode、attachmentUuid查询ES_SPEC未找到记录</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>调用<code>esSpecRepository.selectSpecDocs(itemCode, manualItemCode, attachmentUuid)</code>查询说明书，返回vo为null时抛出<code>CommonException("说明书不存在")</code>。根因可能为：1）产品未关联说明书；2）说明书未审批通过（APPROVED）；3）说明书为历史版本（history=2）未纳入查询。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查产品编码对应的说明书是否存在且已审核
+
+```sql
+-- 检查产品编码对应的说明书是否存在且已审核
   SELECT S.SPEC_ID AS 说明书ID, S.SPEC_TITLE AS 说明书名称, S.VER AS 版本,
          S.HZ_APPROVE_STATUS AS 审批状态, S.HISTORY AS 是否历史版本,
          M.ITEM_CODE AS 关联产品编码
@@ -433,31 +444,43 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）</
   JOIN ES_SPEC_MODEL M ON M.SPEC_ID = S.SPEC_ID
   WHERE M.ITEM_CODE = :产品编码
     AND S.HZ_APPROVE_STATUS = 'APPROVED'
-    AND NVL(S.HISTORY, 0) &lt;&gt; 2;</code></pre>
+    AND NVL(S.HISTORY, 0) <> 2;
+```
 <h4>报错4：说明书文件下载失败</h4>
 <ul><li><strong>触发条件</strong>：调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，说明书记录存在但文件下载异常</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>在查询到说明书后，通过<code>fileClient</code>下载文件。若fileUrl包含<code>@his_data@</code>则获取签名URL下载，否则通过<code>fileClient.downloadFile</code>下载。下载过程抛出Exception时，logger记录错误日志并抛出<code>CommonException(e.getMessage())</code>。根因可能为：1）文件存储服务不可用；2）附件已被删除；3）文件URL失效。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查说明书附件文档记录
+
+```sql
+-- 检查说明书附件文档记录
   SELECT S.SPEC_ID AS 说明书ID, S.SPEC_TITLE AS 说明书名称,
          D.DOC_ID AS 文档ID, D.DOCNAME AS 文档名称, D.ATTACHMENT_UUID AS 附件UUID
   FROM ES_SPEC S
   JOIN ES_DOCS D ON D.SPEC_ID = S.SPEC_ID
-  WHERE S.SPEC_ID = :说明书ID;</code></pre>
+  WHERE S.SPEC_ID = :说明书ID;
+```
 <h4>报错5：查询参数不能为空!</h4>
 <ul><li><strong>触发条件</strong>：调用<code>POST /v1/&#123;orgId&#125;/es-specs</code>（BcsApiController.querySpecUrl）查询说明书URL时，请求参数EsSpecParamDTO为null</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.querySpecUrl</code>方法首先校验param是否为null，为null时抛出<code>CommonException("查询参数不能为空!")</code>。该接口供BCS外部系统查询说明书URL调用。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查说明书关联型号表是否有数据（确认查询目标存在）
+
+```sql
+-- 检查说明书关联型号表是否有数据（确认查询目标存在）
   SELECT COUNT(1) AS 关联型号记录数
   FROM ES_SPECMODEL_REF R
-  WHERE R.ITEMCODE = :产品编码;</code></pre>
+  WHERE R.ITEMCODE = :产品编码;
+```
 <h4>报错6：查询类型只能是normal、custom，且对应值不能为空</h4>
 <ul><li><strong>触发条件</strong>：调用<code>POST /v1/&#123;orgId&#125;/es-specs</code>查询说明书URL时，type参数不为"normal"或"custom"，或type为normal时itemCode为空，type为custom时model为空</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.querySpecUrl</code>根据type分支校验：type="normal"时校验itemCode非空，type="custom"时校验model非空，其他type值均抛出<code>CommonException("查询类型只能是normal、custom，且对应值不能为空")</code>。normal模式按产品编码查询，custom模式按产品型号查询。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查按产品编码(normal)或型号(custom)能否查到说明书关联
+
+```sql
+-- 检查按产品编码(normal)或型号(custom)能否查到说明书关联
   SELECT R.ITEMCODE AS 产品编码, R.MODEL AS 产品型号, R.SPECID AS 说明书ID,
          R.MANUAL_ITEM_CODE AS 说明书物料编码
   FROM ES_SPECMODEL_REF R
-  WHERE R.ITEMCODE = :产品编码 OR R.MODEL = :产品型号;</code></pre>
+  WHERE R.ITEMCODE = :产品编码 OR R.MODEL = :产品型号;
+```
 <h4>报错7：权限不足，无法访问</h4>
 <ul><li><strong>触发条件</strong>：用户访问产品说明书列表页/详情页或点击新建/导出/版本升级按钮时，当前角色未配置对应权限编码</li><li><strong>逻辑分析</strong>：前端<code>PERMISSION_PREFIX=arrow-ae:productInfo:esSpecProp</code>，新建按钮权限<code>arrow-ae:productInfo:esSpecProp.button.create</code>，导出按钮权限<code>arrow-ae:productInfo:esSpecProp.button.export</code>，列表行查看权限<code>arrow-ae:productInfo:esSpecProp.list.button.line.view</code>。HZERO权限拦截器校验失败返回403。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询当前用户是否分配了说明书管理权限
+
+```sql
+-- 查询当前用户是否分配了说明书管理权限
   SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码, P.TYPE AS 权限类型
   FROM HZERO.IAM_USER U
   JOIN HZERO.IAM_MEMBER M ON M.MEMBER_ID = U.ID
@@ -465,33 +488,43 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）</
   JOIN HZERO.IAM_ROLE_PERMISSION RP ON RP.ROLE_ID = R.ID
   JOIN HZERO.IAM_PERMISSION P ON P.ID = RP.PERMISSION_ID
   WHERE U.REAL_NAME = :用户名
-    AND P.CODE LIKE 'arrow-ae:productInfo:esSpecProp%';</code></pre>
+    AND P.CODE LIKE 'arrow-ae:productInfo:esSpecProp%';
+```
 <h4>报错8：登录已过期，请重新登录</h4>
 <ul><li><strong>触发条件</strong>：用户在说明书页面操作时，HZERO Token过期或被踢出登录</li><li><strong>逻辑分析</strong>：前端axios请求携带Authorization Token访问后端接口，后端网关校验Token有效性。Token过期时返回401状态码，前端axios响应拦截器捕获401并跳转登录页。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 查询用户最近登录会话状态
+
+```sql
+-- 查询用户最近登录会话状态
   SELECT U.REAL_NAME AS 用户名, T.TOKEN_VALUE AS 令牌, T.EXPIRES_IN AS 有效期秒,
          T.CREATE_TIME AS 创建时间
   FROM HZERO.OAUTH_ACCESS_TOKEN T
   JOIN HZERO.IAM_USER U ON U.ID = T.USER_ID
   WHERE U.REAL_NAME = :用户名
-  ORDER BY T.CREATE_TIME DESC;</code></pre>
+  ORDER BY T.CREATE_TIME DESC;
+```
 <h4>报错9：暂无数据</h4>
 <ul><li><strong>触发条件</strong>：列表页查询返回空列表，前端DataSet无数据渲染</li><li><strong>逻辑分析</strong>：前端<code>es-specs/report</code>接口返回content为空数组。根因可能为：1）查询条件过严无匹配说明书；2）尚未创建任何说明书；3）说明书均为历史版本被过滤。前端FilterTableCom展示"暂无数据"占位。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查说明书总数及非历史版本数量
+
+```sql
+-- 检查说明书总数及非历史版本数量
   SELECT COUNT(1) AS 说明书总数,
-         SUM(CASE WHEN NVL(HISTORY, 0) &lt;&gt; 2 THEN 1 ELSE 0 END) AS 当前版本数,
+         SUM(CASE WHEN NVL(HISTORY, 0) <> 2 THEN 1 ELSE 0 END) AS 当前版本数,
          SUM(CASE WHEN HZ_APPROVE_STATUS = 'APPROVED' THEN 1 ELSE 0 END) AS 已审核数
-  FROM ES_SPEC;</code></pre>
+  FROM ES_SPEC;
+```
 <h4>报错10：版本升级失败，请稍后重试</h4>
 <ul><li><strong>触发条件</strong>：详情页点击"版本升级"按钮后保存时，调用<code>POST /v1/&#123;orgId&#125;/product-data/version-upgrade</code>接口返回异常</li><li><strong>逻辑分析</strong>：前端<code>handleUpgrade</code>将upgrade置为2、hzApproveStatus置为NEW、ver+1后保存。后端<code>ProductDataServiceImpl.versionUpgrade</code>根据specid查询原说明书主数据、关联型号、附件文档，复制创建新版本。当specid为null时直接返回null不创建新版本；当esSpecRepository.selectByPrimary查询不到原数据时后续操作NPE。版本升级按钮仅审批状态=APPROVED且history≠2时显示。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查待版本升级的说明书状态是否符合条件
+
+```sql
+-- 检查待版本升级的说明书状态是否符合条件
   SELECT SPEC_ID AS 说明书ID, SPEC_TITLE AS 说明书名称, VER AS 版本,
          HZ_APPROVE_STATUS AS 审批状态, HISTORY AS 是否历史版本,
          UPGRADE AS 是否升级标记, SOURCE_ID AS 源版本ID
   FROM ES_SPEC
   WHERE SPEC_ID = :说明书ID
     AND HZ_APPROVE_STATUS = 'APPROVED'
-    AND NVL(HISTORY, 0) &lt;&gt; 2;</code></pre>
+    AND NVL(HISTORY, 0) <> 2;
+```
 </KbCard>
 
 <KbCard title="常见问题">

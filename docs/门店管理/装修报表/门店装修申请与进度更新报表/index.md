@@ -216,7 +216,10 @@
 </table>
 <h4>按钮1：查询（查询页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：按查询条件调用报表查询接口，分页返回</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-apply-list/search</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DESC;</code></pre>
+
+```sql
+SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DESC;
+```
 <h4>按钮2：导出（查询页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：按当前查询条件导出Excel</li></ul>
 <p>8- <strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-export</p>
@@ -263,7 +266,9 @@
 </table>
 <h4>报错1：年度不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的cyear（年度）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询依赖年度定位FIN_FEE_APPLY_HEADER记录。若前端未选择年度、年度下拉框默认值未正确赋值（如系统时间获取异常），或传参丢失，后端校验cyear为空即抛异常，无法执行查询。装修申请单按年度归档，缺失年度将导致全表扫描或空结果。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          cyear               AS 预算年度,
          apply_type          AS 申请类型,
@@ -271,10 +276,13 @@
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   AND    cyear IS NULL
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错2：经销商名称不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，传入的custName（经销商名称）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询按经销商名称模糊匹配FIN_FEE_APPLY_HEADER.CUST_NAME。若前端未输入经销商名称且未设置默认值，或传参丢失，后端校验为空即抛异常。该条件用于缩小查询范围，缺失会导致全量数据返回，影响性能。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          cust_name           AS 经销商名称,
          terminal_name       AS 门店名称,
@@ -282,10 +290,13 @@
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   AND    (cust_name IS NULL OR cust_name = '')
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错3：门店名称不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，传入的terminalName（门店名称）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询按门店名称模糊匹配FIN_FEE_APPLY_HEADER.TERMINAL_NAME。若前端未输入门店名称且未设置默认值，或传参丢失，后端校验为空即抛异常。该条件用于定位具体门店的装修进度，缺失会导致该经销商下所有门店数据返回。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          cust_name           AS 经销商名称,
          terminal_name       AS 门店名称,
@@ -293,48 +304,64 @@
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   AND    (terminal_name IS NULL OR terminal_name = '')
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错4：报表查询失败：申请单状态异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，查询FIN_FEE_APPLY_HEADER时apply_type不等于1（装修申请类型）</li><li><strong>逻辑分析</strong>：本报表仅展示装修申请（apply_type=1）的进度数据。若数据来源错误（如apply_type被错误更新为其他值）、或历史数据迁移时apply_type未正确赋值，查询结果会缺失或包含非装修类申请单，导致报表数据异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+
+```sql
+SELECT fee_apply_id        AS 申请单ID,
          fee_apply_no        AS 申请单号,
          apply_type          AS 申请类型,
          cust_name           AS 经销商名称,
          terminal_name       AS 门店名称,
          create_time         AS 创建时间
   FROM   fin_fee_apply_header
-  WHERE  apply_type &lt;&gt; 1
+  WHERE  apply_type <> 1
   AND    fee_apply_no LIKE 'ZXSQ%'
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错5：导出失败：数据量超过限制</h4>
 <ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel时查询结果数据量超过系统配置的上限（如10万条）</li><li><strong>逻辑分析</strong>：导出接口会先执行查询统计结果数量，若超过系统配置的导出上限（防止OOM和性能问题），抛出异常阻止导出。常见根因：查询条件过宽（如未限制年度、经销商）、或历史数据堆积过多。需缩小查询条件或分批导出。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT cyear               AS 预算年度,
+
+```sql
+SELECT cyear               AS 预算年度,
          cust_name           AS 经销商名称,
          COUNT(*)            AS 申请单数量
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   GROUP  BY cyear, cust_name
-  HAVING COUNT(*) &gt; 10000
-  ORDER  BY 申请单数量 DESC;</code></pre>
+  HAVING COUNT(*) > 10000
+  ORDER  BY 申请单数量 DESC;
+```
 <h4>报错6：网络请求失败/接口调用异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-apply-list/search或GET /mkt-terminal-export接口时，前端未收到响应或收到非2xx状态码</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalApplyListSearch接口分页查询FIN_FEE_APPLY_HEADER（apply_type=1）。若后端ae-report服务未启动、Oracle数据库连接异常、SQL执行超时（如全表扫描无索引）、网络中断、或网关转发失败，均会导致接口调用异常。导出接口因需全量查询数据更易超时。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 装修申请单总数,
+
+```sql
+SELECT COUNT(*)            AS 装修申请单总数,
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
   FROM   fin_fee_apply_header
-  WHERE  apply_type = 1;</code></pre>
+  WHERE  apply_type = 1;
+```
 <h4>报错7：权限不足/未登录</h4>
 <ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre>
+
+```sql
+SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;
+```
 <h4>报错8：导出失败：网络异常</h4>
 <ul><li><strong>触发条件</strong>：点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-export接口过程中，网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口通过@ExcelExport(MktTerminalApplyListExportVO.class)注解实现Excel导出，后端先全量查询FIN_FEE_APPLY_HEADER（apply_type=1）再生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。与"数据量超过限制"不同，本报错侧重网络/超时层面。需重试导出或缩小查询条件减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT cyear               AS 预算年度,
+
+```sql
+SELECT cyear               AS 预算年度,
          COUNT(*)            AS 申请单数量
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   GROUP  BY cyear
-  ORDER  BY 申请单数量 DESC;</code></pre>
+  ORDER  BY 申请单数量 DESC;
+```
 </KbCard>
 
 <KbCard title="常见问题">

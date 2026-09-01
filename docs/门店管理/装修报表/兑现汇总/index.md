@@ -217,14 +217,17 @@
 </table>
 <h4>按钮1：查询（查询页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：按查询条件调用报表查询接口</li><li>第2点：分页返回兑现汇总数据</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/terminalReport/fin-fee-cashout-summary/search</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM fin_fee_cashout_header WHERE 1=1
-  AND (#&#123;budYear&#125; IS NULL OR bud_year = #&#123;budYear&#125;)
-  AND (#&#123;custName&#125; IS NULL OR cust_name LIKE '%'||#&#123;custName&#125;||'%')
-  AND (#&#123;terminalName&#125; IS NULL OR terminal_name LIKE '%'||#&#123;terminalName&#125;||'%')
-  AND (#&#123;cashoutType&#125; IS NULL OR cashout_type = #&#123;cashoutType&#125;)
-  AND (#&#123;startDate&#125; IS NULL OR create_time &gt;= #&#123;startDate&#125;)
-  AND (#&#123;endDate&#125; IS NULL OR create_time &lt;= #&#123;endDate&#125;)
-ORDER BY create_time DESC;</code></pre>
+
+```sql
+SELECT * FROM fin_fee_cashout_header WHERE 1=1
+  AND (#{budYear} IS NULL OR bud_year = #{budYear})
+  AND (#{custName} IS NULL OR cust_name LIKE '%'||#{custName}||'%')
+  AND (#{terminalName} IS NULL OR terminal_name LIKE '%'||#{terminalName}||'%')
+  AND (#{cashoutType} IS NULL OR cashout_type = #{cashoutType})
+  AND (#{startDate} IS NULL OR create_time >= #{startDate})
+  AND (#{endDate} IS NULL OR create_time <= #{endDate})
+ORDER BY create_time DESC;
+```
 </KbCard>
 
 <KbCard title="相关表：FIN_FEE_CASHOUT_HEADER（报销发票兑现主表-查询来源）">
@@ -267,42 +270,57 @@ ORDER BY create_time DESC;</code></pre>
 </table>
 <h4>报错1：查询年度不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的查询年度budYear参数为null或空字符串</li><li><strong>逻辑分析</strong>：兑现汇总报表按年度维度统计数据，年度是核心查询条件。校验逻辑检查入参budYear，为空则抛异常阻止查询。常见根因：用户未选择年度、年度下拉框未默认赋值当前年度、或前端传参丢失。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 兑现单数量
+
+```sql
+SELECT COUNT(*)            AS 兑现单数量
   FROM   fin_fee_cashout_header
   WHERE  bud_year IS NULL
-  AND    hz_approve_status = 'APPROVED';</code></pre>
+  AND    hz_approve_status = 'APPROVED';
+```
 <h4>报错2：查询时间范围异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的起始日期startDate&gt;结束日期endDate</li><li><strong>逻辑分析</strong>：时间范围查询要求起始日期不晚于结束日期。校验逻辑检查入参startDate与endDate，当startDate&gt;endDate则抛异常阻止查询。常见根因：用户手动选择日期范围错误、日期选择组件未做范围限制、或前端传参顺序颠倒。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_cashout_id      AS 兑现单ID,
+
+```sql
+SELECT fee_cashout_id      AS 兑现单ID,
          fee_cashout_no      AS 兑现单号,
          create_time         AS 创建时间,
          hz_approve_status   AS 审批状态
   FROM   fin_fee_cashout_header
   WHERE  hz_approve_status = 'APPROVED'
-  AND    create_time BETWEEN #&#123;startDate&#125; AND #&#123;endDate&#125;
-  AND    #&#123;startDate&#125; &gt; #&#123;endDate&#125;
-  ORDER  BY create_time DESC;</code></pre>
+  AND    create_time BETWEEN #{startDate} AND #{endDate}
+  AND    #{startDate} > #{endDate}
+  ORDER  BY create_time DESC;
+```
 <h4>报错3：兑现类型异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的兑现类型cashoutType既非1（额度内）也非2（额度外）且非空</li><li><strong>逻辑分析</strong>：兑现类型仅支持额度内(1)和额度外(2)两种，传入其他值会导致查询条件异常。校验逻辑检查入参cashoutType，非空且不在(1,2)范围内则抛异常。常见根因：前端下拉框值集配置错误、传参被篡改、或数据迁移导致脏数据。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT fee_cashout_id      AS 兑现单ID,
+
+```sql
+SELECT fee_cashout_id      AS 兑现单ID,
          fee_cashout_no      AS 兑现单号,
          cashout_type        AS 兑现类型,
          hz_approve_status   AS 审批状态
   FROM   fin_fee_cashout_header
   WHERE  cashout_type IS NOT NULL
   AND    cashout_type NOT IN (1, 2)
-  ORDER  BY create_time DESC;</code></pre>
+  ORDER  BY create_time DESC;
+```
 <h4>报错4：网络请求失败/接口调用异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/fin-fee-cashout-summary/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.finFeeCashoutSummarySearch接口分页查询FIN_FEE_CASHOUT_HEADER。若后端服务未启动、数据库连接异常、SQL执行超时（如全表扫描无索引）、网络中断、或反向代理（网关）转发失败，均会导致接口调用异常。常见根因：后端ae-report服务宕机、Oracle数据库连接池耗尽、查询条件过宽导致慢SQL、或网络抖动。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 兑现单总数,
+
+```sql
+SELECT COUNT(*)            AS 兑现单总数,
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
   FROM   fin_fee_cashout_header
-  WHERE  hz_approve_status = 'APPROVED';</code></pre>
+  WHERE  hz_approve_status = 'APPROVED';
+```
 <h4>报错5：权限不足/未登录</h4>
 <ul><li><strong>触发条件</strong>：页面加载或点击"查询"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre>
+
+```sql
+SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;
+```
 </KbCard>
 
 <KbCard title="常见问题">

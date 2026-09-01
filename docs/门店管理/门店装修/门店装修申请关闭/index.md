@@ -364,14 +364,17 @@
 </KbCard>
 
 <KbCard title="状态机">
-<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+
+```text
+NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
                                        │              ├─ 原申请单IS_CLOSE=2
                                        │              ├─ 原申请单HZ_APPROVE_STATUS=INTERRUPT
                                        │              └─ 扣减广告费/资金池额度
                                        │
                                        └──审批驳回──→ REJECTED(已驳回)
 
-NEW ──删除──→ (删除)</code></pre>
+NEW ──删除──→ (删除)
+```
 </KbCard>
 
 <KbCard title="工作流">
@@ -473,17 +476,17 @@ NEW ──删除──→ (删除)</code></pre>
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：提交时报"该门店申请单已发起门店验收流程，不允许发起门店申请关闭"">
+<KbCard title="Q1：提交时报&quot;该门店申请单已发起门店验收流程，不允许发起门店申请关闭&quot;">
 <p><strong>根因</strong>：关联的装修申请单已存在非作废状态(INTERRUPT)的验收报销单</p>
 <p><strong>解决方案</strong>：先作废相关验收报销单，再发起关闭申请</p>
 </KbCard>
 
-<KbCard title="Q2：计算扣除金额时报"公司参数Close_Amount未找到"">
+<KbCard title="Q2：计算扣除金额时报&quot;公司参数Close_Amount未找到&quot;">
 <p><strong>根因</strong>：系统参数Close_Amount(申请关闭扣减单价)未配置</p>
 <p><strong>解决方案</strong>：在系统参数管理中配置Close_Amount</p>
 </KbCard>
 
-<KbCard title="Q3：删除时报"不能删除非制单状态的单据"">
+<KbCard title="Q3：删除时报&quot;不能删除非制单状态的单据&quot;">
 <p><strong>根因</strong>：单据状态非NEW，可能已提交审批</p>
 <p><strong>解决方案</strong>：仅NEW状态可删除，已提交的单据需通过审批驳回后才能删除</p>
 </KbCard>

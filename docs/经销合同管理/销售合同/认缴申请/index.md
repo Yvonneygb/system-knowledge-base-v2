@@ -239,8 +239,11 @@
 </tbody>
 </table>
 <blockquote>查询SQL（后端接口）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME 
-FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
+
+```sql
+SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME 
+FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -267,13 +270,19 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
 <p>- 第1点：保存时校验合同ID不为空</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM CM_CONTRACT_PAYMENT_APPLY WHERE CONTRACT_ID IS NULL;</code></pre>
+
+```sql
+SELECT * FROM CM_CONTRACT_PAYMENT_APPLY WHERE CONTRACT_ID IS NULL;
+```
 <ul><li>校验2：认缴金额必须大于0 —— 确保认缴金额有效</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：保存时校验认缴金额大于0</p>
 <ul><li>系统体现：toast提醒</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM CM_CONTRACT_PAYMENT_APPLY WHERE APPLY_AMT &lt;= 0;</code></pre>
+
+```sql
+SELECT * FROM CM_CONTRACT_PAYMENT_APPLY WHERE APPLY_AMT <= 0;
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -282,15 +291,21 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
 <p>- 第1点：提交时校验认缴金额不超过合同未缴保证金余额</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_PAYMENT_SUMMARY S
-    WHERE A.CONTRACT_ID = S.CONTRACT_ID AND A.APPLY_AMT &gt; S.UNPAID_AMT;</code></pre>
+
+```sql
+SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_PAYMENT_SUMMARY S
+    WHERE A.CONTRACT_ID = S.CONTRACT_ID AND A.APPLY_AMT > S.UNPAID_AMT;
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审核
+
+```text
+新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审核
                                 │
-                                └──OA审批拒绝──→ 已拒绝</code></pre>
+                                └──OA审批拒绝──→ 已拒绝
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -380,68 +395,94 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
 </table>
 <h4>报错1：合同不能为空</h4>
 <ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择合同直接点击保存</li><li><strong>逻辑分析</strong>：保存接口cm-contract-payment-applys/save在写入CM_CONTRACT_PAYMENT_APPLY前校验CONTRACT_ID非空。合同是认缴申请的关联主体，未选择合同将导致认缴金额无归属，后续客户/法人（findCustomer接口）无法带出，未缴余额校验也无从执行。校验在Controller层前置拦截，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_ID, CONTRACT_NO, CUSTOMER_NAME,
+
+```sql
+SELECT APPLY_ID, APPLY_NO, CONTRACT_ID, CONTRACT_NO, CUSTOMER_NAME,
          APPLY_AMT, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE CONTRACT_ID IS NULL OR CONTRACT_NO IS NULL;</code></pre>
+  WHERE CONTRACT_ID IS NULL OR CONTRACT_NO IS NULL;
+```
 <h4>报错2：认缴金额必须大于0</h4>
 <ul><li><strong>触发条件</strong>：用户在认缴金额输入框填写0、负数或留空后点击保存</li><li><strong>逻辑分析</strong>：认缴金额（APPLY_AMT）代表申请认缴的保证金金额，必须为正数。0或负数无业务意义，且审批通过后汇总到认缴概况（CM_CONTRACT_PAYMENT_SUMMARY）将出现异常（认缴金额为0或负数导致未缴金额计算错误）。校验APPLY_AMT &gt; 0，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, APPLY_AMT, HZ_APPROVE_STATUS
+
+```sql
+SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, APPLY_AMT, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE APPLY_AMT IS NULL OR APPLY_AMT &lt;= 0;</code></pre>
+  WHERE APPLY_AMT IS NULL OR APPLY_AMT <= 0;
+```
 <h4>报错3：认缴金额超过未缴余额</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，提交校验发现APPLY_AMT &gt; 合同未缴保证金余额（UNPAID_AMT）</li><li><strong>逻辑分析</strong>：提交时校验认缴金额不超过合同未缴保证金余额，通过关联CM_CONTRACT_PAYMENT_APPLY.CONTRACT_ID与CM_CONTRACT_PAYMENT_SUMMARY.CONTRACT_ID比对UNPAID_AMT（未缴金额=认缴金额-已缴金额）。超出未缴余额意味着认缴超额，审批通过后已缴金额将超过认缴金额，保证金余额计算异常。此为阻断性报错，阻止OA流程（CONTRACT_PAYMENT_APPLY_MCS_AW）发起，需调减认缴金额或先确认认缴概况数据</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.APPLY_AMT,
+
+```sql
+SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.APPLY_AMT,
          S.SUBSCRIPTION_AMT, S.PAID_AMT, S.UNPAID_AMT,
          (A.APPLY_AMT - S.UNPAID_AMT) AS 超额金额
   FROM CM_CONTRACT_PAYMENT_APPLY A
   JOIN CM_CONTRACT_PAYMENT_SUMMARY S ON A.CONTRACT_ID = S.CONTRACT_ID
-  WHERE A.APPLY_AMT &gt; S.UNPAID_AMT
-    AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN');</code></pre>
+  WHERE A.APPLY_AMT > S.UNPAID_AMT
+    AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN');
+```
 <h4>报错4：行明细不能为空</h4>
 <ul><li><strong>触发条件</strong>：用户保存认缴申请时，认缴明细行（CM_CONTRACT_PAYMENT_APPLY_LINE）未填写或为空</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl在save方法中校验明细行非空。认缴明细行记录认款分配、认缴金额拆分等详细信息，无明细行将导致认缴申请无具体认款来源，审批通过后无法汇总到认缴概况。需添加至少一行认缴明细</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.APPLY_AMT, A.HZ_APPROVE_STATUS,
+
+```sql
+SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.APPLY_AMT, A.HZ_APPROVE_STATUS,
          (SELECT COUNT(*) FROM CM_CONTRACT_PAYMENT_APPLY_LINE L
           WHERE L.APPLY_ID = A.APPLY_ID) AS 明细行数
   FROM CM_CONTRACT_PAYMENT_APPLY A
   WHERE NOT EXISTS (SELECT 1 FROM CM_CONTRACT_PAYMENT_APPLY_LINE L
-                    WHERE L.APPLY_ID = A.APPLY_ID);</code></pre>
+                    WHERE L.APPLY_ID = A.APPLY_ID);
+```
 <h4>报错5：法人已有封顶认缴记录，无需再次认缴</h4>
 <ul><li><strong>触发条件</strong>：用户对已封顶认缴的法人再次发起封顶认缴申请</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验法人封顶认缴状态。若法人已在CM_CONTRACT_PAYMENT_SUMMARY中存在PAY_COMPLETE='Y'（已缴清）的封顶认缴记录，再次发起封顶认缴将导致重复认缴。封顶认缴代表法人保证金已缴清，无需再次认缴</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT S.SUMMARY_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.SUBSCRIPTION_AMT,
+
+```sql
+SELECT S.SUMMARY_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.SUBSCRIPTION_AMT,
          S.PAID_AMT, S.PAY_COMPLETE
   FROM CM_CONTRACT_PAYMENT_SUMMARY S
-  WHERE S.CUSTOMER_ID = #&#123;customerId&#125;
+  WHERE S.CUSTOMER_ID = #{customerId}
     AND S.PAY_COMPLETE = 'Y'
-    AND S.CONTRACT_TYPE = #&#123;contractType&#125;;</code></pre>
+    AND S.CONTRACT_TYPE = #{contractType};
+```
 <h4>报错6：法人已有封顶认缴流程在审批中</h4>
 <ul><li><strong>触发条件</strong>：用户对已有封顶认缴流程在审批中的法人再次发起封顶认缴申请</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验法人是否存在审批中的封顶认缴申请（HZ_APPROVE_STATUS='RUN'且认缴类型为封顶）。重复发起将导致OA流程冲突和认缴金额重复计算。需先完成或中止已有封顶认缴流程</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.CUSTOMER_NAME,
+
+```sql
+SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.CUSTOMER_NAME,
          A.APPLY_AMT, A.APPLY_TYPE, A.HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY A
-  WHERE A.CUSTOMER_ID = #&#123;customerId&#125;
+  WHERE A.CUSTOMER_ID = #{customerId}
     AND A.APPLY_TYPE = 'CEILING'
-    AND A.HZ_APPROVE_STATUS = 'RUN';</code></pre>
+    AND A.HZ_APPROVE_STATUS = 'RUN';
+```
 <h4>报错7：当前法人存在普通认缴，请先中断或撤销</h4>
 <ul><li><strong>触发条件</strong>：用户对存在普通认缴的法人发起封顶认缴申请</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验普通认缴与封顶认缴互斥。若法人存在未完成或已审批的普通认缴（APPLY_TYPE='NORMAL'），不允许发起封顶认缴。封顶认缴要求法人所有认缴一次性缴清，与普通认缴的分批认缴逻辑冲突。需先中断普通认缴申请或撤销普通认缴</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.CUSTOMER_NAME,
+
+```sql
+SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.CUSTOMER_NAME,
          A.APPLY_TYPE, A.APPLY_AMT, A.HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY A
-  WHERE A.CUSTOMER_ID = #&#123;customerId&#125;
+  WHERE A.CUSTOMER_ID = #{customerId}
     AND A.APPLY_TYPE = 'NORMAL'
-    AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED');</code></pre>
+    AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED');
+```
 <h4>报错8：认缴的金额与封顶的金额不一致</h4>
 <ul><li><strong>触发条件</strong>：用户发起封顶认缴申请时，申请认缴金额与封顶配置金额（CM_DEPOSITS_CEILING）不一致</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验封顶认缴的申请金额必须等于法人封顶配置金额。封顶认缴代表一次性缴清全部保证金，金额不一致将导致缴清标识计算错误。需调整认缴金额与封顶配置一致</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.APPLY_AMT AS 申请认缴金额,
+
+```sql
+SELECT A.APPLY_ID, A.APPLY_NO, A.APPLY_AMT AS 申请认缴金额,
          C.CEILING_AMT AS 封顶金额,
          (A.APPLY_AMT - C.CEILING_AMT) AS 差额
   FROM CM_CONTRACT_PAYMENT_APPLY A
   JOIN CM_DEPOSITS_CEILING C ON A.CUSTOMER_ID = C.CUSTOMER_ID
   WHERE A.APPLY_TYPE = 'CEILING'
-    AND A.APPLY_AMT != C.CEILING_AMT;</code></pre>
+    AND A.APPLY_AMT != C.CEILING_AMT;
+```
 <h4>报错9：认款单剩余可认款金额不足</h4>
 <ul><li><strong>触发条件</strong>：用户提交认缴申请时，关联认款单（CM_DEPOSITS_PAYMENT）的剩余可认款金额小于申请认缴金额</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验认款单剩余可认款金额（认款金额-已认缴金额-已撤销金额）必须大于等于申请认缴金额。剩余金额不足将导致认缴超额，认款单金额被超用。需调减认缴金额或选择其他有余额的认款单</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.PAYMENT_AMT,
+
+```sql
+SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.PAYMENT_AMT,
          (SELECT NVL(SUM(A.APPLY_AMT), 0) FROM CM_CONTRACT_PAYMENT_APPLY A
           WHERE A.PAYMENT_ID = P.PAYMENT_ID
             AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED')) AS 已认缴金额,
@@ -449,50 +490,75 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
           WHERE A.PAYMENT_ID = P.PAYMENT_ID
             AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED')) AS 剩余可认款金额
   FROM CM_DEPOSITS_PAYMENT P
-  WHERE P.PAYMENT_ID = #&#123;paymentId&#125;;</code></pre>
+  WHERE P.PAYMENT_ID = #{paymentId};
+```
 <h4>报错10：认款单不存在，请重新选择</h4>
 <ul><li><strong>触发条件</strong>：用户保存认缴申请时，关联的认款单（CM_DEPOSITS_PAYMENT）已被删除或撤销</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验关联认款单存在性。认款单不存在根因有三类：(1)认款单已被删除；(2)认款单已撤销（STATUS='CANCELLED'）；(3)PAYMENT_ID传入错误。需重新选择有效认款单</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.PAYMENT_ID,
+
+```sql
+SELECT A.APPLY_ID, A.APPLY_NO, A.PAYMENT_ID,
          P.PAYMENT_ID AS 认款单ID, P.STATUS AS 认款状态
   FROM CM_CONTRACT_PAYMENT_APPLY A
   LEFT JOIN CM_DEPOSITS_PAYMENT P ON A.PAYMENT_ID = P.PAYMENT_ID
   WHERE A.PAYMENT_ID IS NOT NULL
-    AND (P.PAYMENT_ID IS NULL OR P.STATUS = 'CANCELLED');</code></pre>
+    AND (P.PAYMENT_ID IS NULL OR P.STATUS = 'CANCELLED');
+```
 <h4>报错11：申请单已认缴，不能进行重复认缴</h4>
 <ul><li><strong>触发条件</strong>：用户对已执行认缴操作的申请单再次发起认缴</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验申请单认缴状态。若申请单已认缴（已生成认款记录CM_CONTRACT_PAYMENT_RECORD），再次认缴将导致认款金额重复计算。需确认申请单状态，仅未认缴的申请单可发起认缴</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.HZ_APPROVE_STATUS,
+
+```sql
+SELECT A.APPLY_ID, A.APPLY_NO, A.HZ_APPROVE_STATUS,
          (SELECT COUNT(*) FROM CM_CONTRACT_PAYMENT_RECORD R
           WHERE R.APPLY_ID = A.APPLY_ID) AS 认款记录数
   FROM CM_CONTRACT_PAYMENT_APPLY A
   WHERE EXISTS (SELECT 1 FROM CM_CONTRACT_PAYMENT_RECORD R
-                WHERE R.APPLY_ID = A.APPLY_ID);</code></pre>
+                WHERE R.APPLY_ID = A.APPLY_ID);
+```
 <h4>报错12：流程编码缺失，请选择流程</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，校验OA流程编码（CONTRACT_PAYMENT_APPLY_MCS_AW）为空</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl在saveAndSubmit中校验流程编码非空。流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置CONTRACT_PAYMENT_APPLY_MCS_AW流程编码；(2)认缴类型未关联对应流程编码。需在流程配置中维护对应关系</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, APPLY_TYPE, HZ_APPROVE_STATUS
+
+```sql
+SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, APPLY_TYPE, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE APPLY_ID = #&#123;applyId&#125;
-    AND HZ_APPROVE_STATUS = 'NEW';</code></pre>
+  WHERE APPLY_ID = #{applyId}
+    AND HZ_APPROVE_STATUS = 'NEW';
+```
 <h4>报错13：请选择需要删除的数据</h4>
 <ul><li><strong>触发条件</strong>：用户未选中任何认缴申请记录直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl在remove方法中校验传入的删除列表非空。未选中数据时删除操作无意义，且可能导致空指针异常。需先选中至少一条记录再删除</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '请在前端列表页选中需要删除的认缴申请记录' AS 提示 FROM DUAL;</code></pre>
+
+```sql
+SELECT '请在前端列表页选中需要删除的认缴申请记录' AS 提示 FROM DUAL;
+```
 <h4>报错14：当前法人不存在</h4>
 <ul><li><strong>触发条件</strong>：用户保存认缴申请时，根据经销商查询法人主数据返回空</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl根据经销商CUSTOMER_ID查询法人主数据，若经销商未配置法人关联或法人主数据已失效，将抛出此异常。法人是认缴资金流向确认的关键主体。需在经销商主数据中维护法人关联</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CUSTOMER_NAME,
+
+```sql
+SELECT A.APPLY_ID, A.APPLY_NO, A.CUSTOMER_NAME,
          C.CUSTOMER_ID, C.CORPORATE_CODE, C.CORPORATE_NAME
   FROM CM_CONTRACT_PAYMENT_APPLY A
   LEFT JOIN CUSTOMER C ON A.CUSTOMER_ID = C.CUSTOMER_ID
-  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_NAME IS NULL;</code></pre>
+  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_NAME IS NULL;
+```
 <h4>报错15：合同类型不能为空</h4>
 <ul><li><strong>触发条件</strong>：保存认缴申请或查询时，CONTRACT_TYPE参数为空</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl在多处校验合同类型非空。合同类型区分年度经销合同、临时合同等，影响保证金标准和封顶配置的匹配。合同类型为空将导致保证金标准无法匹配，认缴金额计算无依据。需前端正确传入合同类型参数</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, APPLY_AMT
+
+```sql
+SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, APPLY_AMT
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';</code></pre>
+  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';
+```
 <h4>报错16：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：前端调用cm-contract-payment-applys相关接口时，后端服务不可达或请求超时</li><li><strong>逻辑分析</strong>：前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre>
+
+```sql
+SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
+```
 <h4>报错17：权限不足，无法操作</h4>
 <ul><li><strong>触发条件</strong>：当前用户对认缴申请保存、提交、删除等操作无对应功能权限或数据权限</li><li><strong>逻辑分析</strong>：后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre>
+
+```sql
+SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
+```
 </KbCard>
 
 <KbCard title="常见问题">

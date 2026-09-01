@@ -217,7 +217,9 @@
 </tbody>
 </table>
 <blockquote>列表查询SQL（Mapper: LnkPriceListItemMapper.xml → selectPriceListItemListPage）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT  T1.ROW_ID AS id,
+
+```sql
+SELECT  T1.ROW_ID AS id,
         t1.created AS created,
         T1.CREATED_BY AS createdBy,
         TO_CHAR(T1.LAST_UPD, 'yyyy-mm-dd hh24:mi:ss') AS lastUpdated,
@@ -255,14 +257,15 @@ WHERE 1=1
     AND t1.head_id IN (SELECT l.ROW_ID                                 -- 当前事业部价目表
                         FROM lnk_price_list l
                         JOIN rel_crm_ae_org o ON l.dept_id = o.crm_org_id
-                        WHERE o.AE_ORG_CODE = #&#123;deptCode&#125;
-                        AND l.CURRENCY = #&#123;currency&#125;)                  -- 币种过滤
+                        WHERE o.AE_ORG_CODE = #{deptCode}
+                        AND l.CURRENCY = #{currency})                  -- 币种过滤
     -- 经销商用户：按有效合同渠道过滤
-    -- AND (t2.lh_prod_channel = #&#123;channel&#125; OR like匹配)
-    -- 海外事业部人民币场景：AND t3.PRICE_LIST_NAME = #&#123;overseasPriceListName&#125;
-    -- 产品编码：t2.prod_code = #&#123;prodCode&#125; 或 IN (#&#123;prodCodeList&#125;)
+    -- AND (t2.lh_prod_channel = #{channel} OR like匹配)
+    -- 海外事业部人民币场景：AND t3.PRICE_LIST_NAME = #{overseasPriceListName}
+    -- 产品编码：t2.prod_code = #{prodCode} 或 IN (#{prodCodeList})
     -- 产品名称(like)、产品大类(like)、产品中类(like)、产品小类(like)、产品型号(like)
-    -- 定价时的产品定位(=)、物料类型(=)、生命状态(=)</code></pre>
+    -- 定价时的产品定位(=)、物料类型(=)、生命状态(=)
+```
 </KbCard>
 
 <KbCard title="选择弹窗">
@@ -358,23 +361,26 @@ WHERE 1=1
 </tbody>
 </table>
 <blockquote>经销商合同渠道校验SQL（Mapper: checkProdCodeInContractChannel）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(1)
+
+```sql
+SELECT COUNT(1)
 FROM LNK_PROD p
-WHERE p.prod_code = #&#123;prodCode&#125;
+WHERE p.prod_code = #{prodCode}
     AND EXISTS (
         SELECT 1
         FROM lnk_contract t
         JOIN lnk_contract_channel c ON t.row_id = c.lnk_contract_id
-        WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #&#123;dealerCode&#125;)
+        WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{dealerCode})
             AND (t.IS_DELIVERY = 'N' OR t.IS_DELIVERY IS NULL)
             AND t.agr_status = 'Agree'
-            AND t.EFFECTIVE_START_DT &lt;= sysdate
-            AND (t.EFFECTIVE_END_DT &gt;= sysdate OR t.delay_date &gt; sysdate)
+            AND t.EFFECTIVE_START_DT <= sysdate
+            AND (t.EFFECTIVE_END_DT >= sysdate OR t.delay_date > sysdate)
             AND (p.lh_prod_channel = c.channel_val
                  OR p.lh_prod_channel LIKE CONCAT(c.channel_val, '/%')
                  OR p.lh_prod_channel LIKE CONCAT(CONCAT('%/', c.channel_val), '/%')
                  OR p.lh_prod_channel LIKE CONCAT('%/', c.channel_val))
-    )</code></pre>
+    )
+```
 </KbCard>
 
 </div>
@@ -402,28 +408,36 @@ WHERE p.prod_code = #&#123;prodCode&#125;
 1. 经销商用户的有效合同渠道列表为空（未签任何有效合同）
 2. 经销商用户查询单个产品编码时，该产品不在其有效合同渠道内
 排查SQL：</blockquote>
-<pre class="detail-sql" v-pre><code>-- 检查经销商有效合同渠道
+
+```sql
+-- 检查经销商有效合同渠道
 SELECT c.channel_val
 FROM lnk_contract t
 JOIN lnk_contract_channel c ON t.row_id = c.lnk_contract_id
-WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #&#123;dealerCode&#125;)
+WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{dealerCode})
     AND (t.IS_DELIVERY = 'N' OR t.IS_DELIVERY IS NULL)
     AND t.agr_status = 'Agree'
-    AND t.EFFECTIVE_START_DT &lt;= sysdate
-    AND (t.EFFECTIVE_END_DT &gt;= sysdate OR t.delay_date &gt; sysdate);</code></pre>
+    AND t.EFFECTIVE_START_DT <= sysdate
+    AND (t.EFFECTIVE_END_DT >= sysdate OR t.delay_date > sysdate);
+```
 <h4>报错2：导出权限不足</h4>
 <ul><li><strong>触发条件</strong>：当前用户无导出权限时，导出按钮不显示；若通过API直接调用导出接口则返回403</li><li><strong>逻辑分析</strong>：前端PriceTable组件中通过checkPermissions(['hzero.crm.price.list.export'])异步校验导出权限（listConfig.tsx第228行），无权限时hasExportPermission为false，导出按钮不渲染。后端export接口标注@Permission(level=ResourceLevel.ORGANIZATION)，无权限时抛出403异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查用户是否拥有价目表导出权限
+
+```sql
+-- 检查用户是否拥有价目表导出权限
   SELECT R.CODE AS 角色编码, R.NAME AS 角色名称,
          P.CODE AS 权限编码, P.NAME AS 权限名称
   FROM HZERO.IAM_ROLE R
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.CODE = 'hzero.crm.price.list.export'
-  ORDER BY R.CODE;</code></pre>
+  ORDER BY R.CODE;
+```
 <h4>报错3：查询失败</h4>
 <ul><li><strong>触发条件</strong>：列表页加载或点击查询按钮时，后端列表查询接口返回失败</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/lnk-price-list-item/list接口，后端selectPriceListItemListPage方法通过LnkPriceListItemMapper.selectPriceListItemListPage查询LNK_PRICE_LIST_ITEM关联LNK_PROD、LNK_PRICE_LIST表，并调用cux_inv_convert_ex_pub.inv_um_convert函数计算转换率。若数据库连接异常、SQL执行超时、转换率函数异常或事业部价目表不存在则返回失败，前端DataSet自动提示查询失败。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查当前事业部是否存在有效价目表
+
+```sql
+-- 检查当前事业部是否存在有效价目表
   SELECT L.ROW_ID AS 价目表ID, L.PRICE_LIST_NAME AS 价目表名称,
          L.CURRENCY AS 币种, O.AE_ORG_CODE AS 事业部编码
   FROM LNK_PRICE_LIST L
@@ -436,19 +450,25 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #&#1
          T2.PROD_CODE AS 产品编码, T2.PROD_NAME AS 产品名称
   FROM LNK_PRICE_LIST_ITEM T1
     LEFT JOIN LNK_PROD T2 ON T1.PROD_ID = T2.ROW_ID
-  WHERE T2.ROW_ID IS NULL;</code></pre>
+  WHERE T2.ROW_ID IS NULL;
+```
 <h4>报错4：会话过期</h4>
 <ul><li><strong>触发条件</strong>：用户登录会话已失效时执行任意操作（查询/导出）</li><li><strong>逻辑分析</strong>：前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。价目表查询为纯查询页面，会话过期主要影响查询和导出操作。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查用户登录会话状态
+
+```sql
+-- 检查用户登录会话状态
   SELECT U.LOGIN_NAME AS 登录名, T.TOKEN, T.EXPIRE_TIME AS 过期时间,
          T.LAST_CLIENT_TIME AS 最后活跃时间
   FROM HZERO.OAUTH_ACCESS_TOKEN T
     JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
   WHERE U.LOGIN_NAME = :loginName
-  ORDER BY T.EXPIRE_TIME DESC;</code></pre>
+  ORDER BY T.EXPIRE_TIME DESC;
+```
 <h4>报错5：暂无数据</h4>
 <ul><li><strong>触发条件</strong>：查询条件匹配不到任何有效价格记录，列表展示为空</li><li><strong>逻辑分析</strong>：后端SQL条件PRICE_STATUS='Y'且trunc(SYSDATE) BETWEEN trunc(EFF_START_DATE) AND trunc(EFF_END_DATE)过滤有效价格，若当前日期不在任何价格有效期内、价格状态非Y、或事业部/币种/渠道过滤后无匹配数据，则返回空列表。前端DataSet接收空数据，列表区域显示"暂无数据"。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>-- 检查当前事业部有效价格数据
+
+```sql
+-- 检查当前事业部有效价格数据
   SELECT T2.PROD_CODE AS 产品编码, T2.PROD_NAME AS 产品名称,
          T1.PRICE AS 标准单价, T1.PRICE_STATUS AS 价格状态,
          T1.EFF_START_DATE AS 有效开始, T1.EFF_END_DATE AS 有效结束,
@@ -460,7 +480,8 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #&#1
     JOIN REL_CRM_AE_ORG O ON T3.DEPT_ID = O.CRM_ORG_ID
   WHERE O.AE_ORG_CODE = :deptCode
     AND T3.CURRENCY = :currency
-  ORDER BY T2.PROD_CODE;</code></pre>
+  ORDER BY T2.PROD_CODE;
+```
 </KbCard>
 
 <KbCard title="常见问题">

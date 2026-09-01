@@ -388,9 +388,12 @@
 </tbody>
 </table>
 <blockquote>查询SQL（后端接口：CRM产品查询接口invokeCrmProd）：</blockquote>
-<pre class="detail-sql" v-pre><code>-- 调用CRM系统产品查询接口
+
+```sql
+-- 调用CRM系统产品查询接口
 SELECT product_id, product_code, product_name, item_model, unit_price
-FROM crm_product_info WHERE organization_id = #&#123;organizationId&#125; AND status = 'ACTIVE';</code></pre>
+FROM crm_product_info WHERE organization_id = #{organizationId} AND status = 'ACTIVE';
+```
 <h4>弹窗2：产品型号选择弹窗（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -402,7 +405,10 @@ FROM crm_product_info WHERE organization_id = #&#123;organizationId&#125; AND st
 </tbody>
 </table>
 <blockquote>查询SQL（后端接口：getModel）：</blockquote>
-<pre class="detail-sql" v-pre><code>SELECT item_model_id, item_model, model_name FROM epm_item_model WHERE item_model LIKE #&#123;itemModel&#125;;</code></pre>
+
+```sql
+SELECT item_model_id, item_model, model_name FROM epm_item_model WHERE item_model LIKE #{itemModel};
+```
 </KbCard>
 
 <KbCard title="导入">
@@ -447,14 +453,23 @@ FROM crm_product_info WHERE organization_id = #&#123;organizationId&#125; AND st
 </table>
 <h4>按钮1：保存并提交（详情页）</h4>
 <ul><li><strong>触发条件</strong>：审批状态为NEW</li><li><strong>执行逻辑</strong>：</li><li>第1点：保存政策头和产品明细行</li><li>第2点：校验政策数据完整性</li><li>第3点：推送OA审批数据</li><li>第4点：发起工作流</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epm-discount-policy/save-and-submit</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, valid, hz_approve_status, source_type
-FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
+
+```sql
+SELECT discount_policy_id, discount_policy_code, valid, hz_approve_status, source_type
+FROM epm_discount_policy WHERE discount_policy_id = {id};
+```
 <h4>按钮2：导入产品（详情页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：上传Excel文件</li><li>第2点：解析文件内容，校验产品编码</li><li>第3点：生成产品明细行和阶梯政策行</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epm-discount-policy/importProduct</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM epm_discount_policy_item WHERE discount_policy_id = &#123;id&#125;;</code></pre>
+
+```sql
+SELECT * FROM epm_discount_policy_item WHERE discount_policy_id = {id};
+```
 <h4>按钮3：删除（列表页）</h4>
 <ul><li><strong>触发条件</strong>：有效状态为未审核(valid=1)</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验政策状态为未审核</li><li>第2点：级联删除政策头和产品明细行</li><li><strong>接口调用</strong>：DELETE /v1/&#123;organizationId&#125;/epm-discount-policy</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id, valid FROM epm_discount_policy WHERE discount_policy_id IN (&#123;ids&#125;);</code></pre>
+
+```sql
+SELECT discount_policy_id, valid FROM epm_discount_policy WHERE discount_policy_id IN ({ids});
+```
 </KbCard>
 
 <KbCard title="保存校验">
@@ -466,8 +481,11 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
 <p>- 第4点：policyType=4时provinceId不能为空</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT policy_type, customer_id, sale_area_id, customer_class, province_id
-    FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
+
+```sql
+SELECT policy_type, customer_id, sale_area_id, customer_class, province_id
+    FROM epm_discount_policy WHERE discount_policy_id = {id};
+```
 </KbCard>
 
 <KbCard title="提交校验">
@@ -477,24 +495,33 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
 <p>- 第2点：明细为空时不允许提交</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM epm_discount_policy_item WHERE discount_policy_id = &#123;id&#125;;</code></pre>
+
+```sql
+SELECT COUNT(*) FROM epm_discount_policy_item WHERE discount_policy_id = {id};
+```
 <ul><li>校验2：长库龄业务类型校验 —— 校验业务类型合法性</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：校验计划订单业务类型不能为长库龄</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
+
+```sql
+SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
+```
 </KbCard>
 
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-<pre class="lang-text" v-pre><code>未审核(valid=1) ──提交──→ RUN(审批中) ──OA审批通过──→ 有效(valid=2)
+
+```text
+未审核(valid=1) ──提交──→ RUN(审批中) ──OA审批通过──→ 有效(valid=2)
                               │
                               │OA审批驳回
                               ↓
                          未审核(valid=1)
 
-有效(valid=2) ──发起失效──→ 失效流程 ──审批通过──→ 失效(valid=3)</code></pre>
+有效(valid=2) ──发起失效──→ 失效流程 ──审批通过──→ 失效(valid=3)
+```
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -601,7 +628,9 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
 </table>
 <h4>报错1：折扣政策id不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"导入产品"按钮，调用importProduct接口时，传入的折扣政策ID（discountPolicyId）为null或0</li><li><strong>逻辑分析</strong>：导入产品明细需关联到具体折扣政策。若用户在政策头未保存（主键DISCOUNT_POLICY_ID未生成）时直接导入产品，或前端未传discountPolicyId字段，后端校验为空即抛异常，无法将产品明细挂载到政策。常见根因：用户未先保存政策头、保存失败后误点导入、或前端传参丢失。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          discount_policy_name  AS 政策名称,
          valid                 AS 有效状态,
@@ -609,19 +638,25 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
   AND    (discount_policy_id IS NULL OR discount_policy_id = 0)
-  ORDER  BY createtime DESC;</code></pre>
+  ORDER  BY createtime DESC;
+```
 <h4>报错2：推送OA失败：折扣政策不存在</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮推送OA时，按discountPolicyId查询EPM_DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：OA推送前需查询政策单组装数据。若单据在推送前被其他用户删除（物理删除），或discountPolicyId传值错误，查询返回空，无法组装OA数据导致推送失败。常见根因：并发操作删除政策、传参错误、或事务未提交即调用OA推送。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          valid                 AS 有效状态,
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #&#123;传入的discountPolicyId&#125;;</code></pre>
+  AND    discount_policy_id = #{传入的discountPolicyId};
+```
 <h4>报错3：OA回调失败：折扣政策不存在</h4>
 <ul><li><strong>触发条件</strong>：OA审批完成回调DMS时，按回调报文中的discountPolicyId查询EPM_DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：OA回调处理需更新政策有效状态（通过则valid=2，驳回则维持未审核）。若回调期间政策被删除，或OA回调报文的单据ID与DMS不一致（如OA配置错误、ID映射异常），查询返回空，回调处理失败，有效状态无法更新。常见根因：政策被并发删除、OA配置错误、或回调报文ID丢失。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          valid                 AS 有效状态,
          hz_approve_status     AS 审批状态,
@@ -629,23 +664,29 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
          callback_source       AS 回调来源
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #&#123;OA回调报文中的discountPolicyId&#125;;</code></pre>
+  AND    discount_policy_id = #{OA回调报文中的discountPolicyId};
+```
 <h4>报错4：产品行不能为空，请检查！</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"或"保存并提交"按钮，checkProductLine校验时，EPM_DISCOUNT_POLICY_ITEM中该政策的产品明细行为空或全部被标记删除</li><li><strong>逻辑分析</strong>：折扣政策必须包含至少一行产品明细才能提交审批，否则OA审批无产品数据可推送。校验逻辑查询EPM_DISCOUNT_POLICY_ITEM中DISCOUNT_POLICY_ID对应且未删除的行，若为空则抛异常。常见根因：用户未导入产品或未添加产品行、产品行被全部删除、或导入产品失败后误点提交。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dp.discount_policy_id    AS 政策ID,
+
+```sql
+SELECT dp.discount_policy_id    AS 政策ID,
          dp.discount_policy_code  AS 政策单号,
          dp.hz_approve_status     AS 审批状态,
          COUNT(dpi.discount_policy_item_id) AS 产品行数
   FROM   epm_discount_policy dp
   LEFT   JOIN epm_discount_policy_item dpi
          ON dpi.discount_policy_id = dp.discount_policy_id
-        AND dpi._status &lt;&gt; 'delete'
+        AND dpi._status <> 'delete'
   WHERE  dp.source_type = 'YXCRM'
   GROUP  BY dp.discount_policy_id, dp.discount_policy_code, dp.hz_approve_status
-  HAVING COUNT(dpi.discount_policy_item_id) = 0;</code></pre>
+  HAVING COUNT(dpi.discount_policy_item_id) = 0;
+```
 <h4>报错5：订单类型为【计划订单】,业务类型不能为【长库龄】</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，校验长库龄业务类型时，IS_MAKT=2且BILL_TYPE=2(计划订单)或99且BUSINESS_TYPE=16(长库龄)</li><li><strong>逻辑分析</strong>：长库龄业务类型(BUSINESS_TYPE=16)仅适用于常规订单，计划订单(BILL_TYPE=2或99)不允许设置为长库龄业务类型。校验逻辑读取EPM_DISCOUNT_POLICY的BILL_TYPE和BUSINESS_TYPE，组合非法即抛异常。常见根因：用户误将计划订单与长库龄业务类型组合、或前端未做组合校验。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          bill_type             AS 订单类型,
          business_type         AS 业务类型,
@@ -654,19 +695,25 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
   WHERE  source_type = 'YXCRM'
   AND    is_makt = 2
   AND    bill_type IN (2, 99)
-  AND    business_type = 16;</code></pre>
+  AND    business_type = 16;
+```
 <h4>报错6：折扣政策名称最大输入30个字符</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，verifyPolicyName校验时，DISCOUNT_POLICY_NAME长度超过30</li><li><strong>逻辑分析</strong>：折扣政策名称有长度限制，超过30字符无法保存。校验逻辑读取DISCOUNT_POLICY_NAME字段长度，超过30即抛异常。常见根因：用户输入名称过长、或前端未做长度限制。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          discount_policy_name  AS 政策名称,
          LENGTH(discount_policy_name) AS 名称长度
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    LENGTH(discount_policy_name) &gt; 30;</code></pre>
+  AND    LENGTH(discount_policy_name) > 30;
+```
 <h4>报错7：物料明细不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，校验适用类型为通用(SUITABLE_TYPE=normal)时，EPM_DISCOUNT_POLICY_ITEM产品明细为空</li><li><strong>逻辑分析</strong>：适用类型为"通用"的折扣政策必须维护物料明细，否则政策无法适用任何产品。校验逻辑读取SUITABLE_TYPE，若为normal且产品明细为空则抛异常。常见根因：用户选择通用适用类型后未添加产品明细、或产品明细被全部删除。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dp.discount_policy_id    AS 政策ID,
+
+```sql
+SELECT dp.discount_policy_id    AS 政策ID,
          dp.discount_policy_code  AS 政策单号,
          dp.suitable_type         AS 适用类型,
          COUNT(dpi.discount_policy_item_id) AS 物料明细数
@@ -676,10 +723,13 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
   WHERE  dp.source_type = 'YXCRM'
   AND    dp.suitable_type = 'normal'
   GROUP  BY dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type
-  HAVING COUNT(dpi.discount_policy_item_id) = 0;</code></pre>
+  HAVING COUNT(dpi.discount_policy_item_id) = 0;
+```
 <h4>报错8：适用类型为"通用"时，产品优惠方式只能为"折扣"</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，校验适用类型为通用(SUITABLE_TYPE=normal)时，某产品行PREFERENTIAL_TYPE≠1(折扣)</li><li><strong>逻辑分析</strong>：适用类型为"通用"的折扣政策，产品优惠方式只能为折扣(PREFERENTIAL_TYPE=1)，不支持其他优惠方式。校验逻辑遍历产品明细，若SUITABLE_TYPE=normal且PREFERENTIAL_TYPE≠1则抛异常。常见根因：用户选择通用适用类型后误设其他优惠方式、或前端未做联动限制。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dp.discount_policy_id    AS 政策ID,
+
+```sql
+SELECT dp.discount_policy_id    AS 政策ID,
          dp.discount_policy_code  AS 政策单号,
          dp.suitable_type         AS 适用类型,
          dpi.discount_policy_item_id AS 产品行ID,
@@ -690,10 +740,13 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
          ON dpi.discount_policy_id = dp.discount_policy_id
   WHERE  dp.source_type = 'YXCRM'
   AND    dp.suitable_type = 'normal'
-  AND    dpi.preferential_type &lt;&gt; 1;</code></pre>
+  AND    dpi.preferential_type <> 1;
+```
 <h4>报错9：在该时间区间内：...</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkTimeOverlap校验时，政策有效区间与同一产品/型号的已有政策有效区间重叠</li><li><strong>逻辑分析</strong>：同一产品或型号在同一时间区间内不允许存在多个有效折扣政策，避免折扣冲突。校验逻辑查询EPM_DISCOUNT_POLICY_ITEM关联的政策，比对EFFECTIVE_DATE_START和EFFECTIVE_DATE_END区间，重叠则抛异常并提示具体重叠区间。常见根因：用户新建政策有效区间与已有政策重叠、或未检查已有政策有效期。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT a.discount_policy_id    AS 政策ID1,
+
+```sql
+SELECT a.discount_policy_id    AS 政策ID1,
          a.discount_policy_code  AS 政策单号1,
          a.effective_date_start  AS 有效期起1,
          a.effective_date_end    AS 有效期至1,
@@ -703,7 +756,7 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
          b.effective_date_end    AS 有效期至2
   FROM   epm_discount_policy a
   JOIN   epm_discount_policy b
-         ON b.discount_policy_id &gt; a.discount_policy_id
+         ON b.discount_policy_id > a.discount_policy_id
   JOIN   epm_discount_policy_item ai
          ON ai.discount_policy_id = a.discount_policy_id
   JOIN   epm_discount_policy_item bi
@@ -711,72 +764,96 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
         AND bi.item_code = ai.item_code
   WHERE  a.source_type = 'YXCRM'
   AND    b.source_type = 'YXCRM'
-  AND    a.effective_date_start &lt;= b.effective_date_end
-  AND    a.effective_date_end   &gt;= b.effective_date_start;</code></pre>
+  AND    a.effective_date_start <= b.effective_date_end
+  AND    a.effective_date_end   >= b.effective_date_start;
+```
 <h4>报错10：未找到该单据</h4>
 <ul><li><strong>触发条件</strong>：点击"删除"按钮，doDelete校验时，按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：删除操作需先查询政策确认存在。若政策在删除前被其他用户物理删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在，查询返回空，无法删除，抛异常。常见根因：并发操作删除政策、传参错误、或数据不一致。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #&#123;传入的discountPolicyId&#125;;</code></pre>
+  AND    discount_policy_id = #{传入的discountPolicyId};
+```
 <h4>报错11：仅新建状态单据允许删除.</h4>
 <ul><li><strong>触发条件</strong>：点击"删除"按钮，doDelete校验时，政策HZ_APPROVE_STATUS≠NEW(新建)</li><li><strong>逻辑分析</strong>：仅新建状态(HZ_APPROVE_STATUS=NEW)的政策允许删除，已提交审批、审批通过、审批驳回的政策不允许删除，避免破坏审批流程和数据一致性。校验逻辑读取HZ_APPROVE_STATUS，非NEW则抛异常。常见根因：用户尝试删除已提交或已审批的政策、或前端未做状态判断。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          hz_approve_status     AS 审批状态,
          valid                 AS 有效状态
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    hz_approve_status &lt;&gt; 'NEW';</code></pre>
+  AND    hz_approve_status <> 'NEW';
+```
 <h4>报错12：导入数量不能超过&#123;pageSize&#125;</h4>
 <ul><li><strong>触发条件</strong>：点击"导入产品"按钮，Excel解析完成后，数据行数超过系统配置的pageSize上限</li><li><strong>逻辑分析</strong>：导入产品明细有数量限制，超过pageSize(系统配置)无法导入，避免性能问题和事务超时。校验逻辑统计解析后的数据行数，超过pageSize则抛异常。常见根因：用户上传过大Excel文件、或未分批导入。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          COUNT(discount_policy_item_id) AS 导入行数
   FROM   epm_discount_policy_item
-  WHERE  discount_policy_id = #&#123;discountPolicyId&#125;
+  WHERE  discount_policy_id = #{discountPolicyId}
   GROUP  BY discount_policy_id
-  HAVING COUNT(discount_policy_item_id) &gt; #&#123;pageSize&#125;;</code></pre>
+  HAVING COUNT(discount_policy_item_id) > #{pageSize};
+```
 <h4>报错13：导入的产品编码查询不到对应的产品信息：&#123;codes&#125;</h4>
 <ul><li><strong>触发条件</strong>：点击"导入产品"按钮，调用CRM产品查询接口后，导入的产品编码在CRM返回结果中不存在</li><li><strong>逻辑分析</strong>：导入产品明细需关联CRM产品主数据，产品编码在CRM不存在则无法获取产品信息(名称、型号、价格等)。校验逻辑比对导入编码集合与CRM返回编码集合，差集非空则抛异常并提示具体不存在的编码。常见根因：用户输入错误产品编码、产品在CRM未建档、或产品已失效。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id AS 产品行ID,
+
+```sql
+SELECT dpi.discount_policy_item_id AS 产品行ID,
          dpi.item_code            AS 产品编码,
          dpi.discount_policy_id   AS 政策ID
   FROM   epm_discount_policy_item dpi
   LEFT   JOIN crm_product_info cp
          ON cp.product_code = dpi.item_code
         AND cp.status = 'ACTIVE'
-  WHERE  dpi.discount_policy_id = #&#123;discountPolicyId&#125;
-  AND    cp.product_code IS NULL;</code></pre>
+  WHERE  dpi.discount_policy_id = #{discountPolicyId}
+  AND    cp.product_code IS NULL;
+```
 <h4>报错14：产品导入异常，请联系管理员！</h4>
 <ul><li><strong>触发条件</strong>：点击"导入产品"按钮，导入过程中抛出非CommonException异常(如IO异常、解析异常、空指针等)</li><li><strong>逻辑分析</strong>：导入过程涉及Excel解析、CRM接口调用、数据组装等环节，任一环节异常都会导致导入失败。系统捕获Exception后统一抛出"产品导入异常，请联系管理员！"，避免暴露技术细节。常见根因：Excel文件格式损坏、CRM接口超时、数据库异常、或代码bug。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #&#123;discountPolicyId&#125;;</code></pre>
+  AND    discount_policy_id = #{discountPolicyId};
+```
 <h4>报错15：请先维护OA系统信息</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，推送OA前校验OA系统配置(接口地址、用户名、密码等)缺失</li><li><strong>逻辑分析</strong>：推送OA审批需依赖OA系统配置(接口地址、用户名、密码等)，配置缺失则无法推送。校验逻辑读取OA系统配置，任一缺失则抛异常。常见根因：OA系统配置未维护、配置被误删、或环境切换后配置未同步。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT oa_bill_name        AS OA单据名称,
+
+```sql
+SELECT oa_bill_name        AS OA单据名称,
          oa_url              AS OA接口地址,
          oa_user             AS OA用户名,
          oa_password         AS OA密码
   FROM   oa_bill_ref
-  WHERE  oa_bill_name = 'YXZT样品折扣政策申请';</code></pre>
+  WHERE  oa_bill_name = 'YXZT样品折扣政策申请';
+```
 <h4>报错16：流程编码不能为空。</h4>
 <ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，推送OA前校验流程编码(FlowCode)为空</li><li><strong>逻辑分析</strong>：推送OA审批需指定流程编码，流程编码为空则OA无法匹配审批流程。校验逻辑读取FlowCode，为空则抛异常。常见根因：前端未传FlowCode、流程编码配置缺失、或政策类型与流程编码映射未配置。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号,
          hz_approve_status     AS 审批状态,
          hz_instance_id        AS 流程实例ID
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #&#123;discountPolicyId&#125;;</code></pre>
+  AND    discount_policy_id = #{discountPolicyId};
+```
 <h4>报错17：以下型号涉及新品，不允许通过型号定义折扣政策，请通过具体产品编码制定折扣政策</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，校验产品行时，某行按型号(ITEM_MODEL)定义且该型号涉及新品</li><li><strong>逻辑分析</strong>：涉及新品的型号不允许通过型号定义折扣政策，必须通过具体产品编码制定，避免新品政策范围不可控。校验逻辑识别新品型号，若政策行按型号定义且涉及新品则抛异常。常见根因：用户误用型号定义新品政策、或新品标识未同步。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id AS 产品行ID,
+
+```sql
+SELECT dpi.discount_policy_item_id AS 产品行ID,
          dpi.discount_policy_id   AS 政策ID,
          dpi.item_model           AS 型号,
          dpi.item_code            AS 产品编码
@@ -786,21 +863,27 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
   WHERE  dp.source_type = 'YXCRM'
   AND    dpi.item_code IS NULL
   AND    dpi.item_model IS NOT NULL
-  AND    dpi.item_model IN (SELECT item_model FROM epm_item_model WHERE new_prod_flag = 1);</code></pre>
+  AND    dpi.item_model IN (SELECT item_model FROM epm_item_model WHERE new_prod_flag = 1);
+```
 <h4>报错18：产品编码:[&#123;code&#125;] 与型号：[&#123;model&#125;] 折扣政策冲突</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，校验产品行时，同一产品编码与型号存在多个折扣政策行冲突</li><li><strong>逻辑分析</strong>：同一产品编码与型号不允许在多个折扣政策行中重复定义，避免折扣冲突。校验逻辑识别重复的产品编码+型号组合，冲突则抛异常。常见根因：用户重复添加同一产品、或导入文件包含重复产品。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT item_code            AS 产品编码,
+
+```sql
+SELECT item_code            AS 产品编码,
          item_model           AS 型号,
          COUNT(discount_policy_item_id) AS 重复行数
   FROM   epm_discount_policy_item
-  WHERE  discount_policy_id = #&#123;discountPolicyId&#125;
+  WHERE  discount_policy_id = #{discountPolicyId}
   AND    item_code IS NOT NULL
   AND    item_model IS NOT NULL
   GROUP  BY item_code, item_model
-  HAVING COUNT(discount_policy_item_id) &gt; 1;</code></pre>
+  HAVING COUNT(discount_policy_item_id) > 1;
+```
 <h4>报错19：产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策该经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</h4>
 <ul><li><strong>触发条件</strong>：要货订单下单时，updateActiveQty校验，某行QTY_BILL&gt;折扣政策产品行该经销商剩余可下单数量</li><li><strong>逻辑分析</strong>：折扣政策对每个产品按经销商设定可下单数量上限，多个订单共享同一政策时需扣减。下单数量超过该经销商剩余可下单数量则抛异常。常见根因：并发下单导致可下单数量被其他订单扣减、或用户下单数量超过剩余可下单数量。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id AS 产品行ID,
+
+```sql
+SELECT dpi.discount_policy_item_id AS 产品行ID,
          dpi.item_code            AS 产品编码,
          dpi.active_qty           AS 可下单数量,
          dpc.customer_code        AS 经销商编码,
@@ -809,10 +892,13 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
   JOIN   epm_discount_policy dp ON dp.discount_policy_id = dpi.discount_policy_id
   LEFT   JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
   WHERE  dp.source_type = 'YXCRM'
-  AND    dpi.active_qty &lt; dpc.remain_qty;</code></pre>
+  AND    dpi.active_qty < dpc.remain_qty;
+```
 <h4>报错20：产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策全部经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</h4>
 <ul><li><strong>触发条件</strong>：要货订单下单时，updateActiveQty校验，某行QTY_BILL&gt;折扣政策产品行全部经销商合计剩余可下单数量</li><li><strong>逻辑分析</strong>：折扣政策对每个产品设定全部经销商合计可下单数量上限，下单数量超过全部经销商剩余可下单数量则抛异常。常见根因：并发下单导致可下单数量被其他经销商订单扣减、或用户下单数量超过政策总剩余可下单数量。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id AS 产品行ID,
+
+```sql
+SELECT dpi.discount_policy_item_id AS 产品行ID,
          dpi.item_code            AS 产品编码,
          dpi.active_qty           AS 可下单数量,
          SUM(dpc.remain_qty)      AS 全部经销商剩余可下单数量
@@ -821,38 +907,50 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
   LEFT   JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
   WHERE  dp.source_type = 'YXCRM'
   GROUP  BY dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty
-  HAVING dpi.active_qty &lt; SUM(dpc.remain_qty);</code></pre>
+  HAVING dpi.active_qty < SUM(dpc.remain_qty);
+```
 <h4>报错21：请求CRM返回数据解析异常！</h4>
 <ul><li><strong>触发条件</strong>：点击"获取价格"按钮，调用CRM产品查询接口后，返回数据JSON解析失败</li><li><strong>逻辑分析</strong>：获取产品价格需调用CRM接口，返回数据为JSON格式，解析失败则无法获取价格。校验逻辑尝试解析JSON，异常则抛出。常见根因：CRM接口返回非JSON格式数据、CRM接口异常、或网络传输中断。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id    AS 政策ID,
+
+```sql
+SELECT discount_policy_id    AS 政策ID,
          discount_policy_code  AS 政策单号
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #&#123;discountPolicyId&#125;;</code></pre>
+  AND    discount_policy_id = #{discountPolicyId};
+```
 <h4>报错22：产品编码[&#123;code&#125;]请求CRM获取失败原因:[&#123;msg&#125;]</h4>
 <ul><li><strong>触发条件</strong>：点击"获取价格"按钮，调用CRM产品查询接口，CRM返回失败信息(msg)</li><li><strong>逻辑分析</strong>：获取产品价格需调用CRM接口，CRM返回失败信息则无法获取价格。校验逻辑读取CRM返回的msg，非空则抛异常并提示具体失败原因。常见根因：产品编码在CRM不存在、产品已失效、或CRM接口业务异常。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id AS 产品行ID,
+
+```sql
+SELECT dpi.discount_policy_item_id AS 产品行ID,
          dpi.item_code            AS 产品编码,
          dpi.discount_policy_id   AS 政策ID
   FROM   epm_discount_policy_item dpi
   LEFT   JOIN crm_product_info cp
          ON cp.product_code = dpi.item_code
         AND cp.status = 'ACTIVE'
-  WHERE  dpi.discount_policy_id = #&#123;discountPolicyId&#125;
-  AND    cp.product_code IS NULL;</code></pre>
+  WHERE  dpi.discount_policy_id = #{discountPolicyId}
+  AND    cp.product_code IS NULL;
+```
 <h4>报错23：Crm返回产品政策信息为空</h4>
 <ul><li><strong>触发条件</strong>：调用CRM产品政策查询接口后，CRM返回空数据</li><li><strong>逻辑分析</strong>：获取产品政策信息需调用CRM接口，返回空则无法组装政策数据。校验逻辑判断返回数据为空则抛异常。常见根因：产品在CRM未配置政策、CRM接口异常、或产品编码错误。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id AS 产品行ID,
+
+```sql
+SELECT dpi.discount_policy_item_id AS 产品行ID,
          dpi.item_code            AS 产品编码,
          dpi.discount_policy_id   AS 政策ID
   FROM   epm_discount_policy_item dpi
-  WHERE  dpi.discount_policy_id = #&#123;discountPolicyId&#125;
+  WHERE  dpi.discount_policy_id = #{discountPolicyId}
   AND    NOT EXISTS (
     SELECT 1 FROM crm_policy_info cpi WHERE cpi.item_code = dpi.item_code
-  );</code></pre>
+  );
+```
 <h4>报错24：客户的签约方式存在异常，请检查</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，校验客户签约方式时，客户档案签约方式数据异常(为空或非法值)</li><li><strong>逻辑分析</strong>：折扣政策关联客户时需校验客户签约方式，签约方式异常则政策无法正确执行。校验逻辑读取客户档案签约方式，为空或非法值则抛异常。常见根因：客户档案签约方式未维护、签约方式数据被误改、或客户档案数据不一致。</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT dp.discount_policy_id    AS 政策ID,
+
+```sql
+SELECT dp.discount_policy_id    AS 政策ID,
          dp.discount_policy_code  AS 政策单号,
          dpc.customer_id          AS 客户ID,
          dpc.customer_code        AS 客户编码,
@@ -863,7 +961,8 @@ FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
   LEFT   JOIN customer c
          ON c.customer_id = dpc.customer_id
   WHERE  dp.source_type = 'YXCRM'
-  AND    (c.contract_type IS NULL OR c.contract_type NOT IN (1, 2));</code></pre>
+  AND    (c.contract_type IS NULL OR c.contract_type NOT IN (1, 2));
+```
 </KbCard>
 
 <KbCard title="常见问题">
