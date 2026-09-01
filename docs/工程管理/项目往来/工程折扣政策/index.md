@@ -132,6 +132,7 @@
 </div>
 </div>
 </div>
+</div>
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
