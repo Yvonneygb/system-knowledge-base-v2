@@ -1,6 +1,7 @@
 node_modules/
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+docs/.vitepress/.temp/
 *.log
 build_output.txt
 qa-history.json
@@ -10,4 +11,3 @@ qa-history.json
 # Local Netlify folder
 .netlify
 docs/.vitepress/config.ts.timestamp-*.mjs
-docs/.vitepress/cache/
