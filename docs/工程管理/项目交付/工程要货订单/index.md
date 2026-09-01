@@ -869,7 +869,7 @@
 </KbCard>
 
 <div class="kl-card">
-<p>5 个单选 LOV 弹窗的入参与查询 SQL</p>
+<div class="kl-card-header">5 个单选 LOV 弹窗的入参与查询 SQL</div>
 
 <KbSubTitle>弹窗1：客户选择弹窗（LOV编码BASIC_CUSTOM_ORG_LOV_2） <KbBadge type="purple">单选</KbBadge></KbSubTitle>
 <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
@@ -1050,10 +1050,10 @@ SELECT * FROM EPM_PROJECT_CONTRACT
 
 </div>
 <div class="kl-card">
-<p>本页面无导入功能。产品明细通过选择折扣单号自动加载。</p>
+<div class="kl-card-header">本页面无导入功能。产品明细通过选择折扣单号自动加载。</div>
 </div>
 <div class="kl-card">
-<p>列表页与详情页共 15 个操作按钮的显隐与执行逻辑</p>
+<div class="kl-card-header">列表页与详情页共 15 个操作按钮的显隐与执行逻辑</div>
 
 <h4 class="kl-sub-title">按钮清单</h4>
 <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
@@ -1102,7 +1102,7 @@ SELECT * FROM EPM_PROJECT_CONTRACT
 
 </div>
 <div class="kl-card">
-<p>保存时 preCheckData 的 7 项校验规则</p>
+<div class="kl-card-header">保存时 preCheckData 的 7 项校验规则</div>
 
 <KbSubTitle>校验1：期望到达日期不能为空 —— 确保填写了期望到达日期</KbSubTitle>
 
@@ -1186,7 +1186,7 @@ SELECT ITEM_CODE, SM_STATE FROM SA_OUT_BILL_LINE
 
 </div>
 <div class="kl-card">
-<p>提交时 beforeSubmitCheck 的 2 项校验规则</p>
+<div class="kl-card-header">提交时 beforeSubmitCheck 的 2 项校验规则</div>
 
 <KbSubTitle>校验1：流程编码不能为空 —— 确保工作流编码已配置</KbSubTitle>
 
@@ -1211,7 +1211,7 @@ SELECT PROVINCE, CITY, COUNTY FROM CUSTOMER_ADDRESS
 
 </div>
 <div class="kl-card">
-<p>单据状态与审批流程的流转关系</p>
+<div class="kl-card-header">单据状态与审批流程的流转关系</div>
 
 <p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
 
