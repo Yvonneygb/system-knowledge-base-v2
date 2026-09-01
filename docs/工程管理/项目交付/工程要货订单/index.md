@@ -868,197 +868,447 @@
 </tbody></table></div>
 </KbCard>
 
-<KbCard title="选择弹窗">
-<KbSubTitle>弹窗1：客户选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+<div class="kl-card">
+<p>5 个单选 LOV 弹窗的入参与查询 SQL</p>
 
-**入参**
+<KbSubTitle>弹窗1：客户选择弹窗（LOV编码BASIC_CUSTOM_ORG_LOV_2） <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">中文名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">示例</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">searchFlag</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">查询标识</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">限定客户类型</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">124</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">查询工程渠道客户</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| searchFlag | 搜索标识 | 区分工程/样品/家装 | 124 |
-
-**数据范围**
-
-```sql
-客户主档中符合工程条件的有效经销商
-```
-
-<KbSubTitle>弹窗2：合同选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| customerId | 客户ID | 当前订单客户 | 1001 |
-
-**数据范围**
-
-```sql
-EPM_PROJECT_CONTRACT中客户匹配且状态为已生效的合同
-```
-
-<KbSubTitle>弹窗3：折扣单选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| searchFlag | 搜索标识 | 区分工程 | 2 |
-
-**数据范围**
+> 查询SQL（LOV值集BASIC_CUSTOM_ORG_LOV_2）：
 
 ```sql
-EPM_DISCOUNT_APPLY中已生效且适用工程的折扣单
+SELECT * FROM CUSTOMER_ORG WHERE SEARCH_FLAG = :searchFlag
 ```
 
-</KbCard>
-<KbCard title="导入">
-<KbSubTitle>前置约定</KbSubTitle>
+<KbSubTitle>弹窗2：交易公司选择弹窗（LOV编码TRADING_LEGAL_SQL_V） <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">中文名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">示例</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">customerId</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">客户ID</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">关联客户</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">1001</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询客户关联的交易公司</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">searchFlag</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询标识</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询标识</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">4</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">-</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">tradingScope</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">交易范围</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">交易范围</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">2</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">-</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-
-- 支持两种导入类型：折扣政策类型导入(importProduct)和价目表类型导入(importPriceProduct)
-- 文件格式：Excel(.xlsx)，单次导入上限待确认
-
-
-<KbSubTitle>字段映射</KbSubTitle>
-
-
-| 字段含义 | 是否必输 | 字段格式 | 重复判定字段 |
-|---------|---------|---------|------------|
-| 产品编码 | 是 | 文本 | ITEM_CODE |
-| 数量 | 是 | 数值 | - |
-
-
-<KbSubTitle>处理逻辑</KbSubTitle>
-
-
-- **校验逻辑**：产品编码必须存在且有效；数量必须大于0；产品必须属于当前折扣单/政策的适用范围
-- **导入逻辑**：根据价格类型分别处理——折扣政策类型从政策行匹配价格；价目表类型从价目表匹配价格
-- **重复处理策略**：产品编码重复时覆盖数量
-- **性能方案**：同步处理
-
-
-<KbSubTitle>异常与结果约定</KbSubTitle>
-
-
-- 部分成功/失败时：整批回滚
-- 结果反馈机制：导入失败明细提示
-
-
-<KbSubTitle>运维保障</KbSubTitle>
-
-
-- 日志记录：标准日志
-- 断点续传/重试机制：不支持
-
-
-</KbCard>
-<KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 新建 | 新增要货订单 | 列表页 | 有创建权限 | 跳转详情页新建模式 |
-| 修改地址 | 修改收货地址 | 列表页 | 有权限 | 弹出ModifyAddress组件修改选中订单的收货地址 |
-| 导出 | 导出列表数据 | 列表页 | 有导出权限 | 调用project-order-export接口，searchFlag=1 |
-| 查看 | 查看详情 | 列表页-行操作 | 常显 | 跳转详情页查看模式 |
-| 删除 | 删除订单 | 列表页-行操作 | NEW/NO_APPROVED状态且无正式单号且OA不扣订金未审批 | 调用DELETE接口 |
-| 刷新 | 刷新详情数据 | 详情页 | 常显 | 重新查询详情 |
-| 编辑 | 进入编辑模式 | 详情页 | 非审批中/已审批状态 | 切换editFlag |
-| 保存 | 保存当前修改 | 详情页 | 编辑模式下 | 调用POST保存接口 |
-| 保存并提交 | 保存并提交审批 | 详情页 | 编辑模式下且状态允许提交 | 先保存再启动工作流 |
-| 生成价目表 | 生成产品价格数据 | 详情页-产品明细 | priceType=3时 | 调用do-get-pick-po-data接口 |
-| 不扣订金申请 | 申请不扣订金 | 详情页 | 特定条件 | 推送OA审批doApplicationOa |
-| 校验年度经销合同 | 校验客户合同 | 详情页 | 工程订单 | 调用check-customer-contract接口 |
-| 查看库存 | 查看产品库存 | 详情页-产品明细 | 常显 | 弹出库存查询弹窗 |
-
-</KbCard>
-<KbCard title="保存校验">
-<KbSubTitle>校验1：产品明细行不允许为空 —— 确保订单至少有一个产品行</KbSubTitle>
-
-- 第1点：保存时检查产品行列表是否为空
-
-<KbTip>阻断性报错</KbTip>
+> 查询SQL（LOV值集TRADING_LEGAL_SQL_V）：
 
 ```sql
-SELECT COUNT(*) FROM SA_OUT_BILL_LINE WHERE SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+SELECT * FROM EPM_TRADING_COMPANY
+ WHERE CUSTOMER_ID = :customerId
+   AND TRADING_SCOPE = :tradingScope
 ```
 
-<KbSubTitle>校验2：期望到达日期不早于今天 —— 确保交货期合理</KbSubTitle>
+<KbSubTitle>弹窗3：折扣单号选择弹窗（LOV编码AE.EPM_DISCOUNT_APPLYS） <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">中文名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">示例</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">searchFlag</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询标识</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">工程折扣单</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">2</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询工程渠道折扣单</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">customerId</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">客户ID</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">关联客户</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">1001</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询该客户的折扣单</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">saOutBillHeadId</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">订单ID</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">当前订单</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">2001</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">排除当前订单已关联的折扣单</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-- 第1点：前端控制inDate字段min=今天
-- 第2点：后端checkInDate校验
+> 查询SQL（LOV值集AE.EPM_DISCOUNT_APPLYS）：
 
-<KbTip>阻断性报错</KbTip>
+```sql
+SELECT * FROM EPM_DISCOUNT_APPLY
+ WHERE CUSTOMER_ID = :customerId
+   AND VALID = 2
+   AND EFFECTIVE_DATE_END + 1 > SYSDATE
+   AND ACTIVE_QTY > 0
+```
+
+<KbSubTitle>弹窗4：合同选择弹窗（LOV编码AE.GET_PROJECT_INTENTION） <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">中文名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">示例</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">customerId</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">客户ID</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">关联客户</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">1001</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询客户关联的有效合同</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">contractType</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">签约方式</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">合同类型</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">1</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">-</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+> 查询SQL（LOV值集AE.GET_PROJECT_INTENTION）：
+
+```sql
+SELECT * FROM EPM_PROJECT_CONTRACT
+ WHERE CUSTOMER_ID = :customerId
+   AND CONTRACT_STAT = 2
+```
+
+<KbSubTitle>弹窗5：申请不扣订金弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">字段名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">中文名</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">释义</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">示例</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">数据范围</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">nodepositDesc</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">申请原因</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">不扣订金申请原因</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">-</td>
+        <td style="padding:9px 11px;font-size:.72rem;color:#374151;">必填；用户输入</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+<div class="kl-card">
+<p>本页面无导入功能。产品明细通过选择折扣单号自动加载。</p>
+</div>
+<div class="kl-card">
+<p>列表页与详情页共 15 个操作按钮的显隐与执行逻辑</p>
+
+<h4 class="kl-sub-title">按钮清单</h4>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">按钮名称</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">按钮作用</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">所在位置</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">显隐条件/可点击条件</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">影响</th>
+    </tr></thead>
+    <tbody>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">新建</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">新建要货订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">列表页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">有创建权限</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">跳转详情页新建模式</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">修改地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">批量修改收货地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">列表页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">有权限</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">弹出地址修改弹窗</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">导出</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">导出列表数据</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">列表页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">有导出权限</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">调用project-order-export接口</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">查看</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查看详情</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">列表页-行操作</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">常显</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">跳转详情页只读模式</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">删除</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">删除订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">列表页-行操作</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">流程状态NEW/NO_APPROVED且无要货单号且OA状态0/99/空</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">删除订单</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">编辑</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">进入编辑模式</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">非审批中/审批通过</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">切换editFlag</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">保存</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">编辑模式且非审批中且OA状态0/99/空</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">调用保存接口</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">保存并提交</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">保存并提交审批</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">编辑模式且状态允许提交</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">先保存再启动工作流</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">查看定金库存</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询定金库存</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">非审批通过</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">调用deposit-stock接口</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">申请不扣订金</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">申请免扣定金</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">可编辑且billType=1/13且OA状态0/99/空</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">弹窗输入原因后送签OA</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">生成CRM订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">推送CRM生成订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">OA状态0/4/99/空且有流程状态且订单状态非2/3/5/6/7/9</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">校验后生成CRM订单</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">批量获取当月报送总量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">查询产品当月报送量</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">非审批通过且billType=2</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">调用get-cur-month-submit-qty接口</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">同步地址信息</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">从CRM同步地址</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">有客户编码且非审批通过</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">调用async-address接口</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">打印</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">打印订单</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">有订单ID</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">报表编码ENGINEERINGMATERIALORDER</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">刷新</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">刷新详情数据</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">详情页</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">常显</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">重新查询详情</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 class="kl-sub-title">保存（详情页）</h4>
+<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：用户在详情页点击"保存"按钮，编辑模式且非审批中且OA状态0/99/空</li><li><strong>执行逻辑</strong>：<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：preCheckData保存前校验（地址、必填项）</li><li>第2点：若订单状态=4(已拒绝)且OA状态=2(已审批)且订单状态≠11：仅更新期望到达日期</li><li>第3点：否则：返还可下单数量→保存头信息→处理行信息→保存附件→保存行信息→扣减可下单数量</li><li>第4点：afterSave保存后处理：取订单行最低EXTRA_DISCOUNT_RATE回写到头DISCOUNT_RATE</li></ul></li><li><strong>接口调用</strong>：POST /v1/{organizationId}/sa-out-bill-heads</li></ul>
+
+<h4 class="kl-sub-title">保存并提交（详情页）</h4>
+<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：用户在详情页点击"保存并提交"按钮，编辑模式且状态允许提交</li><li><strong>执行逻辑</strong>：<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：校验流程编码非空</li><li>第2点：校验地址信息（省/市/县非空）</li><li>第3点：调用save保存</li><li>第4点：beforeSubmitCheck提交前校验</li><li>第5点：组装工作流参数，workFlowStart开启工作流</li></ul></li><li><strong>接口调用</strong>：POST /v1/{organizationId}/sa-out-bill-heads/save-and-submit</li></ul>
+
+<h4 class="kl-sub-title">生成CRM订单（详情页）</h4>
+<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：OA状态0/4/99/空且有流程状态且订单状态非2/3/5/6/7/9</li><li><strong>执行逻辑</strong>：<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li>第1点：查询订单头+行数据</li><li>第2点：校验地址信息完整性（省/市/县非空）</li><li>第3点：校验折扣单未过期</li><li>第4点：校验开票单位有效性(checkBill)</li><li>第5点：校验合同状态（非变更中、非已审批）</li><li>第6点：校验产品下单数量未超合同(doCheckBillQty)</li><li>第7点：校验SM状态</li><li>第8点：推送CRM生成正式销售订单</li></ul></li><li><strong>接口调用</strong>：POST /v1/{organizationId}/sa-out-bill-heads/do-check-create-crm-order</li></ul>
+
+<h4 class="kl-sub-title">删除（列表页）</h4>
+<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：流程状态NEW/NO_APPROVED且无要货单号且OA状态0/99/空</li><li><strong>执行逻辑</strong>：按saOutBillHeadId删除订单及其明细行</li><li><strong>接口调用</strong>：DELETE /v1/{organizationId}/sa-out-bill-heads</li></ul>
+
+<h4 class="kl-sub-title">申请不扣订金（详情页）</h4>
+<ul style="margin:0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;"><li><strong>触发条件</strong>：可编辑(backEditFlag)且billType=1/13且OA状态0/99/空</li><li><strong>执行逻辑</strong>：弹出弹窗填写申请原因(nodepositDesc)，送签OA审批</li><li><strong>接口调用</strong>：POST /v1/{organizationId}/sa-out-bill-heads/do-application-oa</li></ul>
+
+</div>
+<div class="kl-card">
+<p>保存时 preCheckData 的 7 项校验规则</p>
+
+<KbSubTitle>校验1：期望到达日期不能为空 —— 确保填写了期望到达日期</KbSubTitle>
+
+- 第1点：检查inDate不为空
+
+<KbTip>系统体现：阻断性报错</KbTip>
 
 ```sql
 SELECT IN_DATE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = :id
 ```
 
-</KbCard>
-<KbCard title="提交校验">
-<KbSubTitle>校验1：提交前综合校验(preCheckData) —— 确保订单数据完整合规</KbSubTitle>
+<KbSubTitle>校验2：期望到达日期不超过限制范围 —— 确保日期在允许范围内</KbSubTitle>
 
-- 第1点：校验产品行紧急标识(checkLineUrgency)
-- 第2点：校验业务类型(cheBusinessType)、客户子分类(customerSubClassCheck)
-- 第3点：校验行数量(checkLineNum)、期望到达日期(checkInDate)、下单数量(doCheckQty)、价格(checkPriceBill)
-- 第4点：工程特有校验(beforeSubmitCheck)：年度经销合同、定金等
+- 第1点：期望日期不能超过一年
+- 第2点：电商渠道计划订单限当月往后6个月内，常规订单限7个月内
+- 第3点：非电商渠道计划订单限3个月内，常规订单限4个月内
 
-<KbTip>阻断性报错</KbTip>
+<KbTip>系统体现：阻断性报错</KbTip>
 
 ```sql
-SELECT * FROM SA_OUT_BILL_HEAD h 
-    LEFT JOIN SA_OUT_BILL_LINE l ON l.SA_OUT_BILL_HEAD_ID = h.SA_OUT_BILL_HEAD_ID
-    WHERE h.SA_OUT_BILL_HEAD_ID = :id
+SELECT IN_DATE, BILL_TYPE, CHANNEL FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = :id
 ```
 
-<KbSubTitle>校验2：价格类型校验(validPriceType) —— 确保价格来源有效</KbSubTitle>
+<KbSubTitle>校验3：产品行不能为空 —— 确保至少有一条产品明细</KbSubTitle>
 
-- 第1点：priceType=1时必须关联折扣单(discountApplyId不为空)
-- 第2点：priceType=2时必须关联折扣政策(discountPolicyId不为空)
-- 第3点：priceType=3时产品行必须有价目表价格
+- 第1点：检查产品明细行列表不为空
 
-<KbTip>阻断性报错</KbTip>
+<KbTip>系统体现：阻断性报错</KbTip>
 
 ```sql
-SELECT PRICE_TYPE, DISCOUNT_APPLY_ID, DISCOUNT_POLICY_ID 
-    FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = :id
+SELECT COUNT(*) FROM SA_OUT_BILL_LINE WHERE SA_OUT_BILL_HEAD_ID = :id
 ```
 
-</KbCard>
-<KbCard title="状态机">
-### 状态机
+<KbSubTitle>校验4：仅计划订单允许加紧急 —— 确保常规订单无紧急行</KbSubTitle>
 
-<KbSubTitle>状态机流转图</KbSubTitle>
+- 第1点：billType=1/13(常规)时，不应存在URGENCY=2的行
 
+<KbTip>系统体现：阻断性报错</KbTip>
 
-```text
-NEW(新建) ──保存并提交──→ RUN(审批中) ──审批通过──→ APPROVED(已审批) → 生成CRM订单
-  ↑                         │
-  │                         ├──审批拒绝──→ REJECTED(已拒绝) ──修改后保存并提交──→ RUN
-  │                         ├──审批驳回──→ REBUT(已驳回)
-  │                         └──终止──────→ INTERRUPT(已终止)
-  │
-  └──删除──→ (删除)
-
-NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→ RUN
+```sql
+SELECT COUNT(*) FROM SA_OUT_BILL_LINE
+ WHERE SA_OUT_BILL_HEAD_ID = :id AND URGENCY = 2
 ```
 
-<KbSubTitle>状态机列表</KbSubTitle>
+<KbSubTitle>校验5：紧急行数不超过限制 —— 确保紧急行数合规</KbSubTitle>
 
+- 第1点：紧急行数≤CEIL(产品行数/5)
 
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 编辑、保存、保存并提交、删除 |
-| RUN | 审批中 | 无(等待审批结果) |
-| APPROVED | 审批通过 | 无(流程结束，CRM订单已创建) |
-| REJECTED | 审批拒绝 | 编辑、保存、保存并提交 |
-| WITHDRAW | 已撤回 | 编辑、保存、保存并提交 |
-| INTERRUPT | 已终止 | 无(流程结束) |
-| NO_APPROVED | 无需审批 | 编辑、保存、删除 |
+<KbTip>系统体现：阻断性报错</KbTip>
 
----
+```sql
+SELECT COUNT(*) AS TOTAL_ROWS,
+       SUM(CASE WHEN URGENCY = 2 THEN 1 ELSE 0 END) AS URGENT_ROWS
+  FROM SA_OUT_BILL_LINE
+ WHERE SA_OUT_BILL_HEAD_ID = :id
+```
 
-</KbCard>
+<KbSubTitle>校验6：可下单数量充足 —— 确保不超过政策可下单数量</KbSubTitle>
+
+- 第1点：检查各产品行下单数量不超过折扣单可下单数量
+
+<KbTip>系统体现：阻断性报错</KbTip>
+
+```sql
+SELECT LINE.QTY_BILL, LINE.ACTIVE_QTY
+  FROM SA_OUT_BILL_LINE LINE
+ WHERE LINE.SA_OUT_BILL_HEAD_ID = :id
+   AND LINE.QTY_BILL > LINE.ACTIVE_QTY
+```
+
+<KbSubTitle>校验7：SM状态Z8不允许下单 —— 确保产品未停产</KbSubTitle>
+
+- 第1点：检查产品SM状态不为Z8
+
+<KbTip>系统体现：阻断性报错</KbTip>
+
+```sql
+SELECT ITEM_CODE, SM_STATE FROM SA_OUT_BILL_LINE
+ WHERE SA_OUT_BILL_HEAD_ID = :id AND SM_STATE = 'Z8'
+```
+
+</div>
+<div class="kl-card">
+<p>提交时 beforeSubmitCheck 的 2 项校验规则</p>
+
+<KbSubTitle>校验1：流程编码不能为空 —— 确保工作流编码已配置</KbSubTitle>
+
+- 第1点：检查flowCode/processCode不为空
+
+<KbTip>系统体现：阻断性报错</KbTip>
+
+```sql
+-- 系统级检查，无SQL
+```
+
+<KbSubTitle>校验2：地址信息完整 —— 确保省/市/县非空</KbSubTitle>
+
+- 第1点：检查收货地址的省、市、县字段非空
+
+<KbTip>系统体现：阻断性报错</KbTip>
+
+```sql
+SELECT PROVINCE, CITY, COUNTY FROM CUSTOMER_ADDRESS
+ WHERE CUSTOMER_ADDRESS_ID = :addressId
+```
+
+</div>
+<div class="kl-card">
+<p>单据状态与审批流程的流转关系</p>
+
+<p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
+
+<div style="overflow-x:auto;padding:12px 0;white-space:nowrap;">
+  <table style="border-collapse:collapse;margin:0 auto;">
+    <tr>
+      <td style="padding:4px 8px;">
+        <div style="background:#E6F1FB;border:2px solid #378ADD;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#185FA5;">NEW(新建)</div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">保存并提交→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#FEF3C7;border:2px solid #FCD34D;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#92400E;">RUN(审批中)</div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">审批通过→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#F0FDF4;border:2px solid #86EFAC;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#166534;">APPROVED(已审批)</div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#F0FDF4;border:2px solid #86EFAC;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#166534;">生成CRM订单</div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#F0FDF4;border:2px solid #86EFAC;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#166534;">推送ERP发货</div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:4px 8px;"></td>
+      <td></td>
+      <td style="padding:4px 8px;text-align:center;font-size:11px;color:#888780;">↓</td>
+      <td colspan="6"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="padding:4px 8px;">
+        <div style="background:#FEF2F2;border:2px solid #FCA5A5;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#991B1B;">REJECTED(已拒绝)</div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">修改后保存并提交→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#FEF3C7;border:2px solid #FCD34D;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#92400E;">RUN(审批中)</div>
+      </td>
+      <td colspan="4"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="padding:4px 8px;">
+        <div style="background:#FEF2F2;border:2px solid #FCA5A5;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#991B1B;">REBUT(已驳回)</div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">修改后保存并提交→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#FEF3C7;border:2px solid #FCD34D;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#92400E;">RUN(审批中)</div>
+      </td>
+      <td colspan="4"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="padding:4px 8px;">
+        <div style="background:#F3F4F6;border:2px solid #D1D5DB;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#6B7280;">INTERRUPT(已终止)</div>
+      </td>
+      <td colspan="6"></td>
+    </tr>
+    <tr>
+      <td style="padding:4px 8px;">
+        <div style="background:#E6F1FB;border:2px solid #378ADD;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#185FA5;">NEW(新建)</div>
+      </td>
+      <td style="padding:4px 4px;text-align:center;font-size:11px;color:#888780;">删除→</td>
+      <td style="padding:4px 8px;">
+        <div style="background:#F3F4F6;border:2px solid #D1D5DB;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;color:#6B7280;">(删除)</div>
+      </td>
+      <td colspan="6"></td>
+    </tr>
+  </table>
+</div>
+
+<h4 class="kl-sub-title">状态机列表</h4>
+<div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
+  <table class="kl-table" style="margin:0;width:100%;border-collapse:collapse;">
+    <thead><tr style="background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);">
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">状态机名称</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">状态释义</th>
+      <th style="padding:9px 11px;font-size:.72rem;font-weight:800;color:#5B21B6;text-align:left;white-space:nowrap;border-bottom:2px solid #E8ECF0;">可执行的操作</th>
+    </tr></thead>
+    <tbody>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">NEW</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">新建</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">编辑、保存、保存并提交、删除</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">RUN</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">审批中</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">无(等待审批结果)</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">APPROVED</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">审批通过</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">生成CRM订单、查看定金库存</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">REJECTED</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">审批拒绝</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">编辑、保存、保存并提交</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;border-bottom:1px solid #E8ECF0;">REBUT</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">已驳回</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;border-bottom:1px solid #E8ECF0;">编辑、保存、保存并提交</td></tr>
+      <tr><td style="padding:9px 11px;font-size:.72rem;font-weight:700;color:#111827;">INTERRUPT</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">已终止</td><td style="padding:9px 11px;font-size:.72rem;color:#374151;">无(流程结束)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
 <KbCard num="1" title="表1：SA_OUT_BILL_HEAD（要货订单头表）">
 
 | 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
@@ -1167,124 +1417,1310 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
 <colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
 <thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">产品明细行不允许为空</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">未录入任何产品行</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">期望到达日期不能早于今天</td>
-            <td style="font-size:13px;">保存/提交</td>
-            <td style="font-size:13px;">inDate早于当前日期</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">价格类型校验失败</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">priceType与关联折扣单/政策不匹配</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">年度经销合同校验失败</td>
-            <td style="font-size:13px;">提交(工程)</td>
-            <td style="font-size:13px;">客户无有效年度经销合同</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">下单数量超出限制</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">产品下单数量超过可下单数量或坎级限制</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">CRM订单创建失败</td>
-            <td style="font-size:13px;">审批通过</td>
-            <td style="font-size:13px;">CRM接口返回错误</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">仅新建状态单据允许删除</td>
-            <td style="font-size:13px;">删除</td>
-            <td style="font-size:13px;">非NEW/NO_APPROVED状态不允许删除</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td>
-          </tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">期望到达日期不能为空</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">未填写期望到达日期。填写期望到达日期</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">期望到达日期超过限制范围</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">日期超出允许范围。参考日期限制规则调整日期</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">关联合同变更中</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">合同存在审批中的变更单。等变更审批完成</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">已审批的合同无法生成CRM订单</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">合同已审批通过。直接用折扣单做单</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">仅计划订单允许加紧急</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">常规订单加了紧急行。改为计划订单或移除紧急行</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">紧急行数超过限制</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">紧急行数&gt;CEIL(产品行数/5)。减少紧急行数</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">产品行不能为空</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">无产品明细行。添加产品明细</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">可下单数量不足</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">超过政策可下单数量。减少下单数量</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">产品生命状态为Z8，不允许下达订单</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">产品SM状态为Z8(停产)。选择其他产品</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">产品计划淘汰中</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">SM状态Z6。确认后可继续</td>
+<td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">产品进入售后阶段</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">SM状态S6。确认后可继续</td>
+<td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">产品有库存数量，发完即止</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">SM状态Z7。确认后可继续</td>
+<td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">期望到达日期不能晚于折扣有效期</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">期望日期&gt;折扣有效期。调整期望日期</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">期望到达日期不能晚于政策有效期</td>
+<td style="font-size:13px;">申请不扣订金时</td>
+<td style="font-size:13px;">期望日期&gt;政策有效期。调整期望日期</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">明细行不能为空</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">无产品明细行。添加产品明细</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">业务类型不能为空</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">业务类型为空。选择业务类型</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">存在重复下单的产品：&#123;编码&#125;</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">同一产品重复下单。删除重复行</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">小五金经销商只能下小五金的订单</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">小五金经销商下了非小五金产品。选择小五金产品</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">价格类型为折扣政策的订单，政策id不能为空</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">折扣单订单未关联政策。选择折扣单</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">关联的报备信息不存在</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">报备信息不存在。检查报备配置</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-20" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">关联的报备未生效，不允许下单</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">报备未生效。等报备生效后下单</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-21" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">合同信息有误，请重新选择</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">合同信息异常。重新选择合同</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-22" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">产品[&#123;编码&#125;]下单数量不能小于起订量</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">下单数量&lt;起订量。调整下单数量</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-23" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">无法获上线文信息</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">无法获取用户上下文。检查登录状态</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-24" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">查询客户开票单位为空，请检查！</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">客户开票单位为空。维护开票单位</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-25" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">无法匹配签约方式！</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">签约方式匹配失败。检查签约方式配置</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-26" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">无法匹配交易公司！</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">交易公司匹配失败。检查交易公司配置</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-27" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">无法匹配经销合同</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">经销合同匹配失败。检查合同配置</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-28" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">未查询到折扣单行信息</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">折扣单行信息不存在。检查折扣单</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-29" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">您当前的经销合作合同已失效，暂无法正常下单</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">经销合同已失效。联系业务员处理</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-30" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">价目表或者折扣单要货，不需要送签OA</td>
+<td style="font-size:13px;">提交时</td>
+<td style="font-size:13px;">价目表/折扣单不需要OA审批。直接生成CRM订单</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-31" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">合同关联的单体报备未生效</td>
+<td style="font-size:13px;">提交时</td>
+<td style="font-size:13px;">单体报备未生效。等报备生效</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">该单据已经审核</td>
+<td style="font-size:13px;">提交时</td>
+<td style="font-size:13px;">单据已审核。无需重复提交</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-32" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">期望到达日期已过期，请修改后重新提交</td>
+<td style="font-size:13px;">提交时</td>
+<td style="font-size:13px;">期望日期已过期。修改期望日期</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-33" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">地址id异常,请联系管理员</td>
+<td style="font-size:13px;">提交时</td>
+<td style="font-size:13px;">收货地址ID异常。联系管理员</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">查找法人客户失败</td>
+<td style="font-size:13px;">提交时</td>
+<td style="font-size:13px;">法人客户查找失败。检查客户配置</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">折扣政策不存在，请联系管理员</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">折扣政策不存在。联系管理员</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-34" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">折扣政策【&#123;编码&#125;】已失效，请联系区域经理</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">折扣政策已失效。联系区域经理</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-35" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">折扣政策【&#123;编码&#125;】不在有效期内，请联系区域经理</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">折扣政策不在有效期。联系区域经理</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-36" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">流程编码缺失，请选择流程！</td>
+<td style="font-size:13px;">提交时</td>
+<td style="font-size:13px;">流程编码为空。配置工作流</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-37" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">地址不存在或数据异常，请同步地址信息</td>
+<td style="font-size:13px;">提交时</td>
+<td style="font-size:13px;">地址数据异常。点击同步地址信息</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-38" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">折扣政策【&#123;编码&#125;】的全产品政策行，已失效</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">全产品政策行已失效。联系区域经理</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-39" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">获取不到业务单据信息，请检查！</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">单据信息获取失败。检查单据是否存在</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">当前折扣政策已失效，请重新选择！</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">折扣政策已失效。重新选择折扣单</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-40" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">您当前的要货订单已超有效期，请联系业务员处理</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">订单超有效期。联系业务员</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-41" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">ID不能为空</td>
+<td style="font-size:13px;">删除/审批时</td>
+<td style="font-size:13px;">单据ID为空。检查参数传递</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-42" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">未查询到业务单据，请检查</td>
+<td style="font-size:13px;">删除/审批时</td>
+<td style="font-size:13px;">单据不存在。检查单据是否存在</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-43" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">当前单据不允许执行当前操作</td>
+<td style="font-size:13px;">操作时</td>
+<td style="font-size:13px;">单据状态不允许该操作。检查单据状态</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-44" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">客户编码不能为空！</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">客户编码为空。选择客户</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-45" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">行信息不能为空！</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">行信息为空。添加产品明细</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">查询不到客户-法人关联信息</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">客户法人关联不存在。维护客户法人关系</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-46" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">当前请求未存在数据,请核实后再试</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">请求无数据。核实请求参数</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">未维护要货产品明细,生成失败</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">无产品明细。添加产品明细</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-47" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">未配置公司参数 : 'Gcyhdd_BuKouDingJin'</td>
+<td style="font-size:13px;">申请不扣订金时</td>
+<td style="font-size:13px;">公司参数未配置。配置公司参数</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">客户不能为空</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">客户为空。选择客户</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">客户信息异常</td>
+<td style="font-size:13px;">保存时</td>
+<td style="font-size:13px;">客户信息异常。检查客户数据</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">开票单位在crm状态异常:&#123;原因&#125;</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">开票单位CRM状态异常。检查开票单位</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-48" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">通过客户获取币种为空</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">客户币种为空。维护客户币种</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">对应的合同已失效</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">合同已失效。重新选择合同</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-49" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">对应的合同正在失效申请中</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">合同正在失效申请。等失效申请完成</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-50" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">订单产品线为空，请检查！</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">订单产品线为空。选择产品线</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-51" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">渠道为空，请检查！</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">销售渠道为空。检查渠道配置</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-52" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">未找到该经销商对应的开票单位和交易公司的对应关系</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">开票单位与交易公司对应关系不存在。联系管理员</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">客户的签约方式存在异常，请检查</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">客户签约方式异常。检查签约方式</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><span style="color:#9CA3AF;font-size:12px;">—</span></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">请配置加价系统参数:【ItemValidRate】</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">加价系统参数未配置。配置系统参数</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-53" class="view-btn">查看</a></td>
+</tr>
+<tr>
+<td style="color:#DC2626;font-weight:600;">请配置公司参数(审批折扣率标准【extra_discount_rate_standard】)</td>
+<td style="font-size:13px;">生成CRM订单时</td>
+<td style="font-size:13px;">审批折扣率标准参数未配置。配置公司参数</td>
+<td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+<td style="font-size:13px;text-align:center;"><a href="#err-detail-54" class="view-btn">查看</a></td>
+</tr>
 </tbody></table></div>
 
 <div id="err-detail-1" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>产品明细行不允许为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未录入任何产品行</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能为空</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，期望到达日期(IN_DATE)未填写</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>保存校验中检查IN_DATE非空，因期望到达日期为要货订单必填项，用于物流安排。该报错为阻断性报错</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.IN_DATE, obh.BILL_TYPE, obh.ORDER_STAT
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.IN_DATE IS NULL
+  -- 查出期望到达日期为空的订单</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
   </div>
 </div>
-
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能早于今天</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>inDate早于当前日期</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <h4><span style="color:#7C3AED;">报错：</span>期望到达日期超过限制范围</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，期望到达日期超出允许范围(超过一年；电商渠道计划订单超6个月/常规订单超7个月；非电商渠道计划订单超3个月/常规订单超4个月)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>保存校验中按BILL_TYPE和CHANNEL计算日期上限，若IN_DATE超过上限则抛出阻断性报错。需参考日期限制规则调整日期</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.IN_DATE, obh.BILL_TYPE, obh.CHANNEL,
+         SYSDATE AS 当前日期,
+         CASE WHEN obh.CHANNEL = 1 AND obh.BILL_TYPE = 2 THEN ADD_MONTHS(SYSDATE, 6)
+              WHEN obh.CHANNEL = 1 AND obh.BILL_TYPE = 1 THEN ADD_MONTHS(SYSDATE, 7)
+              WHEN obh.CHANNEL &lt;&gt; 1 AND obh.BILL_TYPE = 2 THEN ADD_MONTHS(SYSDATE, 3)
+              WHEN obh.CHANNEL &lt;&gt; 1 AND obh.BILL_TYPE = 1 THEN ADD_MONTHS(SYSDATE, 4)
+              ELSE ADD_MONTHS(SYSDATE, 12) END AS 日期上限
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 对比IN_DATE与日期上限</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
   </div>
 </div>
-
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>价格类型校验失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>priceType与关联折扣单/政策不匹配</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <h4><span style="color:#7C3AED;">报错：</span>关联合同变更中</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，关联合同存在审批中的变更单(ECN)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>生成CRM订单方法中按CONTRACT_ID查询EPM_PROJECT_CONTRACT_ECN筛选HZ_APPROVE_STATUS='RUN'，若存在则抛出阻断性报错。需等变更审批完成</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT epce.ECN_ID, epce.ECN_CODE, epce.CONTRACT_ID, epce.CONTRACT_CODE,
+         epce.HZ_APPROVE_STATUS, epce.HZ_INSTANCE_ID
+  FROM EPM_PROJECT_CONTRACT_ECN epce
+  WHERE epce.CONTRACT_ID = :contractId
+    AND epce.HZ_APPROVE_STATUS = 'RUN'
+  -- 查出审批中的合同变更单</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
   </div>
 </div>
-
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>年度经销合同校验失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>客户无有效年度经销合同</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <h4><span style="color:#7C3AED;">报错：</span>已审批的合同无法生成CRM订单</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，合同已审批通过(HZ_APPROVE_STATUS=APPROVED)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>生成CRM订单方法中校验合同状态，若已审批通过则抛出阻断性报错。需直接用折扣单做单</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.HZ_APPROVE_STATUS, epc.VALID
+  FROM EPM_PROJECT_CONTRACT epc
+  WHERE epc.CONTRACT_ID = :contractId
+  -- 期望 HZ_APPROVE_STATUS &lt;&gt; 'APPROVED'</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
   </div>
 </div>
-
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>下单数量超出限制</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>产品下单数量超过可下单数量或坎级限制</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <h4><span style="color:#7C3AED;">报错：</span>仅计划订单允许加紧急</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，常规订单(BILL_TYPE=1)加了紧急行(URGENCY=2)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>保存校验中检查仅计划订单(BILL_TYPE=2)允许加紧急行，常规订单不允许。需改为计划订单或移除紧急行</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.BILL_TYPE,
+         obl.SA_OUT_BILL_LINE_ID, obl.URGENCY
+  FROM SA_OUT_BILL_HEAD obh
+  JOIN SA_OUT_BILL_LINE obl ON obh.SA_OUT_BILL_HEAD_ID = obl.SA_OUT_BILL_HEAD_ID
+  WHERE obh.BILL_TYPE = 1
+    AND obl.URGENCY = 2
+  -- 查出常规订单中的紧急行</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
   </div>
 </div>
-
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>CRM订单创建失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CRM接口返回错误</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <h4><span style="color:#7C3AED;">报错：</span>紧急行数超过限制</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，紧急行数 &gt; CEIL(产品行数/5)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>保存校验中统计紧急行数(URGENCY=2)和产品行数，若紧急行数&gt;CEIL(产品行数/5)则抛出阻断性报错。需减少紧急行数</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO,
+         COUNT(*) AS 产品行数,
+         SUM(CASE WHEN obl.URGENCY = 2 THEN 1 ELSE 0 END) AS 紧急行数,
+         CEIL(COUNT(*) / 5) AS 紧急行数上限
+  FROM SA_OUT_BILL_HEAD obh
+  JOIN SA_OUT_BILL_LINE obl ON obh.SA_OUT_BILL_HEAD_ID = obl.SA_OUT_BILL_HEAD_ID
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  GROUP BY obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO
+  -- 对比紧急行数与上限</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
   </div>
 </div>
-
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>非NEW/NO_APPROVED状态不允许删除</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+    <h4><span style="color:#7C3AED;">报错：</span>产品行不能为空</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，无产品明细行(SA_OUT_BILL_LINE为空)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>保存校验中检查产品明细行列表非空，因要货订单必须包含至少一条产品明细。该报错为阻断性报错</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.ORDER_STAT,
+         (SELECT COUNT(*) FROM SA_OUT_BILL_LINE obl
+          WHERE obl.SA_OUT_BILL_HEAD_ID = obh.SA_OUT_BILL_HEAD_ID) AS 产品行数
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 若产品行数为0，则触发该报错</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>可下单数量不足</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，下单数量超过折扣政策可下单数量(ACTIVE_QTY)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>保存校验中按DISCOUNT_APPLY_LINE_ID查询折扣单行的可下单数量(ACTIVE_QTY)，若本次下单数量&gt;ACTIVE_QTY则抛出阻断性报错。需减少下单数量</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT edal.DISCOUNT_APPLY_LINE_ID, edal.ITEM_CODE, edal.ITEM_NAME,
+         edal.CONTRACT_QTY, edal.ACTIVE_QTY, edal.ORDERED_QTY,
+         edal.ACTIVE_QTY - edal.ORDERED_QTY AS 剩余可下单数量
+  FROM EPM_DISCOUNT_APPLY_LINE edal
+  WHERE edal.DISCOUNT_APPLY_LINE_ID = :discountApplyLineId
+  -- 对比本次下单数量与剩余可下单数量</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品生命状态为Z8，不允许下达订单</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，产品SM状态(SM_STATE)为Z8(停产)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>保存校验中检查产品SM状态，Z8表示停产不允许下单。需选择其他产品</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obl.SA_OUT_BILL_LINE_ID, obl.ITEM_CODE, obl.ITEM_NAME, obl.SM_STATE, obl.QTY_BILL
+  FROM SA_OUT_BILL_LINE obl
+  WHERE obl.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obl.SM_STATE = 'Z8'
+  -- 查出SM状态为Z8的产品行</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品计划淘汰中</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，产品SM状态(SM_STATE)为Z6(计划淘汰)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>生成CRM订单方法中检查产品SM状态，Z6表示计划淘汰，弹出toast提醒让用户确认后可继续</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obl.SA_OUT_BILL_LINE_ID, obl.ITEM_CODE, obl.ITEM_NAME, obl.SM_STATE
+  FROM SA_OUT_BILL_LINE obl
+  WHERE obl.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obl.SM_STATE = 'Z6'
+  -- 查出SM状态为Z6的产品行</code></pre>    <div class="detail-tip" v-pre>等级：toast提醒</div>
+  </div>
+</div>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品进入售后阶段</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，产品SM状态(SM_STATE)为S6(售后阶段)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>生成CRM订单方法中检查产品SM状态，S6表示进入售后阶段，弹出toast提醒让用户确认后可继续</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obl.SA_OUT_BILL_LINE_ID, obl.ITEM_CODE, obl.ITEM_NAME, obl.SM_STATE
+  FROM SA_OUT_BILL_LINE obl
+  WHERE obl.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obl.SM_STATE = 'S6'
+  -- 查出SM状态为S6的产品行</code></pre>    <div class="detail-tip" v-pre>等级：toast提醒</div>
+  </div>
+</div>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品有库存数量，发完即止</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，产品SM状态(SM_STATE)为Z7(有库存发完即止)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>生成CRM订单方法中检查产品SM状态，Z7表示有库存数量发完即止，弹出toast提醒让用户确认后可继续</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obl.SA_OUT_BILL_LINE_ID, obl.ITEM_CODE, obl.ITEM_NAME, obl.SM_STATE, obl.QTY_BILL
+  FROM SA_OUT_BILL_LINE obl
+  WHERE obl.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obl.SM_STATE = 'Z7'
+  -- 查出SM状态为Z7的产品行</code></pre>    <div class="detail-tip" v-pre>等级：toast提醒</div>
+  </div>
+</div>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能晚于折扣有效期</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，期望到达日期(IN_DATE)晚于折扣有效期(DISCOUNT_VALID_DATE)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>前端校验计划订单(billType=2/14)且有关联折扣单时，期望到达日期不能晚于折扣有效期。需调整期望日期</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.IN_DATE, obh.DISCOUNT_VALID_DATE,
+         obh.BILL_TYPE, obh.DISCOUNT_APPLY_ID
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.IN_DATE &gt; obh.DISCOUNT_VALID_DATE
+    AND obh.BILL_TYPE IN (2, 14)
+    AND obh.DISCOUNT_APPLY_ID IS NOT NULL</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能晚于政策有效期</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>申请不扣订金时，期望到达日期(IN_DATE)晚于政策有效期(EFFECTIVE_DATE_END)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>前端校验价目表(priceType=2)的计划订单，期望到达日期不能晚于政策有效期。需调整期望日期</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.IN_DATE,
+         edp.EFFECTIVE_DATE_END AS 政策有效期, obh.BILL_TYPE, obh.PRICE_TYPE
+  FROM SA_OUT_BILL_HEAD obh
+  LEFT JOIN EPM_DISCOUNT_POLICY edp ON obh.DISCOUNT_POLICY_ID = edp.DISCOUNT_POLICY_ID
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.PRICE_TYPE = 2
+    AND obh.IN_DATE &gt; edp.EFFECTIVE_DATE_END
+    AND obh.BILL_TYPE IN (2, 14)</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>明细行不能为空</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，产品明细行(SA_OUT_BILL_LINE)为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验产品明细行列表非空，因要货订单必须包含至少一条产品明细。需添加产品明细</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO,
+         (SELECT COUNT(*) FROM SA_OUT_BILL_LINE obl
+          WHERE obl.SA_OUT_BILL_HEAD_ID = obh.SA_OUT_BILL_HEAD_ID) AS 明细行数
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 若明细行数为0，则触发该报错</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>业务类型不能为空</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，业务类型(BUSINESS_TYPE)为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验业务类型必填，因业务类型决定业务规则。需选择业务类型</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.BUSINESS_TYPE
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId AND obh.BUSINESS_TYPE IS NULL</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>存在重复下单的产品：&#123;编码&#125;</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，同一产品编码在多个明细行中重复</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验同一产品不重复下单，按ITEM_CODE分组检查。需删除重复行</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obl.ITEM_CODE, COUNT(*) AS 出现次数
+  FROM SA_OUT_BILL_LINE obl
+  WHERE obl.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  GROUP BY obl.ITEM_CODE
+  HAVING COUNT(*) &gt; 1</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>小五金经销商只能下小五金的订单</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，小五金经销商下了非小五金产品</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验小五金经销商只能下小五金产品线订单。需选择小五金产品</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.CUSTOMER_CODE, obh.ORDER_PDT_LINE
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.CUSTOMER_CODE IN (小五金经销商编码列表)
+    AND obh.ORDER_PDT_LINE &lt;&gt; :小五金产品线值</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-19" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>价格类型为折扣政策的订单，政策id不能为空</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，价格类型为折扣单(PRICE_TYPE=1)但折扣政策ID为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验折扣单订单必须关联折扣政策。需选择折扣单</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.PRICE_TYPE, obh.DISCOUNT_POLICY_ID
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.PRICE_TYPE = 1 AND obh.DISCOUNT_POLICY_ID IS NULL</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-20" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>关联的报备信息不存在</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，关联的报备信息不存在</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验报备信息存在，若不存在则抛出。需检查报备配置</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.PROJECT_CODE, obh.CONTRACT_CODE
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 关联查询报备表确认报备信息是否存在</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-21" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>关联的报备未生效，不允许下单</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，关联的报备未生效</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验报备已生效，若未生效则不允许下单。需等报备生效后下单</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.PROJECT_CODE
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 关联查询报备表确认报备状态为已生效</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-22" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>合同信息有误，请重新选择</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，合同信息异常</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验合同信息完整有效，若异常则抛出。需重新选择合同</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.CONTRACT_ID, obh.CONTRACT_CODE, obh.CONTRACT_NAME
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 关联查询合同表确认合同信息</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-23" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品[&#123;编码&#125;]下单数量不能小于起订量</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，下单数量小于起订量</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验下单数量不小于折扣单行的起订量。需调整下单数量</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obl.ITEM_CODE, obl.QTY_BILL, edal.MINIMUM_QTY AS 起订量
+  FROM SA_OUT_BILL_LINE obl
+  LEFT JOIN EPM_DISCOUNT_APPLY_LINE edal ON obl.DISCOUNT_APPLY_LINE_ID = edal.DISCOUNT_APPLY_LINE_ID
+  WHERE obl.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obl.QTY_BILL &lt; edal.MINIMUM_QTY</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-24" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无法获上线文信息</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，无法获取当前登录用户上下文</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端调用DetailsHelper.getUserDetail()，若返回null则抛出。需检查登录状态</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT iu.USER_ID, iu.LOGIN_NAME, iu.REAL_NAME, iu.ORGANIZATION_ID
+  FROM IAM_USER iu
+  WHERE iu.USER_ID = :currentUserId</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-25" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询客户开票单位为空，请检查！</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，客户开票单位为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端查询客户开票单位，若为空则抛出。需维护开票单位</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT c.CUSTOMER_ID, c.CUSTOMER_CODE, c.CUSTOMER_NAME, c.BILLING_UNIT_ID
+  FROM CUSTOMER c
+  WHERE c.CUSTOMER_ID = :customerId AND c.BILLING_UNIT_ID IS NULL</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-26" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无法匹配签约方式！</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，签约方式匹配失败</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端按客户和合同匹配签约方式，若匹配失败则抛出。需检查签约方式配置</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.CONTRACT_TYPE, obh.CUSTOMER_ID
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 检查签约方式配置</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-27" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无法匹配交易公司！</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，交易公司匹配失败</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端按客户匹配交易公司，若匹配失败则抛出。需检查交易公司配置</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.TRADING_COMPANY_ID, obh.CUSTOMER_ID
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 检查交易公司配置</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-28" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无法匹配经销合同</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，经销合同匹配失败</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端按客户和产品匹配经销合同，若匹配失败则抛出。需检查合同配置</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.CONTRACT_ID, obh.CUSTOMER_ID
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 检查经销合同配置</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-29" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未查询到折扣单行信息</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，折扣单行信息不存在</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端按DISCOUNT_APPLY_LINE_ID查询折扣单行，若不存在则抛出。需检查折扣单</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obl.SA_OUT_BILL_LINE_ID, obl.DISCOUNT_APPLY_LINE_ID,
+         edal.DISCOUNT_APPLY_LINE_ID AS 折扣单行ID
+  FROM SA_OUT_BILL_LINE obl
+  LEFT JOIN EPM_DISCOUNT_APPLY_LINE edal ON obl.DISCOUNT_APPLY_LINE_ID = edal.DISCOUNT_APPLY_LINE_ID
+  WHERE obl.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND edal.DISCOUNT_APPLY_LINE_ID IS NULL</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-30" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>您当前的经销合作合同已失效，暂无法正常下单</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，经销合作合同已失效</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验经销合同有效，若已失效则不允许下单。需联系业务员处理</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.VALID, epc.HZ_APPROVE_STATUS
+  FROM EPM_PROJECT_CONTRACT epc
+  WHERE epc.CONTRACT_ID = :contractId AND epc.VALID &lt;&gt; 2</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-31" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>价目表或者折扣单要货，不需要送签OA，请选择生成crm订单</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>提交时，价目表或折扣单要货尝试送签OA</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验价目表/折扣单要货不需要OA审批，应直接生成CRM订单。需点击生成CRM订单</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.PRICE_TYPE, obh.DISCOUNT_APPLY_ID
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.PRICE_TYPE IN (1, 2)</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-32" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>该单据已经审核</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>提交时，单据已审核(HZ_APPROVE_STATUS=APPROVED)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验单据未审核，若已审核则不允许重复提交。无需重复提交</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.HZ_APPROVE_STATUS
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.HZ_APPROVE_STATUS = 'APPROVED'</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-33" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>期望到达日期已过期，请修改后重新提交</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>提交时，期望到达日期(IN_DATE)已过期(早于当前日期)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验期望到达日期不早于当前日期，若过期则抛出。需修改期望日期</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.IN_DATE, SYSDATE AS 当前日期
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.IN_DATE &lt; SYSDATE</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-34" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策不存在，请联系管理员</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，折扣政策(DISCOUNT_POLICY_ID)不存在</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端按DISCOUNT_POLICY_ID查询折扣政策，若不存在则抛出。需联系管理员</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.DISCOUNT_POLICY_ID, obh.DISCOUNT_POLICY_CODE
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND NOT EXISTS (SELECT 1 FROM EPM_DISCOUNT_POLICY edp
+                    WHERE edp.DISCOUNT_POLICY_ID = obh.DISCOUNT_POLICY_ID)</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-35" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策【&#123;编码&#125;】已失效，请联系区域经理</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，折扣政策已失效(VALID=3)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验折扣政策有效(VALID=2)，若已失效则抛出。需联系区域经理</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME, edp.VALID
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.DISCOUNT_POLICY_ID = :discountPolicyId AND edp.VALID = 3</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-36" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策【&#123;编码&#125;】不在有效期内，请联系区域经理</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，折扣政策不在有效期内(当前日期不在EFFECTIVE_DATE_START和EFFECTIVE_DATE_END之间)</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验折扣政策在有效期内，若不在则抛出。需联系区域经理</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE,
+         edp.EFFECTIVE_DATE_START, edp.EFFECTIVE_DATE_END, SYSDATE AS 当前日期
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.DISCOUNT_POLICY_ID = :discountPolicyId
+    AND (SYSDATE &lt; edp.EFFECTIVE_DATE_START OR SYSDATE &gt; edp.EFFECTIVE_DATE_END)</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-37" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程！</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>提交时，流程编码(processCode/flowCode)为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验流程编码非空，因需按流程编码启动工作流。需配置工作流</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.HZ_APPROVE_STATUS
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 校验工作流配置</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-38" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>地址不存在或数据异常，请同步地址信息</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>提交时，收货地址不存在或数据异常</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验收货地址完整，若异常则提示同步地址。需点击同步地址信息按钮</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.CUSTOMER_ADDRESS_ID, obh.ADDRESS1, obh.TAKE_MAN, obh.PHONE_CODE
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND (obh.CUSTOMER_ADDRESS_ID IS NULL OR obh.ADDRESS1 IS NULL)</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-39" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策【&#123;编码&#125;】的全产品政策行，已失效</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，折扣政策的全产品政策行已失效</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验全产品政策行有效，若已失效则抛出。需联系区域经理</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.APPLICATION_TYPE, edpi.VALID_STAT
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  WHERE edpi.DISCOUNT_POLICY_ID = :discountPolicyId
+    AND edpi.APPLICATION_TYPE = 3 AND edpi.VALID_STAT = 3</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-40" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前折扣政策已失效，请重新选择！</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，折扣政策已失效</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验折扣政策有效，若已失效则提示重新选择。需重新选择折扣单</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.VALID
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.DISCOUNT_POLICY_ID = :discountPolicyId AND edp.VALID &lt;&gt; 2</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-41" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>您当前的要货订单已超有效期，请联系业务员处理</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，要货订单已超有效期</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验订单在有效期内，若超期则抛出。需联系业务员处理</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.IN_DATE,
+         edp.EFFECTIVE_DATE_END AS 政策有效期
+  FROM SA_OUT_BILL_HEAD obh
+  LEFT JOIN EPM_DISCOUNT_POLICY edp ON obh.DISCOUNT_POLICY_ID = edp.DISCOUNT_POLICY_ID
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+    AND obh.IN_DATE &gt; edp.EFFECTIVE_DATE_END</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-42" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>ID不能为空</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>删除或审批时，单据ID(saOutBillHeadId)为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验单据ID非空，若为空则抛出。需检查参数传递</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-43" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未查询到业务单据，请检查</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>删除或审批时，按ID未找到要货订单</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端按SA_OUT_BILL_HEAD_ID查询，若返回null则抛出。需检查单据是否存在</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.HZ_APPROVE_STATUS, obh.ORDER_STAT
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 若返回空，说明单据不存在</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-44" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前单据不允许执行当前操作</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>操作时，单据状态不允许该操作</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验单据状态允许当前操作，若不允许则抛出。需检查单据状态</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.HZ_APPROVE_STATUS, obh.ORDER_STAT
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-45" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>客户编码不能为空！</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存要货订单时，客户编码(CUSTOMER_CODE)为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验客户编码必填，因客户是订单必填项。需选择客户</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.CUSTOMER_ID, obh.CUSTOMER_CODE
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId AND obh.CUSTOMER_CODE IS NULL</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-46" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询不到客户-法人关联信息</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，客户-法人关联信息不存在</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端查询客户与法人的关联关系，若不存在则抛出。需维护客户法人关系</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT c.CUSTOMER_ID, c.CUSTOMER_CODE, c.CUSTOMER_NAME
+  FROM CUSTOMER c
+  WHERE c.CUSTOMER_ID = :customerId
+  -- 关联查询客户法人关系表</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-47" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未维护要货产品明细,生成失败</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，无产品明细行</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验产品明细非空，若为空则生成失败。需添加产品明细</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO,
+         (SELECT COUNT(*) FROM SA_OUT_BILL_LINE obl
+          WHERE obl.SA_OUT_BILL_HEAD_ID = obh.SA_OUT_BILL_HEAD_ID) AS 明细行数
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 若明细行数为0，则触发该报错</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-48" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>开票单位在crm状态异常:&#123;原因&#125;</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，开票单位在CRM中状态异常</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端调用CRM接口校验开票单位状态，若异常则返回包含原因的报错。需检查开票单位</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.BILLING_UNIT_ID, obh.BILLING_UNIT_NAME
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
+  -- 检查开票单位在CRM中的状态</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-49" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对应的合同已失效</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，关联合同已失效</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验合同有效，若已失效则抛出。需重新选择合同</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.VALID
+  FROM EPM_PROJECT_CONTRACT epc
+  WHERE epc.CONTRACT_ID = :contractId AND epc.VALID &lt;&gt; 2</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-50" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对应的合同正在失效申请中</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，关联合同正在失效申请中</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验合同不在失效申请中，若正在失效申请则抛出。需等失效申请完成</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.HZ_APPROVE_STATUS
+  FROM EPM_PROJECT_CONTRACT epc
+  WHERE epc.CONTRACT_ID = :contractId AND epc.HZ_APPROVE_STATUS = 'RUN'</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-51" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>订单产品线为空，请检查！</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，订单产品线(ORDER_PDT_LINE)为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验订单产品线必填，若为空则抛出。需选择产品线</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.ORDER_PDT_LINE
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId AND obh.ORDER_PDT_LINE IS NULL</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-52" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>渠道为空，请检查！</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，销售渠道(CHANNEL)为空</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端校验销售渠道必填，若为空则抛出。需检查渠道配置</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT obh.SA_OUT_BILL_HEAD_ID, obh.SA_SALEBILLNO, obh.CHANNEL
+  FROM SA_OUT_BILL_HEAD obh
+  WHERE obh.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId AND obh.CHANNEL IS NULL</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-53" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请配置加价系统参数:【ItemValidRate】</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，加价系统参数(ItemValidRate)未配置</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端查询公司参数ItemValidRate，若未配置则抛出。需配置系统参数</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT * FROM HPFM_COMPANY_PARAM hcp
+  WHERE hcp.PARAM_CODE = 'ItemValidRate'
+    AND hcp.ORGANIZATION_ID = :organizationId
+  -- 若返回空，则需配置该参数</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
+  </div>
+</div>
+<div id="err-detail-54" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请配置公司参数(审批折扣率标准【extra_discount_rate_standard】)</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>生成CRM订单时，审批折扣率标准参数未配置</div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>后端查询公司参数extra_discount_rate_standard，若未配置则抛出。需配置公司参数</div>
+    <h5>排查SQL</h5>
+<pre class="detail-sql" v-pre><code>  SELECT * FROM HPFM_COMPANY_PARAM hcp
+  WHERE hcp.PARAM_CODE = 'extra_discount_rate_standard'
+    AND hcp.ORGANIZATION_ID = :organizationId
+  -- 若返回空，则需配置该参数</code></pre>    <div class="detail-tip" v-pre>等级：阻断性报错</div>
   </div>
 </div>
 </KbCard>
@@ -1293,35 +2729,76 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
     <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
       <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">审批通过后要货单号为空</span>
+      <span style="font-size:15px;">为什么折扣单号选择后没有带出产品明细？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>编码规则AE.EPM_SA_OUT_BILL_HEAD未配置或已失效<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查编码规则配置
+      <strong style="color:#7C3AED;">原因：</strong>折扣单需满足折扣有效期未过期、可下单数量&gt;0、产品未下架且渠道适用、产品价格未失效。排查SQL：`SELECT VALID, EFFECTIVE_DATE_END, ACTIVE_QTY FROM EPM_DISCOUNT_APPLY WHERE DISCOUNT_APPLY_ID = :id`<br>
+      <strong style="color:#7C3AED;">解决思路：</strong>检查折扣单状态和产品状态
     </div>
   </div>
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
     <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
       <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">产品价格带出为0</span>
+      <span style="font-size:15px;">期望到达日期为什么被清空？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>折扣单/政策中该产品无对应行，或价目表中无该产品价格<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查折扣单/政策是否包含该产品
+      <strong style="color:#7C3AED;">原因：</strong>期望到达日期有严格限制：不能超过一年；当日≤25号时非电商渠道计划订单限3个月内；当日&gt;25号时非瓷砖产品线不能下常规订单<br>
+      <strong style="color:#7C3AED;">解决思路：</strong>参考提示信息调整日期
     </div>
   </div>
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
     <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
       <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">删除按钮不显示</span>
+      <span style="font-size:15px;">生成CRM订单时报"关联合同变更中"怎么办？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>订单已有正式单号(saSalebillno不为空)或OA不扣订金审批中(nodepositOaAuditStat不为0/99/null)<br>
-      <strong style="color:#7C3AED;">处理：</strong>确认订单状态是否允许删除
+      <strong style="color:#7C3AED;">原因：</strong>该订单关联合同存在正在审批的变更单(ECN)。排查SQL：`SELECT * FROM EPM_PROJECT_CONTRACT_ECN WHERE CONTRACT_ID = :contractId AND HZ_APPROVE_STATUS = 'RUN'`<br>
+      <strong style="color:#7C3AED;">解决思路：</strong>等合同变更审批完成后再生成CRM订单
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">紧急行数提示过多怎么办？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>紧急行数规则：仅计划订单可加紧急，且紧急行数≤CEIL(产品行数/5)<br>
+      <strong style="color:#7C3AED;">解决思路：</strong>减少紧急行数或将订单改为计划订单
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">产品SM状态为Z8无法下单怎么办？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>Z8表示产品生命状态不允许下单。排查SQL：`SELECT SM_STATE FROM SA_OUT_BILL_LINE WHERE SA_OUT_BILL_HEAD_ID = :id AND SM_STATE = 'Z8'`<br>
+      <strong style="color:#7C3AED;">解决思路：</strong>联系产品部调整产品状态
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q6</span>
+      <span style="font-size:15px;">"申请不扣订金"按钮不显示？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>显示条件：订单可编辑 + billType=1/13 + 无要货单号或订单状态=4 + OA状态0/99/空 + 订单状态≠4<br>
+      <strong style="color:#7C3AED;">解决思路：</strong>检查订单状态是否满足
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q7</span>
+      <span style="font-size:15px;">经销商登录时客户字段为什么不可选？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">原因：</strong>经销商登录(userType=D)时自动带出其客户信息，不允许修改客户<br>
+      <strong style="color:#7C3AED;">解决思路：</strong>这是预期行为，经销商只能为自己下单
     </div>
   </div>
 </div>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -1347,6 +2824,18 @@ NEW/RUN ──撤回──→ WITHDRAW(已撤回) ──保存并提交──→
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="历史排查记录">
+
+<!-- 空白:待补充 -->
+
+</KbCard>
+</div>
+</div>
+</div>
+
+<div id="manual" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+<KbCard title="操作手册">
 
 <!-- 空白:待补充 -->
 
