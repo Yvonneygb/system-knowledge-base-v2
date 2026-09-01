@@ -363,10 +363,10 @@
 
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">选择弹窗 1</span>
-    <h2>CRM产品选择弹窗（多选）</h2>
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">选择弹窗</span>
+    <h2>选择弹窗</h2>
   </div>
-  <KbQuote>从CRM系统查询产品信息，支持多选</KbQuote>
+
   <KbSubTitle>弹窗1：CRM产品选择 <KbBadge type="purple">多选</KbBadge></KbSubTitle>
 
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
@@ -388,14 +388,7 @@ SELECT product_id, product_code, product_name, item_model, unit_price
  WHERE organization_id = #{organizationId}
    AND status = 'ACTIVE';
 ```
-</div>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">选择弹窗 2</span>
-    <h2>产品型号选择弹窗（单选）</h2>
-  </div>
-  <KbQuote>查询产品型号列表，单选</KbQuote>
   <KbSubTitle>弹窗2：产品型号选择 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
 
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
@@ -472,10 +465,12 @@ SELECT item_model_id, item_model, model_name
 
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮组</span>
-    <h2>操作按钮</h2>
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">其他按钮</span>
+    <h2>其他按钮</h2>
   </div>
   <KbQuote>列表页和详情页的操作按钮</KbQuote>
+
+  <h4 class="kl-sub-title">按钮清单</h4>
   <div style="overflow-x:auto;border-radius:12px;border:1px solid #E8ECF0;background:#fff;">
     <div class="kb-field-scroll">
 <table class="kb-field-tbl" style="table-layout:fixed;min-width:960px;width:100%;border-collapse:collapse;margin:0;">
@@ -493,14 +488,8 @@ SELECT item_model_id, item_model, model_name
 </table>
     </div>
   </div>
-</div>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 1</span>
-    <h2>保存并提交（详情页）</h2>
-  </div>
-  <KbQuote>审批状态为NEW时可保存并提交OA审批</KbQuote>
+  <h4 class="kl-sub-title" style="margin-top:16px;">保存并提交（详情页）</h4>
   <strong>触发条件：</strong>审批状态为NEW
   <strong style="display:block;margin-top:8px;">执行逻辑：</strong>
   <ul style="margin:4px 0 0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
@@ -519,14 +508,8 @@ SELECT discount_policy_id, discount_policy_code, valid, hz_approve_status, sourc
 FROM epm_discount_policy WHERE discount_policy_id = {id};
 ```
   </div>
-</div>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 2</span>
-    <h2>导入产品（详情页）</h2>
-  </div>
-  <KbQuote>通过Excel文件批量导入产品明细</KbQuote>
+  <h4 class="kl-sub-title" style="margin-top:16px;">导入产品（详情页）</h4>
   <strong>触发条件：</strong>常显
   <strong style="display:block;margin-top:8px;">执行逻辑：</strong>
   <ul style="margin:4px 0 0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
@@ -543,14 +526,8 @@ FROM epm_discount_policy WHERE discount_policy_id = {id};
 SELECT * FROM epm_discount_policy_item WHERE discount_policy_id = {id};
 ```
   </div>
-</div>
 
-<div class="kl-card">
-  <div class="biz-kl-hdr" style="text-align:left;">
-    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">按钮 3</span>
-    <h2>删除（列表页）</h2>
-  </div>
-  <KbQuote>仅未审核状态的政策可删除</KbQuote>
+  <h4 class="kl-sub-title" style="margin-top:16px;">删除（列表页）</h4>
   <strong>触发条件：</strong>有效状态为未审核(valid=1)
   <strong style="display:block;margin-top:8px;">执行逻辑：</strong>
   <ul style="margin:4px 0 0;padding-left:18px;font-size:.78rem;color:#374151;line-height:1.9;">
