@@ -399,13 +399,13 @@ FROM (
 <blockquote>重复分类校验SQL（Mapper: queryRepeatCategory）：</blockquote>
 <pre class="detail-sql" v-pre><code>SELECT T1.ROW_ID AS id, T1.STATUS AS status, ...
 FROM LNK_PM_RSP_STM_CFG T1
-WHERE T1.TOP_CATEGORY = #{topCategory}
-    AND T1.SEC_CATEGORY = #{secCategory}
-    AND T1.THR_CATEGORY = #{thrCategory}
+WHERE T1.TOP_CATEGORY = #&#123;topCategory&#125;
+    AND T1.SEC_CATEGORY = #&#123;secCategory&#125;
+    AND T1.THR_CATEGORY = #&#123;thrCategory&#125;
     AND T1.STATUS = 'valid'
-    AND T1.FOUR_CATEGORY = #{fourCategory}  -- fourCategory非空时
+    AND T1.FOUR_CATEGORY = #&#123;fourCategory&#125;  -- fourCategory非空时
     -- OR T1.FOUR_CATEGORY IS NULL          -- fourCategory为空时
-    AND T1.ROW_ID != #{id}                  -- 排除自身</code></pre>
+    AND T1.ROW_ID != #&#123;id&#125;                  -- 排除自身</code></pre>
 </KbCard>
 
 </div>

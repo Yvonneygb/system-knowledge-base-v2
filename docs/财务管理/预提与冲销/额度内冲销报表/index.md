@@ -244,10 +244,10 @@
 </table>
 <h4>按钮1：更新冲销数据（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：通过Repository层方法查询冲销视图数据</li><li>第2点：更新fin_fee_writeoff_in_quota表数据</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/writeoff-in-quota/updateReversalData</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE YEARMONTH = #{yearmonth};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE YEARMONTH = #&#123;yearmonth&#125;;</code></pre>
 <h4>按钮2：执行冲销（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：执行冲销计算</li><li>第2点：推送至共享财务系统(ENCX-额度内冲销)</li><li>第3点：更新单据状态和同步时间</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/writeoff-in-quota/execReversalData</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BILL_STATUS != 1;</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#&#123;ids&#125;) AND BILL_STATUS != 1;</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -333,44 +333,44 @@
          BILLING_UNIT_NAME, WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, WRITEOFF_SUMAMT,
          SYNC_ITEM, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
-    AND (ENTID = #{entid} OR #{entid} IS NULL)
+  WHERE (YEARMONTH = #&#123;yearmonth&#125; OR #&#123;yearmonth&#125; IS NULL)
+    AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
   ORDER BY YEARMONTH DESC, IN_WRITEOFF_NO;</code></pre>
 <h4>报错2：推送共享财务失败</h4>
 <ul><li><strong>触发条件</strong>：用户选中记录点击"执行冲销"，execReversalData接口推送至ENCX共享财务系统时返回失败</li><li><strong>逻辑分析</strong>：执行冲销接口执行冲销计算并推送至共享财务系统（ENCX-额度内冲销），单据类型fin_fee_writeoff_in_quota。失败根因有三类：(1)ENCX共享财务系统不可用或网络中断；(2)推送数据异常，如冲销含税/不含税金额为0、法人编码（BILLING_UNIT_CODE）在ENCX中不存在、成本中心编码（COST_CENTER_CODE）不匹配、科目名称（SUBJECT_NAME）未配置；(3)ENCX侧重复推送校验。推送失败需检查SYNC_ITEM和BILL_STATUS字段</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, BILLING_UNIT_CODE, COST_CENTER_CODE,
          SUBJECT_NAME, WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, SYNC_ITEM, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_ID IN (#{ids}) AND (BILL_STATUS != 1 OR SYNC_ITEM IS NULL);</code></pre>
+  WHERE IN_WRITEOFF_ID IN (#&#123;ids&#125;) AND (BILL_STATUS != 1 OR SYNC_ITEM IS NULL);</code></pre>
 <h4>报错3：要执行的数据为空</h4>
 <ul><li><strong>触发条件</strong>：用户在执行冲销弹窗中填写年月和交易公司编码后点击确定，queryQuotaLimitHead查询返回null</li><li><strong>逻辑分析</strong>：execReversalData接口在FinFeeWriteoffInQuotaServiceImpl.java:97处校验data为null时抛出CommonException("要执行的数据为空！")。queryQuotaLimitHead按交易公司编码（TRADING_COMPANY_CODE）和年月（YEARMONTH）查询冲销头数据，返回null表示该交易公司在指定年月无冲销数据。根因有二：(1)未先执行"更新冲销数据"生成冲销记录；(2)交易公司编码与冲销数据不匹配。需先执行更新冲销数据，再执行冲销</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          TRADING_COMPANY_NAME, BILL_STATUS, WRITEOFF_TAX_AMT
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE YEARMONTH = #{yearMonth} AND TRADING_COMPANY_CODE = #{tradingCompanyCode};</code></pre>
+  WHERE YEARMONTH = #&#123;yearMonth&#125; AND TRADING_COMPANY_CODE = #&#123;tradingCompanyCode&#125;;</code></pre>
 <h4>报错4：共享接口返回null,执行共享接口失败</h4>
 <ul><li><strong>触发条件</strong>：执行冲销时调用arrowFsscSdk.inLimitBudPush推送共享财务系统，返回FsscRsVO为null</li><li><strong>逻辑分析</strong>：execReversalData接口在FinFeeWriteoffInQuotaServiceImpl.java:196处校验fsccRsVO为null时抛出CommonException("共享接口返回null,执行共享接口失败！")。该异常表示共享财务系统接口（inLimitBudPush）无响应或网络中断，未返回任何结果对象。根因有三类：(1)ENCX共享财务系统服务不可用；(2)网络连接中断或超时；(3)共享接口URL配置错误。需检查网络连通性和ENCX系统状态</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, TRADING_COMPANY_CODE, YEARMONTH,
          BILL_STATUS, SYNC_ITEM
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};</code></pre>
+  WHERE IN_WRITEOFF_HEADNO = #&#123;apportionCode&#125;;</code></pre>
 <h4>报错5：执行冲销数据接口异常</h4>
 <ul><li><strong>触发条件</strong>：执行冲销过程中发生未知异常，被try-catch捕获后抛出</li><li><strong>逻辑分析</strong>：execReversalData接口在FinFeeWriteoffInQuotaServiceImpl.java:208处catch块中记录ERROR日志并抛出CommonException("执行冲销数据接口异常！")。该异常为兜底异常处理，覆盖所有未明确处理的异常情况。根因可能包括：(1)冲销数据计算异常，如金额为null、除以0等；(2)数据库操作异常；(3)共享接口调用异常（非返回null情况）。需查看后端日志FinFeeWriteoffInQuotaServiceImpl.execReversalData的ERROR输出定位具体原因</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, BILL_STATUS, SUBJECT_NAME, CASH_OUT_MODE
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};</code></pre>
+  WHERE IN_WRITEOFF_HEADNO = #&#123;apportionCode&#125;;</code></pre>
 <h4>报错6：年月必填</h4>
 <ul><li><strong>触发条件</strong>：用户在执行冲销弹窗中未填写年月即点击确定</li><li><strong>逻辑分析</strong>：前端执行冲销弹窗在ListPage/index.tsx:30处定义yearMonth字段required: true，modalDs.validate()校验失败时阻止提交。年月用于queryQuotaLimitHead查询冲销头数据，为执行冲销的必填参数。需在弹窗中填写有效的年月（格式yyyy-MM）</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE YEARMONTH = #{yearMonth};</code></pre>
+  WHERE YEARMONTH = #&#123;yearMonth&#125;;</code></pre>
 <h4>报错7：交易公司编码必填</h4>
 <ul><li><strong>触发条件</strong>：用户在执行冲销弹窗中未填写交易公司编码即点击确定</li><li><strong>逻辑分析</strong>：前端执行冲销弹窗在ListPage/index.tsx:31处定义tradingCompanyCode字段required: true，modalDs.validate()校验失败时阻止提交。交易公司编码用于queryQuotaLimitHead查询指定交易公司的冲销头数据，为执行冲销的必填参数。需在弹窗中填写有效的交易公司编码</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          TRADING_COMPANY_NAME, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE TRADING_COMPANY_CODE = #{tradingCompanyCode};</code></pre>
+  WHERE TRADING_COMPANY_CODE = #&#123;tradingCompanyCode&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="常见问题">

@@ -312,7 +312,7 @@
 <blockquote>查询SQL（后端接口Mapper：FinFeeBxHeaderMapper）：</blockquote>
 <pre class="detail-sql" v-pre><code>SELECT fee_apply_id, fee_apply_no, total_allow_amt_bx, cust_name, terminal_name
 FROM fin_fee_apply_header WHERE apply_type = 2 AND hz_approve_status = 'APPROVED'
-  AND is_bx != 2 AND cust_id = #{custId};</code></pre>
+  AND is_bx != 2 AND cust_id = #&#123;custId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="其他按钮">
@@ -330,9 +330,9 @@ FROM fin_fee_apply_header WHERE apply_type = 2 AND hz_approve_status = 'APPROVED
 <h4>按钮1：提交（详情页）</h4>
 <ul><li><strong>触发条件</strong>：审批状态为NEW</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验本次报销金额&gt;0</li><li>第2点：校验本次报销金额不超过申请总金额</li><li>第3点：额度内校验报销金额不超过可使用资源额度</li><li>第4点：校验本次批准金额不超过本次报销金额</li><li>第5点：检查同一申请单号是否已有在途报销单</li><li>第6点：推送OA审批，发起工作流</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/fin-fee-bx-headers/check + OA推送接口 + 工作流发起接口</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT bx_id, bx_no, fee_apply_no, bx_type, this_standard_amt, total_apply_amt_bx, hz_approve_status
-FROM fin_fee_bx_header WHERE bx_id = {id};
+FROM fin_fee_bx_header WHERE bx_id = &#123;id&#125;;
 -- 检查在途单据
-SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz_approve_status = 'RUN';</code></pre>
+SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #&#123;feeApplyNo&#125; AND hz_approve_status = 'RUN';</code></pre>
 <h4>按钮2：打印（详情页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询报销单头表数据</li><li>第2点：翻译值集（支付方式、费用类型）</li><li>第3点：查询流程审批历史</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/fin-fee-bx-headers/detail/print</li><li><strong>排查SQL</strong>：无</li></ul>
 </KbCard>
@@ -344,25 +344,25 @@ SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz
 <p>- 第2点：本次报销金额&lt;=0时报错"本次报销金额必须大于0！"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT this_standard_amt FROM fin_fee_bx_header WHERE bx_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT this_standard_amt FROM fin_fee_bx_header WHERE bx_id = &#123;id&#125;;</code></pre>
 <ul><li>校验2：申请金额校验 —— 报销金额不超过申请总金额</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：本次报销金额&gt;申请总金额时报错</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, total_apply_amt_bx FROM fin_fee_bx_header WHERE bx_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, total_apply_amt_bx FROM fin_fee_bx_header WHERE bx_id = &#123;id&#125;;</code></pre>
 <ul><li>校验3：额度内可用金额校验 —— 额度内报销不超可用</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：本次报销金额&gt;额度内可用金额时报错</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, in_can_use_amt FROM fin_fee_bx_header WHERE bx_id = {id} AND bx_type = 1;</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, in_can_use_amt FROM fin_fee_bx_header WHERE bx_id = &#123;id&#125; AND bx_type = 1;</code></pre>
 <ul><li>校验4：批准金额校验 —— 批准金额不超过报销金额</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：本次批准金额&gt;本次报销金额时报错</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, this_authorize_standard_amt FROM fin_fee_bx_header WHERE bx_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, this_authorize_standard_amt FROM fin_fee_bx_header WHERE bx_id = &#123;id&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="提交校验">
@@ -372,14 +372,14 @@ SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz
 <p>- 第2点：存在在途单据时报错"已有在途的广告投放申请单"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz_approve_status = 'RUN';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #&#123;feeApplyNo&#125; AND hz_approve_status = 'RUN';</code></pre>
 <ul><li>校验2：费用项目校验 —— 确保费用项目存在</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：额度内且支付方式非3时，费用项目不能为空</p>
 <p>- 第2点：额度外时，费用项目不能为空</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT object_name, bx_type, pay_type FROM fin_fee_bx_header WHERE bx_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT object_name, bx_type, pay_type FROM fin_fee_bx_header WHERE bx_id = &#123;id&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -546,7 +546,7 @@ SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz
          hz_approve_status    AS 审批状态
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
-  AND    bx_id = #{传入的bxId};</code></pre>
+  AND    bx_id = #&#123;传入的bxId&#125;;</code></pre>
 <h4>报错7：费用项目未找到！</h4>
 <ul><li><strong>触发条件</strong>：OA推送时，按报销单费用项目配置查询费用项目主数据返回null</li><li><strong>逻辑分析</strong>：OA推送需用费用项目组装OA表单。若报销单关联的费用项目（OBJECT_NAME）在费用项目主数据表中不存在、费用项目被停用删除、或配置错误，查询返回空，无法组装OA数据。常见根因：费用项目主数据未同步、配置错误、或报销单费用项目字段为空。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
@@ -567,7 +567,7 @@ SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz
          callback_source      AS 回调来源
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
-  AND    bx_id = #{OA回调报文中的bxId};</code></pre>
+  AND    bx_id = #&#123;OA回调报文中的bxId&#125;;</code></pre>
 <h4>报错9：ID不能为空</h4>
 <ul><li><strong>触发条件</strong>：OA回调处理方法接收到的bxId参数为null或空字符串</li><li><strong>逻辑分析</strong>：OA回调接口需用bxId定位单据。若OA系统未正确配置回调用单据ID字段，或回调报文丢失ID字段，DMS接收到的ID为空，无法执行后续更新逻辑。常见根因：OA单据配置缺失ID字段、回调报文格式异常、或接口映射错误。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
@@ -587,7 +587,7 @@ SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz
          hz_approve_status    AS 审批状态
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
-  AND    bx_id = #{传入的bxId};</code></pre>
+  AND    bx_id = #&#123;传入的bxId&#125;;</code></pre>
 <h4>报错11：主键不能为空!</h4>
 <ul><li><strong>触发条件</strong>：工作流回调更新报销单时，接收到的bxId（单据主键）为null或0</li><li><strong>逻辑分析</strong>：工作流回调需用bxId定位并更新报销单审批状态。若工作流配置未正确传回单据ID、回调报文丢失ID、或保存时未正确回写BX_ID，会导致主键为空，无法执行更新逻辑。常见根因：工作流配置错误、回调报文异常、或自增序列未取回。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
@@ -605,7 +605,7 @@ SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz
 <ul><li>问题1：OA审批推送失败</li><li>原因：OA系统不可用或数据组装异常</li><li>解决思路：检查OA系统状态和OA单据配置</li></ul>
 <ul><li>问题2：提交时提示已有在途单据</li><li>原因：同一申请单已有审批中的报销单</li><li>解决思路：等待在途单据审批完成或作废在途单据后重新提交</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT bx_id, bx_no, hz_approve_status FROM fin_fee_bx_header
-WHERE fee_apply_no = #{feeApplyNo} AND hz_approve_status = 'RUN';</code></pre>
+WHERE fee_apply_no = #&#123;feeApplyNo&#125; AND hz_approve_status = 'RUN';</code></pre>
 </KbCard>
 
 </div>

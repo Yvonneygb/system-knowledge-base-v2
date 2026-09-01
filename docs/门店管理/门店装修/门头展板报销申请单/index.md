@@ -574,7 +574,7 @@
          h.start_date   AS 开始日期,
          h.end_date     AS 结束日期
   FROM   policy_standard_head h
-  WHERE  h.entid = #{当前用户组织ID}
+  WHERE  h.entid = #&#123;当前用户组织ID&#125;
   AND    h.valid = 2
   AND    h.start_date &lt;= SYSDATE
   AND    h.end_date &gt;= SYSDATE
@@ -586,7 +586,7 @@
          h.valid        AS 有效状态,
          CASE h.valid WHEN 2 THEN '有效' ELSE '失效' END AS 状态说明
   FROM   policy_standard_head h
-  WHERE  h.id = #{传入的policyStandardId};</code></pre>
+  WHERE  h.id = #&#123;传入的policyStandardId&#125;;</code></pre>
 <h4>报错3：经销商法人不能为空</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验customerId或customerLegalId为空</li><li><strong>逻辑分析</strong>：报销单需关联经销商和交易公司法人组合，用于后续推送MBO和资金池。若用户未选择经销商、未选择交易公司/法人、或联动查询getCustLegal未返回customerLegalId，校验不通过抛异常。需依次选择经销商→交易公司→法人客户。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT r.id                 AS 报销单ID,
@@ -721,7 +721,7 @@
               AND    r.hz_approve_status IN ('RUN','APPROVED','RETURN')), 0) AS 剩余可用预算
   FROM   fin_fee_check_bx_header b
   WHERE  b.fee_type_id = 66014602
-  AND    b.bud_year = #{当前年份}
+  AND    b.bud_year = #&#123;当前年份&#125;
   ORDER  BY b.division_id;</code></pre>
 <h4>报错15：当前额度外超限处理不存在，请联系相关人员处理</h4>
 <ul><li><strong>触发条件</strong>：点击"提交"按钮，computeLimitBxAmt校验政策extraBudgetExcessStrategy非1非2</li><li><strong>逻辑分析</strong>：限额模式下经销商超额时需按策略处理：1-超出不计(额度内实际报销=财务批准)、2-转额度内(额度内实际报销=财务批准-超限金额)。若政策extraBudgetExcessStrategy未配置、配置为非1非2的非法值、或政策被错误修改，校验不通过抛异常。需联系管理员修正政策配置。</li><li><strong>排查SQL</strong>：</li></ul>
@@ -796,7 +796,7 @@
          l.terminal_id AS 门店ID,
          l.apply_num  AS 申请数量
   FROM   cust_dh_reimburse_line l
-  WHERE  l.id = #{传入的lineId};</code></pre>
+  WHERE  l.id = #&#123;传入的lineId&#125;;</code></pre>
 <h4>报错22：当前审批节点不能修改</h4>
 <ul><li><strong>触发条件</strong>：审批节点保存，nodeEditSave根据taskName未匹配到区域经理/销售会计任一节点</li><li><strong>逻辑分析</strong>：审批节点保存需根据当前taskName分发到对应更新方法。若taskName未配置、工作流节点名称与代码预期不一致、或当前用户不在审批节点上，无法匹配到处理方法即抛异常。需确认当前taskName是否为预期值（区域经理审批/销售会计审批）。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT r.id               AS 报销单ID,
@@ -833,7 +833,7 @@
          r.hz_approve_status AS 审批状态,
          r.last_update_date AS 最后更新时间
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #{传入的id};</code></pre>
+  WHERE  r.id = #&#123;传入的id&#125;;</code></pre>
 <h4>报错26：数据异常,请稍后再试</h4>
 <ul><li><strong>触发条件</strong>：doSelect查询详情时，按id查询CUST_DH_REIMBURSE_HEAD返回null</li><li><strong>逻辑分析</strong>：详情页加载需查询报销单完整信息（含行表、附件等）。若报销单在操作期间被删除、id传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需返回列表页重新进入详情。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT r.id              AS 报销单ID,
@@ -841,7 +841,7 @@
          r.hz_approve_status AS 审批状态,
          r.last_update_date AS 最后更新时间
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #{传入的id};</code></pre>
+  WHERE  r.id = #&#123;传入的id&#125;;</code></pre>
 <h4>报错27：单据信息不合法</h4>
 <ul><li><strong>触发条件</strong>：工作流回调(wfProcSubmit/onWfComplete等)时，校验报销单状态或数据不合法</li><li><strong>逻辑分析</strong>：工作流回调需校验报销单数据合法性后更新审批状态。若报销单状态与工作流操作不匹配（如已APPROVED的报销单再次提交）、数据被非法修改、或工作流实例与报销单状态不一致，校验不通过抛异常。需核查报销单状态与工作流实例一致性。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT r.id               AS 报销单ID,
@@ -860,7 +860,7 @@
          r.policy_standard_id AS 政策ID,
          r.hz_approve_status AS 审批状态
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #{传入的id};</code></pre>
+  WHERE  r.id = #&#123;传入的id&#125;;</code></pre>
 <h4>报错29：请先选择经销商和店面建设补贴政策</h4>
 <ul><li><strong>触发条件</strong>：添加门店装修明细行时，前端校验未选择经销商(customerId为空)或政策(policyStandardId为空)</li><li><strong>逻辑分析</strong>：添加明细行需基于经销商和政策联动带出门店LOV和补贴项目LOV。若用户未选择经销商或政策即点击添加行，无法触发联动查询，前端message.error提示。需先选择经销商和店面建设补贴政策。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT r.id                 AS 报销单ID,

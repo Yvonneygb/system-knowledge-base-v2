@@ -603,7 +603,7 @@
          r.hz_approve_status  AS 审批状态,
          r.last_update_date   AS 最后更新时间
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #{传入的reimburseHeadId};</code></pre>
+  WHERE  r.id = #&#123;传入的reimburseHeadId&#125;;</code></pre>
 <h4>报错2：该报销单存在未审批结束的兑现单X，请勿重复创建</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验时查询同一REIMBURSE_HEAD_ID下CUST_DH_CASHOUT_HEAD存在hzApproveStatus非APPROVED的记录</li><li><strong>逻辑分析</strong>：同一报销单下同一时间只允许存在一个未审批完成的兑现单，避免并发兑现造成额度重复占用。校验逻辑按reimburseHeadId查询CUST_DH_CASHOUT_HEAD，若存在状态在(NEW,RUN,REBUT,WITHDRAW)的记录即抛异常。常见根因：用户重复点击新增、前一笔兑现单未提交或被驳回未处理。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT c.id                 AS 兑现单ID,
@@ -612,7 +612,7 @@
          c.hz_approve_status  AS 审批状态,
          c.creation_date      AS 创建时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.reimburse_head_id = #{传入的reimburseHeadId}
+  WHERE  c.reimburse_head_id = #&#123;传入的reimburseHeadId&#125;
   AND    c.hz_approve_status &lt;&gt; 'APPROVED'
   ORDER  BY c.creation_date DESC;</code></pre>
 <h4>报错3：额度外兑现比例必须在0到1之间</h4>
@@ -662,7 +662,7 @@
               AND    c.hz_approve_status IN ('RUN','APPROVED','RETURN','INTERRUPT')), 0) AS 已使用金额
   FROM   fin_fee_check_bx_header b
   WHERE  b.fee_type_id = 66014602
-  AND    b.bud_year = #{当前年份}
+  AND    b.bud_year = #&#123;当前年份&#125;
   ORDER  BY b.division_id;</code></pre>
 <h4>报错7：额度外申请金额需≤剩余可报销限额</h4>
 <ul><li><strong>触发条件</strong>：点击"提交"按钮，firstSubmitVerify校验政策custLimitFlag=Y（启用经销商限额）时，经销商限额-已报销金额+当前报销单实际额度外报销金额-当前申请金额&lt;0</li><li><strong>逻辑分析</strong>：启用经销商限额控制时，需确保经销商累计额度外报销金额不超过限额。校验逻辑计算：经销商限额-已报销金额+当前报销单额度外金额-本次申请金额，若结果&lt;0说明超额。常见根因：经销商历史报销金额接近限额、本次申请金额过大、或限额配置过低。需减少申请金额或联系业务部调整限额。</li><li><strong>排查SQL</strong>：</li></ul>
@@ -672,7 +672,7 @@
          SUM(c.out_cashout_apply_amt) AS 累计申请金额
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status IN ('RUN','APPROVED','RETURN','INTERRUPT')
-  AND    c.year = #{当前年份}
+  AND    c.year = #&#123;当前年份&#125;
   GROUP  BY c.customer_id, c.customer_code, c.year
   HAVING SUM(c.out_cashout_apply_amt) &gt; 0
   ORDER  BY SUM(c.out_cashout_apply_amt) DESC;</code></pre>
@@ -764,7 +764,7 @@
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #{传入的id};</code></pre>
+  WHERE  c.id = #&#123;传入的id&#125;;</code></pre>
 <h4>报错16：数据异常，请稍后再试</h4>
 <ul><li><strong>触发条件</strong>：查询详情，doSelect按id查询兑现单VO返回null</li><li><strong>逻辑分析</strong>：详情页加载需查询兑现单完整信息（含行表、附件等）。若兑现单被删除、id传值错误、或关联数据被清理导致VO组装失败返回null，抛异常。需返回列表页重新进入详情。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
@@ -774,7 +774,7 @@
           FROM   cust_dh_cashout_line l
           WHERE  l.head_id = c.id) AS 行表记录数
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #{传入的id};</code></pre>
+  WHERE  c.id = #&#123;传入的id&#125;;</code></pre>
 <h4>报错17：门头兑现数据不存在</h4>
 <ul><li><strong>触发条件</strong>：doSelect查询详情时，按dto.getObjId()查询CUST_DH_CASHOUT_HEAD返回null</li><li><strong>逻辑分析</strong>：详情页加载需查询兑现单完整信息。若兑现单在操作期间被删除、objId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT c.id              AS 兑现单ID,
@@ -782,7 +782,7 @@
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #{传入的objId};</code></pre>
+  WHERE  c.id = #&#123;传入的objId&#125;;</code></pre>
 <h4>报错18：申请兑现比例需≤X</h4>
 <ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验outCashoutRatio&gt;1-sumOutCashoutRatio（已提报的申请兑现比例合计）</li><li><strong>逻辑分析</strong>：同一报销单下可分多次兑现，各兑现单的额度外兑现比例之和不得超过1(100%)。校验逻辑汇总同一REIMBURSE_HEAD_ID下已提报兑现单的outCashoutRatio之和(sumOutCashoutRatio)，若本次比例&gt;1-sumOutCashoutRatio即抛异常。常见根因：已有兑现单占用大部分比例、本次比例输入过大。需修改比例至≤剩余可申请比例。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT c.id                 AS 兑现单ID,
@@ -818,7 +818,7 @@
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #{传入的id};</code></pre>
+  WHERE  c.id = #&#123;传入的id&#125;;</code></pre>
 <h4>报错21：政策信息不存在</h4>
 <ul><li><strong>触发条件</strong>：提交审批firstSubmitVerify校验额度外预算时，按报销单关联的policyStandardId查询POLICY_STANDARD_HEAD返回null</li><li><strong>逻辑分析</strong>：额度外预算校验需查询政策获取useExtraBudgetFlag和预算配置。若报销单关联的政策被删除、policyStandardId传值错误、或政策数据被清理，查询返回空抛异常。需核查报销单关联政策是否存在。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT r.id                 AS 报销单ID,

@@ -243,7 +243,7 @@ ORDER BY LPPG.Creation_Date DESC, LPPG.ID DESC</code></pre>
 <pre class="detail-sql" v-pre><code>-- 产品列表查询（LNK_PROD表）
 SELECT * FROM LNK_PROD
 WHERE 1=1
-    AND organization_id = #{organizationId}
+    AND organization_id = #&#123;organizationId&#125;
     AND selectType = 'all'
     -- 动态条件：prodCode(like)、prodName(like)、lhProdModel(like)、lhProdChannel(=)、prodStatus(=)、smState(=)、prodPositioning(like)</code></pre>
 </KbCard>
@@ -401,9 +401,9 @@ ORDER BY LPPG.Creation_Date DESC</code></pre>
 </table>
 <blockquote>联动更新SQL（ServiceImpl.saveData中调用lnkProdRepository.updateByPrimaryCode）：</blockquote>
 <pre class="detail-sql" v-pre><code>UPDATE LNK_PROD
-SET PROD_PROMOTE_GRADE = #{grade},
-    LAST_UPDATED_BY = #{userId}
-WHERE PROD_CODE = #{prodCode}</code></pre>
+SET PROD_PROMOTE_GRADE = #&#123;grade&#125;,
+    LAST_UPDATED_BY = #&#123;userId&#125;
+WHERE PROD_CODE = #&#123;prodCode&#125;</code></pre>
 </KbCard>
 
 </div>
@@ -435,7 +435,7 @@ WHERE PROD_CODE = #{prodCode}</code></pre>
 前端onOkFn方法中，调用POST保存接口后检查res.failed，如果失败则调用commonFn_showErrMsg显示后端错误信息。
 排查SQL：</blockquote>
 <pre class="detail-sql" v-pre><code>-- 检查产品编码是否存在
-SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};</code></pre>
+SELECT * FROM LNK_PROD WHERE PROD_CODE = #&#123;prodCode&#125;;</code></pre>
 <h4>报错3：操作失败！</h4>
 <ul><li><strong>触发条件</strong>：点击失效确认框确认后，后端保存接口返回失败</li><li><strong>逻辑分析</strong>：前端onDisabledFn方法调用POST /v1/&#123;organizationId&#125;/prodPromoteGrade/disable接口，后端将LNK_PROD_PROMOTE_GRADE记录状态置为invalid，同时将LNK_PROD.PROD_PROMOTE_GRADE重置为C。若产品编码不存在或数据库异常则返回失败，前端提示"操作失败！"。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,

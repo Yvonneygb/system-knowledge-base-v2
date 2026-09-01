@@ -271,7 +271,7 @@
 <p>- 第2点：校验区域合法性(doCheckArea)</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUSTOMER_ID IS NULL OR CONTRACT_YEAR IS NULL);</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #&#123;id&#125; AND (CUSTOMER_ID IS NULL OR CONTRACT_YEAR IS NULL);</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -359,17 +359,17 @@
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，workFlowStartValid方法调用doCheckAreaNew/doCheckArea校验区域不通过</li><li><strong>逻辑分析</strong>：提交前通过doCheckAreaNew/doCheckArea方法校验经销商在选定销售区域（SALE_AREA）内的合法性，确保合同授权区域与经销商实际授权区域一致。校验失败根因有三类：(1)经销商在选定区域无销售授权（经销商主数据中未配置该区域）；(2)合同销售区域与经销商授权区域不匹配；(3)区域数据未维护或已失效。此为阻断性报错，阻止OA流程（DISTRIBUTION_CONTRACT_DKHB）发起，需重新选择区域或联系主数据维护经销商授权区域</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.SALE_AREA, S.HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD S
-  WHERE S.SALE_CONTRACT_HEAD_ID = #{id}
+  WHERE S.SALE_CONTRACT_HEAD_ID = #&#123;id&#125;
     AND S.HZ_APPROVE_STATUS IN ('NEW', 'RUN');
   -- 核查经销商授权区域（经销商主数据，具体表名以主数据为准）
   SELECT CUSTOMER_CODE, CUSTOMER_NAME, SALE_AREA, ENABLED
   FROM CUSTOMER_SALE_AREA
-  WHERE CUSTOMER_CODE = #{customerCode};</code></pre>
+  WHERE CUSTOMER_CODE = #&#123;customerCode&#125;;</code></pre>
 <h4>报错3：流程编码缺失，请选择流程</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，workFlowStartValid方法校验OA流程编码为空</li><li><strong>逻辑分析</strong>：年度经销合同提交需发起OA审批流程（DISTRIBUTION_CONTRACT_DKHB）。SaSaleContractHeadServiceImpl在saveAndSubmit中校验流程编码非空，流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置DISTRIBUTION_CONTRACT_DKHB流程编码；(2)合同类型未关联对应流程编码。需在流程配置中维护对应关系</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CONTRACT_TYPE, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID = #{id}
+  WHERE SALE_CONTRACT_HEAD_ID = #&#123;id&#125;
     AND HZ_APPROVE_STATUS = 'NEW';</code></pre>
 <h4>报错4：合同ID为空，请检查</h4>
 <ul><li><strong>触发条件</strong>：用户编辑或提交合同时，SALE_CONTRACT_HEAD_ID参数为空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl在更新、提交、归档等操作前校验合同ID非空。合同ID是主键，缺失将导致无法定位合同记录，后续所有操作均无法执行。通常由前端未正确传入选中记录ID导致</li><li><strong>排查SQL</strong>：</li></ul>
@@ -420,11 +420,11 @@
 <pre class="detail-sql" v-pre><code>SELECT CUSTOMER_ID, CUSTOMER_NAME, CONTRACT_TYPE, CONTRACT_NO,
          START_DATE, END_DATE, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE CUSTOMER_ID = #{customerId}
-    AND CONTRACT_TYPE = #{contractType}
+  WHERE CUSTOMER_ID = #&#123;customerId&#125;
+    AND CONTRACT_TYPE = #&#123;contractType&#125;
     AND HZ_APPROVE_STATUS = 'APPROVED'
-    AND START_DATE &lt;= #{newEndDate}
-    AND END_DATE &gt;= #{newStartDate};</code></pre>
+    AND START_DATE &lt;= #&#123;newEndDate&#125;
+    AND END_DATE &gt;= #&#123;newStartDate&#125;;</code></pre>
 <h4>报错12：未能获取合同保证金标准，不能创建合同</h4>
 <ul><li><strong>触发条件</strong>：用户新建合同时，根据事业部、合同类型查询保证金标准（CM_DEPOSITS_PAY_STANDARD）返回空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl在创建合同前查询保证金标准，保证金标准是计算合同应缴保证金的依据。标准未配置将导致合同保证金金额无法计算。需先在保证金标准配置中维护对应事业部和合同类型的标准</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.ENTID, S.CONTRACT_TYPE,

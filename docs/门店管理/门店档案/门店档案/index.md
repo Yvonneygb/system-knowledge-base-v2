@@ -314,7 +314,7 @@
          t.usable              AS 有效状态,
          t.update_time         AS 最后更新时间
   FROM   mkt_terminal t
-   WHERE  t.terminal_id = #{传入的terminalId}
+   WHERE  t.terminal_id = #&#123;传入的terminalId&#125;
    AND    (t.usable IS NULL OR t.terminal_stat = 2)
    ORDER  BY t.update_time DESC;</code></pre>
 <h4>报错2：网络请求失败</h4>
@@ -333,8 +333,8 @@
          t.entid               AS 企业ID,
          t.organization_id     AS 组织ID
   FROM   mkt_terminal t
-  WHERE  t.organization_id = #{当前用户组织ID}
-  AND    t.cust_code = #{当前经销商编码}
+  WHERE  t.organization_id = #&#123;当前用户组织ID&#125;
+  AND    t.cust_code = #&#123;当前经销商编码&#125;
   ORDER  BY t.terminal_id DESC;</code></pre>
 <h4>报错4：查询无数据</h4>
 <ul><li><strong>触发条件</strong>：进入门店档案列表页或调用LOV接口查询时，按当前组织ID和经销商编码过滤后返回空列表</li><li><strong>逻辑分析</strong>：selectList方法在entid为空时自动填充当前组织ID、custCode为空时自动填充当前经销商编码，按terminalId降序排列。若当前用户所属组织/经销商下确实无门店档案（如新建门店申请未审批通过、门店档案均被撤店terminal_stat=2、或经销商主数据未关联门店），查询返回空列表，前端展示空表格。此为正常业务情况而非错误，但用户可能误判为故障。需核查该组织/经销商下门店档案是否已建立及有效状态。</li><li><strong>排查SQL</strong>：</li></ul>
@@ -347,8 +347,8 @@
          t.entid               AS 企业ID,
          t.organization_id     AS 组织ID
   FROM   mkt_terminal t
-  WHERE  t.organization_id = #{当前用户组织ID}
-  AND    t.cust_code = #{当前经销商编码}
+  WHERE  t.organization_id = #&#123;当前用户组织ID&#125;
+  AND    t.cust_code = #&#123;当前经销商编码&#125;
   ORDER  BY t.terminal_id DESC;</code></pre>
 </KbCard>
 

@@ -238,16 +238,16 @@ FROM CUSTOMER_ORG WHERE ENABLED = 1</code></pre>
 <h4>按钮1：查询（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：按事业部、经销商、年月等条件查询待兑现折扣折让对账单</li><li>第2点：支持分页查询和排序</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/lHCASHFINBillHead/list</code></li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT * FROM LNK_CASH_BILL_HEAD_NEW 
-WHERE (DEPT_ID = #{deptId} OR #{deptId} IS NULL)
-  AND (SERVERNO = #{serverno} OR #{serverno} IS NULL)
-  AND (BILLMONTH = #{billmonth} OR #{billmonth} IS NULL)
+WHERE (DEPT_ID = #&#123;deptId&#125; OR #&#123;deptId&#125; IS NULL)
+  AND (SERVERNO = #&#123;serverno&#125; OR #&#123;serverno&#125; IS NULL)
+  AND (BILLMONTH = #&#123;billmonth&#125; OR #&#123;billmonth&#125; IS NULL)
 ORDER BY BILLMONTH DESC, SERVERNO</code></pre>
 <h4>按钮2：查看明细（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中一条记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询选中对账单的头信息和行明细</li><li>第2点：行明细通过queryCashPoolsBillLine接口查询</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/lHCASHFINBillHead/&#123;headerId&#125;/detail</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_CASHPOOLS_BILL_LINE WHERE HEADER_ID = #{headerId};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_CASHPOOLS_BILL_LINE WHERE HEADER_ID = #&#123;headerId&#125;;</code></pre>
 <h4>按钮3：法人确认（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中未确认的对账单</li><li><strong>执行逻辑</strong>：</li><li>第1点：对选中的对账单进行法人确认</li><li>第2点：更新对账单状态为已确认</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/lHCASHFINBillHead/confirmBill</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS != 'CONFIRMED';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #&#123;headerId&#125; AND STATUS != 'CONFIRMED';</code></pre>
 <h4>按钮4：导出（列表页）</h4>
 <ul><li><strong>触发条件</strong>：有查询结果时可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：将当前查询结果导出为Excel文件</li><li>第2点：支持头导出和行导出</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/lHCASHFINBillHead/export</code></li><li><strong>排查SQL</strong>：同查询SQL</li></ul>
 </KbCard>
@@ -340,10 +340,10 @@ ORDER BY BILLMONTH DESC, SERVERNO</code></pre>
 <pre class="detail-sql" v-pre><code>SELECT HEADER_ID, BILLMONTH, SERVERNO, SERVERNAME, DEPT_NAME, FUND_TYPE,
          BEGINCASHPOOL, ADVERTISING, REBATE, ENDCASHPOOL, STATUS
   FROM LNK_CASH_BILL_HEAD_NEW
-  WHERE (DEPT_ID = #{deptId} OR #{deptId} IS NULL)
-    AND (SERVERNO = #{serverno} OR #{serverno} IS NULL)
-    AND (BILLMONTH = #{billmonth} OR #{billmonth} IS NULL)
-    AND (FUND_TYPE = #{fundType} OR #{fundType} IS NULL)
+  WHERE (DEPT_ID = #&#123;deptId&#125; OR #&#123;deptId&#125; IS NULL)
+    AND (SERVERNO = #&#123;serverno&#125; OR #&#123;serverno&#125; IS NULL)
+    AND (BILLMONTH = #&#123;billmonth&#125; OR #&#123;billmonth&#125; IS NULL)
+    AND (FUND_TYPE = #&#123;fundType&#125; OR #&#123;fundType&#125; IS NULL)
   ORDER BY BILLMONTH DESC, SERVERNO;</code></pre>
 <h4>报错2：请输入id</h4>
 <ul><li><strong>触发条件</strong>：用户在列表页未选中记录或选中后ID未传入，直接触发法人确认操作</li><li><strong>逻辑分析</strong>：法人确认接口confirmBill在Controller层（LnkCashBillHeadNewController.java:92）校验入参id非空，若StringUtils.isBlank(id)则抛出CommonException("请输入id")。根因有二：(1)前端未选中行就调用确认接口，id参数为null或空字符串；(2)前端选中行但headerId字段未正确传递到请求参数。校验在Controller层前置拦截，toast提示后阻断确认操作。需选中一条待确认的对账单后再点击法人确认</li><li><strong>排查SQL</strong>：</li></ul>
@@ -358,13 +358,13 @@ ORDER BY BILLMONTH DESC, SERVERNO</code></pre>
                WHEN STATUS IS NULL THEN '状态异常'
                ELSE '待确认' END) AS 状态判断
   FROM LNK_CASH_BILL_HEAD_NEW
-  WHERE HEADER_ID = #{headerId};</code></pre>
+  WHERE HEADER_ID = #&#123;headerId&#125;;</code></pre>
 <h4>报错4：对账单明细不存在</h4>
 <ul><li><strong>触发条件</strong>：用户在列表页选中对账单点击"查看明细"，detail接口或queryCashPoolsBillLine接口返回空</li><li><strong>逻辑分析</strong>：查看明细调用/v1/&#123;organizationId&#125;/lHCASHFINBillHead/&#123;headerId&#125;/detail接口，按HEADER_ID查询LNK_CASH_BILL_HEAD_NEW头表和LNK_CASHPOOLS_BILL_LINE行表。根因有三：(1)并发场景下他人已删除该对账单，头表记录不存在；(2)对账单头表存在但行表LNK_CASHPOOLS_BILL_LINE无关联明细（HEADER_ID外键失效或行数据未生成）；(3)传入的headerId参数格式错误或为null。需核对头行表数据一致性</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT H.HEADER_ID, H.BILLMONTH, H.SERVERNO, H.STATUS,
          (SELECT COUNT(1) FROM LNK_CASHPOOLS_BILL_LINE L WHERE L.HEADER_ID = H.HEADER_ID) AS 行明细数
   FROM LNK_CASH_BILL_HEAD_NEW H
-  WHERE H.HEADER_ID = #{headerId};</code></pre>
+  WHERE H.HEADER_ID = #&#123;headerId&#125;;</code></pre>
 <h4>报错5：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击查询、查看明细、法人确认或导出，前端axios请求抛出网络异常或超时</li><li><strong>逻辑分析</strong>：前端调用/v1/&#123;organizationId&#125;/lHCASHFINBillHead/list、detail、confirmBill、export等接口时，因后端crm-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)crm-business微服务未注册到Nacos或已宕机；(2)网关路由配置错误找不到服务；(3)网络中断或防火墙拦截；(4)导出数据量超过maxDataCount=50000限制或SQL执行超时。需联系运维确认服务状态</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查对账单数据量是否异常增长导致查询/导出超时
@@ -375,7 +375,7 @@ ORDER BY BILLMONTH DESC, SERVERNO</code></pre>
 <pre class="detail-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre>
+  WHERE USER_ID = #&#123;userId&#125; AND ORGANIZATION_ID = #&#123;organizationId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="常见问题">

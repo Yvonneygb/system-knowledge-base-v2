@@ -405,21 +405,21 @@
 <ul><li><strong>详细逻辑</strong>：每行的本次核销数量(THIS_VERIFER_NUMBER)不可大于剩余可核销数量(SURPLUS_CAN_VERIFER_NUMBER)，小数位≤3</li><li><strong>系统体现</strong>：保存时逐行校验</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT INVBILLNO, ITEM_CODE, SURPLUS_CAN_VERIFER_NUMBER, THIS_VERIFER_NUMBER
 FROM EPM_INVOICE_TRUTH_LINE
-WHERE INVOICE_TRUTH_ID = #{invoiceTruthId}
+WHERE INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;
   AND THIS_VERIFER_NUMBER &gt; SURPLUS_CAN_VERIFER_NUMBER;</code></pre>
 <h4>校验2：发货日期和产品编码校验 —— 确保核销行与出库单行匹配</h4>
 <ul><li><strong>详细逻辑</strong>：校验核销行的发货日期和产品编码与出库单行一致</li><li><strong>系统体现</strong>：checkDateAndItemCode方法校验</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT l.INVBILLNO, l.DATE_INVBILL, l.ITEM_CODE, iobl.INV_OUT_BILL_LINE_ID
 FROM EPM_INVOICE_TRUTH_LINE l
 JOIN INV_OUT_BILL_LINE iobl ON l.INV_OUT_BILL_LINE_ID = iobl.INV_OUT_BILL_LINE_ID
-WHERE l.INVOICE_TRUTH_ID = #{invoiceTruthId};</code></pre>
+WHERE l.INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="提交校验">
 <h4>校验1：核销单必须存在有效明细行 —— 确保有核销数据可提交</h4>
 <ul><li><strong>详细逻辑</strong>：检查核销单下是否存在核销行数据且存在本次核销数量&gt;0的记录</li><li><strong>系统体现</strong>：提交前查询EPM_INVOICE_TRUTH_LINE，无数据或无本次核销数量&gt;0的行则报错</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
-WHERE INVOICE_TRUTH_ID = #{invoiceTruthId}
+WHERE INVOICE_TRUTH_ID = #&#123;invoiceTruthId&#125;
   AND THIS_VERIFER_NUMBER &gt; 0;</code></pre>
 </KbCard>
 
@@ -511,9 +511,9 @@ WHERE INVOICE_TRUTH_ID = #{invoiceTruthId}
 </table>
 <p><strong>查询SQL</strong>：</p>
 <pre class="detail-sql" v-pre><code>SELECT * FROM EPM_INVOICE_TRUTH_HEADER
-WHERE ORGANIZATION_ID = #{organizationId}
-  AND NVL(INVOICE_TRUTH_NO, '') LIKE '%' || #{invoiceTruthNo} || '%'
-  AND NVL(PROJECT_CODE, '') LIKE '%' || #{projectCode} || '%'
+WHERE ORGANIZATION_ID = #&#123;organizationId&#125;
+  AND NVL(INVOICE_TRUTH_NO, '') LIKE '%' || #&#123;invoiceTruthNo&#125; || '%'
+  AND NVL(PROJECT_CODE, '') LIKE '%' || #&#123;projectCode&#125; || '%'
 ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
 </KbCard>
 
@@ -583,10 +583,10 @@ ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
 <p><strong>取消核销更新SQL</strong>：</p>
 <pre class="detail-sql" v-pre><code>UPDATE EPM_VERIFER_INVOICE_DETAILS
 SET EFFECT_STATUS = 'canceled',
-    CANCEL_OPERATOR = #{cancelOperator},
+    CANCEL_OPERATOR = #&#123;cancelOperator&#125;,
     CANCEL_TIME = SYSDATE,
-    CANCEL_TYPE = #{cancelType}
-WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});</code></pre>
+    CANCEL_TYPE = #&#123;cancelType&#125;
+WHERE VERIFER_INVOICE_DETAILS_ID IN (#&#123;detailIdList&#125;);</code></pre>
 </KbCard>
 
 </div>

@@ -366,14 +366,14 @@ FROM (
         ON dbs.organization_id = cbh.organization_id
 ) cbh
 WHERE 1 = 1
-    AND organization_id = #{organizationId}                        -- 事业部ID（精确）
-    AND trading_company_name LIKE '%' || #{tradingCompanyName} || '%'  -- 交易公司名称（模糊）
-    AND billing_unit_code = #{billingUnitCode}                     -- 开票单位编码（精确）
-    AND billing_unit_name LIKE '%' || #{billingUnitName} || '%'    -- 开票单位名称（模糊）
-    AND create_time &gt;= TO_DATE(#{startTime}, 'yyyy-mm-dd')         -- 创建时间范围-开始
-    AND create_time &lt;= TO_DATE(#{endTime}, 'yyyy-mm-dd') + 1       -- 创建时间范围-结束（含当天）
-    AND cust_code = #{custCode}                                    -- 经销商编码（精确）
-    AND cust_name LIKE '%' || #{custName} || '%'                   -- 经销商名称（模糊）</code></pre>
+    AND organization_id = #&#123;organizationId&#125;                        -- 事业部ID（精确）
+    AND trading_company_name LIKE '%' || #&#123;tradingCompanyName&#125; || '%'  -- 交易公司名称（模糊）
+    AND billing_unit_code = #&#123;billingUnitCode&#125;                     -- 开票单位编码（精确）
+    AND billing_unit_name LIKE '%' || #&#123;billingUnitName&#125; || '%'    -- 开票单位名称（模糊）
+    AND create_time &gt;= TO_DATE(#&#123;startTime&#125;, 'yyyy-mm-dd')         -- 创建时间范围-开始
+    AND create_time &lt;= TO_DATE(#&#123;endTime&#125;, 'yyyy-mm-dd') + 1       -- 创建时间范围-结束（含当天）
+    AND cust_code = #&#123;custCode&#125;                                    -- 经销商编码（精确）
+    AND cust_name LIKE '%' || #&#123;custName&#125; || '%'                   -- 经销商名称（模糊）</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -502,7 +502,7 @@ WHERE 1 = 1
          organization_id    AS 组织ID,
          create_time        AS 创建时间
   FROM   fin_fee_check_bx_header
-  WHERE  organization_id = #{当前用户组织ID}
+  WHERE  organization_id = #&#123;当前用户组织ID&#125;
   ORDER  BY create_time DESC;</code></pre>
 <h4>报错2：签名状态子查询返回多行</h4>
 <ul><li><strong>触发条件</strong>：查询结果展示时，子查询 <code>(SELECT afh.signature_state FROM epms.fin_fee_apply_finished_header afh WHERE afh.terminal_apply_id = cbh.terminal_apply_id)</code> 返回多行</li><li><strong>逻辑分析</strong>：报表通过子查询关联FIN_FEE_APPLY_FINISHED_HEADER获取装修申请单的签名状态，期望一个装修申请单ID（TERMINAL_APPLY_ID）对应一条签名状态记录。若FIN_FEE_APPLY_FINISHED_HEADER存在重复数据（如同一TERMINAL_APPLY_ID多条记录）、或历史数据迁移产生重复、或装修申请单被多次完工验收生成多条finished_header记录，子查询返回多行导致Oracle抛出ORA-01427单行子查询返回多行错误，整条查询失败。</li><li><strong>排查SQL</strong>：</li></ul>

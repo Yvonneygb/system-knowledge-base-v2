@@ -454,7 +454,7 @@
          m.creator               AS 申请人,
          m.create_time           AS 创建时间
   FROM   mkt_terminal_modify m
-  WHERE  m.terminal_modify_id = #{传入的objId}
+  WHERE  m.terminal_modify_id = #&#123;传入的objId&#125;
   ORDER  BY m.create_time DESC;</code></pre>
 <h4>报错5：流程中objid为空，流程失败!</h4>
 <ul><li><strong>触发条件</strong>：OA审批通过回调wfComplete时，WfApproveDTO.objId为null或小于等于0</li><li><strong>逻辑分析</strong>：wfComplete方法首行校验objId合法性，objId是工作流回调定位业务单据的关键标识。若OA回调报文缺失objId字段、工作流变量配置错误未回传单据ID、或OA与DMS流程集成配置异常导致objId解析为空/0，校验不通过抛CommonException中断回调流程，变更单不会被写回门店档案。需核查OA流程节点变量配置及回调报文objId字段完整性。</li><li><strong>排查SQL</strong>：</li></ul>

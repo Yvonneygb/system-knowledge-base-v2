@@ -241,15 +241,15 @@ SELECT * FROM (
     LEFT JOIN (
         SELECT county_areaid, COUNT(county_areaid) AS terminal_num
         FROM epms.mkt_terminal
-        WHERE entid = #{orgId}
+        WHERE entid = #&#123;orgId&#125;
         GROUP BY county_areaid
     ) mt ON sa3.areaid = mt.county_areaid
 )
 WHERE 1 = 1
-    AND province_id = #{provinceId}          -- 省份ID（精确）
-    AND city_id = #{cityId}                  -- 城市ID（精确）
-    AND county_id = #{countyId}              -- 区县ID（精确）
-    AND terminal_num &lt; #{terminalNumLow}     -- 门店数量下限筛选</code></pre>
+    AND province_id = #&#123;provinceId&#125;          -- 省份ID（精确）
+    AND city_id = #&#123;cityId&#125;                  -- 城市ID（精确）
+    AND county_id = #&#123;countyId&#125;              -- 区县ID（精确）
+    AND terminal_num &lt; #&#123;terminalNumLow&#125;     -- 门店数量下限筛选</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -320,7 +320,7 @@ WHERE 1 = 1
   LEFT   JOIN (
            SELECT county_areaid, COUNT(county_areaid) AS terminal_num
            FROM   mkt_terminal
-           WHERE  entid = #{当前用户组织ID}
+           WHERE  entid = #&#123;当前用户组织ID&#125;
            GROUP  BY county_areaid
          ) mt ON sa3.areaid = mt.county_areaid
   WHERE  sa3.areatype = 6

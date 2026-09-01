@@ -318,10 +318,10 @@
 <ul><li>问题2：查询结果中库存数量为0或低于实际库存</li><li>原因：库存上限配置（LNK_INV_MAX）限制了展示数量。排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT lim.PROD_ID, lim.DEPT_ID, lim.MAXIMUN, lim.TYPE
     FROM LNK_INV_MAX lim
-    WHERE lim.PROD_ID = (SELECT ROW_ID FROM LNK_PROD WHERE PROD_CODE = #{prodCode});</code></pre>
+    WHERE lim.PROD_ID = (SELECT ROW_ID FROM LNK_PROD WHERE PROD_CODE = #&#123;prodCode&#125;);</code></pre>
 <ul><li>解决思路：检查LNK_INV_MAX表是否配置了过低的库存上限，或调整上限值</li></ul>
 <ul><li>问题3：瓷砖产品线库存换算数量不正确</li><li>原因：转换率计算异常或Oracle函数cux_inv_convert_ex_pub.inv_um_convert返回错误。排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT cux_inv_convert_ex_pub.inv_um_convert(#{from_uom}, #{to_uom}, #{prod_code}) AS conversion_rate
+<pre class="detail-sql" v-pre><code>SELECT cux_inv_convert_ex_pub.inv_um_convert(#&#123;from_uom&#125;, #&#123;to_uom&#125;, #&#123;prod_code&#125;) AS conversion_rate
     FROM DUAL;</code></pre>
 <ul><li>解决思路：检查Oracle转换率函数是否正确部署，确认产品的单位配置</li></ul>
 </KbCard>

@@ -339,9 +339,9 @@
 <pre class="detail-sql" v-pre><code>SELECT DISTINCT p.project_id, p.project_code, p.project_name
 FROM epm_project p
 JOIN epm_project_contract pc ON p.project_id = pc.project_id
-WHERE pc.customer_id = #{customerId}
-  AND pc.trading_company_id = #{receiveUnitId}
-  AND pc.billing_unit_id = #{remitUnitId}
+WHERE pc.customer_id = #&#123;customerId&#125;
+  AND pc.trading_company_id = #&#123;receiveUnitId&#125;
+  AND pc.billing_unit_id = #&#123;remitUnitId&#125;
   AND pc.contract_type = 1
   AND (pc.hz_approve_status = 'APPROVED' OR pc.stat = 7)</code></pre>
 <h4>弹窗2：可认领合同选择弹窗（单选）</h4>
@@ -360,7 +360,7 @@ WHERE pc.customer_id = #{customerId}
 <pre class="detail-sql" v-pre><code>SELECT pc.contract_id, pc.contract_code, pc.contract_name,
        pc.contract_amount, pc.contract_amt_received
 FROM epm_project_contract pc
-WHERE pc.project_id = #{projectId}
+WHERE pc.project_id = #&#123;projectId&#125;
   AND pc.contract_type = 1
   AND pc.hz_approve_status = 'APPROVED'</code></pre>
 <h4>弹窗3：可认领出库明细选择弹窗（多选）</h4>
@@ -380,8 +380,8 @@ WHERE pc.project_id = #{projectId}
 <pre class="detail-sql" v-pre><code>SELECT d.delivery_line_id, d.inv_bill_no, d.item_code, d.contract_amount,
        d.dealer_amount, d.total_claim_amt, d.total_return_amt
 FROM epm_delivery_detail d
-WHERE d.project_id = #{projectId}
-  AND d.contract_id IN (#{contractIds})
+WHERE d.project_id = #&#123;projectId&#125;
+  AND d.contract_id IN (#&#123;contractIds&#125;)
   AND d.total_claim_amt &lt; d.contract_amount</code></pre>
 </KbCard>
 
@@ -402,17 +402,17 @@ WHERE d.project_id = #{projectId}
 <h4>按钮1：提交（详情页）</h4>
 <ul><li><strong>触发条件</strong>：审批状态为NEW或INTERRUPT</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验到款单状态是否允许认领（verifyImportStat）</li><li>第2点：校验本次认领金额不超过到款单剩余可认领金额（虚拟单查DB，真实单查ERP）</li><li>第3点：推送ERP核销数据，状态为SUBMIT</li><li>第4点：发起工作流，按区域选择对应流程Key</li><li>第5点：更新审批状态为RUN，记录工作流实例ID</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epmPaymentAllot/wfProcSubmit</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT payment_allot_id, payment_allot_code, payment_allot_stat, hz_approve_status, hz_instance_id
-FROM epm_payment_allot WHERE payment_allot_id = {id}</code></pre>
+FROM epm_payment_allot WHERE payment_allot_id = &#123;id&#125;</code></pre>
 <h4>按钮2：删除（详情页）</h4>
 <ul><li><strong>触发条件</strong>：审批状态为NEW或INTERRUPT</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验审批状态必须为NEW或INTERRUPT，否则报错</li><li>第2点：级联删除合同行（EPM_PAYMENT_ALLOT_LINE）和出库明细行（EPM_PAYMENT_ALLOT_DETAIL）</li><li>第3点：删除认领头（EPM_PAYMENT_ALLOT）</li><li>第4点：更新到款引入单可认领金额（虚拟单查DB计算，真实单查ERP实时数据）</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epmPaymentAllot/deleteAllot</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM epm_payment_allot WHERE payment_allot_id = {id};
-SELECT * FROM epm_payment_allot_line WHERE payment_allot_id = {id};
-SELECT * FROM epm_payment_allot_detail d JOIN epm_payment_allot_line l ON d.payment_allot_line_id = l.payment_allot_line_id WHERE l.payment_allot_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM epm_payment_allot WHERE payment_allot_id = &#123;id&#125;;
+SELECT * FROM epm_payment_allot_line WHERE payment_allot_id = &#123;id&#125;;
+SELECT * FROM epm_payment_allot_detail d JOIN epm_payment_allot_line l ON d.payment_allot_line_id = l.payment_allot_line_id WHERE l.payment_allot_id = &#123;id&#125;;</code></pre>
 <h4>按钮3：导出（列表页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：按当前查询条件导出认领单列表数据</li><li>第2点：导出字段包括认领单号、到款单号、客户、认款金额、状态等</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/epmPaymentAllot/list/export</li><li><strong>排查SQL</strong>：无</li></ul>
 <h4>按钮4：查询合同认缴金额（详情页）</h4>
 <ul><li><strong>触发条件</strong>：已选择合同</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询合同已回款总金额（contractAmtReceived）</li><li>第2点：查询合同发货总金额（contractAmt）</li><li>第3点：返回合同金额信息供前端展示</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epmPaymentAllot/select-contract-amt</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT contract_id, contract_code, contract_amount, contract_amt_received FROM epm_project_contract WHERE contract_id IN ({contractIds});</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT contract_id, contract_code, contract_amount, contract_amt_received FROM epm_project_contract WHERE contract_id IN (&#123;contractIds&#125;);</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -423,7 +423,7 @@ SELECT * FROM epm_payment_allot_detail d JOIN epm_payment_allot_line l ON d.paym
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT payment_import_id, payment_import_code, bill_type, unallot_amt, allot_status
-    FROM epm_payment_import WHERE payment_import_id = {paymentImportId};</code></pre>
+    FROM epm_payment_import WHERE payment_import_id = &#123;paymentImportId&#125;;</code></pre>
 <ul><li>校验2：可认领金额校验 —— 确保认领金额不超过剩余可认领金额</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：虚拟到款单（VIRTUAL_RECEIPT）查数据库计算剩余可认领金额</p>
@@ -432,7 +432,7 @@ SELECT * FROM epm_payment_allot_detail d JOIN epm_payment_allot_line l ON d.paym
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 虚拟单查DB
-    SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = {id};
+    SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = &#123;id&#125;;
     -- 真实单查ERP（通过ERP接口，无直接SQL）</code></pre>
 <ul><li>校验3：出库明细金额校验 —— 确保不超工程金额</li></ul>
 <ul><li>详细逻辑</li></ul>
@@ -443,7 +443,7 @@ SELECT * FROM epm_payment_allot_detail d JOIN epm_payment_allot_line l ON d.paym
 <pre class="detail-sql" v-pre><code>SELECT d.claim_amt, d.contract_amount,
            (SELECT SUM(claim_amt) FROM epm_payment_allot_detail WHERE source_id = d.source_id AND cancel_flag = 'N') AS total_claim_amt
     FROM epm_payment_allot_detail d WHERE payment_allot_line_id IN (
-      SELECT payment_allot_line_id FROM epm_payment_allot_line WHERE payment_allot_id = {id}
+      SELECT payment_allot_line_id FROM epm_payment_allot_line WHERE payment_allot_id = &#123;id&#125;
     );</code></pre>
 <ul><li>校验4：事业部信息校验 —— 确保用户有事业部信息</li></ul>
 <ul><li>详细逻辑</li></ul>
@@ -460,14 +460,14 @@ SELECT * FROM epm_payment_allot_detail d JOIN epm_payment_allot_line l ON d.paym
 <p>- 第2点：到款单不存在时报错"流程发起异常，到款单不存在！"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT payment_import_id, allot_status FROM epm_payment_import WHERE payment_import_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT payment_import_id, allot_status FROM epm_payment_import WHERE payment_import_id = &#123;id&#125;;</code></pre>
 <ul><li>校验2：可认领金额校验 —— 提交前再次校验金额</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：与保存校验2相同的validPaymentImportCanAllotAmt逻辑</p>
 <p>- 第2点：确保提交时金额仍可用（防止并发认领）</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = &#123;id&#125;;</code></pre>
 <ul><li>校验3：ERP推送校验 —— 推送ERP核销数据并校验返回</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：组装AR_APPLY、OM_CLAIM、OM_APPLY三组数据推送ERP</p>
@@ -475,7 +475,7 @@ SELECT * FROM epm_payment_allot_detail d JOIN epm_payment_allot_line l ON d.paym
 <p>- 第3点：ERP返回数据为空时报错"erp返回认领结果为空"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = {paymentAllotId} AND objtypename = '到款认领';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = &#123;paymentAllotId&#125; AND objtypename = '到款认领';</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -833,7 +833,7 @@ APPROVED ──撤销──→ CANCEL(已撤销)</code></pre>
 <KbCard title="常见问题">
 <ul><li>问题1：认领金额与到款单可认领金额不一致</li><li>原因：并发认领导致可认领金额被其他认领单占用，真实到款单以ERP实时数据为准</li><li>解决思路：1.刷新页面重新获取最新可认领金额；2.减少本次认领金额；3.真实到款单会自动查ERP最新数据</li></ul>
 <ul><li>问题2：ERP推送失败</li><li>原因：ERP接口不可用或推送数据异常</li><li>解决思路：1.检查ERP接口状态；2.检查推送数据是否完整；3.修复后重新提交</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = {paymentAllotId} AND objtypename = '到款认领';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = &#123;paymentAllotId&#125; AND objtypename = '到款认领';</code></pre>
 <ul><li>问题3：可认领项目/合同/明细查询为空</li><li>原因：合同未审批通过、客户/交易公司/收款公司不匹配、合同金额已全部认领</li><li>解决思路：1.检查合同是否审批通过；2.检查到款单客户与合同客户是否一致；3.检查合同是否还有剩余可认领金额</li></ul>
 <ul><li>问题4：删除认领单失败</li><li>原因：仅NEW和INTERRUPT状态的认领单可删除</li><li>解决思路：确认认领单状态为新建或驳回后再删除；若已审批通过需走撤销流程</li></ul>
 </KbCard>

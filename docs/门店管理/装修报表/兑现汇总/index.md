@@ -218,12 +218,12 @@
 <h4>按钮1：查询（查询页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：按查询条件调用报表查询接口</li><li>第2点：分页返回兑现汇总数据</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/terminalReport/fin-fee-cashout-summary/search</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT * FROM fin_fee_cashout_header WHERE 1=1
-  AND (#{budYear} IS NULL OR bud_year = #{budYear})
-  AND (#{custName} IS NULL OR cust_name LIKE '%'||#{custName}||'%')
-  AND (#{terminalName} IS NULL OR terminal_name LIKE '%'||#{terminalName}||'%')
-  AND (#{cashoutType} IS NULL OR cashout_type = #{cashoutType})
-  AND (#{startDate} IS NULL OR create_time &gt;= #{startDate})
-  AND (#{endDate} IS NULL OR create_time &lt;= #{endDate})
+  AND (#&#123;budYear&#125; IS NULL OR bud_year = #&#123;budYear&#125;)
+  AND (#&#123;custName&#125; IS NULL OR cust_name LIKE '%'||#&#123;custName&#125;||'%')
+  AND (#&#123;terminalName&#125; IS NULL OR terminal_name LIKE '%'||#&#123;terminalName&#125;||'%')
+  AND (#&#123;cashoutType&#125; IS NULL OR cashout_type = #&#123;cashoutType&#125;)
+  AND (#&#123;startDate&#125; IS NULL OR create_time &gt;= #&#123;startDate&#125;)
+  AND (#&#123;endDate&#125; IS NULL OR create_time &lt;= #&#123;endDate&#125;)
 ORDER BY create_time DESC;</code></pre>
 </KbCard>
 
@@ -279,8 +279,8 @@ ORDER BY create_time DESC;</code></pre>
          hz_approve_status   AS 审批状态
   FROM   fin_fee_cashout_header
   WHERE  hz_approve_status = 'APPROVED'
-  AND    create_time BETWEEN #{startDate} AND #{endDate}
-  AND    #{startDate} &gt; #{endDate}
+  AND    create_time BETWEEN #&#123;startDate&#125; AND #&#123;endDate&#125;
+  AND    #&#123;startDate&#125; &gt; #&#123;endDate&#125;
   ORDER  BY create_time DESC;</code></pre>
 <h4>报错3：兑现类型异常</h4>
 <ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的兑现类型cashoutType既非1（额度内）也非2（额度外）且非空</li><li><strong>逻辑分析</strong>：兑现类型仅支持额度内(1)和额度外(2)两种，传入其他值会导致查询条件异常。校验逻辑检查入参cashoutType，非空且不在(1,2)范围内则抛异常。常见根因：前端下拉框值集配置错误、传参被篡改、或数据迁移导致脏数据。</li><li><strong>排查SQL</strong>：</li></ul>

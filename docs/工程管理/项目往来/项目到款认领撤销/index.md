@@ -309,7 +309,7 @@
 FROM epm_payment_allot_detail d
 JOIN epm_payment_allot_line l ON d.payment_allot_line_id = l.payment_allot_line_id
 JOIN epm_payment_allot pa ON l.payment_allot_id = pa.payment_allot_id
-WHERE pa.project_id = #{projectId}
+WHERE pa.project_id = #&#123;projectId&#125;
   AND pa.payment_allot_stat = 'APPROVED'
   AND d.cancel_flag = 'N'</code></pre>
 </KbCard>
@@ -328,8 +328,8 @@ WHERE pa.project_id = #{projectId}
 </table>
 <h4>按钮1：保存（详情页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：新建时生成撤销单号（事业部编码+规则编号），设置状态为1</li><li>第2点：调用verifyBeforeInsert校验撤销后可结算工程服务费是否&gt;=0</li><li>第3点：插入撤销头和撤销明细行（EPM_PAD_CANCEL）</li><li>第4点：编辑时先删除旧明细再插入新明细</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epm-payment-allot-cancels/save</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM epm_payment_allot_cancel WHERE id = {cancelId};
-SELECT * FROM epm_pad_cancel WHERE cancel_id = {cancelId};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM epm_payment_allot_cancel WHERE id = &#123;cancelId&#125;;
+SELECT * FROM epm_pad_cancel WHERE cancel_id = &#123;cancelId&#125;;</code></pre>
 <h4>按钮2：提交（详情页）</h4>
 <ul><li><strong>触发条件</strong>：审批状态为NEW</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询撤销明细对应的认领明细，检查是否有cancelFlag=Y的</li><li>第2点：已撤销的明细报错，列出认领单号、出库单号、产品编码</li><li>第3点：校验通过后发起工作流EPM_PAYMENT_ALLOT_CANCEL</li><li>第4点：更新审批状态为RUN，记录工作流实例ID</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epm-payment-allot-cancels/wfProcSubmit</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT d.cancel_flag, pa.payment_allot_code, d.inv_bill_no, d.item_code
@@ -337,7 +337,7 @@ FROM epm_payment_allot_detail d
 JOIN epm_pad_cancel pc ON d.payment_allot_detail_id = pc.payment_allot_detail_id
 JOIN epm_payment_allot_line l ON d.payment_allot_line_id = l.payment_allot_line_id
 JOIN epm_payment_allot pa ON l.payment_allot_id = pa.payment_allot_id
-WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
+WHERE pc.cancel_id = &#123;cancelId&#125; AND d.cancel_flag = 'Y';</code></pre>
 <h4>按钮3：导出（列表页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：按当前查询条件导出撤销单列表数据</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/epm-payment-allot-cancels/list/export</li><li><strong>排查SQL</strong>：无</li></ul>
 </KbCard>
@@ -352,9 +352,9 @@ WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 查询报销关联的认领信息
     SELECT total_claim_amt, total_claim_service_amt, return_service_amt
-    FROM epm_pad_cancel_query WHERE svc_exp_acc_id = {svcExpAccId};
+    FROM epm_pad_cancel_query WHERE svc_exp_acc_id = &#123;svcExpAccId&#125;;
     -- 查询已申请兑现金额
-    SELECT applied_amt FROM epm_applied_amt WHERE svc_exp_acc_id = {svcExpAccId};</code></pre>
+    SELECT applied_amt FROM epm_applied_amt WHERE svc_exp_acc_id = &#123;svcExpAccId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="提交校验">
@@ -369,14 +369,14 @@ WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
     JOIN epm_pad_cancel pc ON d.payment_allot_detail_id = pc.payment_allot_detail_id
     JOIN epm_payment_allot_line l ON d.payment_allot_line_id = l.payment_allot_line_id
     JOIN epm_payment_allot pa ON l.payment_allot_id = pa.payment_allot_id
-    WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
+    WHERE pc.cancel_id = &#123;cancelId&#125; AND d.cancel_flag = 'Y';</code></pre>
 <ul><li>校验2：撤销明细非空校验 —— 确保撤销单有明细行</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：查询EPM_PAD_CANCEL表中cancelId对应的明细</p>
 <p>- 第2点：明细为空时报错"流程启动异常，撤销明细不存在"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM epm_pad_cancel WHERE cancel_id = {cancelId};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM epm_pad_cancel WHERE cancel_id = &#123;cancelId&#125;;</code></pre>
 <ul><li>校验3：ERP冲销推送校验 —— 推送ERP负数冲销并校验返回</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：按认领单分组组装冲销数据，所有金额取负</p>
@@ -384,7 +384,7 @@ WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
 <p>- 第3点：ERP返回状态非S时报错</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = {cancelId} AND objtypename = '到款认领撤销';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = &#123;cancelId&#125; AND objtypename = '到款认领撤销';</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -538,15 +538,15 @@ WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
 
 <KbCard title="常见问题">
 <ul><li>问题1：撤销后可结算工程服务费小于0</li><li>原因：撤销的工程服务费过大，导致已认领工程服务费无法覆盖已申请兑现金额</li><li>解决思路：减少撤销明细中工程服务费金额，确保撤销后可结算金额&gt;=0</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT total_claim_service_amt - #{cancelServiceChargeAmt} - return_service_amt - applied_amt AS settleable_amt
-FROM epm_pad_cancel_query WHERE svc_exp_acc_id = {svcExpAccId};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT total_claim_service_amt - #&#123;cancelServiceChargeAmt&#125; - return_service_amt - applied_amt AS settleable_amt
+FROM epm_pad_cancel_query WHERE svc_exp_acc_id = &#123;svcExpAccId&#125;;</code></pre>
 <ul><li>问题2：ERP撤销推送失败</li><li>原因：ERP接口不可用或推送数据异常</li><li>解决思路：检查ERP接口状态和推送数据，修复后重新提交</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = {cancelId} AND objtypename = '到款认领撤销';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = &#123;cancelId&#125; AND objtypename = '到款认领撤销';</code></pre>
 <ul><li>问题3：提交时提示明细已被撤销</li><li>原因：选中的认领明细已被其他撤销单撤销（cancelFlag=Y）</li><li>解决思路：剔除已撤销的明细后重新提交</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT d.cancel_flag, pa.payment_allot_code, d.inv_bill_no, d.item_code
 FROM epm_payment_allot_detail d
 JOIN epm_pad_cancel pc ON d.payment_allot_detail_id = pc.payment_allot_detail_id
-WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
+WHERE pc.cancel_id = &#123;cancelId&#125; AND d.cancel_flag = 'Y';</code></pre>
 </KbCard>
 
 </div>

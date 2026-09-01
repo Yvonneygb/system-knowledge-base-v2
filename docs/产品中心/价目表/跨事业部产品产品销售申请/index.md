@@ -304,11 +304,11 @@
 FROM LNK_PROD p
 LEFT JOIN LNK_ORG_EXT oe ON p.DEPT_ID = oe.ROW_ID
 WHERE p.DEPT_ID IS NOT NULL          -- deptIdEmpty = 'N'
-  AND p.DEPT_ID != #{excludeDeptCode} -- 排除当前事业部
+  AND p.DEPT_ID != #&#123;excludeDeptCode&#125; -- 排除当前事业部
   -- AND p.LH_PROD_SIGN = '成品'     -- 注释中预留，当前未启用
-  &lt;if test="prodCode != null"&gt;AND p.PROD_CODE LIKE '%' || #{prodCode} || '%'&lt;/if&gt;
-  &lt;if test="prodName != null"&gt;AND p.PROD_NAME LIKE '%' || #{prodName} || '%'&lt;/if&gt;
-  &lt;if test="lhProdModel != null"&gt;AND p.LH_PROD_MODEL LIKE '%' || #{lhProdModel} || '%'&lt;/if&gt;</code></pre>
+  &lt;if test="prodCode != null"&gt;AND p.PROD_CODE LIKE '%' || #&#123;prodCode&#125; || '%'&lt;/if&gt;
+  &lt;if test="prodName != null"&gt;AND p.PROD_NAME LIKE '%' || #&#123;prodName&#125; || '%'&lt;/if&gt;
+  &lt;if test="lhProdModel != null"&gt;AND p.LH_PROD_MODEL LIKE '%' || #&#123;lhProdModel&#125; || '%'&lt;/if&gt;</code></pre>
 </KbCard>
 
 <KbCard title="导入">
@@ -386,7 +386,7 @@ WHERE p.DEPT_ID IS NOT NULL          -- deptIdEmpty = 'N'
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT FORM_CODE, STATUS
     FROM LNK_CROSS_BU_APP_FORM
-    WHERE ID = #{id};</code></pre>
+    WHERE ID = #&#123;id&#125;;</code></pre>
 <ul><li>校验2：明细行不为空 —— 确保申请有具体内容</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：后端查询申请单所有明细行</p>
@@ -395,7 +395,7 @@ WHERE p.DEPT_ID IS NOT NULL          -- deptIdEmpty = 'N'
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS item_count
     FROM LNK_CROSS_BU_APP_FORM_ITEM
-    WHERE HEAD_ID = #{id};</code></pre>
+    WHERE HEAD_ID = #&#123;id&#125;;</code></pre>
 <ul><li>校验3：类型=新增时有效时间必填且合法 —— 确保新增产品的有效期完整有效</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：遍历所有明细行，类型=add时校验有效开始时间非空</p>
@@ -406,7 +406,7 @@ WHERE p.DEPT_ID IS NOT NULL          -- deptIdEmpty = 'N'
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT PROD_CODE, ITEM_TYPE, EFF_START_DATE, EFF_END_DATE
     FROM LNK_CROSS_BU_APP_FORM_ITEM
-    WHERE HEAD_ID = #{id}
+    WHERE HEAD_ID = #&#123;id&#125;
       AND ITEM_TYPE = 'add'
       AND (EFF_START_DATE IS NULL OR EFF_END_DATE IS NULL 
            OR EFF_START_DATE &gt; EFF_END_DATE
@@ -768,20 +768,20 @@ WHERE p.DEPT_ID IS NOT NULL          -- deptIdEmpty = 'N'
 <ul><li>问题1：提交后OA审批流程未发起</li><li>原因：OA推送服务异常或当前用户IAM_USER.attribute2未配置OA账号。排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT u.ID, u.REAL_NAME, u.ATTRIBUTE2
     FROM HZERO.IAM_USER u
-    WHERE u.ID = #{当前用户ID};</code></pre>
+    WHERE u.ID = #&#123;当前用户ID&#125;;</code></pre>
 <ul><li>解决思路：确认用户attribute2已配置OA登录账号，检查OA服务连通性</li></ul>
 <ul><li>问题2：审批通过后销售清单未生成</li><li>原因：申请单明细行为空或OA回调时申请单formCode不匹配。排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT f.FORM_CODE, f.STATUS, COUNT(i.ID) AS item_count
     FROM LNK_CROSS_BU_APP_FORM f
     LEFT JOIN LNK_CROSS_BU_APP_FORM_ITEM i ON i.HEAD_ID = f.ID
-    WHERE f.FORM_CODE = #{formCode}
+    WHERE f.FORM_CODE = #&#123;formCode&#125;
     GROUP BY f.FORM_CODE, f.STATUS;</code></pre>
 <ul><li>解决思路：确认申请单状态为APPROVED且明细行存在，检查OA回调日志</li></ul>
 <ul><li>问题3：产品选择弹窗中查不到产品</li><li>原因：产品的品牌事业部为空或品牌事业部等于当前申请单事业部。排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT p.PROD_CODE, p.PROD_NAME, p.DEPT_ID
     FROM LNK_PROD p
-    WHERE p.PROD_CODE = #{prodCode}
-      AND (p.DEPT_ID IS NULL OR p.DEPT_ID = #{当前事业部});</code></pre>
+    WHERE p.PROD_CODE = #&#123;prodCode&#125;
+      AND (p.DEPT_ID IS NULL OR p.DEPT_ID = #&#123;当前事业部&#125;);</code></pre>
 <ul><li>解决思路：确认产品已维护品牌事业部且品牌事业部≠当前申请单事业部</li></ul>
 </KbCard>
 

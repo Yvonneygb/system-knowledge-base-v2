@@ -295,8 +295,8 @@ WHERE LOV_CODE = 'fixup_grade'
 <h4>按钮2：保存（详情页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验头信息和行信息</li><li>第2点：按主键ID是否为空区分新增和更新列表</li><li>第3点：新增列表批量插入TERMINAL_DECORATE_STANDARD和TERMINAL_DECORATE_LINE</li><li>第4点：更新列表批量更新TERMINAL_DECORATE_STANDARD和TERMINAL_DECORATE_LINE</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/terminal-decorate-standards/save</code></li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 查询保存后的数据
-SELECT * FROM TERMINAL_DECORATE_STANDARD WHERE DECORATE_STANDARD_ID = #{id};
-SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #{id};</code></pre>
+SELECT * FROM TERMINAL_DECORATE_STANDARD WHERE DECORATE_STANDARD_ID = #&#123;id&#125;;
+SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #&#123;id&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -341,7 +341,7 @@ SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #{id};</code><
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT * FROM TERMINAL_DECORATE_LINE 
-    WHERE DECORATE_STANDARD_ID = #{id}
+    WHERE DECORATE_STANDARD_ID = #&#123;id&#125;
       AND (DECORATE_PROJECT IS NULL OR FIXUP_GRADE IS NULL OR IN_STANDARD IS NULL OR OUT_STANDARD IS NULL);</code></pre>
 </KbCard>
 
@@ -422,8 +422,8 @@ SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #{id};</code><
 <pre class="detail-sql" v-pre><code>SELECT TDL.*
 FROM TERMINAL_DECORATE_LINE TDL
 JOIN TERMINAL_DECORATE_STANDARD TDS ON TDL.DECORATE_STANDARD_ID = TDS.DECORATE_STANDARD_ID
-WHERE TDS.ENTID = #{entid}
-  AND TDL.FIXUP_GRADE = #{fixupGrade}
+WHERE TDS.ENTID = #&#123;entid&#125;
+  AND TDL.FIXUP_GRADE = #&#123;fixupGrade&#125;
   AND SYSDATE BETWEEN TDL.START_DATE AND TDL.END_DATE
 ORDER BY TDL.DECORATE_PROJECT</code></pre>
 <p><strong>下游引用接口：</strong></p>

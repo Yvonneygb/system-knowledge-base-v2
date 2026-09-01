@@ -320,15 +320,15 @@ SELECT * FROM (
 ) hh
 WHERE 1 = 1
     AND hh.item_number NOT IN ('CUX_OM_CASH_POOL', 'CUX_OM_PRICE_RAISE')  -- 排除资金池和提价物料
-    AND hh.organization_id = #{param.orgId}                               -- 组织ID（精确）
-    AND hh.service_name LIKE '%' || #{param.serviceName} || '%'           -- 经销商名称（模糊）
-    AND hh.service_number = #{param.serviceNumber}                        -- 经销商编码（精确）
-    AND hh.delivery_number LIKE '%' || #{param.deliveryNumber} || '%'     -- ERP出库单号（模糊）
-    AND hh.advertising_flag = #{param.advertisingFlag}                    -- 是否计广告费（精确）
-    AND hh.delivery_date BETWEEN TO_DATE(#{param.deliveryDateStart}, 'YYYY-MM-DD HH24:MI:SS')
-                              AND TO_DATE(#{param.deliveryDateEnd}, 'YYYY-MM-DD HH24:MI:SS')  -- 发货日期范围
-    AND hh.gl_date BETWEEN TO_DATE(#{param.glDateStart}, 'YYYY-MM-DD HH24:MI:SS')
-                        AND TO_DATE(#{param.glDateEnd}, 'YYYY-MM-DD HH24:MI:SS')              -- 签收日期范围</code></pre>
+    AND hh.organization_id = #&#123;param.orgId&#125;                               -- 组织ID（精确）
+    AND hh.service_name LIKE '%' || #&#123;param.serviceName&#125; || '%'           -- 经销商名称（模糊）
+    AND hh.service_number = #&#123;param.serviceNumber&#125;                        -- 经销商编码（精确）
+    AND hh.delivery_number LIKE '%' || #&#123;param.deliveryNumber&#125; || '%'     -- ERP出库单号（模糊）
+    AND hh.advertising_flag = #&#123;param.advertisingFlag&#125;                    -- 是否计广告费（精确）
+    AND hh.delivery_date BETWEEN TO_DATE(#&#123;param.deliveryDateStart&#125;, 'YYYY-MM-DD HH24:MI:SS')
+                              AND TO_DATE(#&#123;param.deliveryDateEnd&#125;, 'YYYY-MM-DD HH24:MI:SS')  -- 发货日期范围
+    AND hh.gl_date BETWEEN TO_DATE(#&#123;param.glDateStart&#125;, 'YYYY-MM-DD HH24:MI:SS')
+                        AND TO_DATE(#&#123;param.glDateEnd&#125;, 'YYYY-MM-DD HH24:MI:SS')              -- 签收日期范围</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -432,7 +432,7 @@ WHERE 1 = 1
   FROM   inv_out_bill_intf_head h
   LEFT   JOIN inv_out_bill_intf_confirm l ON h.delivery_id = l.delivery_id
   LEFT   JOIN lnk_ob_order_receivable o ON l.delivery_line_id = o.delivery_line_id
-  WHERE  h.organization_id = #{当前用户组织ID}
+  WHERE  h.organization_id = #&#123;当前用户组织ID&#125;
   AND    l.item_number NOT IN ('CUX_OM_CASH_POOL', 'CUX_OM_PRICE_RAISE')
   ORDER  BY h.delivery_date DESC;</code></pre>
 <h4>报错2：日期格式错误</h4>

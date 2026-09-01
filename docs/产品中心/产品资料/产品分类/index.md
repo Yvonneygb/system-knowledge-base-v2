@@ -195,7 +195,7 @@
     IC.OBJECT_VERSION_NUMBER
 FROM ITEM_CLASS IC
 WHERE 1=1
-  AND IC.ORGANIZATION_ID = #{organizationId}
+  AND IC.ORGANIZATION_ID = #&#123;organizationId&#125;
   -- 动态条件：itemClassCode、itemClassName、itemClassLevel、itemClassPid等</code></pre>
 </KbCard>
 
@@ -241,9 +241,9 @@ WHERE 1=1
 <pre class="detail-sql" v-pre><code>-- 新增前重复校验
 SELECT ITEM_CLASS_ID, ITEM_CLASS_CODE, ITEM_CLASS_NAME, ITEM_CLASS_LEVEL, ITEM_USABLE
 FROM ITEM_CLASS
-WHERE ITEM_CLASS_CODE = #{itemClassCode}
-  AND ORGANIZATION_ID = #{organizationId}
-  AND ITEM_CLASS_PID = #{itemClassPid};
+WHERE ITEM_CLASS_CODE = #&#123;itemClassCode&#125;
+  AND ORGANIZATION_ID = #&#123;organizationId&#125;
+  AND ITEM_CLASS_PID = #&#123;itemClassPid&#125;;
 
 -- 新增SQL
 INSERT INTO ITEM_CLASS (
@@ -252,19 +252,19 @@ INSERT INTO ITEM_CLASS (
     CREATED_BY, LAST_UPDATED_BY, ORGANIZATION_ID, IS_RETAIL,
     RESOURCE_ENTORGID, DEPT_ID, IS_INIT, ITEM_CLASS_IDPATH
 ) VALUES (
-    ITEM_CLASS_S.NEXTVAL, #{itemClassCode}, #{itemClassName}, #{itemClassLevel},
-    0, #{itemClassPid}, '\', #{isEnd}, #{itemUsable}, NULL,
-    'admin', 'admin', #{organizationId}, 0, 0, 0, 0, #{itemClassIdPath}
+    ITEM_CLASS_S.NEXTVAL, #&#123;itemClassCode&#125;, #&#123;itemClassName&#125;, #&#123;itemClassLevel&#125;,
+    0, #&#123;itemClassPid&#125;, '\', #&#123;isEnd&#125;, #&#123;itemUsable&#125;, NULL,
+    'admin', 'admin', #&#123;organizationId&#125;, 0, 0, 0, 0, #&#123;itemClassIdPath&#125;
 );
 
 -- 更新父分类是否明细
-UPDATE ITEM_CLASS SET IS_END = 1 WHERE ITEM_CLASS_ID = #{itemClassPid};</code></pre>
+UPDATE ITEM_CLASS SET IS_END = 1 WHERE ITEM_CLASS_ID = #&#123;itemClassPid&#125;;</code></pre>
 <h4>按钮2：删除（分类树页面）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：根据分类ID直接物理删除ITEM_CLASS记录</li><li>第2点：无子分类校验、无引用校验（直接删除）</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/manual-classification/deleta-item-class</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 删除前检查子分类
-SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #{itemClassId};
+SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #&#123;itemClassId&#125;;
 -- 删除SQL
-DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #{itemClassId};</code></pre>
+DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #&#123;itemClassId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -275,9 +275,9 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #{itemClassId};</code></pre>
 <ul><li>系统体现：静默跳过（不报错，不插入）</li></ul>
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM ITEM_CLASS
-    WHERE ITEM_CLASS_CODE = #{itemClassCode}
-      AND ORGANIZATION_ID = #{organizationId}
-      AND ITEM_CLASS_PID = #{itemClassPid};</code></pre>
+    WHERE ITEM_CLASS_CODE = #&#123;itemClassCode&#125;
+      AND ORGANIZATION_ID = #&#123;organizationId&#125;
+      AND ITEM_CLASS_PID = #&#123;itemClassPid&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="提交校验">
@@ -464,15 +464,15 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #{itemClassId};</code></pre>
 <KbCard title="常见问题">
 <ul><li>问题1：分类层级最多支持几级？</li><li>原因：系统支持3级分类（大类→中类→小类），由ITEM_CLASS_LEVEL字段控制（1/2/3）</li><li>解决思路：查询现有分类层级 <code>SELECT DISTINCT ITEM_CLASS_LEVEL FROM ITEM_CLASS ORDER BY ITEM_CLASS_LEVEL</code></li></ul>
 <ul><li>问题2：删除有子分类的节点会怎样？</li><li>原因：后端删除接口直接物理删除，不校验子分类。若父分类被删除，子分类的ITEM_CLASS_PID将指向不存在的记录（孤儿节点）</li><li>解决思路：删除前应先检查子分类</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #{要删除的分类ID};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #&#123;要删除的分类ID&#125;;</code></pre>
 <p>若有子分类，应先删除所有子分类再删除父分类</p>
 <ul><li>问题3：分类编码可以修改吗？</li><li>原因：分类编码自动生成，新增后不支持修改。分类编码被产品引用后修改会影响关联关系</li><li>解决思路：不支持修改，如需调整请删除后重新新增</li></ul>
 <ul><li>问题4：本菜单在CRM前端如何使用？</li><li>原因：作为嵌入式组件嵌入在CRM产品详情页中，通过AE微服务接口获取分类数据</li><li>解决思路：前端在arrow-crm包中调用AE微服务接口 <code>/v1/&#123;organizationId&#125;/manual-classification/</code></li></ul>
 <ul><li>问题5：新增分类时编码已存在为什么不报错？</li><li>原因：后端saveItemClass方法中，若编码+组织ID+父级ID已存在，则静默跳过不执行新增，也不报错</li><li>解决思路：新增前可先查询确认</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT * FROM ITEM_CLASS
-    WHERE ITEM_CLASS_CODE = #{编码}
-      AND ORGANIZATION_ID = #{组织ID}
-      AND ITEM_CLASS_PID = #{父级ID};</code></pre>
+    WHERE ITEM_CLASS_CODE = #&#123;编码&#125;
+      AND ORGANIZATION_ID = #&#123;组织ID&#125;
+      AND ITEM_CLASS_PID = #&#123;父级ID&#125;;</code></pre>
 </KbCard>
 
 </div>

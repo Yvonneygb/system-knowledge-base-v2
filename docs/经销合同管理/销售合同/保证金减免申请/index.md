@@ -350,14 +350,14 @@
 <ul><li><strong>触发条件</strong>：保存减免申请生成减免单号时，DetailsHelper.getUserDetails()返回空</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.generateCode方法通过DetailsHelper.getUserDetails()获取用户上下文，customUserDetails为空时抛CommonException。根因是用户登录态失效（Token过期、会话超时）或未登录调用接口。需重新登录后再次保存</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 验证用户登录态（示意，实际依会话框架）
   SELECT USER_ID, USER_NAME, LAST_LOGIN_TIME FROM USER_SESSION
-  WHERE USER_ID = #{userId} AND SESSION_STATUS = 'ACTIVE';</code></pre>
+  WHERE USER_ID = #&#123;userId&#125; AND SESSION_STATUS = 'ACTIVE';</code></pre>
 <h4>报错6：无法获取事业部信息</h4>
 <ul><li><strong>触发条件</strong>：保存减免申请生成减免单号时，epmDivisionService.getCurrentDivision()返回null</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.generateCode方法获取当前用户所属事业部，currentDivision为null时抛CommonException。事业部用于生成减免单号前缀（DIVISION_CODE）和关联ENTID。根因是用户未关联事业部或事业部主数据缺失。需联系管理员为用户配置事业部关联</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT U.USER_ID, U.USER_NAME, D.DIVISION_ID, D.DIVISION_CODE, D.DIVISION_NAME
   FROM USER U
   LEFT JOIN USER_DIVISION UD ON U.USER_ID = UD.USER_ID
   LEFT JOIN DIVISION_BASE_SET D ON UD.DIVISION_ID = D.DIVISION_ID
-  WHERE U.USER_ID = #{userId} AND D.DIVISION_ID IS NULL;</code></pre>
+  WHERE U.USER_ID = #&#123;userId&#125; AND D.DIVISION_ID IS NULL;</code></pre>
 <h4>报错7：请先维护明细信息</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，前端校验lineDs.records为空（未添加任何减免明细行）</li><li><strong>逻辑分析</strong>：前端DetailPage.hadleChcek方法校验lineDs.records非空，明细行缺失时notification.error提示。减免申请需关联具体的保证金缴纳明细（CM_DEPOSITS_REDUCTION_LINE），无明细行意味着减免无具体来源。需在明细页点击"新建"添加减免明细行后提交</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, COUNT(L.REDUCTION_LINE_ID) AS 明细行数

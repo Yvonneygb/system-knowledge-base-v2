@@ -411,15 +411,15 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
 <pre class="detail-sql" v-pre><code>SELECT S.SUMMARY_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.SUBSCRIPTION_AMT,
          S.PAID_AMT, S.PAY_COMPLETE
   FROM CM_CONTRACT_PAYMENT_SUMMARY S
-  WHERE S.CUSTOMER_ID = #{customerId}
+  WHERE S.CUSTOMER_ID = #&#123;customerId&#125;
     AND S.PAY_COMPLETE = 'Y'
-    AND S.CONTRACT_TYPE = #{contractType};</code></pre>
+    AND S.CONTRACT_TYPE = #&#123;contractType&#125;;</code></pre>
 <h4>报错6：法人已有封顶认缴流程在审批中</h4>
 <ul><li><strong>触发条件</strong>：用户对已有封顶认缴流程在审批中的法人再次发起封顶认缴申请</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验法人是否存在审批中的封顶认缴申请（HZ_APPROVE_STATUS='RUN'且认缴类型为封顶）。重复发起将导致OA流程冲突和认缴金额重复计算。需先完成或中止已有封顶认缴流程</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.CUSTOMER_NAME,
          A.APPLY_AMT, A.APPLY_TYPE, A.HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY A
-  WHERE A.CUSTOMER_ID = #{customerId}
+  WHERE A.CUSTOMER_ID = #&#123;customerId&#125;
     AND A.APPLY_TYPE = 'CEILING'
     AND A.HZ_APPROVE_STATUS = 'RUN';</code></pre>
 <h4>报错7：当前法人存在普通认缴，请先中断或撤销</h4>
@@ -427,7 +427,7 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
 <pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.CUSTOMER_NAME,
          A.APPLY_TYPE, A.APPLY_AMT, A.HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY A
-  WHERE A.CUSTOMER_ID = #{customerId}
+  WHERE A.CUSTOMER_ID = #&#123;customerId&#125;
     AND A.APPLY_TYPE = 'NORMAL'
     AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED');</code></pre>
 <h4>报错8：认缴的金额与封顶的金额不一致</h4>
@@ -449,7 +449,7 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
           WHERE A.PAYMENT_ID = P.PAYMENT_ID
             AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED')) AS 剩余可认款金额
   FROM CM_DEPOSITS_PAYMENT P
-  WHERE P.PAYMENT_ID = #{paymentId};</code></pre>
+  WHERE P.PAYMENT_ID = #&#123;paymentId&#125;;</code></pre>
 <h4>报错10：认款单不存在，请重新选择</h4>
 <ul><li><strong>触发条件</strong>：用户保存认缴申请时，关联的认款单（CM_DEPOSITS_PAYMENT）已被删除或撤销</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl校验关联认款单存在性。认款单不存在根因有三类：(1)认款单已被删除；(2)认款单已撤销（STATUS='CANCELLED'）；(3)PAYMENT_ID传入错误。需重新选择有效认款单</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.PAYMENT_ID,
@@ -470,7 +470,7 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，校验OA流程编码（CONTRACT_PAYMENT_APPLY_MCS_AW）为空</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl在saveAndSubmit中校验流程编码非空。流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置CONTRACT_PAYMENT_APPLY_MCS_AW流程编码；(2)认缴类型未关联对应流程编码。需在流程配置中维护对应关系</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, APPLY_TYPE, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE APPLY_ID = #{applyId}
+  WHERE APPLY_ID = #&#123;applyId&#125;
     AND HZ_APPROVE_STATUS = 'NEW';</code></pre>
 <h4>报错13：请选择需要删除的数据</h4>
 <ul><li><strong>触发条件</strong>：用户未选中任何认缴申请记录直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：CmContractPaymentApplyServiceImpl在remove方法中校验传入的删除列表非空。未选中数据时删除操作无意义，且可能导致空指针异常。需先选中至少一条记录再删除</li><li><strong>排查SQL</strong>：</li></ul>

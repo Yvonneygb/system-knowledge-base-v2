@@ -229,12 +229,12 @@
 <ul><li><strong>触发条件</strong>：用户按经销商/合同/年度查询认缴概况，search接口返回空结果集</li><li><strong>逻辑分析</strong>：认缴概况基于CM_CONTRACT_PAYMENT_SUMMARY表，汇总展示保证金认缴金额（SUBSCRIPTION_AMT）、已缴金额（PAID_AMT）、未缴金额（UNPAID_AMT=认缴-已缴）。无数据根因有三类：(1)无认缴申请记录，认缴申请（CM_CONTRACT_PAYMENT_APPLY）未创建或未审批通过（HZ_APPROVE_STATUS != 'APPROVED'），概况表未汇总；(2)保证金到款（CM_DEPOSITS_PAYMENT）数据未同步到概况表；(3)查询条件（CONTRACT_NO+CUSTOMER_NAME）与概况记录不匹配。需先确认认缴申请审批状态及保证金到款情况</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, SUBSCRIPTION_AMT, PAID_AMT, UNPAID_AMT
   FROM CM_CONTRACT_PAYMENT_SUMMARY
-  WHERE (CONTRACT_NO = #{contractNo} OR #{contractNo} IS NULL)
-    AND (CUSTOMER_NAME = #{customerName} OR #{customerName} IS NULL);
+  WHERE (CONTRACT_NO = #&#123;contractNo&#125; OR #&#123;contractNo&#125; IS NULL)
+    AND (CUSTOMER_NAME = #&#123;customerName&#125; OR #&#123;customerName&#125; IS NULL);
   -- 核查上游认缴申请审批状态
   SELECT APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, APPLY_AMT, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE CONTRACT_NO = #{contractNo} AND HZ_APPROVE_STATUS = 'APPROVED';</code></pre>
+  WHERE CONTRACT_NO = #&#123;contractNo&#125; AND HZ_APPROVE_STATUS = 'APPROVED';</code></pre>
 <h4>报错2：合同类型、事业部、经销商不能为空</h4>
 <ul><li><strong>触发条件</strong>：查询认缴概况或保存概况数据时，CONTRACT_TYPE、ENTID、CUSTOMER_ID任一参数为空</li><li><strong>逻辑分析</strong>：CmContractPaymentSummaryServiceImpl在search和save方法中校验CONTRACT_TYPE、ENTID、CUSTOMER_ID非空。这三个字段是认缴概况数据隔离和汇总的核心维度，缺失将导致查询无数据范围或汇总无归属。通常由前端未正确传入查询条件或保存参数导致</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, ENTID,

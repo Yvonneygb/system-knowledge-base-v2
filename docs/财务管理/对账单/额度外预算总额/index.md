@@ -226,17 +226,17 @@
 <h4>按钮1：查询（列表页）</h4>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：按年度、经销商、事业部、交易公司等条件查询额度外预算总额</li><li>第2点：返回预算总额、各月使用明细、累计已用、预算剩余</li><li><strong>接口调用</strong>：查询MKT_OUTLIMIT_BUD_HEADER表（通过FinFeeApplyHeaderController间接查询）</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT * FROM MKT_OUTLIMIT_BUD_HEADER 
-WHERE BUD_YEAR = #{budYear}
-  AND (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
-  AND (ENTID = #{entid} OR #{entid} IS NULL)
+WHERE BUD_YEAR = #&#123;budYear&#125;
+  AND (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
+  AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
 ORDER BY CUSTOMER_CODE, BUD_YEAR</code></pre>
 <h4>按钮2：查询可用余额（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：汇总额度外费用申请单已审批未冲销金额</li><li>第2点：返回可用余额</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/fin-fee-apply-headers/query-amt</code></li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 汇总额度外费用申请单已审批未冲销金额
 SELECT SUM(APPLY_AMT - CASHOUT_AMT) AS AVAILABLE_AMT
 FROM FIN_FEE_APPLY_HEADER 
-WHERE CUSTOMER_CODE = #{customerCode}
-  AND BUD_YEAR = #{budYear}
+WHERE CUSTOMER_CODE = #&#123;customerCode&#125;
+  AND BUD_YEAR = #&#123;budYear&#125;
   AND HZ_APPROVE_STATUS = 'APPROVED'
   AND CASHOUT_AMT &lt; APPLY_AMT;</code></pre>
 </KbCard>
@@ -332,17 +332,17 @@ WHERE CUSTOMER_CODE = #{customerCode}
          TRADING_COMPANY_NAME, OUTLIMIT_BUD_TOTAL, OUTLIMIT_BUD_ADJ, TOTAL_OUTLIMIT_BUD_USED,
          OUTLIMIT_BUD_SUR, IMPORT_FLAG
   FROM MKT_OUTLIMIT_BUD_HEADER
-  WHERE BUD_YEAR = #{budYear}
-    AND (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
-    AND (ENTID = #{entid} OR #{entid} IS NULL)
+  WHERE BUD_YEAR = #&#123;budYear&#125;
+    AND (CUSTOMER_CODE = #&#123;customerCode&#125; OR #&#123;customerCode&#125; IS NULL)
+    AND (ENTID = #&#123;entid&#125; OR #&#123;entid&#125; IS NULL)
   ORDER BY CUSTOMER_CODE, BUD_YEAR;</code></pre>
 <h4>报错2：可用余额查询失败</h4>
 <ul><li><strong>触发条件</strong>：用户选中预算记录后点击"查询可用余额"按钮，POST /v1/&#123;organizationId&#125;/fin-fee-apply-headers/query-amt接口执行失败</li><li><strong>逻辑分析</strong>：可用余额通过汇总额度外费用申请单（FIN_FEE_APPLY_HEADER）已审批未冲销金额计算，公式为SUM(APPLY_AMT - CASHOUT_AMT)，条件为HZ_APPROVE_STATUS='APPROVED'且CASHOUT_AMT &lt; APPLY_AMT。失败根因有三类：(1)FIN_FEE_APPLY_HEADER表数据量过大，汇总超时；(2)费用申请单状态异常（HZ_APPROVE_STATUS字段值不规范）；(3)FinFeeApplyHeaderController服务异常。需确认费用申请单数据正常后重试</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查费用申请单汇总数据
   SELECT COUNT(*) AS 申请单数, SUM(APPLY_AMT - CASHOUT_AMT) AS 可用余额合计
   FROM FIN_FEE_APPLY_HEADER
-  WHERE CUSTOMER_CODE = #{customerCode}
-    AND BUD_YEAR = #{budYear}
+  WHERE CUSTOMER_CODE = #&#123;customerCode&#125;
+    AND BUD_YEAR = #&#123;budYear&#125;
     AND HZ_APPROVE_STATUS = 'APPROVED'
     AND CASHOUT_AMT &lt; APPLY_AMT;</code></pre>
 <h4>报错3：预算剩余为负数</h4>
@@ -358,7 +358,7 @@ WHERE CUSTOMER_CODE = #{customerCode}
          THIS_OUTLIMIT_BUD_USED_11 AS 十一月, THIS_OUTLIMIT_BUD_USED_12 AS 十二月
   FROM MKT_OUTLIMIT_BUD_HEADER
   WHERE OUTLIMIT_BUD_SUR &lt; 0
-    AND BUD_YEAR = #{budYear};</code></pre>
+    AND BUD_YEAR = #&#123;budYear&#125;;</code></pre>
 <h4>报错4：年度查询条件为空</h4>
 <ul><li><strong>触发条件</strong>：用户未选择预算年度直接点击查询</li><li><strong>逻辑分析</strong>：预算年度（BUD_YEAR）是查询额度外预算总额的关键条件，预算数据按年度划分。未选择年度将导致跨年度全表查询，可能因数据量过大引起超时或返回无关数据。低代码页面查询栏配置年度为建议必填条件，未填写时toast提示后阻断查询</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查各年度数据分布
@@ -377,7 +377,7 @@ WHERE CUSTOMER_CODE = #{customerCode}
 <pre class="detail-sql" v-pre><code>-- 核查用户是否有该经销商的数据权限
   SELECT USER_ID, USER_NAME, CUSTOMER_CODE, ENABLED
   FROM USER_CUSTOMER_AUTH
-  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};</code></pre>
+  WHERE USER_ID = #&#123;userId&#125; AND CUSTOMER_CODE = #&#123;customerCode&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="常见问题">

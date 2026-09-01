@@ -287,7 +287,7 @@
          (SELECT SUM(R.REDUCTION_AMT) FROM CM_DEPOSITS_REDUCTION_HEAD R
           WHERE R.CONTRACT_ID = P.CONTRACT_ID AND R.HZ_APPROVE_STATUS = 'APPROVED') AS 已减免金额
   FROM CM_DEPOSITS_PAYMENT P
-  WHERE P.PAYMENT_ID = #{paymentId};</code></pre>
+  WHERE P.PAYMENT_ID = #&#123;paymentId&#125;;</code></pre>
 <h4>报错2：保证金ID不能空</h4>
 <ul><li><strong>触发条件</strong>：用户在列表页未选中记录或选中记录ID丢失，直接点击"撤销认款"或"认缴申请"按钮</li><li><strong>逻辑分析</strong>：cancelPayById与respectively接口在CmDepositsPaymentServiceImpl中前置校验PAYMENT_ID非空。保证金ID是到款记录的主键，未传入将导致后续查询、状态更新、工作流发起均无法定位记录。校验在Service层拦截，toast提示后阻断操作</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, PAYMENT_AMT, PAYMENT_DATE, STATUS

@@ -300,7 +300,7 @@
 </table>
 <blockquote>查询SQL（后端接口select-account）：</blockquote>
 <pre class="detail-sql" v-pre><code>SELECT ACCOUNT_ID, ACCOUNT_NAME, CAPITAL_POOL FROM CAPITAL_ACCOUNT 
-WHERE TRADING_COMPANY_ID = #{tradingCompanyId} AND ENABLED = 1</code></pre>
+WHERE TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125; AND ENABLED = 1</code></pre>
 <h4>弹窗3：交易公司选择（单选，编辑页明细行）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -363,7 +363,7 @@ WHERE TRADING_COMPANY_ID = #{tradingCompanyId} AND ENABLED = 1</code></pre>
 </table>
 <h4>按钮1：保存并提交（编辑页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：</li><li>第1点：先执行保存校验</li><li>第2点：保存数据到SA_POLICY_SPECIAL_HEADER</li><li>第3点：通过workFlowStart发起OA审批流程(SA_POLICY_SPECIAL_MCS_AW)</li><li>第4点：更新审核状态为RUN</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/sa-policy-special-headers/save-and-submit</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #{id} AND AUDIT_STAT = 'RUN';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #&#123;id&#125; AND AUDIT_STAT = 'RUN';</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -529,7 +529,7 @@ WHERE TRADING_COMPANY_ID = #{tradingCompanyId} AND ENABLED = 1</code></pre>
 <ul><li><strong>触发条件</strong>：用户保存时，明细行中存在相同的"经销商编码+交易公司名称+法人编码"组合</li><li><strong>逻辑分析</strong>：前端DetailPage/index.tsx的校验逻辑中，按custCode + '-' + tradingCompanyName + '-' + legalEntityCode生成唯一键，若重复则notification.error提示"第X行数据重复"并返回false阻断保存。同一申请单中不允许相同经销商+交易公司+法人组合重复，避免资金池重复扣减。需去重后保存</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT CUST_CODE, TRADING_COMPANY_NAME, LEGAL_ENTITY_CODE, COUNT(*) AS 重复行数
   FROM SA_POLICY_SPECIAL_LINE
-  WHERE POLICY_SPECIAL_ID = #{policySpecialId}
+  WHERE POLICY_SPECIAL_ID = #&#123;policySpecialId&#125;
   GROUP BY CUST_CODE, TRADING_COMPANY_NAME, LEGAL_ENTITY_CODE
   HAVING COUNT(*) &gt; 1;</code></pre>
 <h4>报错11：请选择需要删除的数据！</h4>
@@ -544,13 +544,13 @@ WHERE TRADING_COMPANY_ID = #{tradingCompanyId} AND ENABLED = 1</code></pre>
 <pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, AUDIT_STAT, HZ_APPROVE_STATUS,
          HZ_INSTANCE_ID, CALLBACK_SOURCE
   FROM SA_POLICY_SPECIAL_HEADER
-  WHERE POLICY_SPECIAL_ID = #{policySpecialId};</code></pre>
+  WHERE POLICY_SPECIAL_ID = #&#123;policySpecialId&#125;;</code></pre>
 <h4>报错13：未查询到业务单据</h4>
 <ul><li><strong>触发条件</strong>：OA审批回调doProcessOA方法时，按policySpecialId查询SA_POLICY_SPECIAL_HEADER返回空集合</li><li><strong>逻辑分析</strong>：doProcessOA方法中校验policySpecialId非空且大于0，然后通过saPolicySpecialHeaderRepository.search查询。若返回空集合则抛出CommonException("未查询到业务单据，请检查")。根因有三类：(1)OA回传的ID在系统中不存在（如测试环境OA回调到生产）；(2)申请单已被物理删除；(3)数据权限过滤导致查询不到。需核对OA回传ID与系统POLICY_SPECIAL_ID字段</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT,
          AUDIT_STAT, HZ_APPROVE_STATUS
   FROM SA_POLICY_SPECIAL_HEADER
-  WHERE POLICY_SPECIAL_ID = #{policySpecialId};</code></pre>
+  WHERE POLICY_SPECIAL_ID = #&#123;policySpecialId&#125;;</code></pre>
 <h4>报错14：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击保存/保存并提交/删除按钮，前端调用对应接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面通过SaPolicySpecialHeaderController提供save/save-and-submit/remove等接口，提交时通过workFlowStart发起OA流程，doOaAudit中通过oaService.toDataOA推送OA系统。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)OA系统不可达，toDataOA调用超时或失败；(3)数据库连接异常；(4)网关或网络层故障。需先确认ae-business服务和OA系统连通性</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查申请单状态分布
@@ -562,7 +562,7 @@ WHERE TRADING_COMPANY_ID = #{tradingCompanyId} AND ENABLED = 1</code></pre>
 <pre class="detail-sql" v-pre><code>-- 核查用户是否有该经销商的数据权限
   SELECT USER_ID, USER_NAME, CUSTOMER_CODE, ENABLED
   FROM USER_CUSTOMER_AUTH
-  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};</code></pre>
+  WHERE USER_ID = #&#123;userId&#125; AND CUSTOMER_CODE = #&#123;customerCode&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="常见问题">

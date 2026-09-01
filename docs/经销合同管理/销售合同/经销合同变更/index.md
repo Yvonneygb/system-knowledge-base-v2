@@ -283,7 +283,7 @@ WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL</code></pr
 <p>- 第2点：校验变更区域合法性(checkContract)</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONTRACT_ID IS NULL;</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #&#123;id&#125; AND ORIGINAL_CONTRACT_ID IS NULL;</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -388,14 +388,14 @@ WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL</code></pr
 <pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR,
          HZ_APPROVE_STATUS, STATE_PIGEONHOLE, ACTUAL_PIGEONHOLE_DATE
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE CONTRACT_NO = #{contractNo}
+  WHERE CONTRACT_NO = #&#123;contractNo&#125;
     AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NULL);</code></pre>
 <h4>报错3：未找到该记录</h4>
 <ul><li><strong>触发条件</strong>：用户编辑或查看变更申请时，根据ADD_HEAD_ID查询SALE_CONTRACT_ADD_HEAD返回空</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在doSelect、doUpdate等操作前根据主键查询变更单，若记录不存在或已被删除将抛出此异常。根因有三类：(1)变更单已被其他用户删除；(2)ADD_HEAD_ID传入错误；(3)数据权限隔离导致当前用户不可见。需确认变更单存在且当前用户有权限</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_NO, CUSTOMER_NAME,
          CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ADD_HEAD_ID = #{addHeadId};</code></pre>
+  WHERE ADD_HEAD_ID = #&#123;addHeadId&#125;;</code></pre>
 <h4>报错4：合同信息不匹配</h4>
 <ul><li><strong>触发条件</strong>：用户编辑变更申请时，变更单关联的原合同信息与实际原合同不一致</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl校验变更单（SALE_CONTRACT_ADD_HEAD）关联的原合同（ORIGINAL_CONTRACT_ID）与SA_SALE_CONTRACT_HEAD中的实际记录是否一致。不一致根因有二：(1)原合同已被变更或删除；(2)变更单ORIGINAL_CONTRACT_ID指向错误。需重新选择原合同</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.ADD_HEAD_NO, A.ORIGINAL_CONTRACT_ID, A.ORIGINAL_CONTRACT_NO,
@@ -408,20 +408,20 @@ WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL</code></pr
 <ul><li><strong>触发条件</strong>：用户选中已提交或已审批的变更单点击"删除"按钮</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在remove方法中校验变更单状态，仅HZ_APPROVE_STATUS='NEW'（制单状态）的单据可删除。已提交（RUN）或已审批（APPROVED）的单据已进入OA流程或已回写原合同，删除将导致流程数据不一致。需先撤回OA流程再删除</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_NO, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ADD_HEAD_ID = #{addHeadId}
+  WHERE ADD_HEAD_ID = #&#123;addHeadId&#125;
     AND HZ_APPROVE_STATUS != 'NEW';</code></pre>
 <h4>报错6：流程编码缺失，请选择流程</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"，校验OA流程编码（CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS）为空</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在saveAndSubmit中校验流程编码非空。流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS流程编码；(2)变更类型未关联对应流程编码。需在流程配置中维护对应关系</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ADD_HEAD_ID = #{addHeadId}
+  WHERE ADD_HEAD_ID = #&#123;addHeadId&#125;
     AND HZ_APPROVE_STATUS = 'NEW';</code></pre>
 <h4>报错7：电子合同签署中，不允许变更</h4>
 <ul><li><strong>触发条件</strong>：用户对原合同发起变更申请时，原合同正处于电子签章流程中</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl校验原合同的电子签章状态，若原合同正在电子签章流程中（签署中状态），不允许发起变更。变更将导致原合同内容变化，电子签章数据失效。需先完成或中止原合同电子签章流程再发起变更</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS,
          S.ELECTRONIC_SIGN_STATUS, S.STATE_PIGEONHOLE
   FROM SA_SALE_CONTRACT_HEAD S
-  WHERE S.SALE_CONTRACT_HEAD_ID = #{originalContractId}
+  WHERE S.SALE_CONTRACT_HEAD_ID = #&#123;originalContractId&#125;
     AND S.ELECTRONIC_SIGN_STATUS = 'SIGNING';</code></pre>
 <h4>报错8：销售合同编码不能为空</h4>
 <ul><li><strong>触发条件</strong>：校验变更申请时，原合同编码（ORIGINAL_CONTRACT_NO或SA_CONTR_HEAD_CODE）参数为空</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在多处校验销售合同编码非空。合同编码是关联原合同的关键字段，为空将导致原合同信息无法带出，变更回写无目标。需前端正确传入原合同编码</li><li><strong>排查SQL</strong>：</li></ul>
@@ -434,7 +434,7 @@ WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL</code></pr
 <pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS,
          S.STATE_PIGEONHOLE, S.IS_PIGEONHOLE
   FROM SA_SALE_CONTRACT_HEAD S
-  WHERE S.SALE_CONTRACT_HEAD_ID = #{originalContractId}
+  WHERE S.SALE_CONTRACT_HEAD_ID = #&#123;originalContractId&#125;
     AND S.IS_PIGEONHOLE = 1
     AND S.STATE_PIGEONHOLE IS NULL;</code></pre>
 <h4>报错10：已经存在未审核完的合同变更单</h4>
@@ -442,7 +442,7 @@ WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL</code></pr
 <pre class="detail-sql" v-pre><code>SELECT ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          ADD_HEAD_ID, ADD_HEAD_NO, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ORIGINAL_CONTRACT_ID = #{originalContractId}
+  WHERE ORIGINAL_CONTRACT_ID = #&#123;originalContractId&#125;
     AND HZ_APPROVE_STATUS IN ('NEW', 'RUN');</code></pre>
 <h4>报错11：经销商或者法人不存在</h4>
 <ul><li><strong>触发条件</strong>：变更申请校验时，经销商或法人主数据查询返回空</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl根据经销商ID查询经销商和法人主数据，若经销商已被删除或法人关联未配置将抛出此异常。经销商和法人是变更回写和CRM推送的关键主体。需确认经销商存在且已配置法人关联</li><li><strong>排查SQL</strong>：</li></ul>
@@ -463,7 +463,7 @@ WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL</code></pr
 <pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          CUSTOMER_NAME, CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ADD_HEAD_ID = #{addHeadId};</code></pre>
+  WHERE ADD_HEAD_ID = #&#123;addHeadId&#125;;</code></pre>
 <h4>报错14：MBO作废原合同失败</h4>
 <ul><li><strong>触发条件</strong>：变更审批通过后回写原合同，调用MBO接口作废原合同返回失败</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在变更审批通过后调用MBO接口作废原合同（变更回写场景）。MBO作废失败根因有三类：(1)MBO系统不可用；(2)原合同在MBO侧状态不允许作废；(3)MBO接口认证失败。需联系MBO管理员核查</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.ADD_HEAD_NO, A.HZ_APPROVE_STATUS,

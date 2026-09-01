@@ -1535,7 +1535,7 @@ HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.LINE_ID)
          h.sa_salebillno      AS CRM订单号
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
-  AND    h.head_id = #{传入的headId};</code></pre>
+  AND    h.head_id = #&#123;传入的headId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="常见问题">

@@ -279,11 +279,11 @@ ORDER BY LPPGC.Creation_Date DESC, LPPGC.ID DESC</code></pre>
 <ul><li>系统体现：后端阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL
-    WHERE DEPT_CODE = #{deptCode}
-      AND GRADE = #{grade}
-      AND PROD_SIGN = #{prodSign}
-      AND REQ_COLUMN = #{reqColumn}
-      AND REQ_COLUMN_TYPE = #{reqColumnType}
+    WHERE DEPT_CODE = #&#123;deptCode&#125;
+      AND GRADE = #&#123;grade&#125;
+      AND PROD_SIGN = #&#123;prodSign&#125;
+      AND REQ_COLUMN = #&#123;reqColumn&#125;
+      AND REQ_COLUMN_TYPE = #&#123;reqColumnType&#125;
       AND STATUS = 'valid';</code></pre>
 </KbCard>
 
@@ -351,7 +351,7 @@ FROM LNK_PROD_PROMOTE_GRADE_CONTROL LPPGC
         AND l.lov_code = 'CRM.PROD_PROMOTE_REQ_COLUMN'
         AND l.ENABLED_FLAG = 1
 WHERE LPPGC.STATUS = 'valid'
-    AND p.prod_code IN (#{prodCodeList})</code></pre>
+    AND p.prod_code IN (#&#123;prodCodeList&#125;)</code></pre>
 </KbCard>
 
 </div>

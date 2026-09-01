@@ -351,15 +351,15 @@ SELECT
     TO_CHAR(v.NO_CASHOUT_AMT, '999999999990.99') AS NO_CASHOUT_AMT
 FROM epms.FIN_FEE_TERMINAL_CASHOUT_VIEW v
 WHERE 1 = 1
-    AND v.check_bx_code LIKE '%' || #{checkBxCode} || '%'       -- 验收报销单号（模糊）
-    AND v.division_id = #{divisionId}                           -- 事业部ID（精确）
-    AND v.division_name LIKE '%' || #{divisionName} || '%'      -- 事业部名称（模糊）
-    AND v.billing_unit_code = #{billingUnitCode}                -- 开票单位编码（精确）
-    AND v.billing_unit_name LIKE '%' || #{billingUnitName} || '%' -- 开票单位名称（模糊）
-    AND v.trading_company_name LIKE '%' || #{tradingCompanyName} || '%' -- 交易公司名称（模糊）
-    AND v.terminal_code = #{terminalCode}                       -- 门店编码（精确）
-    AND v.cust_code = #{custCode}                               -- 经销商编码（精确）
-    AND v.cust_name LIKE '%' || #{custName} || '%'              -- 经销商名称（模糊）
+    AND v.check_bx_code LIKE '%' || #&#123;checkBxCode&#125; || '%'       -- 验收报销单号（模糊）
+    AND v.division_id = #&#123;divisionId&#125;                           -- 事业部ID（精确）
+    AND v.division_name LIKE '%' || #&#123;divisionName&#125; || '%'      -- 事业部名称（模糊）
+    AND v.billing_unit_code = #&#123;billingUnitCode&#125;                -- 开票单位编码（精确）
+    AND v.billing_unit_name LIKE '%' || #&#123;billingUnitName&#125; || '%' -- 开票单位名称（模糊）
+    AND v.trading_company_name LIKE '%' || #&#123;tradingCompanyName&#125; || '%' -- 交易公司名称（模糊）
+    AND v.terminal_code = #&#123;terminalCode&#125;                       -- 门店编码（精确）
+    AND v.cust_code = #&#123;custCode&#125;                               -- 经销商编码（精确）
+    AND v.cust_name LIKE '%' || #&#123;custName&#125; || '%'              -- 经销商名称（模糊）
 ORDER BY v.CHECK_BX_ID DESC</code></pre>
 <p><strong>明细查询SQL：</strong></p>
 <pre class="detail-sql" v-pre><code>-- 额度内兑现统计报表明细查询
@@ -411,15 +411,15 @@ FROM (
     WHERE h.audit_stat != '超额作废'
 ) m
 WHERE 1 = 1
-    AND m.check_bx_code LIKE '%' || #{checkBxCode} || '%'
-    AND m.division_id = #{divisionId}
-    AND m.division_name LIKE '%' || #{divisionName} || '%'
-    AND m.billing_unit_code = #{billingUnitCode}
-    AND m.billing_unit_name LIKE '%' || #{billingUnitName} || '%'
-    AND m.trading_company_name LIKE '%' || #{tradingCompanyName} || '%'
-    AND m.terminal_code = #{terminalCode}
-    AND m.cust_code = #{custCode}
-    AND m.cust_name LIKE '%' || #{custName} || '%'</code></pre>
+    AND m.check_bx_code LIKE '%' || #&#123;checkBxCode&#125; || '%'
+    AND m.division_id = #&#123;divisionId&#125;
+    AND m.division_name LIKE '%' || #&#123;divisionName&#125; || '%'
+    AND m.billing_unit_code = #&#123;billingUnitCode&#125;
+    AND m.billing_unit_name LIKE '%' || #&#123;billingUnitName&#125; || '%'
+    AND m.trading_company_name LIKE '%' || #&#123;tradingCompanyName&#125; || '%'
+    AND m.terminal_code = #&#123;terminalCode&#125;
+    AND m.cust_code = #&#123;custCode&#125;
+    AND m.cust_name LIKE '%' || #&#123;custName&#125; || '%'</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -538,7 +538,7 @@ WHERE 1 = 1
          audit_stat           AS 审核状态,
          organization_id      AS 组织ID
   FROM   fin_fee_terminal_cashout
-  WHERE  organization_id = #{当前用户组织ID}
+  WHERE  organization_id = #&#123;当前用户组织ID&#125;
   AND    audit_stat != '超额作废'
   ORDER  BY create_time DESC;</code></pre>
 <h4>报错2：支付方式翻译为空</h4>

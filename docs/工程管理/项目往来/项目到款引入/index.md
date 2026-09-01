@@ -383,11 +383,11 @@
 </table>
 <p><strong>查询SQL</strong>：</p>
 <pre class="detail-sql" v-pre><code>SELECT * FROM EPM_PAYMENT_IMPORT
-WHERE ORGANIZATION_ID = #{organizationId}
-  AND NVL(PAYMENT_IMPORT_CODE, '') LIKE '%' || #{paymentImportCode} || '%'
-  AND NVL(SERIAL_NUMBER, '') LIKE '%' || #{serialNumber} || '%'
-  AND NVL(CUSTOMER_CODE, '') LIKE '%' || #{customerCode} || '%'
-  AND RECEIVE_DATE BETWEEN #{startDate} AND #{endDate}
+WHERE ORGANIZATION_ID = #&#123;organizationId&#125;
+  AND NVL(PAYMENT_IMPORT_CODE, '') LIKE '%' || #&#123;paymentImportCode&#125; || '%'
+  AND NVL(SERIAL_NUMBER, '') LIKE '%' || #&#123;serialNumber&#125; || '%'
+  AND NVL(CUSTOMER_CODE, '') LIKE '%' || #&#123;customerCode&#125; || '%'
+  AND RECEIVE_DATE BETWEEN #&#123;startDate&#125; AND #&#123;endDate&#125;
 ORDER BY RECEIVE_DATE DESC;</code></pre>
 </KbCard>
 

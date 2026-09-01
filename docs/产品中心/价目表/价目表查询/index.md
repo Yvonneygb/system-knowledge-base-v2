@@ -255,12 +255,12 @@ WHERE 1=1
     AND t1.head_id IN (SELECT l.ROW_ID                                 -- 当前事业部价目表
                         FROM lnk_price_list l
                         JOIN rel_crm_ae_org o ON l.dept_id = o.crm_org_id
-                        WHERE o.AE_ORG_CODE = #{deptCode}
-                        AND l.CURRENCY = #{currency})                  -- 币种过滤
+                        WHERE o.AE_ORG_CODE = #&#123;deptCode&#125;
+                        AND l.CURRENCY = #&#123;currency&#125;)                  -- 币种过滤
     -- 经销商用户：按有效合同渠道过滤
-    -- AND (t2.lh_prod_channel = #{channel} OR like匹配)
-    -- 海外事业部人民币场景：AND t3.PRICE_LIST_NAME = #{overseasPriceListName}
-    -- 产品编码：t2.prod_code = #{prodCode} 或 IN (#{prodCodeList})
+    -- AND (t2.lh_prod_channel = #&#123;channel&#125; OR like匹配)
+    -- 海外事业部人民币场景：AND t3.PRICE_LIST_NAME = #&#123;overseasPriceListName&#125;
+    -- 产品编码：t2.prod_code = #&#123;prodCode&#125; 或 IN (#&#123;prodCodeList&#125;)
     -- 产品名称(like)、产品大类(like)、产品中类(like)、产品小类(like)、产品型号(like)
     -- 定价时的产品定位(=)、物料类型(=)、生命状态(=)</code></pre>
 </KbCard>
@@ -360,12 +360,12 @@ WHERE 1=1
 <blockquote>经销商合同渠道校验SQL（Mapper: checkProdCodeInContractChannel）：</blockquote>
 <pre class="detail-sql" v-pre><code>SELECT COUNT(1)
 FROM LNK_PROD p
-WHERE p.prod_code = #{prodCode}
+WHERE p.prod_code = #&#123;prodCode&#125;
     AND EXISTS (
         SELECT 1
         FROM lnk_contract t
         JOIN lnk_contract_channel c ON t.row_id = c.lnk_contract_id
-        WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{dealerCode})
+        WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #&#123;dealerCode&#125;)
             AND (t.IS_DELIVERY = 'N' OR t.IS_DELIVERY IS NULL)
             AND t.agr_status = 'Agree'
             AND t.EFFECTIVE_START_DT &lt;= sysdate
@@ -406,7 +406,7 @@ WHERE p.prod_code = #{prodCode}
 SELECT c.channel_val
 FROM lnk_contract t
 JOIN lnk_contract_channel c ON t.row_id = c.lnk_contract_id
-WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{dealerCode})
+WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #&#123;dealerCode&#125;)
     AND (t.IS_DELIVERY = 'N' OR t.IS_DELIVERY IS NULL)
     AND t.agr_status = 'Agree'
     AND t.EFFECTIVE_START_DT &lt;= sysdate

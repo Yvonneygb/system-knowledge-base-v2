@@ -258,10 +258,10 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：打开新建页面，自动带出申请人和申请时间</li><li><strong>接口调用</strong>：无，仅前端操作</li></ul>
 <h4>按钮2：保存（编辑页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：保存调整头信息和明细行到ADS_FEE_ADJUST_IN_QUOTA</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/ads-quotas/save</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #&#123;id&#125;;</code></pre>
 <h4>按钮3：删除（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中未提交记录</li><li><strong>执行逻辑</strong>：批量删除选中的调整申请单</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/ads-quotas/batchDelete</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID IN (#{ids}) AND HZ_APPROVE_STATUS NOT IN ('RUN','APPROVED');</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID IN (#&#123;ids&#125;) AND HZ_APPROVE_STATUS NOT IN ('RUN','APPROVED');</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -285,7 +285,7 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 <p>- 第1点：提交前执行保存校验全部规则</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADING_COMPANY_ID IS NULL OR ADJUST_TYPE IS NULL);</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #&#123;id&#125; AND (TRADING_COMPANY_ID IS NULL OR ADJUST_TYPE IS NULL);</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -383,7 +383,7 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 <pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_NAME,
          ADJUST_TYPE, HZ_APPROVE_STATUS, WFID, HZ_INSTANCE_ID
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE ADJUST_HEADER_ID = #{adjustHeaderId};</code></pre>
+  WHERE ADJUST_HEADER_ID = #&#123;adjustHeaderId&#125;;</code></pre>
 <h4>报错4：OA回传单号为空，请检查！</h4>
 <ul><li><strong>触发条件</strong>：OA审批完成后回调doProcessOA方法，回传报文中adjustHeaderNo字段为空</li><li><strong>逻辑分析</strong>：doProcessOA方法接收OABillCallbackDTO，从中获取adjustHeaderNo（OA回传单号）。若StringUtils.isBlank(adjustHeaderNo)为true则抛出CommonException("OA回传单号为空，请检查！")。根因有二：(1)OA流程表单配置缺少"调整单号"字段映射；(2)OA回传报文格式异常。需检查OA流程SUB_ADJ_FEES_QUOTA的表单字段配置及单据映射关系</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查OA单据映射配置
@@ -395,7 +395,7 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 <pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
          CALLBACK_SOURCE, HZ_INSTANCE_ID
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE ADJUST_HEADER_NO = #{adjustHeaderNo};</code></pre>
+  WHERE ADJUST_HEADER_NO = #&#123;adjustHeaderNo&#125;;</code></pre>
 <h4>报错6：请选择要删除的记录！</h4>
 <ul><li><strong>触发条件</strong>：用户未选中任何调整单直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：batchDelete方法接收adjustHeaderIds列表，若CollectionUtils.isEmpty(adjustHeaderIds)为true则抛出CommonException("请选择要删除的记录！")。前端列表页需选中至少一条记录才可触发删除操作。需在列表中勾选目标记录后重试</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查可删除的调整单（未提交或已拒绝状态）
@@ -414,7 +414,7 @@ FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 <pre class="detail-sql" v-pre><code>-- 核查用户可访问的交易公司
   SELECT USER_ID, TRADING_COMPANY_ID, TRADING_COMPANY_NAME, ENABLED
   FROM USER_TRADING_COMPANY_AUTH
-  WHERE USER_ID = #{userId};</code></pre>
+  WHERE USER_ID = #&#123;userId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="常见问题">

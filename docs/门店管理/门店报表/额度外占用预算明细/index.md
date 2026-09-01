@@ -301,12 +301,12 @@ SELECT * FROM (
     LEFT JOIN epms.EPM_TRADING_COMPANY company ON cus_legal.TRADING_COMPANY_ID = company.TRADING_COMPANY_ID
 ) bod
 WHERE bod.occupy_amt &gt; 0                                       -- 只展示占用金额&gt;0的记录
-    AND bod.division_id = (SELECT dbs.division_id FROM division_base_set dbs WHERE dbs.organization_id = #{divisionId})  -- 事业部ID
-    AND bod.bud_year = #{budYear}                              -- 预算年度（精确）
-    AND bod.terminal_code = #{terminalCode}                    -- 门店编码（精确）
-    AND bod.cust_code = #{custCode}                            -- 经销商编码（精确）
-    AND bod.billing_unit_code = #{billingUnitCode}             -- 开票单位编码（精确）
-    AND bod.trading_company_code = #{tradingCompanyCode}       -- 交易公司编码（精确）</code></pre>
+    AND bod.division_id = (SELECT dbs.division_id FROM division_base_set dbs WHERE dbs.organization_id = #&#123;divisionId&#125;)  -- 事业部ID
+    AND bod.bud_year = #&#123;budYear&#125;                              -- 预算年度（精确）
+    AND bod.terminal_code = #&#123;terminalCode&#125;                    -- 门店编码（精确）
+    AND bod.cust_code = #&#123;custCode&#125;                            -- 经销商编码（精确）
+    AND bod.billing_unit_code = #&#123;billingUnitCode&#125;             -- 开票单位编码（精确）
+    AND bod.trading_company_code = #&#123;tradingCompanyCode&#125;       -- 交易公司编码（精确）</code></pre>
 </KbCard>
 
 <KbCard title="状态机">

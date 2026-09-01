@@ -350,7 +350,7 @@ SELECT
   TO_CHAR(cd.PUSH_TIME, 'YYYY-MM-DD HH24:MI:SS') AS 推送时间,
   cd.CURRENCY        AS 币种
 FROM CASH_DETAILS cd
-WHERE cd.CASH_SUMMARY_ID = #{cashSummaryId}
+WHERE cd.CASH_SUMMARY_ID = #&#123;cashSummaryId&#125;
 ORDER BY cd.ID;
 
 -- 查询返利明细的签收和兑现状态
@@ -411,15 +411,15 @@ SELECT
   lea.CUSTOMER_ID             AS 经销商ID,
   lea.ACCOUNT_ID              AS 账户ID
 FROM EPM_LEGAL_ENTITY_ACCOUNT lea
-WHERE lea.TRADING_COMPANY_ID = #{tradingCompanyId}
-  AND lea.CUSTOMER_ID = #{customerId};</code></pre>
+WHERE lea.TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125;
+  AND lea.CUSTOMER_ID = #&#123;customerId&#125;;</code></pre>
 <h4>按钮3：查看（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中一条兑现单</li><li><strong>执行逻辑</strong>：跳转详情页查看兑现单头和兑现明细</li><li><strong>接口调用</strong>：无，仅前端页面跳转</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM CASH_SUMMARY WHERE ID = #{id};
-SELECT * FROM CASH_DETAILS WHERE CASH_SUMMARY_ID = #{id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM CASH_SUMMARY WHERE ID = #&#123;id&#125;;
+SELECT * FROM CASH_DETAILS WHERE CASH_SUMMARY_ID = #&#123;id&#125;;</code></pre>
 <h4>按钮4：编辑（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中一条兑现单且推送状态=PENDING</li><li><strong>执行逻辑</strong>：跳转编辑页修改兑现单信息</li><li><strong>接口调用</strong>：无，仅前端页面跳转</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM CASH_SUMMARY WHERE ID = #{id} AND PUSH_STATUS = 'PENDING';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM CASH_SUMMARY WHERE ID = #&#123;id&#125; AND PUSH_STATUS = 'PENDING';</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -566,17 +566,17 @@ SELECT * FROM CASH_DETAILS WHERE CASH_SUMMARY_ID = #{id};</code></pre>
 <ul><li><strong>触发条件</strong>：用户点击"推送ERP"按钮，传入的cashId为0</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:66处校验cashId==0时抛出CommonException("兑现单参数不能为空")。该校验为前置参数校验，防止空指针和无效查询。需在列表页选中有效的兑现汇总单记录后再点击推送</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
 FROM CASH_SUMMARY
-WHERE ID = #{cashId};</code></pre>
+WHERE ID = #&#123;cashId&#125;;</code></pre>
 <h4>报错2：兑现单异常，请稍后重试</h4>
 <ul><li><strong>触发条件</strong>：用户选中兑现单点击"推送ERP"，但cashSummaryRepository.selectById(cashId)返回null</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:70处校验兑现单头不存在时抛出CommonException("兑现单异常，请稍后重试")。根因有三类：(1)兑现单已被其他用户删除；(2)兑现单ID被篡改；(3)并发操作导致数据不一致。需刷新列表确认兑现单是否存在</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
 FROM CASH_SUMMARY
-WHERE ID = #{cashId};</code></pre>
+WHERE ID = #&#123;cashId&#125;;</code></pre>
 <h4>报错3：当前兑现不允许推送,请重新核实</h4>
 <ul><li><strong>触发条件</strong>：用户选中已推送成功的兑现单再次点击"推送ERP"</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:73处校验cashH.getPushStatus()等于SUCCESS时抛出CommonException("当前兑现不允许推送,请重新核实")。该校验防止重复推送导致ERP资金池数据重复。需核实兑现单推送状态，仅PENDING或FAIL状态的兑现单可推送</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
 FROM CASH_SUMMARY
-WHERE ID = #{cashId} AND PUSH_STATUS = 'SUCCESS';</code></pre>
+WHERE ID = #&#123;cashId&#125; AND PUSH_STATUS = 'SUCCESS';</code></pre>
 <h4>报错4：当前兑现单没有符合推送的明细</h4>
 <ul><li><strong>触发条件</strong>：用户选中兑现单点击"推送ERP"，兑现明细均已推送或无有效明细</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:80处校验cashDetailsV为空时抛出CommonException("当前兑现单没有符合推送的明细")。根因有二：(1)兑现明细均已推送成功或推送失败，无PENDING状态明细；(2)兑现明细对应的交易公司、经销商在EPM_LEGAL_ENTITY_ACCOUNT中未配置账户ID，导致所有明细被过滤。需核查明细推送状态及法人账户配置</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 查询兑现明细的推送状态
@@ -588,7 +588,7 @@ SELECT
   cd.TRADING_COMPANY_ID AS 交易公司ID,
   cd.CUSTOMER_ID     AS 经销商ID
 FROM CASH_DETAILS cd
-WHERE cd.CASH_SUMMARY_ID = #{cashId}
+WHERE cd.CASH_SUMMARY_ID = #&#123;cashId&#125;
   AND cd.PUSH_STATUS != 'SUCCESS';
 
 -- 核查法人账户配置
@@ -598,13 +598,13 @@ SELECT
   lea.CUSTOMER_ID             AS 经销商ID,
   lea.ACCOUNT_ID              AS 账户ID
 FROM EPM_LEGAL_ENTITY_ACCOUNT lea
-WHERE lea.TRADING_COMPANY_ID = #{tradingCompanyId}
-  AND lea.CUSTOMER_ID = #{customerId};</code></pre>
+WHERE lea.TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125;
+  AND lea.CUSTOMER_ID = #&#123;customerId&#125;;</code></pre>
 <h4>报错5：ERP返回数据异常，没有结果明细</h4>
 <ul><li><strong>触发条件</strong>：推送ERP后，ERP接口返回的X_DATA_TBL_ITEM为空或null</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:168处校验tblItemArr为空时抛出CommonException("ERP返回数据异常，没有结果明细")。该异常表示ERP接口synAdjustCashPoolToEbs调用成功但返回结果格式异常，缺少X_DATA_TBL_ITEM节点。根因有二：(1)ERP接口版本不匹配，返回格式变更；(2)ERP侧处理异常但未按约定格式返回错误。需联系ERP运维核查接口日志</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
 FROM CASH_SUMMARY
-WHERE ID = #{cashId};</code></pre>
+WHERE ID = #&#123;cashId&#125;;</code></pre>
 <h4>报错6：没有可处理的明细</h4>
 <ul><li><strong>触发条件</strong>：用户点击"生成兑现汇总单"按钮，operationCashBiz方法查询无符合生成条件的返利明细</li><li><strong>逻辑分析</strong>：operationCashBiz方法在EpmSalesPriceRebateServiceImpl.java:227处校验cashDetailsV为空时抛出CommonException("没有可处理的明细")。该方法先调用signRebateDetails更新已签收返点明细，再通过generateCashDetails按事业部+法人客户+经销商+交易主体获取兑现明细。无明细根因有三类：(1)上游发票真实性核销未审批通过，返利明细未生成；(2)返利明细已全部生成过兑现(REDEMPTION_FLAG=Y)；(3)查询条件(事业部/经销商/时间范围)不匹配。需核查返利明细的签收和兑现标志</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 查询未兑现且已签收的返利明细
@@ -618,8 +618,8 @@ SELECT
 FROM REBATE_DETAILS rd
 WHERE rd.SIGN_FLAG = 'Y'
   AND rd.REDEMPTION_FLAG = 'N'
-  AND rd.ENT_ID = #{entId}
-  AND (rd.CUSTOMER_ID = #{customerId} OR #{customerId} IS NULL);</code></pre>
+  AND rd.ENT_ID = #&#123;entId&#125;
+  AND (rd.CUSTOMER_ID = #&#123;customerId&#125; OR #&#123;customerId&#125; IS NULL);</code></pre>
 <h4>报错7：开始时间或结束时间不能为空</h4>
 <ul><li><strong>触发条件</strong>：用户点击"生成兑现汇总单"按钮，但未填写限定日期开始或结束</li><li><strong>逻辑分析</strong>：generateCashDetails方法在EpmSalesPriceRebateServiceImpl.java:465处校验dto.getStartTime().isEmpty() || dto.getEndTime().isEmpty()时抛出CommonException("开始时间或结束时间不能为空")。需填写完整的限定日期范围</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT ID, START_TIME, END_TIME

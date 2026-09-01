@@ -592,7 +592,7 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;</code></pre>
 <h4>报错3：查询类型错误！</h4>
 <ul><li><strong>触发条件</strong>：查询产品列表时，前端传入的selectType参数非general/other/all</li><li><strong>逻辑分析</strong>：后端按selectType分流查询逻辑：general=商品检索Tab、other=配件&amp;其它Tab、all=全量查询（下单等场景）。若传入其他值则无法匹配查询分支，抛出CommonException。属于程序异常，通常由前端传参错误导致。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 无对应表查询，检查前端调用日志
-  -- 接口: GET /v1/{organizationId}/prod?selectType={selectType}
+  -- 接口: GET /v1/&#123;organizationId&#125;/prod?selectType=&#123;selectType&#125;
   -- 合法值: general / other / all
   SELECT '检查前端传入selectType参数是否为general/other/all' AS 提示 FROM DUAL;</code></pre>
 <h4>报错4：用户类型错误</h4>

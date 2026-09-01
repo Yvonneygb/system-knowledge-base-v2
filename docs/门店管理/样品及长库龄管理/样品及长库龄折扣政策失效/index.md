@@ -229,10 +229,10 @@ FROM epm_discount_policy WHERE valid = 2 AND source_type = 'YXCRM';</code></pre>
 <h4>按钮1：保存并提交（详情页）</h4>
 <ul><li><strong>触发条件</strong>：审批状态为NEW</li><li><strong>执行逻辑</strong>：</li><li>第1点：保存失效单</li><li>第2点：发起工作流</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epm-discount-policy-disabled/save-and-submit</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT discount_policy_disabled_id, discount_policy_id, stat, hz_approve_status
-FROM epm_discount_policy_disabled WHERE discount_policy_disabled_id = {id};</code></pre>
+FROM epm_discount_policy_disabled WHERE discount_policy_disabled_id = &#123;id&#125;;</code></pre>
 <h4>按钮2：删除（列表页）</h4>
 <ul><li><strong>触发条件</strong>：审批状态为NEW</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验审批状态为NEW</li><li>第2点：删除失效单</li><li><strong>接口调用</strong>：DELETE /v1/&#123;organizationId&#125;/epm-discount-policy-disabled</li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_disabled_id, hz_approve_status FROM epm_discount_policy_disabled WHERE discount_policy_disabled_id IN ({ids});</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT discount_policy_disabled_id, hz_approve_status FROM epm_discount_policy_disabled WHERE discount_policy_disabled_id IN (&#123;ids&#125;);</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -242,7 +242,7 @@ FROM epm_discount_policy_disabled WHERE discount_policy_disabled_id = {id};</cod
 <p>- 第2点：原政策有效状态必须为valid=2</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT valid FROM epm_discount_policy WHERE discount_policy_id = {discountPolicyId};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT valid FROM epm_discount_policy WHERE discount_policy_id = &#123;discountPolicyId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -364,7 +364,7 @@ FROM epm_discount_policy_disabled WHERE discount_policy_disabled_id = {id};</cod
          discount_policy_disabled_code AS 失效单号,
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy_disabled
-  WHERE  discount_policy_disabled_id = #{传入的discountPolicyDisabledId};</code></pre>
+  WHERE  discount_policy_disabled_id = #&#123;传入的discountPolicyDisabledId&#125;;</code></pre>
 <h4>报错6：仅新建状态单据允许删除.</h4>
 <ul><li><strong>触发条件</strong>：点击"删除"按钮，doDelete校验时，失效单HZ_APPROVE_STATUS≠NEW(新建)</li><li><strong>逻辑分析</strong>：仅新建状态(HZ_APPROVE_STATUS=NEW)的失效单允许删除，已提交审批或审批通过的失效单不允许删除，避免破坏审批流程和原政策状态。校验逻辑读取HZ_APPROVE_STATUS，非NEW则抛异常。常见根因：用户尝试删除已提交或已审批的失效单、或前端未做状态判断。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT discount_policy_disabled_id AS 失效单ID,
@@ -380,7 +380,7 @@ FROM epm_discount_policy_disabled WHERE discount_policy_disabled_id = {id};</cod
          hz_approve_status     AS 审批状态,
          hz_instance_id        AS 工作流实例ID
   FROM   epm_discount_policy_disabled
-  WHERE  hz_instance_id = #{工作流实例ID};</code></pre>
+  WHERE  hz_instance_id = #&#123;工作流实例ID&#125;;</code></pre>
 <h4>报错8：政策明细推送crm出错,请稍后再试</h4>
 <ul><li><strong>触发条件</strong>：工作流审批通过回调(wfComplete)时，调用CRM政策失效接口(policyDisabled)，CRM返回resultLine为null</li><li><strong>逻辑分析</strong>：失效审批通过后需推送CRM同步政策失效状态，CRM返回空则无法确认同步结果，抛异常。常见根因：CRM接口超时、CRM服务不可用、或网络异常。</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT d.discount_policy_disabled_id AS 失效单ID,
@@ -411,7 +411,7 @@ FROM epm_discount_policy_disabled WHERE discount_policy_disabled_id = {id};</cod
 
 <KbCard title="常见问题">
 <ul><li>问题1：失效审批通过后原政策状态未更新</li><li>原因：工作流回调处理异常</li><li>解决思路：检查工作流回调逻辑，确认原政策valid是否已更新为3</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT discount_policy_id, valid FROM epm_discount_policy WHERE discount_policy_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT discount_policy_id, valid FROM epm_discount_policy WHERE discount_policy_id = &#123;id&#125;;</code></pre>
 </KbCard>
 
 </div>

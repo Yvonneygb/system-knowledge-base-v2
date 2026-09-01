@@ -425,7 +425,7 @@ ORDER BY POH.PRODUCT_OVER_ID DESC</code></pre>
     LEFT JOIN Item_Class Ic2 ON Io.Item_Class2 = Ic2.Item_Class_Id
     LEFT JOIN Item_Class Ic3 ON Io.Item_Class3 = Ic3.Item_Class_Id
     LEFT JOIN epm_second_channel_relation er ON io.second_channel_id = er.item_second_channel
-    CROSS JOIN (SELECT division_id FROM division_base_set WHERE organization_id = #{organizationid}) ds
+    CROSS JOIN (SELECT division_id FROM division_base_set WHERE organization_id = #&#123;organizationid&#125;) ds
     WHERE Io.division_id &gt; 0
       AND (Io.division_id = ds.division_id OR EXISTS(
           SELECT 1 FROM sa_saleprice_line sl
@@ -434,10 +434,10 @@ ORDER BY POH.PRODUCT_OVER_ID DESC</code></pre>
       ))
 ) t WHERE 1 = 1
   AND t.item_type = 5  -- 物料类别为'成品'
-  AND t.sm_state IN (#{smStates})  -- 角色允许的SM状态
-  AND t.item_code = #{itemCode}  -- 可选
-  AND t.item_name LIKE #{itemName}||'%'  -- 可选
-  AND t.ITEM_MODEL LIKE #{itemDesc}||'%'  -- 可选
+  AND t.sm_state IN (#&#123;smStates&#125;)  -- 角色允许的SM状态
+  AND t.item_code = #&#123;itemCode&#125;  -- 可选
+  AND t.item_name LIKE #&#123;itemName&#125;||'%'  -- 可选
+  AND t.ITEM_MODEL LIKE #&#123;itemDesc&#125;||'%'  -- 可选
   AND NOT EXISTS (
       SELECT 1 FROM product_over_line pol
       WHERE pol.erp_stat = '未推送' AND pol.item_id = t.item_id
@@ -461,7 +461,7 @@ SELECT * FROM HZERO.HPFM_LOV_VALUE
 WHERE LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'
   AND TENANT_ID = 0
 -- 后端逻辑：
--- 1. 遍历值集记录，匹配meaning包含"{roleCode}_{isEliminate}"且tag包含当前smState的记录
+-- 1. 遍历值集记录，匹配meaning包含"&#123;roleCode&#125;_&#123;isEliminate&#125;"且tag包含当前smState的记录
 -- 2. 取匹配记录的description去重作为可选目标SM状态</code></pre>
 </KbCard>
 
@@ -517,7 +517,7 @@ ORDER BY POH.PRODUCT_OVER_ID DESC;</code></pre>
 <ul><li><strong>触发条件</strong>：草稿状态可点击</li><li><strong>执行逻辑</strong>：</li><li>第1点：前端收集头表和行表数据</li><li>第2点：调用POST /v1/&#123;organizationId&#125;/product-over-headers/saveVerify校验产品编码不重复</li><li>第3点：校验通过后保存头行数据</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/product-over-headers/saveVerify</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 校验产品编码重复
 SELECT ITEM_CODE, COUNT(*) FROM PRODUCT_OVER_LINE
-WHERE PRODUCT_OVER_ID = #{productOverId}
+WHERE PRODUCT_OVER_ID = #&#123;productOverId&#125;
 GROUP BY ITEM_CODE HAVING COUNT(*) &gt; 1;</code></pre>
 <h4>按钮4：提交（详情页）</h4>
 <ul><li><strong>触发条件</strong>：草稿状态可点击</li><li><strong>执行逻辑</strong>：</li><li>第1点：调用GET /v1/&#123;organizationId&#125;/product-over-headers/submitVerify校验</li><li>第2点：校验明细行不为空</li><li>第3点：校验产品无在途申请（HZ_APPROVE_STATUS='RUN'）</li><li>第4点：推送OA审批，设置HZ_APPROVE_STATUS='RUN'</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/product-over-headers/submitVerify</li><li><strong>排查SQL</strong>：</li></ul>
@@ -528,7 +528,7 @@ FROM product_over_header pah
 LEFT JOIN product_over_line pol ON pol.product_over_id = pah.product_over_id
 LEFT JOIN HZERO.IAM_USER iu ON iu.id = pah.CREATED_BY
 WHERE pah.HZ_APPROVE_STATUS = 'RUN'
-  AND pol.Item_Code IN (#{itemCodes})
+  AND pol.Item_Code IN (#&#123;itemCodes&#125;)
 GROUP BY pah.PRODUCT_OVER_NO, iu.REAL_NAME;</code></pre>
 <h4>按钮5：导入（详情页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态可点击</li><li><strong>执行逻辑</strong>：</li><li>第1点：选择Excel文件</li><li>第2点：调用POST /v1/&#123;organizationId&#125;/product-over-headers/data-upload接口</li><li>第3步：后端同步上传→同步校验→同步导入，返回成功导入的数据列表</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/product-over-headers/data-upload</li><li><strong>排查SQL</strong>：</li></ul>
@@ -546,8 +546,8 @@ LEFT JOIN hzero.hpfm_uom u ON u.uom_id = i.uom_id
 LEFT JOIN Item_Class Ic1 ON Io.Item_Class1 = Ic1.Item_Class_Id
 LEFT JOIN Item_Class Ic2 ON Io.Item_Class2 = Ic2.Item_Class_Id
 LEFT JOIN Item_Class Ic3 ON Io.Item_Class3 = Ic3.Item_Class_Id
-WHERE i.item_code IN (#{itemCodes})
-  AND io.ORGANIZATION_ID = #{orgId};</code></pre>
+WHERE i.item_code IN (#&#123;itemCodes&#125;)
+  AND io.ORGANIZATION_ID = #&#123;orgId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -561,7 +561,7 @@ WHERE i.item_code IN (#{itemCodes})
 <pre class="detail-sql" v-pre><code>-- 检测同一申请单内产品编码重复
     SELECT ITEM_CODE, COUNT(*) AS cnt
     FROM PRODUCT_OVER_LINE
-    WHERE PRODUCT_OVER_ID = #{productOverId}
+    WHERE PRODUCT_OVER_ID = #&#123;productOverId&#125;
     GROUP BY ITEM_CODE
     HAVING COUNT(*) &gt; 1;</code></pre>
 </KbCard>
@@ -573,7 +573,7 @@ WHERE i.item_code IN (#{itemCodes})
 <p>- 第2点：行列表为空则抛出异常："产品SM状态变更申请明细行不存在！"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM PRODUCT_OVER_LINE WHERE PRODUCT_OVER_ID = #{productOverId};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM PRODUCT_OVER_LINE WHERE PRODUCT_OVER_ID = #&#123;productOverId&#125;;</code></pre>
 <ul><li>校验2：产品无在途申请 —— 同一产品不能有多个在途的SM状态变更申请</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：获取当前申请所有明细行的产品编码（去重）</p>
@@ -587,8 +587,8 @@ WHERE i.item_code IN (#{itemCodes})
     LEFT JOIN product_over_line pol ON pol.product_over_id = pah.product_over_id
     LEFT JOIN HZERO.IAM_USER iu ON iu.id = pah.CREATED_BY
     WHERE pah.HZ_APPROVE_STATUS = 'RUN'
-      AND pol.Item_Code IN (#{当前申请的产品编码列表})
-      AND pah.PRODUCT_OVER_ID != #{当前申请ID}
+      AND pol.Item_Code IN (#&#123;当前申请的产品编码列表&#125;)
+      AND pah.PRODUCT_OVER_ID != #&#123;当前申请ID&#125;
     GROUP BY pah.PRODUCT_OVER_NO, iu.REAL_NAME;</code></pre>
 </KbCard>
 
@@ -938,7 +938,7 @@ WHERE i.item_code IN (#{itemCodes})
 <ul><li>问题3：ERP推送失败如何处理？</li><li>原因：ERP接口返回异常，行表ERP_STAT更新为"推送失败"，RESULT_MESSAGE记录失败原因，同时发送钉钉通知</li><li>解决思路：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT pol.ITEM_CODE, pol.ERP_STAT, pol.RESULT_MESSAGE
     FROM product_over_line pol
-    WHERE pol.PRODUCT_OVER_ID = #{申请单ID}
+    WHERE pol.PRODUCT_OVER_ID = #&#123;申请单ID&#125;
       AND pol.ERP_STAT = '推送失败';</code></pre>
 <p>根据RESULT_MESSAGE排查ERP侧问题，修复后需重新推送</p>
 <ul><li>问题4：一个申请可以变更多个产品吗？</li><li>原因：可以，每个产品对应一行记录，支持通过产品弹窗逐个添加或Excel批量导入</li><li>解决思路：无需处理，正常业务流程</li></ul>

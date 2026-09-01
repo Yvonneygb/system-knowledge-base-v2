@@ -257,7 +257,7 @@
 </table>
 <blockquote>查询SQL（后端接口）：</blockquote>
 <pre class="detail-sql" v-pre><code>SELECT TRADING_COMPANY_ID, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME, LEGAL_ENTITY_ID, LEGAL_ENTITY_NAME
-FROM HPFM_TRADING_COMPANY WHERE CUST_ID = #{custId}</code></pre>
+FROM HPFM_TRADING_COMPANY WHERE CUST_ID = #&#123;custId&#125;</code></pre>
 <h4>弹窗3：余额账户选择（单选）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -270,7 +270,7 @@ FROM HPFM_TRADING_COMPANY WHERE CUST_ID = #{custId}</code></pre>
 </table>
 <blockquote>查询SQL（后端接口select-account）：</blockquote>
 <pre class="detail-sql" v-pre><code>SELECT ACCOUNT_ID, ACCOUNT_NAME, CAPITAL_POOL FROM CAPITAL_ACCOUNT 
-WHERE TRADING_COMPANY_ID = #{tradingCompanyId} AND ENABLED = 1</code></pre>
+WHERE TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125; AND ENABLED = 1</code></pre>
 <h4>弹窗3：交易公司选择（单选，编辑页明细行）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -325,14 +325,14 @@ WHERE TRADING_COMPANY_ID = #{tradingCompanyId} AND ENABLED = 1</code></pre>
 <ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：打开新建政策性补贴申请页面</li><li>第2点：自动带出当前登录用户为申请人，当前时间为申请时间</li><li><strong>接口调用</strong>：无，仅前端操作</li></ul>
 <h4>按钮2：保存（编辑页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验头信息和行信息</li><li>第2点：保存到SA_POLICY_SPECIAL_HEADER和SA_POLICY_SPECIAL_LINE</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/sa-policy-special-headers/save</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #{id};
-SELECT * FROM SA_POLICY_SPECIAL_LINE WHERE POLICY_SPECIAL_ID = #{id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #&#123;id&#125;;
+SELECT * FROM SA_POLICY_SPECIAL_LINE WHERE POLICY_SPECIAL_ID = #&#123;id&#125;;</code></pre>
 <h4>按钮3：保存并提交（编辑页）</h4>
 <ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：</li><li>第1点：先执行保存校验</li><li>第2点：保存数据到SA_POLICY_SPECIAL_HEADER</li><li>第3点：通过workFlowStart发起OA审批流程</li><li>第4点：更新审核状态为RUN</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/sa-policy-special-headers/save-and-submit</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #{id} AND AUDIT_STAT = 'RUN';</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #&#123;id&#125; AND AUDIT_STAT = 'RUN';</code></pre>
 <h4>按钮4：删除（列表页）</h4>
 <ul><li><strong>触发条件</strong>：选中未提交的记录（AUDIT_STAT为NEW或null）</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验单据状态为未提交</li><li>第2点：删除SA_POLICY_SPECIAL_HEADER和SA_POLICY_SPECIAL_LINE数据</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/sa-policy-special-headers/remove</code></li><li><strong>排查SQL</strong>：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #{id} AND (AUDIT_STAT IS NULL OR AUDIT_STAT = 'NEW');</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SA_POLICY_SPECIAL_HEADER WHERE POLICY_SPECIAL_ID = #&#123;id&#125; AND (AUDIT_STAT IS NULL OR AUDIT_STAT = 'NEW');</code></pre>
 </KbCard>
 
 <KbCard title="保存校验">
@@ -511,20 +511,20 @@ SELECT * FROM SA_POLICY_SPECIAL_LINE WHERE POLICY_SPECIAL_ID = #{id};</code></pr
   SELECT DU.USER_ID, DU.DIVISION_ID, D.ENT_NAME, D.ENABLED
   FROM HPFM_DIVISION_USER DU
   JOIN HPFM_DIVISION D ON DU.DIVISION_ID = D.ENT_ID
-  WHERE DU.USER_ID = #{userId} AND D.ENABLED = 1;</code></pre>
+  WHERE DU.USER_ID = #&#123;userId&#125; AND D.ENABLED = 1;</code></pre>
 <h4>报错8：无法获上线文信息</h4>
 <ul><li><strong>触发条件</strong>：用户新建政策性补贴申请生成单据编号时，DetailsHelper.getUserDetails()返回空</li><li><strong>逻辑分析</strong>：生成单据编号generateCode（SaPolicySpecialHeaderServiceImpl.java:180）调用DetailsHelper.getUserDetails()获取用户上下文，若ObjectUtils.isEmpty(customUserDetails)则抛出CommonException("无法获上线文信息")。根因有二：(1)用户登录态过期或Token失效，上下文未正确注入；(2)线程上下文未传递（异步线程或Feign调用场景丢失UserDetails）。需用户重新登录后重试</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查用户账号状态（表名以HZERO IAM实际表为准）
   SELECT USER_ID, LOGIN_NAME, STATUS, ENABLED, LAST_LOGIN_DATE
   FROM IAM_USER
-  WHERE USER_ID = #{userId};</code></pre>
+  WHERE USER_ID = #&#123;userId&#125;;</code></pre>
 <h4>报错9：单据状态不允许删除</h4>
 <ul><li><strong>触发条件</strong>：用户选中已提交审批（AUDIT_STAT为RUN）或已审批通过（AUDIT_STAT为APPROVED）的单据点击删除</li><li><strong>逻辑分析</strong>：删除接口remove（SaPolicySpecialHeaderServiceImpl.java:250）当前实现直接按POLICY_SPECIAL_ID批量删除头表和行表，未显式校验单据状态。但根据业务规则，仅AUDIT_STAT为NEW或null的未提交单据允许删除，已提交OA审批的单据删除将导致OA流程实例残留（WFID/HZ_INSTANCE_ID指向不存在的业务单据）。前端应限制仅未提交单据可勾选删除，若绕过前端直接调用接口需后端补充状态校验。需先撤回OA审批再删除</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, AUDIT_STAT, WFID, HZ_INSTANCE_ID,
          (CASE WHEN AUDIT_STAT IN ('RUN', 'APPROVED') THEN '已提交/已审批-不允许删除'
                ELSE '允许删除' END) AS 删除判断
   FROM SA_POLICY_SPECIAL_HEADER
-  WHERE POLICY_SPECIAL_ID IN (#{id1}, #{id2});</code></pre>
+  WHERE POLICY_SPECIAL_ID IN (#&#123;id1&#125;, #&#123;id2&#125;);</code></pre>
 <h4>报错10：网络请求失败</h4>
 <ul><li><strong>触发条件</strong>：用户点击保存、保存并提交、删除或查询，前端axios请求抛出网络异常或超时</li><li><strong>逻辑分析</strong>：前端调用/v1/&#123;organizationId&#125;/sa-policy-special-headers/*系列接口时，因后端ae-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)ae-business微服务未注册到Nacos或已宕机；(2)OA审批系统（workFlowStart）调用超时导致保存并提交接口整体超时；(3)EBS资金池查询（select-capital）接口超时；(4)网络中断或防火墙拦截。需联系运维确认ae-business、OA、EBS服务状态</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查政策性补贴申请单据量及OA流程状态分布

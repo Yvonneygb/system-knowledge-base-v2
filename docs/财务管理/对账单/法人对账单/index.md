@@ -319,16 +319,16 @@
   -- 以下为EBS侧核查SQL（在EBS库执行）
   SELECT PERIOD_NAME, ORG_NAME, PARTY_NUMBER, BEGIN_BALANCE, DEBIT_AMOUNT, CREDIT_AMOUNT, END_BALANCE
   FROM CUX_CUSTOMER_STATE_HEADER_V
-  WHERE PERIOD_NAME = #{periodName}
-    AND (ORG_NAME = #{orgName} OR #{orgName} IS NULL)
-    AND (STATE_TYPE = #{stateType} OR #{stateType} IS NULL)
+  WHERE PERIOD_NAME = #&#123;periodName&#125;
+    AND (ORG_NAME = #&#123;orgName&#125; OR #&#123;orgName&#125; IS NULL)
+    AND (STATE_TYPE = #&#123;stateType&#125; OR #&#123;stateType&#125; IS NULL)
   ORDER BY PARTY_NUMBER;</code></pre>
 <h4>报错3：请传入对账单类型</h4>
 <ul><li><strong>触发条件</strong>：用户点击导出按钮但未传入对账单类型（stateType）参数</li><li><strong>逻辑分析</strong>：导出接口cuxCustomerStateHeaderDetailExport使用@ExcelExport动态导出，CuxCustomerStateHeader实体实现DynamicExportEntity接口的columns方法（CuxCustomerStateHeader.java:140）校验customData非空，若StringUtils.isBlank(customData)则抛出CommonException("请传入对账单类型")。customData中包含stateType字段用于区分四类导出列（1=货款、2=未结算订单、3=货款调整、4=保证金）。根因有二：(1)前端导出时未将stateType拼装到customData参数中；(2)customData JSON格式错误无法解析。需前端在导出请求中补充stateType参数</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>-- 核查EBS侧四类对账单类型是否有数据（在EBS库执行）
   SELECT STATE_TYPE, COUNT(1) AS 记录数
   FROM CUX_CUSTOMER_STATE_HEADER_V
-  WHERE PERIOD_NAME = #{periodName}
+  WHERE PERIOD_NAME = #&#123;periodName&#125;
   GROUP BY STATE_TYPE
   ORDER BY STATE_TYPE;</code></pre>
 <h4>报错4：状态更新失败</h4>
@@ -348,7 +348,7 @@
 <pre class="detail-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre>
+  WHERE USER_ID = #&#123;userId&#125; AND ORGANIZATION_ID = #&#123;organizationId&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="常见问题">

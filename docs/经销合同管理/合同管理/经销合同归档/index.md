@@ -235,7 +235,7 @@
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD 
-    WHERE SALE_CONTRACT_HEAD_ID = #{id} AND HZ_APPROVE_STATUS = 'APPROVED';</code></pre>
+    WHERE SALE_CONTRACT_HEAD_ID = #&#123;id&#125; AND HZ_APPROVE_STATUS = 'APPROVED';</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -301,7 +301,7 @@
 <pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR,
          HZ_APPROVE_STATUS, STATE_PIGEONHOLE, PIGEONHOLE_DATE, ACTUAL_PIGEONHOLE_DATE
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID = #{id}
+  WHERE SALE_CONTRACT_HEAD_ID = #&#123;id&#125;
     AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NOT NULL);</code></pre>
 <h4>报错2：未配置经销合同延期归档天数</h4>
 <ul><li><strong>触发条件</strong>：归档推送CRM时，scpSysConf查询CONTRACT_PIGEONHOLE_DATE系统参数返回空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl.insertPigeonholeDate方法通过scpSysConf(SysConfConstants.CONTRACT_PIGEONHOLE_DATE)获取归档天数，用于计算应归档日期（PIGEONHOLE_DATE=START_DATE+归档天数）。系统参数未配置时无法计算归档日期，导致后续归档推送和延期判断失败。需联系管理员在系统参数配置中补全CONTRACT_PIGEONHOLE_DATE</li><li><strong>排查SQL</strong>：</li></ul>
@@ -311,12 +311,12 @@
 <ul><li><strong>触发条件</strong>：归档模块调用CRM接口时，saSaleContractHead.getPigeonholeDate()返回null</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl归档CRM接口调用时校验PIGEONHOLE_DATE非空，为空时抛IllegalArgumentException。根因是该合同为历史数据（功能上线前签订），未通过insertPigeonholeDate自动生成归档日期。需手动补全PIGEONHOLE_DATE或重新触发归档日期计算</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, PIGEONHOLE_DATE, STATE_PIGEONHOLE
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND PIGEONHOLE_DATE IS NULL;</code></pre>
+  WHERE SALE_CONTRACT_HEAD_ID = #&#123;id&#125; AND PIGEONHOLE_DATE IS NULL;</code></pre>
 <h4>报错4：添加合同归档推送任务异常</h4>
 <ul><li><strong>触发条件</strong>：归档推送任务创建时，saleContractDto合同数据为空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl添加归档推送任务方法校验saleContractDto非空，为空时抛CommonException。根因是归档推送任务队列消息体缺失合同数据，可能由消息序列化异常或上游传参错误导致。需重新发起归档流程生成完整推送任务</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, STATE_PIGEONHOLE, PIGEONHOLE_DATE_REALLY
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CONTRACT_NO IS NULL OR CONTRACT_NO = '');</code></pre>
+  WHERE SALE_CONTRACT_HEAD_ID = #&#123;id&#125; AND (CONTRACT_NO IS NULL OR CONTRACT_NO = '');</code></pre>
 <h4>报错5：流程编码缺失</h4>
 <ul><li><strong>触发条件</strong>：用户点击"保存并提交"发起归档审批，dto.getFlowCode()为空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl.saveAndSubmit方法首行校验flowCode非空，归档需通过工作流SA_SALE_CONTRACT_HEAD_GD审批，flowCode为空无法启动工作流。根因是前端未选择归档审批流程或流程配置缺失。需在提交前选择归档审批流程</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT WORKFLOW_CODE, WORKFLOW_NAME FROM WORKFLOW_CONFIG
@@ -326,7 +326,7 @@
 <pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, PIGEONHOLE_DATE,
          PIGEONHOLE_DATE_REALLY, DELIVER_DELAY_DATE
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SA_CONTR_HEAD_CODE = #{saContrHeadCode};</code></pre>
+  WHERE SA_CONTR_HEAD_CODE = #&#123;saContrHeadCode&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="常见问题">

@@ -392,15 +392,15 @@ SELECT
     v.no_tax_amt
 FROM epms.mkt_terminal_re_cashout_view v
 WHERE 1 = 1
-    AND v.organization_id = #{organizationId}                     -- 组织ID（精确）
-    AND v.terminal_code LIKE '%' || #{terminalCode} || '%'        -- 门店编码（模糊）
-    AND v.terminal_name LIKE '%' || #{terminalName} || '%'        -- 门店名称（模糊）
-    AND v.cust_code LIKE '%' || #{custCode} || '%'                -- 经销商编码（模糊）
-    AND v.cust_name LIKE '%' || #{custName} || '%'                -- 经销商名称（模糊）
-    AND v.create_time &gt;= #{startTime}                             -- 创建时间范围-开始
-    AND v.create_time &lt;= #{endTime}                               -- 创建时间范围-结束
-    AND v.billing_unit_code = #{billingUnitCode}                  -- 开票单位编码（精确）
-    AND v.billing_unit_name LIKE '%' || #{billingUnitName} || '%' -- 开票单位名称（模糊）</code></pre>
+    AND v.organization_id = #&#123;organizationId&#125;                     -- 组织ID（精确）
+    AND v.terminal_code LIKE '%' || #&#123;terminalCode&#125; || '%'        -- 门店编码（模糊）
+    AND v.terminal_name LIKE '%' || #&#123;terminalName&#125; || '%'        -- 门店名称（模糊）
+    AND v.cust_code LIKE '%' || #&#123;custCode&#125; || '%'                -- 经销商编码（模糊）
+    AND v.cust_name LIKE '%' || #&#123;custName&#125; || '%'                -- 经销商名称（模糊）
+    AND v.create_time &gt;= #&#123;startTime&#125;                             -- 创建时间范围-开始
+    AND v.create_time &lt;= #&#123;endTime&#125;                               -- 创建时间范围-结束
+    AND v.billing_unit_code = #&#123;billingUnitCode&#125;                  -- 开票单位编码（精确）
+    AND v.billing_unit_name LIKE '%' || #&#123;billingUnitName&#125; || '%' -- 开票单位名称（模糊）</code></pre>
 </KbCard>
 
 <KbCard title="状态机">

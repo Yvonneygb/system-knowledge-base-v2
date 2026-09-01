@@ -312,7 +312,7 @@
 </table>
 <blockquote>查询SQL（后端接口Mapper：FinFeeCashoutHeaderMapper）：</blockquote>
 <pre class="detail-sql" v-pre><code>SELECT bx_id, bx_no, cust_name, total_can_cashout_amt, used_cashout_amt
-FROM fin_fee_bx_header WHERE stat = 7 AND save_type = 2 AND cust_id = #{custId}
+FROM fin_fee_bx_header WHERE stat = 7 AND save_type = 2 AND cust_id = #&#123;custId&#125;
   AND total_can_cashout_amt - used_cashout_amt &gt; 0;</code></pre>
 </KbCard>
 
@@ -333,7 +333,7 @@ FROM fin_fee_bx_header WHERE stat = 7 AND save_type = 2 AND cust_id = #{custId}
 <ul><li><strong>触发条件</strong>：审批状态为NEW且签章校验通过</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验;验发票金额&gt;0（支付方式非3时）</li><li>第2点：校验本次兑现金额&lt;=剩余可兑现金额</li><li>第3点：额度内校验本次核销金额&lt;=额度内可用金额</li><li>第4点：额度外校验本次兑现金额&lt;=额度外可用金额-已占用金额</li><li>第5点：发起工作流ADJ_GGBXFPDX</li><li><strong>接口调用</strong>：工作流发起接口</li><li><strong>排查SQL</strong>：</li></ul>
 <pre class="detail-sql" v-pre><code>SELECT fee_cashout_id, fee_cashout_no, cashout_type, this_cashout_amt, total_can_cashout_amt,
        in_can_use_amt, out_can_use_amt, hz_approve_status
-FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};</code></pre>
+FROM fin_fee_cashout_header WHERE fee_cashout_id = &#123;id&#125;;</code></pre>
 <h4>按钮2：打印（详情页）</h4>
 <ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询兑现单头表和行表数据</li><li>第2点：翻译值集（兑现类型、支付方式、发票类型）</li><li>第3点：查询流程审批历史</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/fin-fee-cashout-headers/detail/print</li><li><strong>排查SQL</strong>：无</li></ul>
 </KbCard>
@@ -345,28 +345,28 @@ FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};</code></pre>
 <p>- 第2点：金额&lt;=0时报错"发票金额异常，请检查！"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT pay_type, fact_invoice_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT pay_type, fact_invoice_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = &#123;id&#125;;</code></pre>
 <ul><li>校验2：剩余可兑现金额校验 —— 确保兑现金额不超剩余</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：剩余可兑现金额=可兑现总额-已兑现总额</p>
 <p>- 第2点：本次兑现金额&gt;剩余可兑现金额时报错</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT total_can_cashout_amt, used_cashout_amt, this_cashout_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT total_can_cashout_amt, used_cashout_amt, this_cashout_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = &#123;id&#125;;</code></pre>
 <ul><li>校验3：额度内可用金额校验 —— 额度内核销金额不超可用</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：兑现类型=额度内时，本次核销金额&lt;=额度内可用金额</p>
 <p>- 第2点：超出时报错"本次核销金额不可超过额度内可用金额"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT this_writeoff_amt, in_can_use_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id} AND cashout_type = 1;</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT this_writeoff_amt, in_can_use_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = &#123;id&#125; AND cashout_type = 1;</code></pre>
 <ul><li>校验4：额度外可用金额校验 —— 额度外兑现金额不超可用</li></ul>
 <ul><li>详细逻辑</li></ul>
 <p>- 第1点：兑现类型=额度外时，本次兑现金额&lt;=额度外可用金额-已占用金额</p>
 <p>- 第2点：超出时报错"额度外金额已占用"</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT this_cashout_amt, out_can_use_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id} AND cashout_type = 2;</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT this_cashout_amt, out_can_use_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = &#123;id&#125; AND cashout_type = 2;</code></pre>
 </KbCard>
 
 <KbCard title="提交校验">
@@ -376,7 +376,7 @@ FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};</code></pre>
 <p>- 第2点：可兑现总额-已使用-本次兑现&lt;0时报错</p>
 <ul><li>系统体现：阻断性报错</li></ul>
 <ul><li>排查SQL：</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT total_can_cashout_amt, this_cashout_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};</code></pre>
+<pre class="detail-sql" v-pre><code>SELECT total_can_cashout_amt, this_cashout_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = &#123;id&#125;;</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
@@ -647,7 +647,7 @@ FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};</code></pre>
 <KbCard title="常见问题">
 <ul><li>问题1：ERP资金池同步失败</li><li>原因：ERP接口不可用或数据异常</li><li>解决思路：检查ERP接口状态和数据完整性</li></ul>
 <ul><li>问题2：额度外预算更新不正确</li><li>原因：预算表数据异常或税率配置错误</li><li>解决思路：检查额度外预算表和Outlimit_Tax_Rate配置</li></ul>
-<pre class="detail-sql" v-pre><code>SELECT * FROM mkt_outlimit_bud_header WHERE terminal_code = #{code} AND bud_year = #{year};
+<pre class="detail-sql" v-pre><code>SELECT * FROM mkt_outlimit_bud_header WHERE terminal_code = #&#123;code&#125; AND bud_year = #&#123;year&#125;;
 SELECT confname, confvalue FROM scpsysconf WHERE confname = 'Outlimit_Tax_Rate';</code></pre>
 </KbCard>
 
