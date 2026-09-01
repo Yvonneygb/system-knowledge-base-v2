@@ -131,33 +131,24 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 户外广告投放分布查询">
-<KbQuote>查询已审批通过的户外广告投放申请的分布情况，按区域、经销商、广告媒介等维度展示，用于分析户外广告资源投放的覆盖范围和分布合理性。</KbQuote>
-
-**具体逻辑**：
-
-- 1、仅查询申请类型为户外广告(apply_type=2)且审批状态为已通过(hz_approve_status='APPROVED')的记录
-- 2、地址通过拼接省+市+区县+详细地址生成完整地址
-- 3、广告媒介项目通过HPFM_LOV_VALUE值集翻译(AE.ASVERT_MEDIUM_ITEM)
-- 4、发布日期格式化为YYYY-MM-DD
-- 5、创建人字段实际取值为经销商编码（通过子查询从CUSTOMER表获取）
+<KbCard num="1" title="重点逻辑1：纯报表查询页面【只读查询】">
+<ul><li><strong>业务意义</strong>：供内部人员查询户外广告投放的分布情况，了解广告投放的整体分布</li><li><strong>具体逻辑描述</strong>：</li><li>本页面为hlod低代码报表页面，无独立前端源码</li><li>仅提供查询和导出功能，不支持新增、修改、删除操作</li><li>数据来源于广告费申请头表，筛选Apply_Type=2且HZ_APPROVE_STATUS='APPROVED'</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 数据过滤条件">
-**具体逻辑**：
-
-- 1、apply_type = 2：仅户外广告类型
-- 2、hz_approve_status = 'APPROVED'：仅审批通过的申请
-- 3、支持按事业部、销售区域、运营中心、经销商编码/名称、省份、费用申请单号、发布日期筛选
+<KbCard num="2" title="重点逻辑2：数据筛选条件">
+<ul><li><strong>业务意义</strong>：只展示已审批通过的户外广告投放申请</li><li><strong>具体逻辑描述</strong>：</li><li>Apply_Type = 2：广告投放申请类型</li><li>HZ_APPROVE_STATUS = 'APPROVED'：只展示已审批通过的单据</li><li>排除未审批、审批中、已驳回的单据</li></ul>
 </KbCard>
 
-<KbCard num="3" title="2.3 区域/组织名称翻译">
-**具体逻辑**：
+<KbCard num="3" title="重点逻辑3：广告媒介项目LOV翻译">
+<ul><li><strong>业务意义</strong>：将广告媒介项目编码翻译为可读含义</li><li><strong>具体逻辑描述</strong>：</li><li>通过子查询 <code>HZERO.HPFM_LOV_VALUE</code> 翻译，LOV_CODE = 'AE.ASVERT_MEDIUM_ITEM'</li><li>SQL：<code>(SELECT meaning FROM HZERO.HPFM_LOV_VALUE WHERE lov_code = 'AE.ASVERT_MEDIUM_ITEM' and value = f.advert_medium_item)</code></li><li>VO中使用@LovValue注解：<code>@LovValue(value = "AE.ASVERT_MEDIUM_ITEM", delimiter = ",")</code></li></ul>
+</KbCard>
 
-- 1、销售区域：通过子查询从SCPORG表翻译orgid→orgname
-- 2、运营中心：通过子查询从SCPORG表翻译orgid→orgname
-- 3、事业部：通过DIVISION_BASE_SET关联获取organization_id
-- 4、--
+<KbCard num="4" title="重点逻辑4：详细地址拼接">
+<ul><li><strong>业务意义</strong>：将省、市、区、详细地址拼接为完整地址</li><li><strong>具体逻辑描述</strong>：</li><li>SQL中使用concat嵌套拼接：<code>concat(concat(concat(province_areaname, city_areaname), county_areaname), addr)</code></li><li>结果为"省名市名区名详细地址"的完整地址字符串</li></ul>
+</KbCard>
+
+<KbCard num="5" title="重点逻辑5：查询条件匹配规则">
+<ul><li><strong>业务意义</strong>：支持多维度灵活筛选户外广告分布数据</li><li><strong>具体逻辑描述</strong>：</li><li>模糊查询（LIKE '%xxx%'）：经销商名称</li><li>精确查询：组织ID、事业部ID、经销商编码、省份名称、费用申请单号</li><li>子查询匹配：销售区域（通过scporg表orgid查orgname）、运营中心（同上）</li><li>日期精确匹配：合同有效期起/止使用to_date精确比较</li></ul>
 </KbCard>
 
 </div>
@@ -167,90 +158,243 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
+<KbCard title="界面模块">
+<h4>查询条件区域</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>组织ID</td><td>ORGANIZATION_ID</td><td>隐藏</td><td>当前用户组织ID</td><td>常显</td><td>自动获取，精确匹配</td></tr>
+<tr><td>事业部ID</td><td>DIVISION_ID</td><td>下拉选择框</td><td>按事业部筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>销售区域ID</td><td>SALEZONE_ORG_ID</td><td>下拉选择框</td><td>按销售区域筛选</td><td>常显</td><td>用户选择，子查询scporg表获取orgname匹配</td></tr>
+<tr><td>运营中心ID</td><td>OPERAT_CENTER_ORG_ID</td><td>下拉选择框</td><td>按运营中心筛选</td><td>常显</td><td>用户选择，子查询scporg表获取orgname匹配</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>文本框</td><td>按经销商编码筛选</td><td>常显</td><td>用户输入，精确匹配</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>文本框</td><td>按经销商名称筛选</td><td>常显</td><td>用户输入，模糊匹配（LIKE '%xxx%'）</td></tr>
+<tr><td>省份名称</td><td>PROVINCE_AREANAME</td><td>下拉选择框</td><td>按省份筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>费用申请单号</td><td>FEE_APPLY_NO</td><td>文本框</td><td>按费用申请单号筛选</td><td>常显</td><td>用户输入，精确匹配</td></tr>
+<tr><td>合同有效期起</td><td>PUBLISH_FROM_DATE</td><td>日期选择器</td><td>发布开始日期</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>合同有效期止</td><td>PUBLISH_TO_DATE</td><td>日期选择器</td><td>发布结束日期</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+</tbody>
+</table>
+<h4>报表数据区域</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>费用申请单号</td><td>FEE_APPLY_NO</td><td>文本</td><td>费用申请单号</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>事业部ID</td><td>DIVISION_ID</td><td>隐藏</td><td>事业部ID</td><td>常显</td><td>关联DIVISION_BASE_SET获取</td></tr>
+<tr><td>销售区域名称</td><td>SALEZONE_ORG_NAME</td><td>文本</td><td>销售区域组织名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>运营中心名称</td><td>OPERAT_CENTER_ORG_NAME</td><td>文本</td><td>运营中心组织名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>经销商ID</td><td>CUST_ID</td><td>隐藏</td><td>经销商ID</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>文本</td><td>经销商编码</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>文本</td><td>经销商名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>省份区域名称</td><td>PROVINCE_AREANAME</td><td>文本</td><td>省份名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>城市区域名称</td><td>CITY_AREANAME</td><td>文本</td><td>城市名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>县区区域名称</td><td>COUNTY_AREANAME</td><td>文本</td><td>区县名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>详细地址</td><td>ADDR</td><td>文本</td><td>完整地址</td><td>常显</td><td>concat(省+市+区+详细地址)拼接</td></tr>
+<tr><td>广告媒介类型</td><td>ADVERT_MEDIUM_TYPE</td><td>文本</td><td>广告媒介类型</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>广告尺寸</td><td>ADVERT_SIZE</td><td>文本</td><td>广告尺寸</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>广告媒介项目</td><td>ADVERT_MEDIUM_ITEM</td><td>文本</td><td>广告媒介项目</td><td>常显</td><td>子查询HPFM_LOV_VALUE翻译(AE.ASVERT_MEDIUM_ITEM)</td></tr>
+<tr><td>广告公司</td><td>ADVERT_COMPANY</td><td>文本</td><td>广告公司</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>创建人</td><td>CREATOR</td><td>文本</td><td>创建人</td><td>常显</td><td>子查询customer表获取customer_code</td></tr>
+<tr><td>发布开始日期</td><td>PUBLISH_FROM_DATE</td><td>日期</td><td>发布开始日期</td><td>常显</td><td>TO_CHAR格式化YYYY-MM-DD</td></tr>
+<tr><td>发布结束日期</td><td>PUBLISH_TO_DATE</td><td>日期</td><td>发布结束日期</td><td>常显</td><td>TO_CHAR格式化YYYY-MM-DD</td></tr>
+<tr><td>申请金额</td><td>TOTAL_APPLY_AMT_BX</td><td>数值</td><td>申请金额</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>组织ID</td><td>ORGANIZATION_ID</td><td>隐藏</td><td>组织ID</td><td>常显</td><td>关联DIVISION_BASE_SET获取</td></tr>
+</tbody>
+</table>
+<h4>其他按钮</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询户外广告分布数据</td><td>列表页查询区域</td><td>常显</td><td>调用POST /outdoor-advertising-distribution/search接口，分页返回分布数据</td></tr>
+<tr><td>导出</td><td>导出报表数据为Excel</td><td>列表页查询区域</td><td>常显</td><td>导出当前查询结果为Excel文件</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（列表页查询区域）</h4>
+<ul><li><strong>业务意义</strong>：根据查询条件搜索户外广告分布数据</li><li><strong>具体逻辑描述</strong>：</li><li>点击查询按钮，触发POST <code>/v1/&#123;organizationId&#125;/terminalReport/outdoor-advertising-distribution/search</code> 接口</li><li>请求参数为OutdoorAdvertisingDistributionSearchDTO</li><li>后端通过PageHelper.doPageAndSort实现分页查询</li><li>查询FIN_FEE_APPLY_HEADER表，筛选Apply_Type=2且HZ_APPROVE_STATUS='APPROVED'</li><li>返回OutdoorAdvertisingDistributionSearchVO分页结果</li></ul>
+<h4>按钮2：导出（列表页查询区域）</h4>
+<ul><li><strong>业务意义</strong>：将查询结果导出为Excel文件</li><li><strong>具体逻辑描述</strong>：</li><li>点击导出按钮，将当前查询条件下的报表数据导出为Excel</li></ul>
 </KbCard>
-<KbCard title="导入">
 
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口名称</th><th>请求方式</th><th>接口路径</th><th>权限</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>户外广告投放分布报表查询</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/terminalReport/outdoor-advertising-distribution/search`</td><td>组织级权限</td><td>分页查询户外广告分布数据</td></tr>
+</tbody>
+</table>
+<p><strong>接口入参（OutdoorAdvertisingDistributionSearchDTO）：</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>参数名</th><th>类型</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>organizationId</td><td>Long</td><td>组织ID（精确匹配）</td></tr>
+<tr><td>divisionId</td><td>Long</td><td>事业部ID（精确匹配）</td></tr>
+<tr><td>salezoneOrgId</td><td>Long</td><td>销售区域组织ID（子查询匹配）</td></tr>
+<tr><td>operatCenterOrgId</td><td>Long</td><td>运营中心组织ID（子查询匹配）</td></tr>
+<tr><td>custCode</td><td>String</td><td>经销商编码（精确匹配）</td></tr>
+<tr><td>custName</td><td>String</td><td>经销商名称（模糊匹配）</td></tr>
+<tr><td>provinceName</td><td>String</td><td>省份名称（精确匹配）</td></tr>
+<tr><td>feeApplyNo</td><td>String</td><td>费用申请单号（精确匹配）</td></tr>
+<tr><td>startDate</td><td>String</td><td>合同有效期起（精确匹配）</td></tr>
+<tr><td>endDate</td><td>String</td><td>合同有效期止（精确匹配）</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="其他按钮">
 
-无。纯查询报表，无新增/编辑/删除/导出按钮。
+<KbCard title="后端接口Mapper SQL">
+<pre class="detail-sql" v-pre><code>-- 户外广告投放分布报表查询
+SELECT * FROM (
+    SELECT
+        f.fee_apply_no AS fee_Apply_No,
+        del.organization_id AS organization_Id,
+        f.salezone_org_name AS salezone_Org_Name,
+        f.operat_center_org_name AS operat_Center_Org_Name,
+        f.province_areaname AS province_Area_name,
+        f.city_areaname AS city_Area_name,
+        f.county_areaname AS county_Area_name,
+        f.division_id AS division_Id,
+        f.cust_code AS cust_Code,
+        f.cust_id AS cust_Id,
+        f.cust_name AS cust_Name,
+        f.total_apply_amt_bx AS total_apply_amt_bx,
+        f.advert_medium_type AS advert_Medium_Type,
+        f.advert_size AS advert_Size,
+        (SELECT meaning FROM HZERO.HPFM_LOV_VALUE WHERE lov_code = 'AE.ASVERT_MEDIUM_ITEM' AND value = f.advert_medium_item) AS advert_Medium_Item,
+        TO_CHAR(f.publish_from_date, 'YYYY-MM-DD') AS publish_From_Date,
+        TO_CHAR(f.publish_to_date, 'YYYY-MM-DD') AS publish_To_Date,
+        f.advert_company AS advert_Company,
+        (SELECT customer_code FROM epms.customer c WHERE c.customer_id = f.cust_id) AS creator,
+        concat(concat(concat(f.province_areaname, f.city_areaname), f.county_areaname), f.addr) AS addr
+    FROM epms.fin_fee_apply_header f
+    LEFT JOIN epms.DIVISION_BASE_SET del ON del.organization_id = f.entid
+    LEFT JOIN epms.customer_org cuo ON f.cust_id = cuo.customer_id
+    WHERE f.Apply_Type = 2
+      AND f.HZ_APPROVE_STATUS = 'APPROVED'
+) t
+WHERE 1 = 1
+    AND t.organization_Id = #{organizationId}                                        -- 组织ID（精确）
+    AND t.division_Id = #{divisionId}                                                -- 事业部ID（精确）
+    AND t.sale_zone_Org_Name = (SELECT s.orgname FROM epms.scporg s WHERE s.orgid = #{salezoneOrgId})  -- 销售区域（子查询）
+    AND t.operat_Center_Org_Name = (SELECT orgname FROM epms.scporg s WHERE s.orgid = #{operatCenterOrgId})  -- 运营中心（子查询）
+    AND t.cust_Code = #{custCode}                                                    -- 经销商编码（精确）
+    AND t.cust_Name LIKE '%' || #{custName} || '%'                                   -- 经销商名称（模糊）
+    AND t.province_Area_name = #{provinceName}                                       -- 省份名称（精确）
+    AND t.fee_Apply_No = #{feeApplyNo}                                               -- 费用申请单号（精确）
+    AND to_date(t.publish_from_date, 'YYYY-MM-DD') = to_date(#{startDate}, 'YYYY-MM-DD')  -- 合同有效期起（精确）
+    AND to_date(t.publish_To_Date, 'YYYY-MM-DD') = to_date(#{endDate}, 'YYYY-MM-DD')      -- 合同有效期止（精确）</code></pre>
+</KbCard>
 
-</KbCard>
-<KbCard title="保存校验">
-</KbCard>
-<KbCard title="提交校验">
-</KbCard>
 <KbCard title="状态机">
-
-无。纯查询报表，无状态流转。
-
----
-
-</KbCard>
-<KbCard num="1" title="FIN_FEE_APPLY_HEADER（广告投放申请表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| fee_apply_id | BIGINT | 主键 | - |
-| fee_apply_no | VARCHAR | 费用申请单号 | - |
-| apply_type | INTEGER | 申请类型 | 2-户外广告 |
-| hz_approve_status | VARCHAR | 审批状态 | APPROVED-已通过 |
-| entid | BIGINT | 组织ID/事业部ID | - |
-| cust_id | BIGINT | 经销商ID | - |
-| cust_code | VARCHAR | 经销商编码 | - |
-| cust_name | VARCHAR | 经销商名称 | - |
-| division_id | BIGINT | 事业部ID | - |
-| salezone_org_name | VARCHAR | 销售区域名称 | - |
-| operat_center_org_name | VARCHAR | 运营中心名称 | - |
-| province_areaname | VARCHAR | 省份名称 | - |
-| city_areaname | VARCHAR | 城市名称 | - |
-| county_areaname | VARCHAR | 区县名称 | - |
-| addr | VARCHAR | 详细地址 | - |
-| advert_medium_type | VARCHAR | 广告媒介类型 | - |
-| advert_size | VARCHAR | 广告尺寸 | - |
-| advert_medium_item | VARCHAR | 广告媒介项目 | LOV: AE.ASVERT_MEDIUM_ITEM |
-| advert_company | VARCHAR | 广告公司 | - |
-| publish_from_date | DATE | 发布开始日期 | - |
-| publish_to_date | DATE | 发布结束日期 | - |
-| total_apply_amt_bx | DECIMAL | 申请金额(报销) | - |
-
+<blockquote>本页面为纯查询报表页面，无状态流转。</blockquote>
 </KbCard>
 
-<KbCard num="2" title="DIVISION_BASE_SET（事业部基础设置表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| division_id | BIGINT | 事业部ID | - |
-| division_name | VARCHAR | 事业部名称 | - |
-| organization_id | BIGINT | 组织ID | 关联FIN_FEE_APPLY_HEADER.entid |
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>广告费申请头表</td><td>数据来源</td><td>提供广告投放申请数据（Apply_Type=2且APPROVED）</td><td>广告投放申请已审批通过</td></tr>
+<tr><td>事业部基础设置</td><td>数据关联</td><td>关联DIVISION_BASE_SET获取组织ID</td><td>事业部已配置</td></tr>
+<tr><td>客户组织</td><td>数据关联</td><td>关联CUSTOMER_ORG</td><td>客户主数据已维护</td></tr>
+<tr><td>值集（HPFM_LOV_VALUE）</td><td>数据翻译</td><td>翻译广告媒介项目编码为含义（LOV_CODE='AE.ASVERT_MEDIUM_ITEM'）</td><td>值集已维护</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="3" title="HPFM_LOV_VALUE（平台LOV值表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| lov_code | VARCHAR | LOV编码 | AE.ASVERT_MEDIUM_ITEM |
-| value | VARCHAR | 值 | 对应advert_medium_item |
-| meaning | VARCHAR | 含义 | 翻译后的中文描述 |
-
----
-
+<KbCard title="下游影响">
+<ul><li>户外广告投放分布分析：管理层通过报表了解户外广告投放的区域和经销商分布</li><li>广告费申请统计：统计各维度的广告费申请金额</li><li>Excel导出归档：导出报表数据供内部管理决策与归档使用</li></ul>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="FIN_FEE_APPLY_HEADER（广告费申请头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>FEE_APPLY_NO</td><td>VARCHAR2</td><td>费用申请单号</td><td>费用申请单号</td><td>编码规则生成</td></tr>
+<tr><td>APPLY_TYPE</td><td>NUMBER</td><td>申请类型</td><td>-</td><td>2=广告投放</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR2</td><td>审批状态</td><td>-</td><td>APPROVED=已审批通过</td></tr>
+<tr><td>ENTID</td><td>NUMBER</td><td>企业ID</td><td>-</td><td>关联DIVISION_BASE_SET</td></tr>
+<tr><td>SALEZONE_ORG_NAME</td><td>VARCHAR2</td><td>销售区域名称</td><td>销售区域名称</td><td>保存时带入</td></tr>
+<tr><td>OPERAT_CENTER_ORG_NAME</td><td>VARCHAR2</td><td>运营中心名称</td><td>运营中心名称</td><td>保存时带入</td></tr>
+<tr><td>PROVINCE_AREANAME</td><td>VARCHAR2</td><td>省份名称</td><td>省份区域名称</td><td>保存时带入</td></tr>
+<tr><td>CITY_AREANAME</td><td>VARCHAR2</td><td>城市名称</td><td>城市区域名称</td><td>保存时带入</td></tr>
+<tr><td>COUNTY_AREANAME</td><td>VARCHAR2</td><td>区县名称</td><td>县区区域名称</td><td>保存时带入</td></tr>
+<tr><td>ADDR</td><td>VARCHAR2</td><td>详细地址</td><td>-</td><td>保存时带入</td></tr>
+<tr><td>DIVISION_ID</td><td>NUMBER</td><td>事业部ID</td><td>事业部ID</td><td>保存时带入</td></tr>
+<tr><td>CUST_ID</td><td>NUMBER</td><td>经销商ID</td><td>经销商ID</td><td>关联客户主数据</td></tr>
+<tr><td>CUST_CODE</td><td>VARCHAR2</td><td>经销商编码</td><td>经销商编码</td><td>保存时带入</td></tr>
+<tr><td>CUST_NAME</td><td>VARCHAR2</td><td>经销商名称</td><td>经销商名称</td><td>保存时带入</td></tr>
+<tr><td>TOTAL_APPLY_AMT_BX</td><td>DECIMAL</td><td>申请金额</td><td>申请金额</td><td>用户输入</td></tr>
+<tr><td>ADVERT_MEDIUM_TYPE</td><td>VARCHAR2</td><td>广告媒介类型</td><td>广告媒介类型</td><td>用户输入</td></tr>
+<tr><td>ADVERT_SIZE</td><td>VARCHAR2</td><td>广告尺寸</td><td>广告尺寸</td><td>用户输入</td></tr>
+<tr><td>ADVERT_MEDIUM_ITEM</td><td>VARCHAR2</td><td>广告媒介项目</td><td>广告媒介项目</td><td>用户选择，LOV翻译</td></tr>
+<tr><td>ADVERT_COMPANY</td><td>VARCHAR2</td><td>广告公司</td><td>广告公司</td><td>用户输入</td></tr>
+<tr><td>PUBLISH_FROM_DATE</td><td>DATE</td><td>发布开始日期</td><td>发布开始日期</td><td>用户选择</td></tr>
+<tr><td>PUBLISH_TO_DATE</td><td>DATE</td><td>发布结束日期</td><td>发布结束日期</td><td>用户选择</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>查询结果为空</td><td>查询按钮点击时</td><td>当前查询条件下无户外广告分布数据，请调整查询条件后重试</td><td>低</td><td>[查看](#报错1查询结果为空)</td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错2网络请求失败接口调用异常)</td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错3权限不足未登录)</td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错4导出失败网络异常)</td></tr>
+</tbody>
+</table>
+<h4>报错1：查询结果为空</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，按当前查询条件（事业部、销售区域、运营中心、经销商、省份、费用申请单号、合同有效期等）查询FIN_FEE_APPLY_HEADER返回空结果集</li><li><strong>逻辑分析</strong>：报表查询FIN_FEE_APPLY_HEADER，筛选Apply_Type=2（广告投放申请）且HZ_APPROVE_STATUS='APPROVED'（已审批通过），关联DIVISION_BASE_SET、CUSTOMER_ORG获取补充信息。若查询条件过严（如经销商编码拼写错误、事业部ID不匹配）、或户外广告投放申请未审批通过（HZ_APPROVE_STATUS非APPROVED）、或申请类型非广告投放（Apply_Type非2）、或用户组织ID与数据不匹配，均会返回空结果。该报错为提示性，不影响系统。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+         fee_apply_no        AS 申请单号,
+         cust_name           AS 经销商名称,
+         total_apply_amt_bx  AS 申请金额,
+         apply_type          AS 申请类型,
+         hz_approve_status   AS 审批状态,
+         organization_id     AS 组织ID
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 2
+  AND    hz_approve_status = 'APPROVED'
+  AND    organization_id = #{当前用户组织ID}
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错2：网络请求失败/接口调用异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/outdoor-advertising-distribution/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.outdoorAdvertisingDistributionSearch接口分页查询FIN_FEE_APPLY_HEADER（Apply_Type=2且HZ_APPROVE_STATUS='APPROVED'），关联DIVISION_BASE_SET、CUSTOMER_ORG，子查询HPFM_LOV_VALUE翻译广告媒介项目。若后端ae-report服务未启动、Oracle数据库连接异常、子查询scporg返回多行触发ORA-01427、to_date转换失败、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 广告投放申请总数,
+         MIN(create_time)    AS 最早创建时间,
+         MAX(create_time)    AS 最晚创建时间
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 2
+  AND    hz_approve_status = 'APPROVED';</code></pre>
+<h4>报错3：权限不足/未登录</h4>
+<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre>
+<h4>报错4：导出失败：网络异常</h4>
+<ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口将当前查询条件下的户外广告分布数据全量查询后生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定事业部、经销商）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
+         COUNT(*)                     AS 广告申请数量
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 2
+  AND    hz_approve_status = 'APPROVED'
+  GROUP  BY TO_CHAR(create_time, 'YYYY')
+  ORDER  BY 年度 DESC;</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -258,88 +402,19 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">查询无数据</td>
-            <td style="font-size:13px;">无审批通过的户外广告申请或筛选条件过严</td>
-            <td style="font-size:13px;">放宽查询条件重试</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">广告媒介项目显示编码而非中文</td>
-            <td style="font-size:13px;">HPFM_LOV_VALUE中未维护对应值</td>
-            <td style="font-size:13px;">在LOV值集中添加翻译</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>放宽查询条件重试</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>广告媒介项目显示编码而非中文</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>在LOV值集中添加翻译</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">为什么只显示apply_type=2的记录？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>本报表专用于户外广告分布，apply_type=2表示户外广告类型
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">为什么只显示审批通过的记录？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>未审批或审批中的申请不代表最终投放，仅已通过记录纳入统计
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">creator字段为什么是经销商编码？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>SQL中creator通过子查询从CUSTOMER表取customer_code，非实际创建人
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">发布日期筛选是精确匹配还是范围？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>当前为精确匹配(to_date等值比较)，非范围查询
-    </div>
-  </div>
-</div>
+<p><strong>Q1：报表只展示哪些数据？</strong></p>
+<p>A：只展示Apply_Type=2（广告投放申请）且HZ_APPROVE_STATUS='APPROVED'（已审批通过）的单据。</p>
+<p><strong>Q2：广告媒介项目如何展示？</strong></p>
+<p>A：通过子查询HPFM_LOV_VALUE（LOV_CODE='AE.ASVERT_MEDIUM_ITEM'）将编码翻译为可读含义。</p>
+<p><strong>Q3：详细地址如何拼接？</strong></p>
+<p>A：通过concat嵌套拼接：concat(concat(concat(省名, 市名), 区名), 详细地址)。</p>
+<p><strong>Q4：报表是否支持导出？</strong></p>
+<p>A：是，支持导出Excel。</p>
+<p><strong>Q5：报表是否支持新增/修改/删除？</strong></p>
+<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -348,10 +423,15 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 更新内容 | 更新人 |
-|------|------|---------|--------|
-| 2026-01-16 | v1.0.0 | 初始创建户外广告分布报表 | - |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-12-16</td><td>-</td><td>HZERO</td><td>初始创建户外广告投放分布报表查询接口</td></tr>
+<tr><td>2025-12-10</td><td>-</td><td>HZERO</td><td>初始创建TerminalReportController</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

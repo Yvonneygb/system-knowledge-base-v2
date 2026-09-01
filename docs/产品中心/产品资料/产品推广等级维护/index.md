@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -68,6 +69,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -121,74 +123,395 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 前端路由"><table class="kl-table"><thead><tr><th>路由</th><th>说明</th></tr></thead><tbody><tr><td><code>/product/promoteGradeList</code></td><td>产品推广等级维护列表页</td></tr></tbody></table></KbCard>
-
-<KbQuote>前端路由配置页面导航和参数传递</KbQuote>
-<KbCard title="2.2 API接口"><table class="kl-table"><thead><tr><th>接口</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGrades</code></td><td>GET</td><td>查询推广等级列表</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGrades/{id}</code></td><td>GET</td><td>查询推广等级详情</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGrades</code></td><td>POST</td><td>新增推广等级</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGrades/{id}</code></td><td>PUT</td><td>更新推广等级</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/prodPromoteGrades/{id}</code></td><td>DELETE</td><td>删除推广等级</td></tr></tbody></table></KbCard>
-
-<KbQuote>提供产品图册增删改查API接口</KbQuote>
-<KbCard title="2.3 无工作流"><p>本菜单无审批工作流，数据直接保存生效。</p></KbCard>
-
-<KbQuote>产品图册无审批流程，提交后直接生效</KbQuote>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：同一产品唯一有效等级 `唯一性控制`">
+<ul><li><strong>业务意义</strong>：确保每个产品在同一时间只有一个有效的推广等级，避免多个等级冲突导致推广策略混乱</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：保存时如果新记录状态为valid，系统自动查找该产品编码是否已存在status=valid的记录</li></ul>
+<ul><li>第2点：如果已存在有效记录，系统自动将旧记录状态置为invalid，再插入/更新新记录</li></ul>
+<ul><li>第3点：此逻辑在后端ServiceImpl的saveData方法中实现，前端无感知</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：失效时产品推广等级重置为C `等级重置`">
+<ul><li><strong>业务意义</strong>：产品推广等级被失效后，产品不再具有特殊推广等级，回归默认等级C</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：失效操作将推广等级记录状态置为invalid</li></ul>
+<ul><li>第2点：同步更新LNK_PROD表对应产品的PROD_PROMOTE_GRADE字段为C</li></ul>
+<ul><li>第3点：如果是有效保存，则将LNK_PROD表的PROD_PROMOTE_GRADE更新为实际等级值</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：保存同时更新产品资料 `数据联动`">
+<ul><li><strong>业务意义</strong>：推广等级维护与产品资料保持实时同步，确保产品资料中的推广等级字段始终反映最新状态</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：保存推广等级后，遍历所有传入记录，根据产品编码更新LNK_PROD表</li></ul>
+<ul><li>第2点：有效记录更新为实际等级值，失效记录更新为C</li></ul>
+<ul><li>第3点：同时更新LNK_PROD的LAST_UPDATED_BY为当前操作用户</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 推广等级列表页"><ul><li><strong>查询条件</strong>：等级编码、等级名称、启用状态等</li><li><strong>列表展示字段</strong>：等级编码、等级名称、等级描述、排序号、启用状态、创建时间等</li><li><strong>操作按钮</strong>：新增、编辑、删除、启用/禁用</li><li><strong>分页</strong>：支持前端分页参数传递，后端返回分页结果</li></ul></KbCard>
-<KbCard title="3.2 推广等级数据结构"><ul><li><strong>等级编码（grade_code）</strong>：推广等级的唯一编码，如A、B、C、D等</li><li><strong>等级名称（grade_name）</strong>：推广等级的显示名称，如"重点推广"、"一般推广"、"限制推广"等</li><li><strong>等级描述（grade_description）</strong>：推广等级的详细说明</li><li><strong>排序号（sequence_number）</strong>：等级的排序顺序，数值越小优先级越高</li><li><strong>启用状态（enabled_flag）</strong>：Y/N，控制等级是否可用</li></ul></KbCard>
-<KbCard title="3.3 业务规则"><ul><li>推广等级编码在同一组织下唯一</li><li>推广等级被产品引用后不可删除，只能禁用</li><li>推广等级控制产品在不同渠道的推广力度，等级越高推广力度越大</li><li>推广等级与推广等级要求配置（prodPromoteGradesControls）配合使用，等级要求配置定义达到某等级需要满足的条件</li></ul></KbCard>
-<KbCard title="3.4 选择弹窗"><table class="kl-table"><thead><tr><th>弹窗名称</th><th>说明</th></tr></thead><tbody><tr><td>产品选择弹窗</td><td>新增/编辑弹窗中"产品编码"字段，使用productModalSelectConfigFn</td></tr></tbody></table>
-<p class='kl-tip'>值集：等级CRM.PROD_PROMOTE_GRADE、生命状态CRM.PRODUCT_Z_STATE、状态CRM.COMMON_STATUS、品牌事业部AE.ITEM_ORGANIZATION</p></KbCard>
-<KbCard title="3.5 导入"><p>支持Excel导入。templateCode=CRM.PROD_PROMOTE_GRADE。</p></KbCard>
-<KbCard title="3.6 其他按钮"><table class="kl-table"><thead><tr><th>按钮</th><th>显示条件</th><th>说明</th></tr></thead><tbody><tr><td>新增</td><td>始终显示</td><td>弹窗编辑</td></tr><tr><td>导出</td><td>始终显示</td><td>导出列表</td></tr><tr><td>批量失效</td><td>始终显示</td><td>红色按钮，批量置status='invalid'</td></tr><tr><td>行内失效</td><td>status='valid'</td><td>确认弹窗"是否失效数据?"</td></tr></tbody></table></KbCard>
-<KbCard title="3.7 保存校验"><p><strong>前端校验：</strong> commonFn_formValid(ds)，必填字段：产品编码、等级；新增时默认status='valid'、grade='C'</p></KbCard>
-<KbCard title="3.8 提交校验"><p class='kl-tip'>无提交/审批功能。</p></KbCard>
-<KbCard title="4.1 产品推广等级表"><p class='kl-tip'>表名：PROD_PROMOTE_GRADES（产品推广等级表）</p>
-<table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th><th>备注</th></tr></thead><tbody><tr><td>id</td><td>NUMBER</td><td>主键ID</td><td>PK</td></tr><tr><td>grade_code</td><td>VARCHAR2</td><td>等级编码</td><td>唯一，如A/B/C/D</td></tr><tr><td>grade_name</td><td>VARCHAR2</td><td>等级名称</td><td>NOT NULL</td></tr><tr><td>grade_description</td><td>VARCHAR2</td><td>等级描述</td><td></td></tr><tr><td>sequence_number</td><td>NUMBER</td><td>排序号</td><td>数值越小优先级越高</td></tr><tr><td>enabled_flag</td><td>VARCHAR2</td><td>启用标志</td><td>Y/N</td></tr><tr><td>organization_id</td><td>NUMBER</td><td>组织ID</td><td></td></tr><tr><td>created_by</td><td>NUMBER</td><td>创建人</td><td></td></tr><tr><td>creation_date</td><td>DATE</td><td>创建时间</td><td></td></tr><tr><td>last_updated_by</td><td>NUMBER</td><td>最后更新人</td><td></td></tr><tr><td>last_update_date</td><td>DATE</td><td>最后更新时间</td><td></td></tr><tr><td>object_version_number</td><td>NUMBER</td><td>版本号</td><td>乐观锁</td></tr></tbody></table></KbCard>
+<KbCard title="界面模块1：推广等级列表页">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>序号</td><td>-</td><td>序号渲染</td><td>行序号</td><td>常显</td><td>自动计算=当前行索引+1</td></tr>
+<tr><td>产品编号</td><td>LNK_PROD_PROMOTE_GRADE.PROD_CODE</td><td>文本框</td><td>产品的唯一编码</td><td>常显</td><td>查询条件：like模糊匹配</td></tr>
+<tr><td>产品名称</td><td>LNK_PROD.PROD_NAME</td><td>文本框</td><td>产品名称</td><td>常显</td><td>查询条件：like模糊匹配；来源于LNK_PROD表关联查询</td></tr>
+<tr><td>型号</td><td>LNK_PROD.LH_PROD_MODEL</td><td>文本框</td><td>产品型号</td><td>常显</td><td>查询条件：like模糊匹配；来源于LNK_PROD表关联查询</td></tr>
+<tr><td>品牌事业部</td><td>LNK_ORG_EXT.ORG_NAME</td><td>下拉选择框</td><td>产品所属品牌事业部</td><td>常显</td><td>查询条件：=精确匹配；值集AE.ITEM_ORGANIZATION；来源于LNK_PROD关联LNK_ORG_EXT</td></tr>
+<tr><td>等级</td><td>LNK_PROD_PROMOTE_GRADE.GRADE</td><td>下拉选择框</td><td>推广等级档位</td><td>常显</td><td>查询条件：=精确匹配；值集CRM.PROD_PROMOTE_GRADE</td></tr>
+<tr><td>生命状态</td><td>LNK_PROD.SM_STATE</td><td>下拉选择框</td><td>产品生命周期状态</td><td>常显</td><td>查询条件：=精确匹配；值集CRM.PRODUCT_Z_STATE；来源于LNK_PROD表关联查询；可排序</td></tr>
+<tr><td>状态</td><td>LNK_PROD_PROMOTE_GRADE.STATUS</td><td>下拉选择框</td><td>推广等级记录状态</td><td>常显</td><td>查询条件：=精确匹配；值集CRM.COMMON_STATUS（valid/invalid）</td></tr>
+<tr><td>备注</td><td>LNK_PROD_PROMOTE_GRADE.REMARK</td><td>文本框</td><td>备注说明</td><td>常显</td><td>-</td></tr>
+<tr><td>创建人</td><td>HZERO.IAM_USER.REAL_NAME</td><td>文本框</td><td>创建人姓名</td><td>常显</td><td>来源于HZERO.IAM_USER表关联查询</td></tr>
+<tr><td>创建时间</td><td>LNK_PROD_PROMOTE_GRADE.CREATION_DATE</td><td>日期时间</td><td>记录创建时间</td><td>常显</td><td>格式YYYY-MM-DD HH:mm:ss</td></tr>
+<tr><td>最后修改人</td><td>HZERO.IAM_USER.REAL_NAME</td><td>文本框</td><td>最后修改人姓名</td><td>常显</td><td>来源于HZERO.IAM_USER表关联查询</td></tr>
+<tr><td>最后修改时间</td><td>LNK_PROD_PROMOTE_GRADE.LAST_UPDATE_DATE</td><td>日期时间</td><td>记录最后修改时间</td><td>常显</td><td>格式YYYY-MM-DD HH:mm:ss</td></tr>
+</tbody>
+</table>
+<blockquote>列表查询SQL（Mapper: LnkProdPromoteGradeMapper.xml → selectList）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT
+    LPPG.ID,
+    LPPG.PROD_CODE AS prodCode,
+    LPPG.GRADE,
+    LPPG.STATUS,
+    LPPG.REMARK,
+    LPPG.OBJECT_VERSION_NUMBER AS objectVersionNumber,
+    lp.prod_name AS prodName,
+    lp.LH_PROD_MODEL AS lHprodModel,
+    lp.SM_STATE AS smState,
+    t2.ORG_NAME AS deptName,
+    TO_CHAR(LPPG.Creation_Date, 'yyyy-mm-dd hh24:mi:ss') AS creationDate,
+    TO_CHAR(LPPG.Last_Update_Date, 'yyyy-mm-dd hh24:mi:ss') AS lastUpdateDate,
+    us.REAL_NAME AS createdByName,
+    us2.REAL_NAME AS lastUpdatedByName
+FROM LNK_PROD_PROMOTE_GRADE LPPG
+    JOIN lnk_prod lp ON LPPG.PROD_CODE = lp.PROD_CODE
+    LEFT JOIN LNK_ORG_EXT T2 ON lp.dept_id = t2.row_id
+    LEFT JOIN HZERO.IAM_USER us ON LPPG.CREATED_BY = us.id
+    LEFT JOIN HZERO.IAM_USER us2 ON LPPG.Last_Updated_By = us2.id
+WHERE 1=1
+    -- 动态条件：prodCode(=)、prodName(like)、lhProdModel(like)、deptName(=)、grade(=)、smState(=)、status(=)
+ORDER BY LPPG.Creation_Date DESC, LPPG.ID DESC</code></pre>
+</KbCard>
+
+<KbCard title="界面模块2：新增/编辑弹窗">
+<blockquote>弹窗标题"产品推广等级维护"，通过点击"新增"按钮触发。弹窗内为表单，2列布局。</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>产品编码</td><td>LNK_PROD_PROMOTE_GRADE.PROD_CODE</td><td>弹窗选择</td><td>产品的唯一编码</td><td>常显</td><td>必填；通过产品选择弹窗选择；选择后自动赋值prodCode</td></tr>
+<tr><td>等级</td><td>LNK_PROD_PROMOTE_GRADE.GRADE</td><td>下拉选择框</td><td>推广等级档位</td><td>常显</td><td>必填；值集CRM.PROD_PROMOTE_GRADE；新增时默认值=C</td></tr>
+<tr><td>备注</td><td>LNK_PROD_PROMOTE_GRADE.REMARK</td><td>文本框</td><td>备注说明</td><td>常显</td><td>非必填；无默认值</td></tr>
+</tbody>
+</table>
+<blockquote>新增时隐含默认值：status='valid'（后端处理）</blockquote>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<h4>弹窗1：产品选择弹窗（单选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>prodCode</td><td>产品编码</td><td>模糊查询产品编码</td><td>"P001"</td><td>LNK_PROD表中所有产品</td></tr>
+<tr><td>prodName</td><td>产品名称</td><td>模糊查询产品名称</td><td>"冰箱"</td><td>LNK_PROD表中所有产品</td></tr>
+<tr><td>lhProdModel</td><td>型号</td><td>模糊查询产品型号</td><td>"BCD-200"</td><td>LNK_PROD表中所有产品</td></tr>
+<tr><td>lhProdChannel</td><td>渠道</td><td>精确查询渠道</td><td>-</td><td>值集CRM.LH_PROD_CHANNELS</td></tr>
+<tr><td>prodStatus</td><td>上/下架</td><td>精确查询上下架状态</td><td>-</td><td>值集CRM.LH_PROD_STATUS</td></tr>
+<tr><td>smState</td><td>生命状态</td><td>精确查询生命状态</td><td>-</td><td>值集CRM.PRODUCT_Z_STATE</td></tr>
+<tr><td>prodPositioning</td><td>产品定位</td><td>模糊查询产品定位</td><td>-</td><td>-</td></tr>
+</tbody>
+</table>
+<blockquote>弹窗展示字段：序号、产品编码、产品名称、型号、渠道、上/下架、生命状态、产品定位</blockquote>
+<blockquote>查询前置条件：必须至少输入"产品编码、产品名称、型号"中的一个条件才能查询，否则查询不执行</blockquote>
+<blockquote>查询SQL（后端接口：GET /v1/&#123;organizationId&#125;/prod）：</blockquote>
+<pre class="detail-sql" v-pre><code>-- 产品列表查询（LNK_PROD表）
+SELECT * FROM LNK_PROD
+WHERE 1=1
+    AND organization_id = #{organizationId}
+    AND selectType = 'all'
+    -- 动态条件：prodCode(like)、prodName(like)、lhProdModel(like)、lhProdChannel(=)、prodStatus(=)、smState(=)、prodPositioning(like)</code></pre>
+</KbCard>
+
+<KbCard title="导入">
+<h4>前置约定</h4>
+<ul><li>模板编码：CRM.PROD_PROMOTE_GRADE</li><li>使用通用导入组件CommonImport，支持Excel导入</li><li>文件大小限制：通用限制</li></ul>
+<h4>字段映射</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段含义</th><th>是否必输</th><th>字段格式</th><th>重复判定字段</th></tr>
+</thead>
+<tbody>
+<tr><td>产品编码</td><td>是</td><td>文本</td><td>PROD_CODE</td></tr>
+<tr><td>等级</td><td>是</td><td>值集CRM.PROD_PROMOTE_GRADE</td><td>PROD_CODE+STATUS</td></tr>
+<tr><td>备注</td><td>否</td><td>文本</td><td>-</td></tr>
+</tbody>
+</table>
+<h4>处理逻辑</h4>
+<ul><li><strong>校验逻辑</strong>：后端validObject校验，NotBlank注解校验产品编码和等级非空</li><li><strong>导入逻辑</strong>：通过通用导入框架处理，最终调用saveData方法保存</li><li><strong>重复处理策略</strong>：同一产品编码已存在有效记录时，旧记录自动失效，新记录生效</li><li><strong>性能方案</strong>：批量插入/更新</li></ul>
+<h4>异常与结果约定</h4>
+<ul><li>部分成功/失败时的处理：事务回滚（@Transactional）</li><li>结果反馈机制：导入结果文件下载</li></ul>
+<h4>运维保障</h4>
+<ul><li>日志记录：HZERO平台标准日志</li><li>断点续传/重试机制：通用导入框架支持</li></ul>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新增</td><td>打开新增弹窗</td><td>列表页</td><td>权限hzero.product_data.product_info.promote_grade-list.ps.edit</td><td>弹窗填写产品编码、等级、备注后保存</td></tr>
+<tr><td>导出</td><td>导出列表数据</td><td>列表页</td><td>权限hzero.product_data.product_info.promote_grade-list.ps.export</td><td>调用导出接口下载Excel</td></tr>
+<tr><td>导入</td><td>导入推广等级数据</td><td>列表页</td><td>权限hzero.product_data.product_info.promote_grade-list.ps.import</td><td>打开通用导入组件上传Excel</td></tr>
+<tr><td>批量失效</td><td>批量置为失效</td><td>列表页</td><td>权限hzero.product_data.product_info.promote_grade-list.ps.edit；需选中数据</td><td>将选中记录status置为invalid，同步更新产品资料推广等级为C</td></tr>
+<tr><td>行内失效</td><td>单条失效</td><td>列表页行操作</td><td>status='valid'且权限hzero.product_data.product_info.promote_grade-list.ps.edit</td><td>将该记录status置为invalid，同步更新产品资料推广等级为C</td></tr>
+</tbody>
+</table>
+<h4>按钮1：新增（列表页）</h4>
+<ul><li><strong>触发条件</strong>：拥有权限hzero.product_data.product_info.promote_grade-list.ps.edit</li><li><strong>执行逻辑</strong>：</li><li>第1点：打开"产品推广等级维护"弹窗，表单含产品编码、等级、备注三个字段</li><li>第2点：新增时默认status='valid'，grade='C'</li><li>第3点：点击确认后前端校验必填字段，通过后调用POST /v1/&#123;organizationId&#125;/prodPromoteGrades保存</li><li>第4点：保存成功后关闭弹窗，刷新列表</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/prodPromoteGrades</li></ul>
+<h4>按钮2：导出（列表页）</h4>
+<ul><li><strong>触发条件</strong>：拥有权限hzero.product_data.product_info.promote_grade-list.ps.export</li><li><strong>执行逻辑</strong>：</li><li>第1点：按当前查询条件导出全部数据</li><li>第2点：调用导出接口，下载Excel文件</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/prodPromoteGrades/export</li></ul>
+<blockquote>导出查询SQL（Mapper: LnkProdPromoteGradeMapper.xml → exportList）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT
+    LPPG.ID,
+    LPPG.PROD_CODE AS prodCode,
+    LPPG.GRADE,
+    LPPG.STATUS,
+    LPPG.REMARK,
+    LPPG.OBJECT_VERSION_NUMBER AS objectVersionNumber,
+    lp.prod_name AS prodName,
+    lp.LH_PROD_MODEL AS lhProdModel,
+    lp.SM_STATE AS smState,
+    t2.ORG_NAME AS deptName,
+    TO_CHAR(LPPG.Creation_Date, 'yyyy-mm-dd hh24:mi:ss') AS creationDate,
+    TO_CHAR(LPPG.Last_Update_Date, 'yyyy-mm-dd hh24:mi:ss') AS lastUpdateDate,
+    us.REAL_NAME AS createdByName,
+    us2.REAL_NAME AS lastUpdatedByName
+FROM LNK_PROD_PROMOTE_GRADE LPPG
+    JOIN lnk_prod lp ON LPPG.PROD_CODE = lp.PROD_CODE
+    LEFT JOIN LNK_ORG_EXT T2 ON lp.dept_id = t2.row_id
+    LEFT JOIN HZERO.IAM_USER us ON LPPG.CREATED_BY = us.id
+    LEFT JOIN HZERO.IAM_USER us2 ON LPPG.Last_Updated_By = us2.id
+WHERE 1=1
+    -- 动态条件同selectList
+ORDER BY LPPG.Creation_Date DESC</code></pre>
+<h4>按钮3：导入（列表页）</h4>
+<ul><li><strong>触发条件</strong>：拥有权限hzero.product_data.product_info.promote_grade-list.ps.import</li><li><strong>执行逻辑</strong>：</li><li>第1点：打开通用导入组件，模板编码CRM.PROD_PROMOTE_GRADE</li><li>第2点：上传Excel文件后由后端处理，最终调用saveData方法</li><li><strong>接口调用</strong>：通用导入框架接口</li></ul>
+<h4>按钮4：批量失效（列表页）</h4>
+<ul><li><strong>触发条件</strong>：拥有权限hzero.product_data.product_info.promote_grade-list.ps.edit；已选中至少一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：获取选中的数据列表，如果未选中数据则提示"请选择需要失效的数据！"</li><li>第2点：弹出确认框"是否失效数据?"</li><li>第3点：确认后将选中记录status置为invalid，调用POST保存接口</li><li>第4点：后端saveData方法同步更新LNK_PROD表对应产品的PROD_PROMOTE_GRADE为C</li><li>第5点：操作成功后提示"操作成功，数据已失效！"并刷新列表</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/prodPromoteGrades</li></ul>
+<h4>按钮5：行内失效（列表页行操作）</h4>
+<ul><li><strong>触发条件</strong>：记录status='valid'且拥有权限hzero.product_data.product_info.promote_grade-list.ps.edit</li><li><strong>执行逻辑</strong>：</li><li>第1点：获取当前行数据</li><li>第2点：弹出确认框"是否失效数据?"</li><li>第3点：确认后将该记录status置为invalid，调用POST保存接口</li><li>第4点：后端saveData方法同步更新LNK_PROD表对应产品的PROD_PROMOTE_GRADE为C</li><li>第5点：操作成功后提示"操作成功，数据已失效！"并刷新列表</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/prodPromoteGrades</li></ul>
+</KbCard>
+
+<KbCard title="保存校验">
+<ul><li>校验1：产品编码非空 —— 确保关联到有效产品</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：前端弹窗产品编码字段required=true，commonFn_formValid校验</p>
+<p>- 第2点：后端Entity的prodCode字段标注@NotBlank</p>
+<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE WHERE PROD_CODE IS NULL;</code></pre>
+<ul><li>校验2：等级非空 —— 确保指定推广等级</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：前端弹窗等级字段required=true，commonFn_formValid校验</p>
+<p>- 第2点：后端Entity的grade字段标注@NotBlank</p>
+<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM LNK_PROD_PROMOTE_GRADE WHERE GRADE IS NULL;</code></pre>
+<ul><li>校验3：同一产品唯一有效等级 —— 避免等级冲突</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：后端saveData方法中，对每条status=valid的记录，查询该prodCode是否已存在valid记录</p>
+<p>- 第2点：如果存在，将旧记录status置为invalid后再插入/更新新记录</p>
+<ul><li>系统体现：后端自动处理，无前端提示</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT PROD_CODE, COUNT(*) AS cnt
+    FROM LNK_PROD_PROMOTE_GRADE
+    WHERE STATUS = 'valid'
+    GROUP BY PROD_CODE
+    HAVING COUNT(*) &gt; 1;</code></pre>
+</KbCard>
+
+<KbCard title="提交校验">
+<p>本菜单无提交/审批功能，数据保存后直接生效。</p>
+</KbCard>
+
+<KbCard title="状态机">
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>[新建] → valid（有效） → 失效操作 → invalid（失效）
+                                      ↓
+                              不可再失效（行内失效按钮隐藏）</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>valid</td><td>有效</td><td>行内失效、批量失效</td></tr>
+<tr><td>invalid</td><td>失效</td><td>无（行内失效按钮隐藏）</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="表1：LNK_PROD_PROMOTE_GRADE（产品推广等级表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>主键</td><td>-</td><td>自增主键，新增时自动生成</td></tr>
+<tr><td>PROD_CODE</td><td>VARCHAR2</td><td>产品编码</td><td>产品编码</td><td>必填（@NotBlank）；关联LNK_PROD.PROD_CODE</td></tr>
+<tr><td>GRADE</td><td>VARCHAR2</td><td>推广等级</td><td>等级</td><td>必填（@NotBlank）；值集CRM.PROD_PROMOTE_GRADE；新增默认C</td></tr>
+<tr><td>STATUS</td><td>VARCHAR2</td><td>状态</td><td>状态</td><td>必填（@NotBlank）；值集CRM.COMMON_STATUS；新增默认valid；失效时置为invalid</td></tr>
+<tr><td>REMARK</td><td>VARCHAR2</td><td>备注</td><td>备注</td><td>非必填</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>NUMBER</td><td>乐观锁版本号</td><td>-</td><td>@VersionAudit自动维护</td></tr>
+<tr><td>CREATED_BY</td><td>NUMBER</td><td>创建人ID</td><td>创建人</td><td>@ModifyAudit自动填充，关联HZERO.IAM_USER</td></tr>
+<tr><td>CREATION_DATE</td><td>DATE</td><td>创建时间</td><td>创建时间</td><td>@ModifyAudit自动填充</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>NUMBER</td><td>最后修改人ID</td><td>最后修改人</td><td>@ModifyAudit自动填充，关联HZERO.IAM_USER</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATE</td><td>最后修改时间</td><td>最后修改时间</td><td>@ModifyAudit自动填充</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="表2：LNK_PROD（产品资料表，被联动更新）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PROD_CODE</td><td>VARCHAR2</td><td>产品编码</td><td>-</td><td>关联条件，与LNK_PROD_PROMOTE_GRADE.PROD_CODE匹配</td></tr>
+<tr><td>PROD_PROMOTE_GRADE</td><td>VARCHAR2</td><td>产品推广等级</td><td>-</td><td>保存推广等级时同步更新为实际等级值；失效时重置为C</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>VARCHAR2</td><td>最后修改人</td><td>-</td><td>联动更新时设置为当前操作用户ID</td></tr>
+</tbody>
+</table>
+<blockquote>联动更新SQL（ServiceImpl.saveData中调用lnkProdRepository.updateByPrimaryCode）：</blockquote>
+<pre class="detail-sql" v-pre><code>UPDATE LNK_PROD
+SET PROD_PROMOTE_GRADE = #{grade},
+    LAST_UPDATED_BY = #{userId}
+WHERE PROD_CODE = #{prodCode}</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题"><table class="kl-table"><thead><tr><th>问题</th><th>解答</th></tr></thead><tbody><tr><td>推广等级编码有哪些约定？</td><td>通常使用A/B/C/D等字母编码，A为最高等级，D为最低等级</td></tr><tr><td>推广等级被产品引用后能否删除？</td><td>不能删除，只能通过启用标志设为N来禁用</td></tr><tr><td>推广等级和推广等级要求配置的关系？</td><td>推广等级定义等级本身（A/B/C），要求配置定义达到某等级需满足的指标条件（如销售额≥100万为A级）</td></tr><tr><td>推广等级如何影响业务？</td><td>推广等级控制产品在不同渠道的推广力度，等级越高产品在各渠道的曝光和推广资源越多</td></tr></tbody></table></KbCard>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>请选择需要失效的数据！</td><td>批量失效按钮</td><td>未选中任何数据就点击批量失效</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>保存失败</td><td>新增弹窗确认按钮</td><td>后端保存接口返回失败，检查产品编码是否存在于LNK_PROD表</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>操作失败！</td><td>失效确认框</td><td>后端保存接口返回失败</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>产品编码不能为空</td><td>新增弹窗产品编码字段</td><td>未选择产品就点击确认</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>等级不能为空</td><td>新增弹窗等级字段</td><td>未选择等级就点击确认</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>查询失败</td><td>列表页查询操作</td><td>列表查询接口返回失败</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足</td><td>新增/失效/导出/导入按钮</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>会话过期</td><td>任意操作</td><td>登录会话已失效</td><td>确认弹窗</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<blockquote><strong>"请选择需要失效的数据！"详细逻辑</strong>：
+前端onDisabledFn方法中，获取dataSet.currentSelected，如果长度为0则弹出错误提示，不执行后续操作。</blockquote>
+<blockquote><strong>"保存失败"详细逻辑</strong>：
+前端onOkFn方法中，调用POST保存接口后检查res.failed，如果失败则调用commonFn_showErrMsg显示后端错误信息。
+排查SQL：</blockquote>
+<pre class="detail-sql" v-pre><code>-- 检查产品编码是否存在
+SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};</code></pre>
+<h4>报错3：操作失败！</h4>
+<ul><li><strong>触发条件</strong>：点击失效确认框确认后，后端保存接口返回失败</li><li><strong>逻辑分析</strong>：前端onDisabledFn方法调用POST /v1/&#123;organizationId&#125;/prodPromoteGrade/disable接口，后端将LNK_PROD_PROMOTE_GRADE记录状态置为invalid，同时将LNK_PROD.PROD_PROMOTE_GRADE重置为C。若产品编码不存在或数据库异常则返回失败，前端提示"操作失败！"。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
+         PG.STATUS AS 状态, P.PROD_PROMOTE_GRADE AS 产品当前等级
+  FROM LNK_PROD_PROMOTE_GRADE PG
+    LEFT JOIN LNK_PROD P ON P.PROD_CODE = PG.PROD_CODE
+  WHERE PG.ID = :recordId;</code></pre>
+<h4>报错4：产品编码不能为空</h4>
+<ul><li><strong>触发条件</strong>：新增弹窗中未选择产品编码就点击确认按钮</li><li><strong>逻辑分析</strong>：前端onOkFn方法中先调用commonFn_formValid(ds)进行表单校验，产品编码字段配置required=true（listConfig.tsx第74行），校验不通过时弹窗提示"产品编码不能为空"并阻止提交。后端Controller的validObject方法校验LnkProdPromoteGrade实体prodCode字段的@NotBlank注解，若前端校验被绕过则后端抛出校验异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查是否存在产品编码为空的推广等级记录（异常数据）
+  SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级, PG.STATUS AS 状态
+  FROM LNK_PROD_PROMOTE_GRADE PG
+  WHERE PG.PROD_CODE IS NULL OR TRIM(PG.PROD_CODE) IS NULL;</code></pre>
+<h4>报错5：等级不能为空</h4>
+<ul><li><strong>触发条件</strong>：新增弹窗中未选择等级就点击确认按钮</li><li><strong>逻辑分析</strong>：前端onOkFn方法中commonFn_formValid校验等级字段required=true（listConfig.tsx第91行），校验不通过时弹窗提示"等级不能为空"。后端Entity的grade字段标注@NotBlank，validObject校验失败时抛出阻断性异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查是否存在等级为空的推广等级记录（异常数据）
+  SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级, PG.STATUS AS 状态
+  FROM LNK_PROD_PROMOTE_GRADE PG
+  WHERE PG.GRADE IS NULL OR TRIM(PG.GRADE) IS NULL;</code></pre>
+<h4>报错6：查询失败</h4>
+<ul><li><strong>触发条件</strong>：列表页加载或点击查询按钮时，后端列表查询接口返回失败</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/prodPromoteGrades接口，后端selectList方法通过LnkProdPromoteGradeMapper.selectList查询LNK_PROD_PROMOTE_GRADE关联LNK_PROD、LNK_ORG_EXT、HZERO.IAM_USER表。若数据库连接异常、SQL执行超时或关联的产品资料不存在（INNER JOIN导致数据丢失）则返回失败，前端DataSet自动提示查询失败。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查推广等级记录关联的产品资料是否存在
+  SELECT PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
+         P.PROD_NAME AS 产品名称
+  FROM LNK_PROD_PROMOTE_GRADE PG
+    LEFT JOIN LNK_PROD P ON P.PROD_CODE = PG.PROD_CODE
+  WHERE P.PROD_CODE IS NULL;</code></pre>
+<h4>报错7：权限不足</h4>
+<ul><li><strong>触发条件</strong>：当前用户无对应操作权限时点击新增/批量失效/行内失效/导出/导入按钮</li><li><strong>逻辑分析</strong>：前端按钮配置permissionList权限编码（新增/失效：hzero.product_data.product_info.promote_grade-list.ps.edit；导出：hzero.product_data.product_info.promote_grade-list.ps.export；导入：hzero.product_data.product_info.promote_grade-list.ps.import），无权限时按钮不显示。若通过API直接调用，后端@Permission(level=ResourceLevel.ORGANIZATION)注解校验组织级权限，无权限时抛出403异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查用户角色权限配置（HZERO平台权限表）
+  SELECT R.CODE AS 角色编码, R.NAME AS 角色名称,
+         P.CODE AS 权限编码, P.NAME AS 权限名称
+  FROM HZERO.IAM_ROLE R
+    JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
+    JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
+  WHERE P.CODE LIKE 'hzero.product_data.product_info.promote_grade-list.ps.%'
+  ORDER BY P.CODE;</code></pre>
+<h4>报错8：会话过期</h4>
+<ul><li><strong>触发条件</strong>：用户登录会话已失效时执行任意操作（查询/新增/失效/导出/导入）</li><li><strong>逻辑分析</strong>：前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查用户登录会话状态（HZERO平台Token表）
+  SELECT U.LOGIN_NAME AS 登录名, T.TOKEN, T.EXPIRE_TIME AS 过期时间,
+         T.LAST_CLIENT_TIME AS 最后活跃时间
+  FROM HZERO.OAUTH_ACCESS_TOKEN T
+    JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
+  WHERE U.LOGIN_NAME = :loginName
+  ORDER BY T.EXPIRE_TIME DESC;</code></pre>
+</KbCard>
+
+<KbCard title="常见问题">
+<ul><li>问题1：推广等级被产品引用后能否删除？</li><li>原因：本菜单不提供删除按钮，只提供失效操作。失效后产品推广等级重置为C</li><li>解决思路：使用"行内失效"或"批量失效"按钮将状态置为invalid</li></ul>
+<ul><li>问题2：同一产品能否有多个有效推广等级？</li><li>原因：后端saveData方法自动处理唯一性，新增有效记录时自动将旧的有效记录失效</li><li>解决思路：无需手动处理，系统自动保证同一产品同一时间只有一个有效推广等级</li></ul>
+<ul><li>问题3：推广等级和推广等级要求配置的关系？</li><li>原因：推广等级维护定义产品具体归属的等级（A/B/C等），推广等级要求配置（prodPromoteGradesControls）定义达到某等级需满足的指标条件</li><li>解决思路：两者配合使用，要求配置评估产品指标后自动判定等级，本菜单可手动指定等级</li></ul>
+<ul><li>问题4：失效后产品的推广等级是什么？</li><li>原因：后端saveData方法中，status=invalid时将LNK_PROD.PROD_PROMOTE_GRADE重置为C</li><li>解决思路：失效后产品推广等级自动回归默认值C</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
+
+<div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-12-23</td><td>-</td><td>-</td><td>初始创建：产品推广等级维护功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>版本</th><th>更新内容</th><th>更新人</th></tr></thead><tbody><tr><td>2026-08-03</td><td>V1.0</td><td>初始创建</td><td>AI</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

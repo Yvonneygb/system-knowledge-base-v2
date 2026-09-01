@@ -204,57 +204,37 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：提交前重复校验 提交校验">
-<KbQuote>防止同一广告投放申请单下同时存在多个在途的报销单，避免重复报销</KbQuote>
-
-**具体逻辑**：
-
-- 1、提交前查询同一申请单号下是否存在审批状态为"在途"的报销单
-- 2、若存在，阻断提交并提示已有在途的申请单号
+<KbCard num="1" title="重点逻辑1：报销金额校验 {核心校验}">
+<ul><li><strong>业务意义</strong>：确保报销金额不超过申请金额和可用额度</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：本次报销金额必须&gt;0</li></ul>
+<ul><li>第2点：本次报销金额不超过申请总金额</li></ul>
+<ul><li>第3点：额度内报销金额不超过可使用资源额度</li></ul>
+<ul><li>第4点：本次批准金额不超过本次报销金额</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：额度内报销金额校验 工作流校验">
-<KbQuote>确保额度内广告费报销的各项金额不超过可用额度，防止超额报销</KbQuote>
-
-**具体逻辑**：
-
-- 1、本次报销金额必须大于0
-- 2、本次报销金额不能超过申请总金额
-- 3、本次报销金额不可超过可使用资源额度
-- 4、本次批准金额不可超过本次报销金额
+<KbCard num="2" title="重点逻辑2：在途单据校验 {防重复提交}">
+<ul><li><strong>业务意义</strong>：防止同一申请单存在多个在途的报销单</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：提交前检查同一申请单号是否已有审批中(RUN)的报销单</li></ul>
+<ul><li>第2点：存在在途单据时报错，提示已有在途的广告投放申请单</li></ul>
 </KbCard>
 
-<KbCard num="3" title="重点逻辑3：推送OA审批 工作流节点">
-<KbQuote>广告费报销需推送OA系统进行审批，OA审批结果回调更新报销单</KbQuote>
-
-**具体逻辑**：
-
-- 1、查询报销单信息，校验费用项目是否已找到
-- 2、额度内报销时，支付方式≠费用转到款才校验费用项目
-- 3、将报销数据转换为OA表单格式，包括报销单号、经销商、广告公司、交易公司、金额等
-- 4、额度内报销时额外推送广告投放形式、最终支付金额等字段
-- 5、调用OA接口推送数据，推送失败返回false但不阻断
+<KbCard num="3" title="重点逻辑3：OA审批集成 {OA集成}">
+<ul><li><strong>业务意义</strong>：广告费报销走OA审批流程</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：提交时组装报销数据推送到OA系统</li></ul>
+<ul><li>第2点：OA审批通过回调时，更新报销金额、批准金额、支付方式、供应商等字段</li></ul>
+<ul><li>第3点：额度内报销回调时更新发票号、发票内容、发票类型、税率、未含税金额等信息</li></ul>
+<ul><li>第4点：通过callbackSource变量(1=通过/2=驳回)驱动工作流分支</li></ul>
 </KbCard>
 
-<KbCard num="4" title="重点逻辑4：OA审批回调处理 外部回调">
-<KbQuote>OA审批完成后回调更新报销单数据，保持系统数据与OA审批结果一致</KbQuote>
-
-**具体逻辑**：
-
-- 1、仅最终审批人审批时才处理回调数据
-- 2、审批同意时：更新报销单的媒介说明、申请总金额、使用占比、本次报销金额、批准金额、费用年度、支付方式、供应商信息
-- 3、额度内审批同意时：额外更新发票号、发票内容、发票类型、税点、发票金额、未含税金额、最终支付金额、收款银行/账号、操作人/时间/备注
-- 4、审批同意时设置回调来源=OA_PASS，更新工作流变量callbackSource=1
-- 5、审批不同意时设置回调来源=OA_REJECT，更新工作流变量callbackSource=2
-</KbCard>
-
-<KbCard num="5" title="重点逻辑5：额度外超预算处理 OA回调/审批">
-<KbQuote>额度外报销涉及超预算管理，需在审批通过/驳回时调整预算数据</KbQuote>
-
-**具体逻辑**：
-
-- 1、额度外报销推送OA审批通过后，扣减BUD_OVER_BUDGET中对应年度、组织、费用类型(66014602)的税总额
-- 2、OA审批驳回时，恢复之前扣减的税总额
+<KbCard num="4" title="重点逻辑4：额度内与额度外区分 {费用类型}">
+<ul><li><strong>业务意义</strong>：报销分为额度内和额度外，OA回调处理的数据不同</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：bxType=1为额度内，OA回调时更新发票相关信息</li></ul>
+<ul><li>第2点：bxType=2为额度外（销售费用-额度外其他补贴），无单独发票字段</li></ul>
+<ul><li>第3点：额度内需校验费用项目是否存在，额度外也需校验</li></ul>
 </KbCard>
 
 </div>
@@ -264,647 +244,214 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：广告费报销主页面">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：广告费报销列表页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>费用报销单ID</td>
-<td>文本框</td>
-<td>主键ID</td>
-<td>常显</td>
-<td>新建时自动生成，不可编辑</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.BX_ID</td>
-</tr>
-<tr>
-<td>费用报销单号</td>
-<td>文本框</td>
-<td>报销单唯一编号</td>
-<td>常显</td>
-<td>新建时系统自动生成，不可编辑</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.BX_NO</td>
-</tr>
-<tr>
-<td>广告投放申请单ID</td>
-<td>文本框</td>
-<td>关联的投放申请单ID</td>
-<td>常显</td>
-<td>从申请单带入，不可编辑</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.FEE_APPLY_ID</td>
-</tr>
-<tr>
-<td>广告投放申请单号</td>
-<td>文本框</td>
-<td>关联的投放申请单号</td>
-<td>常显</td>
-<td>从申请单带入，不可编辑</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.FEE_APPLY_NO</td>
-</tr>
-<tr>
-<td>报销类型</td>
-<td>下拉选择框</td>
-<td>区分额度内/额度外报销</td>
-<td>常显</td>
-<td>默认无，手工选择</td>
-<td>值集AE_BX_TYPE：1-额度内，2-额度外</td>
-<td>FIN_FEE_BX_HEADER.BX_TYPE</td>
-</tr>
-<tr>
-<td>模块类型</td>
-<td>下拉选择框</td>
-<td>区分门店装修报销与广告费报销</td>
-<td>常显</td>
-<td>默认2(广告费报销)</td>
-<td>1-门店装修费用报销，2-广告费用报销</td>
-<td>FIN_FEE_BX_HEADER.SAVE_TYPE</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>所属经销商编码</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.CUST_CODE</td>
-</tr>
-<tr>
-<td>经销商名称</td>
-<td>文本框</td>
-<td>所属经销商名称</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.CUST_NAME</td>
-</tr>
-<tr>
-<td>经销商简称</td>
-<td>文本框</td>
-<td>经销商简称</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.SHORT_NAME</td>
-</tr>
-<tr>
-<td>门店编码</td>
-<td>文本框</td>
-<td>门店编码</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.TERMINAL_CODE</td>
-</tr>
-<tr>
-<td>门店名称</td>
-<td>文本框</td>
-<td>门店名称</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.TERMINAL_NAME</td>
-</tr>
-<tr>
-<td>广告公司</td>
-<td>文本框</td>
-<td>广告公司名称</td>
-<td>常显</td>
-<td>从申请单带入或手工填写</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.ADVERT_COMPANY</td>
-</tr>
-<tr>
-<td>广告投放形式</td>
-<td>下拉选择框</td>
-<td>广告投放形式</td>
-<td>报销类型=额度内</td>
-<td>从申请单带入或手工选择</td>
-<td>值集AE_ADVERT_FORM</td>
-<td>FIN_FEE_BX_HEADER.ADVERT_FORM</td>
-</tr>
-<tr>
-<td>广告媒介类型</td>
-<td>下拉选择框</td>
-<td>广告媒介类型</td>
-<td>常显</td>
-<td>从申请单带入或手工选择</td>
-<td>值集AE_ADVERT_MEDIUM_TYPE</td>
-<td>FIN_FEE_BX_HEADER.ADVERT_MEDIUM_TYPE</td>
-</tr>
-<tr>
-<td>广告媒介项目</td>
-<td>下拉选择框</td>
-<td>广告媒介项目（可多选）</td>
-<td>常显</td>
-<td>从申请单带入或手工选择</td>
-<td>值集AE_ADVERT_MEDIUM_ITEM</td>
-<td>FIN_FEE_BX_HEADER.ADVERT_MEDIUM_ITEM</td>
-</tr>
-<tr>
-<td>媒介项目说明</td>
-<td>文本框</td>
-<td>媒介项目具体说明</td>
-<td>常显</td>
-<td>手工填写</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.ADVERT_MEDIUM_NAME</td>
-</tr>
-<tr>
-<td>费用编码</td>
-<td>文本框</td>
-<td>费用项目编码</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.OBJECT_CODE</td>
-</tr>
-<tr>
-<td>费用名称</td>
-<td>文本框</td>
-<td>费用项目名称</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.OBJECT_NAME</td>
-</tr>
-<tr>
-<td>费用计入年度</td>
-<td>文本框</td>
-<td>费用计入的年度</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.BUD_YEAR</td>
-</tr>
-<tr>
-<td>申请总金额</td>
-<td>文本框</td>
-<td>广告费申请总金额</td>
-<td>常显</td>
-<td>从申请单带入或OA回传</td>
-<td>大于0</td>
-<td>FIN_FEE_BX_HEADER.TOTAL_APPLY_AMT_BX</td>
-</tr>
-<tr>
-<td>本次报销金额</td>
-<td>文本框</td>
-<td>本次报销的金额</td>
-<td>常显</td>
-<td>手工填写或OA回传</td>
-<td>大于0，不超过申请总金额和可用资源额度</td>
-<td>FIN_FEE_BX_HEADER.THIS_STANDARD_AMT</td>
-</tr>
-<tr>
-<td>本次批准金额</td>
-<td>文本框</td>
-<td>OA审批批准的金额</td>
-<td>常显</td>
-<td>OA审批回传赋值</td>
-<td>不超过本次报销金额</td>
-<td>FIN_FEE_BX_HEADER.THIS_AUTHORIZE_STANDARD_AMT</td>
-</tr>
-<tr>
-<td>额度内可报销总金额</td>
-<td>文本框</td>
-<td>额度内剩余可报销金额</td>
-<td>报销类型=额度内</td>
-<td>从申请单计算带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.IN_CAN_USE_AMT</td>
-</tr>
-<tr>
-<td>额度内已报销总金额</td>
-<td>文本框</td>
-<td>额度内已报销金额合计</td>
-<td>报销类型=额度内</td>
-<td>系统自动计算</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.IN_USED_AMT</td>
-</tr>
-<tr>
-<td>可使用资源额度</td>
-<td>文本框</td>
-<td>可用的资源额度</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.CANUSE_RESOURCE_AMT</td>
-</tr>
-<tr>
-<td>申请使用占比</td>
-<td>文本框</td>
-<td>申请额度内占比%</td>
-<td>常显</td>
-<td>自动计算或OA回传</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.IN_QUOTA_RATIO</td>
-</tr>
-<tr>
-<td>支付方式</td>
-<td>下拉选择框</td>
-<td>报销的支付方式</td>
-<td>常显</td>
-<td>手工选择或OA回传</td>
-<td>值集AE_PAY_TYPE</td>
-<td>FIN_FEE_BX_HEADER.PAY_TYPE</td>
-</tr>
-<tr>
-<td>供应商编码</td>
-<td>文本框</td>
-<td>供应商编码</td>
-<td>常显</td>
-<td>OA回传赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.SUPPLY_CODE</td>
-</tr>
-<tr>
-<td>供应商全称</td>
-<td>文本框</td>
-<td>供应商全称</td>
-<td>常显</td>
-<td>OA回传赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.SUPPLY_FULL_NAME</td>
-</tr>
-<tr>
-<td>交易公司编码</td>
-<td>文本框</td>
-<td>交易公司编码</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.TRADING_COMPANY_CODE</td>
-</tr>
-<tr>
-<td>交易公司名称</td>
-<td>文本框</td>
-<td>交易公司名称</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>开票单位名称</td>
-<td>文本框</td>
-<td>法人开票单位名称</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.BILLING_UNIT_NAME</td>
-</tr>
-<tr>
-<td>门店详细地址</td>
-<td>文本框</td>
-<td>门店详细地址</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.ADDR</td>
-</tr>
-<tr>
-<td>所属销售区域名称</td>
-<td>文本框</td>
-<td>所属销售区域</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.SALEZONE_ORG_NAME</td>
-</tr>
-<tr>
-<td>所属运营中心名称</td>
-<td>文本框</td>
-<td>所属运营中心</td>
-<td>常显</td>
-<td>从申请单带入</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.OPERAT_CENTER_ORG_NAME</td>
-</tr>
-<tr>
-<td>发票号</td>
-<td>文本框</td>
-<td>发票编号</td>
-<td>额度内OA回传</td>
-<td>OA审批同意且额度内时回传赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.FP_NO</td>
-</tr>
-<tr>
-<td>发票金额</td>
-<td>文本框</td>
-<td>发票金额</td>
-<td>额度内OA回传</td>
-<td>OA审批同意且额度内时回传赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.FP_AMT</td>
-</tr>
-<tr>
-<td>未含税金额</td>
-<td>文本框</td>
-<td>未含税金额</td>
-<td>额度内OA回传</td>
-<td>OA审批同意且额度内时回传赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.NO_TAX_AMT</td>
-</tr>
-<tr>
-<td>最终支付金额</td>
-<td>文本框</td>
-<td>最终支付金额</td>
-<td>报销类型=额度内</td>
-<td>OA审批同意且额度内时回传赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.FINAL_PAY_AMT</td>
-</tr>
-<tr>
-<td>开票类型</td>
-<td>下拉选择框</td>
-<td>发票类型</td>
-<td>额度内OA回传</td>
-<td>OA回传赋值</td>
-<td>值集AE_INVOICE_TYPE</td>
-<td>FIN_FEE_BX_HEADER.INVOICE_TYPE</td>
-</tr>
-<tr>
-<td>税点</td>
-<td>下拉选择框</td>
-<td>开票税点</td>
-<td>额度内OA回传</td>
-<td>OA回传赋值</td>
-<td>值集PIJV_TAX_RATE</td>
-<td>FIN_FEE_BX_HEADER.TAX_RATE</td>
-</tr>
-<tr>
-<td>收款银行</td>
-<td>文本框</td>
-<td>收款银行</td>
-<td>额度内OA回传</td>
-<td>OA回传赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.RECEIVER_BANK</td>
-</tr>
-<tr>
-<td>收款账号</td>
-<td>文本框</td>
-<td>收款账号</td>
-<td>额度内OA回传</td>
-<td>OA回传赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.BANK_NO</td>
-</tr>
-<tr>
-<td>备注</td>
-<td>文本框</td>
-<td>备注说明</td>
-<td>常显</td>
-<td>手工填写</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.NOTE</td>
-</tr>
-<tr>
-<td>审核人</td>
-<td>文本框</td>
-<td>审核人</td>
-<td>常显</td>
-<td>审批通过时自动赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.CHECKER</td>
-</tr>
-<tr>
-<td>审核时间</td>
-<td>文本框</td>
-<td>审核时间</td>
-<td>常显</td>
-<td>审批通过时自动赋值</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.CHECK_TIME</td>
-</tr>
-<tr>
-<td>H0流程审批状态</td>
-<td>文本框</td>
-<td>工作流审批状态</td>
-<td>常显</td>
-<td>工作流自动维护</td>
-<td>-</td>
-<td>FIN_FEE_BX_HEADER.HZ_APPROVE_STATUS</td>
-</tr>
-</tbody></table></div>
+<tr><td>报销单号</td><td>FIN_FEE_BX_HEADER.BX_NO</td><td>文本框</td><td>报销单编号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>申请单号</td><td>FIN_FEE_BX_HEADER.FEE_APPLY_NO</td><td>文本框</td><td>关联申请单号</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>经销商名称</td><td>FIN_FEE_BX_HEADER.CUST_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>费用类型</td><td>FIN_FEE_BX_HEADER.BX_TYPE</td><td>下拉选择框</td><td>额度内/额度外</td><td>常显</td><td>1=额度内，2=额度外</td></tr>
+<tr><td>本次报销金额</td><td>FIN_FEE_BX_HEADER.THIS_STANDARD_AMT</td><td>文本框</td><td>本次报销金额</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>单据状态</td><td>FIN_FEE_BX_HEADER.STAT</td><td>文本框</td><td>单据状态</td><td>常显</td><td>-</td></tr>
+<tr><td>审批状态</td><td>FIN_FEE_BX_HEADER.HZ_APPROVE_STATUS</td><td>文本框</td><td>审批状态</td><td>常显</td><td>NEW/RUN/APPROVED</td></tr>
+<tr><td>申请人</td><td>FIN_FEE_BX_HEADER.CREATOR</td><td>文本框</td><td>申请人</td><td>常显</td><td>系统自动记录</td></tr>
+<tr><td>申请时间</td><td>FIN_FEE_BX_HEADER.CREATE_TIME</td><td>日期选择框</td><td>申请时间</td><td>常显</td><td>系统自动记录</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块2：广告费报销详情页（头表单）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>报销单号</td><td>FIN_FEE_BX_HEADER.BX_NO</td><td>文本框</td><td>报销单编号</td><td>常显</td><td>自动生成，不可编辑</td></tr>
+<tr><td>申请单号</td><td>FIN_FEE_BX_HEADER.FEE_APPLY_NO</td><td>文本框</td><td>关联申请单号</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>费用类型</td><td>FIN_FEE_BX_HEADER.BX_TYPE</td><td>单选框</td><td>额度内/额度外</td><td>常显</td><td>1=额度内，2=额度外</td></tr>
+<tr><td>模块类型</td><td>FIN_FEE_BX_HEADER.SAVE_TYPE</td><td>隐藏</td><td>区分装修/广告</td><td>隐藏</td><td>2=广告费报销</td></tr>
+<tr><td>经销商名称</td><td>FIN_FEE_BX_HEADER.CUST_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>门店名称</td><td>FIN_FEE_BX_HEADER.TERMINAL_NAME</td><td>文本框</td><td>门店名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>申请总金额</td><td>FIN_FEE_BX_HEADER.TOTAL_APPLY_AMT_BX</td><td>文本框</td><td>申请总金额</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>本次报销金额</td><td>FIN_FEE_BX_HEADER.THIS_STANDARD_AMT</td><td>文本框</td><td>本次报销金额</td><td>常显</td><td>可编辑，需&gt;0且不超过申请总金额</td></tr>
+<tr><td>本次批准金额</td><td>FIN_FEE_BX_HEADER.THIS_AUTHORIZE_STANDARD_AMT</td><td>文本框</td><td>本次批准金额</td><td>常显</td><td>OA回调写入，不超过本次报销金额</td></tr>
+<tr><td>支付方式</td><td>FIN_FEE_BX_HEADER.PAY_TYPE</td><td>下拉选择框</td><td>支付方式</td><td>常显</td><td>来源值集AE_PAY_TYPE</td></tr>
+<tr><td>供应商名称</td><td>FIN_FEE_BX_HEADER.SUPPLY_NAME</td><td>文本框</td><td>供应商名称</td><td>常显</td><td>OA回调写入</td></tr>
+<tr><td>发票号</td><td>FIN_FEE_BX_HEADER.FP_NO</td><td>文本框</td><td>发票号</td><td>费用类型=额度内</td><td>OA回调写入</td></tr>
+<tr><td>发票内容</td><td>FIN_FEE_BX_HEADER.INVOICE_CONTENT</td><td>文本框</td><td>发票内容</td><td>费用类型=额度内</td><td>OA回调写入</td></tr>
+<tr><td>发票类型</td><td>FIN_FEE_BX_HEADER.INVOICE_TYPE</td><td>下拉选择框</td><td>发票类型</td><td>费用类型=额度内</td><td>来源值集AE_INVOICE_TYPE</td></tr>
+<tr><td>发票金额</td><td>FIN_FEE_BX_HEADER.FP_AMT</td><td>文本框</td><td>发票金额</td><td>费用类型=额度内</td><td>OA回调写入</td></tr>
+<tr><td>税率</td><td>FIN_FEE_BX_HEADER.TAX_RATE</td><td>下拉选择框</td><td>税率</td><td>费用类型=额度内</td><td>来源值集PIJV_TAX_RATE</td></tr>
+<tr><td>未含税金额</td><td>FIN_FEE_BX_HEADER.NO_TAX_AMT</td><td>文本框</td><td>未含税金额</td><td>费用类型=额度内</td><td>OA回调写入</td></tr>
+<tr><td>最终付款金额</td><td>FIN_FEE_BX_HEADER.FINAL_PAY_AMT</td><td>文本框</td><td>最终付款金额</td><td>费用类型=额度内</td><td>OA回调写入</td></tr>
+<tr><td>收款银行</td><td>FIN_FEE_BX_HEADER.RECEIVER_BANK</td><td>文本框</td><td>收款银行</td><td>费用类型=额度内</td><td>OA回调写入</td></tr>
+<tr><td>银行账号</td><td>FIN_FEE_BX_HEADER.BANK_NO</td><td>文本框</td><td>银行账号</td><td>费用类型=额度内</td><td>OA回调写入</td></tr>
+<tr><td>交易公司</td><td>FIN_FEE_BX_HEADER.TRADING_COMPANY_NAME</td><td>文本框</td><td>交易公司</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>开票单位</td><td>FIN_FEE_BX_HEADER.BILLING_UNIT_NAME</td><td>文本框</td><td>开票单位</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>备注</td><td>FIN_FEE_BX_HEADER.NOTE</td><td>文本域</td><td>备注</td><td>常显</td><td>可编辑</td></tr>
+<tr><td>审批状态</td><td>FIN_FEE_BX_HEADER.HZ_APPROVE_STATUS</td><td>文本框</td><td>审批状态</td><td>常显</td><td>NEW/RUN/APPROVED</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
-<KbSubTitle>弹窗1：广告投放申请单选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| feeApplyNo | 申请单号 | 按单号模糊查询 | ADJ2026001 |
-| custName | 经销商名称 | 按名称模糊查询 | XX经销商 |
-
-**数据范围**
-
-```sql
-审批通过的广告投放申请单
-```
-
+<h4>弹窗1：广告投放申请单选择弹窗（单选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>custId</td><td>经销商ID</td><td>经销商ID</td><td>12345</td><td>已审批通过且未完成报销的广告投放申请单</td></tr>
+<tr><td>saveType</td><td>模块类型</td><td>2=广告费报销</td><td>2</td><td></td></tr>
+</tbody>
+</table>
+<blockquote>查询SQL（后端接口Mapper：FinFeeBxHeaderMapper）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT fee_apply_id, fee_apply_no, total_allow_amt_bx, cust_name, terminal_name
+FROM fin_fee_apply_header WHERE apply_type = 2 AND hz_approve_status = 'APPROVED'
+  AND is_bx != 2 AND cust_id = #{custId};</code></pre>
 </KbCard>
-<KbCard title="导入">
-> 本模块无导入功能
 
-</KbCard>
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 提交 | 提交审批 | 详情页 | 单据状态为新建/驳回时 | 触发工作流SUB_ADJ_PLACEMENT_APPLY，推送OA审批 |
-| 校验 | 提交前校验 | 详情页 | 新建状态 | 调用/v1/{organizationId}/fin-fee-bx-headers/check接口，校验是否有在途报销单 |
-| 打印 | 打印报销单 | 详情页 | 单据已保存 | 调用detail/print接口获取打印数据 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新建</td><td>新建广告费报销</td><td>列表页</td><td>常显</td><td>跳转新建页面</td></tr>
+<tr><td>保存</td><td>保存报销单</td><td>详情页</td><td>常显</td><td>保存到FIN_FEE_BX_HEADER</td></tr>
+<tr><td>提交</td><td>提交审批</td><td>详情页</td><td>审批状态为NEW</td><td>校验金额和在途单据，推送OA审批</td></tr>
+<tr><td>打印</td><td>打印报销单</td><td>详情页</td><td>常显</td><td>调用detail/print接口</td></tr>
+</tbody>
+</table>
+<h4>按钮1：提交（详情页）</h4>
+<ul><li><strong>触发条件</strong>：审批状态为NEW</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验本次报销金额&gt;0</li><li>第2点：校验本次报销金额不超过申请总金额</li><li>第3点：额度内校验报销金额不超过可使用资源额度</li><li>第4点：校验本次批准金额不超过本次报销金额</li><li>第5点：检查同一申请单号是否已有在途报销单</li><li>第6点：推送OA审批，发起工作流</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/fin-fee-bx-headers/check + OA推送接口 + 工作流发起接口</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id, bx_no, fee_apply_no, bx_type, this_standard_amt, total_apply_amt_bx, hz_approve_status
+FROM fin_fee_bx_header WHERE bx_id = {id};
+-- 检查在途单据
+SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz_approve_status = 'RUN';</code></pre>
+<h4>按钮2：打印（详情页）</h4>
+<ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询报销单头表数据</li><li>第2点：翻译值集（支付方式、费用类型）</li><li>第3点：查询流程审批历史</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/fin-fee-bx-headers/detail/print</li><li><strong>排查SQL</strong>：无</li></ul>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：费用报销单号必填 —— 确保报销单号唯一标识</KbSubTitle>
-
-- 第1点：字段BX_NO标注@NotBlank，保存时框架自动校验非空
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_NO IS NULL OR BX_NO = '';
-```
-
-<KbSubTitle>校验2：H0流程审批状态必填 —— 确保流程状态字段完整</KbSubTitle>
-
-- 第1点：字段HZ_APPROVE_STATUS标注@NotBlank，保存时框架自动校验非空
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM FIN_FEE_BX_HEADER WHERE HZ_APPROVE_STATUS IS NULL OR HZ_APPROVE_STATUS = '';
-```
-
+<ul><li>校验1：报销金额校验 —— 确保报销金额大于0</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：额度内(bxType=1)且广告费报销(saveType=2)时校验</p>
+<p>- 第2点：本次报销金额&lt;=0时报错"本次报销金额必须大于0！"</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT this_standard_amt FROM fin_fee_bx_header WHERE bx_id = {id};</code></pre>
+<ul><li>校验2：申请金额校验 —— 报销金额不超过申请总金额</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：本次报销金额&gt;申请总金额时报错</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, total_apply_amt_bx FROM fin_fee_bx_header WHERE bx_id = {id};</code></pre>
+<ul><li>校验3：额度内可用金额校验 —— 额度内报销不超可用</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：本次报销金额&gt;额度内可用金额时报错</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, in_can_use_amt FROM fin_fee_bx_header WHERE bx_id = {id} AND bx_type = 1;</code></pre>
+<ul><li>校验4：批准金额校验 —— 批准金额不超过报销金额</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：本次批准金额&gt;本次报销金额时报错</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT this_standard_amt, this_authorize_standard_amt FROM fin_fee_bx_header WHERE bx_id = {id};</code></pre>
 </KbCard>
+
 <KbCard title="提交校验">
-<KbSubTitle>校验1：同一申请单下不能有在途的报销单 —— 防止重复报销</KbSubTitle>
-
-- 第1点：查询同一申请单号下是否存在HZ_APPROVE_STATUS=RUN（在途）的报销单
-- 第2点：若存在，阻断提交
-
-<KbTip>阻断性报错，提示"已有在途的广告投放申请单，单号：X"</KbTip>
-
-```sql
-SELECT COUNT(*) FROM FIN_FEE_BX_HEADER WHERE FEE_APPLY_NO = :feeApplyNo AND HZ_APPROVE_STATUS = 'RUN';
-```
-
-<KbSubTitle>校验2：额度内报销金额校验 —— 防止超额报销</KbSubTitle>
-
-- 第1点：报销类型=额度内且模块类型=广告费报销时触发
-- 第2点：本次报销金额必须大于0
-- 第3点：本次报销金额不能超过申请总金额
-- 第4点：本次报销金额不可超过可使用资源额度
-- 第5点：本次批准金额不可超过本次报销金额
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_STANDARD_AMT <= 0 OR THIS_STANDARD_AMT > TOTAL_APPLY_AMT_BX OR THIS_STANDARD_AMT > IN_CAN_USE_AMT OR THIS_AUTHORIZE_STANDARD_AMT > THIS_STANDARD_AMT);
-```
-
+<ul><li>校验1：在途单据校验 —— 防止重复提交</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：查询同一申请单号下审批状态为RUN的报销单数量</p>
+<p>- 第2点：存在在途单据时报错"已有在途的广告投放申请单"</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz_approve_status = 'RUN';</code></pre>
+<ul><li>校验2：费用项目校验 —— 确保费用项目存在</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：额度内且支付方式非3时，费用项目不能为空</p>
+<p>- 第2点：额度外时，费用项目不能为空</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT object_name, bx_type, pay_type FROM fin_fee_bx_header WHERE bx_id = {id};</code></pre>
 </KbCard>
+
 <KbCard title="状态机">
-
-
-```text
-新建 → 提交 → 推送OA审批 → OA审批同意 → 审批通过(可创建发票兑现)
-                         ↓
-                      OA审批不同意 → 审批驳回 → 修改后可重新提交
-```
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| 新建 | 单据已保存未提交 | 编辑、删除、提交、校验 |
-| 在途(RUN) | 已提交审批中 | - |
-| 审批通过(APPROVED) | OA审批同意 | 打印、创建发票兑现单 |
-| 审批驳回(REJECTED) | OA审批不同意 | 编辑、重新提交 |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：FIN_FEE_BX_HEADER（费用报销主表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| BX_ID | BIGINT | 费用报销单ID | 费用报销单ID | 主键，自增 |
-| BX_NO | VARCHAR | 费用报销单号 | 费用报销单号 | 系统自动生成，必填 |
-| FEE_APPLY_ID | BIGINT | 广告投放申请单ID | 广告投放申请单ID | 关联FIN_FEE_APPLY_HEADER.FEE_APPLY_ID |
-| FEE_APPLY_NO | VARCHAR | 广告投放申请单号 | 广告投放申请单号 | 关联申请单号 |
-| CYEAR | BIGINT | 年度 | - | 从申请单带入 |
-| CMONTH | BIGINT | 月份 | - | 从申请单带入 |
-| TOTAL_APPLY_AMT | BIGINT | 本次申请金额 | - | - |
-| TOTAL_ALLOW_AMT | BIGINT | 审批金额 | - | - |
-| STAT | BIGINT | 单据状态(已弃用) | - | 使用HZ_APPROVE_STATUS |
-| WFID | BIGINT | 流程ID | - | 工作流ID |
-| WFFLAG | BIGINT | 流程状态 | - | 工作流状态 |
-| CREATOR | VARCHAR | 创建人 | - | 系统自动赋值 |
-| CREATE_TIME | DATE | 创建时间 | - | 系统自动赋值 |
-| UPDATE_TIME | DATE | 修改时间 | - | 系统自动赋值 |
-| UPDATOR | VARCHAR | 修改人 | - | 系统自动赋值 |
-| CHECKER | VARCHAR | 审核人 | 审核人 | 审批通过时赋值 |
-| CHECK_TIME | DATE | 审核时间 | 审核时间 | 审批通过时赋值 |
-| NOTE | VARCHAR | 备注 | 备注 | 手工填写 |
-| ENTID | BIGINT | 事业部ID | - | 从申请单带入 |
-| ENTNAME | VARCHAR | 事业部名称 | - | 从申请单带入 |
-| ORGANIZATION_ID | BIGINT | 组织ID | - | 租户组织ID |
-| ORG_ID | BIGINT | 机构ID | - | 从申请单带入 |
-| ORG_NAME | VARCHAR | 机构名称 | - | 从申请单带入 |
-| ORG_CODE | VARCHAR | 机构编码 | - | 从申请单带入 |
-| BX_TYPE | BIGINT | 报销类型 | 报销类型 | 1-额度内，2-额度外 |
-| SAVE_TYPE | BIGINT | 模块类型 | 模块类型 | 1-门店装修报销，2-广告费报销 |
-| CUST_CODE | VARCHAR | 经销商编码 | 经销商编码 | 从申请单带入 |
-| CUST_NAME | VARCHAR | 经销商名称 | 经销商名称 | 从申请单带入 |
-| CUST_ID | BIGINT | 经销商ID | - | 从申请单带入 |
-| CUST_FULL_NAME | VARCHAR | 经销商全称 | - | 从申请单带入 |
-| SHORT_NAME | VARCHAR | 经销商简称 | 经销商简称 | 从申请单带入 |
-| TERMINAL_CODE | VARCHAR | 门店编码 | 门店编码 | 从申请单带入 |
-| TERMINAL_NAME | VARCHAR | 门店名称 | 门店名称 | 从申请单带入 |
-| ADVERT_COMPANY | VARCHAR | 广告公司 | 广告公司 | 从申请单带入或手工填写 |
-| ADVERT_FORM | BIGINT | 广告投放形式 | 广告投放形式 | 值集AE_ADVERT_FORM |
-| ADVERT_MEDIUM_TYPE | BIGINT | 广告媒介类型 | 广告媒介类型 | 值集AE_ADVERT_MEDIUM_TYPE |
-| ADVERT_MEDIUM_ITEM | VARCHAR | 广告媒介项目 | 广告媒介项目 | 值集AE_ADVERT_MEDIUM_ITEM，可多选逗号分隔 |
-| ADVERT_MEDIUM_NAME | VARCHAR | 媒介项目说明 | 媒介项目说明 | 手工填写 |
-| TOTAL_APPLY_AMT_BX | BIGINT | 申请总金额 | 申请总金额 | 从申请单带入或OA回传 |
-| THIS_STANDARD_AMT | DECIMAL | 本次报销金额 | 本次报销金额 | 手工填写或OA回传 |
-| THIS_AUTHORIZE_STANDARD_AMT | DECIMAL | 本次批准金额 | 本次批准金额 | OA回传赋值 |
-| IN_USED_AMT | BIGINT | 额度内已报销总金额 | 额度内已报销总金额 | 系统自动计算 |
-| IN_CAN_USE_AMT | BIGINT | 额度内可报销总金额 | 额度内可报销总金额 | 从申请单计算带入 |
-| CANUSE_RESOURCE_AMT | BIGINT | 可使用资源额度 | 可使用资源额度 | 从申请单带入 |
-| IN_QUOTA_RATIO | DECIMAL | 申请使用占比 | 申请使用占比 | 自动计算或OA回传 |
-| PAY_TYPE | BIGINT | 支付方式 | 支付方式 | 值集AE_PAY_TYPE |
-| SUPPLY_ID | BIGINT | 供应商ID | - | OA回传赋值 |
-| SUPPLY_CODE | VARCHAR | 供应商编码 | 供应商编码 | OA回传赋值 |
-| SUPPLY_NAME | VARCHAR | 供应商名称 | - | OA回传赋值 |
-| SUPPLY_FULL_NAME | VARCHAR | 供应商全称 | 供应商全称 | OA回传赋值 |
-| TRADING_COMPANY_ID | BIGINT | 交易公司ID | - | 从申请单带入 |
-| TRADING_COMPANY_CODE | VARCHAR | 交易公司编码 | 交易公司编码 | 从申请单带入 |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司名称 | 从申请单带入 |
-| BILLING_UNIT_ID | BIGINT | 开票单位ID | - | 从申请单带入 |
-| BILLING_UNIT_CODE | VARCHAR | 开票单位编码 | - | 从申请单带入 |
-| BILLING_UNIT_NAME | VARCHAR | 开票单位名称 | 开票单位名称 | 从申请单带入 |
-| OBJECT_CODE | VARCHAR | 费用编码 | 费用编码 | 从申请单带入 |
-| OBJECT_NAME | VARCHAR | 费用名称 | 费用名称 | 从申请单带入 |
-| BUD_YEAR | BIGINT | 费用计入年度 | 费用计入年度 | 从申请单带入 |
-| ADDR | VARCHAR | 门店详细地址 | 门店详细地址 | 从申请单带入 |
-| SALEZONE_ORG_ID | BIGINT | 所属销售区域ID | - | 从申请单带入 |
-| SALEZONE_ORG_NAME | VARCHAR | 所属销售区域名称 | 所属销售区域名称 | 从申请单带入 |
-| OPERAT_CENTER_ORG_ID | BIGINT | 所属运营中心ID | - | 从申请单带入 |
-| OPERAT_CENTER_ORG_NAME | VARCHAR | 所属运营中心名称 | 所属运营中心名称 | 从申请单带入 |
-| FP_NO | VARCHAR | 发票号 | 发票号 | OA回传赋值(额度内) |
-| FP_AMT | DECIMAL | 发票金额 | 发票金额 | OA回传赋值(额度内) |
-| NO_TAX_AMT | DECIMAL | 未含税金额 | 未含税金额 | OA回传赋值(额度内) |
-| FINAL_PAY_AMT | DECIMAL | 最终支付金额 | 最终支付金额 | OA回传赋值(额度内) |
-| INVOICE_TYPE | BIGINT | 开票类型 | 开票类型 | OA回传赋值(额度内) |
-| INVOICE_CONTENT | VARCHAR | 开票内容 | - | OA回传赋值(额度内) |
-| TAX_RATE | BIGINT | 税点 | 税点 | OA回传赋值(额度内) |
-| RECEIVER_BANK | VARCHAR | 收款银行 | 收款银行 | OA回传赋值(额度内) |
-| BANK_NO | VARCHAR | 收款账号 | 收款账号 | OA回传赋值(额度内) |
-| OPERATOR | VARCHAR | 操作人 | - | OA回传赋值(额度内) |
-| OPERATION_TIME | DATETIME | 操作时间 | - | OA回传赋值(额度内) |
-| OPERATION_NOTE | VARCHAR | 操作备注 | - | OA回传赋值(额度内) |
-| IS_END | BIGINT | 报销审批流程结束 | - | - |
-| DIVISION_ID | BIGINT | 事业部ID | - | 词汇值 |
-| HZ_INSTANCE_ID | BIGINT | H0流程实例id | - | HZero工作流实例ID |
-| HZ_APPROVE_STATUS | VARCHAR | H0流程审批状态 | H0流程审批状态 | 必填，工作流维护 |
-| CALLBACK_SOURCE | VARCHAR | 外部审批回调来源 | - | 枚举CallbackSourceEnum |
-
----
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ APPROVED(已审核)
+                        │
+                        │OA审批驳回
+                        ↓
+                   回到NEW</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>新建，未提交</td><td>编辑、保存、提交</td></tr>
+<tr><td>RUN</td><td>审批中，OA审批中</td><td>无（等待OA审批结果）</td></tr>
+<tr><td>APPROVED</td><td>已审核，OA审批通过</td><td>发起发票兑现、打印</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表1：FIN_FEE_BX_HEADER（费用报销单主表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>BX_ID</td><td>NUMBER</td><td>报销单ID</td><td>-</td><td>主键，自增</td></tr>
+<tr><td>BX_NO</td><td>VARCHAR2</td><td>报销单号</td><td>报销单号</td><td>自动生成</td></tr>
+<tr><td>FEE_APPLY_ID</td><td>NUMBER</td><td>申请单ID</td><td>-</td><td>关联广告投放申请</td></tr>
+<tr><td>FEE_APPLY_NO</td><td>VARCHAR2</td><td>申请单号</td><td>申请单号</td><td>从申请单带入</td></tr>
+<tr><td>SAVE_TYPE</td><td>NUMBER</td><td>模块类型</td><td>模块类型</td><td>2=广告费报销</td></tr>
+<tr><td>BX_TYPE</td><td>NUMBER</td><td>费用类型</td><td>费用类型</td><td>1=额度内，2=额度外</td></tr>
+<tr><td>STAT</td><td>NUMBER</td><td>单据状态</td><td>单据状态</td><td>-</td></tr>
+<tr><td>TOTAL_APPLY_AMT_BX</td><td>DECIMAL</td><td>申请总金额</td><td>申请总金额</td><td>从申请单带入</td></tr>
+<tr><td>THIS_STANDARD_AMT</td><td>DECIMAL</td><td>本次报销金额</td><td>本次报销金额</td><td>用户输入</td></tr>
+<tr><td>THIS_AUTHORIZE_STANDARD_AMT</td><td>DECIMAL</td><td>本次批准金额</td><td>本次批准金额</td><td>OA回调写入</td></tr>
+<tr><td>IN_CAN_USE_AMT</td><td>DECIMAL</td><td>额度内可用金额</td><td>-</td><td>从资源额度查询</td></tr>
+<tr><td>IN_QUOTA_RATIO</td><td>DECIMAL</td><td>申请使用占比</td><td>-</td><td>OA回调写入</td></tr>
+<tr><td>PAY_TYPE</td><td>NUMBER</td><td>支付方式</td><td>支付方式</td><td>来源值集AE_PAY_TYPE</td></tr>
+<tr><td>SUPPLY_ID</td><td>NUMBER</td><td>供应商ID</td><td>-</td><td>OA回调写入</td></tr>
+<tr><td>SUPPLY_NAME</td><td>VARCHAR2</td><td>供应商名称</td><td>供应商名称</td><td>OA回调写入</td></tr>
+<tr><td>SUPPLY_CODE</td><td>VARCHAR2</td><td>供应商编码</td><td>-</td><td>OA回调写入</td></tr>
+<tr><td>SUPPLY_FULL_NAME</td><td>VARCHAR2</td><td>供应商全称</td><td>-</td><td>OA回调写入</td></tr>
+<tr><td>FP_NO</td><td>VARCHAR2</td><td>发票号</td><td>发票号</td><td>OA回调写入，额度内</td></tr>
+<tr><td>INVOICE_CONTENT</td><td>VARCHAR2</td><td>发票内容</td><td>发票内容</td><td>OA回调写入，额度内</td></tr>
+<tr><td>INVOICE_TYPE</td><td>NUMBER</td><td>发票类型</td><td>发票类型</td><td>来源值集AE_INVOICE_TYPE</td></tr>
+<tr><td>FP_AMT</td><td>DECIMAL</td><td>发票金额</td><td>发票金额</td><td>OA回调写入，额度内</td></tr>
+<tr><td>TAX_RATE</td><td>NUMBER</td><td>税率</td><td>税率</td><td>来源值集PIJV_TAX_RATE</td></tr>
+<tr><td>NO_TAX_AMT</td><td>DECIMAL</td><td>未含税金额</td><td>未含税金额</td><td>OA回调写入，额度内</td></tr>
+<tr><td>FINAL_PAY_AMT</td><td>DECIMAL</td><td>最终付款金额</td><td>最终付款金额</td><td>OA回调写入，额度内</td></tr>
+<tr><td>RECEIVER_BANK</td><td>VARCHAR2</td><td>收款银行</td><td>收款银行</td><td>OA回调写入，额度内</td></tr>
+<tr><td>BANK_NO</td><td>VARCHAR2</td><td>银行账号</td><td>银行账号</td><td>OA回调写入，额度内</td></tr>
+<tr><td>CUST_NAME</td><td>VARCHAR2</td><td>经销商名称</td><td>经销商名称</td><td>从申请单带入</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称</td><td>门店名称</td><td>从申请单带入</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>VARCHAR2</td><td>交易公司</td><td>交易公司</td><td>从申请单带入</td></tr>
+<tr><td>BILLING_UNIT_NAME</td><td>VARCHAR2</td><td>开票单位</td><td>开票单位</td><td>从申请单带入</td></tr>
+<tr><td>NOTE</td><td>VARCHAR2</td><td>备注</td><td>备注</td><td>用户输入</td></tr>
+<tr><td>CREATOR</td><td>VARCHAR2</td><td>申请人</td><td>申请人</td><td>系统自动记录</td></tr>
+<tr><td>CREATE_TIME</td><td>DATE</td><td>申请时间</td><td>申请时间</td><td>系统自动记录</td></tr>
+<tr><td>CHECKER</td><td>VARCHAR2</td><td>审核人</td><td>-</td><td>OA回调时写入</td></tr>
+<tr><td>CHECK_TIME</td><td>DATE</td><td>审核时间</td><td>-</td><td>OA回调时写入</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR2</td><td>审批状态</td><td>审批状态</td><td>NEW/RUN/APPROVED</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>NUMBER</td><td>审批实例ID</td><td>-</td><td>工作流实例ID</td></tr>
+<tr><td>CALLBACK_SOURCE</td><td>NUMBER</td><td>回调来源</td><td>-</td><td>1=OA通过，2=OA驳回</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>NUMBER</td><td>组织ID</td><td>-</td><td>当前事业部</td></tr>
+<tr><td>BUD_YEAR</td><td>NUMBER</td><td>预算年度</td><td>-</td><td>OA回调写入</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -912,225 +459,155 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">推送OA失败：门店广告投放报销申请不存在</td>
-            <td style="font-size:13px;">推送OA</td>
-            <td style="font-size:13px;">报销单在数据库中不存在，检查数据是否被删除</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">费用项目未找到！</td>
-            <td style="font-size:13px;">推送OA</td>
-            <td style="font-size:13px;">费用项目名称为空，额度内时支付方式≠3也校验</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">ID不能为空</td>
-            <td style="font-size:13px;">OA回调</td>
-            <td style="font-size:13px;">OA回调时传入的ID为空或≤0</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">OA回调失败：广告投放报销申请不存在！</td>
-            <td style="font-size:13px;">OA回调</td>
-            <td style="font-size:13px;">OA回调时查询报销单不存在</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">本次报销金额必须大于0！</td>
-            <td style="font-size:13px;">工作流校验</td>
-            <td style="font-size:13px;">额度内广告费报销时本次报销金额≤0</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">本次报销金额不能超过申请总金额！</td>
-            <td style="font-size:13px;">工作流校验</td>
-            <td style="font-size:13px;">本次报销金额&gt;申请总金额</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">本次报销金额不可超过可使用资源额度！</td>
-            <td style="font-size:13px;">工作流校验</td>
-            <td style="font-size:13px;">本次报销金额&gt;可使用资源额度</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">本次批准金额不可超过本次报销金额！</td>
-            <td style="font-size:13px;">工作流校验</td>
-            <td style="font-size:13px;">本次批准金额&gt;本次报销金额</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">已有在途的广告投放申请单，单号：X</td>
-            <td style="font-size:13px;">提交校验</td>
-            <td style="font-size:13px;">同一申请单下已有在途报销单</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">报销申请不存在</td>
-            <td style="font-size:13px;">提交校验</td>
-            <td style="font-size:13px;">校验时查询报销单不存在</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">主键不能为空!</td>
-            <td style="font-size:13px;">工作流回调</td>
-            <td style="font-size:13px;">更新工作流信息时主键为空</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>推送OA失败：门店广告投放报销申请不存在</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>报销单在数据库中不存在，检查数据是否被删除</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>费用项目未找到！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>费用项目名称为空，额度内时支付方式≠3也校验</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>ID不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OA回调时传入的ID为空或≤0</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>OA回调失败：广告投放报销申请不存在！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OA回调时查询报销单不存在</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-5" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次报销金额必须大于0！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>额度内广告费报销时本次报销金额≤0</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-6" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次报销金额不能超过申请总金额！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>本次报销金额&gt;申请总金额</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-7" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次报销金额不可超过可使用资源额度！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>本次报销金额&gt;可使用资源额度</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-8" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次批准金额不可超过本次报销金额！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>本次批准金额&gt;本次报销金额</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-9" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>已有在途的广告投放申请单，单号：X</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>同一申请单下已有在途报销单</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-10" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>报销申请不存在</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>校验时查询报销单不存在</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-11" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>主键不能为空!</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>更新工作流信息时主键为空</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>本次报销金额必须大于0！</td><td>提交</td><td>报销金额为0或负数，填写有效金额</td><td>阻断性报错</td><td>[查看](#报错1本次报销金额必须大于0)</td></tr>
+<tr><td>本次报销金额不能超过申请总金额！</td><td>提交</td><td>报销金额超过申请金额，减少报销金额</td><td>阻断性报错</td><td>[查看](#报错2本次报销金额不能超过申请总金额)</td></tr>
+<tr><td>本次报销金额不可超过可使用资源额度！</td><td>提交</td><td>额度内报销金额超过可用额度</td><td>阻断性报错</td><td>[查看](#报错3本次报销金额不可超过可使用资源额度)</td></tr>
+<tr><td>本次批准金额不可超过本次报销金额！</td><td>提交</td><td>批准金额超过报销金额</td><td>阻断性报错</td><td>[查看](#报错4本次批准金额不可超过本次报销金额)</td></tr>
+<tr><td>已有在途的广告投放申请单</td><td>提交</td><td>同一申请单已有在途报销单，等待审批完成</td><td>阻断性报错</td><td>[查看](#报错5已有在途的广告投放申请单)</td></tr>
+<tr><td>推送OA失败：门店广告投放报销申请不存在</td><td>OA推送</td><td>报销单已被删除</td><td>阻断性报错</td><td>[查看](#报错6推送oa失败门店广告投放报销申请不存在)</td></tr>
+<tr><td>费用项目未找到！</td><td>OA推送</td><td>费用项目配置异常</td><td>阻断性报错</td><td>[查看](#报错7费用项目未找到)</td></tr>
+<tr><td>OA回调失败：广告投放报销申请不存在！</td><td>OA回调</td><td>报销单已被删除</td><td>阻断性报错</td><td>[查看](#报错8oa回调失败广告投放报销申请不存在)</td></tr>
+<tr><td>ID不能为空</td><td>OA回调</td><td>OA回调缺少单据ID</td><td>阻断性报错</td><td>[查看](#报错9id不能为空)</td></tr>
+<tr><td>报销申请不存在</td><td>提交校验</td><td>报销单不存在</td><td>阻断性报错</td><td>[查看](#报错10报销申请不存在)</td></tr>
+<tr><td>主键不能为空!</td><td>更新工作流</td><td>工作流回调缺少单据ID</td><td>阻断性报错</td><td>[查看](#报错11主键不能为空)</td></tr>
+</tbody>
+</table>
+<h4>报错1：本次报销金额必须大于0！</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮，额度内（BX_TYPE=1）且广告费报销（SAVE_TYPE=2）时，校验本次报销金额thisStandardAmt&lt;=0</li><li><strong>逻辑分析</strong>：报销单需有有效报销金额才能占用资源额度与推送OA。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT，若该值&lt;=0则抛出阻断性异常，阻止OA推送和工作流发起。常见根因：用户未填写报销金额、金额被错误置0、或前端未做必填校验直接提交空单。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         fee_apply_no         AS 申请单号,
+         bx_type              AS 费用类型,
+         this_standard_amt    AS 本次报销金额,
+         hz_approve_status    AS 审批状态
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    bx_type = 1
+  AND    (this_standard_amt IS NULL OR this_standard_amt &lt;= 0)
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错2：本次报销金额不能超过申请总金额！</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮，校验本次报销金额thisStandardAmt&gt;申请总金额totalApplyAmtBx</li><li><strong>逻辑分析</strong>：报销金额受申请单总金额约束。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT与TOTAL_APPLY_AMT_BX，当本次报销金额超过申请总金额则抛异常。常见根因：用户输入报销金额超限、申请单金额被修改、或前端未实时带入最新申请总金额。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         fee_apply_no         AS 申请单号,
+         this_standard_amt    AS 本次报销金额,
+         total_apply_amt_bx   AS 申请总金额,
+         hz_approve_status    AS 审批状态
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    this_standard_amt &gt; total_apply_amt_bx
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错3：本次报销金额不可超过可使用资源额度！</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮，额度内（BX_TYPE=1）时，校验本次报销金额thisStandardAmt&gt;额度内可用金额inCanUseAmt</li><li><strong>逻辑分析</strong>：额度内报销需占用资源额度，报销金额不能超过当前可用额度。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT与IN_CAN_USE_AMT，当BX_TYPE=1且本次报销金额&gt;额度内可用金额时抛异常。常见根因：资源额度已被其他报销单占用、额度未及时刷新、或用户输入报销金额超限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         fee_apply_no         AS 申请单号,
+         bx_type              AS 费用类型,
+         this_standard_amt    AS 本次报销金额,
+         in_can_use_amt       AS 额度内可用金额,
+         hz_approve_status    AS 审批状态
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    bx_type = 1
+  AND    this_standard_amt &gt; in_can_use_amt
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错4：本次批准金额不可超过本次报销金额！</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮，校验本次批准金额thisAuthorizeStandardAmt&gt;本次报销金额thisStandardAmt</li><li><strong>逻辑分析</strong>：OA回调写入的批准金额不能超过用户提交的报销金额。校验逻辑读取FIN_FEE_BX_HEADER.THIS_AUTHORIZE_STANDARD_AMT与THIS_STANDARD_AMT，当批准金额超过报销金额则抛异常。常见根因：OA审批时批准金额被错误调大、数据回写异常、或前端未做边界校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                       AS 报销单ID,
+         bx_no                       AS 报销单号,
+         this_standard_amt           AS 本次报销金额,
+         this_authorize_standard_amt AS 本次批准金额,
+         hz_approve_status           AS 审批状态
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    this_authorize_standard_amt &gt; this_standard_amt
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错5：已有在途的广告投放申请单</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮，校验同一申请单号FEE_APPLY_NO下已存在审批状态为RUN的报销单</li><li><strong>逻辑分析</strong>：为防止同一申请单重复报销，提交前查询FIN_FEE_BX_HEADER中同一FEE_APPLY_NO且HZ_APPROVE_STATUS='RUN'的记录数。若存在在途单据则抛异常，阻止重复提交。常见根因：用户在第一张报销单审批未完成时又提交第二张、或前端未做在途校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT fee_apply_no        AS 申请单号,
+         COUNT(*)            AS 在途单据数,
+         LISTAGG(bx_no, ',') WITHIN GROUP (ORDER BY bx_no) AS 在途报销单号
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    hz_approve_status = 'RUN'
+  GROUP  BY fee_apply_no
+  HAVING COUNT(*) &gt;= 1;</code></pre>
+<h4>报错6：推送OA失败：门店广告投放报销申请不存在</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮推送OA时，按bxId查询FIN_FEE_BX_HEADER返回null</li><li><strong>逻辑分析</strong>：OA推送前需查询报销单组装数据。若单据在推送前被其他用户删除（物理删除），或bxId传值错误，查询返回空，无法组装OA数据导致推送失败。常见根因：并发操作删除单据、传参错误、或事务未提交即调用OA推送。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         stat                 AS 单据状态,
+         hz_approve_status    AS 审批状态
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    bx_id = #{传入的bxId};</code></pre>
+<h4>报错7：费用项目未找到！</h4>
+<ul><li><strong>触发条件</strong>：OA推送时，按报销单费用项目配置查询费用项目主数据返回null</li><li><strong>逻辑分析</strong>：OA推送需用费用项目组装OA表单。若报销单关联的费用项目（OBJECT_NAME）在费用项目主数据表中不存在、费用项目被停用删除、或配置错误，查询返回空，无法组装OA数据。常见根因：费用项目主数据未同步、配置错误、或报销单费用项目字段为空。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         object_name          AS 费用项目,
+         bx_type              AS 费用类型,
+         pay_type             AS 支付方式
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    (object_name IS NULL OR object_name NOT IN (SELECT project_code FROM fin_fee_project WHERE stat = 1))
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错8：OA回调失败：广告投放报销申请不存在！</h4>
+<ul><li><strong>触发条件</strong>：OA审批完成回调DMS时，按回调报文中的bxId查询FIN_FEE_BX_HEADER返回null</li><li><strong>逻辑分析</strong>：OA回调处理需更新报销单审批状态、批准金额、发票信息等。若回调期间单据被删除，或OA回调报文的单据ID与DMS不一致（如OA配置错误、ID映射异常），查询返回空，回调处理失败，审批状态无法更新。常见根因：单据被并发删除、OA配置错误、或回调报文ID丢失。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         hz_approve_status    AS 审批状态,
+         hz_instance_id       AS 工作流实例ID,
+         callback_source      AS 回调来源
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    bx_id = #{OA回调报文中的bxId};</code></pre>
+<h4>报错9：ID不能为空</h4>
+<ul><li><strong>触发条件</strong>：OA回调处理方法接收到的bxId参数为null或空字符串</li><li><strong>逻辑分析</strong>：OA回调接口需用bxId定位单据。若OA系统未正确配置回调用单据ID字段，或回调报文丢失ID字段，DMS接收到的ID为空，无法执行后续更新逻辑。常见根因：OA单据配置缺失ID字段、回调报文格式异常、或接口映射错误。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         hz_instance_id       AS 工作流实例ID,
+         hz_approve_status    AS 审批状态
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    hz_approve_status = 'RUN'
+  AND    bx_id IS NULL
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错10：报销申请不存在</h4>
+<ul><li><strong>触发条件</strong>：提交校验时，按bxId查询FIN_FEE_BX_HEADER返回null</li><li><strong>逻辑分析</strong>：提交校验需查询报销单确认单据存在且状态合法。若单据已被删除、bxId传值错误、或事务未提交即调用校验，查询返回空，无法继续提交逻辑。常见根因：单据被并发删除、前端传参错误、或保存失败后误调提交。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         stat                 AS 单据状态,
+         hz_approve_status    AS 审批状态
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    bx_id = #{传入的bxId};</code></pre>
+<h4>报错11：主键不能为空!</h4>
+<ul><li><strong>触发条件</strong>：工作流回调更新报销单时，接收到的bxId（单据主键）为null或0</li><li><strong>逻辑分析</strong>：工作流回调需用bxId定位并更新报销单审批状态。若工作流配置未正确传回单据ID、回调报文丢失ID、或保存时未正确回写BX_ID，会导致主键为空，无法执行更新逻辑。常见根因：工作流配置错误、回调报文异常、或自增序列未取回。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id                AS 报销单ID,
+         bx_no                AS 报销单号,
+         hz_instance_id       AS 工作流实例ID,
+         hz_approve_status    AS 审批状态
+  FROM   fin_fee_bx_header
+  WHERE  save_type = 2
+  AND    hz_approve_status = 'RUN'
+  AND    (bx_id IS NULL OR bx_id = 0)
+  ORDER  BY create_time DESC;</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">推送OA失败但工作流继续流转</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>推送OA异常被catch捕获返回false，但不阻断工作流。排查SQL：`SELECT * FROM FIN_FEE_BX_HEADER WHERE HZ_APPROVE_STATUS = 'RUN' AND CALLBACK_SOURCE IS NULL`<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查OA接口连接和单据配置表(OA_BILL_REF)中"YXZT门店广告投放报销申请"的配置
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">OA回调后数据未更新</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>OA回调时slHFinalApprover不为"Y"，即非最终审批人审批。排查SQL：`SELECT * FROM FIN_FEE_BX_HEADER WHERE HZ_APPROVE_STATUS = 'RUN' AND CALLBACK_SOURCE IS NULL`<br>
-      <strong style="color:#7C3AED;">处理：</strong>确认OA审批流程是否已到最终审批节点
-    </div>
-  </div>
-</div>
+<ul><li>问题1：OA审批推送失败</li><li>原因：OA系统不可用或数据组装异常</li><li>解决思路：检查OA系统状态和OA单据配置</li></ul>
+<ul><li>问题2：提交时提示已有在途单据</li><li>原因：同一申请单已有审批中的报销单</li><li>解决思路：等待在途单据审批完成或作废在途单据后重新提交</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT bx_id, bx_no, hz_approve_status FROM fin_fee_bx_header
+WHERE fee_apply_no = #{feeApplyNo} AND hz_approve_status = 'RUN';</code></pre>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -1139,11 +616,16 @@ SELECT * FROM FIN_FEE_BX_HEADER WHERE BX_TYPE = 1 AND SAVE_TYPE = 2 AND (THIS_ST
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2026-01-24 | - | jiaqiang.fu01 | 更新费用报销单实体 |
-| 2025-10-27 | - | tyc | 初始创建广告费报销模块 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写知识库文档</td></tr>
+<tr><td>2026-01-24</td><td>-</td><td>jiaqiang.fu01</td><td>更新费用报销单实体</td></tr>
+<tr><td>2025-10-27</td><td>-</td><td>tyc</td><td>初始创建费用报销单功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -104,6 +105,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -159,74 +161,251 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 嵌入位置"><p>本功能嵌入在CRM产品详情页中使用，无独立路由页面。</p></KbCard>
-
-<KbQuote>在其它页面通过嵌入组件查询选择产品图册数据</KbQuote>
-<KbCard title="2.2 API接口"><table class="kl-table"><thead><tr><th>接口</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/images</code></td><td>GET</td><td>查询产品图片列表</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/images</code></td><td>POST</td><td>上传产品图片</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/images/{id}</code></td><td>DELETE</td><td>删除产品图片</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/images/sort</code></td><td>PUT</td><td>调整图片排序</td></tr></tbody></table></KbCard>
-
-<KbQuote>提供产品图册增删改查API接口</KbQuote>
-<KbCard title="2.3 无工作流"><p>本功能无审批工作流，图片上传后直接生效。</p></KbCard>
-
-<KbQuote>产品图册无审批流程，提交后直接生效</KbQuote>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：文件上传至OSS `文件存储`">
+<ul><li><strong>业务意义</strong>：产品图片存储在OSS对象存储中，确保高可用和CDN加速</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过HZERO文件客户端fileClient.uploadAttachment上传文件至OSS</li></ul>
+<ul><li>第2点：上传参数包括bucketName（存储桶）、directoryCustom（目录）、uuid（唯一标识）、fileName（文件名）、fileType（文件类型）、storageCode（存储编码）</li></ul>
+<ul><li>第3点：上传成功后返回文件URL，用于后续关联记录写入</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：导入批量处理 `批量导入`">
+<ul><li><strong>业务意义</strong>：支持通过Excel模板批量导入产品图片关联关系</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：导入模板编码CRM.PROD_PHOTO，导入处理类ProdPhotoImport</li></ul>
+<ul><li>第2点：ProdPhotoImport继承ObjFileBusRelImportServiceImpl，固定busType=prodPhoto、relBusType=prod</li></ul>
+<ul><li>第3点：导入数据解析为busId（产品编码）、fileUrl（文件URL）、fileType（文件类型）</li></ul>
+<ul><li>第4点：批量调用objFileBusRelService.saveData写入OBJ_FILE_BUS_REL表</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 上传功能"><ul><li><strong>上传方式</strong>：点击上传按钮或拖拽上传</li><li><strong>文件格式限制</strong>：支持JPG、JPEG、PNG、GIF、BMP等常见图片格式</li><li><strong>文件大小限制</strong>：单张图片一般不超过5MB，具体以系统配置为准</li><li><strong>批量上传</strong>：支持一次选择多张图片上传</li><li><strong>上传进度</strong>：显示上传进度条，支持上传失败重试</li></ul></KbCard>
-<KbCard title="3.2 图片处理"><ul><li><strong>缩略图生成</strong>：上传后系统自动生成缩略图，用于列表展示</li><li><strong>图片压缩</strong>：大图自动压缩到合理尺寸，减少存储和加载开销</li><li><strong>水印</strong>：可根据配置自动添加产品水印</li><li><strong>主图设置</strong>：第一张上传的图片默认为主图，可手动调整</li></ul></KbCard>
-<KbCard title="3.3 图片管理"><ul><li><strong>图片列表</strong>：在产品详情页以缩略图网格展示</li><li><strong>图片预览</strong>：点击缩略图可查看大图，支持左右切换</li><li><strong>图片删除</strong>：支持删除单张图片，主图删除后自动将下一张设为主图</li><li><strong>图片排序</strong>：支持拖拽排序调整显示顺序</li><li><strong>主图标记</strong>：排序第一的图片自动标记为主图</li></ul></KbCard>
-<KbCard title="3.4 存储方式"><ul><li>图片文件存储在文件服务器或对象存储（如OSS/S3）</li><li>数据库中存储文件的相对路径和关联信息</li><li>图片URL通过文件服务获取，支持CDN加速</li></ul></KbCard>
-<KbCard title="3.5 选择弹窗"><p class='kl-tip'>前端代码缺失，无法确认。疑似通过产品列表的"产品图册-导入"按钮触发。</p></KbCard>
-<KbCard title="3.6 导入"><p>支持Excel导入（通过产品列表菜单的"产品图册-导入"按钮，templateCode=CRM.PROD_PHOTO）。</p></KbCard>
-<KbCard title="3.7 其他按钮"><p class='kl-tip'>前端代码缺失，无法确认。</p></KbCard>
-<KbCard title="3.8 保存校验"><p class='kl-tip'>前端代码缺失，无法确认。</p></KbCard>
-<KbCard title="3.9 提交校验"><p class='kl-tip'>无提交/审批功能（前端代码缺失，无工作流相关代码）。</p></KbCard>
-<KbCard title="4.1 产品图片表"><p class='kl-tip'>表名：PRODUCT_IMAGE（产品图片表）</p>
-<table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th><th>备注</th></tr></thead><tbody><tr><td>id</td><td>NUMBER</td><td>主键ID</td><td>PK</td></tr><tr><td>product_id</td><td>NUMBER</td><td>产品ID</td><td>FK→PRODUCT</td></tr><tr><td>file_name</td><td>VARCHAR2</td><td>文件名</td><td></td></tr><tr><td>file_path</td><td>VARCHAR2</td><td>文件路径</td><td>相对路径</td></tr><tr><td>file_url</td><td>VARCHAR2</td><td>文件访问URL</td><td></td></tr><tr><td>file_size</td><td>NUMBER</td><td>文件大小（字节）</td><td></td></tr><tr><td>file_type</td><td>VARCHAR2</td><td>文件类型</td><td>JPG/PNG/GIF等</td></tr><tr><td>thumbnail_path</td><td>VARCHAR2</td><td>缩略图路径</td><td></td></tr><tr><td>thumbnail_url</td><td>VARCHAR2</td><td>缩略图URL</td><td></td></tr><tr><td>sequence_number</td><td>NUMBER</td><td>排序号</td><td>排序第一为主图</td></tr><tr><td>is_primary</td><td>VARCHAR2</td><td>是否主图</td><td>Y/N</td></tr><tr><td>organization_id</td><td>NUMBER</td><td>组织ID</td><td></td></tr><tr><td>created_by</td><td>NUMBER</td><td>创建人</td><td></td></tr><tr><td>creation_date</td><td>DATE</td><td>创建时间</td><td></td></tr><tr><td>object_version_number</td><td>NUMBER</td><td>版本号</td><td>乐观锁</td></tr></tbody></table></KbCard>
+<KbCard title="界面模块1：产品图片上传页">
+<blockquote>本页面为低代码页面（hlod），无独立前端路由和源码。使用HZERO平台标准文件上传组件，后端通过ProdPhotoImport（模板CRM.PROD_PHOTO）处理导入，数据写入OBJ_FILE_BUS_REL表。</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>产品编码</td><td>OBJ_FILE_BUS_REL.BUS_ID</td><td>文本框/选择框</td><td>要上传图片的产品编码</td><td>常显</td><td>1.默认值：无 2.来源：用户输入/选择 3.可编辑：是 4.需关联LNK_PROD.PROD_CODE</td></tr>
+<tr><td>图片类型</td><td>OBJ_FILE_TYPE.FILE_BUS_TYPE</td><td>下拉选择框</td><td>图片分类类型</td><td>常显</td><td>1.默认值：无 2.来源：值集CRM.OBJ_FILE_TYPE（busType=prodPhoto） 3.可编辑：是</td></tr>
+<tr><td>图片文件</td><td>OBJ_FILE_BUS_REL.FILE_URL</td><td>文件上传组件</td><td>要上传的图片文件</td><td>常显</td><td>1.默认值：无 2.来源：用户选择文件上传 3.上传后自动生成文件URL 4.支持图片格式</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<blockquote>本菜单为低代码页面，选择弹窗由低代码平台配置。</blockquote>
+</KbCard>
+
+<KbCard title="导入">
+<h4>前置约定</h4>
+<ul><li>文件格式：Excel（.xlsx）</li><li>模板编码：CRM.PROD_PHOTO</li><li>导入处理类：ProdPhotoImport（busType=prodPhoto, relBusType=prod）</li><li>权限：hzero.product_data.product_info.product_list.ps.import</li></ul>
+<h4>字段映射</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段含义</th><th>是否必输</th><th>字段格式</th><th>重复判定字段</th></tr>
+</thead>
+<tbody>
+<tr><td>产品编码（busId）</td><td>是</td><td>文本</td><td>是（同产品+同类型）</td></tr>
+<tr><td>文件URL（fileUrl）</td><td>是</td><td>文本/URL</td><td>否</td></tr>
+<tr><td>文件类型（fileType）</td><td>是</td><td>文本</td><td>否</td></tr>
+</tbody>
+</table>
+<h4>处理逻辑</h4>
+<ul><li><strong>校验逻辑</strong>：由HZERO导入框架按模板配置校验</li><li><strong>导入逻辑</strong>：</li><li>第1点：解析导入数据为busId、fileUrl、fileType</li><li>第2点：调用objFileBusRelService.getFileBusRel构建ObjFileBusRel实体（fileBusType=prodPhoto, relBusType=prod）</li><li>第3点：批量调用objFileBusRelService.saveData写入OBJ_FILE_BUS_REL表</li><li><strong>重复处理策略</strong>：按模板配置</li><li><strong>性能方案</strong>：批量插入</li></ul>
+<h4>异常与结果约定</h4>
+<ul><li>部分成功/失败时的处理：由导入框架控制，支持失败明细导出</li><li>结果反馈机制：导入完成后提示成功/失败数量</li></ul>
+<h4>运维保障</h4>
+<ul><li>日志记录：HZERO导入框架自动记录导入日志</li><li>断点续传/重试机制：支持失败行重新导入</li></ul>
+</KbCard>
+
+<KbCard title="其他按钮">
+<blockquote>本菜单为低代码页面，按钮由低代码平台配置，通常包含上传、导入、导出等操作。</blockquote>
+</KbCard>
+
+<KbCard title="保存校验">
+<ul><li>校验1：产品编码必填 —— 确保图片关联到有效产品</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：产品编码（busId）为必填字段，需关联LNK_PROD.PROD_CODE</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(1) FROM LNK_PROD WHERE PROD_CODE = :busId;</code></pre>
+<ul><li>校验2：图片类型必填 —— 确保图片分类有效</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：图片类型需在OBJ_FILE_TYPE表中存在且busType=prodPhoto</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(1) FROM OBJ_FILE_TYPE WHERE BUS_TYPE = 'prodPhoto' AND FILE_BUS_TYPE = :fileType;</code></pre>
+</KbCard>
+
+<KbCard title="提交校验">
+<blockquote>本菜单为上传操作页面，无审批提交流程。</blockquote>
+</KbCard>
+
+<KbCard title="状态机">
+<blockquote>本菜单为上传操作页面，无状态流转。</blockquote>
+</KbCard>
+
+<KbCard title="表1：OBJ_FILE_BUS_REL（附件与业务数据关系表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>主键</td><td>-</td><td>自增主键</td></tr>
+<tr><td>REL_BUS_TYPE</td><td>VARCHAR</td><td>关联业务类型</td><td>-</td><td>产品图片固定为'prod'</td></tr>
+<tr><td>BUS_ID</td><td>VARCHAR</td><td>业务数据ID</td><td>产品编码</td><td>产品编码（LNK_PROD.PROD_CODE）</td></tr>
+<tr><td>FILE_URL</td><td>VARCHAR</td><td>文件URL</td><td>图片文件</td><td>对应HZERO.HFLE_FILE.file_url</td></tr>
+<tr><td>FILE_TYPE_ID</td><td>NUMBER</td><td>文件类型ID</td><td>图片类型（间接）</td><td>关联OBJ_FILE_TYPE.ID</td></tr>
+<tr><td>SOURCE</td><td>VARCHAR</td><td>来源</td><td>-</td><td>IMPORT=导入上传</td></tr>
+<tr><td>CREATION_DATE</td><td>DATE</td><td>创建时间</td><td>-</td><td>自动记录</td></tr>
+<tr><td>CREATED_BY</td><td>VARCHAR</td><td>创建人</td><td>-</td><td>自动记录</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>自动记录</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>VARCHAR</td><td>最后更新人</td><td>-</td><td>自动记录</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="表2：OBJ_FILE_TYPE（文件类型表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>主键</td><td>-</td><td>关联OBJ_FILE_BUS_REL.FILE_TYPE_ID</td></tr>
+<tr><td>BUS_TYPE</td><td>VARCHAR</td><td>业务类型</td><td>-</td><td>产品图片固定为'prodPhoto'</td></tr>
+<tr><td>FILE_BUS_TYPE</td><td>VARCHAR</td><td>文件业务类型编码</td><td>图片类型</td><td>值集CRM.OBJ_FILE_TYPE</td></tr>
+<tr><td>FILE_BUS_TYPE_NAME</td><td>VARCHAR</td><td>文件业务类型名称</td><td>-</td><td>附件类型中文名称</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题"><table class="kl-table"><thead><tr><th>问题</th><th>解答</th></tr></thead><tbody><tr><td>支持哪些图片格式？</td><td>支持JPG、JPEG、PNG、GIF、BMP等常见格式</td></tr><tr><td>单张图片大小限制是多少？</td><td>一般不超过5MB，具体以系统配置为准</td></tr><tr><td>主图如何设置？</td><td>排序第一的图片自动为主图，可通过拖拽排序调整</td></tr><tr><td>图片上传失败怎么办？</td><td>检查文件格式和大小是否超限，网络是否正常，支持重新上传</td></tr><tr><td>图片存储在哪里？</td><td>文件服务器或对象存储（如OSS/S3），数据库存储路径信息</td></tr></tbody></table></KbCard>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>文件上传失败</td><td>上传图片时</td><td>OSS配置错误或网络异常，检查storageCode和bucketName配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>产品编码不存在</td><td>保存时</td><td>输入的产品编码在LNK_PROD表中不存在</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>文件类型不存在:prodPhoto:xxx</td><td>导入时</td><td>导入的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>产品编码必填</td><td>保存时</td><td>未填写产品编码，需填写有效产品编码</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>图片类型必填</td><td>保存时</td><td>未选择图片类型，需选择有效的图片分类类型</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>导入失败</td><td>导入时</td><td>导入数据校验失败或批量写入异常，检查导入模板和数据格式</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足</td><td>导入时</td><td>当前用户无产品图片导入权限，需分配对应权限角色</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>会话过期</td><td>页面操作时</td><td>登录会话已过期，需重新登录</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<blockquote><strong>"文件上传失败"详细逻辑：</strong>
+（1）调用fileClient.uploadAttachment上传文件至OSS失败。
+（2）排查方向：检查OSS配置（bucketName、storageCode）、网络连通性、文件大小限制。
+排查SQL：
+```sql
+-- 检查OSS文件存储配置
+SELECT F.FILE_URL, F.FILE_NAME, F.BUCKET_NAME, F.STORAGE_CODE
+FROM HZERO.HFLE_FILE F
+WHERE F.FILE_NAME = :fileName</blockquote>
+<p>ORDER BY F.CREATION_DATE DESC;</p>
+<blockquote>```</blockquote>
+<h4>报错2：产品编码不存在</h4>
+<ul><li><strong>触发条件</strong>：保存图片关联关系时，校验输入的产品编码在LNK_PROD表中不存在</li><li><strong>逻辑分析</strong>：后端保存OBJ_FILE_BUS_REL记录前，先查询LNK_PROD表确认产品编码存在。若产品编码拼写错误、产品已被删除或产品尚未同步入库，则校验失败抛出异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
+         P.PROD_STATUS AS 上下架状态, P.SM_STATE AS 生命状态
+  FROM LNK_PROD P
+  WHERE P.PROD_CODE = :prodCode;
+  -- 若查询结果为空，确认产品编码不存在或已删除</code></pre>
+<h4>报错3：文件类型不存在:prodPhoto:xxx</h4>
+<ul><li><strong>触发条件</strong>：通过Excel导入产品图片时，导入的图片类型在OBJ_FILE_TYPE表中不存在</li><li><strong>逻辑分析</strong>：后端ObjFileBusRelServiceImpl.getFileBusRel方法根据fileBusType=prodPhoto和fileType查询OBJ_FILE_TYPE表（status=1），若objFileTypeDb为null则抛出RuntimeException。导入处理类ProdPhotoImport继承ObjFileBusRelImportServiceImpl，固定busType=prodPhoto、relBusType=prod。常见于导入模板的图片类型值与系统配置不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
+  FROM OBJ_FILE_TYPE T
+  WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1'
+  ORDER BY T.FILE_BUS_TYPE;
+  -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置</code></pre>
+<h4>报错4：产品编码必填</h4>
+<ul><li><strong>触发条件</strong>：保存或导入时，未填写产品编码（busId）字段</li><li><strong>逻辑分析</strong>：产品编码为OBJ_FILE_BUS_REL.BUS_ID字段，对应界面"产品编码"必填项。前端表单校验或导入框架按模板CRM.PROD_PHOTO配置校验，若为空则阻断保存。产品编码需关联LNK_PROD.PROD_CODE，确保图片关联到有效产品。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS 产品存在数
+  FROM LNK_PROD P
+  WHERE P.PROD_CODE = :busId;
+  -- 若:busId为空或查询结果为0，则校验失败</code></pre>
+<h4>报错5：图片类型必填</h4>
+<ul><li><strong>触发条件</strong>：保存或导入时，未选择图片类型（fileType）字段</li><li><strong>逻辑分析</strong>：图片类型对应OBJ_FILE_TYPE.FILE_BUS_TYPE，界面为下拉选择框，来源值集CRM.OBJ_FILE_TYPE（busType=prodPhoto）。前端表单校验或导入框架按模板配置校验，若为空则阻断保存。图片类型需在OBJ_FILE_TYPE表中存在且busType=prodPhoto、status=1。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT T.FILE_BUS_TYPE AS 类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
+  FROM OBJ_FILE_TYPE T
+  WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1';
+  -- 若未选择图片类型或选择的值不在上述结果中，则校验失败</code></pre>
+<h4>报错6：导入失败</h4>
+<ul><li><strong>触发条件</strong>：通过Excel模板CRM.PROD_PHOTO导入产品图片时，导入框架校验失败或批量写入OBJ_FILE_BUS_REL异常</li><li><strong>逻辑分析</strong>：导入由HZERO导入框架处理，ProdPhotoImport.doImport方法解析每行数据为busId、fileUrl、fileType，调用getFileBusRel构建ObjFileBusRel实体，再批量调用saveData写入数据库。任一行校验失败（如文件类型不存在、产品编码为空）或数据库写入异常均导致导入失败，支持失败明细导出。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查导入的图片关联数据
+  SELECT F.BUS_ID AS 产品编码, F.FILE_URL AS 文件URL, F.FILE_TYPE_ID AS 文件类型ID,
+         F.SOURCE AS 来源, F.CREATION_DATE AS 创建时间
+  FROM OBJ_FILE_BUS_REL F
+  WHERE F.REL_BUS_TYPE = 'prod'
+    AND F.SOURCE = 'IMPORT'
+    AND F.CREATION_DATE &gt;= SYSDATE - 1
+  ORDER BY F.CREATION_DATE DESC;</code></pre>
+<h4>报错7：权限不足</h4>
+<ul><li><strong>触发条件</strong>：用户执行产品图片导入操作时，当前用户无对应权限</li><li><strong>逻辑分析</strong>：产品图片上传页为低代码页面，导入操作需权限hzero.product_data.product_info.product_list.ps.import。若用户无权限则接口返回403或导入按钮不显示。常见于用户角色未分配产品图片导入权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
+  FROM HZERO.IAM_ROLE R
+    JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
+    JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
+  WHERE P.PERMISSION_CODE LIKE '%product_list.ps.import%'
+    AND R.ROLE_CODE = :currentRoleCode;</code></pre>
+<h4>报错8：会话过期</h4>
+<ul><li><strong>触发条件</strong>：用户在产品图片上传页面操作时，登录会话（access_token）已过期</li><li><strong>逻辑分析</strong>：前端请求携带的access_token过期，后端返回401未授权。前端HZERO框架拦截401状态码跳转登录页。常见于长时间未操作页面或token有效期过短。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 无直接SQL，检查用户会话状态
+  SELECT U.LOGIN_NAME, U.LAST_LOGIN_DATE AS 最后登录时间
+  FROM HZERO.IAM_USER U
+  WHERE U.LOGIN_NAME = :currentLoginName;</code></pre>
+</KbCard>
+
+<KbCard title="常见问题">
+<ul><li>问题1：上传后图片在图册页面看不到</li><li>原因：OBJ_FILE_BUS_REL记录的REL_BUS_TYPE或BUS_TYPE不正确，或FILE_TYPE_ID未正确关联</li><li>解决思路：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT F.*, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME
+    FROM OBJ_FILE_BUS_REL F
+      LEFT JOIN OBJ_FILE_TYPE T ON F.FILE_TYPE_ID = T.ID
+    WHERE F.REL_BUS_TYPE = 'prod' AND F.BUS_ID = :prodCode;</code></pre>
+<ul><li>问题2：导入失败提示文件类型不存在</li><li>原因：OBJ_FILE_TYPE表中未配置对应的busType=prodPhoto的文件类型</li><li>解决思路：在OBJ_FILE_TYPE表中添加对应的文件类型配置</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
+
+<div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-12-18</td><td>-</td><td>-</td><td>附件与业务数据关系表(ObjFileBusRel)初始创建</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>版本</th><th>更新内容</th><th>更新人</th></tr></thead><tbody><tr><td>2026-08-03</td><td>V1.0</td><td>初始创建</td><td>AI</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

@@ -157,25 +157,11 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：纯报表查询页面 【只读查询】">
-<KbQuote>供内部人员汇总查询门店装修额度内和额度外的兑现数据，了解兑现整体情况及资金使用分布</KbQuote>
-
-**具体逻辑**：
-
-- 1、本页面为hlod低代码报表页面，无独立前端源码
-- 2、仅提供查询和导出功能，不支持新增、修改、删除操作
-- 3、数据来源于两张表：额度内兑现头表(FIN_FEE_CASHOUT_HEADER, cashoutType=1)和额度外兑现表(FIN_FEE_TERMINAL_RE_CASHOUT)
-</KbCard>
-
-<KbCard num="2" title="重点逻辑2：额度内/额度外数据合并展示 【汇总逻辑】">
-<KbQuote>将额度内兑现和额度外兑现数据合并汇总展示，便于对比分析</KbQuote>
-
-**具体逻辑**：
-
-- 1、额度内兑现数据从FIN_FEE_CASHOUT_HEADER查询，过滤cashoutType=1(额度内)
-- 2、额度外兑现数据从FIN_FEE_TERMINAL_RE_CASHOUT查询
-- 3、通过兑现类型字段区分额度内/额度外数据，汇总展示门店维度的兑现金额
-- 4、可按兑现类型筛选查看特定类型的兑现数据
+<KbCard num="1" title="重点逻辑1：兑现数据汇总统计 {数据汇总}">
+<ul><li><strong>业务意义</strong>：按多维度汇总兑现数据，支持管理层决策</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：按年度、经销商、门店、兑现类型等维度汇总</li></ul>
+<ul><li>第2点：统计可兑现总额、已兑现金额、剩余可兑现金额</li></ul>
 </KbCard>
 
 </div>
@@ -185,199 +171,80 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：兑现汇总报表页面（hlod低代码页面）">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：兑现汇总报表查询页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>门店编码</td>
-<td>文本框</td>
-<td>按门店编码筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_CASHOUT_HEADER.TERMINAL_CODE / FIN_FEE_TERMINAL_RE_CASHOUT.TERMINAL_CODE</td>
-</tr>
-<tr>
-<td>门店名称</td>
-<td>文本框</td>
-<td>按门店名称筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_CASHOUT_HEADER.TERMINAL_NAME / FIN_FEE_TERMINAL_RE_CASHOUT.TERMINAL_NAME</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>按经销商编码筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_CASHOUT_HEADER.CUST_CODE / FIN_FEE_TERMINAL_RE_CASHOUT.CUST_CODE</td>
-</tr>
-<tr>
-<td>经销商名称</td>
-<td>文本框</td>
-<td>按经销商名称筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_CASHOUT_HEADER.CUST_NAME / FIN_FEE_TERMINAL_RE_CASHOUT.CUST_NAME</td>
-</tr>
-<tr>
-<td>申请日期起</td>
-<td>日期选择器</td>
-<td>申请日期范围起</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>日期</td>
-<td>FIN_FEE_CASHOUT_HEADER.CREATE_TIME / FIN_FEE_TERMINAL_RE_CASHOUT.CREATE_TIME</td>
-</tr>
-<tr>
-<td>申请日期止</td>
-<td>日期选择器</td>
-<td>申请日期范围止</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>日期</td>
-<td>FIN_FEE_CASHOUT_HEADER.CREATE_TIME / FIN_FEE_TERMINAL_RE_CASHOUT.CREATE_TIME</td>
-</tr>
-<tr>
-<td>兑现类型</td>
-<td>下拉选择框</td>
-<td>按兑现类型筛选</td>
-<td>常显</td>
-<td>用户选择</td>
-<td>1-额度内/2-额度外</td>
-<td>FIN_FEE_CASHOUT_HEADER.CASHOUT_TYPE</td>
-</tr>
-<tr>
-<td>交易公司</td>
-<td>文本框</td>
-<td>按交易公司筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_CASHOUT_HEADER.TRADING_COMPANY_NAME / FIN_FEE_TERMINAL_RE_CASHOUT.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>审批状态</td>
-<td>下拉选择框</td>
-<td>按审批状态筛选</td>
-<td>常显</td>
-<td>用户选择</td>
-<td>NEW/RUN/APPROVED/REJECTED</td>
-<td>FIN_FEE_CASHOUT_HEADER.HZ_APPROVE_STATUS / FIN_FEE_TERMINAL_RE_CASHOUT.HZ_APPROVE_STATUS</td>
-</tr>
-</tbody></table></div>
+<tr><td>年度</td><td>-</td><td>下拉选择框</td><td>查询年度</td><td>常显</td><td>默认当前年度</td></tr>
+<tr><td>经销商名称</td><td>-</td><td>文本框</td><td>查询经销商</td><td>常显</td><td>可输入筛选</td></tr>
+<tr><td>门店名称</td><td>-</td><td>文本框</td><td>查询门店</td><td>常显</td><td>可输入筛选</td></tr>
+<tr><td>兑现类型</td><td>-</td><td>下拉选择框</td><td>额度内/额度外</td><td>常显</td><td>1=额度内，2=额度外</td></tr>
+<tr><td>时间范围</td><td>-</td><td>日期范围选择框</td><td>查询时间范围</td><td>常显</td><td>可选择起止日期</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard title="选择弹窗">
+<KbCard title="界面模块2：兑现汇总报表结果列表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>经销商名称</td><td>-</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>门店名称</td><td>-</td><td>文本框</td><td>门店名称</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>兑现单号</td><td>-</td><td>文本框</td><td>兑现单号</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>报销单号</td><td>-</td><td>文本框</td><td>关联报销单号</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>兑现类型</td><td>-</td><td>文本框</td><td>额度内/额度外</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>可兑现总额</td><td>-</td><td>文本框</td><td>可兑现总额</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>已兑现金额</td><td>-</td><td>文本框</td><td>已兑现金额</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>本次兑现金额</td><td>-</td><td>文本框</td><td>本次兑现金额</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>审批状态</td><td>-</td><td>文本框</td><td>审批状态</td><td>常显</td><td>查询结果</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="导入">
-> 不支持导入功能
 
-</KbCard>
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 查询 | 查询兑现汇总报表 | 列表页 | 常显 | 调用兑现查询接口 |
-| 导出 | 导出报表数据 | 列表页 | 常显 | 导出当前查询结果为Excel |
-
-</KbCard>
-<KbCard title="保存校验">
-</KbCard>
-<KbCard title="提交校验">
-</KbCard>
-<KbCard title="状态机">
-
-> 本页面为纯查询页面，无状态流转
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：FIN_FEE_CASHOUT_HEADER（额度内兑现头表，关联表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| FEE_CASHOUT_ID | NUMBER | 兑现ID(主键) | - | 关联字段 |
-| FEE_CASHOUT_NO | VARCHAR | 兑现单号 | 兑现单号 | 编码规则生成 |
-| CASHOUT_TYPE | NUMBER | 兑现类型 | 兑现类型 | 1-额度内/2-额度外 |
-| TERMINAL_ID | NUMBER | 门店ID | - | 关联门店 |
-| TERMINAL_CODE | VARCHAR | 门店编码 | 门店编码 | 保存时带入 |
-| TERMINAL_NAME | VARCHAR | 门店名称 | 门店名称 | 保存时带入 |
-| CUST_ID | NUMBER | 经销商ID | - | 关联经销商 |
-| CUST_CODE | VARCHAR | 经销商编码 | 经销商编码 | 保存时带入 |
-| CUST_NAME | VARCHAR | 经销商名称 | 经销商名称 | 保存时带入 |
-| TRADING_COMPANY_ID | NUMBER | 交易公司ID | - | 关联交易公司 |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司 | 保存时带入 |
-| BILLING_UNIT_ID | NUMBER | 开票单位ID | - | 关联开票单位 |
-| BILLING_UNIT_NAME | VARCHAR | 开票单位名称 | 开票单位 | 保存时带入 |
-| TOTAL_CAN_CASHOUT_AMT | DECIMAL | 可兑现总额 | 可兑现总额 | 验收报销单带入 |
-| THIS_CASHOUT_AMT | DECIMAL | 本次兑现金额 | 本次兑现金额 | 用户输入 |
-| FACT_INVOICE_AMT | DECIMAL | 实际兑现含税金额 | 实际兑现含税金额 | 计算得出 |
-| SUR_CASHOUT_AMT | DECIMAL | 剩余未兑现金额 | 剩余未兑现金额 | 计算得出 |
-| PAY_TYPE | NUMBER | 支付方式 | 支付方式 | 用户选择 |
-| HZ_APPROVE_STATUS | VARCHAR | 审批状态 | 审批状态 | NEW/RUN/APPROVED/REJECTED |
-| CREATOR | VARCHAR | 申请人 | 申请人 | 系统自动赋值 |
-| CREATE_TIME | DATE | 申请时间 | 申请时间 | 系统自动赋值 |
-| ORGANIZATION_ID | NUMBER | 组织ID | - | 租户组织 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询报表数据</td><td>查询页</td><td>常显</td><td>调用search接口</td></tr>
+<tr><td>重置</td><td>重置查询条件</td><td>查询页</td><td>常显</td><td>清空查询条件</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（查询页）</h4>
+<ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：按查询条件调用报表查询接口</li><li>第2点：分页返回兑现汇总数据</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/terminalReport/fin-fee-cashout-summary/search</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM fin_fee_cashout_header WHERE 1=1
+  AND (#{budYear} IS NULL OR bud_year = #{budYear})
+  AND (#{custName} IS NULL OR cust_name LIKE '%'||#{custName}||'%')
+  AND (#{terminalName} IS NULL OR terminal_name LIKE '%'||#{terminalName}||'%')
+  AND (#{cashoutType} IS NULL OR cashout_type = #{cashoutType})
+  AND (#{startDate} IS NULL OR create_time &gt;= #{startDate})
+  AND (#{endDate} IS NULL OR create_time &lt;= #{endDate})
+ORDER BY create_time DESC;</code></pre>
 </KbCard>
 
-<KbCard num="2" title="表2：FIN_FEE_TERMINAL_RE_CASHOUT（额度外兑现表，关联表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| TERMINAL_CASHOUT_ID | NUMBER | 兑现ID(主键) | - | 关联字段 |
-| TERMINAL_CASHOUT_CODE | VARCHAR | 兑现编码 | 兑现单号 | 编码规则生成 |
-| TERMINAL_ID | NUMBER | 门店ID | - | 关联门店 |
-| TERMINAL_CODE | VARCHAR | 门店编码 | 门店编码 | 保存时带入 |
-| TERMINAL_NAME | VARCHAR | 门店名称 | 门店名称 | 保存时带入 |
-| CUST_ID | NUMBER | 经销商ID | - | 关联经销商 |
-| CUST_CODE | VARCHAR | 经销商编码 | 经销商编码 | 保存时带入 |
-| CUST_NAME | VARCHAR | 经销商名称 | 经销商名称 | 保存时带入 |
-| TRADING_COMPANY_ID | NUMBER | 交易公司ID | - | 关联交易公司 |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司 | 保存时带入 |
-| BILLING_UNIT_ID | NUMBER | 开票单位ID | - | 关联开票单位 |
-| BILLING_UNIT_NAME | VARCHAR | 开票单位名称 | 开票单位 | 保存时带入 |
-| THIS_APPLY_CASHOUT_AMT | DECIMAL | 本次申请兑现金额 | 本次兑现金额 | 用户输入 |
-| FACT_INVOICE_AMT | DECIMAL | 实际兑现含税金额 | 实际兑现含税金额 | 计算得出 |
-| THIS_SUR_CASHOUT_AMT | DECIMAL | 剩余未兑现金额 | 剩余未兑现金额 | 计算得出 |
-| PAY_TYPE | NUMBER | 支付方式 | 支付方式 | 用户选择 |
-| HZ_APPROVE_STATUS | VARCHAR | 审批状态 | 审批状态 | NEW/RUN/APPROVED/REJECTED |
-| CREATOR | VARCHAR | 申请人 | 申请人 | 系统自动赋值 |
-| CREATE_TIME | DATE | 申请时间 | 申请时间 | 系统自动赋值 |
-| ORGANIZATION_ID | NUMBER | 组织ID | - | 租户组织 |
-
----
-
+<KbCard title="相关表：FIN_FEE_CASHOUT_HEADER（报销发票兑现主表-查询来源）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>FEE_CASHOUT_NO</td><td>VARCHAR2</td><td>兑现单号</td><td>兑现单号</td><td>查询来源</td></tr>
+<tr><td>BX_NO</td><td>VARCHAR2</td><td>报销单号</td><td>报销单号</td><td>查询来源</td></tr>
+<tr><td>CASHOUT_TYPE</td><td>NUMBER</td><td>兑现类型</td><td>兑现类型</td><td>1=额度内，2=额度外</td></tr>
+<tr><td>TOTAL_CAN_CASHOUT_AMT</td><td>DECIMAL</td><td>可兑现总额</td><td>可兑现总额</td><td>查询来源</td></tr>
+<tr><td>THIS_CASHOUT_AMT</td><td>DECIMAL</td><td>本次兑现金额</td><td>本次兑现金额</td><td>查询来源</td></tr>
+<tr><td>CUST_NAME</td><td>VARCHAR2</td><td>经销商名称</td><td>经销商名称</td><td>查询来源</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称</td><td>门店名称</td><td>查询来源</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR2</td><td>审批状态</td><td>审批状态</td><td>查询来源</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
-</KbCard>
 </div>
 </div>
 </div>
@@ -385,55 +252,63 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">无</td>
-            <td style="font-size:13px;">-</td>
-            <td style="font-size:13px;">-</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
+<tr><td>查询年度不能为空</td><td>查询</td><td>未选择查询年度，选择年度后查询</td><td>阻断性报错</td><td>[查看](#报错1查询年度不能为空)</td></tr>
+<tr><td>查询时间范围异常</td><td>查询</td><td>起始日期大于结束日期，调整时间范围</td><td>阻断性报错</td><td>[查看](#报错2查询时间范围异常)</td></tr>
+<tr><td>兑现类型异常</td><td>查询</td><td>兑现类型非1或2，重新选择兑现类型</td><td>阻断性报错</td><td>[查看](#报错3兑现类型异常)</td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错4网络请求失败接口调用异常)</td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错5权限不足未登录)</td></tr>
+</tbody>
+</table>
+<h4>报错1：查询年度不能为空</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的查询年度budYear参数为null或空字符串</li><li><strong>逻辑分析</strong>：兑现汇总报表按年度维度统计数据，年度是核心查询条件。校验逻辑检查入参budYear，为空则抛异常阻止查询。常见根因：用户未选择年度、年度下拉框未默认赋值当前年度、或前端传参丢失。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 兑现单数量
+  FROM   fin_fee_cashout_header
+  WHERE  bud_year IS NULL
+  AND    hz_approve_status = 'APPROVED';</code></pre>
+<h4>报错2：查询时间范围异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的起始日期startDate&gt;结束日期endDate</li><li><strong>逻辑分析</strong>：时间范围查询要求起始日期不晚于结束日期。校验逻辑检查入参startDate与endDate，当startDate&gt;endDate则抛异常阻止查询。常见根因：用户手动选择日期范围错误、日期选择组件未做范围限制、或前端传参顺序颠倒。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT fee_cashout_id      AS 兑现单ID,
+         fee_cashout_no      AS 兑现单号,
+         create_time         AS 创建时间,
+         hz_approve_status   AS 审批状态
+  FROM   fin_fee_cashout_header
+  WHERE  hz_approve_status = 'APPROVED'
+  AND    create_time BETWEEN #{startDate} AND #{endDate}
+  AND    #{startDate} &gt; #{endDate}
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错3：兑现类型异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的兑现类型cashoutType既非1（额度内）也非2（额度外）且非空</li><li><strong>逻辑分析</strong>：兑现类型仅支持额度内(1)和额度外(2)两种，传入其他值会导致查询条件异常。校验逻辑检查入参cashoutType，非空且不在(1,2)范围内则抛异常。常见根因：前端下拉框值集配置错误、传参被篡改、或数据迁移导致脏数据。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT fee_cashout_id      AS 兑现单ID,
+         fee_cashout_no      AS 兑现单号,
+         cashout_type        AS 兑现类型,
+         hz_approve_status   AS 审批状态
+  FROM   fin_fee_cashout_header
+  WHERE  cashout_type IS NOT NULL
+  AND    cashout_type NOT IN (1, 2)
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错4：网络请求失败/接口调用异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/fin-fee-cashout-summary/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.finFeeCashoutSummarySearch接口分页查询FIN_FEE_CASHOUT_HEADER。若后端服务未启动、数据库连接异常、SQL执行超时（如全表扫描无索引）、网络中断、或反向代理（网关）转发失败，均会导致接口调用异常。常见根因：后端ae-report服务宕机、Oracle数据库连接池耗尽、查询条件过宽导致慢SQL、或网络抖动。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 兑现单总数,
+         MIN(create_time)    AS 最早创建时间,
+         MAX(create_time)    AS 最晚创建时间
+  FROM   fin_fee_cashout_header
+  WHERE  hz_approve_status = 'APPROVED';</code></pre>
+<h4>报错5：权限不足/未登录</h4>
+<ul><li><strong>触发条件</strong>：页面加载或点击"查询"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre>
+</KbCard>
 
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>无</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>-</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">额度内和额度外数据混合展示时重复</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>两张表数据通过兑现类型区分，不存在重复<br>
-      <strong style="color:#7C3AED;">处理：</strong>通过兑现类型筛选条件可单独查看额度内或额度外数据
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">兑现汇总金额与单独查看兑现页面不一致</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>可能存在查询条件差异或数据同步延迟<br>
-      <strong style="color:#7C3AED;">处理：</strong>刷新页面重新查询，确认查询条件一致
-    </div>
-  </div>
-</div>
+<ul><li>问题1：报表数据为空</li><li>原因：查询条件过窄或无符合条件的兑现数据</li><li>解决思路：放宽查询条件，检查是否有已审批通过的兑现单</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -442,10 +317,15 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2026-08-01 | - | - | 初始生成知识库文档 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写知识库文档</td></tr>
+<tr><td>2025-12-10</td><td>-</td><td>HZERO</td><td>初始创建报表功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

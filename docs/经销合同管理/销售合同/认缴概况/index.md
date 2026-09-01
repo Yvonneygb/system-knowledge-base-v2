@@ -129,23 +129,11 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：保证金标准金额查询 【数据查询】">
-<KbQuote>查询指定事业部+合同类型的保证金标准金额，用于判断是否缴清</KbQuote>
-
-**具体逻辑**：
-
-- 1、根据事业部ID和合同类型查询保证金标准设定
-- 2、若未配置标准设定则报错"保证金标准设定未配置，请先配置"
-- 3、返回标准金额（STANDARD_AMOUNT），若为null则返回0
-</KbCard>
-
-<KbCard num="2" title="重点逻辑2：认缴概况查询 【数据查询】">
-<KbQuote>按经销商+法人+合同类型维度汇总展示认缴情况</KbQuote>
-
-**具体逻辑**：
-
-- 1、支持按事业部、经销商、法人、合同类型等条件筛选查询
-- 2、每条记录展示需缴纳保证金金额和是否缴清标识
+<KbCard num="1" title="重点逻辑1：认缴概况汇总 {数据汇总}">
+<ul><li><strong>业务意义</strong>：汇总展示保证金认缴情况，掌握认缴整体状况</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过search接口查询保证金认缴概况</li></ul>
+<ul><li>第2点：按经销商、合同、年度维度汇总认缴金额、已缴金额、未缴金额</li></ul>
 </KbCard>
 
 </div>
@@ -156,127 +144,67 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="界面模块1：认缴概况列表页">
-<div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>经销商</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>查询结果</td>
-<td>-</td>
-<td>CM_CONTRACT_PAYMENT_SUMMARY.CUSTOMER_ID</td>
-</tr>
-<tr>
-<td>法人</td>
-<td>文本框</td>
-<td>法人名称</td>
-<td>常显</td>
-<td>查询结果</td>
-<td>-</td>
-<td>CM_CONTRACT_PAYMENT_SUMMARY.BILLING_UNIT_ID</td>
-</tr>
-<tr>
-<td>合同类型</td>
-<td>文本框</td>
-<td>合同类型名称</td>
-<td>常显</td>
-<td>查询结果，来源值集scpdict:sales_contract_type</td>
-<td>-</td>
-<td>CM_CONTRACT_PAYMENT_SUMMARY.CONTRACT_TYPE</td>
-</tr>
-<tr>
-<td>需缴纳保证金金额</td>
-<td>文本框</td>
-<td>该维度的保证金标准金额</td>
-<td>常显</td>
-<td>从保证金标准设定获取</td>
-<td>大于等于0</td>
-<td>CM_CONTRACT_PAYMENT_SUMMARY.PAYMENT_AMOUNT</td>
-</tr>
-<tr>
-<td>是否缴清</td>
-<td>文本框</td>
-<td>保证金是否已缴清</td>
-<td>常显</td>
-<td>系统自动维护</td>
-<td>Y(是)/N(否)</td>
-<td>CM_CONTRACT_PAYMENT_SUMMARY.PAY_COMPLETE</td>
-</tr>
-</tbody></table></div>
+<tr><td>合同编号</td><td>CM_CONTRACT_PAYMENT_SUMMARY.CONTRACT_NO</td><td>文本框</td><td>合同编号</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>经销商</td><td>CM_CONTRACT_PAYMENT_SUMMARY.CUSTOMER_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>认缴金额</td><td>CM_CONTRACT_PAYMENT_SUMMARY.SUBSCRIPTION_AMT</td><td>数字显示框</td><td>认缴金额</td><td>常显</td><td>系统汇总</td></tr>
+<tr><td>已缴金额</td><td>CM_CONTRACT_PAYMENT_SUMMARY.PAID_AMT</td><td>数字显示框</td><td>已缴金额</td><td>常显</td><td>系统汇总</td></tr>
+<tr><td>未缴金额</td><td>CM_CONTRACT_PAYMENT_SUMMARY.UNPAID_AMT</td><td>数字显示框</td><td>未缴金额</td><td>常显</td><td>系统计算=认缴-已缴</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<blockquote>本页面为查询页面，无独立弹窗。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
-无
-
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-无（纯查询页面）
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询认缴概况</td><td>列表页</td><td>始终可用</td><td>调用search接口</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
+<blockquote>本页面为查询页面，无保存操作。</blockquote>
 </KbCard>
+
 <KbCard title="提交校验">
+<blockquote>本页面为查询页面，无提交操作。</blockquote>
 </KbCard>
+
 <KbCard title="状态机">
-
-
-```text
-未缴清(N) ──认缴金额达到标准──> 已缴清(Y)
-已缴清(Y) ──撤销认缴──> 未缴清(N)
-```
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| N | 未缴清 | 无（由认缴申请和撤销认款触发状态变更） |
-| Y | 已缴清 | 无（由撤销认款触发状态变更） |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：CM_CONTRACT_PAYMENT_SUMMARY（认缴概况/认缴信息头）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 主键ID | - | 自增 |
-| ENTID | NUMBER | 组织ID | - | 创建时赋值 |
-| CUSTOMER_ID | NUMBER | 经销商ID | 经销商 | 认缴申请审批通过时生成 |
-| BILLING_UNIT_ID | NUMBER | 法人ID | 法人 | 认缴申请审批通过时生成 |
-| CONTRACT_TYPE | NUMBER | 合同类型 | 合同类型 | 认缴申请审批通过时生成，来源值集 |
-| PAYMENT_AMOUNT | NUMBER | 需缴纳保证金金额 | 需缴纳保证金金额 | 从保证金标准设定获取 |
-| PAY_COMPLETE | VARCHAR2 | 是否缴清 | 是否缴清 | 系统自动维护，Y/N |
-
----
-
+<blockquote>本页面为查询页面，无状态流转。</blockquote>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表1：CM_CONTRACT_PAYMENT_SUMMARY（保证金认缴概况表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>SUMMARY_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+<tr><td>CONTRACT_NO</td><td>VARCHAR</td><td>合同编号</td><td>合同编号</td><td>系统带出</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>经销商</td><td>系统带出</td></tr>
+<tr><td>SUBSCRIPTION_AMT</td><td>DECIMAL</td><td>认缴金额</td><td>认缴金额</td><td>系统汇总</td></tr>
+<tr><td>PAID_AMT</td><td>DECIMAL</td><td>已缴金额</td><td>已缴金额</td><td>系统汇总</td></tr>
+<tr><td>UNPAID_AMT</td><td>DECIMAL</td><td>未缴金额</td><td>未缴金额</td><td>系统计算=认缴-已缴</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -284,72 +212,55 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">合同类型、事业部、经销商 不能为空</td>
-            <td style="font-size:13px;">查询标准金额</td>
-            <td style="font-size:13px;">查询保证金标准金额时关键参数为空</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">保证金标准设定未配置，请先配置</td>
-            <td style="font-size:13px;">查询标准金额</td>
-            <td style="font-size:13px;">对应合同类型未配置保证金标准</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>合同类型、事业部、经销商 不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>查询保证金标准金额时关键参数为空</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>保证金标准设定未配置，请先配置</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>对应合同类型未配置保证金标准</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>查询无数据</td><td>查询时</td><td>无认缴记录，确认认缴申请已审批</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>合同类型、事业部、经销商不能为空</td><td>查询/保存时</td><td>必填参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>保证金标准设定未配置，请先配置</td><td>保存时</td><td>保证金标准未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：查询无数据</h4>
+<ul><li><strong>触发条件</strong>：用户按经销商/合同/年度查询认缴概况，search接口返回空结果集</li><li><strong>逻辑分析</strong>：认缴概况基于CM_CONTRACT_PAYMENT_SUMMARY表，汇总展示保证金认缴金额（SUBSCRIPTION_AMT）、已缴金额（PAID_AMT）、未缴金额（UNPAID_AMT=认缴-已缴）。无数据根因有三类：(1)无认缴申请记录，认缴申请（CM_CONTRACT_PAYMENT_APPLY）未创建或未审批通过（HZ_APPROVE_STATUS != 'APPROVED'），概况表未汇总；(2)保证金到款（CM_DEPOSITS_PAYMENT）数据未同步到概况表；(3)查询条件（CONTRACT_NO+CUSTOMER_NAME）与概况记录不匹配。需先确认认缴申请审批状态及保证金到款情况</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, SUBSCRIPTION_AMT, PAID_AMT, UNPAID_AMT
+  FROM CM_CONTRACT_PAYMENT_SUMMARY
+  WHERE (CONTRACT_NO = #{contractNo} OR #{contractNo} IS NULL)
+    AND (CUSTOMER_NAME = #{customerName} OR #{customerName} IS NULL);
+  -- 核查上游认缴申请审批状态
+  SELECT APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, APPLY_AMT, HZ_APPROVE_STATUS
+  FROM CM_CONTRACT_PAYMENT_APPLY
+  WHERE CONTRACT_NO = #{contractNo} AND HZ_APPROVE_STATUS = 'APPROVED';</code></pre>
+<h4>报错2：合同类型、事业部、经销商不能为空</h4>
+<ul><li><strong>触发条件</strong>：查询认缴概况或保存概况数据时，CONTRACT_TYPE、ENTID、CUSTOMER_ID任一参数为空</li><li><strong>逻辑分析</strong>：CmContractPaymentSummaryServiceImpl在search和save方法中校验CONTRACT_TYPE、ENTID、CUSTOMER_ID非空。这三个字段是认缴概况数据隔离和汇总的核心维度，缺失将导致查询无数据范围或汇总无归属。通常由前端未正确传入查询条件或保存参数导致</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, ENTID,
+         SUBSCRIPTION_AMT, PAID_AMT, UNPAID_AMT
+  FROM CM_CONTRACT_PAYMENT_SUMMARY
+  WHERE CONTRACT_TYPE IS NULL OR ENTID IS NULL OR CUSTOMER_ID IS NULL;</code></pre>
+<h4>报错3：保证金标准设定未配置，请先配置</h4>
+<ul><li><strong>触发条件</strong>：保存认缴概况数据时，根据事业部和合同类型查询保证金标准（CM_DEPOSITS_PAY_STANDARD）返回空</li><li><strong>逻辑分析</strong>：CmContractPaymentSummaryServiceImpl在save方法中查询保证金标准，保证金标准是计算应缴保证金和判断缴清状态的依据。标准未配置将导致认缴概况数据无法正确计算缴清标识（PAY_COMPLETE）。需先在保证金标准配置中维护对应事业部和合同类型的标准</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SUMMARY_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.CONTRACT_TYPE, S.ENTID,
+         P.PAY_STANDARD_ID, P.STANDARD_AMT
+  FROM CM_CONTRACT_PAYMENT_SUMMARY S
+  LEFT JOIN CM_DEPOSITS_PAY_STANDARD P
+    ON S.ENTID = P.ENTID AND S.CONTRACT_TYPE = P.CONTRACT_TYPE
+  WHERE P.PAY_STANDARD_ID IS NULL;</code></pre>
+<h4>报错4：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：前端调用cm-contract-payment-summarys相关接口时，后端服务不可达或请求超时</li><li><strong>逻辑分析</strong>：前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre>
+<h4>报错5：权限不足，无法操作</h4>
+<ul><li><strong>触发条件</strong>：当前用户对认缴概况查询、导出等操作无对应功能权限或数据权限</li><li><strong>逻辑分析</strong>：后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">认缴概况中某记录的缴清标识始终为N</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>认缴金额未达到保证金标准金额。排查SQL：<br>
-      <strong style="color:#7C3AED;">处理：</strong>确认认缴记录是否已审批通过并生成认缴记录
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">撤销认款后认缴概况缴清标识未更新</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>撤销认款逻辑中未正确匹配到认缴概况记录<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查撤销认款时summaryIdSet是否正确收集
-    </div>
-  </div>
-</div>
+<ul><li>问题1：概况数据不正确</li><li>原因：保证金到款或认缴申请数据未及时同步</li><li>解决思路：检查SQL <code>SELECT * FROM CM_CONTRACT_PAYMENT_SUMMARY WHERE CONTRACT_NO = #&#123;contractNo&#125;</code></li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -358,10 +269,14 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-09-18 | - | jiaqiang.fu01 | 初始创建认缴概况模块 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

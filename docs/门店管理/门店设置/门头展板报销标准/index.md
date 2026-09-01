@@ -146,45 +146,12 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 报销标准生效管理">
-
-<KbQuote>新建标准默认未生效，审批通过后自动生效，生效后可手动作废</KbQuote>
-**具体逻辑**：
-
-- 1、新建标准默认为**未生效**状态（valid=1）
-- 2、审批通过后自动变为**已生效**（valid=2）
-- 3、支持手动**作废**操作，作废后状态变为**已作废**（valid=3）
-- 4、作废操作通过 `doInvalid` 接口执行，仅已生效状态可作废
+<KbCard num="1" title="重点逻辑1：政策标准有效期">
+<ul><li><strong>业务意义</strong>：控制政策标准的有效时间范围，确保装修申请引用的是有效政策</li><li><strong>具体逻辑描述</strong>：</li><li>政策标准有开始日期和结束日期</li><li>装修申请提交时校验当前日期在有效期内</li><li>失效操作标记政策标准不可用</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 经销商限额控制">
-
-<KbQuote>经销商限额标识Y时表示有限额，额度类型决定计算方式</KbQuote>
-**具体逻辑**：
-
-- 1、当经销商限额标识为Y时，表示该标准对经销商有限额约束
-- 2、额度类型（budgetType）决定限额的计算方式
-- 3、使用额度外预算为Y时，需录入预算年度，否则年度字段禁用
-</KbCard>
-
-<KbCard num="3" title="2.3 单独门店申请与超额报销">
-
-<KbQuote>单独门店申请与超额报销分别控制门店申请和超金额的业务行为</KbQuote>
-**具体逻辑**：
-
-- 1、单独门店申请标识控制是否允许门店单独发起申请
-- 2、超额报销标识控制超出标准金额时是否允许报销
-- 3、审核可修改金额标识控制审批环节是否可调整报销金额
-</KbCard>
-
-<KbCard num="4" title="2.4 行信息匹配规则">
-
-<KbQuote>按装修项目+门店类型+标准等级+数量范围多维度匹配行标准</KbQuote>
-**具体逻辑**：
-
-- 1、每个标准头下可配置多行明细，按装修项目+适用门店类型+标准等级+数量范围匹配
-- 2、数量下限和上限定义适用区间，额度内/外标准分别设定金额
-- 3、--
+<KbCard num="2" title="重点逻辑2：补贴标准行明细">
+<ul><li><strong>业务意义</strong>：每个政策标准头下可配置多个补贴项目行</li><li><strong>具体逻辑描述</strong>：</li><li>行表POLICY_STANDARD_LINE关联头表</li><li>每行包含补贴项目/补贴方式/标准金额</li><li>支持行级别增删改</li></ul>
 </KbCard>
 
 </div>
@@ -194,119 +161,131 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard title="界面模块">
+<p>本页面为hlod低代码页面，基于后端API梳理。</p>
+<h4>头部信息区</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>政策标准编号</td><td>POLICY_STANDARD_NO</td><td>TextField</td><td>政策标准编号</td><td>始终</td><td>编码规则生成</td></tr>
+<tr><td>补贴类型</td><td>SUBSIDY_TYPE</td><td>Select</td><td>补贴类型</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>装修等级</td><td>FIXUP_GRADE</td><td>Select(AE.FIXUP_GRADE)</td><td>装修等级</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>开始日期</td><td>START_DATE</td><td>DatePicker</td><td>有效期开始</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>结束日期</td><td>END_DATE</td><td>DatePicker</td><td>有效期结束</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>状态</td><td>HZ_APPROVE_STATUS</td><td>Select</td><td>审核状态</td><td>始终</td><td>系统维护</td></tr>
+</tbody>
+</table>
+<h4>政策标准行明细</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>补贴项目</td><td>DECORATE_PROJECT</td><td>Select</td><td>补贴项目</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>补贴方式</td><td>SUBSIDY_MODE</td><td>Select</td><td>补贴方式</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>标准金额</td><td>STANDARD_AMT</td><td>NumberField</td><td>标准金额(元/㎡)</td><td>始终</td><td>用户输入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口</th><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>列表查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/policy-standard-heads`</td><td>查询政策标准列表</td></tr>
+<tr><td>有效LOV</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/policy-standard-heads/lov`</td><td>查询有效政策标准LOV</td></tr>
+<tr><td>补贴项目LOV</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/policy-standard-heads/project-lov`</td><td>查询补贴项目LOV</td></tr>
+<tr><td>失效</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/policy-standard-heads/invalid`</td><td>失效政策标准</td></tr>
+<tr><td>创建/更新</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/policy-standard-heads`</td><td>新增或更新政策标准</td></tr>
+<tr><td>删除</td><td>DELETE</td><td>`/v1/&#123;organizationId&#125;/policy-standard-heads`</td><td>删除政策标准</td></tr>
+<tr><td>行列表</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/policy-standard-lines`</td><td>查询政策标准行列表</td></tr>
+<tr><td>行明细</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/policy-standard-lines/detail`</td><td>查询政策标准行明细</td></tr>
+<tr><td>创建/更新行</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/policy-standard-lines`</td><td>新增或更新政策标准行</td></tr>
+<tr><td>删除行</td><td>DELETE</td><td>`/v1/&#123;organizationId&#125;/policy-standard-lines`</td><td>删除政策标准行</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="选择弹窗">
-<KbSubTitle>选择弹窗</KbSubTitle>
-
-- **事业部LOV**：选择事业部，带出事业部ID和词汇值
-- **装修项目LOV**：词汇编码 `AE.MKT.POLICY_STANDARD_PROJECT`，选择装修项目分类
-- **有效政策LOV**：接口 `/v1/{organizationId}/policy-standard-heads/valid-head`，供下游单据引用已生效标准
-
+<p>本页面无选择弹窗。</p>
 </KbCard>
+
 <KbCard title="导入">
-不支持批量导入
-
+<p>本页面无导入功能。</p>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 操作说明 | 可用条件 |
-|---------|---------|---------|
-| 新增 | 新建一条报销标准 | 始终可用 |
-| 保存 | 保存当前编辑数据 | 编辑状态 |
-| 提交 | 提交审批流程 | 保存后、未提交状态 |
-| 作废 | 将已生效标准标记为已作废 | valid=2(已生效) |
-| 删除 | 删除未生效的标准 | valid=1(未生效)且未提交审批 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>触发条件</th><th>执行逻辑</th><th>接口调用</th></tr>
+</thead>
+<tbody>
+<tr><td>失效</td><td>HZ_APPROVE_STATUS为APPROVED</td><td>标记政策标准失效</td><td>POST /invalid</td></tr>
+<tr><td>删除</td><td>HZ_APPROVE_STATUS为NEW</td><td>删除政策标准头表及行表</td><td>DELETE</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
-- 政策编码不能为空
-
-- 政策名称不能为空
-
-- 结束时间需&gt;=开始时间
-
-- 使用额度外预算为Y时，年度必填
-
-- 行信息至少一行
-
+<ul><li>校验1：补贴类型/装修等级必填 —— 确保政策标准基本配置完整</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD WHERE SUBSIDY_TYPE IS NULL OR FIXUP_GRADE IS NULL</code></li></ul>
+<ul><li>校验2：有效期范围合法 —— 开始日期≤结束日期</li><li><strong>详细逻辑</strong>：前端日期校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD WHERE START_DATE &gt; END_DATE</code></li></ul>
 </KbCard>
+
 <KbCard title="提交校验">
-- 头信息保存校验通过
-
-- 行信息完整无空值
-
-- 工作流 `STORE_POLICY_STANDARD_HEAD` 启动成功
-
+<ul><li>校验1：至少配置一行补贴标准 —— 确保政策标准有具体补贴项目</li><li><strong>详细逻辑</strong>：提交时校验行表非空</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT H.POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD H WHERE NOT EXISTS (SELECT 1 FROM POLICY_STANDARD_LINE L WHERE L.HEADER_ID=H.POLICY_STANDARD_ID)</code></li></ul>
 </KbCard>
+
 <KbCard title="状态机">
+<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+                                       │
+                                       └──审批驳回──→ REJECTED(已驳回)
 
-```text
-新建(valid=1) ──提交──→ 审批中 ──审批通过──→ 已生效(valid=2) ──作废──→ 已作废(valid=3)
-                          │
-                          └──审批拒绝──→ 已拒绝(可修改重新提交)
-```
-
----
-
-</KbCard>
-<KbCard num="1" title="4.1 POLICY_STANDARD_HEAD（政策标准头表）">
-
-| 列名 | 类型 | 说明 | 约束 |
-|-----|------|------|------|
-| POLICY_STANDARD_ID | BIGINT | 主键ID | PK, AUTO_INCREMENT |
-| ENTID | BIGINT | 事业部ID | |
-| DIVISION_ID | BIGINT | 事业部词汇值 | |
-| STANDARD_CODE | VARCHAR | 政策编码 | |
-| STANDARD_NAME | VARCHAR | 政策名称 | |
-| CUST_LIMIT_FLAG | VARCHAR | 经销商限额标识 Y/N | |
-| START_DATE | DATE | 开始时间 | |
-| END_DATE | DATE | 结束时间 | |
-| APPLY_REASON | VARCHAR | 备注 | |
-| SINGLE_STORE_APPLY_FLAG | VARCHAR | 单独门店申请 Y/N | |
-| EXCESS_FLAG | VARCHAR | 超额报销 Y/N | |
-| BUDGET_TYPE | VARCHAR | 额度类型 | |
-| USE_EXTRA_BUDGET_FLAG | VARCHAR | 使用额度外预算 Y/N | |
-| EXTRA_BUDGET_EXCESS_STRATEGY | BIGINT | 额度外超额处理策略 | |
-| MODIFY_FLAG | VARCHAR | 审核可修改金额 Y/N | |
-| YEAR | BIGINT | 预算年度 | |
-| VALID | BIGINT | 生效状态 1/2/3 | |
-| WFID | BIGINT | 流程ID | |
-| WFFLAG | BIGINT | 流程状态 | |
-| HZ_INSTANCE_ID | BIGINT | H0流程实例ID | |
-| HZ_APPROVE_STATUS | VARCHAR | H0流程审批状态 | NOT NULL |
-
+APPROVED ──失效──→ (已失效)
+NEW ──删除──→ (删除)</code></pre>
 </KbCard>
 
-<KbCard num="2" title="4.2 POLICY_STANDARD_LINE（政策标准行表）">
-
-| 列名 | 类型 | 说明 | 约束 |
-|-----|------|------|------|
-| ID | BIGINT | 主键ID | PK, AUTO_INCREMENT |
-| HEAD_ID | BIGINT | 关联头表ID | FK → POLICY_STANDARD_HEAD |
-| DECORATE_PROJECT | VARCHAR | 装修项目 | |
-| UNIT_TYPE | VARCHAR | 单位类型 | |
-| TERMINAL_TYPE | VARCHAR | 适用门店类型(逗号分隔) | |
-| STANDARD_GRADE | VARCHAR | 标准等级 | |
-| MIN_NUM | DECIMAL | 数量下限 | |
-| MAX_NUM | DECIMAL | 数量上限 | |
-| WITHIN_STANDARD | DECIMAL | 额度内标准 | |
-| OUTSIDE_STANDARD | DECIMAL | 额度外标准 | |
-
----
-
+<KbCard title="工作流">
+<ul><li><strong>工作流编码</strong>：<code>STORE_POLICY_STANDARD_HEAD</code>（门头报销标准）</li></ul>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="POLICY_STANDARD_HEAD（政策标准头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>POLICY_STANDARD_ID</td><td>Long</td><td>主键ID</td><td>-</td><td>自增</td></tr>
+<tr><td>POLICY_STANDARD_NO</td><td>String</td><td>政策标准编号</td><td>政策标准编号</td><td>编码规则生成</td></tr>
+<tr><td>SUBSIDY_TYPE</td><td>Long</td><td>补贴类型</td><td>补贴类型</td><td>用户选择</td></tr>
+<tr><td>FIXUP_GRADE</td><td>Long</td><td>装修等级</td><td>装修等级</td><td>用户选择</td></tr>
+<tr><td>START_DATE</td><td>LocalDate</td><td>有效期开始</td><td>开始日期</td><td>用户输入</td></tr>
+<tr><td>END_DATE</td><td>LocalDate</td><td>有效期结束</td><td>结束日期</td><td>用户输入</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>Long</td><td>组织ID</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>String</td><td>流程实例ID</td><td>-</td><td>工作流启动后赋值</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>String</td><td>流程审批状态</td><td>状态</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="POLICY_STANDARD_LINE（政策标准行表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>POLICY_LINE_ID</td><td>Long</td><td>主键ID</td><td>-</td><td>自增</td></tr>
+<tr><td>HEADER_ID</td><td>Long</td><td>头表ID</td><td>-</td><td>关联头表</td></tr>
+<tr><td>DECORATE_PROJECT</td><td>String</td><td>补贴项目</td><td>补贴项目</td><td>用户选择</td></tr>
+<tr><td>SUBSIDY_MODE</td><td>String</td><td>补贴方式</td><td>补贴方式</td><td>用户选择</td></tr>
+<tr><td>STANDARD_AMT</td><td>BigDecimal</td><td>标准金额(元/㎡)</td><td>标准金额</td><td>用户输入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -314,133 +293,11 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">政策编码不能为空</td>
-            <td style="font-size:13px;">保存时未填写编码</td>
-            <td style="font-size:13px;">补充政策编码后保存</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">作废失败</td>
-            <td style="font-size:13px;">标准非已生效状态</td>
-            <td style="font-size:13px;">仅已生效状态可作废</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">删除失败</td>
-            <td style="font-size:13px;">标准已提交审批或已生效</td>
-            <td style="font-size:13px;">仅未生效且未提交审批可删除</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">年度不能为空</td>
-            <td style="font-size:13px;">使用额度外预算为Y但未填年度</td>
-            <td style="font-size:13px;">填写预算年度</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>政策编码不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>补充政策编码后保存</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM POLICY_STANDARD_HEAD WHERE STANDARD_CODE IS NULL OR TRIM(STANDARD_CODE) = '';
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>作废失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>仅已生效状态可作废</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM POLICY_STANDARD_HEAD WHERE VALID != 2 AND POLICY_STANDARD_ID = ?;
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>删除失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>仅未生效且未提交审批可删除</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM POLICY_STANDARD_HEAD WHERE VALID NOT IN (1) OR (VALID = 1 AND WFID IS NOT NULL);
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>年度不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>填写预算年度</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM POLICY_STANDARD_HEAD WHERE USE_EXTRA_BUDGET_FLAG = 'Y' AND YEAR IS NULL;
-```
-  
-  </div>
-</div>
+<KbCard title="Q1：装修申请提交时报"没有有效期内的政策标准"">
+<p><strong>根因</strong>：当前日期不在任何政策标准的有效期内</p>
+<p><strong>解决方案</strong>：延长政策标准的有效期或新增覆盖当前日期的政策标准</p>
 </KbCard>
-<KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">报销标准如何被下游引用？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>下游门店验收报销通过 `/v1/{organizationId}/policy-standard-heads/valid-head` 接口查询已生效标准，再通过 `/do-select` 接口获取对应行明细进行金额匹配。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">审批拒绝后如何处理？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>审批拒绝后可修改数据重新提交审批流程。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">额度内标准和额度外标准如何区分？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>行信息中 within_standard 为额度内标准金额，outside_standard 为额度外标准金额，根据门店实际用量是否在额度范围内匹配对应标准。
-    </div>
-  </div>
-</div>
-</KbCard>
+
 </div>
 </div>
 </div>
@@ -449,10 +306,14 @@ SELECT * FROM POLICY_STANDARD_HEAD WHERE USE_EXTRA_BUDGET_FLAG = 'Y' AND YEAR IS
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 修改内容 | 修改人 |
-|-----|------|---------|-------|
-| 2026-07-31 | V1.0 | 初始生成知识库文档 | AI |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

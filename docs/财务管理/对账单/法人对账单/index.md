@@ -135,36 +135,29 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：法人维度对账单查询 核心逻辑">
-<KbQuote>按法人维度查询对账单数据，用于财务按法人主体进行对账核算</KbQuote>
-
-**具体逻辑**：
-
-- 1、支持按事业部、交易公司、法人、年月等多维度查询
-- 2、核心数据来源于CUSTOMER_LEGAL_ENTITY客户-法人关联表
-- 3、查询结果展示法人编码、法人名称、交易公司、关联客户等对账信息
-- 4、列表支持分页查询和排序
+<KbCard num="1" title="重点逻辑1：EBS实时数据获取 {数据来源}">
+<ul><li><strong>业务意义</strong>：法人对账数据存储在EBS系统中，通过实时接口获取确保数据准确性</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：对账单列表和明细数据通过EBS SDK接口从EBS系统实时获取</li></ul>
+<ul><li>第2点：不存储在DMS本地数据库，每次查询实时调用EBS接口</li></ul>
+<ul><li>第3点：数据包含期初余额、本期增加（借方）、本期减少（贷方）、期末余额</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：法人关联关系">
-<KbQuote>一个客户(经销商)可关联多个法人，形成客户-法人多对多关系</KbQuote>
-
-**具体逻辑**：
-
-- 1、CUSTOMER_LEGAL_ENTITY表记录客户与法人的关联关系
-- 2、每条关联记录包含法人编码(legalEntityCode)、法人名称(legalEntityName)、交易公司信息
-- 3、valid字段标识关联有效状态：1-未审核、2-已审核、3-已失效
-- 4、isLoan字段标识是否垫资(2=是)，isCreditControl标识是否信用管控(2=是)
+<KbCard num="2" title="重点逻辑2：四类对账明细 {分类展示}">
+<ul><li><strong>业务意义</strong>：按业务类型分类展示对账明细，清晰呈现不同类型往来数据</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：货款（stateType=1）：展示货款类往来明细</li></ul>
+<ul><li>第2点：未结算订单/发出商品（stateType=2）：展示未结算订单明细</li></ul>
+<ul><li>第3点：货款（stateType=3）：展示货款类调整明细</li></ul>
+<ul><li>第4点：保证金（stateType=4）：展示保证金类往来明细</li></ul>
 </KbCard>
 
-<KbCard num="3" title="重点逻辑3：对账单详情与打印">
-<KbQuote>查看法人维度对账单明细，支持打印存档</KbQuote>
-
-**具体逻辑**：
-
-- 1、从列表页点击查看进入详情页，展示法人关联明细
-- 2、支持从列表页或详情页发起打印
-- 3、详情页数据为只读，不可编辑
+<KbCard num="3" title="重点逻辑3：多维度查询 {查询检索}">
+<ul><li><strong>业务意义</strong>：支持按交易公司、法人、期间、对账单类型等多维度查询</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：支持按期间（periodName）、对账单类型（stateType）、OU名称（orgName）查询</li></ul>
+<ul><li>第2点：支持按客户编号（partyNumber）、事业部（businessDept）筛选</li></ul>
+<ul><li>第3点：支持按币种（currencyCode）区分查询</li></ul>
 </KbCard>
 
 </div>
@@ -174,209 +167,124 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：查询条件区域">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：法人对账单列表页（hlod低代码页面）">
+<blockquote>本页面为hlod低代码页面，无独立前端源码，基于后端Entity和API梳理。数据通过EBS SDK接口从EBS系统获取。</blockquote>
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>事业部</td>
-<td>下拉选择框</td>
-<td>事业部筛选</td>
-<td>常显</td>
-<td>来源值集epm.division</td>
-<td>epm.division值集</td>
-<td>-</td>
-</tr>
-<tr>
-<td>交易公司编码</td>
-<td>下拉选择框</td>
-<td>交易公司筛选</td>
-<td>常显</td>
-<td>LOV选择交易公司</td>
-<td>-</td>
-<td>CUSTOMER_LEGAL_ENTITY.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>法人编码</td>
-<td>下拉选择框</td>
-<td>法人筛选</td>
-<td>常显</td>
-<td>LOV选择法人客户</td>
-<td>-</td>
-<td>CUSTOMER_LEGAL_ENTITY.LEGAL_ENTITY_CODE</td>
-</tr>
-<tr>
-<td>年月</td>
-<td>文本框</td>
-<td>对账年月</td>
-<td>常显</td>
-<td>格式yyyy-MM</td>
-<td>年月格式</td>
-<td>-</td>
-</tr>
-</tbody></table></div>
+<tr><td>期间</td><td>CuxCustomerStateHeader.periodName</td><td>文本框</td><td>会计期间</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>对账单类型</td><td>CuxCustomerStateHeader.stateType</td><td>下拉选择框</td><td>对账单类型</td><td>常显</td><td>来源快码</td></tr>
+<tr><td>OU名称</td><td>CuxCustomerStateHeader.orgName</td><td>文本框</td><td>OU组织名称</td><td>常显</td><td>手动选择或带出</td></tr>
+<tr><td>客户编号</td><td>CuxCustomerStateHeader.partyNumber</td><td>文本框</td><td>客户编号</td><td>常显</td><td>手动输入</td></tr>
+<tr><td>事业部</td><td>CuxCustomerStateHeader.businessDept</td><td>文本框</td><td>事业部</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>币种</td><td>CuxCustomerStateHeader.currencyCode</td><td>文本框</td><td>币种</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>期初余额</td><td>CuxCustomerStateHeader.beginBalance</td><td>数字显示框</td><td>期初余额</td><td>常显</td><td>EBS接口返回</td></tr>
+<tr><td>本期增加(借方)</td><td>CuxCustomerStateHeader.debitAmount</td><td>数字显示框</td><td>本期增加金额</td><td>常显</td><td>EBS接口返回</td></tr>
+<tr><td>本期减少(贷方)</td><td>CuxCustomerStateHeader.creditAmount</td><td>数字显示框</td><td>本期减少金额</td><td>常显</td><td>EBS接口返回</td></tr>
+<tr><td>期末余额</td><td>CuxCustomerStateHeader.endBalance</td><td>数字显示框</td><td>期末余额</td><td>常显</td><td>EBS接口返回</td></tr>
+<tr><td>发送状态</td><td>CuxCustomerStateHeader.sendFlag</td><td>文本框</td><td>对账单发送状态</td><td>常显</td><td>系统更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard title="界面模块2：查询结果列表">
-<div class="kb-field-scroll">
+<KbCard title="界面模块2：法人对账单明细页（自定义React页面）">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>客户ID</td>
-<td>文本框</td>
-<td>客户ID</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_LEGAL_ENTITY.CUSTOMER_ID</td>
-</tr>
-<tr>
-<td>法人编码</td>
-<td>文本框</td>
-<td>法人编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_LEGAL_ENTITY.LEGAL_ENTITY_CODE</td>
-</tr>
-<tr>
-<td>法人名称</td>
-<td>文本框</td>
-<td>法人名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_LEGAL_ENTITY.LEGAL_ENTITY_NAME</td>
-</tr>
-<tr>
-<td>交易公司名称</td>
-<td>文本框</td>
-<td>交易公司名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_LEGAL_ENTITY.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>是否垫资</td>
-<td>下拉选择框</td>
-<td>是否垫资</td>
-<td>常显</td>
-<td>2=是，非2=否</td>
-<td>2/其他</td>
-<td>CUSTOMER_LEGAL_ENTITY.IS_LOAN</td>
-</tr>
-<tr>
-<td>是否信用管控</td>
-<td>下拉选择框</td>
-<td>是否信用管控</td>
-<td>常显</td>
-<td>2=是，非2=否</td>
-<td>2/其他</td>
-<td>CUSTOMER_LEGAL_ENTITY.IS_CREDIT_CONTROL</td>
-</tr>
-<tr>
-<td>开票客户类型</td>
-<td>下拉选择框</td>
-<td>开票客户类型</td>
-<td>常显</td>
-<td>值集epm.customer_invoice_type</td>
-<td>-</td>
-<td>CUSTOMER_LEGAL_ENTITY.CUSTOMER_INVOICE_TYPE</td>
-</tr>
-<tr>
-<td>有效状态</td>
-<td>下拉选择框</td>
-<td>有效状态</td>
-<td>常显</td>
-<td>1-未审核/2-已审核/3-已失效</td>
-<td>1,2,3</td>
-<td>CUSTOMER_LEGAL_ENTITY.VALID</td>
-</tr>
-</tbody></table></div>
+<tr><td>对账主体</td><td>-</td><td>文本框</td><td>对账主体信息</td><td>常显</td><td>从列表带出</td></tr>
+<tr><td>客户名称</td><td>-</td><td>文本框</td><td>客户名称</td><td>常显</td><td>从列表带出</td></tr>
+<tr><td>会计期</td><td>-</td><td>文本框</td><td>会计期间</td><td>常显</td><td>从列表带出</td></tr>
+<tr><td>币种信息</td><td>-</td><td>文本框</td><td>币种</td><td>常显</td><td>从列表带出</td></tr>
+<tr><td>货款明细(stateType=1)</td><td>-</td><td>表格</td><td>货款类往来明细</td><td>常显</td><td>EBS接口返回</td></tr>
+<tr><td>未结算订单明细(stateType=2)</td><td>-</td><td>表格</td><td>未结算订单/发出商品明细</td><td>常显</td><td>EBS接口返回</td></tr>
+<tr><td>货款明细(stateType=3)</td><td>-</td><td>表格</td><td>货款类调整明细</td><td>常显</td><td>EBS接口返回</td></tr>
+<tr><td>保证金明细(stateType=4)</td><td>-</td><td>表格</td><td>保证金类往来明细</td><td>常显</td><td>EBS接口返回</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<blockquote>本页面查询条件主要使用文本输入和下拉选择，无独立弹窗。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
+<blockquote>本页面为查询页面，无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 查询 | 查询法人对账单 | 查询区域 | 查询条件已填写 | 调用查询接口分页查询 |
-| 查看详情 | 查看对账单明细 | 列表行操作 | 常显 | 跳转详情页 |
-| 打印 | 打印对账单 | 列表页/详情页 | 有选中记录 | 生成打印报表 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>按条件查询法人对账单</td><td>列表页</td><td>始终可用</td><td>调用EBS接口获取数据</td></tr>
+<tr><td>查看明细</td><td>查看对账单四类明细</td><td>列表页</td><td>选中一条记录</td><td>打开明细页展示四类对账明细</td></tr>
+<tr><td>状态更新</td><td>更新对账单发送状态</td><td>列表页</td><td>选中记录</td><td>调用状态更新接口</td></tr>
+<tr><td>导出</td><td>导出对账单明细</td><td>列表页/明细页</td><td>有数据时</td><td>导出Excel</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（列表页）</h4>
+<ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：按期间、对账单类型、OU、客户编号、事业部等条件查询</li><li>第2点：通过EBS SDK接口实时获取对账数据</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/queryCuxCustomerStateHeaderPage</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 数据从EBS系统获取，非本地SQL
+-- EBS接口查询参数: periodName, stateType, orgName, partyNumber, businessDept</code></pre>
+<h4>按钮2：查看明细（列表页）</h4>
+<ul><li><strong>触发条件</strong>：选中一条记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询选中对账单的四类明细数据</li><li>第2点：分别展示货款、未结算订单、货款调整、保证金明细</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/queryCuxCustomerStateHeaderDetail</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 明细数据从EBS系统获取，按stateType分类查询
+-- stateType=1: 货款, stateType=2: 未结算订单, stateType=3: 货款调整, stateType=4: 保证金</code></pre>
+<h4>按钮3：状态更新（列表页）</h4>
+<ul><li><strong>触发条件</strong>：选中记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：更新对账单发送状态</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/cuxCustomerStateHeaderStatusUpd</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 更新EBS系统中的对账单发送状态</code></pre>
+<h4>按钮4：导出（列表页/明细页）</h4>
+<ul><li><strong>触发条件</strong>：有数据时可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：将当前查询结果导出为Excel文件</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/cuxCustomerStateHeaderDetailExport</code></li><li><strong>排查SQL</strong>：同查询SQL</li></ul>
 </KbCard>
+
 <KbCard title="保存校验">
+<blockquote>本页面为查询页面，无保存操作。</blockquote>
 </KbCard>
+
 <KbCard title="提交校验">
+<blockquote>本页面为查询页面，无提交操作。</blockquote>
 </KbCard>
+
 <KbCard title="状态机">
-### 状态机
-
-> 本菜单无工作流审批，无状态流转。为纯查询报表页面。
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：CUSTOMER_LEGAL_ENTITY（客户-法人关联表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| REL_ID | BIGINT | 关联关系ID | - | 自增主键 |
-| CUSTOMER_ID | BIGINT | 客户ID | 客户ID | 关联经销商主表 |
-| LEGAL_ENTITY_ID | BIGINT | 法人客户ID | - | 关联法人客户主表 |
-| LEGAL_ENTITY_CODE | VARCHAR | 法人客户编码 | 法人编码 | - |
-| LEGAL_ENTITY_NAME | VARCHAR | 法人客户名称 | 法人名称 | - |
-| TRADING_COMPANY_ID | BIGINT | 交易公司ID | - | 关联交易公司主表 |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司名称 | - |
-| IS_LOAN | BIGINT | 是否垫资 | 是否垫资 | 2=是，非2=否 |
-| IS_CREDIT_CONTROL | BIGINT | 是否信用管控 | 是否信用管控 | 2=是，非2=否 |
-| CUSTOMER_INVOICE_TYPE | VARCHAR | 开票客户类型 | 开票客户类型 | 值集epm.customer_invoice_type |
-| VALID | BIGINT | 有效状态 | 有效状态 | 1-未审核/2-已审核/3-已失效 |
-| SEQ | BIGINT | 序号 | - | - |
-| IS_INIT | BIGINT | 是否初始化数据 | - | 2=初始化产生 |
-| EXT_REL_ID | VARCHAR | 外部系统关联关系ID | - | 对接外部系统 |
-| LH_DISCOUNT | VARCHAR | 折扣率 | - | - |
-
----
-
+<blockquote>本页面为查询页面，无状态流转。对账单发送状态由状态更新按钮控制。</blockquote>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表1：CuxCustomerStateHeader（法人对账单头 - EBS数据）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>STATE_ID</td><td>VARCHAR</td><td>对账单ID</td><td>-</td><td>EBS系统生成</td></tr>
+<tr><td>PERIOD_NAME</td><td>VARCHAR</td><td>会计期间</td><td>期间</td><td>手动选择</td></tr>
+<tr><td>STATE_TYPE</td><td>VARCHAR</td><td>对账单类型</td><td>对账单类型</td><td>来源快码</td></tr>
+<tr><td>ORG_NAME</td><td>VARCHAR</td><td>OU名称</td><td>OU名称</td><td>手动选择</td></tr>
+<tr><td>PARTY_NUMBER</td><td>VARCHAR</td><td>客户编号</td><td>客户编号</td><td>手动输入</td></tr>
+<tr><td>BUSINESS_DEPT</td><td>VARCHAR</td><td>事业部</td><td>事业部</td><td>手动选择</td></tr>
+<tr><td>CURRENCY_CODE</td><td>VARCHAR</td><td>币种</td><td>币种</td><td>手动选择</td></tr>
+<tr><td>BEGIN_BALANCE</td><td>VARCHAR</td><td>期初余额</td><td>期初余额</td><td>EBS接口返回</td></tr>
+<tr><td>DEBIT_AMOUNT</td><td>VARCHAR</td><td>本期增加(借方)</td><td>本期增加</td><td>EBS接口返回</td></tr>
+<tr><td>CREDIT_AMOUNT</td><td>VARCHAR</td><td>本期减少(贷方)</td><td>本期减少</td><td>EBS接口返回</td></tr>
+<tr><td>END_BALANCE</td><td>VARCHAR</td><td>期末余额</td><td>期末余额</td><td>EBS接口返回</td></tr>
+<tr><td>SEND_FLAG</td><td>VARCHAR</td><td>发送状态</td><td>发送状态</td><td>系统更新</td></tr>
+<tr><td>ADD_FEE_TRANSFER</td><td>VARCHAR</td><td>本期增加-费用转货款</td><td>-</td><td>EBS接口返回</td></tr>
+<tr><td>ADD_RECEIPT</td><td>VARCHAR</td><td>本期增加-收款</td><td>-</td><td>EBS接口返回</td></tr>
+<tr><td>REDUCEAMT_REFUND</td><td>VARCHAR</td><td>本期减少-退款</td><td>-</td><td>EBS接口返回</td></tr>
+<tr><td>REDUCEAMT_OTHERS</td><td>VARCHAR</td><td>本期减少-其他扣项</td><td>-</td><td>EBS接口返回</td></tr>
+<tr><td>REDUCEAMT_DELIVERY</td><td>VARCHAR</td><td>本期减少-出货</td><td>-</td><td>EBS接口返回</td></tr>
+<tr><td>ADD_DEPOSIT_TRANSFER</td><td>VARCHAR</td><td>本期增加-保证金转货款</td><td>-</td><td>EBS接口返回</td></tr>
+<tr><td>ADD_ADJUST_TRANSFER</td><td>VARCHAR</td><td>本期增加-调整收款</td><td>-</td><td>EBS接口返回</td></tr>
+<tr><td>STATE_ACCOUNT</td><td>VARCHAR</td><td>会计科目</td><td>-</td><td>EBS接口返回</td></tr>
+<tr><td>ORG_CODE</td><td>VARCHAR</td><td>OU编码</td><td>-</td><td>EBS接口返回</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -384,55 +292,70 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">查询结果为空</td>
-            <td style="font-size:13px;">查询</td>
-            <td style="font-size:13px;">CUSTOMER_LEGAL_ENTITY表中无匹配记录</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
+<tr><td>EBS接口调用失败</td><td>查询时</td><td>EBS系统不可用或网络异常，检查EBS系统状态</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>查询条件不匹配或EBS中无对应期间数据，放宽条件</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>请传入对账单类型</td><td>导出时</td><td>导出未传入stateType参数，前端补充对账单类型后重试</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>状态更新失败</td><td>状态更新时</td><td>EBS接口返回失败或对账单状态不允许更新，确认状态后重试</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足</td><td>查询/导出/状态更新时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：EBS接口调用失败</h4>
+<ul><li><strong>触发条件</strong>：用户点击查询或查看明细，后端通过EBS SDK接口实时获取数据时抛出连接异常或超时</li><li><strong>逻辑分析</strong>：法人对账单数据不存储在DMS本地数据库，每次查询实时调用EBS SDK接口（queryCuxCustomerStateHeaderPage/queryCuxCustomerStateHeaderDetail）。失败根因有三类：(1)EBS系统宕机或服务不可用；(2)DMS与EBS网络中断或SDK配置错误（地址/账号/密钥）；(3)EBS接口入参异常（periodName/stateType/orgName格式不符EBS要求但DMS未做转换）。此为阻断性报错，需联系EBS运维确认系统状态及SDK连接配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- EBS数据非本地存储，以下为DMS侧EBS接口调用配置核查（具体表名以EBS适配层为准）
+  -- 核查EBS接口配置是否存在及启用状态
+  SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
+  FROM EBS_INTERFACE_CONFIG
+  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_HEADER', 'CUX_CUSTOMER_STATE_DETAIL');</code></pre>
+<h4>报错2：查询无数据</h4>
+<ul><li><strong>触发条件</strong>：EBS接口调用成功但返回空结果集</li><li><strong>逻辑分析</strong>：EBS接口按periodName（会计期间）、stateType（对账单类型1-4）、orgName（OU名称）、partyNumber（客户编号）、businessDept（事业部）组合过滤。无数据根因有二：(1)查询条件过窄，如选了特定期间+特定客户但EBS中该客户在该期间无往来；(2)EBS中该期间尚未结账或数据未录入。需放宽条件（如去掉客户编号只按期间+OU查询）确认是数据缺失还是条件过滤问题</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 通过EBS接口核查指定期间+OU下是否有任意往来数据（stateType=1货款为例）
+  -- 以下为EBS侧核查SQL（在EBS库执行）
+  SELECT PERIOD_NAME, ORG_NAME, PARTY_NUMBER, BEGIN_BALANCE, DEBIT_AMOUNT, CREDIT_AMOUNT, END_BALANCE
+  FROM CUX_CUSTOMER_STATE_HEADER_V
+  WHERE PERIOD_NAME = #{periodName}
+    AND (ORG_NAME = #{orgName} OR #{orgName} IS NULL)
+    AND (STATE_TYPE = #{stateType} OR #{stateType} IS NULL)
+  ORDER BY PARTY_NUMBER;</code></pre>
+<h4>报错3：请传入对账单类型</h4>
+<ul><li><strong>触发条件</strong>：用户点击导出按钮但未传入对账单类型（stateType）参数</li><li><strong>逻辑分析</strong>：导出接口cuxCustomerStateHeaderDetailExport使用@ExcelExport动态导出，CuxCustomerStateHeader实体实现DynamicExportEntity接口的columns方法（CuxCustomerStateHeader.java:140）校验customData非空，若StringUtils.isBlank(customData)则抛出CommonException("请传入对账单类型")。customData中包含stateType字段用于区分四类导出列（1=货款、2=未结算订单、3=货款调整、4=保证金）。根因有二：(1)前端导出时未将stateType拼装到customData参数中；(2)customData JSON格式错误无法解析。需前端在导出请求中补充stateType参数</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查EBS侧四类对账单类型是否有数据（在EBS库执行）
+  SELECT STATE_TYPE, COUNT(1) AS 记录数
+  FROM CUX_CUSTOMER_STATE_HEADER_V
+  WHERE PERIOD_NAME = #{periodName}
+  GROUP BY STATE_TYPE
+  ORDER BY STATE_TYPE;</code></pre>
+<h4>报错4：状态更新失败</h4>
+<ul><li><strong>触发条件</strong>：用户点击"状态更新"按钮，EBS接口cuxCustomerStateHeaderStatusUpd返回失败</li><li><strong>逻辑分析</strong>：状态更新调用ArrowEbsSdkServiceImpl.cuxCustomerStateHeaderStatusUpd（ArrowEbsSdkServiceImpl.java:94），通过interfaceInvokeSdk.invoke调用EBS的CUX_CUSTOMER_UPDATE_STATE接口更新对账单发送状态（SEND_FLAG）。失败根因有三：(1)EBS接口返回returnStatus非S（业务校验失败，如对账单状态不允许更新）；(2)EBS接口入参List&lt;CuxCustomerStateHeaderDto&gt;格式不符EBS要求；(3)EBS系统内部异常（如数据库锁、约束冲突）。此为阻断性报错，需联系EBS运维确认接口返回的msgData错误信息</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查DMS侧EBS状态更新接口配置
+  SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
+  FROM EBS_INTERFACE_CONFIG
+  WHERE INTERFACE_CODE = 'CUX_CUSTOMER_UPDATE_STATE';</code></pre>
+<h4>报错5：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：用户点击查询、查看明细、状态更新或导出，前端axios请求抛出网络异常或超时</li><li><strong>逻辑分析</strong>：前端调用/v1/&#123;organizationId&#125;/cuxCustomerStateHeader/*系列接口时，因后端crm-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)crm-business微服务未注册到Nacos或已宕机；(2)EBS SDK调用超时（EBS系统响应慢或网络延迟）导致整体请求超时；(3)网络中断或防火墙拦截DMS与EBS的连接；(4)导出数据量大导致Excel生成超时。需联系运维确认crm-business和EBS系统状态</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查DMS侧EBS接口配置及启用状态
+  SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
+  FROM EBS_INTERFACE_CONFIG
+  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_LIST_PAGE', 'CUX_CUSTOMER_STATE_DETAIL', 'CUX_CUSTOMER_UPDATE_STATE');</code></pre>
+<h4>报错6：权限不足</h4>
+<ul><li><strong>触发条件</strong>：用户访问法人对账单页面或调用接口时，返回403或"无权限访问"提示</li><li><strong>逻辑分析</strong>：后端Controller使用@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)控制访问权限，要求用户登录且拥有当前组织（organizationId）的访问权限。根因有三：(1)用户未分配该菜单（hlod页面+自定义React详情页）的访问角色；(2)用户当前切换的组织不在其授权组织范围内；(3)用户数据权限未覆盖查询的交易公司/法人/事业部。需联系管理员分配菜单角色和数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
+  SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
+  FROM IAM_USER_ROLE
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre>
+</KbCard>
 
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CUSTOMER_LEGAL_ENTITY表中无匹配记录</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">法人关联记录显示"未审核"状态</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>客户-法人关联数据新增后尚未审核，valid=1<br>
-      <strong style="color:#7C3AED;">处理：</strong>在CRM模块中审核客户法人关联关系，将valid更新为2
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">同一客户关联多个法人导致对账数据重复</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>CUSTOMER_LEGAL_ENTITY为多对多关系，一个客户可关联多个法人<br>
-      <strong style="color:#7C3AED;">处理：</strong>按法人编码去重或按交易公司分组查询
-    </div>
-  </div>
-</div>
+<ul><li>问题1：对账数据与EBS不一致</li><li>原因：EBS接口返回数据有延迟或缓存问题</li><li>解决思路：确认EBS系统数据已更新，重新查询刷新</li></ul>
+<ul><li>问题2：四类明细中某类无数据</li><li>原因：该法人在该期间内无对应类型往来数据</li><li>解决思路：检查EBS中该期间该法人的往来数据，确认stateType对应类型是否有数据</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -441,14 +364,15 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2026-07-31 | - | - | 初始生成知识库文档 |
-
-> 要求：
-> 1. 按倒序展示
-> 2. 只需要包含2026年的提交记录
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写，补充界面模块、数据库表详解</td></tr>
+<tr><td>2025-10-28</td><td>-</td><td>tzx</td><td>初始创建CuxCustomerStateHeader实体</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

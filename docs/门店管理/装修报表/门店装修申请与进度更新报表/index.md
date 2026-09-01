@@ -157,23 +157,11 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：纯报表查询页面 【只读查询】">
-<KbQuote>供内部人员查询门店装修申请与进度更新的汇总报表信息，了解装修申请的整体情况及审批进度</KbQuote>
-
-**具体逻辑**：
-
-- 1、本页面为hlod低代码报表页面，无独立前端源码
-- 2、仅提供查询和导出功能，不支持新增、修改、删除操作
-- 3、数据来源于装修申请头表(FIN_FEE_APPLY_FINISHED_HEADER)，包含额度内/额度外/门头/终端的申请标准和金额信息
-</KbCard>
-
-<KbCard num="2" title="重点逻辑2：与装修申请页面共用后端代码 【共用代码】">
-<KbQuote>报表查询复用装修申请的查询接口</KbQuote>
-
-**具体逻辑**：
-
-- 1、后端使用FinFeeApplyFinishedHeaderController的查询接口，通过searchFlag参数区分报表查询场景
-- 2、报表页面与装修申请管理页面使用相同的后端查询逻辑，区别在于报表页面仅展示不可编辑
+<KbCard num="1" title="重点逻辑1：装修申请进度汇总 {数据汇总}">
+<ul><li><strong>业务意义</strong>：展示门店装修申请的全流程进度</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：汇总装修申请从申请到完工验收的全流程状态</li></ul>
+<ul><li>第2点：包含申请金额、批准金额、验收金额、报销金额等</li></ul>
 </KbCard>
 
 </div>
@@ -183,190 +171,73 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：门店装修申请与进度更新报表页面（hlod低代码页面）">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：报表查询页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>门店编码</td>
-<td>文本框</td>
-<td>按门店编码筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.TERMINAL_CODE</td>
-</tr>
-<tr>
-<td>门店名称</td>
-<td>文本框</td>
-<td>按门店名称筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.TERMINAL_NAME</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>按经销商编码筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.CUST_CODE</td>
-</tr>
-<tr>
-<td>经销商名称</td>
-<td>文本框</td>
-<td>按经销商名称筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.CUST_NAME</td>
-</tr>
-<tr>
-<td>申请日期起</td>
-<td>日期选择器</td>
-<td>申请日期范围起</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>日期</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.CREATE_TIME</td>
-</tr>
-<tr>
-<td>申请日期止</td>
-<td>日期选择器</td>
-<td>申请日期范围止</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>日期</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.CREATE_TIME</td>
-</tr>
-<tr>
-<td>审批状态</td>
-<td>下拉选择框</td>
-<td>按审批状态筛选</td>
-<td>常显</td>
-<td>用户选择</td>
-<td>NEW/RUN/APPROVED/REJECTED/INTERRUPT</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.HZ_APPROVE_STATUS</td>
-</tr>
-<tr>
-<td>交易公司</td>
-<td>文本框</td>
-<td>按交易公司筛选</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>装修等级</td>
-<td>下拉选择框</td>
-<td>按装修等级筛选</td>
-<td>常显</td>
-<td>用户选择</td>
-<td>值集</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.FIXUP_GRADE</td>
-</tr>
-<tr>
-<td>是否关闭</td>
-<td>下拉选择框</td>
-<td>按关闭状态筛选</td>
-<td>常显</td>
-<td>用户选择</td>
-<td>1-未关闭/2-已关闭</td>
-<td>FIN_FEE_APPLY_FINISHED_HEADER.IS_CLOSE</td>
-</tr>
-</tbody></table></div>
+<tr><td>年度</td><td>-</td><td>下拉选择框</td><td>查询年度</td><td>常显</td><td>默认当前年度</td></tr>
+<tr><td>经销商名称</td><td>-</td><td>文本框</td><td>查询经销商</td><td>常显</td><td>可输入筛选</td></tr>
+<tr><td>门店名称</td><td>-</td><td>文本框</td><td>查询门店</td><td>常显</td><td>可输入筛选</td></tr>
+<tr><td>申请状态</td><td>-</td><td>下拉选择框</td><td>查询申请状态</td><td>常显</td><td>-</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard title="选择弹窗">
+<KbCard title="界面模块2：报表结果列表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>申请单号</td><td>-</td><td>文本框</td><td>装修申请单号</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>经销商名称</td><td>-</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>门店名称</td><td>-</td><td>文本框</td><td>门店名称</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>申请金额</td><td>-</td><td>文本框</td><td>申请金额</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>批准金额</td><td>-</td><td>文本框</td><td>批准金额</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>验收金额</td><td>-</td><td>文本框</td><td>验收金额</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>报销金额</td><td>-</td><td>文本框</td><td>报销金额</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>申请状态</td><td>-</td><td>文本框</td><td>申请状态</td><td>常显</td><td>查询结果</td></tr>
+<tr><td>进度状态</td><td>-</td><td>文本框</td><td>进度状态</td><td>常显</td><td>查询结果</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="导入">
-> 不支持导入功能
 
-</KbCard>
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 查询 | 查询装修申请报表 | 列表页 | 常显 | 调用装修申请查询接口 |
-| 导出 | 导出报表数据 | 列表页 | 常显 | 导出当前查询结果为Excel |
-
-</KbCard>
-<KbCard title="保存校验">
-</KbCard>
-<KbCard title="提交校验">
-</KbCard>
-<KbCard title="状态机">
-
-> 本页面为纯查询页面，无状态流转
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：FIN_FEE_APPLY_FINISHED_HEADER（门店装修申请与进度更新表，关联表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| TERMINAL_APPLY_ID | NUMBER | 装修申请ID(主键) | - | 关联字段 |
-| TERMINAL_APPLY_NO | VARCHAR | 装修申请单号 | 装修申请单号 | 编码规则生成 |
-| TERMINAL_ID | NUMBER | 门店ID | - | 关联门店 |
-| TERMINAL_CODE | VARCHAR | 门店编码 | 门店编码 | 保存时带入 |
-| TERMINAL_NAME | VARCHAR | 门店名称 | 门店名称 | 保存时带入 |
-| CUST_ID | NUMBER | 经销商ID | - | 关联经销商 |
-| CUST_CODE | VARCHAR | 经销商编码 | 经销商编码 | 保存时带入 |
-| CUST_NAME | VARCHAR | 经销商名称 | 经销商名称 | 保存时带入 |
-| TRADING_COMPANY_ID | NUMBER | 交易公司ID | - | 关联交易公司 |
-| TRADING_COMPANY_CODE | VARCHAR | 交易公司编码 | - | 保存时带入 |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司 | 保存时带入 |
-| BILLING_UNIT_ID | NUMBER | 开票单位ID | - | 关联开票单位 |
-| BILLING_UNIT_CODE | VARCHAR | 开票单位编码 | - | 保存时带入 |
-| BILLING_UNIT_NAME | VARCHAR | 开票单位名称 | 开票单位 | 保存时带入 |
-| TERMINAL_TYPE | NUMBER | 门店类型 | 门店类型 | 保存时带入 |
-| FIXUP_GRADE | NUMBER | 装修等级 | 装修等级 | 保存时带入 |
-| DECORATION_STYLE | NUMBER | 装修风格 | 装修风格 | 保存时带入 |
-| TERMINAL_AREA | DECIMAL | 门店面积 | 门店面积 | 用户输入 |
-| DECORATION_DAYS | NUMBER | 装修周期 | 装修周期 | 用户输入 |
-| IN_APPLY_STANDARD_AMT | DECIMAL | 额度内申请标准金额 | 额度内申请标准金额 | 装修标准计算 |
-| OUT_APPLY_STANDARD_AMT | DECIMAL | 额度外申请标准金额 | 额度外申请标准金额 | 装修标准计算 |
-| FRONTDOOR_APPLY_STANDARD_AMT | DECIMAL | 门头申请标准金额 | 门头申请标准金额 | 装修标准计算 |
-| PLAN_OPEN_DATE | DATE | 计划开业日期 | 计划开业日期 | 用户输入 |
-| DECORATION_FINISHED_TIME | DATE | 装修完成时间 | 装修完成时间 | 用户输入 |
-| IS_CLOSE | NUMBER | 是否关闭 | 是否关闭 | 1-未关闭/2-已关闭 |
-| CLOSING_REASONS | VARCHAR | 关闭原因 | - | 关闭时填写 |
-| HZ_APPROVE_STATUS | VARCHAR | 审批状态 | 审批状态 | NEW/RUN/APPROVED/REJECTED/INTERRUPT |
-| HZ_INSTANCE_ID | NUMBER | 流程实例ID | - | 工作流实例 |
-| CREATOR | VARCHAR | 申请人 | 申请人 | 系统自动赋值 |
-| CREATE_TIME | DATE | 申请日期 | 申请日期 | 系统自动赋值 |
-| ORGANIZATION_ID | NUMBER | 组织ID | - | 租户组织 |
-
----
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询报表数据</td><td>查询页</td><td>常显</td><td>调用search接口</td></tr>
+<tr><td>导出</td><td>导出Excel</td><td>查询页</td><td>常显</td><td>调用导出接口</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（查询页）</h4>
+<ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：按查询条件调用报表查询接口，分页返回</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-apply-list/search</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DESC;</code></pre>
+<h4>按钮2：导出（查询页）</h4>
+<ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：按当前查询条件导出Excel</li></ul>
+<p>8- <strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-export</p>
+<ul><li><strong>排查SQL</strong>：无</li></ul>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="相关表：FIN_FEE_APPLY_HEADER（市场费用申请单-查询来源）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>FEE_APPLY_NO</td><td>VARCHAR2</td><td>申请单号</td><td>申请单号</td><td>查询来源</td></tr>
+<tr><td>CUST_NAME</td><td>VARCHAR2</td><td>经销商名称</td><td>经销商名称</td><td>查询来源</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称</td><td>门店名称</td><td>查询来源</td></tr>
+<tr><td>TOTAL_APPLY_AMT_BX</td><td>DECIMAL</td><td>申请金额</td><td>申请金额</td><td>查询来源</td></tr>
+<tr><td>TOTAL_ALLOW_AMT_BX</td><td>DECIMAL</td><td>批准金额</td><td>批准金额</td><td>查询来源</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -374,55 +245,102 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">无</td>
-            <td style="font-size:13px;">-</td>
-            <td style="font-size:13px;">-</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
+<tr><td>年度不能为空</td><td>查询</td><td>未选择查询年度，默认当前年度失败</td><td>阻断性报错</td><td>[查看](#报错1年度不能为空)</td></tr>
+<tr><td>经销商名称不能为空</td><td>查询</td><td>经销商名称查询条件传参为空</td><td>提示性报错</td><td>[查看](#报错2经销商名称不能为空)</td></tr>
+<tr><td>门店名称不能为空</td><td>查询</td><td>门店名称查询条件传参为空</td><td>提示性报错</td><td>[查看](#报错3门店名称不能为空)</td></tr>
+<tr><td>报表查询失败：申请单状态异常</td><td>查询</td><td>装修申请单apply_type非1，数据来源错误</td><td>阻断性报错</td><td>[查看](#报错4报表查询失败申请单状态异常)</td></tr>
+<tr><td>导出失败：数据量超过限制</td><td>导出</td><td>导出数据量超过系统上限</td><td>阻断性报错</td><td>[查看](#报错5导出失败数据量超过限制)</td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错6网络请求失败接口调用异常)</td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错7权限不足未登录)</td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错8导出失败网络异常)</td></tr>
+</tbody>
+</table>
+<h4>报错1：年度不能为空</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的cyear（年度）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询依赖年度定位FIN_FEE_APPLY_HEADER记录。若前端未选择年度、年度下拉框默认值未正确赋值（如系统时间获取异常），或传参丢失，后端校验cyear为空即抛异常，无法执行查询。装修申请单按年度归档，缺失年度将导致全表扫描或空结果。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+         fee_apply_no        AS 申请单号,
+         cyear               AS 预算年度,
+         apply_type          AS 申请类型,
+         create_time         AS 创建时间
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 1
+  AND    cyear IS NULL
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错2：经销商名称不能为空</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，传入的custName（经销商名称）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询按经销商名称模糊匹配FIN_FEE_APPLY_HEADER.CUST_NAME。若前端未输入经销商名称且未设置默认值，或传参丢失，后端校验为空即抛异常。该条件用于缩小查询范围，缺失会导致全量数据返回，影响性能。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+         fee_apply_no        AS 申请单号,
+         cust_name           AS 经销商名称,
+         terminal_name       AS 门店名称,
+         cyear               AS 预算年度
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 1
+  AND    (cust_name IS NULL OR cust_name = '')
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错3：门店名称不能为空</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，传入的terminalName（门店名称）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询按门店名称模糊匹配FIN_FEE_APPLY_HEADER.TERMINAL_NAME。若前端未输入门店名称且未设置默认值，或传参丢失，后端校验为空即抛异常。该条件用于定位具体门店的装修进度，缺失会导致该经销商下所有门店数据返回。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+         fee_apply_no        AS 申请单号,
+         cust_name           AS 经销商名称,
+         terminal_name       AS 门店名称,
+         cyear               AS 预算年度
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 1
+  AND    (terminal_name IS NULL OR terminal_name = '')
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错4：报表查询失败：申请单状态异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，查询FIN_FEE_APPLY_HEADER时apply_type不等于1（装修申请类型）</li><li><strong>逻辑分析</strong>：本报表仅展示装修申请（apply_type=1）的进度数据。若数据来源错误（如apply_type被错误更新为其他值）、或历史数据迁移时apply_type未正确赋值，查询结果会缺失或包含非装修类申请单，导致报表数据异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT fee_apply_id        AS 申请单ID,
+         fee_apply_no        AS 申请单号,
+         apply_type          AS 申请类型,
+         cust_name           AS 经销商名称,
+         terminal_name       AS 门店名称,
+         create_time         AS 创建时间
+  FROM   fin_fee_apply_header
+  WHERE  apply_type &lt;&gt; 1
+  AND    fee_apply_no LIKE 'ZXSQ%'
+  ORDER  BY create_time DESC;</code></pre>
+<h4>报错5：导出失败：数据量超过限制</h4>
+<ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel时查询结果数据量超过系统配置的上限（如10万条）</li><li><strong>逻辑分析</strong>：导出接口会先执行查询统计结果数量，若超过系统配置的导出上限（防止OOM和性能问题），抛出异常阻止导出。常见根因：查询条件过宽（如未限制年度、经销商）、或历史数据堆积过多。需缩小查询条件或分批导出。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT cyear               AS 预算年度,
+         cust_name           AS 经销商名称,
+         COUNT(*)            AS 申请单数量
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 1
+  GROUP  BY cyear, cust_name
+  HAVING COUNT(*) &gt; 10000
+  ORDER  BY 申请单数量 DESC;</code></pre>
+<h4>报错6：网络请求失败/接口调用异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-apply-list/search或GET /mkt-terminal-export接口时，前端未收到响应或收到非2xx状态码</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalApplyListSearch接口分页查询FIN_FEE_APPLY_HEADER（apply_type=1）。若后端ae-report服务未启动、Oracle数据库连接异常、SQL执行超时（如全表扫描无索引）、网络中断、或网关转发失败，均会导致接口调用异常。导出接口因需全量查询数据更易超时。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 装修申请单总数,
+         MIN(create_time)    AS 最早创建时间,
+         MAX(create_time)    AS 最晚创建时间
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 1;</code></pre>
+<h4>报错7：权限不足/未登录</h4>
+<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre>
+<h4>报错8：导出失败：网络异常</h4>
+<ul><li><strong>触发条件</strong>：点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-export接口过程中，网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口通过@ExcelExport(MktTerminalApplyListExportVO.class)注解实现Excel导出，后端先全量查询FIN_FEE_APPLY_HEADER（apply_type=1）再生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。与"数据量超过限制"不同，本报错侧重网络/超时层面。需重试导出或缩小查询条件减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT cyear               AS 预算年度,
+         COUNT(*)            AS 申请单数量
+  FROM   fin_fee_apply_header
+  WHERE  apply_type = 1
+  GROUP  BY cyear
+  ORDER  BY 申请单数量 DESC;</code></pre>
+</KbCard>
 
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>无</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>-</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">报表数据与装修申请页面数据不一致</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>可能存在缓存或查询条件差异<br>
-      <strong style="color:#7C3AED;">处理：</strong>刷新页面重新查询，确认查询条件一致
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">审批状态筛选无结果</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>审批状态值可能包含INTERRUPT(作废)状态，需确认筛选条件<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查审批状态下拉选项是否包含所需状态值
-    </div>
-  </div>
-</div>
+<ul><li>问题1：报表数据为空</li><li>原因：无符合条件的装修申请数据</li><li>解决思路：放宽查询条件</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -431,10 +349,15 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2026-08-01 | - | - | 初始生成知识库文档 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写知识库文档</td></tr>
+<tr><td>2025-12-10</td><td>-</td><td>HZERO</td><td>初始创建报表功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

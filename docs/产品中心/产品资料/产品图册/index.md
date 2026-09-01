@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -68,6 +69,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -121,78 +123,285 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 嵌入位置"><p>本功能嵌入在CRM产品详情页中使用，组件标识为<code>detailImgListConfig</code>，无独立路由页面。</p></KbCard>
-
-<KbQuote>在其它页面通过嵌入组件查询选择产品图册数据</KbQuote>
-<KbCard title="2.2 API接口"><table class="kl-table"><thead><tr><th>接口</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums</code></td><td>GET</td><td>查询产品图册列表</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}</code></td><td>GET</td><td>查询图册详情（含图片）</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums</code></td><td>POST</td><td>新增图册</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}</code></td><td>PUT</td><td>更新图册</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}</code></td><td>DELETE</td><td>删除图册</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}/images</code></td><td>POST</td><td>向图册添加图片</td></tr><tr><td><code>CRM_BUSINESS/v1/{orgId}/product/{productId}/imgAlbums/{id}/images/{imageId}</code></td><td>DELETE</td><td>从图册移除图片</td></tr></tbody></table></KbCard>
-
-<KbQuote>提供产品图册增删改查API接口</KbQuote>
-<KbCard title="2.3 无工作流"><p>本功能无审批工作流，数据直接保存生效。</p></KbCard>
-
-<KbQuote>产品图册无审批流程，提交后直接生效</KbQuote>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：PLM定时同步 `数据同步`">
+<ul><li><strong>业务意义</strong>：自动从PLM系统同步产品图册，保持图册数据与PLM一致</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：定时任务getProdPhotosJob调用PLM接口获取产品图册列表</li></ul>
+<ul><li>第2点：调用PLM接口获取图册压缩包并上传至OSS</li></ul>
+<ul><li>第3点：按source+sourceCode去重，已存在的记录跳过，新记录写入OBJ_FILE_BUS_REL</li></ul>
+<ul><li>第4点：同步记录来源标记为PLM，记录sourceCode用于去重</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：图片签名预览 `安全访问`">
+<ul><li><strong>业务意义</strong>：OSS图片需签名后才能访问，确保图片访问安全性</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：查询图册数据后，对图片类型文件调用GET /hfle/v1/0/files/signedUrl获取签名URL</li></ul>
+<ul><li>第2点：按页签名（每页6张），切换轮播页时签名目标页图片</li></ul>
+<ul><li>第3点：签名失败时跳过该图片，不影响其他图片展示</li></ul>
+<ul><li>第4点：非图片类型文件直接使用原始URL</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：分页轮播展示 `界面交互`">
+<ul><li><strong>业务意义</strong>：产品图册可能数量较多，采用轮播分页展示提升用户体验</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：查询全部图册数据（size=1000），前端按每页6张切片分页</li></ul>
+<ul><li>第2点：使用Carousel轮播组件展示，左右箭头切换页面</li></ul>
+<ul><li>第3点：仅访问过的页面渲染内容，未访问页面占位，优化性能</li></ul>
+<ul><li>第4点：每张图片以卡片形式展示，标题为附件类型名称</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 图册概念"><ul><li><strong>图册（ImgAlbum）</strong>：多张产品图片的集合，按主题或用途分组</li><li>一个产品可以有多个图册，如"外观展示图"、"安装示意图"、"细节特写图"等</li><li>图册是图片的分组管理方式，同一张图片可以属于多个图册</li></ul></KbCard>
-<KbCard title="3.2 图册数据结构"><ul><li><strong>图册名称（album_name）</strong>：图册的显示名称，如"外观图"、"安装图"</li><li><strong>图册描述（album_description）</strong>：图册的详细说明</li><li><strong>图册封面（cover_image_id）</strong>：图册的封面图片，默认取图册中第一张图片</li><li><strong>图片数量（image_count）</strong>：图册中包含的图片数量</li><li><strong>排序号（sequence_number）</strong>：图册的显示排序</li></ul></KbCard>
-<KbCard title="3.3 图册与图片的关系"><ul><li>图册和图片是多对多关系，通过关联表维护</li><li>一张图片可以属于多个图册</li><li>图册中的图片支持排序，控制展示顺序</li><li>图册中的图片支持设置封面图</li></ul></KbCard>
-<KbCard title="3.4 图册管理操作"><ul><li><strong>新增图册</strong>：填写图册名称和描述，创建空图册</li><li><strong>向图册添加图片</strong>：从已上传的产品图片中选择添加到图册</li><li><strong>从图册移除图片</strong>：移除图册与图片的关联，不删除图片本身</li><li><strong>设置封面图</strong>：指定图册中的一张图片作为封面</li><li><strong>图册排序</strong>：调整图册的显示顺序</li><li><strong>图册内图片排序</strong>：调整图册内图片的显示顺序</li></ul></KbCard>
-<KbCard title="3.5 前端组件detailImgListConfig"><ul><li>组件标识：<code>detailImgListConfig</code></li><li>嵌入位置：产品详情页的图册Tab页签</li><li>展示方式：图册以卡片形式展示，点击展开查看图册内图片</li><li>图片展示：缩略图网格，支持点击查看大图</li></ul></KbCard>
-<KbCard title="3.6 选择弹窗"><p class='kl-tip'>无LOV选择弹窗。查询条件：附件类型（CRM.OBJ_FILE_TYPE）、附件名称。</p></KbCard>
-<KbCard title="3.7 导入"><p class='kl-tip'>不支持独立导入。导入在产品列表菜单中（templateCode=CRM.PROD_PHOTO）。</p></KbCard>
-<KbCard title="3.8 其他按钮"><table class="kl-table"><thead><tr><th>按钮</th><th>说明</th></tr></thead><tbody><tr><td>重置</td><td>有查询条件时显示</td></tr><tr><td>刷新</td><td>刷新图片列表</td></tr><tr><td>图片预览</td><td>Picture组件，签名URL /hfle/v1/0/files/signedUrl</td></tr></tbody></table>
-<p class='kl-tip'>轮播分页：每页6张图片（Carousel组件）。</p></KbCard>
-<KbCard title="3.9 保存校验"><p class='kl-tip'>无保存校验（纯查询展示组件）。</p></KbCard>
-<KbCard title="3.10 提交校验"><p class='kl-tip'>无提交/审批功能。</p></KbCard>
-<KbCard title="4.1 产品图册表"><p class='kl-tip'>表名：PRODUCT_IMG_ALBUM（产品图册表）</p>
-<table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th><th>备注</th></tr></thead><tbody><tr><td>id</td><td>NUMBER</td><td>主键ID</td><td>PK</td></tr><tr><td>product_id</td><td>NUMBER</td><td>产品ID</td><td>FK→PRODUCT</td></tr><tr><td>album_name</td><td>VARCHAR2</td><td>图册名称</td><td>NOT NULL</td></tr><tr><td>album_description</td><td>VARCHAR2</td><td>图册描述</td><td></td></tr><tr><td>cover_image_id</td><td>NUMBER</td><td>封面图片ID</td><td>FK→PRODUCT_IMAGE</td></tr><tr><td>image_count</td><td>NUMBER</td><td>图片数量</td><td></td></tr><tr><td>sequence_number</td><td>NUMBER</td><td>排序号</td><td></td></tr><tr><td>organization_id</td><td>NUMBER</td><td>组织ID</td><td></td></tr><tr><td>created_by</td><td>NUMBER</td><td>创建人</td><td></td></tr><tr><td>creation_date</td><td>DATE</td><td>创建时间</td><td></td></tr><tr><td>last_updated_by</td><td>NUMBER</td><td>最后更新人</td><td></td></tr><tr><td>last_update_date</td><td>DATE</td><td>最后更新时间</td><td></td></tr><tr><td>object_version_number</td><td>NUMBER</td><td>版本号</td><td>乐观锁</td></tr></tbody></table></KbCard>
-<KbCard title="4.2 产品图册图片关联表"><p class='kl-tip'>表名：PRODUCT_IMG_ALBUM_REL（产品图册图片关联表）</p>
-<table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th><th>备注</th></tr></thead><tbody><tr><td>id</td><td>NUMBER</td><td>主键ID</td><td>PK</td></tr><tr><td>album_id</td><td>NUMBER</td><td>图册ID</td><td>FK→PRODUCT_IMG_ALBUM</td></tr><tr><td>image_id</td><td>NUMBER</td><td>图片ID</td><td>FK→PRODUCT_IMAGE</td></tr><tr><td>sequence_number</td><td>NUMBER</td><td>图册内排序号</td><td></td></tr><tr><td>created_by</td><td>NUMBER</td><td>创建人</td><td></td></tr><tr><td>creation_date</td><td>DATE</td><td>创建时间</td><td></td></tr><tr><td>object_version_number</td><td>NUMBER</td><td>版本号</td><td>乐观锁</td></tr></tbody></table></KbCard>
+<KbCard title="界面模块1：产品图册查询页">
+<blockquote>本页面为低代码页面（hlod），无独立前端路由。前端组件位于arrow-crm/src/pages/product/stores/product/detailImgListConfig.tsx（ProductImgList组件），在产品详情页中作为Tab页渲染。后端Controller路径：/v1/&#123;organizationId&#125;/files（GET），固定传入busType=prodPhoto、relBusType=prod。</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>附件类型</td><td>OBJ_FILE_BUS_REL.FILE_TYPE_ID（间接）</td><td>下拉选择框</td><td>按图片分类类型筛选</td><td>常显</td><td>1.默认值：无 2.来源：值集CRM.OBJ_FILE_TYPE（busType=prodPhoto） 3.查询方式：= 4.选择后触发查询</td></tr>
+<tr><td>附件名称</td><td>HFLE_FILE.FILE_NAME（间接）</td><td>文本框</td><td>按文件名称筛选</td><td>常显</td><td>1.默认值：无 2.查询方式：LIKE 3.输入后触发查询</td></tr>
+<tr><td>图片卡片</td><td>OBJ_FILE_BUS_REL.FILE_URL</td><td>图片预览</td><td>展示产品图片缩略图，点击可预览大图</td><td>常显</td><td>1.来源：签名URL 2.每页6张，轮播切换 3.非图片类型显示文件图标 4.卡片标题为附件类型名称</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块2：产品图册查询页-按钮区">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>重置</td><td>-</td><td>按钮</td><td>清空查询条件并重新查询</td><td>有查询条件时显示</td><td>1.点击后清空附件类型和附件名称，重新查询全部图册</td></tr>
+<tr><td>刷新</td><td>-</td><td>图标按钮</td><td>重新查询当前条件下的图册数据</td><td>常显</td><td>1.点击后按当前查询条件重新查询，重置页码为第一页</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<blockquote>本菜单为图册查询页面，无选择弹窗。</blockquote>
+</KbCard>
+
+<KbCard title="导入">
+<h4>前置约定</h4>
+<ul><li>文件格式：Excel（.xlsx）</li><li>模板编码：CRM.PROD_PHOTO</li><li>导入处理类：ProdPhotoImport（busType=prodPhoto）</li><li>权限：hzero.product_data.product_info.product_list.ps.import</li><li>仅内部用户可操作（从产品列表页触发）</li></ul>
+<h4>字段映射</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段含义</th><th>是否必输</th><th>字段格式</th><th>重复判定字段</th></tr>
+</thead>
+<tbody>
+<tr><td>产品编码</td><td>是</td><td>文本</td><td>是</td></tr>
+<tr><td>图片类型</td><td>是</td><td>文本</td><td>否</td></tr>
+<tr><td>文件URL</td><td>是</td><td>文本/URL</td><td>否</td></tr>
+</tbody>
+</table>
+<blockquote>具体字段映射规则由导入模板CRM.PROD_PHOTO定义。</blockquote>
+<h4>处理逻辑</h4>
+<ul><li><strong>校验逻辑</strong>：由导入框架按模板配置校验，ProdPhotoImport类处理busType=prodPhoto的导入</li><li><strong>导入逻辑</strong>：通过HZERO导入框架处理，写入OBJ_FILE_BUS_REL表</li><li><strong>重复处理策略</strong>：按模板配置</li><li><strong>性能方案</strong>：异步导入</li></ul>
+<h4>异常与结果约定</h4>
+<ul><li>部分成功/失败时的处理：由导入框架控制，支持失败明细导出</li><li>结果反馈机制：导入完成后提示成功/失败数量</li></ul>
+<h4>运维保障</h4>
+<ul><li>日志记录：HZERO导入框架自动记录导入日志</li><li>断点续传/重试机制：支持失败行重新导入</li></ul>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>重置</td><td>清空查询条件</td><td>查询页</td><td>有查询条件时显示</td><td>清空条件并重新查询全部图册</td></tr>
+<tr><td>刷新</td><td>刷新图册列表</td><td>查询页</td><td>常显</td><td>按当前条件重新查询</td></tr>
+</tbody>
+</table>
+<h4>按钮1：重置（查询页）</h4>
+<ul><li><strong>触发条件</strong>：附件类型或附件名称有值时显示</li><li><strong>执行逻辑</strong>：</li><li>第1点：清空附件类型和附件名称查询条件</li><li>第2点：重置页码为第一页</li><li>第3点：重新查询全部图册数据</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/files?busType=prodPhoto&amp;relBusType=prod&amp;busId=&#123;prodCode&#125;</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT F.ID, F.FILE_URL, F.FILE_TYPE_ID, F.BUS_ID, F.REL_BUS_TYPE, F.SOURCE, F.SOURCE_CODE
+FROM OBJ_FILE_BUS_REL F
+WHERE F.REL_BUS_TYPE = 'prod'
+  AND F.BUS_ID = :prodCode
+  AND F.FILE_TYPE_ID IN (
+    SELECT ID FROM OBJ_FILE_TYPE WHERE BUS_TYPE = 'prodPhoto'
+  );</code></pre>
+<h4>按钮2：刷新（查询页）</h4>
+<ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：重置页码为第一页</li><li>第2点：按当前查询条件重新查询</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/files?busType=prodPhoto&amp;relBusType=prod&amp;busId=&#123;prodCode&#125;&amp;fileName=&#123;fileName&#125;&amp;fileBusType=&#123;fileBusType&#125;</li><li><strong>排查SQL</strong>：无</li></ul>
+</KbCard>
+
+<KbCard title="保存校验">
+<blockquote>本菜单为查询展示页面，无保存操作，无保存校验。</blockquote>
+</KbCard>
+
+<KbCard title="提交校验">
+<blockquote>本菜单为查询展示页面，无提交操作，无提交校验。</blockquote>
+</KbCard>
+
+<KbCard title="状态机">
+<blockquote>本菜单为查询展示页面，无状态流转。</blockquote>
+</KbCard>
+
+<KbCard title="表1：OBJ_FILE_BUS_REL（附件与业务数据关系表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>主键</td><td>-</td><td>自增主键</td></tr>
+<tr><td>REL_BUS_TYPE</td><td>VARCHAR</td><td>关联业务类型</td><td>-</td><td>产品图册固定为'prod'（FileRelBusTypeEnums.PROD）</td></tr>
+<tr><td>BUS_ID</td><td>VARCHAR</td><td>业务数据ID</td><td>-</td><td>产品图册中为产品编码（LNK_PROD.PROD_CODE）</td></tr>
+<tr><td>FILE_URL</td><td>VARCHAR</td><td>文件URL</td><td>图片卡片</td><td>对应HZERO.HFLE_FILE.file_url，需签名后访问</td></tr>
+<tr><td>FILE_TYPE_ID</td><td>NUMBER</td><td>文件类型ID</td><td>附件类型（间接）</td><td>关联OBJ_FILE_TYPE.ID，busType=prodPhoto</td></tr>
+<tr><td>SOURCE</td><td>VARCHAR</td><td>来源</td><td>-</td><td>PLM=PLM同步，IMPORT=导入，CHANGE=变更申请</td></tr>
+<tr><td>SOURCE_CODE</td><td>VARCHAR</td><td>来源编码</td><td>-</td><td>PLM同步时用于去重</td></tr>
+<tr><td>CREATION_DATE</td><td>DATE</td><td>创建时间</td><td>-</td><td>自动记录</td></tr>
+<tr><td>CREATED_BY</td><td>VARCHAR</td><td>创建人</td><td>-</td><td>自动记录</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>自动记录</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>VARCHAR</td><td>最后更新人</td><td>-</td><td>自动记录</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>NUMBER</td><td>乐观锁版本号</td><td>-</td><td>乐观锁控制</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="表2：OBJ_FILE_TYPE（文件类型表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>主键</td><td>-</td><td>关联OBJ_FILE_BUS_REL.FILE_TYPE_ID</td></tr>
+<tr><td>BUS_TYPE</td><td>VARCHAR</td><td>业务类型</td><td>-</td><td>产品图册固定为'prodPhoto'</td></tr>
+<tr><td>FILE_BUS_TYPE</td><td>VARCHAR</td><td>文件业务类型编码</td><td>附件类型</td><td>值集CRM.OBJ_FILE_TYPE</td></tr>
+<tr><td>FILE_BUS_TYPE_NAME</td><td>VARCHAR</td><td>文件业务类型名称</td><td>图片卡片标题</td><td>附件类型中文名称</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题"><table class="kl-table"><thead><tr><th>问题</th><th>解答</th></tr></thead><tbody><tr><td>图册和图片是什么关系？</td><td>多对多关系，一张图片可以属于多个图册</td></tr><tr><td>从图册移除图片会删除图片吗？</td><td>不会，只移除关联关系，图片本身仍保留</td></tr><tr><td>图册封面图如何设置？</td><td>默认取图册中第一张图片，可手动指定图册中任意图片为封面</td></tr><tr><td>图册名称有重复限制吗？</td><td>同一产品下图册名称建议不重复，具体以业务规则为准</td></tr><tr><td>detailImgListConfig组件在哪里使用？</td><td>嵌入在产品详情页的图册Tab页签中</td></tr></tbody></table></KbCard>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>获取产品图册失败</td><td>查询图册时</td><td>调用files接口失败，检查网络连接或后端服务状态</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>图片预览失败/空白</td><td>点击图片预览时</td><td>图片签名URL获取失败，检查OSS配置和文件是否存在</td><td>界面异常</td><td>[查看]</td></tr>
+<tr><td>暂无数据</td><td>查询图册时</td><td>产品无图册数据或PLM同步任务未执行，需先导入或同步图册</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>文件类型不存在:prodPhoto:xxx</td><td>导入图册时</td><td>导入的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>PLM同步图册失败</td><td>定时任务执行时</td><td>PLM接口异常或文件解压上传失败，检查PLM接口连通性和OSS配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>PLM同步文件类型xxx不存在</td><td>定时任务执行时</td><td>PLM返回的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足</td><td>查询/导入时</td><td>当前用户无产品图册操作权限，需分配对应权限角色</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>会话过期</td><td>页面操作时</td><td>登录会话已过期，需重新登录</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<blockquote><strong>"获取产品图册失败"详细逻辑：</strong>
+（1）调用GET /v1/&#123;organizationId&#125;/files接口返回failed=true时提示此错误。
+（2）排查SQL：
+``<code>sql
+-- 检查产品图册数据是否存在
+SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :prodCode;
+</code>``</blockquote>
+<h4>报错2：图片预览失败/空白</h4>
+<ul><li><strong>触发条件</strong>：点击图片卡片预览大图时，签名URL获取失败或图片加载失败</li><li><strong>逻辑分析</strong>：前端调用GET /hfle/v1/0/files/signedUrl获取OSS签名URL，若HFLE_FILE表中文件不存在、OSS文件已被删除、或签名URL过期则预览失败。前端逻辑：签名失败时跳过该图片不影响其他图片展示，但该卡片显示空白。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT F.ID AS 关联ID, F.FILE_URL AS 文件URL, F.BUS_ID AS 产品编码,
+         F.SOURCE AS 来源, F.SOURCE_CODE AS 来源编码,
+         H.FILE_NAME AS 文件名, H.FILE_SIZE AS 文件大小
+  FROM OBJ_FILE_BUS_REL F
+    LEFT JOIN HZERO.HFLE_FILE H ON H.FILE_URL = F.FILE_URL
+  WHERE F.REL_BUS_TYPE = 'prod'
+    AND F.BUS_ID = :prodCode
+    AND H.FILE_URL IS NULL;</code></pre>
+<h4>报错3：暂无数据</h4>
+<ul><li><strong>触发条件</strong>：查询产品图册时，GET /v1/&#123;organizationId&#125;/files接口返回空列表content=[]</li><li><strong>逻辑分析</strong>：前端searchFn调用files接口查询busType=prodPhoto&amp;relBusType=prod&amp;busId=&#123;prodCode&#125;的图册数据，若返回content为空数组则前端List组件渲染"暂无数据"占位图。常见于产品无图册数据、PLM同步任务未执行或图册数据被删除。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(1) AS 图册数量
+  FROM OBJ_FILE_BUS_REL F
+  WHERE F.REL_BUS_TYPE = 'prod'
+    AND F.BUS_ID = :prodCode
+    AND F.FILE_TYPE_ID IN (SELECT ID FROM OBJ_FILE_TYPE WHERE BUS_TYPE = 'prodPhoto');</code></pre>
+<h4>报错4：文件类型不存在:prodPhoto:xxx</h4>
+<ul><li><strong>触发条件</strong>：通过Excel导入产品图册时，导入的图片类型在OBJ_FILE_TYPE表中不存在</li><li><strong>逻辑分析</strong>：后端ObjFileBusRelServiceImpl.getFileBusRel方法根据fileBusType=prodPhoto和fileType查询OBJ_FILE_TYPE表（status=1），若objFileTypeDb为null则抛出RuntimeException。导入处理类ProdPhotoImport继承ObjFileBusRelImportServiceImpl，固定busType=prodPhoto。常见于导入模板的图片类型值与系统配置不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
+  FROM OBJ_FILE_TYPE T
+  WHERE T.BUS_TYPE = 'prodPhoto'
+  ORDER BY T.FILE_BUS_TYPE;
+  -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置</code></pre>
+<h4>报错5：PLM同步图册失败</h4>
+<ul><li><strong>触发条件</strong>：定时任务getProdPhotosJob执行时，调用PLM接口获取图册压缩包或解压上传文件失败</li><li><strong>逻辑分析</strong>：后端ProdPicturesJob.uploadFile方法将PLM返回的压缩包写入临时文件、解压、按文件类型上传至OSS并写入OBJ_FILE_BUS_REL。任一环节异常（PLM接口超时、压缩包损坏、解压失败、OSS上传失败）均抛出RuntimeException，事务回滚。常见于PLM接口不可用、OSS配置错误或磁盘空间不足。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查最近PLM同步的图册数据
+  SELECT F.BUS_ID AS 产品编码, F.FILE_URL AS 文件URL, F.SOURCE AS 来源,
+         F.SOURCE_CODE AS 来源编码, F.CREATION_DATE AS 同步时间
+  FROM OBJ_FILE_BUS_REL F
+  WHERE F.SOURCE = 'PLM'
+    AND F.CREATION_DATE &gt;= SYSDATE - 1
+  ORDER BY F.CREATION_DATE DESC;</code></pre>
+<h4>报错6：PLM同步文件类型xxx不存在</h4>
+<ul><li><strong>触发条件</strong>：PLM同步任务执行时，PLM返回的图片类型（smallDocType）在OBJ_FILE_TYPE表中不存在</li><li><strong>逻辑分析</strong>：后端ProdPicturesJob.uploadFile方法根据busType=prodPhoto和smallDocType查询OBJ_FILE_TYPE表，若objFileTypeDb为null则记录error日志并跳过该文件（continue），不抛出异常。该图片不会被同步，需在OBJ_FILE_TYPE表补充对应文件类型配置后重新同步。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT T.FILE_BUS_TYPE AS 已配置类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
+  FROM OBJ_FILE_TYPE T
+  WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1';
+  -- 对比PLM返回的smallDocType值，补充缺失的类型配置</code></pre>
+<h4>报错7：权限不足</h4>
+<ul><li><strong>触发条件</strong>：用户访问产品图册查询页或执行导入操作时，当前用户无对应权限</li><li><strong>逻辑分析</strong>：产品图册查询页通过低代码平台渲染，权限由HZERO IAM控制。导入操作需权限hzero.product_data.product_info.product_list.ps.import。若用户无权限则接口返回403或前端按钮不显示。常见于用户角色未分配产品图册相关权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
+  FROM HZERO.IAM_ROLE R
+    JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
+    JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
+  WHERE P.PERMISSION_CODE LIKE '%product_list.ps.import%'
+    AND R.ROLE_CODE = :currentRoleCode;</code></pre>
+<h4>报错8：会话过期</h4>
+<ul><li><strong>触发条件</strong>：用户在产品图册页面操作时，登录会话（access_token）已过期</li><li><strong>逻辑分析</strong>：前端请求携带的access_token过期，后端返回401未授权。前端HZERO框架拦截401状态码跳转登录页。常见于长时间未操作页面或token有效期过短。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 无直接SQL，检查用户会话状态
+  SELECT U.LOGIN_NAME, U.LAST_LOGIN_DATE AS 最后登录时间
+  FROM HZERO.IAM_USER U
+  WHERE U.LOGIN_NAME = :currentLoginName;</code></pre>
+</KbCard>
+
+<KbCard title="常见问题">
+<ul><li>问题1：图册数据为空</li><li>原因：可能PLM同步任务未执行、产品无图册数据、或图册数据被删除</li><li>解决思路：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查图册数据
+    SELECT F.*, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME
+    FROM OBJ_FILE_BUS_REL F
+      LEFT JOIN OBJ_FILE_TYPE T ON F.FILE_TYPE_ID = T.ID
+    WHERE F.REL_BUS_TYPE = 'prod' AND F.BUS_ID = :prodCode;</code></pre>
+<ul><li>问题2：PLM同步的图册未更新</li><li>原因：定时任务getProdPhotosJob未执行或PLM接口异常</li><li>解决思路：检查定时任务执行日志和PLM接口连通性</li></ul>
+<ul><li>问题3：图片无法预览</li><li>原因：OSS文件已被删除或签名URL过期</li><li>解决思路：检查HFLE_FILE表中文件是否存在，重新上传或同步图册</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
+
+<div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-12-18</td><td>-</td><td>-</td><td>附件与业务数据关系表(ObjFileBusRel)初始创建</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>版本</th><th>更新内容</th><th>更新人</th></tr></thead><tbody><tr><td>2026-08-03</td><td>V1.0</td><td>初始创建</td><td>AI</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

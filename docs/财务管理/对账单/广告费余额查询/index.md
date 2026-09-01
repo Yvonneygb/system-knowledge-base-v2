@@ -131,48 +131,20 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：额度内广告费余额查询 核心逻辑">
-<KbQuote>按法人/交易公司查询额度内广告费的期初余额、本期变动、期末余额等信息</KbQuote>
-
-**具体逻辑**：
-
-- 1、MktInlimitBalanceHeaderController的query方法，支持分页查询
-- 2、queryCount方法返回查询记录总数，用于分页计算
-- 3、查询结果包含期初余额(beginningBalance)、期末余额(actualEndingBalance)、已占用额度(occupiedAmount)、剩余可用额度(canUseAmount)
+<KbCard num="1" title="重点逻辑1：多维度余额查询 {查询检索}">
+<ul><li><strong>业务意义</strong>：按法人/交易公司/事业部/年月多维度查询额度内广告费余额，掌握资金余量变化</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：支持按事业部、交易公司、开票单位、年月等条件组合查询</li></ul>
+<ul><li>第2点：展示期初余额、本期变动（扣减金额、到期调整、其他调整、额度内兑现）、期末余额</li></ul>
+<ul><li>第3点：同时展示占用金额和可用金额，支撑预算管控</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：余额构成明细计算 核心逻辑">
-<KbQuote>期末余额由期初余额加减各项变动计算得出</KbQuote>
-
-**具体逻辑**：
-
-- 1、期初余额(beginningBalance)为年初或月初结转金额
-- 2、扣减项包括：账户别名发放扣减(deductionAmount)、额度内兑现已审核金额(inlimitCashoutQuota)、出库单计提(checkoutOrderProvision)
-- 3、调整项包括：到期额度调整(expireAdjustQuota)、其他调整(otherAdjustQuota)
-- 4、期末余额(actualEndingBalance) = 期初余额 - 扣减项 + 调整项
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：占用金额分类">
-<KbQuote>已占用额度按类型细分，便于分析资金占用结构</KbQuote>
-
-**具体逻辑**：
-
-- 1、兑现占用金额(cashout)——已兑现申请占用的金额
-- 2、出库单占用金额(delivery)——出库单占用的金额
-- 3、冻结占用金额(frozen)——冻结占用的金额
-- 4、调整占用金额(adjustment)——调整占用的金额
-- 5、已占用总额(occupiedAmount) = cashout + delivery + frozen + adjustment
-</KbCard>
-
-<KbCard num="4" title="重点逻辑4：辅助查询接口">
-<KbQuote>提供资源金额、营销金额、合同信息等辅助查询</KbQuote>
-
-**具体逻辑**：
-
-- 1、queryResourceAmt——查询资源金额
-- 2、queryMarketingMoney——查询营销金额
-- 3、getContractInfo——查询合同余额信息
-- 4、exportBalance——导出广告费余额Excel
+<KbCard num="2" title="重点逻辑2：额度内可用余额计算 {余额计算}">
+<ul><li><strong>业务意义</strong>：实时计算额度内可用余额，支撑兑现与报销决策</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过query-resource-amt接口查询额度内可用余额</li></ul>
+<ul><li>第2点：可用余额=期末余额-占用金额</li></ul>
+<ul><li>第3点：通过query-marketing-money接口查询发票兑现额度内可用余额</li></ul>
 </KbCard>
 
 </div>
@@ -182,339 +154,129 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：hlod低代码查询页面">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：广告费余额查询列表页（hlod低代码页面）">
+<blockquote>本页面为hlod低代码页面，无独立前端源码，基于后端Entity和API梳理。</blockquote>
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>事业部</td>
-<td>下拉选择框</td>
-<td>事业部筛选</td>
-<td>常显</td>
-<td>来源值集epm.division</td>
-<td>epm.division值集</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.ENTID</td>
-</tr>
-<tr>
-<td>法人编码</td>
-<td>下拉选择框</td>
-<td>法人筛选</td>
-<td>常显</td>
-<td>选择法人后带入</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.BILLING_UNIT_CODE</td>
-</tr>
-<tr>
-<td>交易公司编码</td>
-<td>下拉选择框</td>
-<td>交易公司筛选</td>
-<td>常显</td>
-<td>选择交易公司后带入</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.TRADING_COMPANY_CODE</td>
-</tr>
-<tr>
-<td>款项类型</td>
-<td>下拉选择框</td>
-<td>款项类型筛选</td>
-<td>常显</td>
-<td>来源值集</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.MONEY_TYPE</td>
-</tr>
-<tr>
-<td>开始时间</td>
-<td>日期选择器</td>
-<td>查询起始时间</td>
-<td>常显</td>
-<td>用户选择</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.START_TIME</td>
-</tr>
-<tr>
-<td>结束时间</td>
-<td>日期选择器</td>
-<td>查询截止时间</td>
-<td>常显</td>
-<td>用户选择</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.END_TIME</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块2：查询结果列表">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>事业部名称</td>
-<td>文本框</td>
-<td>事业部名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.ENTNAME</td>
-</tr>
-<tr>
-<td>法人名称</td>
-<td>文本框</td>
-<td>法人名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.BILLING_UNIT_NAME</td>
-</tr>
-<tr>
-<td>交易公司名称</td>
-<td>文本框</td>
-<td>交易公司名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>款项类型</td>
-<td>文本框</td>
-<td>款项类型</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.MONEY_TYPE</td>
-</tr>
-<tr>
-<td>期初余额</td>
-<td>数值框</td>
-<td>期初余额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.BEGINNING_BALANCE</td>
-</tr>
-<tr>
-<td>账户别名发放扣减</td>
-<td>数值框</td>
-<td>发放扣减金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.DEDUCTION_AMOUNT</td>
-</tr>
-<tr>
-<td>到期额度调整</td>
-<td>数值框</td>
-<td>到期调整金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.EXPIRE_ADJUST_QUOTA</td>
-</tr>
-<tr>
-<td>其他调整</td>
-<td>数值框</td>
-<td>其他调整金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.OTHER_ADJUST_QUOTA</td>
-</tr>
-<tr>
-<td>额度内兑现已审核金额</td>
-<td>数值框</td>
-<td>兑现已审核金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.INLIMIT_CASHOUT_QUOTA</td>
-</tr>
-<tr>
-<td>出库单计提</td>
-<td>数值框</td>
-<td>出库单计提金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.CHECKOUT_ORDER_PROVISION</td>
-</tr>
-<tr>
-<td>期末余额</td>
-<td>数值框</td>
-<td>期末余额</td>
-<td>常显</td>
-<td>期初-扣减+调整</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.ACTUAL_ENDING_BALANCE</td>
-</tr>
-<tr>
-<td>已占用额度</td>
-<td>数值框</td>
-<td>已占用总额</td>
-<td>常显</td>
-<td>cashout+delivery+frozen+adjustment</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.OCCUPIED_AMOUNT</td>
-</tr>
-<tr>
-<td>剩余可用额度</td>
-<td>数值框</td>
-<td>剩余可用</td>
-<td>常显</td>
-<td>期末余额-已占用额度</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.CAN_USE_AMOUNT</td>
-</tr>
-<tr>
-<td>兑现占用</td>
-<td>数值框</td>
-<td>兑现占用金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.CASHOUT</td>
-</tr>
-<tr>
-<td>出库单占用</td>
-<td>数值框</td>
-<td>出库单占用金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.DELIVERY</td>
-</tr>
-<tr>
-<td>冻结占用</td>
-<td>数值框</td>
-<td>冻结占用金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.FROZEN</td>
-</tr>
-<tr>
-<td>调整占用</td>
-<td>数值框</td>
-<td>调整占用金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.ADJUSTMENT</td>
-</tr>
-<tr>
-<td>同步时间</td>
-<td>日期选择器</td>
-<td>数据同步时间</td>
-<td>常显</td>
-<td>营销中台同步时间</td>
-<td>-</td>
-<td>MKT_INLIMIT_BALANCE_HEADER.SYNC_ITEM</td>
-</tr>
-</tbody></table></div>
+<tr><td>事业部</td><td>MKT_INLIMIT_BALANCE_HEADER.ENTNAME</td><td>文本框</td><td>事业部名称</td><td>常显</td><td>选择事业部带出</td></tr>
+<tr><td>交易公司</td><td>MKT_INLIMIT_BALANCE_HEADER.TRADING_COMPANY_NAME</td><td>文本框</td><td>交易公司名称</td><td>常显</td><td>选择交易公司带出</td></tr>
+<tr><td>开票单位</td><td>MKT_INLIMIT_BALANCE_HEADER.BILLING_UNIT_NAME</td><td>文本框</td><td>开票单位名称</td><td>常显</td><td>选择开票单位带出</td></tr>
+<tr><td>查询起始时间</td><td>MKT_INLIMIT_BALANCE_HEADER.START_TIME</td><td>日期选择框</td><td>查询起始时间</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>查询结束时间</td><td>MKT_INLIMIT_BALANCE_HEADER.END_TIME</td><td>日期选择框</td><td>查询结束时间</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>币种</td><td>MKT_INLIMIT_BALANCE_HEADER.MONEY_TYPE</td><td>下拉选择框</td><td>币种</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>期初余额</td><td>MKT_INLIMIT_BALANCE_HEADER.BEGINNING_BALANCE</td><td>数字显示框</td><td>期初余额</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>扣减金额</td><td>MKT_INLIMIT_BALANCE_HEADER.DEDUCTION_AMOUNT</td><td>数字显示框</td><td>本期扣减金额</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>到期调整</td><td>MKT_INLIMIT_BALANCE_HEADER.EXPIRE_ADJUST_QUOTA</td><td>数字显示框</td><td>到期调整额度</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>其他调整</td><td>MKT_INLIMIT_BALANCE_HEADER.OTHER_ADJUST_QUOTA</td><td>数字显示框</td><td>其他调整额度</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>额度内兑现</td><td>MKT_INLIMIT_BALANCE_HEADER.INLIMIT_CASHOUT_QUOTA</td><td>数字显示框</td><td>额度内兑现金额</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>出库预提</td><td>MKT_INLIMIT_BALANCE_HEADER.CHECKOUT_ORDER_PROVISION</td><td>数字显示框</td><td>出库单预提金额</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>期末余额</td><td>MKT_INLIMIT_BALANCE_HEADER.THIS_ENDING_BALANCE</td><td>数字显示框</td><td>期末余额</td><td>常显</td><td>系统计算=期初余额-扣减+到期调整+其他调整-额度内兑现</td></tr>
+<tr><td>占用金额</td><td>MKT_INLIMIT_BALANCE_HEADER.OCCUPIED_AMOUNT</td><td>数字显示框</td><td>已占用金额</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>可用金额</td><td>MKT_INLIMIT_BALANCE_HEADER.CAN_USE_AMOUNT</td><td>数字显示框</td><td>可用余额</td><td>常显</td><td>系统计算=期末余额-占用金额</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<h4>弹窗1：事业部选择（单选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>entid</td><td>事业部ID</td><td>事业部唯一标识</td><td>1001</td><td>当前用户有权限的事业部</td></tr>
+</tbody>
+</table>
+<blockquote>查询SQL（事业部LOV）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT ENT_ID, ENT_NAME FROM HPFM_DIVISION WHERE ENABLED = 1</code></pre>
+<h4>弹窗2：交易公司选择（单选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>tradingCompanyId</td><td>交易公司ID</td><td>交易公司唯一标识</td><td>2001</td><td>选定事业部下的交易公司</td></tr>
+</tbody>
+</table>
+<blockquote>查询SQL（后端接口）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT TRADING_COMPANY_ID, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME
+FROM HPFM_TRADING_COMPANY WHERE DIVISION_ID = #{divisionId}</code></pre>
 </KbCard>
+
 <KbCard title="导入">
+<blockquote>本页面为查询页面，无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 查询 | 查询广告费余额 | 查询区域 | 查询条件已填写 | 调用query接口分页查询 |
-| 导出 | 导出Excel | 列表页 | 有查询结果 | 调用exportBalance接口导出 |
-| 查询资源金额 | 查询资源金额 | 列表页 | 选中记录 | 调用queryResourceAmt接口 |
-| 查询营销金额 | 查询营销金额 | 列表页 | 选中记录 | 调用queryMarketingMoney接口 |
-| 查询合同信息 | 查询合同余额信息 | 列表页 | 选中记录 | 调用getContractInfo接口 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>按条件查询广告费余额</td><td>列表页</td><td>始终可用</td><td>调用query接口</td></tr>
+<tr><td>导出</td><td>导出查询结果</td><td>列表页</td><td>有查询结果时</td><td>调用exportBalance接口导出Excel</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（列表页）</h4>
+<ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：按事业部、交易公司、开票单位、年月等条件查询额度内广告费余额</li><li>第2点：返回期初余额、本期变动、期末余额、占用金额、可用金额</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/inlimit-balance-header/query</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM MKT_INLIMIT_BALANCE_HEADER 
+WHERE ENTID = #{entid}
+  AND (TRADING_COMPANY_ID = #{tradingCompanyId} OR #{tradingCompanyId} IS NULL)
+  AND START_TIME &gt;= #{startTime} AND END_TIME &lt;= #{endTime}
+ORDER BY ENTNAME, TRADING_COMPANY_NAME</code></pre>
+<h4>按钮2：导出（列表页）</h4>
+<ul><li><strong>触发条件</strong>：有查询结果时可用</li><li><strong>执行逻辑</strong>：</li><li>第1点：将当前查询结果导出为Excel文件</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/inlimit-balance-header/exportBalance</code></li><li><strong>排查SQL</strong>：同查询SQL</li></ul>
 </KbCard>
+
 <KbCard title="保存校验">
+<blockquote>本页面为纯查询页面，无保存操作。</blockquote>
 </KbCard>
+
 <KbCard title="提交校验">
+<blockquote>本页面为纯查询页面，无提交操作。</blockquote>
 </KbCard>
+
 <KbCard title="状态机">
-### 状态机
-
-> 本菜单为纯查询页面，无状态机流转。
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：MKT_INLIMIT_BALANCE_HEADER（营销中台额度内余额查询表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| INLIMIT_BALANCE_ID | BIGINT | 主键ID | - | 自增主键 |
-| ENTID | BIGINT | 事业部ID | 事业部 | 值集epm.division |
-| ENTNAME | VARCHAR | 事业部名称 | 事业部名称 | - |
-| DIVISION_ID | BIGINT | 事业部(词汇值) | - | - |
-| TRADING_COMPANY_ID | BIGINT | 交易公司ID | - | - |
-| TRADING_COMPANY_CODE | VARCHAR | 交易公司编码 | 交易公司编码 | - |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司名称 | - |
-| BILLING_UNIT_ID | BIGINT | 法人ID | - | - |
-| BILLING_UNIT_CODE | VARCHAR | 法人编码 | 法人编码 | - |
-| BILLING_UNIT_NAME | VARCHAR | 法人名称 | 法人名称 | - |
-| START_TIME | DATE | 开始时间 | 开始时间 | 查询条件 |
-| END_TIME | DATE | 结束时间 | 结束时间 | 查询条件 |
-| MONEY_TYPE | VARCHAR | 款项类型 | 款项类型 | - |
-| BEGINNING_BALANCE | DECIMAL | 期初余额 | 期初余额 | 年初/月初结转 |
-| DEDUCTION_AMOUNT | DECIMAL | 账户别名发放扣减 | 账户别名发放扣减 | - |
-| EXPIRE_ADJUST_QUOTA | DECIMAL | 到期额度调整 | 到期额度调整 | - |
-| OTHER_ADJUST_QUOTA | DECIMAL | 其他调整 | 其他调整 | - |
-| INLIMIT_CASHOUT_QUOTA | DECIMAL | 额度内兑现已审核金额 | 额度内兑现已审核金额 | - |
-| CHECKOUT_ORDER_PROVISION | DECIMAL | 出库单计提 | 出库单计提 | - |
-| OTHER | DECIMAL | 其他 | - | - |
-| ACTUAL_ENDING_BALANCE | DECIMAL | 期末余额 | 期末余额 | 期初-扣减+调整 |
-| TYA_ENDING_BALANCE | DECIMAL | 2年前期末余额 | - | - |
-| OYA_ENDING_BALANCE | DECIMAL | 1年前期末余额 | - | - |
-| THIS_ENDING_BALANCE | DECIMAL | 本年期末余额 | - | - |
-| OCCUPIED_AMOUNT | DECIMAL | 已占用额度 | 已占用额度 | cashout+delivery+frozen+adjustment |
-| CAN_USE_AMOUNT | DECIMAL | 剩余可用额度 | 剩余可用额度 | 期末余额-已占用额度 |
-| CASHOUT | DECIMAL | 兑现占用金额 | 兑现占用 | - |
-| DELIVERY | DECIMAL | 出库单占用金额 | 出库单占用 | - |
-| FROZEN | DECIMAL | 冻结占用金额 | 冻结占用 | - |
-| ADJUSTMENT | DECIMAL | 调整占用金额 | 调整占用 | - |
-| INLIMIT_CASHOUT_QUOTA_DISCOUNT | DECIMAL | 额度内兑现已审核金额-费用转款 | - | - |
-| INLIMIT_CASHOUT_QUOTA_REMIT | DECIMAL | 额度内兑现已审核金额-折扣折让 | - | - |
-| CREATE_TIME | DATE | 创建时间 | - | 系统自动记录 |
-| UPDATE_TIME | DATE | 更新时间 | - | 系统自动记录 |
-| SYNC_ITEM | DATE | 同步时间 | 同步时间 | 营销中台同步时间 |
-
----
-
+<blockquote>本页面为纯查询页面，无状态流转。</blockquote>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表1：MKT_INLIMIT_BALANCE_HEADER（营销中台额度内余额查询表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>INLIMIT_BALANCE_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+<tr><td>ENTID</td><td>BIGINT</td><td>事业部ID</td><td>事业部</td><td>选择事业部带出</td></tr>
+<tr><td>ENTNAME</td><td>VARCHAR</td><td>事业部名称</td><td>事业部</td><td>选择事业部带出</td></tr>
+<tr><td>DIVISION_ID</td><td>BIGINT</td><td>事业部词汇值</td><td>-</td><td>事业部词汇值</td></tr>
+<tr><td>TRADING_COMPANY_ID</td><td>BIGINT</td><td>交易公司ID</td><td>交易公司</td><td>选择交易公司带出</td></tr>
+<tr><td>TRADING_COMPANY_CODE</td><td>VARCHAR</td><td>交易公司编码</td><td>-</td><td>选择交易公司带出</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>VARCHAR</td><td>交易公司名称</td><td>交易公司</td><td>选择交易公司带出</td></tr>
+<tr><td>BILLING_UNIT_ID</td><td>BIGINT</td><td>开票单位ID</td><td>开票单位</td><td>选择开票单位带出</td></tr>
+<tr><td>BILLING_UNIT_CODE</td><td>VARCHAR</td><td>开票单位编码</td><td>-</td><td>选择开票单位带出</td></tr>
+<tr><td>BILLING_UNIT_NAME</td><td>VARCHAR</td><td>开票单位名称</td><td>开票单位</td><td>选择开票单位带出</td></tr>
+<tr><td>START_TIME</td><td>DATE</td><td>查询起始时间</td><td>查询起始时间</td><td>手动选择</td></tr>
+<tr><td>END_TIME</td><td>DATE</td><td>查询结束时间</td><td>查询结束时间</td><td>手动选择</td></tr>
+<tr><td>MONEY_TYPE</td><td>VARCHAR</td><td>币种</td><td>币种</td><td>手动选择</td></tr>
+<tr><td>BEGINNING_BALANCE</td><td>DECIMAL</td><td>期初余额</td><td>期初余额</td><td>系统计算</td></tr>
+<tr><td>DEDUCTION_AMOUNT</td><td>DECIMAL</td><td>扣减金额</td><td>扣减金额</td><td>系统计算</td></tr>
+<tr><td>EXPIRE_ADJUST_QUOTA</td><td>DECIMAL</td><td>到期调整额度</td><td>到期调整</td><td>系统计算</td></tr>
+<tr><td>OTHER_ADJUST_QUOTA</td><td>DECIMAL</td><td>其他调整额度</td><td>其他调整</td><td>系统计算</td></tr>
+<tr><td>INLIMIT_CASHOUT_QUOTA</td><td>DECIMAL</td><td>额度内兑现金额</td><td>额度内兑现</td><td>系统计算</td></tr>
+<tr><td>CHECKOUT_ORDER_PROVISION</td><td>DECIMAL</td><td>出库单预提</td><td>出库预提</td><td>系统计算</td></tr>
+<tr><td>THIS_ENDING_BALANCE</td><td>DECIMAL</td><td>期末余额</td><td>期末余额</td><td>系统计算</td></tr>
+<tr><td>OCCUPIED_AMOUNT</td><td>DECIMAL</td><td>占用金额</td><td>占用金额</td><td>系统计算</td></tr>
+<tr><td>CAN_USE_AMOUNT</td><td>DECIMAL</td><td>可用金额</td><td>可用金额</td><td>系统计算=期末余额-占用金额</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -522,72 +284,69 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">查询结果为空</td>
-            <td style="font-size:13px;">查询</td>
-            <td style="font-size:13px;">MKT_INLIMIT_BALANCE_HEADER表中无匹配记录</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">余额数据未同步</td>
-            <td style="font-size:13px;">查询</td>
-            <td style="font-size:13px;">SYNC_ITEM时间过旧，营销中台未及时同步</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>MKT_INLIMIT_BALANCE_HEADER表中无匹配记录</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>余额数据未同步</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>SYNC_ITEM时间过旧，营销中台未及时同步</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
+<tr><td>查询无数据</td><td>查询时</td><td>查询条件不匹配或余额数据未同步，放宽条件或确认数据已同步</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>必填查询条件为空</td><td>查询时</td><td>事业部/交易公司/年月未填写，补全必填条件后查询</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>时间区间无效</td><td>查询时</td><td>起始时间大于结束时间或时间格式错误，重新选择时间区间</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足</td><td>查询/导出时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>余额数据不存在</td><td>查询时</td><td>营销中台或资金池未同步余额数据到MKT_INLIMIT_BALANCE_HEADER，先确认上游数据已同步</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：查询无数据</h4>
+<ul><li><strong>触发条件</strong>：用户按事业部/交易公司/开票单位/年月组合条件查询广告费余额，返回结果集为空</li><li><strong>逻辑分析</strong>：查询接口inlimit-balance-header/query基于MKT_INLIMIT_BALANCE_HEADER表过滤，该表数据由营销中台和资金池同步生成。无数据根因有三类：(1)查询条件（事业部+交易公司+年月区间）组合过窄，START_TIME/END_TIME区间内无记录；(2)营销中台或资金池数据未同步到MKT_INLIMIT_BALANCE_HEADER表，余额头表为空；(3)事业部或交易公司ID与余额表ENTID/TRADING_COMPANY_ID不匹配。需先确认表中有数据，再逐步放宽条件定位</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT INLIMIT_BALANCE_ID, ENTID, ENTNAME, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
+         START_TIME, END_TIME, BEGINNING_BALANCE, THIS_ENDING_BALANCE, CAN_USE_AMOUNT
+  FROM MKT_INLIMIT_BALANCE_HEADER
+  WHERE (ENTID = #{entid} OR #{entid} IS NULL)
+    AND (TRADING_COMPANY_ID = #{tradingCompanyId} OR #{tradingCompanyId} IS NULL)
+    AND START_TIME &gt;= #{startTime} AND END_TIME &lt;= #{endTime}
+  ORDER BY ENTNAME, TRADING_COMPANY_NAME, START_TIME;</code></pre>
+<h4>报错2：必填查询条件为空</h4>
+<ul><li><strong>触发条件</strong>：用户未选择事业部、交易公司或年月等必填条件直接点击查询</li><li><strong>逻辑分析</strong>：查询接口inlimit-balance-header/query基于MKT_INLIMIT_BALANCE_HEADER表过滤，事业部ENTID和年月区间（START_TIME/END_TIME）是余额定位的核心维度。若事业部为空，查询将跨事业部聚合导致余额数据混乱；若年月为空，无法定位余额期间。前端hlod低代码页面通常对必填字段做非空校验，未通过则toast提示并阻断查询。需补全必填条件后重新查询</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查当前用户有权限的事业部列表
+  SELECT ENT_ID, ENT_NAME, ENABLED
+  FROM HPFM_DIVISION
+  WHERE ENABLED = 1
+  ORDER BY ENT_NAME;</code></pre>
+<h4>报错3：时间区间无效</h4>
+<ul><li><strong>触发条件</strong>：用户选择的查询起始时间大于结束时间，或时间格式不符合要求</li><li><strong>逻辑分析</strong>：查询接口要求START_TIME &lt;= END_TIME，前端日期选择框虽限制但可能因手动输入或时区问题导致区间反转。当START_TIME &gt; END_TIME时，SQL条件 START_TIME &gt;= #&#123;startTime&#125; AND END_TIME &lt;= #&#123;endTime&#125; 将产生矛盾条件返回空集或抛出参数校验异常。需重新选择时间区间确保起始时间不晚于结束时间</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查指定事业部+交易公司下的余额时间区间分布
+  SELECT MIN(START_TIME) AS 最早期间, MAX(END_TIME) AS 最晚期间, COUNT(1) AS 记录数
+  FROM MKT_INLIMIT_BALANCE_HEADER
+  WHERE ENTID = #{entid} AND TRADING_COMPANY_ID = #{tradingCompanyId};</code></pre>
+<h4>报错4：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：用户点击查询或导出，前端axios请求抛出网络异常或超时</li><li><strong>逻辑分析</strong>：前端调用/v1/&#123;organizationId&#125;/inlimit-balance-header/query或exportBalance接口时，因后端ae-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)ae-business微服务未注册到Nacos或已宕机；(2)网关路由配置错误找不到服务；(3)网络中断或防火墙拦截；(4)余额计算SQL执行超时（MKT_INLIMIT_BALANCE_HEADER数据量大或聚合计算复杂）。需联系运维确认服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查余额头表数据量及同步时间
+  SELECT COUNT(1) AS 余额记录数, MIN(START_TIME) AS 最早期间, MAX(END_TIME) AS 最晚期间
+  FROM MKT_INLIMIT_BALANCE_HEADER
+  WHERE ENTID = #{entid};</code></pre>
+<h4>报错5：权限不足</h4>
+<ul><li><strong>触发条件</strong>：用户访问广告费余额查询页面或调用接口时，返回403或"无权限访问"提示</li><li><strong>逻辑分析</strong>：后端Controller使用@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)控制访问权限，要求用户登录且拥有当前组织（organizationId）的访问权限。根因有三：(1)用户未分配该菜单（hlod页面）的访问角色；(2)用户当前切换的组织不在其授权组织范围内；(3)用户数据权限未覆盖查询的事业部（HPFM_DIVISION）。需联系管理员分配菜单角色和事业部数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
+  SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
+  FROM IAM_USER_ROLE
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre>
+<h4>报错6：余额数据不存在</h4>
+<ul><li><strong>触发条件</strong>：查询条件匹配但MKT_INLIMIT_BALANCE_HEADER表中无该事业部+交易公司+年月的余额记录</li><li><strong>逻辑分析</strong>：MKT_INLIMIT_BALANCE_HEADER表数据由营销中台和资金池同步生成，非DMS本地维护。根因有三：(1)营销中台未配置该事业部+交易公司的广告费额度，余额头表无记录；(2)资金池未建立或未同步余额数据到MKT_INLIMIT_BALANCE_HEADER；(3)同步任务未执行或执行失败，数据存在延迟。需先确认营销中台和资金池数据已配置并同步</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ENTID, ENTNAME, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
+         START_TIME, END_TIME, BEGINNING_BALANCE, THIS_ENDING_BALANCE, CAN_USE_AMOUNT
+  FROM MKT_INLIMIT_BALANCE_HEADER
+  WHERE ENTID = #{entid}
+    AND TRADING_COMPANY_ID = #{tradingCompanyId}
+  ORDER BY START_TIME DESC;</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">期末余额与期初余额差异异常</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>扣减项或调整项数据异常<br>
-      <strong style="color:#7C3AED;">处理：</strong>逐项核对期初余额、扣减项、调整项，确认数据来源正确
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">已占用额度与各占用明细之和不一致</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>occupiedAmount ≠ cashout + delivery + frozen + adjustment<br>
-      <strong style="color:#7C3AED;">处理：</strong>确认营销中台数据同步是否完整
-    </div>
-  </div>
-</div>
+<ul><li>问题1：余额数据不正确</li><li>原因：营销中台或资金池数据未及时同步到MKT_INLIMIT_BALANCE_HEADER表</li><li>解决思路：检查SQL <code>SELECT * FROM MKT_INLIMIT_BALANCE_HEADER WHERE ENTID = #&#123;entid&#125; AND TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125;</code></li></ul>
+<ul><li>问题2：可用金额为负数</li><li>原因：占用金额超过期末余额，存在超支情况</li><li>解决思路：检查占用金额来源，确认是否有异常占用</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -596,14 +355,14 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-09-22 | - | - | 初始创建广告费余额查询功能 |
-
-> 要求：
-> 1. 按倒序展示
-> 2. 只需要包含2026年的提交记录
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写，补充界面模块、选择弹窗、数据库表详解</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

@@ -149,34 +149,20 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 列表查询自动填充组织与经销商">
-
-<KbQuote>未传入组织ID和经销商编码时自动从用户信息填充</KbQuote>
-**具体逻辑**：
-
-- 1、当前端未传入组织ID时，自动从当前登录用户的附加信息中获取DEPT作为组织ID
-- 2、当前端未传入经销商编码时，自动从当前登录用户附加信息中获取DC作为经销商编码
-- 3、业务意义：经销商用户登录后只能查看本经销商下的门店，无需手动选择
+<KbCard num="1" title="重点逻辑1：主数据表无审批流程">
+<ul><li><strong>业务意义</strong>：门店档案是基础主数据，不涉及审批流程，由上游申请单审批通过后自动生成/更新</li><li><strong>具体逻辑描述</strong>：</li><li>门店档案由"新建门店申请"审批通过后通过syncMktTerminal方法自动生成</li><li>门店档案由"门店变更申请"审批通过后通过onWfComplete方法自动更新</li><li>本页面仅支持查询和补充信息编辑，不支持新增/删除</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 保存逻辑仅允许局部字段维护">
-
-<KbQuote>保存接口仅允许维护说明类字段，核心属性变更须走审批</KbQuote>
-**具体逻辑**：
-
-- 1、保存接口仅更新`otherCondition`（其他情况说明）和`terminalAreaChange`（门店面积变动说明）两个字段
-- 2、不允许通过此接口修改门店核心属性（如编码、名称、经销商等），核心属性变更需走变更申请流程
-- 3、业务意义：保护门店核心数据的一致性，变更必须经过审批
+<KbCard num="2" title="重点逻辑2：数据权限按组织+经销商隔离">
+<ul><li><strong>业务意义</strong>：查询时自动按当前用户组织ID和经销商编码过滤，确保数据隔离</li><li><strong>具体逻辑描述</strong>：</li><li>selectList方法：entid为空时自动填充当前组织ID，custCode为空时自动填充当前经销商编码</li><li>finFeeApplyLov方法：同样自动填充组织ID、经销商编码，并注入装修提前天数</li><li>默认按terminalId降序排列</li></ul>
 </KbCard>
 
-<KbCard num="3" title="2.3 LOV查询接口">
+<KbCard num="3" title="重点逻辑3：保存仅支持局部更新">
+<ul><li><strong>业务意义</strong>：保存接口仅更新补充信息字段，不支持全字段编辑</li><li><strong>具体逻辑描述</strong>：</li><li>save方法先按主键查询，不存在抛CommonException("数据不存在")</li><li>仅更新两个字段：otherCondition（其他情况说明）、terminalAreaChange（门店面积变动说明）</li><li>使用updateByPrimaryKeySelective选择性更新</li><li>批量插入附件关系（ObjAttachRel）</li></ul>
+</KbCard>
 
-<KbQuote>为下游模块提供门店选择LOV查询接口</KbQuote>
-**具体逻辑**：
-
-- 1、`finFeeApplyLov`：为门店装修申请与进度提供门店选择LOV，增加装修提前天数校验参数
-- 2、`custDhReimburseHead`：为门头展板报销申请提供门店信息查询
-- 3、--
+<KbCard num="4" title="重点逻辑4：LOV接口支持装修申请和门头报销">
+<ul><li><strong>业务意义</strong>：为下游模块提供门店选择LOV接口</li><li><strong>具体逻辑描述</strong>：</li><li>finFeeApplyLov：门店装修申请与进度更新时选择门店，注入advancePermissibleTime（装修提前天数）</li><li>custDhReimburseHead：门头展板报销申请时选择门店，直接透传查询</li></ul>
 </KbCard>
 
 </div>
@@ -186,135 +172,186 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
+<KbCard title="界面模块">
+<h4>门店档案列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>门店ID</td><td>TERMINAL_ID</td><td>隐藏</td><td>主键</td><td>常显</td><td>系统自动生成</td></tr>
+<tr><td>门店编码</td><td>TERMINAL_CODE</td><td>文本</td><td>门店编码</td><td>常显</td><td>新建门店申请审批通过时生成</td></tr>
+<tr><td>门店名称</td><td>TERMINAL_NAME</td><td>文本</td><td>门店名称</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>文本</td><td>经销商编码</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>文本</td><td>经销商名称</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>门店类型</td><td>TERMINAL_TYPE</td><td>文本</td><td>门店类型</td><td>常显</td><td>1=专卖/2=商超/3=家装/4=社区/5=乡镇</td></tr>
+<tr><td>门店面积</td><td>TERMINAL_AREA</td><td>数值</td><td>门店面积</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>门店状态</td><td>TERMINAL_STAT</td><td>文本</td><td>门店状态</td><td>常显</td><td>1=运营中, 2=撤店</td></tr>
+<tr><td>经营属性</td><td>CUSTOMER_CLASS</td><td>文本</td><td>经营属性</td><td>常显</td><td>1=直营专营/2=经销专营/3=分销</td></tr>
+<tr><td>装修风格</td><td>DECORATION_STYLE</td><td>文本</td><td>店面装修风格</td><td>常显</td><td>LOV翻译</td></tr>
+<tr><td>门店装修等级</td><td>FIXUP_GRADE</td><td>文本</td><td>门店装修等级</td><td>常显</td><td>LOV翻译(AE.FIXUP_GRADE)</td></tr>
+<tr><td>有效状态</td><td>USABLE</td><td>文本</td><td>有效状态</td><td>常显</td><td>2=有效</td></tr>
+<tr><td>省份名称</td><td>PROVINCE_AREANAME</td><td>文本</td><td>省份</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>城市名称</td><td>CITY_AREANAME</td><td>文本</td><td>城市</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>区县名称</td><td>COUNTY_AREANAME</td><td>文本</td><td>区县</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>门店详细地址</td><td>ADDR</td><td>文本</td><td>门店详细地址</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>开店日期</td><td>IN_SHOP_DATE</td><td>日期</td><td>开店日期</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>撤店日期</td><td>SHUT_DATE</td><td>日期</td><td>撤店日期</td><td>常显</td><td>门店变更申请审批通过时更新</td></tr>
+<tr><td>最新装修日期</td><td>LATEST_DECORATION_DATE</td><td>日期</td><td>最新装修日期</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>店长姓名</td><td>SORE_MANAGERS_NAME</td><td>文本</td><td>店长姓名</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>店长联系电话</td><td>SORE_MANAGERS_TEL</td><td>文本</td><td>店长联系电话</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>其他情况说明</td><td>OTHER_CONDITION</td><td>文本域</td><td>其他情况说明</td><td>常显</td><td>用户输入（补充信息）</td></tr>
+<tr><td>门店面积变动说明</td><td>TERMINAL_AREA_CHANGE</td><td>文本域</td><td>面积变动说明</td><td>常显</td><td>用户输入（补充信息）</td></tr>
+<tr><td>备注</td><td>NOTE</td><td>文本域</td><td>备注</td><td>常显</td><td>从申请单同步</td></tr>
+<tr><td>创建人</td><td>CREATOR</td><td>文本</td><td>创建人</td><td>常显</td><td>系统自动赋值</td></tr>
+<tr><td>创建时间</td><td>CREATE_TIME</td><td>日期</td><td>创建时间</td><td>常显</td><td>系统自动赋值</td></tr>
+</tbody>
+</table>
+<h4>其他按钮</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询门店档案列表</td><td>列表页</td><td>常显</td><td>调用GET /mkt-terminals，按组织+经销商过滤</td></tr>
+<tr><td>保存</td><td>保存补充信息</td><td>详情页</td><td>常显</td><td>调用POST /mkt-terminals，更新otherCondition和terminalAreaChange+附件</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（列表页）</h4>
+<ul><li><strong>业务意义</strong>：查询门店档案列表</li><li><strong>具体逻辑描述</strong>：</li><li>调用GET <code>/v1/&#123;organizationId&#125;/mkt-terminals</code> 接口</li><li>自动填充entid（当前组织ID）和custCode（当前经销商编码）</li><li>使用@ProcessLovValue翻译LOV字段</li><li>默认按terminalId降序排列</li></ul>
+<h4>按钮2：保存（详情页）</h4>
+<ul><li><strong>业务意义</strong>：保存门店补充信息</li><li><strong>具体逻辑描述</strong>：</li><li>调用POST <code>/v1/&#123;organizationId&#125;/mkt-terminals</code> 接口</li><li>先按主键查询，不存在抛CommonException("数据不存在")</li><li>仅更新otherCondition和terminalAreaChange两个字段</li><li>批量插入附件关系</li></ul>
 </KbCard>
-<KbCard title="导入">
-支持批量导入，导入数据通过`import_flag`字段标识。
 
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口名称</th><th>请求方式</th><th>接口路径</th><th>权限</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>网点资料列表</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-terminals`</td><td>permissionLogin=true</td><td>分页查询门店档案，自动按组织+经销商过滤</td></tr>
+<tr><td>网点资料保存</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/mkt-terminals`</td><td>permissionLogin=true</td><td>保存补充信息（otherCondition+terminalAreaChange+附件）</td></tr>
+<tr><td>门店装修申请LOV</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-terminals/fin-fee-apply-lov`</td><td>permissionLogin=true</td><td>装修申请时选择门店，注入装修提前天数</td></tr>
+<tr><td>门头报销门店LOV</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-terminals/cust-dh-reimburse`</td><td>permissionLogin=true</td><td>门头展板报销时选择门店</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="其他按钮">
 
-| 按钮名称 | 功能说明 |
-|---------|---------|
-| 查询 | 按条件分页查询门店档案列表 |
-| 保存 | 仅保存其他情况说明和面积变动说明 |
-
-</KbCard>
-<KbCard title="保存校验">
-- 校验门店ID对应的数据必须存在，否则抛出"数据不存在"
-
-</KbCard>
-<KbCard title="提交校验">
-</KbCard>
 <KbCard title="状态机">
-
-本菜单无工作流状态机。门店状态`terminal_stat`由新建门店申请和变更申请审批后写入。
-
----
-
-</KbCard>
-<KbCard num="1" title="MKT_TERMINAL">
-
-| 列名 | 类型 | 说明 | 是否可空 | 默认值 |
-|-----|------|------|---------|-------|
-| terminal_id | BIGINT | 门店ID(主键) | N | 自增 |
-| terminal_code | VARCHAR | 门店编码 | N | - |
-| terminal_name | VARCHAR | 门店名称 | Y | - |
-| cust_id | BIGINT | 所属经销商ID | Y | - |
-| cust_code | VARCHAR | 所属经销商编码 | Y | - |
-| cust_name | VARCHAR | 所属经销商名称 | Y | - |
-| addr | VARCHAR | 门店详细地址 | Y | - |
-| usable | BIGINT | 有效状态 | Y | - |
-| division_id | BIGINT | 事业部ID | Y | - |
-| guide_count | BIGINT | 导购员数量 | Y | - |
-| service_engineer_count | BIGINT | 服务工程师数量 | Y | - |
-| property_type | BIGINT | 产权归属 | Y | - |
-| fixup_grade | BIGINT | 门店装修等级 | Y | - |
-| creator | VARCHAR | 创建人 | Y | - |
-| create_time | DATETIME | 创建时间 | Y | - |
-| updator | VARCHAR | 更新人 | Y | - |
-| update_time | DATETIME | 更新时间 | Y | - |
-| note | VARCHAR | 备注 | Y | - |
-| sys_id | BIGINT | 连锁商场ID | Y | - |
-| sys_code | VARCHAR | 连锁商场编码 | Y | - |
-| shopmanager_name | VARCHAR | 负责人 | Y | - |
-| d_cust_id | BIGINT | 所属分销商ID | Y | - |
-| shopmanager_mob | VARCHAR | 负责人电话 | Y | - |
-| city_areaid | BIGINT | 门店所属市ID | Y | - |
-| city_areaname | VARCHAR | 门店所属市名称 | Y | - |
-| entid | BIGINT | 组织ID | Y | - |
-| in_shop_date | DATE | 开店日期 | Y | - |
-| terminal_type | BIGINT | 门店类型 | Y | - |
-| terminal_area | BIGINT | 门店面积 | Y | - |
-| customer_class | BIGINT | 经营属性 | Y | - |
-| province_areaid | BIGINT | 门店所属省ID | Y | - |
-| province_areaname | VARCHAR | 门店所属省名称 | Y | - |
-| county_areaid | BIGINT | 门店所在地区/县ID | Y | - |
-| county_areaname | VARCHAR | 门店所在地区/县名称 | Y | - |
-| is_ls | BIGINT | 是否连锁 | Y | - |
-| areaname | VARCHAR | 拼接省市区名称 | Y | - |
-| shut_date | DATE | 撤店日期 | Y | - |
-| brand | VARCHAR | 品牌 | Y | - |
-| store_location_type | BIGINT | 门店位置类型 | Y | - |
-| latest_decoration_date | DATE | 最新装修日期 | Y | - |
-| start_saleme_date | DATE | 开始经营我司产品日期 | Y | - |
-| lease_expiration_date | DATE | 店面租赁到期日 | Y | - |
-| sore_managers_name | VARCHAR | 店长姓名 | Y | - |
-| sore_managers_tel | VARCHAR | 店长联系电话 | Y | - |
-| designer_count | BIGINT | 设计师数量 | Y | - |
-| entname | VARCHAR | 组织名称 | Y | - |
-| cust_full_name | VARCHAR | 所属经销商拼接名称 | Y | - |
-| decoration_style | BIGINT | 店面装修风格 | Y | - |
-| jx_store_count | BIGINT | 经销商自营门店数 | Y | - |
-| jx_store_salesamt | BIGINT | 经销商自营门店月均销售额 | Y | - |
-| fx_store_count | BIGINT | 分销商自营门店数 | Y | - |
-| fx_store_salesamt | BIGINT | 分销商自营门店月均销售额 | Y | - |
-| city_changzhurenkou | BIGINT | 当地常住人口(万人) | Y | - |
-| city_gdp | BIGINT | 当地上年度GDP(亿元) | Y | - |
-| city_gdp_perpeson | BIGINT | 当地人均GDP(万元) | Y | - |
-| salezone_org_id | BIGINT | 所属销售区域ID | Y | - |
-| salezone_org_name | VARCHAR | 所属销售区域名称 | Y | - |
-| operat_center_org_id | BIGINT | 所属运营中心ID | Y | - |
-| operat_center_org_name | VARCHAR | 所属运营中心名称 | Y | - |
-| d_cust_code | VARCHAR | 所属分销商编码 | Y | - |
-| d_cust_name | VARCHAR | 所属分销商名称 | Y | - |
-| terminal_stat | BIGINT | 门店状态 | Y | - |
-| import_flag | VARCHAR | 导入标识 | Y | - |
-| short_name | VARCHAR | 所属经销商简称 | Y | - |
-| store_area_level | VARCHAR | 门店区域等级 | Y | - |
-| d_cust_full_name | VARCHAR | 所属分销商拼接名称 | Y | - |
-| checkor | VARCHAR | 审核人 | Y | - |
-| check_time | DATETIME | 审核时间 | Y | - |
-| retail_amount2018 | BIGINT | 2018年零售金额 | Y | - |
-| retail_amount2019 | BIGINT | 2019年零售金额 | Y | - |
-| retail_amount2020 | BIGINT | 2020年零售金额 | Y | - |
-| retail_amount20210106 | BIGINT | 2021年1-6月零售金额 | Y | - |
-| retail_amount20210712 | BIGINT | 2021年7-12月零售金额 | Y | - |
-| retail_amount20220106 | BIGINT | 2022年1-6月零售金额 | Y | - |
-| retail_amount20220712 | BIGINT | 2022年7-12月零售金额 | Y | - |
-| decoration_check_time | DATE | 门店装修验收审核时间 | Y | - |
-| decoration_over_time | DATE | 门店装修验收过期时间 | Y | - |
-| other_condition | VARCHAR | 其他情况说明 | Y | - |
-| terminal_area_change | VARCHAR | 门店面积变动说明 | Y | - |
-| sore_managers_count | BIGINT | 店长数量 | Y | - |
-| original_stat | BIGINT | 原门店属性 | Y | - |
-
----
-
+<blockquote>门店档案为主数据表，无状态流转。门店状态（TERMINAL_STAT）由门店变更申请审批通过后更新：1=运营中 → 2=撤店。</blockquote>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>新建门店申请</td><td>数据来源</td><td>审批通过后通过syncMktTerminal生成门店档案</td><td>新建门店申请已审批通过</td></tr>
+<tr><td>门店变更申请</td><td>数据来源</td><td>审批通过后更新门店档案</td><td>门店变更申请已审批通过</td></tr>
+<tr><td>经销商主数据</td><td>数据来源</td><td>提供经销商信息</td><td>经销商已创建</td></tr>
+<tr><td>事业部基础设置</td><td>数据来源</td><td>提供事业部信息</td><td>事业部已配置</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="下游影响">
+<ul><li>门店装修申请：通过finFeeApplyLov接口选择门店</li><li>门店验收与报销：基于门店档案进行验收报销</li><li>门头展板报销：通过custDhReimburseHead接口选择门店</li><li>门店报表：所有门店报表的数据基础</li></ul>
+</KbCard>
+
+<KbCard title="MKT_TERMINAL（门店档案表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_ID</td><td>NUMBER</td><td>门店ID(主键)</td><td>门店ID</td><td>自增</td></tr>
+<tr><td>TERMINAL_CODE</td><td>VARCHAR2</td><td>门店编码</td><td>门店编码</td><td>barCode+divisionCode+5位Redis流水号</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称</td><td>门店名称</td><td>从申请单同步</td></tr>
+<tr><td>CUST_ID</td><td>NUMBER</td><td>经销商ID</td><td>-</td><td>从申请单同步</td></tr>
+<tr><td>CUST_CODE</td><td>VARCHAR2</td><td>经销商编码</td><td>经销商编码</td><td>从申请单同步</td></tr>
+<tr><td>CUST_NAME</td><td>VARCHAR2</td><td>经销商名称</td><td>经销商名称</td><td>从申请单同步</td></tr>
+<tr><td>TERMINAL_TYPE</td><td>NUMBER</td><td>门店类型</td><td>门店类型</td><td>1=专卖/2=商超/3=家装/4=社区/5=乡镇</td></tr>
+<tr><td>TERMINAL_AREA</td><td>NUMBER</td><td>门店面积</td><td>门店面积</td><td>从申请单同步</td></tr>
+<tr><td>TERMINAL_STAT</td><td>NUMBER</td><td>门店状态</td><td>门店状态</td><td>1=运营中, 2=撤店</td></tr>
+<tr><td>CUSTOMER_CLASS</td><td>NUMBER</td><td>经营属性</td><td>经营属性</td><td>1=直营专营/2=经销专营/3=分销</td></tr>
+<tr><td>DECORATION_STYLE</td><td>NUMBER</td><td>装修风格</td><td>装修风格</td><td>LOV翻译</td></tr>
+<tr><td>FIXUP_GRADE</td><td>NUMBER</td><td>门店装修等级</td><td>门店装修等级</td><td>LOV翻译(AE.FIXUP_GRADE)</td></tr>
+<tr><td>USABLE</td><td>NUMBER</td><td>有效状态</td><td>有效状态</td><td>2=有效</td></tr>
+<tr><td>PROVINCE_AREANAME</td><td>VARCHAR2</td><td>省份名称</td><td>省份名称</td><td>从申请单同步</td></tr>
+<tr><td>CITY_AREANAME</td><td>VARCHAR2</td><td>城市名称</td><td>城市名称</td><td>从申请单同步</td></tr>
+<tr><td>COUNTY_AREANAME</td><td>VARCHAR2</td><td>区县名称</td><td>区县名称</td><td>从申请单同步</td></tr>
+<tr><td>ADDR</td><td>VARCHAR2</td><td>门店详细地址</td><td>门店详细地址</td><td>从申请单同步</td></tr>
+<tr><td>IN_SHOP_DATE</td><td>DATE</td><td>开店日期</td><td>开店日期</td><td>从申请单同步</td></tr>
+<tr><td>SHUT_DATE</td><td>DATE</td><td>撤店日期</td><td>撤店日期</td><td>变更申请审批通过时更新</td></tr>
+<tr><td>OTHER_CONDITION</td><td>VARCHAR2</td><td>其他情况说明</td><td>其他情况说明</td><td>用户输入（补充信息）</td></tr>
+<tr><td>TERMINAL_AREA_CHANGE</td><td>VARCHAR2</td><td>面积变动说明</td><td>面积变动说明</td><td>用户输入（补充信息）</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>NUMBER</td><td>组织ID</td><td>-</td><td>租户组织标识</td></tr>
+<tr><td>ENTID</td><td>NUMBER</td><td>企业ID</td><td>-</td><td>LOV翻译(AE.ITEM_ORGANIZATION)</td></tr>
+<tr><td>DIVISION_ID</td><td>NUMBER</td><td>事业部ID</td><td>-</td><td>从申请单同步</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>数据不存在</td><td>保存时</td><td>门店档案不存在或已被删除，请检查门店ID</td><td>高</td><td>[查看](#报错1数据不存在)</td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时，请检查网络与服务状态</td><td>中</td><td>[查看](#报错2网络请求失败)</td></tr>
+<tr><td>权限不足</td><td>全局</td><td>当前用户无门店档案操作权限或数据权限隔离</td><td>中</td><td>[查看](#报错3权限不足)</td></tr>
+<tr><td>查询无数据</td><td>列表查询时</td><td>当前组织/经销商下无门店档案数据</td><td>低</td><td>[查看](#报错4查询无数据)</td></tr>
+</tbody>
+</table>
+<h4>报错1：数据不存在</h4>
+<ul><li><strong>触发条件</strong>：点击"保存"按钮补充其他情况说明/面积变动说明时，按terminalId调用selectByPrimaryKey查询MKT_TERMINAL返回null</li><li><strong>逻辑分析</strong>：保存接口仅支持局部更新otherCondition和terminalAreaChange两个字段，前置需先校验门店档案存在。若门店档案在编辑期间被上游"门店变更申请"流程撤店删除（实际为状态置为撤店而非物理删除）、terminalId传值错误（如前端缓存了已失效ID）、或并发场景下被清理，查询返回空，抛CommonException中断保存。需核查门店档案是否仍处于有效运营状态。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_id         AS 门店ID,
+         t.terminal_code       AS 门店编码,
+         t.terminal_name       AS 门店名称,
+         t.terminal_stat       AS 门店状态,
+         t.usable              AS 有效状态,
+         t.update_time         AS 最后更新时间
+  FROM   mkt_terminal t
+   WHERE  t.terminal_id = #{传入的terminalId}
+   AND    (t.usable IS NULL OR t.terminal_stat = 2)
+   ORDER  BY t.update_time DESC;</code></pre>
+<h4>报错2：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：前端调用门店档案接口（查询列表、保存补充信息、LOV选择）时，请求超时或后端服务不可达</li><li><strong>逻辑分析</strong>：低代码页面通过axios请求后端API（/v1/&#123;organizationId&#125;/mkt-terminals、fin-fee-apply-lov、cust-dh-reimburse等）。若后端ae-business服务未启动、网络中断、网关超时、或数据库连接池耗尽导致请求堆积，axios捕获网络异常，前端展示通用错误提示，列表数据无法加载或保存操作失败。需核查后端服务健康状态、网络连通性、网关配置及数据库连接池。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '服务连通性检查' AS 检查项,
+         COUNT(*)          AS 门店档案总记录数,
+         MAX(t.update_time) AS 最后更新时间
+  FROM   mkt_terminal t
+  WHERE  t.usable = 2;</code></pre>
+<h4>报错3：权限不足</h4>
+<ul><li><strong>触发条件</strong>：当前用户无门店档案相关操作权限（查询/保存/LOV选择）</li><li><strong>逻辑分析</strong>：低代码页面通过permissionLogin=true进行登录校验，selectList方法自动按当前用户组织ID（entid）和经销商编码（custCode）过滤数据实现数据权限隔离。若用户角色未分配门店档案菜单权限、权限码配置缺失、或组织ID/经销商编码不匹配导致数据权限隔离后无可见数据，接口返回403/401或空列表。需核查用户角色权限配置及组织数据权限、经销商主数据关联。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_id         AS 门店ID,
+         t.terminal_code       AS 门店编码,
+         t.terminal_name       AS 门店名称,
+         t.cust_code           AS 经销商编码,
+         t.entid               AS 企业ID,
+         t.organization_id     AS 组织ID
+  FROM   mkt_terminal t
+  WHERE  t.organization_id = #{当前用户组织ID}
+  AND    t.cust_code = #{当前经销商编码}
+  ORDER  BY t.terminal_id DESC;</code></pre>
+<h4>报错4：查询无数据</h4>
+<ul><li><strong>触发条件</strong>：进入门店档案列表页或调用LOV接口查询时，按当前组织ID和经销商编码过滤后返回空列表</li><li><strong>逻辑分析</strong>：selectList方法在entid为空时自动填充当前组织ID、custCode为空时自动填充当前经销商编码，按terminalId降序排列。若当前用户所属组织/经销商下确实无门店档案（如新建门店申请未审批通过、门店档案均被撤店terminal_stat=2、或经销商主数据未关联门店），查询返回空列表，前端展示空表格。此为正常业务情况而非错误，但用户可能误判为故障。需核查该组织/经销商下门店档案是否已建立及有效状态。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_id         AS 门店ID,
+         t.terminal_code       AS 门店编码,
+         t.terminal_name       AS 门店名称,
+         t.cust_code           AS 经销商编码,
+         t.terminal_stat       AS 门店状态,
+         t.usable              AS 有效状态,
+         t.entid               AS 企业ID,
+         t.organization_id     AS 组织ID
+  FROM   mkt_terminal t
+  WHERE  t.organization_id = #{当前用户组织ID}
+  AND    t.cust_code = #{当前经销商编码}
+  ORDER  BY t.terminal_id DESC;</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -322,111 +359,17 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">数据不存在</td>
-            <td style="font-size:13px;">保存时根据terminalId未查到对应门店记录</td>
-            <td style="font-size:13px;">确认门店ID是否正确，数据是否已被删除</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">未获取到用户信息</td>
-            <td style="font-size:13px;">用户附加信息中无userType</td>
-            <td style="font-size:13px;">检查用户登录状态和权限配置</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">未获取到事业部信息</td>
-            <td style="font-size:13px;">用户附加信息中无DEPT</td>
-            <td style="font-size:13px;">联系管理员配置用户所属事业部</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认门店ID是否正确，数据是否已被删除</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM MKT_TERMINAL WHERE TERMINAL_ID = ?;
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未获取到用户信息</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查用户登录状态和权限配置</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT USER_ID, USER_TYPE FROM SYS_USER_ATTACH WHERE USER_ID = ?;
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未获取到事业部信息</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>联系管理员配置用户所属事业部</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT USER_ID, DEPT FROM SYS_USER_ATTACH WHERE USER_ID = ?;
-```
-  
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">为什么保存时只能修改其他情况说明和面积变动说明？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>门店核心属性（编码、名称、经销商、地址等）的变更必须通过"门店变更申请"菜单走审批流程，确保数据变更可追溯。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">门店编码是如何生成的？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>门店编码在新建门店申请审批通过时自动生成，规则为：城市车辆编码 + 事业部编码 + 5位流水号（Redis自增序列）。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">前端为什么没有独立页面？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>门店档案作为基础数据，在storeChange（门店变更申请）页面中引用展示，不提供独立的新增/编辑入口，新增走新建门店申请，变更走变更申请。
-    </div>
-  </div>
-</div>
+<p><strong>Q1：门店档案如何创建？</strong></p>
+<p>A：由"新建门店申请"审批通过后自动生成（syncMktTerminal方法），不支持在本页面直接新增。</p>
+<p><strong>Q2：门店档案如何更新？</strong></p>
+<p>A：由"门店变更申请"审批通过后自动更新（onWfComplete方法）。本页面仅支持补充"其他情况说明"和"面积变动说明"。</p>
+<p><strong>Q3：查询时如何过滤数据？</strong></p>
+<p>A：自动按当前用户组织ID（entid）和经销商编码（custCode）过滤，确保数据隔离。</p>
+<p><strong>Q4：LOV接口有什么用？</strong></p>
+<p>A：finFeeApplyLov为门店装修申请提供门店选择（注入装修提前天数），custDhReimburseHead为门头展板报销提供门店选择。</p>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -435,10 +378,14 @@ SELECT USER_ID, DEPT FROM SYS_USER_ATTACH WHERE USER_ID = ?;
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 更新内容 | 更新人 |
-|-----|------|---------|-------|
-| 2026-07-31 | v1.0 | 初始生成知识库文档 | AI |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-11-13</td><td>-</td><td>YD</td><td>初始创建门店档案管理功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

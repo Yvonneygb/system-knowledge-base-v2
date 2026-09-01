@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -100,6 +101,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -169,74 +171,188 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 新增逻辑（doInsert）"><ul><li>生成复核单号：编码规则<code>AE.CASH_CODE</code>，参数包含divisionCode</li><li>插入主表</li><li>更新兑现单绑定：批量更新FinFeeTerminalCashout的cashId</li></ul></KbCard>
-<KbCard title="2.2 更新逻辑（doUpdate）"><ul><li>更新主表</li><li>解绑旧兑现单(doDeleteLine)：将原绑定的兑现单cashId置空</li><li>绑定新兑现单(doUpdateLine)：更新新兑现单的cashId</li></ul></KbCard>
-<KbCard title="2.3 删除逻辑（doDelete）"><ul><li>删除主表</li><li>解绑关联兑现单：将cashId置空</li></ul></KbCard>
-<KbCard title="2.4 审批通过回调（onWfComplete）"><ul><li>推送共享(doSendShare)</li><li>更新复核单：auditStat=审核完成，hzApproveStatus=APPROVED</li><li>批量更新兑现单：auditStat=审核完成，postFlag=Y，hzApproveStatus=APPROVED</li></ul></KbCard>
-<KbCard title="2.5 推送共享（doSendShare）"><ul><li>查询复核单绑定的兑现单明细</li><li>遍历每个兑现单：<ul><li>获取对应报销单的支付方式</li><li>支付方式=3(折扣折让)：推送资金池(synAdjustCashPoolToEbs)</li><li>其他：推送共享接口(待实现)</li></ul></li><li>校验收款报销单号和门头兑现单号不能同时为空</li></ul></KbCard>
-<KbCard title="2.6 推送资金池（synAdjustCashPoolToEbs）"><ul><li>获取经销商账户(extAccountId)</li><li>构建CashPoolDataDTO，sourceType="广告费（额内）"</li><li>amount取inThisCashoutAmt(额度内兑现金额)</li><li>使用兑现单号(orderPlanShareNo)作为唯一来源单号</li><li>调用ebsSdkService.synAdjustCashPoolToEbs推送</li><li>推送成功：标记isShare=2，shareFlag=2，auditStat=审核通过</li></ul></KbCard>
-<KbCard title="2.7 总账日期获取（getLedgerDate）"><ul><li>查询事业部上月是否存在入账成功的冲销数据</li><li>存在：总账日期为今天</li><li>不存在：总账日期为上个月最后一天</li></ul></KbCard>
-<KbCard title="2.8 查询兑现单明细（doSelect）"><ul><li>查询复核单基本信息</li><li>查询绑定的额度内兑现单明细</li><li>过滤共享已驳回的兑现单(isShare!=2)</li><li>计算allCashFlag(可推送兑现单数量)</li></ul></KbCard>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：批量关联兑现单">
+<ul><li><strong>业务意义</strong>：将多张额度内兑现单通过batchCashId统一关联，批量提交审批</li><li><strong>具体逻辑描述</strong>：</li><li>创建批量复核单FIN_FEE_IN_CASH_HEAD</li><li>多张FIN_FEE_TERMINAL_CASHOUT通过batchCashId关联到批量复核单</li><li>批量提交后统一走审批流程</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：批量审批通过处理">
+<ul><li><strong>业务意义</strong>：审批通过后批量处理所有关联的兑现单</li><li><strong>具体逻辑描述</strong>：</li><li>批量回写兑现单审批状态为APPROVED</li><li>批量同步资金池(EBS)</li><li>批量推送MBO系统</li><li>批量回写验收报销单兑现信息</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 API接口列表"><table class="kl-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td>GET</td><td>/</td><td>额度内兑现列表(分页)</td></tr><tr><td>GET</td><td>/{cashId}/detail</td><td>额度内兑现明细</td></tr><tr><td>POST</td><td>/</td><td>创建或更新额度内兑现</td></tr><tr><td>DELETE</td><td>/</td><td>删除额度内兑现</td></tr></tbody></table></KbCard>
-<KbCard title="3.2 工作流回调"><table class="kl-table"><thead><tr><th>方法</th><th>触发时机</th><th>逻辑说明</th></tr></thead><tbody><tr><td>wfProcSubmit</td><td>提交审批</td><td>启动工作流实例</td></tr><tr><td>wfComplete</td><td>审批完成</td><td>推送共享/资金池，更新兑现单状态</td></tr><tr><td>onWfComplete</td><td>审批通过</td><td>doSendShare + 批量更新</td></tr></tbody></table></KbCard>
-<KbCard title="3.3 选择弹窗"><p class='kl-tip'>本菜单为hlod低代码页面，选择弹窗由低代码平台配置承载。后端接口：列表 <code>GET /fin-fee-in-cash-heads</code>，详情 <code>GET /fin-fee-in-cash-heads/{cashId}/detail</code>。</p></KbCard>
-<KbCard title="3.4 导入"><p class='kl-tip'>不支持导入功能（hlod低代码页面，未发现导入相关接口）。</p></KbCard>
-<KbCard title="3.5 其他按钮"><table class="kl-table"><thead><tr><th>按钮</th><th>说明</th></tr></thead><tbody><tr><td>新建</td><td>创建额度内兑现批量复核单（POST接口）</td></tr><tr><td>编辑</td><td>修改复核单</td></tr><tr><td>删除</td><td>删除复核单（DELETE接口）</td></tr><tr><td>提交</td><td>启动工作流审批</td></tr></tbody></table>
-<p class='kl-tip'>后端接口：创建/更新（POST <code>/fin-fee-in-cash-heads</code>）、删除（DELETE <code>/fin-fee-in-cash-heads</code>）</p></KbCard>
-<KbCard title="3.6 保存校验"><p><strong>后端校验（FinFeeInCashHeadServiceImpl）：</strong></p>
-<table class="kl-table"><thead><tr><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>数据存在性</td><td>单据信息不存在</td></tr><tr><td>兑现单号</td><td>验收报销单号和门头兑现单号为空</td></tr><tr><td>总账日期</td><td>验收单号X，总账日期不能为空，请检查</td></tr></tbody></table></KbCard>
-<KbCard title="3.7 提交校验"><p><strong>工作流编码：</strong> <code>STORE_FIN_FEE_IN_CASH_HEAD</code>（MCS_AW额度内批量复核）</p>
-<p><strong>审批通过后：</strong> 设置auditStat="审核完成"，hzApproveStatus=APPROVED，推送共享/资金池，更新兑现单状态</p></KbCard>
-<KbCard title="表：FIN_FEE_IN_CASH_HEAD"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>cash_id</td><td>Long</td><td>主键ID(单据ID)</td></tr><tr><td>cash_code</td><td>String</td><td>单号</td></tr><tr><td>organization_id</td><td>Long</td><td>组织ID</td></tr><tr><td>creator</td><td>String</td><td>申请人</td></tr><tr><td>create_time</td><td>Date</td><td>申请日期</td></tr><tr><td>creator_name</td><td>String</td><td>申请人名称</td></tr><tr><td>updator</td><td>String</td><td>更新人</td></tr><tr><td>update_time</td><td>Date</td><td>更新日期</td></tr><tr><td>updator_name</td><td>String</td><td>更新人名称</td></tr><tr><td>stat</td><td>Long</td><td>单据状态</td></tr><tr><td>wfid</td><td>Long</td><td>流程ID</td></tr><tr><td>wfflag</td><td>Long</td><td>流程状态</td></tr><tr><td>checker</td><td>String</td><td>审核人</td></tr><tr><td>check_time</td><td>Date</td><td>审核时间</td></tr><tr><td>audit_stat</td><td>String</td><td>审核状态</td></tr><tr><td>hz_instance_id</td><td>Long</td><td>流程实例ID</td></tr><tr><td>hz_approve_status</td><td>String</td><td>流程实例状态</td></tr></tbody></table>
-<p class='kl-tip'>注：兑现单明细通过FinFeeTerminalCashout表的cash_id字段关联</p></KbCard>
+<KbCard title="界面模块">
+<p>本页面为hlod低代码页面，前端尚无独立React组件。后端Controller(FinFeeInCashHeadController)提供4个API。</p>
+<h4>头部信息区</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>批量复核单号</td><td>CASH_CODE</td><td>TextField</td><td>批量复核单号</td><td>始终</td><td>编码规则生成</td></tr>
+<tr><td>申请人</td><td>CREATOR_NAME</td><td>TextField</td><td>申请人</td><td>始终</td><td>默认当前用户</td></tr>
+<tr><td>申请日期</td><td>CREATE_TIME</td><td>DatePicker</td><td>申请日期</td><td>始终</td><td>默认当前时间</td></tr>
+<tr><td>审核状态</td><td>HZ_APPROVE_STATUS</td><td>Select(HWKF.APPROVE_STATUS)</td><td>审核状态</td><td>始终</td><td>默认NEW</td></tr>
+<tr><td>审核人</td><td>CHECKER</td><td>TextField</td><td>审核人</td><td>始终</td><td>审批通过时赋值</td></tr>
+<tr><td>审核时间</td><td>CHECK_TIME</td><td>DatePicker</td><td>审核时间</td><td>始终</td><td>审批通过时赋值</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口</th><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>列表查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-in-cash-heads`</td><td>查询批量复核列表</td></tr>
+<tr><td>详情查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-in-cash-heads/&#123;cashId&#125;/detail`</td><td>查询批量复核详情(含关联兑现单)</td></tr>
+<tr><td>保存</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-in-cash-heads`</td><td>创建或更新批量复核</td></tr>
+<tr><td>删除</td><td>DELETE</td><td>`/v1/&#123;organizationId&#125;/fin-fee-in-cash-heads`</td><td>删除批量复核(仅NEW状态)</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>弹窗名称</th><th>LOV编码</th><th>参数</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>额度内兑现单</td><td>-</td><td>-</td><td>选择多张NEW状态的额度内兑现单(FIN_FEE_TERMINAL_CASHOUT)</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="导入">
+<p>本页面无导入功能。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>触发条件</th><th>执行逻辑</th><th>接口调用</th></tr>
+</thead>
+<tbody>
+<tr><td>删除</td><td>HZ_APPROVE_STATUS为NEW</td><td>删除批量复核单，解除兑现单关联</td><td>DELETE</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="保存校验">
+<ul><li>校验1：至少选择一张兑现单 —— 确保批量复核有关联数据</li><li><strong>详细逻辑</strong>：前端校验已选择兑现单数量&gt;0</li><li><strong>系统体现</strong>：前端校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(*) FROM FIN_FEE_TERMINAL_CASHOUT WHERE BATCH_CASH_ID=&#123;cashId&#125;</code></li></ul>
+</KbCard>
+
+<KbCard title="提交校验">
+<ul><li>校验1：关联兑现单状态校验 —— 确保所有关联兑现单为NEW状态</li><li><strong>详细逻辑</strong>：提交时校验所有关联兑现单hzApproveStatus=NEW</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_TERMINAL_CASHOUT WHERE BATCH_CASH_ID=&#123;cashId&#125; AND HZ_APPROVE_STATUS!='NEW'</code></li></ul>
+</KbCard>
+
+<KbCard title="状态机">
+<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+                                       │              ├─ 批量回写兑现单APPROVED
+                                       │              ├─ 批量同步资金池
+                                       │              └─ 批量推送MBO
+                                       │
+                                       └──审批驳回──→ REJECTED(已驳回)
+
+NEW ──删除──→ (删除)</code></pre>
+</KbCard>
+
+<KbCard title="工作流">
+<ul><li><strong>工作流编码</strong>：<code>STORE_FIN_FEE_IN_CASH_HEAD</code>（MCS_AW额度内批量复核）</li><li><strong>编码规则</strong>：批量复核单号由系统生成</li></ul>
+</KbCard>
+
+<KbCard title="FIN_FEE_IN_CASH_HEAD（额度内兑现批量复核表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CASH_ID</td><td>Long</td><td>主键ID</td><td>-</td><td>自增</td></tr>
+<tr><td>CASH_CODE</td><td>String</td><td>批量复核单号</td><td>批量复核单号</td><td>编码规则生成</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>Long</td><td>组织ID</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CREATOR</td><td>String</td><td>申请人</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CREATE_TIME</td><td>Date</td><td>申请日期</td><td>申请日期</td><td>系统赋值</td></tr>
+<tr><td>CREATOR_NAME</td><td>String</td><td>申请人名称</td><td>申请人</td><td>系统赋值</td></tr>
+<tr><td>UPDATOR</td><td>String</td><td>更新人</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>UPDATE_TIME</td><td>Date</td><td>更新日期</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>UPDATOR_NAME</td><td>String</td><td>更新人名称</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>STAT</td><td>Long</td><td>单据状态</td><td>-</td><td>系统维护</td></tr>
+<tr><td>WFID</td><td>Long</td><td>流程ID</td><td>-</td><td>系统维护</td></tr>
+<tr><td>WFFLAG</td><td>Long</td><td>流程状态</td><td>-</td><td>系统维护</td></tr>
+<tr><td>CHECKER</td><td>String</td><td>审核人</td><td>审核人</td><td>审批通过时赋值</td></tr>
+<tr><td>CHECK_TIME</td><td>Date</td><td>审核时间</td><td>审核时间</td><td>审批通过时赋值</td></tr>
+<tr><td>AUDIT_STAT</td><td>String</td><td>审核状态</td><td>-</td><td>系统维护</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>Long</td><td>流程实例ID</td><td>-</td><td>工作流启动后赋值</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>String</td><td>流程审批状态</td><td>审核状态</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="FIN_FEE_TERMINAL_CASHOUT（额度内门店装修兑现表，关联表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_CASHOUT_ID</td><td>Long</td><td>兑现ID</td><td>-</td><td>自增</td></tr>
+<tr><td>CASH_ID</td><td>Long</td><td>批量复核ID</td><td>-</td><td>关联FIN_FEE_IN_CASH_HEAD</td></tr>
+<tr><td>TERMINAL_CASHOUT_CODE</td><td>String</td><td>兑现单号</td><td>-</td><td>编码规则生成</td></tr>
+<tr><td>CHECK_BX_ID</td><td>Long</td><td>验收报销单ID</td><td>-</td><td>关联验收报销单</td></tr>
+<tr><td>IN_THIS_CASHOUT_AMT</td><td>BigDecimal</td><td>额度内本次兑现金额</td><td>-</td><td>用户输入</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>String</td><td>流程审批状态</td><td>-</td><td>随批量复核单状态联动</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题"><table class="kl-table"><thead><tr><th>问题</th><th>原因/解决方案</th></tr></thead><tbody><tr><td>推送报"验收报销单号和门头兑现单号为空"</td><td>绑定的兑现单必须关联验收报销单或门头兑现单</td></tr><tr><td>资金池推送失败</td><td>检查ERP接口连通性和extAccountId</td></tr><tr><td>兑现单未标记审核完成</td><td>确认工作流审批已通过，onWfComplete正常执行</td></tr><tr><td>总账日期异常</td><td>检查事业部上月冲销数据(FinFeeWriteoffInQuota)</td></tr></tbody></table></KbCard>
+<KbCard title="Q1：提交时报关联兑现单状态异常">
+<p><strong>根因</strong>：关联的兑现单中存在非NEW状态的记录</p>
+<p><strong>解决方案</strong>：确保所有关联兑现单均为NEW状态后再提交</p>
+</KbCard>
+
+<KbCard title="Q2：删除时报状态不允许">
+<p><strong>根因</strong>：批量复核单状态非NEW</p>
+<p><strong>解决方案</strong>：仅NEW状态可删除</p>
+</KbCard>
+
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
+
+<div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-12-01</td><td>-</td><td>hfy</td><td>初始创建FinFeeInCashHeadServiceImpl应用服务</td></tr>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>作者</th><th>说明</th></tr></thead><tbody><tr><td>2025-12-01</td><td>hfy</td><td>初始创建</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

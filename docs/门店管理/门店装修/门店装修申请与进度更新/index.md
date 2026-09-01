@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -100,6 +101,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -172,93 +174,526 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><p>###&lt;|message|&gt;重点逻辑</p></KbCard>
-
-<KbQuote>核心业务逻辑汇总，涵盖新增校验、作废、重新生成等关键操作</KbQuote>
-<KbCard title="2.1 新增校验（doInsert）"><ul><li>装修周期校验：不超过公司参数<code>Decoration_Days</code></li><li>自动赋值：成本中心、省市区名称、签章状态(0)、二次变更(0)、签呈标记(0)</li><li>默认值：isClose=1(未关闭)、isOverYear=1(未超年)、isOverStandard=1(未超标准)</li><li>单号生成：编码规则<code>AE.TERMINAL_APPLY_NO</code></li></ul></KbCard>
-
-<KbQuote>新增时校验装修周期不超过公司参数，自动赋值成本中心、单号等默认值</KbQuote>
-<KbCard title="2.2 更新校验（doUpdate）"><ul><li>装修周期校验：不超过公司参数<code>Decoration_Days</code></li><li>预算年度：根据上次装修完成时间自动计算budYear</li></ul></KbCard>
-
-<KbQuote>更新时校验装修周期，根据上次装修完成时间自动计算预算年度</KbQuote>
-<KbCard title="2.3 作废逻辑（operate）"><ul><li>仅NEW和REJECTED状态可作废</li><li>作废后标记hzApproveStatus=INTERRUPT，记录作废原因</li></ul></KbCard>
-
-<KbQuote>仅NEW和REJECTED状态可作废，标记审批状态并记录作废原因</KbQuote>
-<KbCard title="2.4 重新生成（validRegenerate）"><ul><li>校验同一门店无其他非INTERRUPT状态的申请单</li><li>校验超期天数不超过公司参数<code>Over_Date_Limit</code></li><li>校验扣减比例&lt;1（补贴金额不为0）</li><li>清空原ID/单号/流程信息，状态重置为NEW</li></ul></KbCard>
-
-<KbQuote>校验无其他未完成申请单、超期天数限制、扣减比例后重置为新申请</KbQuote>
-<KbCard title="2.5 删除校验（doDelete）"><ul><li>仅NEW状态可删除</li><li>删除主表及关联照片明细</li></ul></KbCard>
-
-<KbQuote>仅NEW状态可删除，同时删除主表及关联照片明细</KbQuote>
-<KbCard title="2.6 二次变更（doUpdateSecondChange）"><ul><li>批量更新指定申请单的isSecondChange=2</li></ul></KbCard>
-
-<KbQuote>批量更新指定申请单的二次变更标记为2</KbQuote>
-<KbCard title="2.7 装修前后照片"><ul><li>支持查询门店装修前后照片（MktStorephotoSetLine）</li></ul></KbCard>
-
-<KbQuote>支持查询门店装修前后的照片明细数据</KbQuote>
-<KbCard title="2.8 交易公司LOV"><ul><li>提供交易公司LOV查询接口getTradingCompany</li></ul></KbCard>
-
-<KbQuote>提供交易公司选择的LOV查询接口</KbQuote>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：装修标准自动计算">
+<ul><li><strong>业务意义</strong>：根据门店装修等级和类型自动匹配政策补贴标准，确保申请金额有据可依</li><li><strong>具体逻辑描述</strong>：</li><li>选择门店后根据fixupGrade(装修等级)+terminalType(门店类型)+thisTerminalArea(装修面积)调用do-search-decorate接口查询装修标准</li><li>返回额度内/额度外/店面/门头四类政策补贴标准(元/㎡)</li><li>政策补贴金额 = 政策补贴标准 × 装修面积</li><li>申请补贴金额 = 申请补贴标准 × 装修面积</li><li>差异金额 = 政策补贴金额 - 申请补贴金额</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：超期扣减计算">
+<ul><li><strong>业务意义</strong>：装修超期完成时按比例扣减补贴金额，控制装修时效</li><li><strong>具体逻辑描述</strong>：</li><li>超期天数 = (装修完成时间 - 交付设计时间) - 装修周期</li><li>扣减比例 = 超期天数 × 公司参数Deduct_Pro / 100（封顶100%）</li><li>申请标准金额 = 申请标准 × 装修面积 × (1 - 扣减比例)</li><li>差异标准金额 = 政策标准金额 - 申请标准金额</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：审批通过自动发起关闭">
+<ul><li><strong>业务意义</strong>：装修严重超期时系统自动发起关闭申请，扣减经销商额度</li><li><strong>具体逻辑描述</strong>：</li><li>审批通过后若超期天数 &gt; 公司参数Over_Date_Limit</li><li>系统自动创建FinFeeApplyClose记录(关闭原因:申请单超过最大装修超期天数，系统自动发起装修申请关闭)</li><li>调用doCalDeductionAmt计算扣减金额</li><li>自动启动FIN_FEE_APPLY_CLOSE工作流</li></ul>
+</KbCard>
+
+<KbCard num="4" title="重点逻辑4：门店状态联动">
+<ul><li><strong>业务意义</strong>：装修申请流程中锁定门店状态，防止并发操作</li><li><strong>具体逻辑描述</strong>：</li><li>提交审批时：保存门店原始状态到originalStat，设置terminalStat=4(装修中)</li><li>审批通过时：设置terminalStat=1(正常)</li><li>驳回/退回时：恢复terminalStat=originalStat</li></ul>
+</KbCard>
+
+<KbCard num="5" title="重点逻辑5：作废解绑软装订单">
+<ul><li><strong>业务意义</strong>：作废装修申请时解除已绑定的CRM软装采购订单关联</li><li><strong>具体逻辑描述</strong>：</li><li>作废后查询已绑定的CRM销售订单(queryCrmSaleOrderV)</li><li>调用unbindSoftOrder解绑软装订单</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 API接口列表"><table class="kl-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td>GET</td><td>/</td><td>装修申请列表(分页)</td></tr><tr><td>GET</td><td>/change-header-lov</td><td>变更-关闭申请-LOV</td></tr><tr><td>POST</td><td>/do-search-decorate</td><td>查询装修标准</td></tr><tr><td>GET</td><td>/storephoto-set-line</td><td>装修前后照片</td></tr><tr><td>GET</td><td>/do-select</td><td>装修申请详情</td></tr><tr><td>GET</td><td>/do-select-print</td><td>打印数据</td></tr><tr><td>POST</td><td>/operate</td><td>作废</td></tr><tr><td>GET</td><td>/valid-regenerate</td><td>重新生成</td></tr><tr><td>GET</td><td>/do-search-modify</td><td>发起签呈-列表查询</td></tr><tr><td>POST</td><td>/do-update-second-change</td><td>二次变更</td></tr><tr><td>GET</td><td>/do-delete</td><td>删除</td></tr><tr><td>POST</td><td>/do-save</td><td>保存</td></tr><tr><td>GET</td><td>/get-trading-company</td><td>交易公司LOV</td></tr><tr><td>GET</td><td>/get-com-data</td><td>面积分配标准比</td></tr></tbody></table></KbCard>
-<KbCard title="3.2 工作流回调"><table class="kl-table"><thead><tr><th>方法</th><th>触发时机</th><th>逻辑说明</th></tr></thead><tbody><tr><td>wfProcSubmit</td><td>提交审批</td><td>启动工作流实例</td></tr><tr><td>wfComplete</td><td>审批完成</td><td>更新审核状态，处理后续逻辑</td></tr></tbody></table></KbCard>
-<KbCard title="3.3 选择弹窗"><table class="kl-table"><thead><tr><th>弹窗名称</th><th>LOV编码</th><th>参数</th><th>说明</th></tr></thead><tbody><tr><td>门店编码</td><td><code>AE.STORE_FINFEEAPPLYCLOSE_DATA_VIEW</code></td><td>entid</td><td>选择门店后联动带出经销商、门店名称、装修等级、产权归属、装修性质等</td></tr><tr><td>设计师</td><td><code>AE.DESIGNER_EMPLOYEE_VIEW</code></td><td>-</td><td>选择设计师</td></tr><tr><td>交易公司</td><td><code>AE.COMPANY_DATA_VIEW</code></td><td>-</td><td>选择交易公司</td></tr></tbody></table></KbCard>
-<KbCard title="3.4 导入"><p class='kl-tip'>不支持导入功能。</p></KbCard>
-<KbCard title="3.5 其他按钮"><table class="kl-table"><thead><tr><th>按钮</th><th>显示条件</th><th>说明</th></tr></thead><tbody><tr><td>保存</td><td>编辑模式</td><td>走保存接口</td></tr><tr><td>提交</td><td>hzApproveStatus ∈ [NEW, REJECT, REBUT]</td><td>启动工作流</td></tr><tr><td>打印</td><td>有单据ID</td><td>reportCode=<code>MDZXSQYJD_PRINT</code></td></tr><tr><td>作废</td><td>列表页</td><td>后端invalidateDetail接口</td></tr><tr><td>重新生成</td><td>列表页</td><td>后端regenerateDetail接口</td></tr></tbody></table>
-<p class='kl-tip'>列表页为hlod低代码页面。审批节点：广告专员、运营专员、区域经理、设计师、销售会计、软装设计师、设计经理等。</p></KbCard>
-<KbCard title="3.6 保存校验"><p><strong>前端校验：</strong></p>
-<table class="kl-table"><thead><tr><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>门店编码、门店名称、经销商名称/简称必填</td><td>(C7N内置提示)</td></tr><tr><td>旧店上次装修时间(decorationType=2)必填</td><td>(C7N内置提示)</td></tr><tr><td>要求完成设计时间、门店详细地址、装修性质必填</td><td>(C7N内置提示)</td></tr><tr><td>headFormDS/withholdingInfoTableDS/designImageTableDS校验</td><td>dsValidator</td></tr></tbody></table>
-<p><strong>后端校验：</strong></p>
-<table class="kl-table"><thead><tr><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>数据存在性</td><td>门店装修申请及完成信息不存在 / 门店信息不存在</td></tr><tr><td>重复申请</td><td>该门店X已有其它装修申请单Y，禁止重新生成</td></tr><tr><td>重新生成条件</td><td>超期天数大于X或补贴金额为0,禁止重新生成</td></tr><tr><td>删除状态</td><td>不能删除非制单状态的单据</td></tr><tr><td>作废状态</td><td>新建、审核拒绝的单据才能作废</td></tr><tr><td>变更中</td><td>单据正在申请变更中，不可提交！</td></tr><tr><td>预算年度</td><td>申请单的预算年度不可晚于当前年份，不可提前发起申请</td></tr><tr><td>预算额度</td><td>X的预算剩余可用额度不足</td></tr><tr><td>政策标准</td><td>无政策标准不能提交 / 店面装修等级没有对应的政策标准 / 店面装修等级没有有效期内的政策标准</td></tr><tr><td>验收单</td><td>与该门店装修申请单相关的门店装修验收单尚未失效，暂时不能发起关闭</td></tr></tbody></table></KbCard>
-<KbCard title="3.7 提交校验"><p><strong>工作流编码：</strong> <code>SUB_STORE_MDZXBZSQYJDG</code>（门店装修申请与进度更新）</p></KbCard>
-<KbCard title="表：FIN_FEE_APPLY_FINISHED_HEADER"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>terminal_apply_id</td><td>Long</td><td>主键ID(装修申请ID)</td></tr><tr><td>terminal_apply_no</td><td>String</td><td>装修申请单号</td></tr><tr><td>terminal_id</td><td>Long</td><td>门店ID</td></tr><tr><td>terminal_code</td><td>String</td><td>门店编码</td></tr><tr><td>terminal_name</td><td>String</td><td>门店名称</td></tr><tr><td>cust_id</td><td>Long</td><td>经销商ID</td></tr><tr><td>cust_code</td><td>String</td><td>经销商编码</td></tr><tr><td>cust_name</td><td>String</td><td>经销商名称</td></tr><tr><td>short_name</td><td>String</td><td>经销商简称</td></tr><tr><td>cust_full_name</td><td>String</td><td>经销商拼接名称</td></tr><tr><td>customer_class</td><td>Long</td><td>经营属性</td></tr><tr><td>d_cust_id</td><td>Long</td><td>分销商ID</td></tr><tr><td>d_cust_code</td><td>String</td><td>分销商编码</td></tr><tr><td>d_cust_name</td><td>String</td><td>分销商名称</td></tr><tr><td>d_cust_full_name</td><td>String</td><td>分销商拼接名称</td></tr><tr><td>province_areaid</td><td>Long</td><td>省ID</td></tr><tr><td>city_areaid</td><td>Long</td><td>市ID</td></tr><tr><td>county_areaid</td><td>Long</td><td>县/区ID</td></tr><tr><td>areaname</td><td>String</td><td>拼接省市区</td></tr><tr><td>addr</td><td>String</td><td>详细地址</td></tr><tr><td>terminal_type</td><td>Long</td><td>门店类型</td></tr><tr><td>store_location_type</td><td>Long</td><td>位置类型</td></tr><tr><td>trading_company_id</td><td>Long</td><td>交易公司ID(必填)</td></tr><tr><td>trading_company_code</td><td>String</td><td>交易公司编码</td></tr><tr><td>trading_company_name</td><td>String</td><td>交易公司名称</td></tr><tr><td>billing_unit_id</td><td>Long</td><td>开票单位ID(必填)</td></tr><tr><td>billing_unit_code</td><td>String</td><td>开票单位编码</td></tr><tr><td>billing_unit_name</td><td>String</td><td>开票单位名称</td></tr><tr><td>is_close</td><td>Long</td><td>是否关闭(1未关闭/2已关闭)</td></tr><tr><td>closing_reasons</td><td>String</td><td>关闭原因</td></tr><tr><td>decoration_style</td><td>Long</td><td>装修风格</td></tr><tr><td>this_decoration_style</td><td>Long</td><td>本次装修风格</td></tr><tr><td>terminal_area</td><td>BigDecimal</td><td>门店面积</td></tr><tr><td>this_terminal_area</td><td>BigDecimal</td><td>实际装修面积</td></tr><tr><td>area_standard_rate</td><td>BigDecimal</td><td>面积分配标准比例</td></tr><tr><td>plan_open_date</td><td>LocalDate</td><td>计划开业日期</td></tr><tr><td>fixup_grade</td><td>Long</td><td>装修等级</td></tr><tr><td>decoration_days</td><td>Long</td><td>装修周期</td></tr><tr><td>decoration_type</td><td>Long</td><td>装修性质</td></tr><tr><td>last_decoration_date</td><td>LocalDate</td><td>旧店上次装修时间</td></tr><tr><td>property_type</td><td>Long</td><td>产权归属</td></tr><tr><td>lease_expiration_date</td><td>LocalDate</td><td>租赁到期日</td></tr><tr><td>designer</td><td>String</td><td>委派设计师</td></tr><tr><td>designer_mob</td><td>String</td><td>设计师手机号</td></tr><tr><td>shopmanager_name</td><td>String</td><td>负责人</td></tr><tr><td>shopmanager_mob</td><td>String</td><td>负责人电话</td></tr><tr><td>decoration_finished_time</td><td>LocalDate</td><td>装修完成时间</td></tr><tr><td>plan_design_date</td><td>LocalDate</td><td>要求完成设计日期</td></tr><tr><td>reply_design_date</td><td>LocalDate</td><td>交付设计日期</td></tr><tr><td>decoration_interval_date</td><td>LocalDate</td><td>装修间隔期至</td></tr><tr><td>is_over_standard</td><td>Long</td><td>是否超标准</td></tr><tr><td>over_date</td><td>Long</td><td>超期天数</td></tr><tr><td>in_expected_deduction</td><td>BigDecimal</td><td>预计扣减额度(额度内)</td></tr><tr><td>out_expected_deduction</td><td>BigDecimal</td><td>预计扣减额度(额度外)</td></tr><tr><td>is_over_year</td><td>Long</td><td>是否超年</td></tr><tr><td>subsidy_type</td><td>Long</td><td>补贴类型</td></tr><tr><td>decoration_area</td><td>BigDecimal</td><td>装修面积</td></tr><tr><td>frontdoor_area</td><td>BigDecimal</td><td>门头面积</td></tr><tr><td>in_policy_standard</td><td>BigDecimal</td><td>额度内政策标准</td></tr><tr><td>out_policy_standard</td><td>BigDecimal</td><td>额度外政策标准</td></tr><tr><td>terminal_policy_standard</td><td>BigDecimal</td><td>终端政策标准</td></tr><tr><td>frontdoor_policy_standard</td><td>BigDecimal</td><td>门头政策标准</td></tr><tr><td>in_policy_standard_amt</td><td>BigDecimal</td><td>额度内政策标准金额</td></tr><tr><td>out_policy_standard_amt</td><td>BigDecimal</td><td>额度外政策标准金额</td></tr><tr><td>terminal_policy_standard_amt</td><td>BigDecimal</td><td>终端政策标准金额</td></tr><tr><td>frontdoor_policy_standard_amt</td><td>BigDecimal</td><td>门头政策标准金额</td></tr><tr><td>in_apply_standard</td><td>BigDecimal</td><td>额度内申请标准</td></tr><tr><td>out_apply_standard</td><td>BigDecimal</td><td>额度外申请标准</td></tr><tr><td>terminal_apply_standard</td><td>BigDecimal</td><td>终端申请标准</td></tr><tr><td>frontdoor_apply_standard</td><td>BigDecimal</td><td>门头申请标准</td></tr><tr><td>in_apply_standard_amt</td><td>BigDecimal</td><td>额度内申请标准金额</td></tr><tr><td>out_apply_standard_amt</td><td>BigDecimal</td><td>额度外申请标准金额</td></tr><tr><td>terminal_apply_standard_amt</td><td>BigDecimal</td><td>终端申请标准金额</td></tr><tr><td>frontdoor_apply_standard_amt</td><td>BigDecimal</td><td>门头申请标准金额</td></tr><tr><td>in_diff_standard_amt</td><td>BigDecimal</td><td>额度内差异标准金额</td></tr><tr><td>out_diff_standard_amt</td><td>BigDecimal</td><td>额度外差异标准金额</td></tr><tr><td>terminal_diff_standard_amt</td><td>BigDecimal</td><td>终端差异标准金额</td></tr><tr><td>frontdoor_diff_standard_amt</td><td>BigDecimal</td><td>门头差异标准金额</td></tr><tr><td>note</td><td>String</td><td>备注</td></tr><tr><td>stat</td><td>Long</td><td>单据状态</td></tr><tr><td>wfflag</td><td>Long</td><td>流程状态</td></tr><tr><td>wfid</td><td>Long</td><td>流程ID</td></tr><tr><td>audit_stat</td><td>String</td><td>审核状态</td></tr><tr><td>apply_cause</td><td>String</td><td>作废原因</td></tr><tr><td>frontdoor_fixup_grade</td><td>Long</td><td>门头装修等级</td></tr><tr><td>sum_out_apply_standard_amt</td><td>BigDecimal</td><td>额度外申请标准金额合计</td></tr><tr><td>creator</td><td>String</td><td>申请人</td></tr><tr><td>create_time</td><td>Date</td><td>申请日期</td></tr><tr><td>organization_id</td><td>Long</td><td>组织ID</td></tr><tr><td>entid</td><td>Long</td><td>事业部ID</td></tr><tr><td>cost_center_code</td><td>String</td><td>成本中心编码</td></tr><tr><td>cost_center_name</td><td>String</td><td>成本中心名称</td></tr><tr><td>is_use</td><td>Long</td><td>是否使用</td></tr><tr><td>is_regenerate</td><td>Long</td><td>是否重新生成</td></tr><tr><td>is_modify</td><td>Long</td><td>签呈标记(0未发起/1已发起/3作废)</td></tr><tr><td>is_second_change</td><td>Long</td><td>二次变更标记(0否/2是)</td></tr><tr><td>userid</td><td>String</td><td>设计师ID</td></tr><tr><td>soft_userid</td><td>String</td><td>软装设计师ID</td></tr><tr><td>soft_designer</td><td>String</td><td>软装设计师</td></tr><tr><td>soft_designer_mob</td><td>String</td><td>软装设计师手机号</td></tr><tr><td>bud_year</td><td>Long</td><td>预算年度</td></tr><tr><td>deduct_proportion</td><td>BigDecimal</td><td>扣减比例</td></tr><tr><td>pre_decoration_finished_time</td><td>LocalDate</td><td>上次装修完成时间</td></tr><tr><td>thistime_terminal_area</td><td>BigDecimal</td><td>本次装修面积(变更用)</td></tr><tr><td>thistime_frontdoor_area</td><td>BigDecimal</td><td>本次门头面积(变更用)</td></tr><tr><td>soft_purchase_standard</td><td>BigDecimal</td><td>软装采购标准</td></tr><tr><td>soft_purchase_amt</td><td>BigDecimal</td><td>软装采购金额</td></tr><tr><td>lantern_standard</td><td>BigDecimal</td><td>灯具标准</td></tr><tr><td>lantern_amt</td><td>BigDecimal</td><td>灯具金额</td></tr><tr><td>subsidy_mode</td><td>Long</td><td>补贴方式</td></tr><tr><td>decorate_project</td><td>Long</td><td>装修项目</td></tr><tr><td>signature_state</td><td>Long</td><td>电子签章状态</td></tr><tr><td>signature_url</td><td>String</td><td>电子签章地址</td></tr><tr><td>hz_instance_id</td><td>Long</td><td>流程实例ID</td></tr><tr><td>hz_approve_status</td><td>String</td><td>流程实例状态</td></tr></tbody></table></KbCard>
+<KbCard title="界面模块">
+<p>本页面为前端React页面，位于<code>arrow-ae/src/pages/storeManage/finFeeApplyClose/</code>，含详情页和列表页(hlod低代码页面)。</p>
+<h4>头部信息区(headDS)</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>门店编码</td><td>TERMINAL_CODE</td><td>Lov(AE.STORE_FINFEEAPPLYCLOSE_DATA_VIEW)</td><td>选择门店</td><td>始终</td><td>选择门店后联动带出经销商/门店名称/装修等级等</td></tr>
+<tr><td>门店名称</td><td>TERMINAL_NAME</td><td>TextField</td><td>门店名称</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>TextField</td><td>经销商编码</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>TextField</td><td>经销商名称</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>经销商简称</td><td>SHORT_NAME</td><td>TextField</td><td>经销商简称</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>门店面积</td><td>TERMINAL_AREA</td><td>NumberField</td><td>门店面积</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>本次装修面积</td><td>THIS_TERMINAL_AREA</td><td>NumberField</td><td>实际装修面积</td><td>始终</td><td>用户输入，必填，≤门店面积</td></tr>
+<tr><td>面积分配标准比</td><td>AREA_STANDARD_RATE</td><td>NumberField</td><td>面积分配标准比</td><td>始终</td><td>必填，显示时×100</td></tr>
+<tr><td>装修等级</td><td>FIXUP_GRADE</td><td>Select(AE.FIXUP_GRADE)</td><td>装修等级</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>装修性质</td><td>DECORATION_TYPE</td><td>Select(AE.DECORATION_TYPE)</td><td>装修性质</td><td>始终</td><td>用户选择，必填</td></tr>
+<tr><td>本次装修风格</td><td>THIS_DECORATION_STYLE</td><td>Select(AE.DECORATION_STYLE)</td><td>本次装修风格</td><td>始终</td><td>用户选择，必填</td></tr>
+<tr><td>产权归属</td><td>PROPERTY_TYPE</td><td>Select(AE.PROPERTY_TYPE)</td><td>产权归属</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>门店类型</td><td>TERMINAL_TYPE</td><td>Select(AE.TERMINAL_TYPE)</td><td>门店类型</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>经营属性</td><td>CUSTOMER_CLASS</td><td>Select(AE.CUSTOMER_CLASS)</td><td>经营属性</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>装修周期</td><td>DECORATION_DAYS</td><td>NumberField</td><td>装修天数</td><td>始终</td><td>用户输入，必填，≤公司参数Decoration_Days</td></tr>
+<tr><td>预算年度</td><td>BUD_YEAR</td><td>TextField</td><td>预算年度</td><td>始终</td><td>必填，≤当前年份</td></tr>
+<tr><td>计划开业日期</td><td>PLAN_OPEN_DATE</td><td>DatePicker</td><td>计划开业日期</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>旧店上次装修时间</td><td>LAST_DECORATION_DATE</td><td>TextField</td><td>旧店上次装修时间</td><td>decorationType=2时必填</td><td>从门店LOV带入</td></tr>
+<tr><td>要求完成设计时间</td><td>PLAN_DESIGN_DATE</td><td>TextField</td><td>要求完成设计时间</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>门店详细地址</td><td>ADDR</td><td>TextField</td><td>门店详细地址</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>门店所在地</td><td>AREANAME</td><td>Cascader</td><td>省/市/区</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>交易公司</td><td>TRADING_COMPANY_ID</td><td>Lov(AE.COMPANY_DATA_VIEW)</td><td>交易公司</td><td>hzApproveStatus=NEW时可编辑</td><td>选择后带出编码/名称/法人客户，必填</td></tr>
+<tr><td>法人客户编码</td><td>BILLING_UNIT_CODE</td><td>TextField</td><td>法人客户编码</td><td>始终</td><td>从交易公司LOV带入，必填</td></tr>
+<tr><td>法人客户名称</td><td>BILLING_UNIT_NAME</td><td>TextField</td><td>法人客户名称</td><td>始终</td><td>从交易公司LOV带入，必填</td></tr>
+<tr><td>展示设计师</td><td>DESIGNER</td><td>Lov(AE.DESIGNER_EMPLOYEE_VIEW)</td><td>展示设计师</td><td>taskName含展示总监/设计经理时必填</td><td>选择后带出手机号/用户ID</td></tr>
+<tr><td>软装设计师</td><td>SOFT_DESIGNER</td><td>Lov(AE.DESIGNER_EMPLOYEE_VIEW)</td><td>软装设计师</td><td>taskName含展示总监/设计经理时必填</td><td>选择后带出手机号/用户ID</td></tr>
+<tr><td>软装采购标准</td><td>SOFT_PURCHASE_STANDARD</td><td>Select(AE.PURCHASE_STANDARD)</td><td>软装采购标准</td><td>taskName=软装设计师提交方案时必填</td><td>用户选择</td></tr>
+<tr><td>灯具采购标准</td><td>LANTERN_STANDARD</td><td>Select(AE.LANTERN_PURCHASE_STANDARD)</td><td>灯具采购标准</td><td>taskName=软装设计师提交方案时必填</td><td>用户选择</td></tr>
+<tr><td>备注</td><td>NOTE</td><td>TextField</td><td>备注</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>关闭申请原因</td><td>APPLY_CAUSE</td><td>TextField</td><td>关闭申请原因</td><td>始终</td><td>系统自动填充(超期自动关闭时)，disabled</td></tr>
+<tr><td>申请单号</td><td>TERMINAL_APPLY_NO</td><td>TextField</td><td>装修申请单号</td><td>始终</td><td>保存时由编码规则生成，只读</td></tr>
+<tr><td>申请日期</td><td>CREATION_DATE</td><td>TextField</td><td>申请日期</td><td>始终</td><td>默认当前时间，只读</td></tr>
+<tr><td>申请人</td><td>CREATOR</td><td>TextField</td><td>申请人</td><td>始终</td><td>默认当前用户realName，只读</td></tr>
+<tr><td>审核状态</td><td>HZ_APPROVE_STATUS</td><td>Select(HWKF.APPROVE_STATUS)</td><td>审核状态</td><td>始终</td><td>默认NEW，只读</td></tr>
+<tr><td>是否超标准</td><td>IS_OVER_STANDARD</td><td>NumberField</td><td>是否超标准</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>负责人</td><td>SHOPMANAGER_NAME</td><td>TextField</td><td>门店负责人</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>负责人电话</td><td>SHOPMANAGER_MOB</td><td>TextField</td><td>负责人电话</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>所属分销商</td><td>D_CUST_NAME</td><td>TextField</td><td>所属分销商名称</td><td>始终</td><td>从门店LOV带入，只读</td></tr>
+<tr><td>组织名称</td><td>ENT_NAME</td><td>TextField</td><td>组织名称</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>本次门店面积</td><td>THISTIME_TERMINAL_AREA</td><td>NumberField</td><td>本次门店面积</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>位置类型</td><td>STORE_LOCATION_TYPE</td><td>Select(AE.STORE_LOCATION_TYPE)</td><td>位置类型</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>最新装修日期</td><td>LATEST_DECORATION_DATE</td><td>DatePicker</td><td>最新装修日期</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>店面租赁到期日</td><td>LEASE_EXPIRATION_DATE</td><td>DatePicker</td><td>店面租赁到期日</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>装修风格</td><td>DECORATION_STYLE</td><td>Select(AE.DECORATION_STYLE)</td><td>装修风格</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>所属销售区域</td><td>SALEZONE_ORG_NAME</td><td>TextField</td><td>所属销售区域</td><td>始终</td><td>从门店LOV带入，必填</td></tr>
+<tr><td>所属运营中心</td><td>OPERAT_CENTER_ORG_NAME</td><td>TextField</td><td>所属运营中心</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>导购员数量</td><td>GUIDE_COUNT</td><td>NumberField</td><td>导购员数量</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>服务工程师数量</td><td>SERVICE_ENGINEER_COUNT</td><td>NumberField</td><td>服务工程师数量</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>连锁商场编码</td><td>SYS_CODE</td><td>TextField</td><td>连锁商场编码</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>是否连锁</td><td>IS_LS</td><td>NumberField</td><td>是否连锁</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>品牌</td><td>BRAND</td><td>TextField</td><td>品牌</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>开始经营我司产品日期</td><td>START_SALEME_DATE</td><td>DatePicker</td><td>开始经营我司产品日期</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>店长姓名</td><td>SORE_MANAGERS_NAME</td><td>TextField</td><td>店长姓名</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>店长联系电话</td><td>SORE_MANAGERS_TEL</td><td>TextField</td><td>店长联系电话</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>设计师数量</td><td>DESIGNER_COUNT</td><td>NumberField</td><td>设计师数量</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>设计师手机号码</td><td>DESIGNER_MOB</td><td>TextField</td><td>设计师手机号码</td><td>始终</td><td>从展示设计师LOV带入</td></tr>
+<tr><td>所属经销商拼接名称</td><td>CUST_FULL_NAME</td><td>TextField</td><td>所属经销商拼接后的名称</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>门店状态</td><td>TERMINAL_STAT</td><td>TextField</td><td>门店状态</td><td>始终</td><td>从门店LOV带入，提交时置4(装修中)</td></tr>
+<tr><td>门店区域等级</td><td>STORE_AREA_LEVEL</td><td>TextField</td><td>门店区域等级</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>所属分销商拼接名称</td><td>D_CUST_FULL_NAME</td><td>TextField</td><td>所属分销商拼接名称</td><td>始终</td><td>从门店LOV带入</td></tr>
+<tr><td>审核人</td><td>CHECKOR</td><td>TextField</td><td>审核人</td><td>始终</td><td>审批通过时赋值</td></tr>
+<tr><td>审核时间</td><td>CHECK_TIME</td><td>DatePicker</td><td>审核时间</td><td>始终</td><td>审批通过时赋值</td></tr>
+<tr><td>交易公司名称</td><td>TRADING_COMPANY_NAME</td><td>TextField</td><td>交易公司名称</td><td>始终</td><td>从交易公司LOV带入</td></tr>
+<tr><td>交易公司编码</td><td>TRADING_COMPANY_CODE</td><td>TextField</td><td>交易公司编码</td><td>始终</td><td>从交易公司LOV带入</td></tr>
+<tr><td>扣减总金额</td><td>DEDUCTION_SUM_AMOUNT</td><td>NumberField</td><td>扣减总金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>广告费扣减额度</td><td>DEDUCTION_ADV_AMOUNT</td><td>NumberField</td><td>广告费扣减额度</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>资金池扣减额度</td><td>DEDUCTION_CAPITAL_AMOUNT</td><td>NumberField</td><td>资金池扣减额度</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>关闭原因</td><td>CLOSING_REASONS</td><td>TextField</td><td>关闭原因</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>成本中心编码</td><td>COST_CENTER_CODE</td><td>TextField</td><td>成本中心编码</td><td>始终</td><td>从交易公司LOV带入</td></tr>
+<tr><td>成本中心名称</td><td>COST_CENTER_NAME</td><td>TextField</td><td>成本中心名称</td><td>始终</td><td>从交易公司LOV带入</td></tr>
+<tr><td>扣减比例</td><td>DEDUCT_PROPORTION</td><td>NumberField</td><td>扣减比例</td><td>始终</td><td>系统计算，超期天数×Deduct_Pro/100</td></tr>
+<tr><td>是否二次变更</td><td>IS_SECOND_CHANGE</td><td>NumberField</td><td>是否二次变更</td><td>始终</td><td>发起签呈后置2</td></tr>
+<tr><td>软装补贴金额</td><td>SOFT_PURCHASE_AMT</td><td>NumberField</td><td>软装补贴金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>灯具补贴金额</td><td>LANTERN_AMT</td><td>NumberField</td><td>灯具补贴金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>补贴模式</td><td>SUBSIDY_MODE</td><td>TextField</td><td>补贴模式</td><td>始终</td><td>从装修标准查询带入</td></tr>
+<tr><td>装修项目</td><td>DECORATE_PROJECT</td><td>TextField</td><td>装修项目</td><td>始终</td><td>从装修标准查询带入</td></tr>
+<tr><td>是否跨年</td><td>IS_OVER_YEAR</td><td>NumberField</td><td>是否跨年</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>签名状态</td><td>SIGNATURE_STATE</td><td>NumberField</td><td>签名状态</td><td>始终</td><td>系统维护</td></tr>
+<tr><td>是否修改</td><td>IS_MODIFY</td><td>NumberField</td><td>是否修改</td><td>始终</td><td>系统维护</td></tr>
+</tbody>
+</table>
+<h4>预提信息表格(withholdingInfoDS)</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>装修项目</td><td>DECORATE_PROJECT</td><td>Select(AE.MKT.DECORATE_PROJECT)</td><td>装修项目类别</td><td>始终</td><td>从装修标准查询带入</td></tr>
+<tr><td>补贴方式</td><td>SUBSIDY_MODE</td><td>Select(AE.DECORATE_SUBSIDY_MODE)</td><td>补贴方式</td><td>始终</td><td>从装修标准查询带入</td></tr>
+<tr><td>补贴类型</td><td>SUBSIDY_TYPE</td><td>TextField</td><td>补贴类型(1额度内/2额度外)</td><td>始终</td><td>从装修标准查询带入</td></tr>
+<tr><td>装修等级</td><td>FIXUP_GRADE</td><td>Select(AE.FIXUP_GRADE)</td><td>装修等级</td><td>始终</td><td>从头部信息带入</td></tr>
+<tr><td>装修面积</td><td>DECORATION_AREA</td><td>NumberField</td><td>装修面积(㎡)</td><td>始终</td><td>从头部信息带入</td></tr>
+<tr><td>政策补贴标准</td><td>IN_POLICY_STANDARD/OUT_POLICY_STANDARD</td><td>NumberField</td><td>政策补贴标准(元/㎡)</td><td>始终</td><td>从装修标准查询带入</td></tr>
+<tr><td>政策补贴金额</td><td>IN_POLICY_STANDARD_AMT/OUT_POLICY_STANDARD_AMT</td><td>NumberField</td><td>政策补贴金额(元)</td><td>始终</td><td>政策标准×装修面积</td></tr>
+<tr><td>申请补贴标准</td><td>IN_APPLY_STANDARD/OUT_APPLY_STANDARD</td><td>NumberField</td><td>申请补贴标准(元/㎡)</td><td>始终</td><td>从装修标准查询带入</td></tr>
+<tr><td>申请补贴金额</td><td>IN_APPLY_STANDARD_AMT/OUT_APPLY_STANDARD_AMT</td><td>NumberField</td><td>申请补贴金额(元)</td><td>始终</td><td>申请标准×装修面积×(1-扣减比例)</td></tr>
+<tr><td>补贴标准差异</td><td>IN_DIFF_STANDARD/OUT_DIFF_STANDARD</td><td>NumberField</td><td>补贴标准差异(元/㎡)</td><td>始终</td><td>申请标准-政策标准</td></tr>
+<tr><td>差异金额</td><td>IN_DIFF_STANDARD_AMT/OUT_DIFF_STANDARD_AMT</td><td>NumberField</td><td>差异金额(元)</td><td>始终</td><td>政策金额-申请金额</td></tr>
+</tbody>
+</table>
+<h4>装修照片对比表格(designImageDS)</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>照片项目名称</td><td>PHOTO_ITEM</td><td>TextField</td><td>照片项目名称</td><td>始终</td><td>从门店照片设置带入</td></tr>
+<tr><td>照片项目说明</td><td>PHOTO_ITEM_NOTE</td><td>TextField</td><td>照片项目说明</td><td>始终</td><td>从门店照片设置带入</td></tr>
+<tr><td>拍摄角度及要求</td><td>SHOOT_REQUIRE</td><td>TextField</td><td>拍摄角度及要求</td><td>始终</td><td>从门店照片设置带入</td></tr>
+<tr><td>装修前照片</td><td>BEFORE_DOC_ID</td><td>Upload</td><td>装修前照片</td><td>始终</td><td>用户上传</td></tr>
+<tr><td>装修前照片名称</td><td>BEFORE_DOC_NAME</td><td>TextField</td><td>装修前照片文件名</td><td>始终</td><td>上传时带入</td></tr>
+<tr><td>装修后照片</td><td>AFTER_DOC_ID</td><td>Upload</td><td>装修后照片</td><td>始终</td><td>用户上传</td></tr>
+<tr><td>装修后照片名称</td><td>AFTER_DOC_NAME</td><td>TextField</td><td>装修后照片文件名</td><td>始终</td><td>上传时带入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口</th><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>详情查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/do-select`</td><td>查询装修申请详情(含照片明细)</td></tr>
+<tr><td>保存</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/do-save`</td><td>新增/更新装修申请</td></tr>
+<tr><td>删除</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/do-delete`</td><td>删除装修申请(仅NEW状态)</td></tr>
+<tr><td>作废</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/operate`</td><td>作废装修申请(NEW/REJECTED状态)</td></tr>
+<tr><td>重新生成校验</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/valid-regenerate`</td><td>校验是否可重新生成</td></tr>
+<tr><td>查询装修标准</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/do-search-decorate`</td><td>按等级/类型/面积查询装修标准</td></tr>
+<tr><td>装修前后照片</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/storephoto-set-line`</td><td>查询门店照片设置</td></tr>
+<tr><td>交易公司LOV</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/get-trading-company`</td><td>按事业部+经销商查询交易公司</td></tr>
+<tr><td>面积分配标准比</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/get-com-data`</td><td>获取面积分配标准比</td></tr>
+<tr><td>打印</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/do-select-print`</td><td>获取打印数据(含审批历史)</td></tr>
+<tr><td>签呈列表</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/do-search-modify`</td><td>查询可发起签呈的申请单</td></tr>
+<tr><td>二次变更</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/do-update-second-change`</td><td>批量设置isSecondChange=2</td></tr>
+<tr><td>变更关闭LOV</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/change-header-lov`</td><td>门店变更-关闭申请LOV</td></tr>
+<tr><td>验收报销LOV</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers`</td><td>门店验收与报销LOV</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>弹窗名称</th><th>LOV编码</th><th>参数</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>门店编码</td><td>`AE.STORE_FINFEEAPPLYCLOSE_DATA_VIEW`</td><td>entid</td><td>选择门店后联动带出经销商、门店名称、装修等级、产权归属、装修性质、面积、地址等</td></tr>
+<tr><td>展示设计师</td><td>`AE.DESIGNER_EMPLOYEE_VIEW`</td><td>-</td><td>选择设计师后带出realName/phone/id</td></tr>
+<tr><td>软装设计师</td><td>`AE.DESIGNER_EMPLOYEE_VIEW`</td><td>-</td><td>选择软装设计师后带出realName/phone/id</td></tr>
+<tr><td>交易公司</td><td>`AE.COMPANY_DATA_VIEW`</td><td>divisionId, custId</td><td>选择交易公司后带出编码/名称/法人客户，按事业部+经销商过滤</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="导入">
+<p>本页面无导入功能。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>触发条件</th><th>执行逻辑</th><th>接口调用</th></tr>
+</thead>
+<tbody>
+<tr><td>作废</td><td>HZ_APPROVE_STATUS为NEW或REJECTED</td><td>弹窗输入作废原因→调用operate接口→刷新列表</td><td>POST /operate</td></tr>
+<tr><td>重新生成</td><td>HZ_APPROVE_STATUS为APPROVED</td><td>调用valid-regenerate校验→清空ID/单号/流程信息→重置为NEW</td><td>GET /valid-regenerate</td></tr>
+<tr><td>发起签呈</td><td>HZ_APPROVE_STATUS为APPROVED</td><td>查询签呈列表→选择申请单→调用二次变更接口</td><td>GET /do-search-modify → POST /do-update-second-change</td></tr>
+<tr><td>删除</td><td>HZ_APPROVE_STATUS为NEW</td><td>弹窗确认→删除主表及照片明细</td><td>GET /do-delete</td></tr>
+<tr><td>打印</td><td>任意状态</td><td>获取打印数据(含审批历史/补贴明细汇总)→打印</td><td>GET /do-select-print</td></tr>
+</tbody>
+</table>
+<h4>按钮1：作废（列表页行操作）</h4>
+<ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为NEW或REJECTED</li><li><strong>执行逻辑</strong>：</li></ul>
+<p>1. 弹窗输入作废原因(applyCause)</p>
+<p>2. 调用operate接口，设置HZ_APPROveStatus=INTERRUPT</p>
+<p>3. 解绑已绑定的CRM软装采购订单(queryCrmSaleOrderV + unbindSoftOrder)</p>
+<p>4. 刷新列表</p>
+<h4>按钮2：重新生成（列表页行操作）</h4>
+<ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为APPROVED</li><li><strong>执行逻辑</strong>：</li></ul>
+<p>1. 调用valid-regenerate接口校验</p>
+<p>2. 校验同一门店无其他非INTERRUPT状态的申请单</p>
+<p>3. 校验超期天数≤公司参数Over_Date_Limit且扣减比例&lt;1</p>
+<p>4. 清空terminalApplyId/terminalApplyNo/hzInstanceId，重置hzApproveStatus=NEW</p>
+<p>5. 返回重置后的数据用于新增</p>
+<h4>按钮3：发起签呈（列表页行操作）</h4>
+<ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为APPROVED</li><li><strong>执行逻辑</strong>：</li></ul>
+<p>1. 调用do-search-modify查询可发起签呈的申请单列表(isModify=1)</p>
+<p>2. 选择目标申请单</p>
+<p>3. 调用do-update-second-change批量设置isSecondChange=2</p>
+<h4>按钮4：删除（列表页行操作）</h4>
+<ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为NEW</li><li><strong>执行逻辑</strong>：</li></ul>
+<p>1. 弹窗确认</p>
+<p>2. 调用do-delete删除主表记录及关联照片明细</p>
+<h4>按钮5：打印（详情页）</h4>
+<ul><li><strong>触发条件</strong>：任意状态</li><li><strong>执行逻辑</strong>：</li></ul>
+<p>1. 调用do-select-print获取打印数据</p>
+<p>2. 数据含审批历史、补贴明细汇总(总额度内/外政策金额、申请金额、差异金额)</p>
+<p>3. 翻译值集含义(terminalType/fixupGrade/propertyType/locationType)</p>
+</KbCard>
+
+<KbCard title="保存校验">
+<ul><li>校验1：门店编码/门店名称/经销商名称/简称必填 —— 确保关联门店信息完整</li><li><strong>详细逻辑</strong>：前端DataSet字段required=true，C7N内置校验</li><li><strong>系统体现</strong>：保存时后端校验terminalId和custId非空</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, TERMINAL_CODE, CUST_CODE FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_ID IS NULL OR CUST_ID IS NULL</code></li></ul>
+<ul><li>校验2：装修周期≤公司参数Decoration_Days —— 控制装修时效上限</li><li><strong>详细逻辑</strong>：doInsert/doUpdate时读取系统参数Decoration_Days，若decorationDays&gt;参数值抛异常</li><li><strong>系统体现</strong>：后端validSystemParam("Decoration_Days")校验</li><li><strong>排查SQL</strong>：<code>SELECT PARAM_VALUE FROM SYS_PARAM WHERE PARAM_CODE='Decoration_Days'</code></li></ul>
+<ul><li>校验3：本次装修面积≤门店面积 —— 防止面积超限</li><li><strong>详细逻辑</strong>：前端validateArea方法校验thistimeTerminalArea≤terminalArea</li><li><strong>系统体现</strong>：前端message.info提示并回填为门店面积</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, TERMINAL_AREA, THIS_TERMINAL_AREA FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE THIS_TERMINAL_AREA &gt; TERMINAL_AREA</code></li></ul>
+<ul><li>校验4：旧店上次装修时间(decorationType=2时必填) —— 旧店重装需记录上次装修时间</li><li><strong>详细逻辑</strong>：前端dynamicProps.required根据decorationType=2动态校验</li><li><strong>系统体现</strong>：前端DataSet字段dynamicProps配置</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE DECORATION_TYPE=2 AND LAST_DECORATION_DATE IS NULL</code></li></ul>
+<ul><li>校验5：单据不在变更中 —— 防止变更和提交冲突</li><li><strong>详细逻辑</strong>：onUserSubmit时校验isModify≠2</li><li><strong>系统体现</strong>：后端抛异常"单据正在申请变更中，不可提交！"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, IS_MODIFY FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE IS_MODIFY=2</code></li></ul>
+</KbCard>
+
+<KbCard title="提交校验">
+<ul><li>校验1：预算年度≤当前年份 —— 防止提前发起未来年度申请</li><li><strong>详细逻辑</strong>：onUserSubmit时校验budYear-LocalDate.now().getYear()≤0</li><li><strong>系统体现</strong>：后端抛异常"申请单的预算年度不可晚于当前年份，不可提前发起申请"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, BUD_YEAR FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE BUD_YEAR &gt; EXTRACT(YEAR FROM SYSDATE)</code></li></ul>
+<ul><li>校验2：预算额度充足 —— 确保额度外预算有剩余</li><li><strong>详细逻辑</strong>：onUserSubmit时若额度内申请金额&gt;0，查询viewOverBudgetAmt(feeTypeId=66014601)校验剩余额度≥0</li><li><strong>系统体现</strong>：后端抛异常"&#123;budYear&#125;的预算剩余可用额度不足"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_CHECK_BX_HEADER WHERE BUD_YEAR=&#123;year&#125; AND FEE_TYPE_ID='66014601'</code></li></ul>
+<ul><li>校验3：有政策标准 —— 确保装修等级有对应政策</li><li><strong>详细逻辑</strong>：onUserSubmit时校验fixupGrade非空非0，查询terminalDecorateStandardRepository.selectFixupGradeList非空</li><li><strong>系统体现</strong>：后端抛异常"无政策标准不能提交"/"店面装修等级没有对应的政策标准"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE FIXUP_GRADE=&#123;grade&#125; AND ORGANIZATION_ID=&#123;orgId&#125;</code></li></ul>
+<ul><li>校验4：有有效期内政策标准 —— 确保政策在当前时间有效</li><li><strong>详细逻辑</strong>：onUserSubmit时调用doSearchDecorate查询有效期内的装修标准，非空校验</li><li><strong>系统体现</strong>：后端抛异常"店面装修等级没有有效期内的政策标准"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE FIXUP_GRADE=&#123;grade&#125; AND START_DATE&lt;=SYSDATE AND END_DATE&gt;=SYSDATE</code></li></ul>
+<ul><li>校验5：单据不在变更中 —— 防止变更和提交冲突</li><li><strong>详细逻辑</strong>：onUserSubmit时校验isModify≠2</li><li><strong>系统体现</strong>：后端抛异常"单据正在申请变更中，不可提交！"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, IS_MODIFY FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE IS_MODIFY=2</code></li></ul>
+</KbCard>
+
+<KbCard title="状态机">
+<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+                                       │              ├─ 计算超期/扣减
+                                       │              ├─ 门店状态→1(正常)
+                                       │              └─ 超期&gt;限制时自动发起关闭申请
+                                       │
+                                       ├──审批驳回──→ REJECTED(已驳回)
+                                       │              └─ 恢复门店原始状态
+                                       │
+                                       └──退回──→ NEW(新建)
+                                                   └─ 恢复门店原始状态
+
+NEW/REJECTED ──作废──→ INTERRUPT(已作废) ──→ 解绑CRM软装订单
+APPROVED ──重新生成──→ NEW(新建)
+APPROVED ──发起签呈──→ isSecondChange=2</code></pre>
+</KbCard>
+
+<KbCard title="工作流">
+<ul><li><strong>工作流编码</strong>：<code>SUB_STORE_MDZXBZSQYJDG</code>（门店装修申请与进度更新）</li><li><strong>编码规则</strong>：<code>AE.TERMINAL_APPLY_NO</code>（装修申请单号，参数divisionCode）</li><li><strong>审批节点</strong>：经销商上传装修后照片 → 门店设计师提交方案 → 软装设计师提交方案 → 设计经理审批 → 展示总监审批</li><li><strong>OA回传</strong>：doProcessOA处理OA审批结果回传，更新装修面积/等级/计划开业时间/装修周期/设计师等信息</li></ul>
+</KbCard>
+
+<KbCard title="FIN_FEE_APPLY_FINISHED_HEADER（门店装修申请完成头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_APPLY_ID</td><td>Long</td><td>主键ID(装修申请ID)</td><td>-</td><td>自增</td></tr>
+<tr><td>TERMINAL_APPLY_NO</td><td>String</td><td>装修申请单号</td><td>单号</td><td>编码规则AE.TERMINAL_APPLY_NO生成</td></tr>
+<tr><td>TERMINAL_ID</td><td>Long</td><td>门店ID</td><td>门店编码LOV</td><td>用户选择(LOV)</td></tr>
+<tr><td>TERMINAL_CODE</td><td>String</td><td>门店编码</td><td>门店编码</td><td>选择时带入</td></tr>
+<tr><td>TERMINAL_NAME</td><td>String</td><td>门店名称</td><td>门店名称</td><td>选择时带入</td></tr>
+<tr><td>CUST_ID</td><td>Long</td><td>经销商ID</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>CUST_CODE</td><td>String</td><td>经销商编码</td><td>经销商编码</td><td>从门店带入</td></tr>
+<tr><td>CUST_NAME</td><td>String</td><td>经销商名称</td><td>经销商名称</td><td>从门店带入</td></tr>
+<tr><td>SHORT_NAME</td><td>String</td><td>经销商简称</td><td>经销商简称</td><td>从门店带入</td></tr>
+<tr><td>CUST_FULL_NAME</td><td>String</td><td>经销商拼接名称</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>CUSTOMER_CLASS</td><td>Long</td><td>经营属性</td><td>经营属性</td><td>从门店带入</td></tr>
+<tr><td>D_CUST_ID</td><td>Long</td><td>分销商ID</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>D_CUST_CODE</td><td>String</td><td>分销商编码</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>D_CUST_NAME</td><td>String</td><td>分销商名称</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>D_CUST_FULL_NAME</td><td>String</td><td>分销商拼接名称</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>PROVINCE_AREAID</td><td>Long</td><td>省ID</td><td>门店所在地</td><td>从门店带入</td></tr>
+<tr><td>CITY_AREAID</td><td>Long</td><td>市ID</td><td>门店所在地</td><td>从门店带入</td></tr>
+<tr><td>COUNTY_AREAID</td><td>Long</td><td>县/区ID</td><td>门店所在地</td><td>从门店带入</td></tr>
+<tr><td>PROVINCE_AREANAME</td><td>String</td><td>省名称</td><td>-</td><td>convertScpArea赋值</td></tr>
+<tr><td>CITY_AREANAME</td><td>String</td><td>市名称</td><td>-</td><td>convertScpArea赋值</td></tr>
+<tr><td>COUNTY_AREANAME</td><td>String</td><td>县/区名称</td><td>-</td><td>convertScpArea赋值</td></tr>
+<tr><td>AREANAME</td><td>String</td><td>拼接省市区</td><td>-</td><td>convertScpArea拼接赋值</td></tr>
+<tr><td>ADDR</td><td>String</td><td>详细地址</td><td>门店详细地址</td><td>从门店带入</td></tr>
+<tr><td>TERMINAL_TYPE</td><td>Long</td><td>门店类型</td><td>门店类型</td><td>从门店带入</td></tr>
+<tr><td>STORE_LOCATION_TYPE</td><td>Long</td><td>位置类型</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>TRADING_COMPANY_ID</td><td>Long</td><td>交易公司ID</td><td>交易公司LOV</td><td>用户选择</td></tr>
+<tr><td>TRADING_COMPANY_CODE</td><td>String</td><td>交易公司编码</td><td>-</td><td>选择时带入</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>String</td><td>交易公司名称</td><td>-</td><td>选择时带入</td></tr>
+<tr><td>BILLING_UNIT_ID</td><td>Long</td><td>开票单位ID</td><td>-</td><td>从交易公司带入</td></tr>
+<tr><td>BILLING_UNIT_CODE</td><td>String</td><td>开票单位编码</td><td>法人客户编码</td><td>从交易公司带入</td></tr>
+<tr><td>BILLING_UNIT_NAME</td><td>String</td><td>开票单位名称</td><td>法人客户名称</td><td>从交易公司带入</td></tr>
+<tr><td>IS_CLOSE</td><td>Long</td><td>是否关闭(1未关闭/2已关闭)</td><td>-</td><td>系统维护，默认1</td></tr>
+<tr><td>CLOSING_REASONS</td><td>String</td><td>关闭原因</td><td>-</td><td>关闭时填写</td></tr>
+<tr><td>DECORATION_STYLE</td><td>Long</td><td>装修风格</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>THIS_DECORATION_STYLE</td><td>Long</td><td>本次装修风格</td><td>本次装修风格</td><td>用户输入</td></tr>
+<tr><td>TERMINAL_AREA</td><td>BigDecimal</td><td>门店面积</td><td>门店面积</td><td>从门店带入</td></tr>
+<tr><td>THIS_TERMINAL_AREA</td><td>BigDecimal</td><td>实际装修面积</td><td>本次装修面积</td><td>用户输入</td></tr>
+<tr><td>THISTIME_TERMINAL_AREA</td><td>BigDecimal</td><td>本次店面装修面积</td><td>-</td><td>用户输入</td></tr>
+<tr><td>THISTIME_FRONTDOOR_AREA</td><td>BigDecimal</td><td>本次门头装修面积</td><td>-</td><td>用户输入</td></tr>
+<tr><td>AREA_STANDARD_RATE</td><td>BigDecimal</td><td>面积分配标准比例</td><td>面积分配标准比</td><td>get-com-data接口获取</td></tr>
+<tr><td>PLAN_OPEN_DATE</td><td>LocalDate</td><td>计划开业日期</td><td>计划开业日期</td><td>用户输入</td></tr>
+<tr><td>FIXUP_GRADE</td><td>Long</td><td>装修等级</td><td>装修等级</td><td>从门店带入</td></tr>
+<tr><td>DECORATION_DAYS</td><td>Long</td><td>装修周期</td><td>装修周期</td><td>用户输入，≤Decoration_Days</td></tr>
+<tr><td>DECORATION_TYPE</td><td>Long</td><td>装修性质</td><td>装修性质</td><td>用户输入</td></tr>
+<tr><td>LAST_DECORATION_DATE</td><td>LocalDate</td><td>旧店上次装修时间</td><td>旧店上次装修时间</td><td>decorationType=2时必填</td></tr>
+<tr><td>PROPERTY_TYPE</td><td>Long</td><td>产权归属</td><td>产权归属</td><td>从门店带入</td></tr>
+<tr><td>LEASE_EXPIRATION_DATE</td><td>LocalDate</td><td>租赁到期日</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>DESIGNER</td><td>String</td><td>展示设计师</td><td>展示设计师</td><td>用户选择</td></tr>
+<tr><td>DESIGNER_MOB</td><td>String</td><td>设计师手机号</td><td>-</td><td>选择时带入</td></tr>
+<tr><td>USERID</td><td>String</td><td>设计师用户ID</td><td>-</td><td>选择时带入</td></tr>
+<tr><td>SOFT_DESIGNER</td><td>String</td><td>软装设计师</td><td>软装设计师</td><td>用户选择</td></tr>
+<tr><td>SOFT_DESIGNER_MOB</td><td>String</td><td>软装设计师手机号</td><td>-</td><td>选择时带入</td></tr>
+<tr><td>SOFT_USERID</td><td>String</td><td>软装设计师用户ID</td><td>-</td><td>选择时带入</td></tr>
+<tr><td>SHOPMANAGER_NAME</td><td>String</td><td>负责人</td><td>-</td><td>用户输入</td></tr>
+<tr><td>SHOPMANAGER_MOB</td><td>String</td><td>负责人电话</td><td>-</td><td>用户输入</td></tr>
+<tr><td>DECORATION_FINISHED_TIME</td><td>LocalDate</td><td>装修完成时间</td><td>-</td><td>用户输入，默认当前日期</td></tr>
+<tr><td>PLAN_DESIGN_DATE</td><td>LocalDate</td><td>要求完成设计日期</td><td>要求完成设计时间</td><td>用户输入</td></tr>
+<tr><td>REPLY_DESIGN_DATE</td><td>LocalDate</td><td>交付设计日期</td><td>-</td><td>用户输入，默认当前日期</td></tr>
+<tr><td>DECORATION_INTERVAL_DATE</td><td>LocalDate</td><td>装修间隔期至</td><td>-</td><td>审批通过时计算: 装修完成时间+Waiting_Days-Advance_Permissible_Period</td></tr>
+<tr><td>IS_OVER_STANDARD</td><td>Long</td><td>是否超标准(1否/2是)</td><td>-</td><td>系统计算，默认1</td></tr>
+<tr><td>OVER_DATE</td><td>Long</td><td>超期天数</td><td>-</td><td>审批通过时计算: (装修完成时间-交付设计时间)-装修周期</td></tr>
+<tr><td>DEDUCT_PROPORTION</td><td>BigDecimal</td><td>超期扣除比例</td><td>-</td><td>审批通过时计算: 超期天数×Deduct_Pro/100，封顶1</td></tr>
+<tr><td>IN_EXPECTED_DEDUCTION</td><td>BigDecimal</td><td>预计扣减额度(额度内)</td><td>-</td><td>系统计算</td></tr>
+<tr><td>OUT_EXPECTED_DEDUCTION</td><td>BigDecimal</td><td>预计扣减额度(额度外)</td><td>-</td><td>系统计算</td></tr>
+<tr><td>IS_OVER_YEAR</td><td>Long</td><td>是否跨年度验收(1否/2是)</td><td>-</td><td>系统计算，默认1</td></tr>
+<tr><td>SUBSIDY_TYPE</td><td>Long</td><td>补贴类型</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>DECORATION_AREA</td><td>BigDecimal</td><td>店面装修面积</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>FRONTDOOR_AREA</td><td>BigDecimal</td><td>门头实际装修面积</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>IN_POLICY_STANDARD</td><td>BigDecimal</td><td>额度内政策补贴标准(元/㎡)</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>OUT_POLICY_STANDARD</td><td>BigDecimal</td><td>额度外政策补贴标准(元/㎡)</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>TERMINAL_POLICY_STANDARD</td><td>BigDecimal</td><td>店面政策补贴标准(元/㎡)</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>FRONTDOOR_POLICY_STANDARD</td><td>BigDecimal</td><td>门头政策补贴标准(元/㎡)</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>IN_POLICY_STANDARD_AMT</td><td>BigDecimal</td><td>额度内政策补贴总金额</td><td>-</td><td>政策标准×面积</td></tr>
+<tr><td>OUT_POLICY_STANDARD_AMT</td><td>BigDecimal</td><td>额度外政策补贴总金额</td><td>-</td><td>政策标准×面积</td></tr>
+<tr><td>TERMINAL_POLICY_STANDARD_AMT</td><td>BigDecimal</td><td>店面政策补贴金额</td><td>-</td><td>政策标准×面积</td></tr>
+<tr><td>FRONTDOOR_POLICY_STANDARD_AMT</td><td>BigDecimal</td><td>门头政策补贴金额</td><td>-</td><td>政策标准×面积</td></tr>
+<tr><td>IN_APPLY_STANDARD</td><td>BigDecimal</td><td>额度内申请补贴标准(元/㎡)</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>OUT_APPLY_STANDARD</td><td>BigDecimal</td><td>额度外申请补贴标准(元/㎡)</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>TERMINAL_APPLY_STANDARD</td><td>BigDecimal</td><td>店面申请补贴标准(元/㎡)</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>FRONTDOOR_APPLY_STANDARD</td><td>BigDecimal</td><td>门头申请补贴标准(元/㎡)</td><td>-</td><td>从装修标准带入</td></tr>
+<tr><td>IN_APPLY_STANDARD_AMT</td><td>BigDecimal</td><td>额度内申请补贴总金额</td><td>-</td><td>申请标准×面积×(1-扣减比例)</td></tr>
+<tr><td>OUT_APPLY_STANDARD_AMT</td><td>BigDecimal</td><td>额度外申请补贴总金额</td><td>-</td><td>申请标准×面积×(1-扣减比例)</td></tr>
+<tr><td>TERMINAL_APPLY_STANDARD_AMT</td><td>BigDecimal</td><td>店面申请补贴金额</td><td>-</td><td>申请标准×面积×(1-扣减比例)</td></tr>
+<tr><td>FRONTDOOR_APPLY_STANDARD_AMT</td><td>BigDecimal</td><td>门头申请补贴金额</td><td>-</td><td>申请标准×面积×(1-扣减比例)</td></tr>
+<tr><td>IN_DIFF_STANDARD</td><td>BigDecimal</td><td>额度内差异补贴标准(元/㎡)</td><td>-</td><td>申请标准-政策标准</td></tr>
+<tr><td>OUT_DIFF_STANDARD</td><td>BigDecimal</td><td>额度外差异补贴标准(元/㎡)</td><td>-</td><td>申请标准-政策标准</td></tr>
+<tr><td>TERMINAL_DIFF_STANDARD</td><td>BigDecimal</td><td>店面差异补贴标准(元/㎡)</td><td>-</td><td>申请标准-政策标准</td></tr>
+<tr><td>FRONTDOOR_DIFF_STANDARD</td><td>BigDecimal</td><td>门头差异补贴标准(元/㎡)</td><td>-</td><td>申请标准-政策标准</td></tr>
+<tr><td>IN_DIFF_STANDARD_AMT</td><td>BigDecimal</td><td>额度内差异补贴金额</td><td>-</td><td>政策金额-申请金额</td></tr>
+<tr><td>OUT_DIFF_STANDARD_AMT</td><td>BigDecimal</td><td>额度外差异补贴金额</td><td>-</td><td>政策金额-申请金额</td></tr>
+<tr><td>TERMINAL_DIFF_STANDARD_AMT</td><td>BigDecimal</td><td>店面差异补贴金额</td><td>-</td><td>政策金额-申请金额</td></tr>
+<tr><td>FRONTDOOR_DIFF_STANDARD_AMT</td><td>BigDecimal</td><td>门头差异补贴金额</td><td>-</td><td>政策金额-申请金额</td></tr>
+<tr><td>SUM_OUT_APPLY_STANDARD_AMT</td><td>BigDecimal</td><td>额度外申请补贴全部金额</td><td>-</td><td>累计额度外申请金额</td></tr>
+<tr><td>NOTE</td><td>String</td><td>备注</td><td>备注</td><td>用户输入</td></tr>
+<tr><td>WFFLAG</td><td>Long</td><td>流程状态</td><td>-</td><td>系统维护</td></tr>
+<tr><td>WFID</td><td>Long</td><td>流程ID</td><td>-</td><td>系统维护</td></tr>
+<tr><td>AUDIT_STAT</td><td>String</td><td>审核状态</td><td>-</td><td>系统维护</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>String</td><td>流程实例ID</td><td>-</td><td>提交审批时赋值</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>String</td><td>流程审批状态</td><td>-</td><td>NEW/RUN/APPROVED/REJECTED/INTERRUPT</td></tr>
+<tr><td>FRONTDOOR_FIXUP_GRADE</td><td>Long</td><td>门头装修等级</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>APPLY_CAUSE</td><td>String</td><td>作废原因</td><td>关闭申请原因</td><td>作废时填写</td></tr>
+<tr><td>IS_USE</td><td>Long</td><td>是否使用(1否/2是)</td><td>-</td><td>系统维护</td></tr>
+<tr><td>IS_REGENERATE</td><td>Long</td><td>是否重新生成的单据</td><td>-</td><td>系统维护</td></tr>
+<tr><td>IS_MODIFY</td><td>Long</td><td>单据变更状态</td><td>-</td><td>变更时设为1/2</td></tr>
+<tr><td>IS_SECOND_CHANGE</td><td>Long</td><td>允许二次变更(0否/2是)</td><td>-</td><td>发起签呈时设为2</td></tr>
+<tr><td>SIGNATURE_STATE</td><td>Long</td><td>电子签章状态(0未签/2已签)</td><td>-</td><td>系统维护，默认0</td></tr>
+<tr><td>SIGNATURE_URL</td><td>String</td><td>电子签章地址</td><td>-</td><td>签章后赋值</td></tr>
+<tr><td>DOCID</td><td>Long</td><td>附件ID</td><td>-</td><td>系统维护</td></tr>
+<tr><td>BUD_YEAR</td><td>Long</td><td>预算年度</td><td>预算年度</td><td>根据预计装修完成时间年份赋值</td></tr>
+<tr><td>PRE_DECORATION_FINISHED_TIME</td><td>LocalDate</td><td>预计装修完成时间</td><td>-</td><td>用户输入</td></tr>
+<tr><td>SOFT_PURCHASE_STANDARD</td><td>BigDecimal</td><td>软装采购标准</td><td>软装采购标准</td><td>用户选择</td></tr>
+<tr><td>SOFT_PURCHASE_AMT</td><td>BigDecimal</td><td>软装采购金额</td><td>-</td><td>系统计算</td></tr>
+<tr><td>LANTERN_STANDARD</td><td>BigDecimal</td><td>灯具采购标准</td><td>灯具采购标准</td><td>用户选择</td></tr>
+<tr><td>LANTERN_AMT</td><td>BigDecimal</td><td>灯具采购金额</td><td>-</td><td>系统计算</td></tr>
+<tr><td>SUBSIDY_MODE</td><td>String</td><td>补贴方式</td><td>-</td><td>值列表AE.DECORATE_SUBSIDY_MODE</td></tr>
+<tr><td>DECORATE_PROJECT</td><td>String</td><td>装修项目</td><td>-</td><td>值列表AE.MKT.DECORATE_PROJECT，默认"1"</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>Long</td><td>组织ID</td><td>-</td><td>从事业部基础设置获取</td></tr>
+<tr><td>ENTID</td><td>Long</td><td>事业部ID</td><td>-</td><td>从事业部基础设置获取</td></tr>
+<tr><td>SALEZONE_ORG_ID</td><td>Long</td><td>销售区域ID</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>OPERAT_CENTER_ORG_ID</td><td>Long</td><td>运营中心ID</td><td>-</td><td>从门店带入</td></tr>
+<tr><td>COST_CENTER_CODE</td><td>String</td><td>成本中心编码</td><td>-</td><td>doGetCostCenterCode获取</td></tr>
+<tr><td>COST_CENTER_NAME</td><td>String</td><td>成本中心名称</td><td>-</td><td>doGetCostCenterCode获取</td></tr>
+<tr><td>CREATOR</td><td>String</td><td>创建人</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CREATION_DATE</td><td>LocalDateTime</td><td>创建时间</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>OLD_CREATE_TIME</td><td>LocalDateTime</td><td>申请时间</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>UPDATOR</td><td>String</td><td>更新人</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>UPDATE_TIME</td><td>LocalDateTime</td><td>更新日期</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CHECKER</td><td>String</td><td>审核人</td><td>-</td><td>审批通过时赋值</td></tr>
+<tr><td>CHECK_TIME</td><td>LocalDateTime</td><td>审核日期</td><td>-</td><td>审批通过时赋值</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="FIN_FEE_APPLY_FINISHED_PHOTO（门店装修申请照片明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_APPLY_ID</td><td>Long</td><td>装修申请ID</td><td>-</td><td>关联头表</td></tr>
+<tr><td>PHOTO_ITEM</td><td>String</td><td>照片项目名称</td><td>照片项目名称</td><td>从门店照片设置带入</td></tr>
+<tr><td>PHOTO_ITEM_NOTE</td><td>String</td><td>照片项目说明</td><td>照片项目说明</td><td>从门店照片设置带入</td></tr>
+<tr><td>SHOOT_REQUIRE</td><td>String</td><td>拍摄角度及要求</td><td>拍摄角度及要求</td><td>从门店照片设置带入</td></tr>
+<tr><td>BEFORE_DOC_ID</td><td>Long</td><td>装修前照片文档ID</td><td>装修前照片</td><td>用户上传</td></tr>
+<tr><td>BEFORE_DOC_NAME</td><td>String</td><td>装修前照片名称</td><td>-</td><td>上传时赋值</td></tr>
+<tr><td>AFTER_DOC_ID</td><td>Long</td><td>装修后照片文档ID</td><td>装修后照片</td><td>用户上传</td></tr>
+<tr><td>AFTER_DOC_NAME</td><td>String</td><td>装修后照片名称</td><td>-</td><td>上传时赋值</td></tr>
+<tr><td>IS_YS_PROVIDE</td><td>Long</td><td>是否验收提供</td><td>-</td><td>从门店照片设置带入</td></tr>
+<tr><td>IS_ZX_PROVIDE</td><td>Long</td><td>是否装修提供</td><td>-</td><td>从门店照片设置带入</td></tr>
+<tr><td>YS_PROVIDE_COUNT</td><td>Long</td><td>验收提供数量</td><td>-</td><td>从门店照片设置带入</td></tr>
+<tr><td>ZX_PROVIDE_COUNT</td><td>Long</td><td>装修提供数量</td><td>-</td><td>从门店照片设置带入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="MKT_STOREPHOTO_SET_LINE（门店照片设置明细表，只读引用）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>STOREPHOTO_SET_ID</td><td>Long</td><td>照片设置头ID</td><td>-</td><td>关联头表</td></tr>
+<tr><td>PHOTO_ITEM</td><td>String</td><td>照片项目名称</td><td>照片项目名称</td><td>预设</td></tr>
+<tr><td>PHOTO_ITEM_NOTE</td><td>String</td><td>照片项目说明</td><td>照片项目说明</td><td>预设</td></tr>
+<tr><td>SHOOT_REQUIRE</td><td>String</td><td>拍摄角度及要求</td><td>拍摄角度及要求</td><td>预设</td></tr>
+<tr><td>IS_YS_PROVIDE</td><td>Long</td><td>是否验收提供</td><td>-</td><td>预设</td></tr>
+<tr><td>IS_ZX_PROVIDE</td><td>Long</td><td>是否装修提供</td><td>-</td><td>预设</td></tr>
+<tr><td>YS_PROVIDE_COUNT</td><td>Long</td><td>验收提供数量</td><td>-</td><td>预设</td></tr>
+<tr><td>ZX_PROVIDE_COUNT</td><td>Long</td><td>装修提供数量</td><td>-</td><td>预设</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题"><table class="kl-table"><thead><tr><th>问题</th><th>原因/解决方案</th></tr></thead><tbody><tr><td>新增时"装修周期只能小于等于X"</td><td>公司参数Decoration_Days限制了最大装修周期</td></tr><tr><td>重新生成报"已有其它装修申请单"</td><td>同一门店已有非作废状态的申请单</td></tr><tr><td>重新生成报"超期天数大于X或补贴金额为0"</td><td>超期天数超过Over_Date_Limit或扣减比例≥1</td></tr><tr><td>删除报"不能删除非制单状态的单据"</td><td>仅NEW状态可删除</td></tr></tbody></table></KbCard>
+<KbCard title="Q1：装修申请提交时报"预算剩余可用额度不足"">
+<p><strong>根因</strong>：该预算年度的额度外预算(feeTypeId=66014601)剩余可用额度&lt;0</p>
+<p><strong>解决方案</strong>：联系财务确认预算额度是否已用完，或调整申请金额</p>
+</KbCard>
+
+<KbCard title="Q2：装修申请提交时报"店面装修等级没有有效期内的政策标准"">
+<p><strong>根因</strong>：该装修等级在当前时间范围内没有有效的装修标准政策(START_DATE~END_DATE未覆盖当前日期)</p>
+<p><strong>解决方案</strong>：在门店装修标准设置中新增或延长该等级的政策有效期</p>
+</KbCard>
+
+<KbCard title="Q3：作废时报"新建、审核拒绝的单据才能作废"">
+<p><strong>根因</strong>：单据状态非NEW或REJECTED，可能已在审批中(RUN)或已审批(APPROVED)</p>
+<p><strong>解决方案</strong>：已审批单据不可作废，如需关闭请走关闭申请流程</p>
+</KbCard>
+
+<KbCard title="Q4：重新生成时报"该门店已有其它装修申请单"">
+<p><strong>根因</strong>：同一门店存在其他非INTERRUPT状态的装修申请单</p>
+<p><strong>解决方案</strong>：先作废其他申请单，再重新生成</p>
+</KbCard>
+
+<KbCard title="Q5：重新生成时报"超期天数大于限制或补贴金额为0"">
+<p><strong>根因</strong>：超期天数&gt;公司参数Over_Date_Limit，或扣减比例≥1(补贴金额已全部扣减)</p>
+<p><strong>解决方案</strong>：超期严重的申请单不可重新生成，需新建申请</p>
+</KbCard>
+
+<KbCard title="Q6：审批通过后自动发起了关闭申请">
+<p><strong>根因</strong>：装修超期天数&gt;公司参数Over_Date_Limit，系统自动创建FinFeeApplyClose并启动FIN_FEE_APPLY_CLOSE工作流</p>
+<p><strong>解决方案</strong>：这是系统正常逻辑，需在关闭申请流程中处理扣减额度</p>
+</KbCard>
+
+<KbCard title="Q7：提交时报"单据正在申请变更中，不可提交"">
+<p><strong>根因</strong>：isModify=2，单据已发起变更申请</p>
+<p><strong>解决方案</strong>：先完成或撤销变更申请，再提交</p>
+</KbCard>
+
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
+
+<div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-09-05</td><td>-</td><td>hfy</td><td>初始创建FinFeeApplyFinishedHeaderServiceImpl应用服务</td></tr>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>作者</th><th>说明</th></tr></thead><tbody><tr><td>2025-09-05</td><td>hfy</td><td>初始创建</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

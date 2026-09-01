@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -124,6 +125,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -201,74 +203,387 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑"><ul><li><strong>审批流程</strong>：单店培训点将仅涉及1个内置审批流程<code>trainApplyApproval</code></li><li><strong>门店维度</strong>：单店点将以门店为维度，每条申请关联一个具体门店</li><li><strong>讲师排期校验</strong>：提交时校验讲师在申请时间段内是否已有排期冲突</li><li><strong>状态联动</strong>：审批状态变更自动更新申请主状态</li></ul></KbCard>
-
-<KbQuote>点将执行流程涉及派单、签到、执行记录和结果上传等环节</KbQuote>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：审批流程驱动">
+<ul><li><strong>业务意义</strong>：确保讲师资源分配经过审批确认，避免随意占用稀缺讲师资源</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：单店培训点将仅涉及1个内置审批流程trainApplyApproval</li></ul>
+<ul><li>第2点：单店点将以门店为维度，每条申请关联一个具体门店</li></ul>
+<ul><li>第3点：提交时校验讲师在申请时间段内是否已有排期冲突</li></ul>
+<ul><li>第4点：审批状态变更自动更新申请主状态</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：pageType页面类型切换">
+<ul><li><strong>业务意义</strong>：同一页面复用管理和审批两种视图，通过参数区分功能模式</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：manage模式为管理视图，可查看申请详情，不显示审批按钮</li></ul>
+<ul><li>第2点：approval模式为审批视图，显示审批按钮，可进行审批通过/驳回操作</li></ul>
+<ul><li>第3点：切换时通过onPageTypeChange更新pageType，并重新查询列表数据</li></ul>
+<ul><li>第4点：查询接口pageType参数默认为manage</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：审批弹窗逻辑">
+<ul><li><strong>业务意义</strong>：规范审批操作流程，确保审批记录完整可追溯</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：审批人自动填充当前登录用户真实姓名，不可编辑</li></ul>
+<ul><li>第2点：审批时间自动填充当前时间，不可编辑</li></ul>
+<ul><li>第3点：签订人仅在pageType=approval时显示，通过signerDS根据法人主体动态查询签订人列表，审批通过时必填</li></ul>
+<ul><li>第4点：审批意见必填，TextArea组件</li></ul>
+<ul><li>第5点：审批结果为approved（通过）或reject（驳回），通过approvalResult字段传递</li></ul>
+<ul><li>第6点：申请类型applyTypeOne=train（培训），applyTypeTwo=apply（申请）</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 列表页"><ul><li><strong>前端路由</strong>：<code>/general/singleStoreGeneral/singleStoreGeneralManage/list</code></li><li><strong>API</strong>：<code>mlt/trainApply/page</code></li><li><strong>Entity</strong>：<code>TrainApply</code></li><li><strong>查询条件</strong>：申请单号、讲师姓名、经销商名称、门店名称、申请状态、申请时间范围</li><li><strong>列表字段</strong>：申请单号、培训主题、讲师姓名、经销商名称、门店名称、培训时间、申请状态、审批状态、创建时间</li><li><strong>操作按钮</strong>：新建、提交、取消、查看详情</li></ul></KbCard>
-<KbCard title="3.2 新建/编辑"><ul><li><strong>API</strong>：<code>mlt/trainApply/insert</code>、<code>mlt/trainApply/update</code></li><li><strong>必填字段</strong>：讲师、培训经销商、培训门店、培训开始时间、培训结束时间、培训主题</li><li><strong>校验逻辑</strong>：<ul><li>讲师必须在档且状态正常</li><li>培训时间不可与该讲师已有排期冲突</li><li>培训时间需在有效范围内</li></ul></li></ul></KbCard>
-<KbCard title="3.3 提交审批"><ul><li><strong>API</strong>：<code>mlt/trainApply/submit</code></li><li><strong>内置审批</strong>：<code>trainApplyApproval</code></li><li><strong>审批回调</strong>：审批通过/驳回后自动更新申请状态</li></ul></KbCard>
-<KbCard title="3.4 取消申请"><ul><li><strong>API</strong>：<code>mlt/trainApply/cancel</code></li><li><strong>前置条件</strong>：申请已提交且审批未完成</li><li><strong>逻辑</strong>：取消后申请状态变为"已取消"</li></ul></KbCard>
-<KbCard title="3.5 内置审批说明"><table class="kl-table"><thead><tr><th>审批编码</th><th>审批名称</th><th>触发时机</th><th>说明</th></tr></thead><tbody><tr><td>trainApplyApproval</td><td>单店培训审批</td><td>提交申请后</td><td>业务审批，审批通过后点将生效</td></tr></tbody></table></KbCard>
-<KbCard title="3.6 选择弹窗"><table class="kl-table"><thead><tr><th>弹窗名称</th><th>说明</th></tr></thead><tbody><tr><td>审批弹窗</td><td>审批意见Form+SingleStoreApplyDetail，含签署人Select</td></tr><tr><td>流程摘要弹窗</td><td>ProcessDetail</td></tr></tbody></table></KbCard>
-<KbCard title="3.7 导入"><p class='kl-tip'>不支持导入功能。</p></KbCard>
-<KbCard title="3.8 其他按钮"><p>SelectBox切换"单店点将管理/单店点将审批"。按钮：查看申请、审批。</p></KbCard>
-<KbCard title="3.9 保存校验"><p class='kl-tip'>无保存功能（管理端只查看+审批，保存由经销商端完成）。</p></KbCard>
-<KbCard title="3.10 提交校验"><p>审批校验pplyApprovalFormDS.validate()（审批意见必填，通过时签署人必填），调用pplyApproval，无工作流编码。</p></KbCard>
-<KbCard title="train_apply（单店培训点将申请表）"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>apply_code</td><td>VARCHAR2</td><td>申请单号（主键）</td></tr><tr><td>train_theme</td><td>VARCHAR2</td><td>培训主题</td></tr><tr><td>train_start_date</td><td>DATE</td><td>培训开始时间</td></tr><tr><td>train_end_date</td><td>DATE</td><td>培训结束时间</td></tr><tr><td>lecturer_code</td><td>VARCHAR2</td><td>讲师编码</td></tr><tr><td>lecturer_name</td><td>VARCHAR2</td><td>讲师姓名</td></tr><tr><td>dealer_code</td><td>VARCHAR2</td><td>经销商编码</td></tr><tr><td>dealer_name</td><td>VARCHAR2</td><td>经销商名称</td></tr><tr><td>terminal_code</td><td>VARCHAR2</td><td>门店编码</td></tr><tr><td>terminal_name</td><td>VARCHAR2</td><td>门店名称</td></tr><tr><td>apply_status</td><td>VARCHAR2</td><td>申请状态</td></tr><tr><td>approval_status</td><td>VARCHAR2</td><td>审批状态</td></tr><tr><td>remark</td><td>VARCHAR2</td><td>备注</td></tr><tr><td>created_by</td><td>VARCHAR2</td><td>创建人</td></tr><tr><td>creation_date</td><td>DATE</td><td>创建时间</td></tr><tr><td>last_updated_by</td><td>VARCHAR2</td><td>最后更新人</td></tr><tr><td>last_update_date</td><td>DATE</td><td>最后更新时间</td></tr></tbody></table></KbCard>
+<KbCard title="界面模块1：查询栏">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>申请编号</td><td>TRAIN_APPLY.APPLY_CODE</td><td>TextField</td><td>点将申请的唯一编码</td><td>始终显示</td><td>手动输入，模糊查询</td></tr>
+<tr><td>审核状态</td><td>TRAIN_APPLY.APPROVAL_STATE</td><td>Select</td><td>申请的审批状态</td><td>始终显示</td><td>值集MBO.APPLY_APPROVAL_STATE</td></tr>
+<tr><td>申请时间</td><td>TRAIN_APPLY.CREATE_DATE</td><td>DatePicker(range)</td><td>申请创建时间范围</td><td>始终显示</td><td>转换为startDate/endDate提交</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块2：列表展示">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>申请编码</td><td>TRAIN_APPLY.APPLY_CODE</td><td>TextField</td><td>点将申请唯一编码</td><td>始终显示</td><td>左锁定列</td></tr>
+<tr><td>申请人</td><td>TRAIN_APPLY.DISTRIBUTOR_NAME</td><td>TextField</td><td>发起申请的经销商名称</td><td>始终显示</td><td>左锁定列</td></tr>
+<tr><td>申请时间</td><td>TRAIN_APPLY.CREATE_DATE</td><td>TextField</td><td>申请创建时间</td><td>始终显示</td><td>后端返回</td></tr>
+<tr><td>培训名称</td><td>TRAIN_APPLY.TRAIN_NAME</td><td>TextField</td><td>单店培训项目名称</td><td>始终显示</td><td>后端返回</td></tr>
+<tr><td>培训师</td><td>TRAIN_APPLY.LECTURER_NAME</td><td>TextField</td><td>被点将的培训师姓名</td><td>始终显示</td><td>后端返回</td></tr>
+<tr><td>点将状态</td><td>TRAIN_APPLY.ORDER_LECTURE_STATE</td><td>Select</td><td>点将流程状态</td><td>始终显示</td><td>值集MBO.ORDER_LECTURE_STATE</td></tr>
+<tr><td>申请审核状态</td><td>TRAIN_APPLY.APPROVAL_STATE</td><td>Select</td><td>申请审批状态</td><td>始终显示</td><td>值集MBO.APPLY_APPROVAL_STATE</td></tr>
+<tr><td>取消申请审核状态</td><td>TRAIN_APPLY.CANCEL_APPROVAL_STATE</td><td>Select</td><td>取消申请的审批状态</td><td>始终显示</td><td>值集MBO.CANCEL_APPROVAL_STATE</td></tr>
+<tr><td>培训开始时间</td><td>TRAIN_APPLY.PRE_START_DATE</td><td>TextField</td><td>拟定培训开始时间</td><td>始终显示</td><td>后端返回</td></tr>
+<tr><td>培训结束时间</td><td>TRAIN_APPLY.PRE_END_DATE</td><td>TextField</td><td>拟定培训结束时间</td><td>始终显示</td><td>后端返回</td></tr>
+<tr><td>拟点将天数</td><td>TRAIN_APPLY.PRE_ORD_LECTURER_DAYS</td><td>NumberField</td><td>计划点将天数</td><td>始终显示</td><td>经销商申请时填写</td></tr>
+<tr><td>实际点将天数</td><td>TRAIN_APPLY.REAL_ORD_LECTURER_DAYS</td><td>NumberField</td><td>实际执行点将天数</td><td>始终显示</td><td>执行环节填写</td></tr>
+<tr><td>结束确认状态</td><td>TRAIN_APPLY.END_CONFIRM_STATE</td><td>Select</td><td>流程结束确认状态</td><td>始终显示</td><td>值集MBO.END_COMFIRM_STATE</td></tr>
+<tr><td>CRM单号</td><td>TRAIN_APPLY.CRM_ORDER_CODE</td><td>TextField</td><td>CRM系统订单编号</td><td>始终显示</td><td>推送CRM后返回</td></tr>
+<tr><td>CRM订单状态</td><td>TRAIN_APPLY.CRM_ORDER_STATUS</td><td>Select</td><td>CRM订单状态</td><td>始终显示</td><td>值集MBO.CRM_ORDER_STATUS</td></tr>
+<tr><td>异常问题</td><td>TRAIN_APPLY.ERROR_INFO</td><td>TextField</td><td>流程异常信息</td><td>始终显示</td><td>后端返回</td></tr>
+<tr><td>操作更新时间</td><td>TRAIN_APPLY.UPDATE_DATE</td><td>TextField</td><td>最后操作时间</td><td>始终显示</td><td>后端返回</td></tr>
+<tr><td>操作</td><td>-</td><td>Button(link)</td><td>查看流程按钮</td><td>始终显示</td><td>右锁定列，打开流程摘要弹窗</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<h4>弹窗1：审批弹窗（单选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>applyCode</td><td>申请编码</td><td>待审批的申请编码</td><td>TA20260101001</td><td>当前列表选中的申请</td></tr>
+<tr><td>approvalResult</td><td>审批结果</td><td>通过或驳回</td><td>approved</td><td>approved/reject</td></tr>
+<tr><td>signerId</td><td>签订人ID</td><td>审批通过时必填</td><td>10001</td><td>根据法人主体动态查询的可选签订人</td></tr>
+</tbody>
+</table>
+<blockquote>审批弹窗包含审批意见Form和申请详情展示，审批通过时需选择签订人</blockquote>
+<blockquote>查询SQL（签订人列表，根据法人主体查询）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT
+  su.USER_ID   AS 签订人ID,
+  su.REAL_NAME AS 签订人姓名,
+  su.PHONE     AS 签订人电话
+FROM SYS_USER su
+WHERE su.ORG_ID = :orgId
+  AND su.STATUS = 'active'
+ORDER BY su.REAL_NAME;</code></pre>
+<h4>弹窗2：流程摘要弹窗（单选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>applyCode</td><td>申请编码</td><td>待查看流程的申请编码</td><td>TA20260101001</td><td>当前列表选中的申请</td></tr>
+</tbody>
+</table>
+<blockquote>流程摘要弹窗通过ProcessDetail组件展示流程审批历史，弹窗宽度1000px，仅显示关闭按钮</blockquote>
+<blockquote>查询SQL（流程审批历史，工作流引擎查询）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT
+  ph.NODE_NAME     AS 审批节点,
+  ph.APPROVER_NAME AS 审批人,
+  ph.APPROVE_RESULT AS 审批结果,
+  ph.APPROVE_COMMENT AS 审批意见,
+  TO_CHAR(ph.APPROVE_TIME, 'YYYY-MM-DD HH24:MI:SS') AS 审批时间
+FROM PROCESS_HISTORY ph
+WHERE ph.BUSINESS_CODE = :applyCode
+ORDER BY ph.APPROVE_TIME;</code></pre>
+</KbCard>
+
+<KbCard title="导入">
+<p>不支持导入功能。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查看申请</td><td>跳转经销商单店点将详情页</td><td>列表页</td><td>需选择一条数据</td><td>打开新标签页跳转详情页</td></tr>
+<tr><td>审批</td><td>审批通过/驳回</td><td>列表页</td><td>pageType不等于manage且需选择一条数据</td><td>调用审批接口，触发推送OA/FDD/CRM</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查看申请（列表页）</h4>
+<ul><li><strong>触发条件</strong>：选择一条数据，始终显示</li><li><strong>执行逻辑</strong>：</li><li>第1点：通过openTab打开新标签页</li><li>第2点：跳转路由为/general/distributorGeneral/distributorGeneralSingleStore/detail/&#123;applyCode&#125;/view</li><li>第3点：参数isCrm在pageType=manage时为true，否则为false（控制详情页是否显示CRM相关操作）</li><li><strong>接口调用</strong>：无，仅前端页面跳转</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode;</code></pre>
+<h4>按钮2：审批（列表页）</h4>
+<ul><li><strong>触发条件</strong>：pageType不等于manage且选择一条数据</li><li><strong>执行逻辑</strong>：</li><li>第1点：打开审批弹窗，填写审批意见、签订人</li><li>第2点：校验审批意见必填，审批通过时签订人必填</li><li>第3点：调用审批接口提交审批结果</li><li>第4点：审批通过后推送OA/法大大/CRM</li><li><strong>接口调用</strong>：POST /mlt/trainApply/trainApplyApproval</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT
+  ta.APPLY_CODE,
+  ta.APPROVAL_STATE,
+  ta.ORDER_LECTURE_STATE
+FROM TRAIN_APPLY ta
+WHERE ta.APPLY_CODE = :applyCode;</code></pre>
+</KbCard>
+
+<KbCard title="保存校验">
+<p>无保存功能（管理端只查看+审批，保存由经销商端完成）。</p>
+</KbCard>
+
+<KbCard title="提交校验">
+<ul><li>校验1：审批意见必填 —— 确保审批记录有完整的审批意见</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：提交审批前执行applyApprovalFormDS.validate()校验</p>
+<p>- 第2点：审批意见字段为必填，TextArea组件</p>
+<ul><li>系统体现：toast提醒"审批意见不能为空"</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, APPROVAL_COMMENTS
+    FROM TRAIN_APPLY
+    WHERE APPLY_CODE = :applyCode
+      AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');</code></pre>
+<ul><li>校验2：审批通过时签订人必填 —— 确保审批通过后有签订人用于后续合同签署</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：当approvalResult为approved时，签订人字段必填</p>
+<p>- 第2点：签订人通过signerDS根据法人主体动态查询</p>
+<ul><li>系统体现：toast提醒"签订人不能为空"</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
+    FROM TRAIN_APPLY
+    WHERE APPLY_CODE = :applyCode
+      AND APPROVAL_STATE = 'approved'
+      AND SIGNER_ID IS NULL;</code></pre>
+</KbCard>
+
+<KbCard title="状态机">
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>新建(NEW) → 提交(SUBMITTED) → 审批通过(APPROVED) → 生效(EFFECTIVE) → 执行中(EXECUTING) → 已完成(COMPLETED)
+                |
+                └→ 审批驳回(REJECTED) → 可修改重新提交</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>新建</td><td>编辑、删除、提交</td></tr>
+<tr><td>SUBMITTED</td><td>已提交</td><td>审批通过、审批驳回、取消</td></tr>
+<tr><td>APPROVED</td><td>审批通过</td><td>推送OA/FDD/CRM</td></tr>
+<tr><td>REJECTED</td><td>审批驳回</td><td>修改后重新提交</td></tr>
+<tr><td>EFFECTIVE</td><td>已生效</td><td>转入执行</td></tr>
+<tr><td>EXECUTING</td><td>执行中</td><td>更新进度、结束执行</td></tr>
+<tr><td>COMPLETED</td><td>已完成</td><td>查看</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="表1：TRAIN_APPLY（单店培训点将申请表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>主键ID</td><td>-</td><td>序列自增</td></tr>
+<tr><td>APPLY_CODE</td><td>VARCHAR2(64)</td><td>申请编码</td><td>申请编码</td><td>系统生成，唯一</td></tr>
+<tr><td>DISTRIBUTOR_NAME</td><td>VARCHAR2(255)</td><td>申请人/经销商名称</td><td>申请人</td><td>经销商发起时写入</td></tr>
+<tr><td>CREATE_DATE</td><td>TIMESTAMP</td><td>申请时间</td><td>申请时间</td><td>系统自动创建时间</td></tr>
+<tr><td>TRAIN_NAME</td><td>VARCHAR2(255)</td><td>培训名称</td><td>培训名称</td><td>经销商申请时填写</td></tr>
+<tr><td>TRAIN_THEME</td><td>VARCHAR2</td><td>培训主题</td><td>-</td><td>经销商申请时填写</td></tr>
+<tr><td>LECTURER_NAME</td><td>VARCHAR2(255)</td><td>培训师姓名</td><td>培训师</td><td>关联讲师档案</td></tr>
+<tr><td>LECTURER_CODE</td><td>VARCHAR2</td><td>讲师编码</td><td>-</td><td>关联讲师档案</td></tr>
+<tr><td>ORDER_LECTURE_STATE</td><td>VARCHAR2(32)</td><td>点将状态</td><td>点将状态</td><td>值集MBO.ORDER_LECTURE_STATE</td></tr>
+<tr><td>APPROVAL_STATE</td><td>VARCHAR2(32)</td><td>申请审核状态</td><td>申请审核状态</td><td>值集MBO.APPLY_APPROVAL_STATE</td></tr>
+<tr><td>CANCEL_APPROVAL_STATE</td><td>VARCHAR2(32)</td><td>取消申请审核状态</td><td>取消申请审核状态</td><td>值集MBO.CANCEL_APPROVAL_STATE</td></tr>
+<tr><td>PRE_START_DATE</td><td>DATE</td><td>拟定培训开始时间</td><td>培训开始时间</td><td>经销商申请时填写</td></tr>
+<tr><td>PRE_END_DATE</td><td>DATE</td><td>拟定培训结束时间</td><td>培训结束时间</td><td>经销商申请时填写</td></tr>
+<tr><td>PRE_ORD_LECTURER_DAYS</td><td>NUMBER</td><td>拟点将天数</td><td>拟点将天数</td><td>经销商申请时填写</td></tr>
+<tr><td>REAL_ORD_LECTURER_DAYS</td><td>NUMBER</td><td>实际点将天数</td><td>实际点将天数</td><td>执行环节填写</td></tr>
+<tr><td>END_CONFIRM_STATE</td><td>VARCHAR2(32)</td><td>结束确认状态</td><td>结束确认状态</td><td>值集MBO.END_COMFIRM_STATE</td></tr>
+<tr><td>CRM_ORDER_CODE</td><td>VARCHAR2(64)</td><td>CRM单号</td><td>CRM单号</td><td>推送CRM后回写</td></tr>
+<tr><td>CRM_ORDER_STATUS</td><td>VARCHAR2(32)</td><td>CRM订单状态</td><td>CRM订单状态</td><td>值集MBO.CRM_ORDER_STATUS</td></tr>
+<tr><td>ERROR_INFO</td><td>VARCHAR2(2000)</td><td>异常问题信息</td><td>异常问题</td><td>流程异常时写入</td></tr>
+<tr><td>UPDATE_DATE</td><td>TIMESTAMP</td><td>操作更新时间</td><td>操作更新时间</td><td>系统自动更新时间</td></tr>
+<tr><td>APPLY_TYPE_ONE</td><td>VARCHAR2(32)</td><td>申请类型一</td><td>-</td><td>固定值train</td></tr>
+<tr><td>APPLY_TYPE_TWO</td><td>VARCHAR2(32)</td><td>申请类型二</td><td>-</td><td>固定值apply</td></tr>
+<tr><td>SIGNER_ID</td><td>NUMBER</td><td>签订人ID</td><td>-</td><td>审批通过时选择</td></tr>
+<tr><td>SIGNER_NAME</td><td>VARCHAR2(255)</td><td>签订人姓名</td><td>-</td><td>审批通过时选择</td></tr>
+<tr><td>SIGNER_PHONE</td><td>VARCHAR2(32)</td><td>签订人电话</td><td>-</td><td>审批通过时选择</td></tr>
+<tr><td>DEALER_CODE</td><td>VARCHAR2</td><td>经销商编码</td><td>-</td><td>申请时填写</td></tr>
+<tr><td>DEALER_NAME</td><td>VARCHAR2</td><td>经销商名称</td><td>-</td><td>申请时填写</td></tr>
+<tr><td>TERMINAL_CODE</td><td>VARCHAR2</td><td>门店编码</td><td>-</td><td>申请时填写</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称</td><td>-</td><td>申请时填写</td></tr>
+<tr><td>CREATED_BY</td><td>VARCHAR2</td><td>创建人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>CREATION_DATE</td><td>DATE</td><td>创建时间</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>VARCHAR2</td><td>最后更新人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>系统自动</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>请选择一条数据</td><td>点击查看申请/审批按钮</td><td>未选择列表行或选择多行，选择一条数据后再操作</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>请求失败</td><td>查询/审批接口调用</td><td>后端服务异常或网络错误，检查后端服务状态后重试</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>审批意见不能为空</td><td>提交审批时</td><td>未填写审批意见，填写审批意见后提交</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>签订人不能为空</td><td>审批通过时</td><td>未选择签订人，选择签订人后提交</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>数据校验失败</td><td>审批提交时</td><td>表单校验未通过，检查必填项是否完整</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
+<tr><td>数据不存在</td><td>查看/审批</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
+<tr><td>状态不允许操作</td><td>审批</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.APPLY_APPROVAL_STATE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
+<tr><td>审批人不能为空</td><td>提交审批</td><td>未设置审批人，检查当前用户登录态</td><td>error</td><td>前端取 userInfo.realName 为空</td></tr>
+</tbody>
+</table>
+<h4>报错1：请选择一条数据</h4>
+<ul><li><strong>触发条件</strong>：点击查看申请/审批按钮前未选择列表行或选择多行</li><li><strong>逻辑分析</strong>：前端校验选中行数量=1，不满足时toast提示</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.TRAIN_NAME AS 培训名称,
+         ta.APPROVAL_STATE AS 审核状态, ta.ORDER_LECTURE_STATE AS 点将状态
+  FROM TRAIN_APPLY ta
+  WHERE ta.APPLY_TYPE_ONE = 'train' AND ta.APPLY_TYPE_TWO = 'apply'
+  ORDER BY ta.CREATE_DATE DESC;</code></pre>
+<h4>报错2：请求失败</h4>
+<ul><li><strong>触发条件</strong>：查询/审批接口调用时</li><li><strong>逻辑分析</strong>：后端 mbo-business 微服务异常或网络错误，HTTP 状态码非 2xx</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ta.APPLY7S 申请编码, ta.ERROR_INFO AS 异常信息
+  FROM TRAIN_APPLY ta
+  WHERE ta.ERROR_INFO IS NOT NULL;</code></pre>
+<h4>报错3：审批意见不能为空</h4>
+<ul><li><strong>触发条件</strong>：提交审批时未填写审批意见</li><li><strong>逻辑分析</strong>：前端 applyApprovalFormDS.validate() 校验 APPROVAL_COMMENTS 必填，TextArea 组件</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见
+  FROM TRAIN_APPLY ta
+  WHERE ta.APPLY_CODE = :applyCode
+    AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = '');</code></pre>
+<h4>报错4：签订人不能为空</h4>
+<ul><li><strong>触发条件</strong>：审批通过时未选择签订人</li><li><strong>逻辑分析</strong>：approvalResult=approved 时 signerId 必填，签订人通过 signerDS 根据法人主体动态查询</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.SIGNER_ID AS 签订人ID, ta.SIGNER_NAME AS 签订人姓名
+  FROM TRAIN_APPLY ta
+  WHERE ta.APPLY_CODE = :applyCode
+    AND ta.APPROVAL_STATE = 'approved'
+    AND ta.SIGNER_ID IS NULL;</code></pre>
+<h4>报错5：数据校验失败</h4>
+<ul><li><strong>触发条件</strong>：审批提交时表单校验未通过</li><li><strong>逻辑分析</strong>：前端表单校验（审批意见、签订人等必填项）未通过时阻止提交</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见,
+         ta.SIGNER_NAME AS 签订人, ta.APPROVAL_STATE AS 审核状态
+  FROM TRAIN_APPLY ta
+  WHERE ta.APPROVAL_STATE = 'approving'
+    AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = ''
+         OR (ta.SIGNER_ID IS NULL));</code></pre>
+<h4>报错6：网络异常/接口超时</h4>
+<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+         ORDER_LECTURE_STATE AS 点将状态,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错7：权限不足</h4>
+<ul><li><strong>触发条件</strong>：点击查看申请、审批等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+  FROM SYS_USER U
+  LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
+  LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
+  LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
+  LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
+  WHERE P.PERMISSION_CODE LIKE '%single_store_general_manage%' ORDER BY U.USER_NAME;</code></pre>
+<h4>报错8：数据不存在</h4>
+<ul><li><strong>触发条件</strong>：查看申请、审批等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 TRAIN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+         ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre>
+<h4>报错9：状态不允许操作</h4>
+<ul><li><strong>触发条件</strong>：点击审批按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如审批要求 APPROVAL_STATE 为 to_be_approval。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+         ORDER_LECTURE_STATE AS 点将状态, APPROVAL_STATE AS 审核状态,
+         ERROR_INFO AS 异常问题
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
+    AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject')
+  ORDER BY CREATE_DATE DESC;</code></pre>
+<h4>报错10：值集数据不显示</h4>
+<ul><li><strong>触发条件</strong>：查询条件或列表中点将状态、审核状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.APPLY_APPROVAL_STATE、MBO.ORDER_LECTURE_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+         LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
+  FROM SYS_LOOKUP_VALUE
+  WHERE LOOKUP_CODE IN ('MBO.APPLY_APPROVAL_STATE','MBO.ORDER_LECTURE_STATE','MBO.CANCEL_APPROVAL_STATE')
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+<h4>报错11：审批人不能为空</h4>
+<ul><li><strong>触发条件</strong>：提交审批时，前端从 getCurrentUser().realName 取审批人姓名为空</li><li><strong>逻辑分析</strong>：前端审批弹窗 beforeOpen 阶段设置 approvalUserName 为 userInfo.realName，若用户未登录或登录态失效导致 realName 为空，则审批人字段为空。需检查用户登录态、token 是否过期、用户信息接口是否正常</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, U.REAL_NAME AS 真实姓名,
+         U.LOGIN_FLAG AS 登录标记, U.STATUS_CODE AS 状态
+  FROM SYS_USER U
+  WHERE U.REAL_NAME IS NULL OR U.STATUS_CODE &lt;&gt; 'ACTIVE';</code></pre>
+</KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
+<ul><li>问题1：审批通过后CRM单号为空</li><li>原因：推送CRM失败或CRM系统未返回订单号，排查SQL：SELECT APPLY_CODE, CRM_ORDER_CODE, ERROR_INFO FROM TRAIN_APPLY WHERE APPLY_CODE = :applyCode AND CRM_ORDER_CODE IS NULL;</li><li>解决思路：检查ERROR_INFO字段是否有异常信息，尝试重新同步CRM</li></ul>
+<ul><li>问题2：讲师排期冲突导致提交失败</li><li>原因：所点讲师在申请时间段内已有排期，排查SQL：SELECT * FROM MA_LECTURER_SCHEDULE WHERE LECTURER_CODE = :lecturerCode AND ((START_DATE &lt;= :preEndDate AND END_DATE &gt;= :preStartDate))</li><li>解决思路：调整培训时间或更换讲师</li></ul>
+</KbCard>
+
 </div>
+</div>
+</div>
+
+<div id="changelog" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="常见问题"><p><strong>Q1：提交审批后能否修改？</strong></p>
-<p>A：已提交审批的申请不可修改，需先取消后再编辑重新提交。</p>
-<p><strong>Q2：审批驳回后如何处理？</strong></p>
-<p>A：审批驳回后，申请状态变为"已驳回"，可修改后重新提交。</p>
-<p><strong>Q3：讲师排期冲突如何校验？</strong></p>
-<p>A：提交时后端校验该讲师在申请培训时间段内是否已有排期，存在冲突则拒绝提交。</p>
-<p><strong>Q4：单店点将与设计师点将的审批区别？</strong></p>
-<p>A：单店点将仅有1个审批流程<code>trainApplyApproval</code>，设计师点将涉及讲师审批、门店审批、常规审批、取消审批4个审批流程。</p></KbCard>
-</div>
-</div>
-</div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>版本</th><th>更新内容</th><th>更新人</th></tr></thead><tbody><tr><td>2026-08-03</td><td>v1.0</td><td>初始创建</td><td>AI生成</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

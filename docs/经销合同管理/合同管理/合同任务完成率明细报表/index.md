@@ -126,43 +126,12 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：三维度汇总展示 {多维度报表}">
-<KbQuote>从不同维度展示合同任务完成率，满足不同管理层级需求</KbQuote>
-
-**具体逻辑**：
-
-- 1、**业务意义**：从不同维度展示合同任务完成率，满足不同管理层级需求
-- 2、具体逻辑描述
-- 3、第1点：合同明细维度：展示合同行级明细，包含项目编码、合同编码、物料编码、合同数量、发货数量、完成率等
-- 4、第2点：合同汇总维度：按合同汇总，展示有效合同数量、发货数量、完成率、发货金额、合同金额、金额完成率
-- 5、第3点：项目汇总维度：按项目汇总，展示项目级别的完成率统计
-</KbCard>
-
-<KbCard num="2" title="重点逻辑2：图表可视化 {ECharts图表}">
-<KbQuote>通过图表直观展示月度完成率趋势</KbQuote>
-
-**具体逻辑**：
-
-- 1、**业务意义**：通过图表直观展示月度完成率趋势
-- 2、具体逻辑描述
-- 3、第1点：按月度展示完成率柱状图，支持按数量和按金额两种维度
-- 4、第2点：柱状图上方显示具体完成率百分比标签
-- 5、第3点：叠加折线图展示完成率趋势
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：汇总行计算 {前端计算}">
-<KbQuote>在查询结果基础上计算汇总数据</KbQuote>
-
-**具体逻辑**：
-
-- 1、**业务意义**：在查询结果基础上计算汇总数据
-- 2、具体逻辑描述
-- 3、第1点：有效合同数量=各记录有效合同数量之和
-- 4、第2点：发货数量=各记录发货确认数量之和
-- 5、第3点：未发货数量=有效合同数量-发货数量
-- 6、第4点：数量完成率=发货数量/有效合同数量
-- 7、第5点：金额完成率=发货金额/合同金额
-- 8、--
+<KbCard num="1" title="重点逻辑1：合同出货完成率明细 {明细展示}">
+<ul><li><strong>业务意义</strong>：按合同维度展示出货完成率明细，精确掌握每个合同的执行情况</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过searchContractDetailWithSubtotal接口查询合同明细</li></ul>
+<ul><li>第2点：展示每个合同的出货明细，含小计行</li></ul>
+<ul><li>第3点：完成率=已出货数量/合同任务数量×100%</li></ul>
 </KbCard>
 
 </div>
@@ -172,664 +141,59 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：查询条件区域">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：合同任务完成率明细报表页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>开始年月</td>
-<td>月份选择框</td>
-<td>查询起始年月</td>
-<td>常显</td>
-<td>必输</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>结束年月</td>
-<td>月份选择框</td>
-<td>查询截止年月</td>
-<td>常显</td>
-<td>必输</td>
-<td>大于等于开始年月</td>
-<td>-</td>
-</tr>
-<tr>
-<td>合同编码</td>
-<td>LOV选择框</td>
-<td>按合同编码筛选</td>
-<td>常显</td>
-<td>可选</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>工程编码</td>
-<td>LOV选择框</td>
-<td>按工程编码筛选</td>
-<td>常显</td>
-<td>可选</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>LOV选择框</td>
-<td>按经销商编码筛选</td>
-<td>常显</td>
-<td>可选</td>
-<td>-</td>
-<td>-</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块2：合同明细Tab">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>工程编码</td>
-<td>文本框</td>
-<td>工程项目编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>PROJECT_CODE</td>
-</tr>
-<tr>
-<td>工程名称</td>
-<td>文本框</td>
-<td>工程项目名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>PROJECT_NAME</td>
-</tr>
-<tr>
-<td>合同编码</td>
-<td>文本框</td>
-<td>合同编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_CODE</td>
-</tr>
-<tr>
-<td>合同名称</td>
-<td>文本框</td>
-<td>合同名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_NAME</td>
-</tr>
-<tr>
-<td>完成类型</td>
-<td>文本框</td>
-<td>完成类型</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>COMPLETED_TYPE</td>
-</tr>
-<tr>
-<td>有效标识</td>
-<td>文本框</td>
-<td>合同有效标识</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>VALID</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>经销商编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_CODE</td>
-</tr>
-<tr>
-<td>经销商名称</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_NAME</td>
-</tr>
-<tr>
-<td>简称</td>
-<td>文本框</td>
-<td>经销商简称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>SHORT_NAME</td>
-</tr>
-<tr>
-<td>币种</td>
-<td>文本框</td>
-<td>币种</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CURRENCY</td>
-</tr>
-<tr>
-<td>合同类型</td>
-<td>文本框</td>
-<td>合同类型</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_TYPE</td>
-</tr>
-<tr>
-<td>折扣申请单号</td>
-<td>文本框</td>
-<td>关联折扣申请单号</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>DISCOUNT_APPLY_CODE</td>
-</tr>
-<tr>
-<td>折扣有效日期</td>
-<td>文本框</td>
-<td>折扣有效日期</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>DISCOUNT_VALID_DATE</td>
-</tr>
-<tr>
-<td>分组序号</td>
-<td>文本框</td>
-<td>分组序号(小计行标识)</td>
-<td>常显</td>
-<td>小计行显示"小计"</td>
-<td>-</td>
-<td>GRP_SEQ</td>
-</tr>
-<tr>
-<td>物料编码</td>
-<td>文本框</td>
-<td>物料编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>ITEM_CODE</td>
-</tr>
-<tr>
-<td>物料名称</td>
-<td>文本框</td>
-<td>物料名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>ITEM_NAME</td>
-</tr>
-<tr>
-<td>规格</td>
-<td>文本框</td>
-<td>物料规格</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>SPEC</td>
-</tr>
-<tr>
-<td>颜色</td>
-<td>文本框</td>
-<td>物料颜色</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>COLOR</td>
-</tr>
-<tr>
-<td>合同数量</td>
-<td>数值输入框</td>
-<td>合同任务数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_QTY</td>
-</tr>
-<tr>
-<td>替代数量</td>
-<td>数值输入框</td>
-<td>已替代数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>REPLACED_QTY</td>
-</tr>
-<tr>
-<td>延期数量</td>
-<td>数值输入框</td>
-<td>已延期数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>DELAYED_QTY</td>
-</tr>
-<tr>
-<td>有效数量</td>
-<td>数值输入框</td>
-<td>有效合同数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>VALID_QTY</td>
-</tr>
-<tr>
-<td>出库数量</td>
-<td>数值输入框</td>
-<td>已出库数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>QTY_BILL</td>
-</tr>
-<tr>
-<td>完成率(数量)</td>
-<td>数值输入框</td>
-<td>数量完成率</td>
-<td>常显</td>
-<td>显示为百分比，保留2位小数</td>
-<td>0~100%</td>
-<td>INV_RATE</td>
-</tr>
-<tr>
-<td>发货金额</td>
-<td>数值输入框</td>
-<td>已发货金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>DELIVER_AMOUNT</td>
-</tr>
-<tr>
-<td>合同金额</td>
-<td>数值输入框</td>
-<td>合同金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_AMOUNT</td>
-</tr>
-<tr>
-<td>完成率(金额)</td>
-<td>数值输入框</td>
-<td>金额完成率</td>
-<td>常显</td>
-<td>显示为百分比，保留2位小数</td>
-<td>0~100%</td>
-<td>AMOUNT_PERCENTAGE</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块3：合同汇总Tab">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>工程编码</td>
-<td>文本框</td>
-<td>工程项目编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>PROJECT_CODE</td>
-</tr>
-<tr>
-<td>工程名称</td>
-<td>文本框</td>
-<td>工程项目名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>PROJECT_NAME</td>
-</tr>
-<tr>
-<td>合同编码</td>
-<td>文本框</td>
-<td>合同编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_CODE</td>
-</tr>
-<tr>
-<td>合同名称</td>
-<td>文本框</td>
-<td>合同名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_NAME</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>经销商编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_CODE</td>
-</tr>
-<tr>
-<td>经销商名称</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_NAME</td>
-</tr>
-<tr>
-<td>简称</td>
-<td>文本框</td>
-<td>经销商简称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>SHORT_NAME</td>
-</tr>
-<tr>
-<td>币种</td>
-<td>文本框</td>
-<td>币种</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CURRENCY</td>
-</tr>
-<tr>
-<td>有效数量</td>
-<td>数值输入框</td>
-<td>有效合同数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>VALID_QTY</td>
-</tr>
-<tr>
-<td>发货确认数量</td>
-<td>数值输入框</td>
-<td>发货确认数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONFIRM_OUT_QTY</td>
-</tr>
-<tr>
-<td>完成率(数量)</td>
-<td>数值输入框</td>
-<td>数量完成率</td>
-<td>常显</td>
-<td>-</td>
-<td>0~100%</td>
-<td>INV_RATE</td>
-</tr>
-<tr>
-<td>发货金额</td>
-<td>数值输入框</td>
-<td>已发货金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>DELIVER_AMOUNT</td>
-</tr>
-<tr>
-<td>合同金额</td>
-<td>数值输入框</td>
-<td>合同金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_AMOUNT</td>
-</tr>
-<tr>
-<td>完成率(金额)</td>
-<td>数值输入框</td>
-<td>金额完成率</td>
-<td>常显</td>
-<td>-</td>
-<td>0~100%</td>
-<td>AMOUNT_PERCENTAGE</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块4：项目汇总Tab">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>工程编码</td>
-<td>文本框</td>
-<td>工程项目编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>PROJECT_CODE</td>
-</tr>
-<tr>
-<td>工程名称</td>
-<td>文本框</td>
-<td>工程项目名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>PROJECT_NAME</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>经销商编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_CODE</td>
-</tr>
-<tr>
-<td>经销商名称</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CUSTOMER_NAME</td>
-</tr>
-<tr>
-<td>简称</td>
-<td>文本框</td>
-<td>经销商简称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>SHORT_NAME</td>
-</tr>
-<tr>
-<td>币种</td>
-<td>文本框</td>
-<td>币种</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CURRENCY</td>
-</tr>
-<tr>
-<td>有效数量</td>
-<td>数值输入框</td>
-<td>有效合同数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>VALID_QTY</td>
-</tr>
-<tr>
-<td>发货确认数量</td>
-<td>数值输入框</td>
-<td>发货确认数量</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONFIRM_OUT_QTY</td>
-</tr>
-<tr>
-<td>完成率(数量)</td>
-<td>数值输入框</td>
-<td>数量完成率</td>
-<td>常显</td>
-<td>-</td>
-<td>0~100%</td>
-<td>INV_RATE</td>
-</tr>
-<tr>
-<td>发货金额</td>
-<td>数值输入框</td>
-<td>已发货金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>DELIVER_AMOUNT</td>
-</tr>
-<tr>
-<td>合同金额</td>
-<td>数值输入框</td>
-<td>合同金额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>CONTRACT_AMOUNT</td>
-</tr>
-<tr>
-<td>完成率(金额)</td>
-<td>数值输入框</td>
-<td>金额完成率</td>
-<td>常显</td>
-<td>-</td>
-<td>0~100%</td>
-<td>AMOUNT_PERCENTAGE</td>
-</tr>
-</tbody></table></div>
+<tr><td>合同编码</td><td>EPM_PROJECT_CONTRACT.CONTRACT_CODE</td><td>文本框</td><td>合同编码</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>合同名称</td><td>EPM_PROJECT_CONTRACT.CONTRACT_NAME</td><td>文本框</td><td>合同名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>产品编码</td><td>-</td><td>文本框</td><td>产品编码</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>产品名称</td><td>-</td><td>文本框</td><td>产品名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>任务数量</td><td>-</td><td>数字显示框</td><td>合同任务数量</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>已出货数量</td><td>-</td><td>数字显示框</td><td>已出货数量</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>完成率</td><td>-</td><td>数字显示框</td><td>出货完成率</td><td>常显</td><td>自动计算=已出货/任务×100%</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<blockquote>本页面为报表查询页面，无独立弹窗。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
-无
-
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 查询 | 执行报表查询 | 查询区域 | 常显 | 调用AE_REPORT接口查询数据 |
-| 按合同导出 | 导出合同汇总Excel | 合同汇总Tab | 常显 | 调用exportContractRate接口 |
-| 按工程导出 | 导出项目汇总Excel | 项目汇总Tab | 常显 | 调用exportProjectRate接口 |
-| 按合同明细导出 | 导出合同明细Excel | 合同明细Tab | 常显 | 调用exportContractInvRate接口 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>按条件查询合同明细</td><td>列表页</td><td>始终可用</td><td>调用searchContractDetailWithSubtotal接口</td></tr>
+<tr><td>导出</td><td>导出明细报表</td><td>列表页</td><td>有数据时</td><td>调用exportContractInvRate接口</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
+<blockquote>本页面为报表页面，无保存操作。</blockquote>
 </KbCard>
+
 <KbCard title="提交校验">
+<blockquote>本页面为报表页面，无提交操作。</blockquote>
 </KbCard>
+
 <KbCard title="状态机">
-
-无，纯查询报表。
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：SA_SALE_CONTRACT_HEAD（销售合同主表-相关字段）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| SA_CONTR_HEAD_ID | NUMBER | 销售合同ID | - | 报表关联主键 |
-| SA_CONTR_HEAD_CODE | VARCHAR | 销售合同编号 | 合同编码 | - |
-| SALES_CONTRACT_TYPE | NUMBER | 销售合同类型 | 合同类型 | - |
-| CUST_CODE | VARCHAR | 经销商编码 | 经销商编码 | - |
-| CUST_NAME | VARCHAR | 经销商名称 | 经销商名称 | - |
-| SHORT_NAME | VARCHAR | 经销商简称 | 简称 | - |
-| CURRENCY | VARCHAR | 币种 | 币种 | - |
-| START_DATE | DATE | 合同开始日期 | - | 时间范围筛选 |
-| END_DATE | DATE | 合同截止日期 | - | 时间范围筛选 |
-| VALID | NUMBER | 生效状态 | 有效标识 | 1未生效/2生效 |
-
+<blockquote>本页面为报表页面，无状态流转。</blockquote>
 </KbCard>
 
-<KbCard num="2" title="表2：EPM_PROJECT_CONTRACT（工程合同表-相关字段）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| PROJECT_ID | NUMBER | 工程项目ID | - | 报表关联主键 |
-| PROJECT_CODE | VARCHAR | 工程编码 | 工程编码 | - |
-| PROJECT_NAME | VARCHAR | 工程名称 | 工程名称 | - |
-
----
-
+<KbCard title="表1：EPM_PROJECT_CONTRACT（项目合同表）">
+<blockquote>与菜单108共用同一张表，字段详见"经销合同管理-合同管理-合同任务完成率"。</blockquote>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
-</KbCard>
 </div>
 </div>
 </div>
@@ -837,65 +201,52 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">无</td>
-            <td style="font-size:13px;">-</td>
-            <td style="font-size:13px;">纯查询报表，无报错逻辑</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
+<tr><td>查询无数据</td><td>查询时</td><td>合同无出货数据或条件不匹配，放宽条件</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>导出失败</td><td>导出时</td><td>导出数据量为空或导出接口异常，先查询再导出</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>网络请求失败</td><td>查询/导出时</td><td>后端服务不可用或网络中断，重试或联系IT</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无报表查询权限，联系管理员授权</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>必填查询条件为空</td><td>查询时</td><td>未填写年度/合同编码等必填条件，补全后查询</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：查询无数据</h4>
+<ul><li><strong>触发条件</strong>：用户按合同/产品查询合同出货完成率明细，searchContractInvRate接口返回空结果集</li><li><strong>逻辑分析</strong>：明细报表为完成率报表（菜单108）的下钻视图，通过searchContractDetailWithSubtotal接口按合同维度展示出货完成率明细，完成率=已出货数量/合同任务数量×100%，含小计行。无数据根因有三类：(1)选中的合同无出货数据（DELIVERY_AMT为0或出库单未生成）；(2)合同任务数量为0（合同未配置任务明细行）；(3)产品/合同筛选条件与记录不匹配。需先确认合同是否有出库单及任务明细</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME,
+         TASK_AMT, DELIVERY_AMT,
+         CASE WHEN TASK_AMT &gt; 0 THEN ROUND(DELIVERY_AMT / TASK_AMT * 100, 2) ELSE 0 END AS 完成率
+  FROM EPM_PROJECT_CONTRACT
+  WHERE (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
+  ORDER BY CONTRACT_CODE;</code></pre>
+<h4>报错2：导出失败</h4>
+<ul><li><strong>触发条件</strong>：用户点击"导出"按钮，exportContractInvRate接口返回空数据集或抛出异常</li><li><strong>逻辑分析</strong>：导出接口exportContractInvRate基于searchContractDetailWithSubtotal同一查询逻辑（ContractInvRateConvert.INSTANCE.toExportVO），若查询结果集为空则导出文件无内容；若导出过程中后端服务异常（如内存溢出、LOV翻译失败@ProcessLovValue）也会失败。前端通过ExcelExportCom组件触发导出，需先执行查询确认有数据再导出</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*) AS 可导出记录数
+  FROM EPM_PROJECT_CONTRACT
+  WHERE (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
+    AND TASK_AMT IS NOT NULL;</code></pre>
+<h4>报错3：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：前端调用contractReport/epm-project-contract/searchContractInvRate或exportContractInvRate接口时，axios请求超时或返回非2xx状态码</li><li><strong>逻辑分析</strong>：报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。前端index.tsx通过DataSet.query()发起请求，失败时控制台输出"获取图表数据失败"日志。需确认ae-report服务状态及网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 确认报表服务数据源连通性（间接验证服务可用性）
+  SELECT COUNT(*) AS 合同总记录数 FROM EPM_PROJECT_CONTRACT;</code></pre>
+<h4>报错4：权限不足</h4>
+<ul><li><strong>触发条件</strong>：当前用户角色未配置报表查询权限（PERMISSION_PREFIX.arrow-ae:contractInvRate），访问页面时被拦截</li><li><strong>逻辑分析</strong>：报表页面通过permissionList控制访问权限，用户无对应权限码时无法进入页面或调用接口。需在角色管理中为用户分配"合同任务完成率明细报表"查询权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 查询用户角色权限（示意，实际表名依权限框架）
+  SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
+  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractInvRate%';</code></pre>
+<h4>报错5：必填查询条件为空</h4>
+<ul><li><strong>触发条件</strong>：用户未填写年度（POLICY_YEAR）或合同编码（CONTRACT_CODE）等必填查询条件直接点击查询</li><li><strong>逻辑分析</strong>：YearMonthContractRateDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端QueryDS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT DISTINCT POLICY_YEAR FROM EPM_PROJECT_CONTRACT
+  WHERE POLICY_YEAR IS NOT NULL ORDER BY POLICY_YEAR DESC;</code></pre>
+</KbCard>
 
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>无</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>纯查询报表，无报错逻辑</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">查询无数据</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>查询条件(年月范围/合同编码/工程编码/经销商编码)过滤后无匹配数据<br>
-      <strong style="color:#7C3AED;">处理：</strong>放宽查询条件，检查年月范围是否正确
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">完成率显示为0或异常值</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>有效合同数量为0时完成率无法计算，或发货数据未及时更新<br>
-      <strong style="color:#7C3AED;">处理：</strong>确认出库单/发货单是否已审核确认，检查有效合同数量是否正确
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">图表不显示</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>searchYearContractRate接口返回code不为success<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查AE_REPORT服务是否正常运行，确认报表接口返回数据格式
-    </div>
-  </div>
-</div>
+<ul><li>问题1：与菜单108的关系</li><li>原因：菜单108为年月汇总视图，菜单109为合同明细下钻视图</li><li>解决思路：两个菜单共用ContractReportController，分别调用不同API方法</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -904,10 +255,14 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2026-01-15 | - | - | 合同任务完成率明细报表页面开发 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

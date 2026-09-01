@@ -125,25 +125,20 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 门店区域分布查询">
-<KbQuote>按省-市-区县三级区域层级展示门店数量分布，用于分析各区域门店覆盖密度和布局合理性。</KbQuote>
-
-**具体逻辑**：
-
-- 1、以区域基础表(SCPAREA)为骨架，areatype=4(省)/5(市)/6(区县)三级LEFT JOIN
-- 2、门店数量通过MKT_TERMINAL按county_areaid分组COUNT统计
-- 3、无门店的区域也展示（门店数量为0），使用NVL(mt.terminal_num, 0)处理
-- 4、支持按省份、城市、区县、门店数量阈值筛选
+<KbCard num="1" title="重点逻辑1：纯报表查询页面【只读查询】">
+<ul><li><strong>业务意义</strong>：供内部人员查询门店在各区域的分布情况，了解门店的区域覆盖密度</li><li><strong>具体逻辑描述</strong>：</li><li>本页面为hlod低代码报表页面，无独立前端源码</li><li>仅提供查询和导出功能，不支持新增、修改、删除操作</li><li>数据来源于区域表和门店表的关联查询</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 区域层级构建逻辑">
-**具体逻辑**：
+<KbCard num="2" title="重点逻辑2：省市区三级关联">
+<ul><li><strong>业务意义</strong>：通过区域表的areatype和superid实现省→市→区三级关联</li><li><strong>具体逻辑描述</strong>：</li><li>省级（sa1）：<code>SELECT areaname, areaid, superid FROM epms.scparea WHERE areatype = 4</code></li><li>市级（sa2）：<code>SELECT areaname, areaid, superid FROM epms.scparea WHERE areatype = 5</code>，关联条件 <code>sa1.areaid = sa2.superid</code></li><li>区县级（sa3）：<code>SELECT areaname, areaid, superid FROM epms.scparea WHERE areatype = 6</code>，关联条件 <code>sa2.areaid = sa3.superid</code></li></ul>
+</KbCard>
 
-- 1、从SCPAREA取areatype=4作为省级节点
-- 2、LEFT JOIN areatype=5通过superid关联省级，构建市级节点
-- 3、LEFT JOIN areatype=6通过superid关联市级，构建区县级节点
-- 4、LEFT JOIN门店统计结果通过county_areaid关联区县级
-- 5、--
+<KbCard num="3" title="重点逻辑3：门店数量统计">
+<ul><li><strong>业务意义</strong>：统计每个区县的门店数量</li><li><strong>具体逻辑描述</strong>：</li><li>子查询mt：<code>SELECT county_areaid, COUNT(county_areaid) AS terminal_num FROM epms.mkt_terminal WHERE entid = #&#123;orgId&#125; GROUP BY county_areaid</code></li><li>通过 <code>sa3.areaid = mt.county_areaid</code> 关联到区县级</li><li>无门店的区域显示0：<code>NVL(mt.terminal_num, 0)</code></li></ul>
+</KbCard>
+
+<KbCard num="4" title="重点逻辑4：门店数量下限筛选">
+<ul><li><strong>业务意义</strong>：支持按门店数量下限筛选，查找门店数量不足的区域</li><li><strong>具体逻辑描述</strong>：</li><li>当terminalNumLow不为空且&gt;=0时，筛选 <code>terminal_num &lt; #&#123;terminalNumLow&#125;</code></li><li>用于查找门店数量低于下限的区域，辅助门店拓展决策</li></ul>
 </KbCard>
 
 </div>
@@ -153,72 +148,204 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
+<KbCard title="界面模块">
+<h4>查询条件区域</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>组织ID</td><td>ORG_ID</td><td>隐藏</td><td>当前用户组织ID</td><td>常显</td><td>自动获取，必填，用于筛选门店entid</td></tr>
+<tr><td>省份ID</td><td>PROVINCE_ID</td><td>下拉选择框</td><td>按省份筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>城市ID</td><td>CITY_ID</td><td>下拉选择框</td><td>按城市筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>区县ID</td><td>COUNTY_ID</td><td>下拉选择框</td><td>按区县筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>门店数量下限</td><td>TERMINAL_NUM_LOW</td><td>数值输入框</td><td>筛选门店数量低于此值的区域</td><td>常显</td><td>用户输入，筛选terminal_num &lt; 此值</td></tr>
+</tbody>
+</table>
+<h4>报表数据区域</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>省份区域名称</td><td>PROVINCE_AREANAME</td><td>文本</td><td>省份名称</td><td>常显</td><td>来自scparea(areatype=4)</td></tr>
+<tr><td>省份ID</td><td>PROVINCE_ID</td><td>隐藏</td><td>省份ID</td><td>常显</td><td>来自scparea(areatype=4)</td></tr>
+<tr><td>城市区域名称</td><td>CITY_AREANAME</td><td>文本</td><td>城市名称</td><td>常显</td><td>来自scparea(areatype=5)</td></tr>
+<tr><td>城市ID</td><td>CITY_ID</td><td>隐藏</td><td>城市ID</td><td>常显</td><td>来自scparea(areatype=5)</td></tr>
+<tr><td>区县区域名称</td><td>COUNTY_AREANAME</td><td>文本</td><td>区县名称</td><td>常显</td><td>来自scparea(areatype=6)</td></tr>
+<tr><td>区县ID</td><td>COUNTY_ID</td><td>隐藏</td><td>区县ID</td><td>常显</td><td>来自scparea(areatype=6)</td></tr>
+<tr><td>门店数量</td><td>TERMINAL_NUM</td><td>数值</td><td>该区县的门店数量</td><td>常显</td><td>COUNT(mkt_terminal WHERE county_areaid=区县ID AND entid=orgId)，无门店显示0</td></tr>
+</tbody>
+</table>
+<h4>其他按钮</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询门店区域分布数据</td><td>列表页查询区域</td><td>常显</td><td>调用POST /mkt-store-areal-distribution/search接口，分页返回区域分布数据</td></tr>
+<tr><td>导出</td><td>导出报表数据为Excel</td><td>列表页查询区域</td><td>常显</td><td>导出当前查询结果为Excel文件</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（列表页查询区域）</h4>
+<ul><li><strong>业务意义</strong>：根据查询条件搜索门店区域分布数据</li><li><strong>具体逻辑描述</strong>：</li><li>点击查询按钮，触发POST <code>/v1/&#123;organizationId&#125;/terminalReport/mkt-store-areal-distribution/search</code> 接口</li><li>请求参数为MktTerminalArealDistributionSearchDTO，包含orgId、provinceId、cityId、countyId、terminalNumLow</li><li>后端通过PageHelper.doPageAndSort实现分页查询</li><li>查询scparea表省市区三级关联，统计mkt_terminal门店数量</li><li>返回MktTerminalArealDistributionSearchVO分页结果</li></ul>
+<h4>按钮2：导出（列表页查询区域）</h4>
+<ul><li><strong>业务意义</strong>：将查询结果导出为Excel文件</li><li><strong>具体逻辑描述</strong>：</li><li>点击导出按钮，将当前查询条件下的报表数据导出为Excel</li></ul>
 </KbCard>
-<KbCard title="导入">
 
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口名称</th><th>请求方式</th><th>接口路径</th><th>权限</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>门店区域分布报表查询</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/terminalReport/mkt-store-areal-distribution/search`</td><td>组织级权限</td><td>分页查询门店区域分布数据</td></tr>
+</tbody>
+</table>
+<p><strong>接口入参（MktTerminalArealDistributionSearchDTO）：</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>参数名</th><th>类型</th><th>必填</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>orgId</td><td>Long</td><td>是</td><td>组织ID，用于筛选门店entid</td></tr>
+<tr><td>provinceId</td><td>Long</td><td>否</td><td>省份ID（精确匹配）</td></tr>
+<tr><td>cityId</td><td>Long</td><td>否</td><td>城市ID（精确匹配）</td></tr>
+<tr><td>countyId</td><td>Long</td><td>否</td><td>区县ID（精确匹配）</td></tr>
+<tr><td>searchFlag</td><td>Integer</td><td>否</td><td>搜索标志</td></tr>
+<tr><td>terminalNumLow</td><td>Integer</td><td>否</td><td>门店数量下限，筛选terminal_num &lt; 此值</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="其他按钮">
 
-无。纯查询报表，无新增/编辑/删除按钮。
+<KbCard title="后端接口Mapper SQL">
+<pre class="detail-sql" v-pre><code>-- 门店区域分布报表查询
+SELECT * FROM (
+    SELECT
+        sa1.areaname AS province_areaname,
+        sa1.areaid AS province_id,
+        sa2.areaname AS city_areaname,
+        sa2.areaid AS city_id,
+        sa3.areaname AS county_areaname,
+        sa3.areaid AS county_id,
+        NVL(mt.terminal_num, 0) AS terminal_num
+    FROM (
+        SELECT areaname, areaid, superid FROM epms.scparea WHERE areatype = 4 ORDER BY areaid ASC
+    ) sa1
+    LEFT JOIN (
+        SELECT areaname, areaid, superid FROM epms.scparea WHERE areatype = 5 ORDER BY areaid ASC
+    ) sa2 ON sa1.areaid = sa2.superid
+    LEFT JOIN (
+        SELECT areaname, areaid, superid FROM epms.scparea WHERE areatype = 6 ORDER BY areaid ASC
+    ) sa3 ON sa2.areaid = sa3.superid
+    LEFT JOIN (
+        SELECT county_areaid, COUNT(county_areaid) AS terminal_num
+        FROM epms.mkt_terminal
+        WHERE entid = #{orgId}
+        GROUP BY county_areaid
+    ) mt ON sa3.areaid = mt.county_areaid
+)
+WHERE 1 = 1
+    AND province_id = #{provinceId}          -- 省份ID（精确）
+    AND city_id = #{cityId}                  -- 城市ID（精确）
+    AND county_id = #{countyId}              -- 区县ID（精确）
+    AND terminal_num &lt; #{terminalNumLow}     -- 门店数量下限筛选</code></pre>
+</KbCard>
 
-</KbCard>
-<KbCard title="保存校验">
-</KbCard>
-<KbCard title="提交校验">
-</KbCard>
 <KbCard title="状态机">
-
-无。纯查询报表，无状态流转。
-
----
-
-</KbCard>
-<KbCard num="1" title="MKT_TERMINAL（门店档案表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| terminal_id | BIGINT | 主键 | - |
-| terminal_code | VARCHAR | 门店编码 | - |
-| terminal_name | VARCHAR | 门店名称 | - |
-| cust_id | BIGINT | 所属经销商ID | - |
-| cust_code | VARCHAR | 所属经销商编码 | - |
-| cust_name | VARCHAR | 所属经销商名称 | - |
-| county_areaid | BIGINT | 区县区域ID | 用于区域分布统计的关联键 |
-| city_areaid | BIGINT | 城市区域ID | - |
-| province_areaid | BIGINT | 省份区域ID | - |
-| entid | BIGINT | 组织ID | 按组织过滤门店 |
-| terminal_stat | INTEGER | 门店状态 | 1-运营中, 2-撤店 |
-| terminal_type | INTEGER | 门店类型 | 1~5 |
-| terminal_area | DECIMAL | 门店面积 | - |
-
+<blockquote>本页面为纯查询报表页面，无状态流转。</blockquote>
 </KbCard>
 
-<KbCard num="2" title="SCPAREA（区域基础表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| areaid | BIGINT | 区域ID | - |
-| areaname | VARCHAR | 区域名称 | - |
-| areatype | INTEGER | 区域类型 | 4-省, 5-市, 6-区县 |
-| superid | BIGINT | 上级区域ID | 省superid为国家, 市superid为省, 区县superid为市 |
-
----
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>区域表</td><td>数据来源</td><td>提供省市区三级区域数据（areatype=4/5/6）</td><td>区域数据已维护</td></tr>
+<tr><td>门店表</td><td>数据来源</td><td>统计每个区县的门店数量</td><td>门店档案已创建</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="下游影响">
+<ul><li>门店区域分布分析：管理层通过报表了解门店在各省市区县的分布情况</li><li>门店数量统计：统计每个区域的门店数量，辅助门店拓展决策</li><li>Excel导出归档：导出报表数据供内部管理决策与归档使用</li></ul>
 </KbCard>
+
+<KbCard title="SCPAREA（区域表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>AREAID</td><td>NUMBER</td><td>区域ID(主键)</td><td>省份ID/城市ID/区县ID</td><td>主键</td></tr>
+<tr><td>AREANAME</td><td>VARCHAR2</td><td>区域名称</td><td>省份名称/城市名称/区县名称</td><td>区域名称</td></tr>
+<tr><td>AREATYPE</td><td>NUMBER</td><td>区域类型</td><td>-</td><td>4=省, 5=市, 6=区县</td></tr>
+<tr><td>SUPERID</td><td>NUMBER</td><td>上级区域ID</td><td>-</td><td>关联上级区域，省superid为空</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="MKT_TERMINAL（门店表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>COUNTY_AREAID</td><td>NUMBER</td><td>区县区域ID</td><td>-</td><td>关联SCPAREA(AREATYPE=6)</td></tr>
+<tr><td>ENTID</td><td>NUMBER</td><td>企业ID</td><td>-</td><td>用于按组织ID筛选门店</td></tr>
+<tr><td>TERMINAL_STAT</td><td>NUMBER</td><td>门店状态</td><td>-</td><td>1=运营中, 2=撤店</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>查询结果为空</td><td>查询按钮点击时</td><td>当前查询条件下无门店区域分布数据，请调整查询条件后重试</td><td>低</td><td>[查看](#报错1查询结果为空)</td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错2网络请求失败接口调用异常)</td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错3权限不足未登录)</td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错4导出失败网络异常)</td></tr>
+</tbody>
+</table>
+<h4>报错1：查询结果为空</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，按当前查询条件（组织ID、省份、城市、区县、门店数量下限等）查询SCPAREA关联MKT_TERMINAL返回空结果集</li><li><strong>逻辑分析</strong>：报表通过SCPAREA表的areatype=4(省)/5(市)/6(区县)三级关联展示区域，通过子查询 <code>SELECT county_areaid, COUNT(county_areaid) AS terminal_num FROM epms.mkt_terminal WHERE entid = #&#123;orgId&#125; GROUP BY county_areaid</code> 统计每个区县的门店数量，无门店的区域显示0。若查询条件过严（如选择的省份/城市/区县下无SCPAREA记录）、或组织ID（entid）下无任何门店、或门店数量下限设置过高筛掉所有区域，均会返回空结果。注意：无门店的区域会显示0但仍返回行，只有当SCPAREA本身无匹配区域时才完全为空。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT sa3.areaid          AS 区县ID,
+         sa3.areaname        AS 区县名称,
+         NVL(mt.terminal_num, 0) AS 门店数量
+  FROM   scparea sa3
+  LEFT   JOIN (
+           SELECT county_areaid, COUNT(county_areaid) AS terminal_num
+           FROM   mkt_terminal
+           WHERE  entid = #{当前用户组织ID}
+           GROUP  BY county_areaid
+         ) mt ON sa3.areaid = mt.county_areaid
+  WHERE  sa3.areatype = 6
+  ORDER  BY sa3.areaid;</code></pre>
+<h4>报错2：网络请求失败/接口调用异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-store-areal-distribution/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalArealDistributionSearch接口分页查询SCPAREA省市区三级关联并统计MKT_TERMINAL门店数量。若后端ae-report服务未启动、Oracle数据库连接异常、SCPAREA三级关联LEFT JOIN导致慢SQL、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 区县总数
+  FROM   scparea
+  WHERE  areatype = 6;</code></pre>
+<h4>报错3：权限不足/未登录</h4>
+<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre>
+<h4>报错4：导出失败：网络异常</h4>
+<ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口将当前查询条件下的门店区域分布数据全量查询后生成Excel文件流返回。若查询数据量较大（如未限定省市区导致全国区县数据）导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定省份、城市）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT sa1.areaname        AS 省份名称,
+         COUNT(sa3.areaid)   AS 区县数量
+  FROM   scparea sa1
+  LEFT   JOIN scparea sa2 ON sa1.areaid = sa2.superid AND sa2.areatype = 5
+  LEFT   JOIN scparea sa3 ON sa2.areaid = sa3.superid AND sa3.areatype = 6
+  WHERE  sa1.areatype = 4
+  GROUP  BY sa1.areaname
+  ORDER  BY 区县数量 DESC;</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -226,79 +353,19 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">查询无数据</td>
-            <td style="font-size:13px;">该组织下无门店数据</td>
-            <td style="font-size:13px;">确认组织ID正确</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">门店数量全部为0</td>
-            <td style="font-size:13px;">MKT_TERMINAL中county_areaid未维护</td>
-            <td style="font-size:13px;">检查门店档案区域信息</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认组织ID正确</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>门店数量全部为0</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查门店档案区域信息</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">为什么有些区域门店数量为0？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>区域基础表包含所有行政区域，无门店的区域也会展示
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">terminalNumLow筛选逻辑是什么？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>筛选门店数量小于该阈值的区域，用于找出门店覆盖不足的区域
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">数据按什么排序？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>按areaid ASC排序，即区域编码升序
-    </div>
-  </div>
-</div>
+<p><strong>Q1：门店数量如何统计？</strong></p>
+<p>A：通过子查询 <code>SELECT county_areaid, COUNT(county_areaid) AS terminal_num FROM epms.mkt_terminal WHERE entid = #&#123;orgId&#125; GROUP BY county_areaid</code> 统计每个区县的门店数量，无门店的区域显示0。</p>
+<p><strong>Q2：省市区三级如何关联？</strong></p>
+<p>A：通过SCPAREA表的areatype和superid关联：省(areatype=4) → 市(areatype=5, superid=省areaid) → 区县(areatype=6, superid=市areaid)。</p>
+<p><strong>Q3：门店数量下限筛选的作用？</strong></p>
+<p>A：筛选门店数量低于指定值的区域，用于查找门店覆盖不足的区域，辅助门店拓展决策。</p>
+<p><strong>Q4：报表是否支持导出？</strong></p>
+<p>A：是，支持导出Excel。</p>
+<p><strong>Q5：报表是否支持新增/修改/删除？</strong></p>
+<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -307,10 +374,15 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 更新内容 | 更新人 |
-|------|------|---------|--------|
-| 2026-01-15 | v1.0.0 | 初始创建门店区域分布报表 | - |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-12-15</td><td>-</td><td>HZERO</td><td>初始创建门店区域分布报表查询接口</td></tr>
+<tr><td>2025-12-10</td><td>-</td><td>HZERO</td><td>初始创建TerminalReportController</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

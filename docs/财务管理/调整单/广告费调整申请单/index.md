@@ -180,33 +180,20 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：H0工作流与OA双轨审批 核心逻辑">
-<KbQuote>广告费调整申请同时走H0工作流和OA审批两条审批路径</KbQuote>
-
-**具体逻辑**：
-
-- 1、H0工作流编码SUB_ADJ_FEES_QUOTA，完成时更新auditStat="审核通过"
-- 2、OA推送封装头行报文，含调整单号/申请人/事业部/调整类型/年度/来源单据/入账时间/申请原因等
-- 3、OA回调中，最终审批节点同意时设置callbackSource=OA_PASS，拒绝时设置OA_REJECT
+<KbCard num="1" title="重点逻辑1：OA审批流程 {审批流转}">
+<ul><li><strong>业务意义</strong>：广告费调整需经OA审批，确保调整合规</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：提交时通过WorkflowCodeEnum.SUB_ADJ_FEES_QUOTA发起OA审批流程</li></ul>
+<ul><li>第2点：单据名称为"广告费调整申请"，通过oaBillRefRepository.selectByBillName推送OA</li></ul>
+<ul><li>第3点：审批通过后更新HZ_APPROVE_STATUS为APPROVED，审批拒绝更新为REJECTED</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：数据来源区分 核心逻辑">
-<KbQuote>支持人工录入和Excel导入两种数据来源</KbQuote>
-
-**具体逻辑**：
-
-- 1、dataSource字段区分——manual=人工录入，import=Excel导入
-- 2、导入时行表的adjustAmt字段记录Excel中的应调整金额
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：调整后可用金额计算 核心逻辑">
-<KbQuote>调整后可用金额=可用余额+申请调整金额(正为增加，负为扣减)</KbQuote>
-
-**具体逻辑**：
-
-- 1、行表canUseAmount为当前可用余额
-- 2、applyAdjustAmt为申请调整金额(可正可负)
-- 3、adjustedAvailableAmt=canUseAmount+applyAdjustAmt
+<KbCard num="2" title="重点逻辑2：调整类型与扣减比例 {调整计算}">
+<ul><li><strong>业务意义</strong>：不同调整类型对应不同调整逻辑，扣减比例控制调整力度</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：调整类型来源于词汇adjust_type，区分不同调整场景</li></ul>
+<ul><li>第2点：扣减比例控制调整金额占原余额的比例</li></ul>
+<ul><li>第3点：调整年度限定调整作用的预算年度</li></ul>
 </KbCard>
 
 </div>
@@ -216,344 +203,146 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：hlod低代码页面">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：广告费调整申请单列表页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>调整单号</td>
-<td>文本框</td>
-<td>系统生成的调整单号</td>
-<td>常显</td>
-<td>新建时按编码规则自动生成(含事业部编码)</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.ADJUST_HEADER_NO</td>
-</tr>
-<tr>
-<td>申请人</td>
-<td>文本框</td>
-<td>申请人</td>
-<td>常显</td>
-<td>系统自动取当前用户</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.APPLICANT</td>
-</tr>
-<tr>
-<td>申请时间</td>
-<td>日期选择器</td>
-<td>申请时间</td>
-<td>常显</td>
-<td>系统自动记录</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.APPLICANT_TIME</td>
-</tr>
-<tr>
-<td>事业部</td>
-<td>下拉选择框</td>
-<td>事业部</td>
-<td>常显</td>
-<td>必填；来源值集epm.division</td>
-<td>epm.division值集</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.DIVISION_ID</td>
-</tr>
-<tr>
-<td>调整类型</td>
-<td>下拉选择框</td>
-<td>调整类型</td>
-<td>常显</td>
-<td>必填；来源值集adjust_type</td>
-<td>adjust_type值集</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.ADJUST_TYPE</td>
-</tr>
-<tr>
-<td>调整年度</td>
-<td>文本框</td>
-<td>调整年度</td>
-<td>常显</td>
-<td>必填</td>
-<td>年度格式</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.ADJUST_YEAR</td>
-</tr>
-<tr>
-<td>扣减比例</td>
-<td>数值框</td>
-<td>扣减比例</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>0-100</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.DEDUCTION_RATIO</td>
-</tr>
-<tr>
-<td>申请原因</td>
-<td>文本域</td>
-<td>申请原因</td>
-<td>常显</td>
-<td>必填；用户输入</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.APPLYREASON</td>
-</tr>
-<tr>
-<td>来源单据类型</td>
-<td>下拉选择框</td>
-<td>来源单据类型</td>
-<td>常显</td>
-<td>来源值集fin_fee_bill_type</td>
-<td>fin_fee_bill_type值集</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.SOURCE_BILL_TYPE</td>
-</tr>
-<tr>
-<td>入账日期</td>
-<td>日期选择器</td>
-<td>入账日期</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.INVOICE_PAID_DATE</td>
-</tr>
-<tr>
-<td>审核状态</td>
-<td>下拉选择框</td>
-<td>审批状态</td>
-<td>常显</td>
-<td>默认NEW</td>
-<td>HWKF.APPROVE_STATUS值集</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA.HZ_APPROVE_STATUS</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块2：明细行">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>法人编码</td>
-<td>文本框</td>
-<td>法人编码</td>
-<td>常显</td>
-<td>选择法人后带入</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.LEGAL_ENTITY_CODE</td>
-</tr>
-<tr>
-<td>法人客户名称</td>
-<td>文本框</td>
-<td>法人名称</td>
-<td>常显</td>
-<td>选择法人后带入</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.LEGAL_ENTITY_NAME</td>
-</tr>
-<tr>
-<td>交易公司</td>
-<td>文本框</td>
-<td>交易公司名称</td>
-<td>常显</td>
-<td>选择交易公司后带入</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>经销商编码</td>
-<td>常显</td>
-<td>选择经销商后带入</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.CUST_CODE</td>
-</tr>
-<tr>
-<td>经销商名称</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>选择经销商后带入</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.CUST_NAME</td>
-</tr>
-<tr>
-<td>可用余额</td>
-<td>数值框</td>
-<td>当前可用余额</td>
-<td>常显</td>
-<td>来源资金池查询</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.CAN_USE_AMOUNT</td>
-</tr>
-<tr>
-<td>申请调整金额</td>
-<td>数值框</td>
-<td>本次申请调整金额</td>
-<td>常显</td>
-<td>必填；用户输入；正为增加，负为扣减</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.APPLY_ADJUST_AMT</td>
-</tr>
-<tr>
-<td>调整后可用金额</td>
-<td>数值框</td>
-<td>调整后的可用余额</td>
-<td>常显</td>
-<td>自动计算=可用余额+申请调整金额</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.ADJUSTED_AVAILABLE_AMT</td>
-</tr>
-<tr>
-<td>币种</td>
-<td>文本框</td>
-<td>交易币种</td>
-<td>常显</td>
-<td>来源交易公司</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.CURRENCY</td>
-</tr>
-<tr>
-<td>备注</td>
-<td>文本框</td>
-<td>行备注</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>ADS_FEE_ADJUST_IN_QUOTA_L.REMARKS</td>
-</tr>
-</tbody></table></div>
+<tr><td>调整单号</td><td>ADS_FEE_ADJUST_IN_QUOTA.ADJUST_HEADER_NO</td><td>文本框</td><td>调整申请单号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>申请人</td><td>ADS_FEE_ADJUST_IN_QUOTA.APPLICANT</td><td>文本框</td><td>申请人</td><td>常显</td><td>自动带出当前用户</td></tr>
+<tr><td>申请时间</td><td>ADS_FEE_ADJUST_IN_QUOTA.APPLICANT_TIME</td><td>日期选择框</td><td>申请时间</td><td>常显</td><td>自动带出当前时间</td></tr>
+<tr><td>交易公司</td><td>ADS_FEE_ADJUST_IN_QUOTA.TRADING_COMPANY_NAME</td><td>文本框</td><td>交易公司名称</td><td>常显</td><td>选择交易公司带出</td></tr>
+<tr><td>调整类型</td><td>ADS_FEE_ADJUST_IN_QUOTA.ADJUST_TYPE</td><td>下拉选择框</td><td>调整类型</td><td>常显</td><td>来源词汇adjust_type</td></tr>
+<tr><td>调整年度</td><td>ADS_FEE_ADJUST_IN_QUOTA.ADJUST_YEAR</td><td>文本框</td><td>调整年度</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>扣减比例</td><td>ADS_FEE_ADJUST_IN_QUOTA.DEDUCTION_RATIO</td><td>数字输入框</td><td>扣减比例</td><td>常显</td><td>手动输入</td></tr>
+<tr><td>申请原因</td><td>ADS_FEE_ADJUST_IN_QUOTA.APPLYREASON</td><td>文本框</td><td>申请原因</td><td>常显</td><td>手动输入</td></tr>
+<tr><td>H0流程审批状态</td><td>ADS_FEE_ADJUST_IN_QUOTA.HZ_APPROVE_STATUS</td><td>文本框</td><td>流程审批状态</td><td>常显</td><td>流程回调更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<h4>弹窗1：交易公司选择（单选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>tradingCompanyId</td><td>交易公司ID</td><td>交易公司ID</td><td>2001</td><td>当前用户有权限的交易公司</td></tr>
+</tbody>
+</table>
+<blockquote>查询SQL（后端接口）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT TRADING_COMPANY_ID, TRADING_COMPANY_CODE, TRADING_COMPANY_NAME
+FROM HPFM_TRADING_COMPANY WHERE ENABLED = 1</code></pre>
 </KbCard>
+
 <KbCard title="导入">
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 保存 | 保存广告费调整 | 详情页 | 编辑模式下 | 调用save接口，新增时生成调整单号 |
-| 批量删除 | 批量删除调整单 | 列表页 | 选中记录且状态允许 | 调用batch-delete接口 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新增</td><td>新建调整申请</td><td>列表页</td><td>始终可用</td><td>打开新建页面</td></tr>
+<tr><td>保存</td><td>保存调整信息</td><td>编辑页</td><td>编辑状态</td><td>调用save接口</td></tr>
+<tr><td>提交</td><td>发起OA审批</td><td>编辑页</td><td>保存后</td><td>发起SUB_ADJ_FEES_QUOTA流程</td></tr>
+<tr><td>删除</td><td>批量删除调整单</td><td>列表页</td><td>选中未提交记录</td><td>调用batchDelete接口</td></tr>
+</tbody>
+</table>
+<h4>按钮1：新增（列表页）</h4>
+<ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：打开新建页面，自动带出申请人和申请时间</li><li><strong>接口调用</strong>：无，仅前端操作</li></ul>
+<h4>按钮2：保存（编辑页）</h4>
+<ul><li><strong>触发条件</strong>：编辑状态</li><li><strong>执行逻辑</strong>：保存调整头信息和明细行到ADS_FEE_ADJUST_IN_QUOTA</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/ads-quotas/save</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id};</code></pre>
+<h4>按钮3：删除（列表页）</h4>
+<ul><li><strong>触发条件</strong>：选中未提交记录</li><li><strong>执行逻辑</strong>：批量删除选中的调整申请单</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/ads-quotas/batchDelete</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID IN (#{ids}) AND HZ_APPROVE_STATUS NOT IN ('RUN','APPROVED');</code></pre>
 </KbCard>
+
 <KbCard title="保存校验">
+<ul><li>校验1：交易公司不能为空 —— 确保调整关联明确交易公司</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：保存时校验交易公司ID不为空</p>
+<ul><li>系统体现：toast提醒</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE TRADING_COMPANY_ID IS NULL;</code></pre>
+<ul><li>校验2：调整类型不能为空 —— 确保调整类型明确</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：保存时校验调整类型不为空</p>
+<ul><li>系统体现：toast提醒</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_TYPE IS NULL;</code></pre>
 </KbCard>
+
 <KbCard title="提交校验">
+<ul><li>校验1：保存校验全部通过 —— 确保提交前数据完整</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：提交前执行保存校验全部规则</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADING_COMPANY_ID IS NULL OR ADJUST_TYPE IS NULL);</code></pre>
 </KbCard>
+
 <KbCard title="状态机">
-### 状态机
-
-<KbSubTitle>状态机流转图</KbSubTitle>
-
-
-```text
-NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APPROVED(已审批)
-  ↑                         │
-  │                         ├──审批拒绝──→ REJECTED(已拒绝)
-  │                         └──终止──────→ INTERRUPT(已终止)
-  │
-  └──删除──→ (删除)
-```
-
-<KbSubTitle>状态机列表</KbSubTitle>
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 编辑、保存、提交、删除 |
-| RUN | 审批中 | 无(等待审批结果) |
-| APPROVED | 审批通过 | 无(流程结束) |
-| REJECTED | 审批拒绝 | 编辑、重新提交 |
-| INTERRUPT | 已终止 | 无(流程结束) |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：ADS_FEE_ADJUST_IN_QUOTA（广告费调整申请头表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ADJUST_HEADER_ID | BIGINT | 主键ID | - | 自增主键 |
-| ADJUST_HEADER_NO | VARCHAR | 调整单号 | 调整单号 | 新建时按编码规则自动生成(含事业部编码变量) |
-| APPLICANT | VARCHAR | 申请人 | 申请人 | 系统自动取当前用户 |
-| APPLICANT_TIME | DATE | 申请时间 | 申请时间 | 系统自动记录 |
-| DIVISION_ID | LONG | 事业部 | 事业部 | 必填；值集epm.division |
-| ORGANIZATION_ID | LONG | 组织ID | - | 取用户上下文 |
-| ADJUST_TYPE | LONG | 调整类型 | 调整类型 | 必填；值集adjust_type |
-| ADJUST_YEAR | VARCHAR | 调整年度 | 调整年度 | 必填 |
-| DEDUCTION_RATIO | LONG | 扣减比例 | 扣减比例 | 用户输入 |
-| APPLYREASON | VARCHAR | 申请原因 | 申请原因 | 必填 |
-| SOURCE_BILL_ID | BIGINT | 来源单据ID | - | 关联来源单据 |
-| SOURCE_BILL_TYPE | VARCHAR | 来源单据类型 | 来源单据类型 | 值集fin_fee_bill_type |
-| DATA_SOURCE | VARCHAR | 数据来源 | - | manual=人工录入/import=Excel导入 |
-| INVOICE_PAID_DATE | VARCHAR | 入账日期 | 入账日期 | 用户输入 |
-| AUDIT_STAT | VARCHAR | 审核状态 | - | 审批通过后更新为"审核通过" |
-| CHECKOR | VARCHAR | 审核人 | - | 审批通过后记录 |
-| CHECK_TIME | DATETIME | 审核完成时间 | - | 审批通过后记录 |
-| HZ_INSTANCE_ID | BIGINT | 流程实例ID | - | 工作流启动后回写 |
-| HZ_APPROVE_STATUS | VARCHAR | 审批状态 | 审核状态 | 默认NEW |
-| CALLBACK_SOURCE | VARCHAR | 外部审批回调来源 | - | OA回调后更新(OA_PASS/OA_REJECT) |
-| CREATION_DATE | DATETIME | 创建时间 | - | 框架自动记录 |
-| OBJECT_VERSION_NUMBER | BIGINT | 乐观锁版本号 | - | 框架自动维护 |
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──提交──→ 审批中(RUN) ──OA审批通过──→ 已审核(APPROVED)
+                                │
+                                └──OA审批拒绝──→ 已拒绝(REJECTED)</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>已保存未提交</td><td>编辑、保存、提交、删除</td></tr>
+<tr><td>RUN</td><td>OA审批中</td><td>无（等待审批结果）</td></tr>
+<tr><td>APPROVED</td><td>OA审批通过</td><td>查看</td></tr>
+<tr><td>REJECTED</td><td>OA审批拒绝</td><td>修改、重新提交</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="表2：ADS_FEE_ADJUST_IN_QUOTA_L（广告费调整申请行表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ADJUST_LINE_ID | BIGINT | 行ID(主键) | - | 自增主键 |
-| ADJUST_HEADER_ID | BIGINT | 头ID | - | 关联头表 |
-| SEQ | LONG | 序号 | - | 自动生成 |
-| YEAR | VARCHAR | 年度 | - | 来源头表 |
-| DIVISION_ID | LONG | 事业部 | - | 来源头表 |
-| LEGAL_ENTITY_ID | BIGINT | 法人ID | 法人编码 | 选择法人后带入 |
-| LEGAL_ENTITY_CODE | VARCHAR | 法人编码 | 法人编码 | - |
-| LEGAL_ENTITY_NAME | VARCHAR | 法人客户名称 | 法人客户名称 | - |
-| TRADING_COMPANY_ID | BIGINT | 交易公司ID | 交易公司 | 选择交易公司后带入 |
-| TRADING_COMPANY_CODE | VARCHAR | 交易公司编码 | - | - |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司 | - |
-| CUST_ID | BIGINT | 经销商ID | 经销商编码 | 选择经销商后带入 |
-| CUST_CODE | VARCHAR | 经销商编码 | 经销商编码 | - |
-| CUST_NAME | VARCHAR | 经销商名称 | 经销商名称 | - |
-| CAN_USE_AMOUNT | DECIMAL | 可用余额 | 可用余额 | 来源资金池查询 |
-| APPLY_ADJUST_AMT | DECIMAL | 申请调整金额 | 申请调整金额 | 必填；用户输入 |
-| ADJUSTED_AVAILABLE_AMT | DECIMAL | 调整后可用金额 | 调整后可用金额 | 自动计算=可用余额+申请调整金额 |
-| ADJUST_AMT | LONG | 应调整金额(导入) | - | Excel导入时的原始应调整金额 |
-| CURRENCY | VARCHAR | 币种 | 币种 | 来源交易公司 |
-| REMARKS | VARCHAR | 备注 | 备注 | 用户输入 |
-
----
-
+<KbCard title="表1：ADS_FEE_ADJUST_IN_QUOTA（额度内广告费调整表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ADJUST_HEADER_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+<tr><td>ADJUST_HEADER_NO</td><td>VARCHAR</td><td>调整单号</td><td>调整单号</td><td>自动生成</td></tr>
+<tr><td>APPLICANT</td><td>VARCHAR</td><td>申请人</td><td>申请人</td><td>自动带出当前用户</td></tr>
+<tr><td>APPLICANT_TIME</td><td>DATETIME</td><td>申请时间</td><td>申请时间</td><td>自动带出当前时间</td></tr>
+<tr><td>DIVISION_ID</td><td>BIGINT</td><td>事业部词汇值</td><td>-</td><td>词汇epm.division</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>BIGINT</td><td>组织ID</td><td>-</td><td>系统带出</td></tr>
+<tr><td>TRADING_COMPANY_ID</td><td>BIGINT</td><td>交易公司ID</td><td>-</td><td>选择交易公司带出</td></tr>
+<tr><td>TRADING_COMPANY_CODE</td><td>VARCHAR</td><td>交易公司编码</td><td>-</td><td>选择交易公司带出</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>VARCHAR</td><td>交易公司名称</td><td>交易公司</td><td>选择交易公司带出</td></tr>
+<tr><td>ADJUST_TYPE</td><td>BIGINT</td><td>调整类型</td><td>调整类型</td><td>来源词汇adjust_type</td></tr>
+<tr><td>ADJUST_YEAR</td><td>VARCHAR</td><td>调整年度</td><td>调整年度</td><td>手动选择</td></tr>
+<tr><td>DEDUCTION_RATIO</td><td>BIGINT</td><td>扣减比例</td><td>扣减比例</td><td>手动输入</td></tr>
+<tr><td>APPLYREASON</td><td>VARCHAR</td><td>申请原因</td><td>申请原因</td><td>手动输入</td></tr>
+<tr><td>STAT</td><td>BIGINT</td><td>单据状态(已弃用)</td><td>-</td><td>已弃用，使用HZ_APPROVE_STATUS</td></tr>
+<tr><td>WFID</td><td>BIGINT</td><td>流程ID</td><td>-</td><td>提交时生成</td></tr>
+<tr><td>WFFLAG</td><td>BIGINT</td><td>流程标识</td><td>-</td><td>流程回调更新</td></tr>
+<tr><td>CHECKOR</td><td>VARCHAR</td><td>审核人</td><td>-</td><td>审批通过时带出</td></tr>
+<tr><td>CHECK_TIME</td><td>DATETIME</td><td>审核完成时间</td><td>-</td><td>审批通过时带出</td></tr>
+<tr><td>INVOICE_PAID_DATE</td><td>VARCHAR</td><td>入账日期</td><td>-</td><td>审批通过后设置</td></tr>
+<tr><td>SOURCE_BILL_ID</td><td>BIGINT</td><td>来源单据ID</td><td>-</td><td>关联来源单据</td></tr>
+<tr><td>SOURCE_BILL_TYPE</td><td>VARCHAR</td><td>来源单据类型</td><td>-</td><td>字典fin_fee_bill_type</td></tr>
+<tr><td>DATA_SOURCE</td><td>VARCHAR</td><td>数据来源</td><td>-</td><td>import=导入，manual=人工录入</td></tr>
+<tr><td>AUDIT_STAT</td><td>VARCHAR</td><td>审核状态</td><td>-</td><td>流程回调更新</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>BIGINT</td><td>H0流程实例ID</td><td>-</td><td>提交时生成</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>H0流程审批状态</td><td>H0流程审批状态</td><td>流程回调更新</td></tr>
+<tr><td>CALLBACK_SOURCE</td><td>VARCHAR</td><td>外部审批回调来源</td><td>-</td><td>枚举CallbackSourceEnum</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
-</KbCard>
 </div>
 </div>
 </div>
@@ -561,62 +350,77 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">调整单号生成失败</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">编码规则AE_SA_ADS_FEE_ADJUST_IN_QUOTA_ADJ未配置</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">明细行不允许为空</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">无明细行记录</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>调整单号生成失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>编码规则AE_SA_ADS_FEE_ADJUST_IN_QUOTA_ADJ未配置</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>明细行不允许为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>无明细行记录</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>交易公司不能为空</td><td>保存时</td><td>未选择交易公司，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>调整类型不能为空</td><td>保存时</td><td>未选择调整类型，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>推送OA失败：广告费调整申请不存在</td><td>提交推送OA时</td><td>调整单已被删除或数据异常，刷新列表后重试</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>OA回传单号为空，请检查！</td><td>OA审批回调时</td><td>OA回传报文缺少单号字段，检查OA流程配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>OA回传单号不存在，请检查！</td><td>OA审批回调时</td><td>OA回传单号在系统中找不到对应记录，检查OA单据映射</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>请选择要删除的记录！</td><td>删除时</td><td>未选中任何记录，选中后删除</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>网络请求失败</td><td>保存/提交/删除时</td><td>后端服务不可用或OA系统不可达，确认服务正常</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无交易公司数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：交易公司不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择交易公司直接点击保存</li><li><strong>逻辑分析</strong>：保存接口ads-quotas/save在写入ADS_FEE_ADJUST_IN_QUOTA前校验TRADING_COMPANY_ID非空。交易公司是广告费调整关联额度内余额和法人的前置条件，未选择交易公司将导致调整无法定位到具体余额账户，后续审批通过后也无法回写余额。校验在Controller层前置拦截，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
+         ADJUST_TYPE, HZ_APPROVE_STATUS
+  FROM ADS_FEE_ADJUST_IN_QUOTA
+  WHERE TRADING_COMPANY_ID IS NULL OR TRADING_COMPANY_NAME IS NULL;</code></pre>
+<h4>报错2：调整类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户未选择调整类型（来源词汇adjust_type）直接点击保存</li><li><strong>逻辑分析</strong>：调整类型决定调整的业务场景和扣减逻辑，不同ADJUST_TYPE对应不同处理分支。未选择调整类型将导致后续扣减比例（DEDUCTION_RATIO）应用逻辑无法确定，审批通过后余额调整方向和金额计算无依据。校验ADJUST_TYPE非空，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, TRADING_COMPANY_NAME, ADJUST_TYPE,
+         ADJUST_YEAR, DEDUCTION_RATIO, HZ_APPROVE_STATUS
+  FROM ADS_FEE_ADJUST_IN_QUOTA
+  WHERE ADJUST_TYPE IS NULL;</code></pre>
+<h4>报错3：推送OA失败：广告费调整申请不存在</h4>
+<ul><li><strong>触发条件</strong>：用户提交调整单后，doOaAudit方法中adsFeeAdjustInQuotaMapper.selectList查询返回空集合</li><li><strong>逻辑分析</strong>：提交后系统调用AdsFeeAdjustInQuotaServiceImpl.doOaAudit推送OA，先通过adsFeeAdjustInQuotaMapper.selectList按adjustHeaderId查询调整单数据。返回空集合（CollectionUtils.isEmpty(quotaList)）时抛出CommonException("推送OA失败：广告费调整申请不存在")。根因有三类：(1)调整单在提交后被其他用户删除；(2)adjustHeaderId传参错误；(3)数据权限过滤导致查询不到。需刷新列表确认调整单存在后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_NAME,
+         ADJUST_TYPE, HZ_APPROVE_STATUS, WFID, HZ_INSTANCE_ID
+  FROM ADS_FEE_ADJUST_IN_QUOTA
+  WHERE ADJUST_HEADER_ID = #{adjustHeaderId};</code></pre>
+<h4>报错4：OA回传单号为空，请检查！</h4>
+<ul><li><strong>触发条件</strong>：OA审批完成后回调doProcessOA方法，回传报文中adjustHeaderNo字段为空</li><li><strong>逻辑分析</strong>：doProcessOA方法接收OABillCallbackDTO，从中获取adjustHeaderNo（OA回传单号）。若StringUtils.isBlank(adjustHeaderNo)为true则抛出CommonException("OA回传单号为空，请检查！")。根因有二：(1)OA流程表单配置缺少"调整单号"字段映射；(2)OA回传报文格式异常。需检查OA流程SUB_ADJ_FEES_QUOTA的表单字段配置及单据映射关系</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查OA单据映射配置
+  SELECT OABILL_ID, BILL_NAME, ENABLED
+  FROM OA_BILL_REF
+  WHERE BILL_NAME = '广告费调整申请';</code></pre>
+<h4>报错5：OA回传单号不存在，请检查！</h4>
+<ul><li><strong>触发条件</strong>：OA审批回调时，按adjustHeaderNo查询ADS_FEE_ADJUST_IN_QUOTA表返回null</li><li><strong>逻辑分析</strong>：doProcessOA方法中通过adsFeeAdjustInQuotaMapper.selectByCondition按ADJUST_HEADER_NO查询调整单。若结果为空（adsFeeAdjustInQuota == null）则抛出CommonException("OA回传单号不存在，请检查！")。根因有三类：(1)OA回传的单号在系统中不存在（如测试环境OA回调到生产）；(2)调整单已被物理删除；(3)单号格式不匹配（如OA传带前缀的单号，系统中存储无前缀）。需核对OA回传单号与系统ADJUST_HEADER_NO字段</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
+         CALLBACK_SOURCE, HZ_INSTANCE_ID
+  FROM ADS_FEE_ADJUST_IN_QUOTA
+  WHERE ADJUST_HEADER_NO = #{adjustHeaderNo};</code></pre>
+<h4>报错6：请选择要删除的记录！</h4>
+<ul><li><strong>触发条件</strong>：用户未选中任何调整单直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：batchDelete方法接收adjustHeaderIds列表，若CollectionUtils.isEmpty(adjustHeaderIds)为true则抛出CommonException("请选择要删除的记录！")。前端列表页需选中至少一条记录才可触发删除操作。需在列表中勾选目标记录后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查可删除的调整单（未提交或已拒绝状态）
+  SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, HZ_APPROVE_STATUS
+  FROM ADS_FEE_ADJUST_IN_QUOTA
+  WHERE HZ_APPROVE_STATUS NOT IN ('RUN', 'APPROVED')
+  ORDER BY APPLICANT_TIME DESC;</code></pre>
+<h4>报错7：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：用户点击保存/提交/删除按钮，前端调用对应接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面通过AdsFeeAdjustInQuotaController提供save/batchDelete接口，提交时通过oaSdkService.toDataOA推送OA系统。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)OA系统不可达，toDataOA调用超时或失败；(3)数据库连接异常；(4)网关或网络层故障。需先确认ae-business服务和OA系统连通性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查调整单数据量
+  SELECT HZ_APPROVE_STATUS, COUNT(*) AS 记录数
+  FROM ADS_FEE_ADJUST_IN_QUOTA
+  GROUP BY HZ_APPROVE_STATUS;</code></pre>
+<h4>报错8：权限不足</h4>
+<ul><li><strong>触发条件</strong>：用户登录后进入广告费调整申请单页面，当前用户无对应交易公司的数据权限</li><li><strong>逻辑分析</strong>：本页面按交易公司维度查询，数据权限通过用户上下文控制可见交易公司范围。权限不足根因有二：(1)用户未分配对应交易公司的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应交易公司数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查用户可访问的交易公司
+  SELECT USER_ID, TRADING_COMPANY_ID, TRADING_COMPANY_NAME, ENABLED
+  FROM USER_TRADING_COMPANY_AUTH
+  WHERE USER_ID = #{userId};</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">OA审批后审核状态未更新</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>OA回调中判断"最终审批节点"条件不满足<br>
-      <strong style="color:#7C3AED;">处理：</strong>确认OA审批是否为最终审批节点通过
-    </div>
-  </div>
-</div>
+<ul><li>问题1：OA审批流程未发起</li><li>原因：OA系统不可用或工作流配置缺失</li><li>解决思路：检查工作流SUB_ADJ_FEES_QUOTA配置，确认OA系统连接</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -625,14 +429,15 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-09-15 | - | - | 初始创建广告费调整申请单功能 |
-
-> 要求：
-> 1. 按倒序展示
-> 2. 只需要包含2026年的提交记录
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写，补充界面模块、选择弹窗、保存校验、状态机、数据库表详解</td></tr>
+<tr><td>2025-11-17</td><td>-</td><td>YD</td><td>初始创建AdsFeeAdjustInQuota实体</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

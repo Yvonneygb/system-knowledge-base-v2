@@ -195,59 +195,34 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 门店编码自动生成">
-
-<KbQuote>审批通过时自动生成唯一门店编码，规则为城市编码+事业部编码+流水号</KbQuote>
-**具体逻辑**：
-
-- 1、审批通过时调用`getMktTerminalCode`方法生成门店编码
-- 2、编码规则：城市车辆编码(barCode) + 事业部编码(divisionCode) + 5位流水号
-- 3、流水号通过Redis自增key实现：`ae:terminal:{divisionCode}:{barCode}`
-- 4、业务意义：保证门店编码全局唯一且可追溯归属区域和事业部
+<KbCard num="1" title="重点逻辑1：工作流审批驱动">
+<ul><li><strong>业务意义</strong>：新建门店需经OA审批通过后才能正式建立门店档案</li><li><strong>具体逻辑描述</strong>：</li><li>工作流编码：NEW_STORE_APPLY（"新建门店"）</li><li>提交审批：wfProcSubmit方法组装流程参数，调用workflowClient.startInstanceByFlowKey发起流程</li><li>OA链接标题格式："新建门店申请_门店名称_申请单号_更新时间"</li><li>流程参数包含：applyId、terminalApplyId、startRealName、custId、terminalType、terminalNameFlag、terminalStat、tradeYears</li><li>审批状态：NEW(新建) → RUN(审批中) → APPROVED(已审批) / REJECTED(已驳回)</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 审批通过自动创建门店档案">
-
-<KbQuote>审批通过后自动将申请单数据创建为门店档案并记录审核人</KbQuote>
-**具体逻辑**：
-
-- 1、审批通过后调用`syncMktTerminal`方法，将申请单数据通过MapStruct转换为门店档案实体
-- 2、新建门店档案时设置`usable=2`（有效），记录审核人和审核时间
-- 3、同时将申请单的审批状态更新为APPROVED
-- 4、业务意义：确保门店档案的创建必须经过审批，避免随意建店
+<KbCard num="2" title="重点逻辑2：门店编码自动生成">
+<ul><li><strong>业务意义</strong>：审批通过后自动生成唯一门店编码，确保编码规范统一</li><li><strong>具体逻辑描述</strong>：</li><li>编码规则：terminalCode = barCode + divisionCode + 5位流水号</li><li>流水号通过Redis自增生成，key = "ae:terminal:" + divisionCode + ":" + barCode</li><li>格式化：String.format("%05d", serialNumber)，补零到5位</li><li>barCode为车辆简称，divisionCode为事业部编码</li></ul>
 </KbCard>
 
-<KbCard num="3" title="2.3 附件迁移">
-
-<KbQuote>审批通过后申请单附件自动迁移归档到门店档案</KbQuote>
-**具体逻辑**：
-
-- 1、审批通过后，将申请单的附件（attachConfId=8122）迁移到门店档案（attachConfId=8123）
-- 2、迁移时重新设置objId为新创建的门店ID
-- 3、根据用户所属部门匹配对应的attachTypeId
-- 4、业务意义：申请阶段的附件自动归档到门店档案下
+<KbCard num="3" title="重点逻辑3：审批通过同步门店档案">
+<ul><li><strong>业务意义</strong>：审批通过后将申请数据同步到门店档案表（MKT_TERMINAL），正式建立门店档案</li><li><strong>具体逻辑描述</strong>：</li><li>syncMktTerminal方法：</li></ul>
+<p>1. 查询申请单，不存在抛CommonException("单据信息不匹配")</p>
+<p>2. 根据城市ID查询SCPAREA区域表，生成门店编码</p>
+<p>3. 更新申请单：hzApproveStatus=APPROVED、checkTime=now、checkor=当前用户</p>
+<p>4. 通过MktTerminalConvert转换为MktTerminal实体，设置usable=2、objectVersionNumber=1</p>
+<p>5. insertSelective插入门店档案表</p>
 </KbCard>
 
-<KbCard num="4" title="2.4 工作流提交参数构造">
-
-<KbQuote>提交工作流时传递业务参数用于审批节点分支和路由</KbQuote>
-**具体逻辑**：
-
-- 1、提交工作流时传递关键业务参数：applyId、terminalApplyId、startRealName、custId、terminalType、terminalNameFlag、terminalStat、tradeYears、oALinkTitle
-- 2、`terminalNameFlag`根据门店类型和名称判断：类型=2返回"1"，名称含"五金店"或"优选店"返回"2"，其他返回"3"
-- 3、`oALinkTitle`格式：`新建门店申请_门店名称_申请单号_更新时间`
-- 4、业务意义：工作流节点根据这些参数进行条件分支和审批人路由
+<KbCard num="4" title="重点逻辑4：附件迁移">
+<ul><li><strong>业务意义</strong>：审批通过后将申请阶段的附件迁移到新门店档案下</li><li><strong>具体逻辑描述</strong>：</li><li>onWfComplete方法中：</li></ul>
+<p>1. 查询附件关系ObjAttachRel（attachConfId=8122）</p>
+<p>2. 查询附件类型ObjAttachType（attachConfId=8123）</p>
+<p>3. 将附件attachConfId改为8123、objId改为新门店terminalId</p>
+<p>4. attachTypeId按组织匹配</p>
+<p>5. batchInsert批量插入附件关系到新门店</p>
 </KbCard>
 
-<KbCard num="5" title="2.5 工作流回调统一处理">
-
-<KbQuote>继承抽象类统一分发审批结果，通过/驳回分别处理</KbQuote>
-**具体逻辑**：
-
-- 1、继承AbstractTerminalServiceImpl的`workFlowEvent`方法统一分发审批结果
-- 2、审批通过(APPROVED) → onWfComplete：创建门店档案+迁移附件
-- 3、驳回(REBUT)/退回(RETURN)/终止(INTERRUPT)/撤回(WITHDRAW)/拒绝(REJECTED) → onWfBreak：仅更新审批状态
-- 4、--
+<KbCard num="5" title="重点逻辑5：门店名称标识计算">
+<ul><li><strong>业务意义</strong>：根据门店类型和名称计算标识，用于工作流分支路由</li><li><strong>具体逻辑描述</strong>：</li><li>terminalType==2 → "1"</li><li>terminalName==null → "3"</li><li>terminalName包含"五金店" → "2"</li><li>terminalName包含"优选店" → "2"</li><li>其他 → "3"</li></ul>
 </KbCard>
 
 </div>
@@ -257,162 +232,348 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
-<KbSubTitle>选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| 分销商选择 | d_cust_id/d_cust_code/d_cust_name | 选择所属分销商 |  |
-| 行政区划选择 | province_areaid/city_areaid/county_areaid | 选择省市区，带出名称 |  |
-
+<KbCard title="界面模块">
+<h4>门店申请单头表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>门店申请单ID</td><td>TERMINAL_APPLY_ID</td><td>隐藏</td><td>主键</td><td>常显</td><td>系统自动生成</td></tr>
+<tr><td>门店申请单号</td><td>TERMINAL_APPLY_NO</td><td>文本</td><td>申请单号</td><td>常显</td><td>编码规则生成</td></tr>
+<tr><td>门店编码</td><td>TERMINAL_CODE</td><td>文本</td><td>门店编码</td><td>审批通过后显示</td><td>审批通过时自动生成：barCode+divisionCode+5位流水号</td></tr>
+<tr><td>门店名称</td><td>TERMINAL_NAME</td><td>文本框</td><td>门店名称</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>所属经销商ID</td><td>CUST_ID</td><td>隐藏</td><td>经销商ID</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>文本</td><td>经销商编码</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>文本</td><td>经销商名称</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>经销商简称</td><td>SHORT_NAME</td><td>文本</td><td>经销商简称</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>门店详细地址</td><td>ADDR</td><td>文本框</td><td>门店详细地址</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>省份名称</td><td>PROVINCE_AREANAME</td><td>下拉选择框</td><td>省份</td><td>常显</td><td>用户选择，联动城市</td></tr>
+<tr><td>城市名称</td><td>CITY_AREANAME</td><td>下拉选择框</td><td>城市</td><td>常显</td><td>用户选择，联动区县</td></tr>
+<tr><td>区县名称</td><td>COUNTY_AREANAME</td><td>下拉选择框</td><td>区县</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>门店类型</td><td>TERMINAL_TYPE</td><td>下拉选择框</td><td>门店类型</td><td>常显</td><td>用户选择（1=专卖/2=商超/3=家装/4=社区/5=乡镇）</td></tr>
+<tr><td>门店面积</td><td>TERMINAL_AREA</td><td>数值输入框</td><td>门店面积(平米)</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>经营属性</td><td>CUSTOMER_CLASS</td><td>下拉选择框</td><td>经营属性</td><td>常显</td><td>用户选择（1=直营专营/2=经销专营/3=分销）</td></tr>
+<tr><td>经营品牌</td><td>BRAND</td><td>文本框</td><td>经营品牌</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>是否连锁</td><td>IS_LS</td><td>下拉选择框</td><td>是否连锁</td><td>常显</td><td>用户选择（2=连锁）</td></tr>
+<tr><td>门店位置类型</td><td>STORE_LOCATION_TYPE</td><td>下拉选择框</td><td>店态位置</td><td>常显</td><td>用户选择（LOV: Store_Location_Type）</td></tr>
+<tr><td>装修风格</td><td>DECORATION_STYLE</td><td>下拉选择框</td><td>店面装修风格</td><td>常显</td><td>用户选择（LOV）</td></tr>
+<tr><td>产权归属</td><td>PROPERTY_TYPE</td><td>下拉选择框</td><td>产权归属</td><td>常显</td><td>用户选择（LOV）</td></tr>
+<tr><td>门店装修等级</td><td>FIXUP_GRADE</td><td>下拉选择框</td><td>门店装修等级</td><td>常显</td><td>用户选择（LOV）</td></tr>
+<tr><td>开店日期</td><td>IN_SHOP_DATE</td><td>日期选择器</td><td>开店日期</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>最新装修日期</td><td>LATEST_DECORATION_DATE</td><td>日期选择器</td><td>最新装修日期</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>开始经营日期</td><td>START_SALEME_DATE</td><td>日期选择器</td><td>开始经营我司产品日期</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>店面租赁到期日</td><td>LEASE_EXPIRATION_DATE</td><td>日期选择器</td><td>店面租赁到期日</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>负责人</td><td>SHOPMANAGER_NAME</td><td>文本框</td><td>负责人</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>负责人电话</td><td>SHOPMANAGER_MOB</td><td>文本框</td><td>负责人电话</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>店长姓名</td><td>SORE_MANAGERS_NAME</td><td>文本框</td><td>店长姓名</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>店长联系电话</td><td>SORE_MANAGERS_TEL</td><td>文本框</td><td>店长联系电话</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>店长数量</td><td>SORE_MANAGERS_COUNT</td><td>数值输入框</td><td>店长数量</td><td>常显</td><td>用户输入，@NotNull</td></tr>
+<tr><td>导购员数量</td><td>GUIDE_COUNT</td><td>数值输入框</td><td>导购员数量</td><td>常显</td><td>用户输入，@NotNull</td></tr>
+<tr><td>设计师数量</td><td>DESIGNER_COUNT</td><td>数值输入框</td><td>设计师数量</td><td>常显</td><td>用户输入，@NotNull</td></tr>
+<tr><td>服务工程师数量</td><td>SERVICE_ENGINEER_COUNT</td><td>数值输入框</td><td>服务工程师数量</td><td>常显</td><td>用户输入，@NotNull</td></tr>
+<tr><td>销售区域ID</td><td>SALEZONE_ORG_ID</td><td>隐藏</td><td>销售区域ID</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>销售区域名称</td><td>SALEZONE_ORG_NAME</td><td>文本</td><td>销售区域名称</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>运营中心ID</td><td>OPERAT_CENTER_ORG_ID</td><td>隐藏</td><td>运营中心ID</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>运营中心名称</td><td>OPERAT_CENTER_ORG_NAME</td><td>文本</td><td>运营中心名称</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>事业部ID</td><td>DIVISION_ID</td><td>隐藏</td><td>事业部ID</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>事业部编码</td><td>DIVISION_CODE</td><td>隐藏</td><td>事业部编码</td><td>常显</td><td>选择经销商时带入</td></tr>
+<tr><td>经销商自营门店数</td><td>JX_STORE_COUNT</td><td>数值输入框</td><td>经销商自营门店数</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>经销商月均销售额</td><td>JX_STORE_SALESAMT</td><td>数值输入框</td><td>经销商月均销售额(万元)</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>分销商自营门店数</td><td>FX_STORE_COUNT</td><td>数值输入框</td><td>分销商自营门店数</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>分销商月均销售额</td><td>FX_STORE_SALESAMT</td><td>数值输入框</td><td>分销商月均销售额(万元)</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>当地常住人口</td><td>CITY_CHANGZHURENKOU</td><td>数值输入框</td><td>当地常住人口(万人)</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>上年度GDP</td><td>CITY_GDP</td><td>数值输入框</td><td>上年度GDP(万元)</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>人均GDP</td><td>CITY_GDP_PERPESON</td><td>数值输入框</td><td>人均GDP(万元)</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>连锁商场ID</td><td>SYS_ID</td><td>隐藏</td><td>连锁商场ID</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>连锁商场编码</td><td>SYS_CODE</td><td>文本</td><td>连锁商场编码</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>车辆简称</td><td>BAR_CODE</td><td>文本框</td><td>车辆简称</td><td>常显</td><td>用户输入，用于生成门店编码</td></tr>
+<tr><td>备注</td><td>NOTE</td><td>文本域</td><td>备注</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>H0流程实例ID</td><td>HZ_INSTANCE_ID</td><td>隐藏</td><td>工作流实例ID</td><td>常显</td><td>提交审批时自动赋值</td></tr>
+<tr><td>H0流程审批状态</td><td>HZ_APPROVE_STATUS</td><td>文本</td><td>审批状态</td><td>常显</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>申请人</td><td>CREATOR</td><td>文本</td><td>申请人</td><td>常显</td><td>系统自动赋值当前用户</td></tr>
+<tr><td>申请日期</td><td>CREATE_TIME</td><td>日期</td><td>申请日期</td><td>常显</td><td>系统自动赋值当前时间</td></tr>
+<tr><td>审核人</td><td>CHECKOR</td><td>文本</td><td>审核人</td><td>审批通过后显示</td><td>审批通过时自动赋值</td></tr>
+<tr><td>审核时间</td><td>CHECK_TIME</td><td>日期</td><td>审核时间</td><td>审批通过后显示</td><td>审批通过时自动赋值</td></tr>
+</tbody>
+</table>
+<h4>经销品类品牌明细</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>序号</td><td>SEQ</td><td>数值</td><td>序号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>经销品类</td><td>ITEM_TYPE</td><td>下拉选择框</td><td>经销品类</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>经销品牌</td><td>BRAND</td><td>文本框</td><td>经销品牌</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>是否我集团其它品牌</td><td>IS_WEOTHER_BRAND</td><td>下拉选择框</td><td>是否我集团其它品牌</td><td>常显</td><td>用户选择</td></tr>
+</tbody>
+</table>
+<h4>其他品类明细</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>序号</td><td>SEQ</td><td>数值</td><td>序号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>经销品类名称</td><td>BRAND_ITEM_TYPE</td><td>文本框</td><td>经销品类名称</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>品牌名称</td><td>BRAND_NAME</td><td>文本框</td><td>品牌名称</td><td>常显</td><td>用户输入</td></tr>
+</tbody>
+</table>
+<h4>其他按钮</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>保存</td><td>保存草稿</td><td>列表页/详情页</td><td>常显</td><td>保存申请数据，hzApproveStatus=NEW</td></tr>
+<tr><td>提交</td><td>提交审批</td><td>详情页</td><td>hzApproveStatus=NEW</td><td>调用wfProcSubmit发起工作流，hzApproveStatus=RUN</td></tr>
+<tr><td>同步门店档案</td><td>审批通过同步门店档案</td><td>后端回调</td><td>hzApproveStatus=RUN且OA审批通过</td><td>调用syncMktTerminal生成门店编码并插入MKT_TERMINAL</td></tr>
+</tbody>
+</table>
+<h4>按钮1：保存（详情页）</h4>
+<ul><li><strong>业务意义</strong>：保存门店申请草稿数据</li><li><strong>具体逻辑描述</strong>：</li><li>保存主表MktTerminalApply数据</li><li>级联保存行表MktTerminalApplyLine（经销品类品牌明细）</li><li>级联保存品牌表MktTerminalApplyBrand（其他品类明细）</li><li>hzApproveStatus设为NEW</li></ul>
+<h4>按钮2：提交（详情页）</h4>
+<ul><li><strong>业务意义</strong>：提交门店申请进入OA审批流程</li><li><strong>具体逻辑描述</strong>：</li><li>调用wfProcSubmit方法</li><li>组装流程参数：applyId、terminalApplyId、startRealName、custId、terminalType、terminalNameFlag、terminalStat、tradeYears</li><li>OA链接标题："新建门店申请_门店名称_申请单号_更新时间"</li><li>调用workflowClient.startInstanceByFlowKey发起流程（FlowKey=NEW_STORE_APPLY）</li><li>回写hzInstanceId和hzApproveStatus=RUN</li></ul>
+<h4>按钮3：同步门店档案（后端回调）</h4>
+<ul><li><strong>业务意义</strong>：审批通过后自动同步门店档案</li><li><strong>具体逻辑描述</strong>：</li><li>OA审批通过后回调onWfComplete</li><li>调用syncMktTerminal：</li></ul>
+<p>1. 生成门店编码（barCode + divisionCode + 5位Redis流水号）</p>
+<p>2. 更新申请单hzApproveStatus=APPROVED</p>
+<p>3. 转换为MktTerminal实体，insertSelective插入门店档案表</p>
+<ul><li>迁移附件到新门店</li></ul>
 </KbCard>
-<KbCard title="导入">
-无导入功能。
 
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口名称</th><th>请求方式</th><th>接口路径</th><th>权限</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>同步门店档案</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/mkt-terminal-applys`</td><td>permissionLogin=true</td><td>审批通过后同步门店档案（调用syncMktTerminal）</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="其他按钮">
 
-| 按钮名称 | 功能说明 |
-|---------|---------|
-| 新增 | 新建门店申请单 |
-| 保存 | 保存草稿，不提交审批 |
-| 提交 | 保存并提交工作流审批 |
-| 审批通过同步 | 手动触发syncMktTerminal（审批通过后调用） |
-
-</KbCard>
-<KbCard title="保存校验">
-- terminalApplyNo（申请单号）不能为空（@NotBlank）
-
-- soreManagersCount（店长数量）不能为空（@NotNull）
-
-- guideCount（导购员数量）不能为空（@NotNull）
-
-- designerCount（设计师数量）不能为空（@NotNull）
-
-- serviceEngineerCount（服务工程师数量）不能为空（@NotNull）
-
-- hzApproveStatus（审批状态）不能为空（@NotBlank）
-
-</KbCard>
-<KbCard title="提交校验">
-- 校验申请单数据必须存在，否则抛出"单据信息不匹配"
-
-- 校验工作流编码必须正确
-
-</KbCard>
 <KbCard title="状态机">
-
-```
-[新建/草稿] --提交--> [审批中(RUN)] --审批通过--> [已批准(APPROVED)]
-                          |
-                          +--驳回--> [已驳回(REBUT)]
-                          +--退回--> [已退回(RETURN)]
-                          +--终止--> [已终止(INTERRUPT)]
-                          +--撤回--> [已撤回(WITHDRAW)]
-                          +--拒绝--> [已拒绝(REJECTED)]
-```
-
----
-
-</KbCard>
-<KbCard num="1" title="MKT_TERMINAL_APPLY">
-
-| 列名 | 类型 | 说明 | 是否可空 | 默认值 |
-|-----|------|------|---------|-------|
-| terminal_apply_id | BIGINT | 门店申请单ID(主键) | N | 自增 |
-| terminal_apply_no | VARCHAR | 门店申请单号 | N | - |
-| terminal_code | VARCHAR | 门店编码 | Y | - |
-| terminal_name | VARCHAR | 门店名称 | Y | - |
-| cust_id | BIGINT | 所属经销商ID | Y | - |
-| cust_code | VARCHAR | 所属经销商编码 | Y | - |
-| cust_name | VARCHAR | 所属经销商名称 | Y | - |
-| addr | VARCHAR | 门店详细地址 | Y | - |
-| stat | BIGINT | 单据状态(已弃用) | Y | - |
-| creator | VARCHAR | 申请人 | Y | - |
-| create_time | DATETIME | 申请日期 | Y | - |
-| updator | VARCHAR | 更新人 | Y | - |
-| update_time | DATETIME | 更新日期 | Y | - |
-| checkor | VARCHAR | 审核人 | Y | - |
-| check_time | DATETIME | 审核时间 | Y | - |
-| note | VARCHAR | 备注 | Y | - |
-| sys_id | BIGINT | 连锁商场ID | Y | - |
-| sys_code | VARCHAR | 连锁商场编码 | Y | - |
-| shopmanager_name | VARCHAR | 负责人 | Y | - |
-| division_id | BIGINT | 事业部ID | Y | - |
-| shopmanager_mob | VARCHAR | 负责人电话 | Y | - |
-| wfid | BIGINT | 流程ID | Y | - |
-| wfflag | BIGINT | 流程FLAG | Y | - |
-| entid | BIGINT | 组织ID | Y | - |
-| in_shop_date | DATE | 开店日期 | Y | - |
-| terminal_type | BIGINT | 门店类型 | Y | - |
-| terminal_area | BIGINT | 门店面积 | Y | - |
-| customer_class | BIGINT | 经营属性 | Y | - |
-| brand | VARCHAR | 经营品牌 | Y | - |
-| is_ls | BIGINT | 是否连锁 | Y | - |
-| province_areaname | VARCHAR | 门店所属省名称 | Y | - |
-| city_areaname | VARCHAR | 门店所属市名称 | Y | - |
-| county_areaname | VARCHAR | 门店所在地区/县名称 | Y | - |
-| province_areaid | BIGINT | 门店所属省ID | Y | - |
-| city_areaid | BIGINT | 门店所属市ID | Y | - |
-| county_areaid | BIGINT | 门店所在地区/县ID | Y | - |
-| areaname | VARCHAR | 拼接省市区名称 | Y | - |
-| store_location_type | BIGINT | 门店位置类型 | Y | - |
-| latest_decoration_date | DATE | 最新装修日期 | Y | - |
-| start_saleme_date | DATE | 开始经营我司产品日期 | Y | - |
-| lease_expiration_date | DATE | 店面租赁到期日 | Y | - |
-| sore_managers_name | VARCHAR | 店长姓名 | Y | - |
-| sore_managers_tel | VARCHAR | 店长联系电话 | Y | - |
-| sore_managers_count | BIGINT | 店长数量 | N | - |
-| guide_count | BIGINT | 导购员数量 | N | - |
-| designer_count | BIGINT | 设计师数量 | N | - |
-| service_engineer_count | BIGINT | 服务工程师数量 | N | - |
-| entname | VARCHAR | 组织名称 | Y | - |
-| cust_full_name | VARCHAR | 所属经销商拼接名称 | Y | - |
-| decoration_style | BIGINT | 店面装修风格 | Y | - |
-| property_type | BIGINT | 产权归属 | Y | - |
-| fixup_grade | BIGINT | 门店装修等级 | Y | - |
-| jx_store_count | BIGINT | 经销商自营门店数 | Y | - |
-| jx_store_salesamt | DECIMAL | 经销商自营门店月均销售额 | Y | - |
-| fx_store_count | BIGINT | 分销商自营门店数 | Y | - |
-| fx_store_salesamt | DECIMAL | 分销商自营门店月均销售额 | Y | - |
-| city_changzhurenkou | DECIMAL | 当地常住人口(万人) | Y | - |
-| city_gdp | DECIMAL | 当地上年度GDP(万元) | Y | - |
-| city_gdp_perpeson | DECIMAL | 当地人均GDP(万元) | Y | - |
-| salezone_org_id | BIGINT | 所属销售区域ID | Y | - |
-| salezone_org_name | VARCHAR | 所属销售区域名称 | Y | - |
-| operat_center_org_id | BIGINT | 所属运营中心ID | Y | - |
-| operat_center_org_name | VARCHAR | 所属运营中心名称 | Y | - |
-| d_cust_id | BIGINT | 所属分销商ID | Y | - |
-| d_cust_code | VARCHAR | 所属分销商编码 | Y | - |
-| d_cust_name | VARCHAR | 所属分销商名称 | Y | - |
-| short_name | VARCHAR | 所属经销商简称 | Y | - |
-| store_area_level | VARCHAR | 门店区域等级 | Y | - |
-| d_cust_full_name | VARCHAR | 所属分销商拼接名称 | Y | - |
-| clientname | VARCHAR | 区分APP与PC | Y | - |
-| terminal_stat | BIGINT | 门店状态 | Y | - |
-| bar_code | VARCHAR | 车辆简称 | Y | - |
-| division_code | VARCHAR | 事业部编码 | Y | - |
-| hz_instance_id | BIGINT | H0流程实例id | Y | - |
-| hz_approve_status | VARCHAR | H0流程审批状态 | N | - |
-
----
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>当前状态</th><th>事件</th><th>目标状态</th><th>触发条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>提交审批</td><td>RUN</td><td>用户点击提交按钮</td><td>调用wfProcSubmit发起工作流</td></tr>
+<tr><td>RUN</td><td>OA审批通过</td><td>APPROVED</td><td>OA回调onWfComplete</td><td>同步门店档案，生成门店编码</td></tr>
+<tr><td>RUN</td><td>OA审批驳回</td><td>REJECTED</td><td>OA回调onWfBreak</td><td>更新hzApproveStatus为驳回状态</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>经销商主数据</td><td>数据来源</td><td>提供经销商ID/编码/名称/销售区域/运营中心等</td><td>经销商已创建</td></tr>
+<tr><td>事业部基础设置</td><td>数据来源</td><td>提供事业部ID/编码</td><td>事业部已配置</td></tr>
+<tr><td>区域表</td><td>数据来源</td><td>提供省市区数据，用于生成门店编码</td><td>区域数据已维护</td></tr>
+<tr><td>工作流引擎</td><td>流程驱动</td><td>发起NEW_STORE_APPLY工作流审批</td><td>工作流已配置</td></tr>
+<tr><td>OA审批系统</td><td>流程审批</td><td>OA端审批通过/驳回回调</td><td>OA流程已配置</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="下游影响">
+<ul><li>门店档案（MKT_TERMINAL）：审批通过后生成门店档案记录，usable=2</li><li>门店变更申请：基于已建立的门店档案发起变更</li><li>门店装修申请：基于已建立的门店档案申请装修</li><li>门店验收与报销：基于已建立的门店档案进行验收报销</li></ul>
+</KbCard>
+
+<KbCard title="MKT_TERMINAL_APPLY（门店申请单主表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_APPLY_ID</td><td>NUMBER</td><td>申请单ID(主键)</td><td>门店申请单ID</td><td>自增</td></tr>
+<tr><td>TERMINAL_APPLY_NO</td><td>VARCHAR2</td><td>申请单号</td><td>门店申请单号</td><td>编码规则生成</td></tr>
+<tr><td>TERMINAL_CODE</td><td>VARCHAR2</td><td>门店编码</td><td>门店编码</td><td>审批通过时生成：barCode+divisionCode+5位流水号</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称</td><td>门店名称</td><td>用户输入</td></tr>
+<tr><td>CUST_ID</td><td>NUMBER</td><td>经销商ID</td><td>所属经销商ID</td><td>选择经销商时带入</td></tr>
+<tr><td>CUST_CODE</td><td>VARCHAR2</td><td>经销商编码</td><td>经销商编码</td><td>选择经销商时带入</td></tr>
+<tr><td>CUST_NAME</td><td>VARCHAR2</td><td>经销商名称</td><td>经销商名称</td><td>选择经销商时带入</td></tr>
+<tr><td>SHORT_NAME</td><td>VARCHAR2</td><td>经销商简称</td><td>经销商简称</td><td>选择经销商时带入</td></tr>
+<tr><td>ADDR</td><td>VARCHAR2</td><td>门店详细地址</td><td>门店详细地址</td><td>用户输入</td></tr>
+<tr><td>TERMINAL_TYPE</td><td>NUMBER</td><td>门店类型</td><td>门店类型</td><td>1=专卖/2=商超/3=家装/4=社区/5=乡镇</td></tr>
+<tr><td>TERMINAL_AREA</td><td>NUMBER</td><td>门店面积</td><td>门店面积</td><td>用户输入</td></tr>
+<tr><td>CUSTOMER_CLASS</td><td>NUMBER</td><td>经营属性</td><td>经营属性</td><td>1=直营专营/2=经销专营/3=分销</td></tr>
+<tr><td>IS_LS</td><td>NUMBER</td><td>是否连锁</td><td>是否连锁</td><td>2=连锁</td></tr>
+<tr><td>STORE_LOCATION_TYPE</td><td>NUMBER</td><td>门店位置类型</td><td>店态位置</td><td>LOV翻译</td></tr>
+<tr><td>DECORATION_STYLE</td><td>NUMBER</td><td>装修风格</td><td>店面装修风格</td><td>LOV翻译</td></tr>
+<tr><td>FIXUP_GRADE</td><td>NUMBER</td><td>门店装修等级</td><td>门店装修等级</td><td>LOV翻译</td></tr>
+<tr><td>IN_SHOP_DATE</td><td>DATE</td><td>开店日期</td><td>开店日期</td><td>用户选择</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR2</td><td>审批状态</td><td>H0流程审批状态</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>NUMBER</td><td>工作流实例ID</td><td>H0流程实例ID</td><td>提交审批时赋值</td></tr>
+<tr><td>CREATOR</td><td>VARCHAR2</td><td>申请人</td><td>申请人</td><td>系统自动赋值</td></tr>
+<tr><td>CREATE_TIME</td><td>DATE</td><td>申请日期</td><td>申请日期</td><td>系统自动赋值</td></tr>
+<tr><td>CHECKOR</td><td>VARCHAR2</td><td>审核人</td><td>审核人</td><td>审批通过时赋值</td></tr>
+<tr><td>CHECK_TIME</td><td>DATE</td><td>审核时间</td><td>审核时间</td><td>审批通过时赋值</td></tr>
+<tr><td>BAR_CODE</td><td>VARCHAR2</td><td>车辆简称</td><td>车辆简称</td><td>用于生成门店编码</td></tr>
+<tr><td>DIVISION_ID</td><td>NUMBER</td><td>事业部ID</td><td>事业部ID</td><td>选择经销商时带入</td></tr>
+<tr><td>DIVISION_CODE</td><td>VARCHAR2</td><td>事业部编码</td><td>事业部编码</td><td>用于生成门店编码</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>NUMBER</td><td>组织ID</td><td>-</td><td>租户组织标识</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="MKT_TERMINAL_APPLY_LINE（门店申请单行-经销品类品牌）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PK_ID</td><td>NUMBER</td><td>主键</td><td>-</td><td>自增</td></tr>
+<tr><td>TERMINAL_APPLY_ID</td><td>NUMBER</td><td>门店申请单ID</td><td>-</td><td>关联MKT_TERMINAL_APPLY</td></tr>
+<tr><td>SEQ</td><td>NUMBER</td><td>序号</td><td>序号</td><td>自动生成</td></tr>
+<tr><td>ITEM_TYPE</td><td>NUMBER</td><td>经销品类</td><td>经销品类</td><td>用户选择</td></tr>
+<tr><td>BRAND</td><td>VARCHAR2</td><td>经销品牌</td><td>经销品牌</td><td>用户输入</td></tr>
+<tr><td>IS_WEOTHER_BRAND</td><td>NUMBER</td><td>是否我集团其它品牌</td><td>是否我集团其它品牌</td><td>用户选择</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="MKT_TERMINAL_APPLY_BRAND（门店申请其他品类）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PK_ID</td><td>NUMBER</td><td>主键</td><td>-</td><td>自增</td></tr>
+<tr><td>TERMINAL_APPLY_ID</td><td>NUMBER</td><td>主表ID</td><td>-</td><td>关联MKT_TERMINAL_APPLY</td></tr>
+<tr><td>SEQ</td><td>NUMBER</td><td>序号</td><td>序号</td><td>自动生成</td></tr>
+<tr><td>BRAND_ITEM_TYPE</td><td>VARCHAR2</td><td>经销品类名称</td><td>经销品类名称</td><td>用户输入</td></tr>
+<tr><td>BRAND_NAME</td><td>VARCHAR2</td><td>品牌名称</td><td>品牌名称</td><td>用户输入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="MKT_TERMINAL（门店档案表，审批通过后落库）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_ID</td><td>NUMBER</td><td>门店ID(主键)</td><td>-</td><td>自增</td></tr>
+<tr><td>TERMINAL_CODE</td><td>VARCHAR2</td><td>门店编码</td><td>-</td><td>barCode+divisionCode+5位Redis流水号</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称</td><td>-</td><td>从申请单同步</td></tr>
+<tr><td>CUST_ID</td><td>NUMBER</td><td>经销商ID</td><td>-</td><td>从申请单同步</td></tr>
+<tr><td>USABLE</td><td>NUMBER</td><td>可用状态</td><td>-</td><td>审批通过时设为2</td></tr>
+<tr><td>TERMINAL_STAT</td><td>NUMBER</td><td>门店状态</td><td>-</td><td>1=运营中, 2=撤店</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>NUMBER</td><td>版本号</td><td>-</td><td>初始为1</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>单据信息不匹配</td><td>同步门店档案时</td><td>申请单不存在或已被删除，请检查申请单状态</td><td>高</td><td>[查看](#报错1单据信息不匹配)</td></tr>
+<tr><td>当前数据不存在</td><td>流程回调时</td><td>工作流回调时申请单已被删除</td><td>高</td><td>[查看](#报错2当前数据不存在)</td></tr>
+<tr><td>门店编码生成失败</td><td>同步门店档案时</td><td>Redis连接异常或区域数据缺失</td><td>高</td><td>[查看](#报错3门店编码生成失败)</td></tr>
+<tr><td>单据信息不匹配</td><td>提交审批时</td><td>申请单不存在或已被删除，请检查申请单ID</td><td>高</td><td>[查看](#报错4单据信息不匹配)</td></tr>
+<tr><td>流程中objid为空，流程失败!</td><td>审批通过回调时</td><td>工作流回调报文objId为空或非正数，流程无法继续</td><td>高</td><td>[查看](#报错5流程中objid为空流程失败)</td></tr>
+<tr><td>单据信息不匹配</td><td>审批驳回回调时</td><td>回调时申请单已被删除，无法更新驳回状态</td><td>高</td><td>[查看](#报错6单据信息不匹配)</td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时，请检查网络与服务状态</td><td>中</td><td>[查看](#报错7网络请求失败)</td></tr>
+<tr><td>权限不足</td><td>全局</td><td>当前用户无新建门店申请操作权限</td><td>中</td><td>[查看](#报错8权限不足)</td></tr>
+</tbody>
+</table>
+<h4>报错1：单据信息不匹配</h4>
+<ul><li><strong>触发条件</strong>：OA审批通过回调onWfComplete→syncMktTerminal时，按terminalApplyId调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null</li><li><strong>逻辑分析</strong>：审批通过同步门店档案前需读取申请单数据用于转换MktTerminal实体。若申请单在OA审批期间被其他用户物理删除、terminalApplyId传值错误（如工作流变量丢失）、或并发场景下被清理，查询返回空，无法组装门店档案数据，抛CommonException中断同步流程，门店档案不会生成，需人工核查申请单状态后重新触发同步。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_apply_id   AS 申请单ID,
+         t.terminal_apply_no   AS 申请单号,
+         t.terminal_name       AS 门店名称,
+         t.hz_approve_status   AS 审批状态,
+         t.hz_instance_id      AS 工作流实例ID
+  FROM   mkt_terminal_apply t
+  WHERE  t.hz_approve_status = 'RUN'
+  AND    NOT EXISTS (SELECT 1 FROM mkt_terminal m WHERE m.terminal_code = t.terminal_code)
+  ORDER  BY t.create_time DESC;</code></pre>
+<h4>报错2：当前数据不存在</h4>
+<ul><li><strong>触发条件</strong>：OA审批驳回回调onWfBreak时，按terminalApplyId调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null</li><li><strong>逻辑分析</strong>：审批驳回需更新申请单hzApproveStatus=REJECTED并记录驳回意见。若回调期间申请单被删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法更新状态，申请单滞留RUN状态，需核查OA回调报文与申请单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_apply_id   AS 申请单ID,
+         t.terminal_apply_no   AS 申请单号,
+         t.hz_approve_status   AS 审批状态,
+         t.hz_instance_id      AS 工作流实例ID,
+         t.creator             AS 申请人
+  FROM   mkt_terminal_apply t
+  WHERE  t.hz_approve_status = 'RUN'
+  AND    t.update_time &lt; SYSDATE - 1
+  ORDER  BY t.update_time DESC;</code></pre>
+<h4>报错3：门店编码生成失败</h4>
+<ul><li><strong>触发条件</strong>：syncMktTerminal→getMktTerminalCode生成门店编码时，Redis自增失败或SCPAREA区域数据查询为空</li><li><strong>逻辑分析</strong>：门店编码规则为barCode+divisionCode+5位Redis流水号（key="ae:terminal:"+divisionCode+":"+barCode）。若Redis连接异常、key被误删、或按城市ID查询SCPAREA区域表返回null（城市ID未维护、区域数据缺失），无法生成有效编码，同步门店档案流程中断。需核查Redis连通性及SCPAREA区域数据完整性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_apply_id   AS 申请单ID,
+         t.terminal_apply_no   AS 申请单号,
+         t.city_areaname       AS 城市名称,
+         t.bar_code            AS 车辆简称,
+         t.division_code       AS 事业部编码,
+         s.areaid              AS 区域ID
+  FROM   mkt_terminal_apply t
+  LEFT   JOIN scparea s ON s.areaname = t.city_areaname
+   WHERE  t.hz_approve_status = 'APPROVED'
+   AND    (s.areaid IS NULL OR t.bar_code IS NULL OR t.division_code IS NULL)
+   ORDER  BY t.create_time DESC;</code></pre>
+<h4>报错4：单据信息不匹配</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮发起审批时，wfProcSubmit方法按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null</li><li><strong>逻辑分析</strong>：提交审批前需读取申请单数据用于组装工作流参数（applyId、custId、terminalType、terminalNameFlag等）。若申请单在编辑期间被其他用户物理删除、前端传入的objId为空或与实际申请单ID不一致（如多标签页操作导致ID串台）、并发场景下被清理，查询返回空，无法组装流程参数，抛CommonException中断提交，工作流不会发起。需核查申请单是否存在及objId传值正确性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_apply_id   AS 申请单ID,
+         t.terminal_apply_no   AS 申请单号,
+         t.terminal_name       AS 门店名称,
+         t.hz_approve_status   AS 审批状态,
+         t.creator             AS 申请人,
+         t.create_time         AS 创建时间
+  FROM   mkt_terminal_apply t
+  WHERE  t.terminal_apply_id = #{传入的objId}
+  ORDER  BY t.create_time DESC;</code></pre>
+<h4>报错5：流程中objid为空，流程失败!</h4>
+<ul><li><strong>触发条件</strong>：OA审批通过回调onWfComplete时，WfApproveDTO.objId为null或小于等于0</li><li><strong>逻辑分析</strong>：onWfComplete方法首行校验objId合法性，objId是工作流回调定位业务单据的关键标识。若OA回调报文缺失objId字段、工作流变量配置错误未回传单据ID、或OA与DMS流程集成配置异常导致objId解析为空/0，校验不通过抛CommonException中断同步流程，门店档案不会生成。需核查OA流程节点变量配置及回调报文objId字段完整性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_apply_id   AS 申请单ID,
+         t.terminal_apply_no   AS 申请单号,
+         t.terminal_name       AS 门店名称,
+         t.hz_approve_status   AS 审批状态,
+         t.hz_instance_id      AS 工作流实例ID
+  FROM   mkt_terminal_apply t
+  WHERE  t.hz_approve_status = 'RUN'
+  AND    (t.hz_instance_id IS NULL OR t.terminal_apply_id IS NULL)
+  ORDER  BY t.update_time DESC;</code></pre>
+<h4>报错6：单据信息不匹配</h4>
+<ul><li><strong>触发条件</strong>：OA审批驳回回调onWfBreak时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null</li><li><strong>逻辑分析</strong>：审批驳回需更新申请单hzApproveStatus为驳回状态并记录驳回意见。若回调期间申请单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常、objId传值错误），查询返回空，无法更新状态，申请单滞留RUN状态，需核查OA回调报文与申请单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_apply_id   AS 申请单ID,
+         t.terminal_apply_no   AS 申请单号,
+         t.terminal_name       AS 门店名称,
+         t.hz_approve_status   AS 审批状态,
+         t.hz_instance_id      AS 工作流实例ID,
+         t.update_time         AS 最后更新时间
+  FROM   mkt_terminal_apply t
+  WHERE  t.hz_approve_status = 'RUN'
+  AND    t.update_time &lt; SYSDATE - 1
+  ORDER  BY t.update_time DESC;</code></pre>
+<h4>报错7：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：前端调用后端接口（保存、提交、同步门店档案）时，请求超时或后端服务不可达</li><li><strong>逻辑分析</strong>：低代码页面通过axios请求后端API，若后端ae-business服务未启动、网络中断、网关超时、或数据库连接池耗尽导致请求堆积，axios捕获网络异常，前端展示通用错误提示。需核查后端服务健康状态、网络连通性、网关配置及数据库连接池。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '服务连通性检查' AS 检查项,
+         COUNT(*)          AS 近1小时RUN状态申请单数
+  FROM   mkt_terminal_apply t
+  WHERE  t.hz_approve_status = 'RUN'
+  AND    t.update_time &gt;= SYSDATE - 1/24;</code></pre>
+<h4>报错8：权限不足</h4>
+<ul><li><strong>触发条件</strong>：当前用户无新建门店申请相关操作权限（保存/提交/查看）</li><li><strong>逻辑分析</strong>：低代码页面通过permissionLogin=true进行登录校验，按钮操作通过角色权限码控制。若用户角色未分配新建门店申请菜单权限、权限码配置缺失、或组织ID不匹配导致数据权限隔离，接口返回403/401，前端展示权限不足提示。需核查用户角色权限配置及组织数据权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.terminal_apply_id   AS 申请单ID,
+         t.terminal_apply_no   AS 申请单号,
+         t.creator             AS 申请人,
+         t.organization_id     AS 组织ID
+  FROM   mkt_terminal_apply t
+  WHERE  t.organization_id = #{当前用户组织ID}
+  ORDER  BY t.create_time DESC;</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -420,142 +581,19 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">单据信息不匹配</td>
-            <td style="font-size:13px;">根据terminalApplyId未查到申请单</td>
-            <td style="font-size:13px;">确认申请单ID是否正确，数据是否已被删除</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">流程中objid为空，流程失败!</td>
-            <td style="font-size:13px;">工作流回调时objId为空或&lt;=0</td>
-            <td style="font-size:13px;">检查工作流配置，确认objId正确传递</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">未获取到用户信息</td>
-            <td style="font-size:13px;">用户附加信息中无userType</td>
-            <td style="font-size:13px;">检查用户登录状态和权限配置</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">未获取到事业部信息</td>
-            <td style="font-size:13px;">用户附加信息中无DEPT</td>
-            <td style="font-size:13px;">联系管理员配置用户所属事业部</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认申请单ID是否正确，数据是否已被删除</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM MKT_TERMINAL_APPLY WHERE TERMINAL_APPLY_ID = ?;
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程中objid为空，流程失败!</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查工作流配置，确认objId正确传递</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT HZ_INSTANCE_ID, OBJ_ID FROM WF_PROCESS WHERE HZ_INSTANCE_ID = (SELECT HZ_INSTANCE_ID FROM MKT_TERMINAL_APPLY WHERE TERMINAL_APPLY_ID = ?);
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未获取到用户信息</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查用户登录状态和权限配置</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT USER_ID, USER_TYPE FROM SYS_USER_ATTACH WHERE USER_ID = ?;
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未获取到事业部信息</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>联系管理员配置用户所属事业部</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT USER_ID, DEPT FROM SYS_USER_ATTACH WHERE USER_ID = ?;
-```
-  
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">门店编码什么时候生成？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>门店编码在审批通过后调用syncMktTerminal方法时生成，不在保存草稿时生成。编码规则为：城市车辆编码+事业部编码+5位Redis流水号。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">审批通过后门店档案没有创建怎么办？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>A: 检查工作流回调是否正常触发，确认onWfComplete方法是否执行成功。常见原因：MapStruct转换失败、MKT_TERMINAL插入异常等。<br>
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">stat字段和hz_approve_status字段有什么区别？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>stat字段已弃用，当前审批状态统一使用hz_approve_status字段管理。stat字段保留仅为兼容历史数据。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">terminalNameFlag参数的含义？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>工作流条件分支参数：门店类型=2时返回"1"，门店名称含"五金店"或"优选店"返回"2"，其他返回"3"。用于工作流节点根据门店类型和名称走不同审批路径。
-    </div>
-  </div>
-</div>
+<p><strong>Q1：门店编码如何生成？</strong></p>
+<p>A：审批通过后自动生成，编码规则：barCode + divisionCode + 5位Redis流水号。流水号通过Redis自增生成，key = "ae:terminal:" + divisionCode + ":" + barCode。</p>
+<p><strong>Q2：审批流程是什么？</strong></p>
+<p>A：工作流编码NEW_STORE_APPLY（"新建门店"），提交后进入OA审批，审批通过回调onWfComplete同步门店档案，审批驳回回调onWfBreak更新状态。</p>
+<p><strong>Q3：审批通过后会做什么？</strong></p>
+<p>A：1)生成门店编码 2)更新申请单状态为APPROVED 3)同步数据到MKT_TERMINAL门店档案表 4)迁移附件到新门店。</p>
+<p><strong>Q4：门店名称标识有什么用？</strong></p>
+<p>A：terminalNameFlag用于工作流分支路由：terminalType==2→"1"，包含"五金店"/"优选店"→"2"，其他→"3"。</p>
+<p><strong>Q5：OA链接标题格式是什么？</strong></p>
+<p>A："新建门店申请_门店名称_申请单号_更新时间"。</p>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -564,10 +602,14 @@ SELECT USER_ID, DEPT FROM SYS_USER_ATTACH WHERE USER_ID = ?;
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 更新内容 | 更新人 |
-|-----|------|---------|-------|
-| 2026-07-31 | v1.0 | 初始生成知识库文档 | AI |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-11-13</td><td>-</td><td>YD</td><td>初始创建新建门店申请0申请功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

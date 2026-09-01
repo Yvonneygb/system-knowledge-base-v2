@@ -150,25 +150,14 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：5种取消类型 {操作类型区分}">
-<KbQuote>支持不同粒度的取消操作，满足不同业务场景</KbQuote>
-
-**具体逻辑**：
-
-- 1、取消发票(invoice) - 取消整张发票的核销
-- 2、取消发票明细(invoiceDetail) - 取消发票中某行明细的核销
-- 3、取消出库单行核销(invLine) - 取消出库单行的核销
-- 4、取消核销明细(veriferDetail) - 取消核销明细记录
-- 5、作废发票(obsInvoice) - 作废整张发票
-</KbCard>
-
-<KbCard num="2" title="重点逻辑2：尾差处理 {精度控制}">
-<KbQuote>取消核销时处理金额尾差，确保数据一致性</KbQuote>
-
-**具体逻辑**：
-
-- 1、取消核销时进行尾差计算和处理
-- 2、确保回写后的核销数量和金额与实际一致
+<KbCard num="1" title="重点逻辑1：多种取消类型 `灵活取消`">
+<ul><li><strong>业务意义</strong>：支持不同粒度的取消操作，满足各种业务场景</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：取消发票（invoice）——取消整张发票的核销</li></ul>
+<ul><li>第2点：取消发票明细（invoiceDetail）——取消单条发票明细的核销</li></ul>
+<ul><li>第3点：取消出库单行核销（invLine）——取消出库单行的核销标记</li></ul>
+<ul><li>第4点：取消核销明细（veriferDetail）——取消核销明细记录</li></ul>
+<ul><li>第5点：作废发票（obsInvoice）——将发票标记为作废</li></ul>
 </KbCard>
 
 </div>
@@ -178,121 +167,35 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：工程真实性核销详情页-取消核销与发票作废">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>取消类型</td>
-<td>下拉选择框</td>
-<td>取消操作的类型</td>
-<td>执行取消操作时</td>
-<td>1.用户选择</td>
-<td>invoice/invoiceDetail/invLine/veriferDetail/obsInvoice</td>
-<td></td>
-</tr>
-<tr>
-<td>核销明细ID</td>
-<td>文本框</td>
-<td>要取消的核销明细ID</td>
-<td>常显</td>
-<td>1.从核销明细列表选择</td>
-<td>-</td>
-<td></td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="选择弹窗">
-</KbCard>
-<KbCard title="导入">
-</KbCard>
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 取消核销 | 取消核销记录 | 真实性核销详情页 | 核销单存在已核销数据 | 调用clVerifyObsInvo接口，回写出库行核销数量 |
-| 作废发票 | 作废发票 |>作废发票 | 真实性核销详情页 | 发票存在且可作废 | 调用clVerifyObsInvo接口(obsInvoice类型)，更新发票状态为作废 |
-
-</KbCard>
-<KbCard title="保存校验">
-<KbSubTitle>校验1：核销数据存在性校验 —— 确保要取消的核销数据存在</KbSubTitle>
-
-- 第1点：取消前校验核销明细ID是否存在
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT COUNT(1) FROM EPM_VERIFER_INVOICE_DETAILS WHERE VERIFER_INVOICE_DETAILS$DETAILS_ID = #{veriferInvoiceDetailsId}
-```
-
-</KbCard>
-<KbCard title="提交校验">
-</KbCard>
-<KbCard title="状态机">
-### 状态机
-
-<KbSubTitle>状态机流转图</KbSubTitle>
-
-
-```text
-无独立状态机，操作为即时生效，不涉及审批流程
-```
-
-<KbSubTitle>状态机列表</KbSubTitle>
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| - | 即时操作 | 取消核销、作废发票 |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：EPM_VERIFER_INVOICE_DETAILS（核销发票明细）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| VERIFER_INVOICE_DETAILS_ID | Long | 核销明细ID(主键) | - | 自增主键 |
-| INVOICE_TRUTH_HEADER_ID | Long | 真实性核销头ID(外键) | - | 关联核销头 |
-| INVOICE_TRUTH'LINE_ID | Long | 真实性核销行ID(外键) | - | 关联核销行 |
-| VERIFY_QTY | BigDecimal | 核销数量 | - | 取消核销时回写减少 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>取消核销</td><td>取消核销明细</td><td>真实性核销详情页</td><td>核销单非新建状态</td><td>调用/cl-verify-obs-invo接口取消核销</td></tr>
+<tr><td>作废发票</td><td>作废已核销发票</td><td>真实性核销详情页</td><td>发票已核销</td><td>调用/cl-verify-obs-invo接口作废发票</td></tr>
+</tbody>
+</table>
+<h4>按钮1：取消核销（真实性核销详情页）</h4>
+<ul><li><strong>触发条件</strong>：核销单非新建状态</li><li><strong>执行逻辑</strong>：</li><li>第1点：选择取消类型（发票/发票明细/出库单行/核销明细）</li><li>第2点：确认取消操作</li><li>第3点：调用后端/cl-verify-obs-invo接口执行取消</li><li>第4点：更新对应数据的核销状态</li><li><strong>接口调用</strong>：POST /v1/&#123;orgId&#125;/epm-verifer-invoice-detailss/cl-verify-obs-invo</li></ul>
 </KbCard>
 
-<KbCard num="2" title="表2：EPM_INFVOICE_TRUTH_HEADER（真实性核销头）- 相关字段">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| INVOICE_TRUTH_ID | Long | 核销头ID(主键) | - | 关<关联字段 |
-| HZ_APPROVE_STATUS | String | 审批状态 | - | 核销单审批状态 |
-
----
-
+<KbCard title="表1：EPM_VERIFER_INVOICE_DETAILS（核销发票明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>VERIFER_INVOICE_DETAILS_ID</td><td>NUMBER</td><td>主键</td><td>无</td><td>自增生成</td></tr>
+<tr><td>INVOICE_VERIFER_ID</td><td>NUMBER</td><td>核销单头ID</td><td>无</td><td>关联核销头表</td></tr>
+<tr><td>PROD_CODE</td><td>VARCHAR</td><td>产品编码</td><td>无</td><td>关联产品主档</td></tr>
+<tr><td>VERIFER_QTY</td><td>NUMBER</td><td>核销数量</td><td>无</td><td>取消时置为0</td></tr>
+<tr><td>VERIFER_STATUS</td><td>VARCHAR</td><td>核销状态</td><td>无</td><td>取消时更新为未核销</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
-</KbCard>
 </div>
 </div>
 </div>
@@ -300,45 +203,100 @@ SELECT COUNT(1) FROM EPM_VERIFER_INVOICE_DETAILS WHERE VERIFER_INVOICE_DETAILS$D
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">核销数据不存在</td>
-            <td style="font-size:13px;">取消核销</td>
-            <td style="font-size:13px;">核销明细已被删除，&amp;刷新页面</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
+<tr><td>核销明细不存在</td><td>取消核销时</td><td>按ID查询EPM_VERIFER_INVOICE_DETAILS为空。检查核销明细ID有效性</td><td>高</td><td>[查看]</td></tr>
+<tr><td>发票不存在</td><td>作废发票时</td><td>按ID查询发票信息为空。检查发票ID有效性</td><td>高</td><td>[查看]</td></tr>
+<tr><td>核销明细状态异常,请刷新数据后重试</td><td>取消核销时</td><td>核销明细已被其他操作变更。刷新数据后重试</td><td>高</td><td>[查看]</td></tr>
+<tr><td>取消后出库单行已核销数量小于0</td><td>取消核销时</td><td>取消数量大于出库单行已核销数量。检查数据一致性</td><td>高</td><td>[查看]</td></tr>
+<tr><td>操作类型不能为空</td><td>取消核销/作废发票时</td><td>传入的actionType为空。检查前端参数传递</td><td>高</td><td>[查看]</td></tr>
+<tr><td>对应列表id数组不能为空</td><td>取消核销/作废发票时</td><td>传入的idList为空数组。检查前端选中数据传递</td><td>高</td><td>[查看]</td></tr>
+<tr><td>不支持&#123;actionType&#125;操作</td><td>取消核销/作废发票时</td><td>传入的actionType不在支持的枚举范围内。检查前端参数</td><td>高</td><td>[查看]</td></tr>
+<tr><td>本次核销数量的小数位不能超过3位</td><td>取消核销时</td><td>核销数量小数位&gt;3。调整核销数量精度</td><td>高</td><td>[查看]</td></tr>
+<tr><td>核销取消数据为空</td><td>取消核销时</td><td>取消核销传入的数据为空。检查前端数据构造</td><td>高</td><td>[查看]</td></tr>
+<tr><td>更新核销数据失败</td><td>取消核销时</td><td>更新核销数据时抛出异常。查看异常信息联系IT</td><td>高</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：核销明细不存在</h4>
+<ul><li><strong>触发条件</strong>：取消核销时，按VERIFER_INVOICE_DETAILS_ID查询EPM_VERIFER_INVOICE_DETAILS返回null</li><li><strong>逻辑分析</strong>：取消方法中按ID查询核销明细，若返回null则抛出阻断性报错。需检查核销明细ID有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_VERIFER_ID, vid.PROD_CODE,
+         vid.VERIFER_QTY, vid.VERIFER_STATUS, vid.EFFECT_STATUS
+  FROM EPM_VERIFER_INVOICE_DETAILS vid
+  WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
+  -- 若返回空，说明核销明细不存在</code></pre>
+<h4>报错2：发票不存在</h4>
+<ul><li><strong>触发条件</strong>：作废发票时，按ID查询发票信息返回null</li><li><strong>逻辑分析</strong>：作废方法中按发票ID查询发票信息，若返回null则抛出阻断性报错。需检查发票ID有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT euii.UPLOAD_INVOICE_INFO_ID, euii.INVOICE_NO, euii.INVOICE_CODE, euii.EFFECT_STATUS
+  FROM EPM_UPLOAD_INVOICE_INFO euii
+  WHERE euii.UPLOAD_INVOICE_INFO_ID = :uploadInvoiceInfoId
+  -- 若返回空，说明发票不存在</code></pre>
+<h4>报错3：核销明细状态异常,请刷新数据后重试</h4>
+<ul><li><strong>触发条件</strong>：取消核销时，核销明细已被其他操作变更(并发修改)</li><li><strong>逻辑分析</strong>：取消方法中更新核销明细状态时，若影响行数与预期不一致则抛出阻断性报错。需刷新数据后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.LAST_UPDATE_DATE,
+         vid.OBJECT_VERSION_NUMBER
+  FROM EPM_VERIFER_INVOICE_DETAILS vid
+  WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
+  -- 检查核销明细当前状态和版本号，判断是否被并发修改</code></pre>
+<h4>报错4：取消后出库单行已核销数量小于0</h4>
+<ul><li><strong>触发条件</strong>：取消核销时，取消数量大于出库单行已核销数量</li><li><strong>逻辑分析</strong>：取消方法中更新INV_OUT_BILL_LINE的已核销数量(原已核销数量-取消数量)，若结果&lt;0则抛出阻断性报错。需检查数据一致性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.VERIFERED_NUMBER, iobl.CAN_VERIFER_NUMBER,
+         vid.VERIFER_QTY, vid.VERIFER_INVOICE_DETAILS_ID,
+         iobl.VERIFERED_NUMBER - vid.VERIFER_QTY AS 取消后已核销数量
+  FROM EPM_VERIFER_INVOICE_DETAILS vid
+  JOIN INV_OUT_BILL_LINE iobl ON vid.INV_OUT_BILL_LINE_ID = iobl.INV_OUT_BILL_LINE_ID
+  WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
+    AND iobl.VERIFERED_NUMBER - vid.VERIFER_QTY &lt; 0
+  -- 查出取消后已核销数量&lt;0的异常数据</code></pre>
+<h4>报错5：操作类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：调用clVerifyObsInvo接口时，传入的dto.actionType为空</li><li><strong>逻辑分析</strong>：EpmVeriferInvoiceDetailsServiceImpl.clVerifyObsInvo方法中校验actionType非空，因不同操作类型(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)走不同分支。需检查前端参数传递</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 接口入参校验，无对应SQL
+  SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_STATUS
+  FROM EPM_VERIFER_INVOICE_DETAILS vid
+  WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
+  -- 校验核销明细状态</code></pre>
+<h4>报错6：对应列表id数组不能为空</h4>
+<ul><li><strong>触发条件</strong>：调用clVerifyObsInvo接口时，传入的dto.idList为空数组</li><li><strong>逻辑分析</strong>：clVerifyObsInvo方法中校验idList非空，因取消操作需指定具体要取消的明细ID列表。需检查前端是否选中数据后传递</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 接口入参校验，无对应SQL
+  SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_VERIFER_ID
+  FROM EPM_VERIFER_INVOICE_DETAILS vid
+  WHERE vid.INVOICE_VERIFER_ID = :invoiceVeriferId
+  -- 查出该核销单下所有明细，确认是否有可选数据</code></pre>
+<h4>报错7：不支持&#123;actionType&#125;操作</h4>
+<ul><li><strong>触发条件</strong>：调用clVerifyObsInvo接口时，传入的actionType不在支持的枚举范围内(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)</li><li><strong>逻辑分析</strong>：clVerifyObsInvo方法中按actionType走switch分支，未匹配的actionType抛出不支持操作报错。需检查前端参数是否正确</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 接口入参校验，无对应SQL
+  -- 检查前端传入的actionType值是否在[invoice, invoiceDetail, invLine, veriferDetail, obsInvoice]范围内</code></pre>
+<h4>报错8：本次核销数量的小数位不能超过3位</h4>
+<ul><li><strong>触发条件</strong>：取消核销时，核销数量(VERIFER_QTY)的小数位超过3位</li><li><strong>逻辑分析</strong>：取消核销方法中校验核销数量精度，因业务要求数量精度最多3位小数。需调整核销数量精度</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_QTY, vid.PROD_CODE
+  FROM EPM_VERIFER_INVOICE_DETAILS vid
+  WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
+  -- 检查VERIFER_QTY的小数位是否超过3位</code></pre>
+<h4>报错9：核销取消数据为空</h4>
+<ul><li><strong>触发条件</strong>：取消核销时，传入的取消核销数据为空</li><li><strong>逻辑分析</strong>：取消核销方法中校验取消数据列表非空，因需指定要取消的具体数据。需检查前端数据构造</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 接口入参校验，无对应SQL
+  SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_STATUS, vid.EFFECT_STATUS
+  FROM EPM_VERIFER_INVOICE_DETAILS vid
+  WHERE vid.INVOICE_VERIFER_ID = :invoiceVeriferId
+    AND vid.VERIFER_STATUS = '已核销'
+  -- 查出可取消的核销明细</code></pre>
+<h4>报错10：更新核销数据失败</h4>
+<ul><li><strong>触发条件</strong>：取消核销时，更新核销数据抛出异常</li><li><strong>逻辑分析</strong>：取消核销方法中更新核销明细状态时捕获异常，拼接异常信息抛出。可能原因：数据库锁、数据不存在、并发修改。查看异常信息联系IT</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_STATUS, vid.EFFECT_STATUS,
+         vid.OBJECT_VERSION_NUMBER, vid.LAST_UPDATE_DATE
+  FROM EPM_VERIFER_INVOICE_DETAILS vid
+  WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
+  -- 检查核销明细状态和版本号，判断是否被锁或并发修改</code></pre>
+</KbCard>
 
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>核销数据不存在</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>核销明细已被删除，&amp;刷新页面</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">取消核销后出库行核销数量未回写</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>取消核销逻辑执行异常；排查SQL：`SELECT INVOICE_TRUTH_HEADER_ID, VERIFY_QTY FROM EPM_VERIFER_INVOICE_DETAILS WHERE INVOICE_TRUTH_HEADER_ID = #{invoiceTruthId}`<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查clVerifyObsInvo接口执行日志，确认回写SQL是否执行成功
-    </div>
-  </div>
-</div>
+<ul><li>问题1：取消核销后数据能否恢复</li><li>原因：取消核销操作将核销状态更新为未核销，可重新核销</li><li>解决思路：取消后可重新执行核销操作</li></ul>
+<ul><li>问题2：作废发票后能否恢复</li><li>原因：作废发票操作将发票状态标记为作废</li><li>解决思路：作废后需重新开具发票</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -347,10 +305,14 @@ SELECT COUNT(1) FROM EPM_VERIFER_INVOICE_DETAILS WHERE VERIFER_INVOICE_DETAILS$D
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| - | - | - | 暂无2026年提交记录 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-29</td><td>-</td><td>-</td><td>按skill规范完整重写，基于后端代码梳理</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

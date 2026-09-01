@@ -183,44 +183,11 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：保存减免申请 【数据保存】">
-<KbQuote>新建或编辑保证金减免申请，支持头行结构保存</KbQuote>
-
-**具体逻辑**：
-
-- 1、新增时自动生成减免单号（编码规则AE.DEPOSITS_REDUCTION_HEAD_NO，含事业部编码前缀）
-- 2、新增时设置审批状态为"新建"，业务状态为"未生效"
-- 3、新增时自动获取当前登录用户所属事业部ID
-- 4、保存行信息时，自动查询各合同类型对应的保证金标准金额并回填
-- 5、支持附件保存，关联对象ID为减免申请头ID
-</KbCard>
-
-<KbCard num="2" title="重点逻辑2：保存并提交 【审批提交】">
-<KbQuote>保存减免申请并启动工作流审批流程</KbQuote>
-
-**具体逻辑**：
-
-- 1、提交前校验流程编码不能为空，否则报错"流程编码缺失，请选择流程！"
-- 2、先执行保存逻辑，再启动工作流
-- 3、工作流启动后，将业务状态更新为"审批中"
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：工作流审批回调 【状态流转】">
-<KbQuote>工作流审批完成后回调更新单据状态</KbQuote>
-
-**具体逻辑**：
-
-- 1、审批通过时，业务状态更新为"有效"，审批状态更新为"已批准"
-- 2、审批驳回时，业务状态回退为"未生效"，审批状态更新为"已驳回"
-</KbCard>
-
-<KbCard num="4" title="重点逻辑4：删除减免申请 【数据删除】">
-<KbQuote>删除未生效的减免申请及其关联数据</KbQuote>
-
-**具体逻辑**：
-
-- 1、批量删除头记录及关联的行记录
-- 2、同时删除关联的附件记录
+<KbCard num="1" title="重点逻辑1：OA审批流程 {审批流转}">
+<ul><li><strong>业务意义</strong>：保证金减免需经OA审批，确保减免合规</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：保存并提交时发起OA审批流程(DEPOSITS_REDUCTION_HEAD_MCS_AW)</li></ul>
+<ul><li>第2点：审批通过后更新保证金余额，减免生效</li></ul>
 </KbCard>
 
 </div>
@@ -231,222 +198,109 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="界面模块1：保证金减免申请列表页">
-<div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>减免单号</td>
-<td>文本框</td>
-<td>减免申请单据编号</td>
-<td>常显</td>
-<td>新增时自动生成</td>
-<td>-</td>
-<td>CM_DEPOSITS_REDUCTION_HEAD.REDUCTION_NO</td>
-</tr>
-<tr>
-<td>经销商</td>
-<td>下拉选择框</td>
-<td>申请减免的经销商</td>
-<td>常显</td>
-<td>弹窗选择</td>
-<td>系统内有效经销商</td>
-<td>CM_DEPOSITS_REDUCTION_HEAD.CUSTOMER_ID</td>
-</tr>
-<tr>
-<td>状态</td>
-<td>文本框</td>
-<td>业务有效状态</td>
-<td>常显</td>
-<td>系统自动维护</td>
-<td>pending/running/enable/disenable</td>
-<td>CM_DEPOSITS_REDUCTION_HEAD.STATUS</td>
-</tr>
-<tr>
-<td>备注</td>
-<td>文本框</td>
-<td>申请备注说明</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>-</td>
-<td>CM_DEPOSITS_REDUCTION_HEAD.REMARKS</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块2：保证金减免申请明细行">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>合同类型</td>
-<td>下拉选择框</td>
-<td>减免对应的合同类型</td>
-<td>常显</td>
-<td>从值集scpdict:sales_contract_type选择</td>
-<td>值集内有效项</td>
-<td>CM_DEPOSITS_REDUCTION_LINE.CONTRACT_TYPE</td>
-</tr>
-<tr>
-<td>保证金标准金额</td>
-<td>文本框</td>
-<td>该合同类型的保证金标准金额</td>
-<td>常显</td>
-<td>根据事业部+经销商+合同类型自动查询</td>
-<td>-</td>
-<td>CM_DEPOSITS_REDUCTION_LINE.DEPOSITS_AMOUNT</td>
-</tr>
-<tr>
-<td>申请减免金额</td>
-<td>文本框</td>
-<td>申请减免的金额</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>大于0，不超过标准金额</td>
-<td>CM_DEPOSITS_REDUCTION_LINE.REDUCTION_AMOUNT</td>
-</tr>
-</tbody></table></div>
+<tr><td>减免单号</td><td>CM_DEPOSITS_REDUCTION_HEAD.REDUCTION_NO</td><td>文本框</td><td>减免申请单号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>经销商</td><td>CM_DEPOSITS_REDUCTION_HEAD.CUSTOMER_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>选择经销商带出</td></tr>
+<tr><td>合同编号</td><td>CM_DEPOSITS_REDUCTION_HEAD.CONTRACT_NO</td><td>文本框</td><td>关联合同编号</td><td>常显</td><td>选择合同带出</td></tr>
+<tr><td>减免金额</td><td>CM_DEPOSITS_REDUCTION_HEAD.REDUCTION_AMT</td><td>数字输入框</td><td>申请减免金额</td><td>常显</td><td>手动输入</td></tr>
+<tr><td>H0流程审批状态</td><td>CM_DEPOSITS_REDUCTION_HEAD.HZ_APPROVE_STATUS</td><td>文本框</td><td>流程审批状态</td><td>常显</td><td>流程回调更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
-<KbSubTitle>弹窗1：经销商选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| entid | 事业部ID | 限定事业部范围 | 111 |
-
-**数据范围**
-
-```sql
-系统内当前事业部下的有效经销商
-```
-
+<blockquote>本页面查询条件使用文本输入和下拉选择，无独立弹窗。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
-无
-
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 导出 | 导出减免申请列表 | 列表页 | 常显 | 导出Excel |
-| 新增 | 新建减免申请 | 列表页 | 常显 | 跳转新建页面 |
-| 保存 | 保存减免申请 | 新建/编辑页 | 常显 | 调用save接口保存头行数据 |
-| 保存并提交 | 保存并提交审批 | 新建/编辑页 | 状态为未生效时可用 | 调用saveAndSubmit接口，启动工作流 |
-| 删除 | 删除减免申请 | 列表页 | 状态为未生效时可用 | 调用remove接口删除头行及附件 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新增</td><td>新建减免申请</td><td>列表页</td><td>始终可用</td><td>打开新建页面</td></tr>
+<tr><td>保存</td><td>保存减免信息</td><td>编辑页</td><td>编辑状态</td><td>调用save接口</td></tr>
+<tr><td>保存并提交</td><td>发起OA审批</td><td>编辑页</td><td>保存后</td><td>发起DEPOSITS_REDUCTION_HEAD_MCS_AW流程</td></tr>
+<tr><td>删除</td><td>删除减免申请</td><td>列表页</td><td>选中未提交记录</td><td>调用remove接口</td></tr>
+<tr><td>导出</td><td>导出列表</td><td>列表页</td><td>有数据时</td><td>调用rebateDetailExport接口</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：行信息中合同类型必填 —— 确保每行都有对应的合同类型</KbSubTitle>
-
-- 第1点：保存行记录时，contractType字段不能为空
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM CM_DEPOSITS_REDUCTION_LINE WHERE HEAD_ID = :headId AND CONTRACT_TYPE IS NULL;
-```
-
+<ul><li>校验1：减免金额必须大于0 —— 确保减免金额有效</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：保存时校验减免金额大于0</p>
+<ul><li>系统体现：toast提醒</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM CM_DEPOSITS_REDUCTION_HEAD WHERE REDUCTION_AMT &lt;= 0;</code></pre>
 </KbCard>
+
 <KbCard title="提交校验">
-<KbSubTitle>校验1：流程编码不能为空 —— 确保选择了审批流程</KbSubTitle>
-
-- 第1点：保存并提交时，flowCode参数不能为空
-
-<KbTip>阻断性报错，提示"流程编码缺失，请选择流程！"</KbTip>
-
-```sql
--- 无需SQL，前端参数校验
-```
-
+<ul><li>校验1：减免金额不超过保证金余额 —— 确保减免不超额</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：提交时校验减免金额不超过已缴保证金余额</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT H.REDUCTION_AMT, P.PAYMENT_AMT FROM CM_DEPOSITS_REDUCTION_HEAD H, CM_DEPOSITS_PAYMENT P
+    WHERE H.CONTRACT_ID = P.CONTRACT_ID AND H.REDUCTION_AMT &gt; P.PAYMENT_AMT;</code></pre>
 </KbCard>
+
 <KbCard title="状态机">
-
-
-```text
-新建 ──保存──> 未生效(pending) ──提交──> 审批中(running) ──审批通过──> 有效(enable)
-                                          │
-                                      审批驳回
-                                          │
-                                          v
-                                     未生效(pending)
-```
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| pending | 未生效 | 编辑、保存、提交、删除 |
-| running | 审批中 | 无（等待审批） |
-| enable | 有效 | 无（已生效） |
-| disenable | 失效 | 无 |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：CM_DEPOSITS_REDUCTION_HEAD（保证金减免申请头）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 主键ID | - | 自增 |
-| ENTID | NUMBER | 组织ID | - | 新增时自动获取当前事业部 |
-| CUSTOMER_ID | NUMBER | 经销商ID | 经销商 | 弹窗选择 |
-| STATUS | VARCHAR2 | 有效状态 | 状态 | pending/running/enable/disenable |
-| STAT | NUMBER | 单据状态 | - | 工作流状态 |
-| WFID | NUMBER | 流程ID | - | 工作流实例ID |
-| WFFLAG | NUMBER | 流程标志 | - | 工作流标志 |
-| REDUCTION_NO | VARCHAR2 | 减免单号 | 减免单号 | 编码规则自动生成 |
-| REMARKS | VARCHAR2 | 备注 | 备注 | 手工输入 |
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审核
+                                │
+                                └──OA审批拒绝──→ 已拒绝</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>已保存未提交</td><td>编辑、保存、提交、删除</td></tr>
+<tr><td>RUN</td><td>OA审批中</td><td>无（等待审批结果）</td></tr>
+<tr><td>APPROVED</td><td>OA审批通过</td><td>查看</td></tr>
+<tr><td>REJECTED</td><td>OA审批拒绝</td><td>修改、重新提交</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="表2：CM_DEPOSITS_REDUCTION_LINE（保证金减免申请行）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 主键ID | - | 自增 |
-| HEAD_ID | NUMBER | 申请头ID | - | 关联CM_DEPOSITS_REDUCTION_HEAD.ID |
-| CONTRACT_TYPE | NUMBER | 合同类型 | 合同类型 | 从值集选择 |
-| REDUCTION_AMOUNT | NUMBER | 申请减免金额 | 申请减免金额 | 手工输入 |
-| DEPOSITS_AMOUNT | NUMBER | 保证金标准金额 | 保证金标准金额 | 根据合同类型自动查询 |
-
----
-
+<KbCard title="表1：CM_DEPOSITS_REDUCTION_HEAD（保证金减免申请头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>REDUCTION_HEAD_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+<tr><td>REDUCTION_NO</td><td>VARCHAR</td><td>减免单号</td><td>减免单号</td><td>自动生成</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>经销商</td><td>选择经销商带出</td></tr>
+<tr><td>CONTRACT_NO</td><td>VARCHAR</td><td>合同编号</td><td>合同编号</td><td>选择合同带出</td></tr>
+<tr><td>REDUCTION_AMT</td><td>DECIMAL</td><td>减免金额</td><td>减免金额</td><td>手动输入</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>H0流程审批状态</td><td>H0流程审批状态</td><td>流程回调更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表2：CM_DEPOSITS_REDUCTION_LINE（保证金减免申请明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>REDUCTION_LINE_ID</td><td>BIGINT</td><td>明细行主键</td><td>-</td><td>自增主键</td></tr>
+<tr><td>REDUCTION_HEAD_ID</td><td>BIGINT</td><td>关联头表ID</td><td>-</td><td>FK → CM_DEPOSITS_REDUCTION_HEAD</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -454,106 +308,69 @@ SELECT * FROM CM_DEPOSITS_REDUCTION_LINE WHERE HEAD_ID = :headId AND CONTRACT_TY
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">流程编码缺失，请选择流程！</td>
-            <td style="font-size:13px;">保存并提交</td>
-            <td style="font-size:13px;">未选择审批流程编码</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请选择需要删除的数据！</td>
-            <td style="font-size:13px;">删除</td>
-            <td style="font-size:13px;">未选择任何记录就点击删除</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">无法获上线文信息</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">无法获取当前登录用户信息</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">无法获事业部信息</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">当前用户未关联事业部</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择审批流程编码</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请选择需要删除的数据！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择任何记录就点击删除</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>无法获上线文信息</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>无法获取当前登录用户信息</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>无法获事业部信息</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前用户未关联事业部</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>减免金额必须大于0</td><td>保存时</td><td>减免金额填写了0或负数</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>减免金额超过保证金余额</td><td>提交时</td><td>减免金额大于已缴保证金</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>流程编码缺失</td><td>保存并提交时</td><td>未选择OA审批流程，选择流程后提交</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>请选择需要删除的数据</td><td>删除时</td><td>未选中任何减免申请记录，选中后删除</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>无法获取上下文信息</td><td>保存时</td><td>用户登录态失效，重新登录</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>无法获取事业部信息</td><td>保存时</td><td>用户未关联事业部，联系管理员配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>请先维护明细信息</td><td>提交时</td><td>减免申请未添加明细行，添加明细后提交</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：减免金额必须大于0</h4>
+<ul><li><strong>触发条件</strong>：用户在减免金额输入框填写0、负数或留空后点击保存</li><li><strong>逻辑分析</strong>：保证金减免金额（REDUCTION_AMT）代表实际减免的保证金金额，必须为正数。0或负数无业务意义，且审批通过后扣减保证金余额（CM_DEPOSITS_PAYMENT）将出现异常（扣减0或反向增加余额）。校验REDUCTION_AMT &gt; 0，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT REDUCTION_HEAD_ID, REDUCTION_NO, CUSTOMER_NAME, CONTRACT_NO,
+         REDUCTION_AMT, HZ_APPROVE_STATUS
+  FROM CM_DEPOSITS_REDUCTION_HEAD
+  WHERE REDUCTION_AMT IS NULL OR REDUCTION_AMT &lt;= 0;</code></pre>
+<h4>报错2：减免金额超过保证金余额</h4>
+<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，提交校验发现REDUCTION_AMT &gt; 已缴保证金余额（PAYMENT_AMT）</li><li><strong>逻辑分析</strong>：提交时校验减免金额不超过关联合同的已缴保证金余额，通过关联CM_DEPOSITS_REDUCTION_HEAD.CONTRACT_ID与CM_DEPOSITS_PAYMENT.CONTRACT_ID比对。超出余额意味着减免无充足保证金来源，审批通过后保证金余额将出现负数。此为阻断性报错，阻止OA流程（DEPOSITS_REDUCTION_HEAD_MCS_AW）发起，需调减减免金额或先确认保证金到款</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, H.CONTRACT_NO, H.REDUCTION_AMT,
+         P.PAYMENT_AMT AS 已缴保证金, (H.REDUCTION_AMT - P.PAYMENT_AMT) AS 超额金额
+  FROM CM_DEPOSITS_REDUCTION_HEAD H
+  JOIN CM_DEPOSITS_PAYMENT P ON H.CONTRACT_ID = P.CONTRACT_ID
+  WHERE H.REDUCTION_AMT &gt; P.PAYMENT_AMT
+    AND H.HZ_APPROVE_STATUS IN ('NEW', 'RUN');</code></pre>
+<h4>报错3：流程编码缺失</h4>
+<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，dto.getFlowCode()为空字符串或null</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.saveAndSubmit方法首行校验flowCode非空，保证金减免需通过工作流DEPOSITS_REDUCTION_HEAD_MCS_AW审批，flowCode为空无法启动工作流。根因是前端未选择审批流程或流程配置缺失。需在提交前选择OA审批流程</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT WORKFLOW_CODE, WORKFLOW_NAME FROM WORKFLOW_CONFIG
+  WHERE WORKFLOW_CODE = 'DEPOSITS_REDUCTION_HEAD_MCS_AW';</code></pre>
+<h4>报错4：请选择需要删除的数据</h4>
+<ul><li><strong>触发条件</strong>：用户未选中任何减免申请记录直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.remove方法校验cCmDepositsReductionHeadList非空，空集合时抛CommonException。前端列表页未勾选记录时删除按钮应禁用，此报错为前置校验。需先在列表勾选待删除的未提交记录再点击删除</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT REDUCTION_HEAD_ID, REDUCTION_NO, HZ_APPROVE_STATUS, STATUS
+  FROM CM_DEPOSITS_REDUCTION_HEAD
+  WHERE HZ_APPROVE_STATUS = 'NEW' AND STATUS = 'pending';</code></pre>
+<h4>报错5：无法获取上下文信息</h4>
+<ul><li><strong>触发条件</strong>：保存减免申请生成减免单号时，DetailsHelper.getUserDetails()返回空</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.generateCode方法通过DetailsHelper.getUserDetails()获取用户上下文，customUserDetails为空时抛CommonException。根因是用户登录态失效（Token过期、会话超时）或未登录调用接口。需重新登录后再次保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 验证用户登录态（示意，实际依会话框架）
+  SELECT USER_ID, USER_NAME, LAST_LOGIN_TIME FROM USER_SESSION
+  WHERE USER_ID = #{userId} AND SESSION_STATUS = 'ACTIVE';</code></pre>
+<h4>报错6：无法获取事业部信息</h4>
+<ul><li><strong>触发条件</strong>：保存减免申请生成减免单号时，epmDivisionService.getCurrentDivision()返回null</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.generateCode方法获取当前用户所属事业部，currentDivision为null时抛CommonException。事业部用于生成减免单号前缀（DIVISION_CODE）和关联ENTID。根因是用户未关联事业部或事业部主数据缺失。需联系管理员为用户配置事业部关联</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT U.USER_ID, U.USER_NAME, D.DIVISION_ID, D.DIVISION_CODE, D.DIVISION_NAME
+  FROM USER U
+  LEFT JOIN USER_DIVISION UD ON U.USER_ID = UD.USER_ID
+  LEFT JOIN DIVISION_BASE_SET D ON UD.DIVISION_ID = D.DIVISION_ID
+  WHERE U.USER_ID = #{userId} AND D.DIVISION_ID IS NULL;</code></pre>
+<h4>报错7：请先维护明细信息</h4>
+<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，前端校验lineDs.records为空（未添加任何减免明细行）</li><li><strong>逻辑分析</strong>：前端DetailPage.hadleChcek方法校验lineDs.records非空，明细行缺失时notification.error提示。减免申请需关联具体的保证金缴纳明细（CM_DEPOSITS_REDUCTION_LINE），无明细行意味着减免无具体来源。需在明细页点击"新建"添加减免明细行后提交</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, COUNT(L.REDUCTION_LINE_ID) AS 明细行数
+  FROM CM_DEPOSITS_REDUCTION_HEAD H
+  LEFT JOIN CM_DEPOSITS_REDUCTION_LINE L ON H.REDUCTION_HEAD_ID = L.HEAD_ID
+  GROUP BY H.REDUCTION_HEAD_ID, H.REDUCTION_NO
+  HAVING COUNT(L.REDUCTION_LINE_ID) = 0;</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">保存后减免单号未生成</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>编码规则AE.DEPOSITS_REDUCTION_HEAD_NO未配置或事业部编码未设置<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查编码规则配置和事业部基础设置
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">提交后工作流未启动</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>工作流编码DEPOSITS_REDUCTION_HEAD_MCS_AW未部署或流程定义有误<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查工作流引擎中该流程是否已部署
-    </div>
-  </div>
-</div>
+<ul><li>问题1：OA审批未发起</li><li>原因：OA系统不可用或工作流配置缺失</li><li>解决思路：检查工作流DEPOSITS_REDUCTION_HEAD_MCS_AW配置</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -562,10 +379,14 @@ SELECT * FROM CM_DEPOSITS_REDUCTION_LINE WHERE HEAD_ID = :headId AND CONTRACT_TY
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-09-16 | - | jiaqiang.fu01 | 初始创建保证金减免申请模块 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

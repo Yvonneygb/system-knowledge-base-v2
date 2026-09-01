@@ -204,46 +204,33 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：签收返利明细 核心逻辑">
-<KbQuote>兑现前需先签收返利明细，确保兑现基于已确认的返利数据</KbQuote>
-
-**具体逻辑**：
-
-- 1、查询未签收(signFlag=N)且未兑现(redemptionFlag=N)的返点明细
-- 2、批量(200条/批)检查发货行签收状态
-- 3、已签收的明细更新signFlag=Y
+<KbCard num="1" title="重点逻辑1：生成兑现汇总单 {数据汇总}">
+<ul><li><strong>业务意义</strong>：将分散的返利明细按事业部维度汇总为兑现汇总单，便于统一兑现和推送</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：先调用signRebateDetails()更新已签收返利明细的签收标识，将已签收的返利明细SIGN_FLAG更新为Y</li></ul>
+<ul><li>第2点：调用generateCashDetails()按事业部+法人客户+经销商+交易主体获取兑现明细</li></ul>
+<ul><li>第3点：按事业部(entId)分组，每个事业部生成一个兑现单头(CASH_SUMMARY)</li></ul>
+<ul><li>第4点：保存兑现明细(CASH_DETAILS)，关联兑现单头ID</li></ul>
+<ul><li>第5点：更新返利明细的兑现标识(REDEMPTION_FLAG=Y)和关联的兑现明细ID</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：按事业部分组生成兑现汇总单 核心逻辑">
-<KbQuote>兑现汇总单按事业部维度分组，每个事业部生成一个兑现头</KbQuote>
-
-**具体逻辑**：
-
-- 1、按事业部+法人客户+经销商+交易主体汇总查询兑现明细
-- 2、按事业部(entId)分组，每组创建一个兑现头(CashSummary)，pushStatus=PENDING
-- 3、逐行保存兑现明细(CashDetails)，关联兑现头ID
-- 4、更新0点记录的兑现标识=Y，关联cashDetailsId
+<KbCard num="2" title="重点逻辑2：ERP资金池推送 {数据推送}">
+<ul><li><strong>业务意义</strong>：兑现结果推送至ERP资金池，确保财务系统数据同步</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：校验兑现单是否存在(cashSummaryRepository.selectById)，不存在则抛出"兑现单异常，请稍后重试"</li></ul>
+<ul><li>第2点：校验兑现单是否已推送成功(getPushStatus==SUCCESS)，已推送则抛出"当前兑现不允许推送,请重新核实"</li></ul>
+<ul><li>第3点：查询未推送或推送失败的兑现明细(cashSummaryRepository.findListUnprocessedByCashId)</li></ul>
+<ul><li>第4点：组装推送数据(CashPoolDataDTO)，包含来源数据ID、交易公司编码、经销商编码、法人账户ID、金额、入账日期</li></ul>
+<ul><li>第5点：调用ebsSdkService.synAdjustCashPoolToEbs推送至ERP资金池</li></ul>
+<ul><li>第6点：根据ERP返回结果更新推送状态，只有所有行都成功才标记兑现单头为SUCCESS</li></ul>
 </KbCard>
 
-<KbCard num="3" title="重点逻辑3：推送ERP 核心逻辑">
-<KbQuote>兑现汇总单需推送到ERP执行资金池调整</KbQuote>
-
-**具体逻辑**：
-
-- 1、查询兑现头下未推送/推送失败的兑现明细
-- 2、组装CashPoolDataDTO(sourceType="真实性核销返利")，含法人账户信息
-- 3、调用ebsSdkService.synAdjustCashPoolToEbs()推送EBS
-- 4、逐行更新推送状态——任一行FAIL则头FAIL，全SUCCESS则头SUCCESS
-</KbCard>
-
-<KbCard num="4" title="重点逻辑4：服务费兑现工作流(并行流程) 核心逻辑">
-<KbQuote>服务费兑现走工作流审批，按区域区分不同审批流程</KbQuote>
-
-**具体逻辑**：
-
-- 1、工作流编码按区域区分——EXPENSE_TO_CASH_D(东)/_N(南)/_X(西)/_B(北)
-- 2、审批通过后(wfComplete)更新单据状态
-- 3、节点事件执行(eventExecute)推送财务共享(FSSC)
+<KbCard num="3" title="重点逻辑3：签收标识更新 {签收校验}">
+<ul><li><strong>业务意义</strong>：确保只有已签收的返利明细才能参与兑现，防止未签收数据被误兑现</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：查询所有SIGN_FLAG=N且REDEMPTION_FLAG=N的返利明细</li></ul>
+<ul><li>第2点：批量查询这些返利明细对应的发货行是否已签收(lnkObOrderReceivableRepository.signedStatu)</li></ul>
+<ul><li>第3点：对已签收的返利明细更新SIGN_FLAG为Y</li></ul>
 </KbCard>
 
 </div>
@@ -253,259 +240,303 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：hlod低代码页面">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：兑现单创建表单">
+<blockquote>本页面为低代码页面(hlod)，无独立前端源码。界面模块基于后端DTO(CashCommonDTO)和业务逻辑梳理。</blockquote>
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>兑现记录编号</td>
-<td>文本框</td>
-<td>兑现单号</td>
-<td>常显</td>
-<td>系统自动生成</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.CASHING_NO</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>经销商编码</td>
-<td>常显</td>
-<td>选择经销商后带入</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.CUSTOMER_CODE</td>
-</tr>
-<tr>
-<td>经销商名称</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>选择经销商后带入</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.CUSTOMER_NAME</td>
-</tr>
-<tr>
-<td>兑现类型</td>
-<td>下拉选择框</td>
-<td>兑现方式</td>
-<td>常显</td>
-<td>来源值集epm.cashing_way</td>
-<td>epm.cashing_way值集</td>
-<td>EPM_EXPENSE_TO_CASH.CASHING_WAY</td>
-</tr>
-<tr>
-<td>服务费金额</td>
-<td>数值框</td>
-<td>服务费总金额</td>
-<td>常显</td>
-<td>来源服务费编号</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.SERVICE_AMT</td>
-</tr>
-<tr>
-<td>本次可兑现金额</td>
-<td>数值框</td>
-<td>可兑现金额</td>
-<td>常显</td>
-<td>自动计算=兑现前剩余-应扣质保金-应扣税金-应扣其他</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.CASHABLE_AMT</td>
-</tr>
-<tr>
-<td>本次申请兑现金额</td>
-<td>数值框</td>
-<td>实际申请兑现金额</td>
-<td>常显</td>
-<td>必填；用户输入；≤本次可兑现金额</td>
-<td>正数</td>
-<td>EPM_EXPENSE_TO_CASH.APPLY_AMT</td>
-</tr>
-<tr>
-<td>应扣质保金</td>
-<td>数值框</td>
-<td>扣除质保金</td>
-<td>常显</td>
-<td>自动计算</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.DEPOSIT_DEDUCT</td>
-</tr>
-<tr>
-<td>应扣税金</td>
-<td>数值框</td>
-<td>扣除税金</td>
-<td>常显</td>
-<td>自动计算</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.TAXES_DEDUCT</td>
-</tr>
-<tr>
-<td>合同编码</td>
-<td>文本框</td>
-<td>关联合同编码</td>
-<td>常显</td>
-<td>选择合同后带入</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH&gt;CONTRACT_CODE</td>
-</tr>
-<tr>
-<td>交易公司</td>
-<td>文本框</td>
-<td>交易法人公司</td>
-<td>常显</td>
-<td>选择后带入</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>收款方</td>
-<td>文本框</td>
-<td>收款人/单位</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.RECEIVER</td>
-</tr>
-<tr>
-<td>开户银行</td>
-<td>文本框</td>
-<td>收款银行</td>
-<td>常显</td>
-<td>用户输入</td>
-<td>-</td>
-<td>EPM_EXPENSE_TO_CASH.BANK_NAME</td>
-</tr>
-</tbody></table></div>
+<tr><td>事业部</td><td>CASH_SUMMARY.ENT_ID</td><td>Select</td><td>选择事业部，决定兑现单归属</td><td>始终显示</td><td>必填，下拉选择事业部</td></tr>
+<tr><td>经销商</td><td>CASH_SUMMARY.CUSTOMER_ID</td><td>Lov</td><td>选择经销商，筛选返利明细</td><td>始终显示</td><td>选填，不选则查询全部经销商</td></tr>
+<tr><td>限定日期开始</td><td>CASH_SUMMARY.START_TIME</td><td>DatePicker</td><td>返利明细的限定日期起始</td><td>始终显示</td><td>必填，格式YYYY-MM-DD</td></tr>
+<tr><td>限定日期结束</td><td>CASH_SUMMARY.END_TIME</td><td>DatePicker</td><td>返利明细的限定日期截止</td><td>始终显示</td><td>必填，格式YYYY-MM-DD，需≥开始时间</td></tr>
+<tr><td>入账日期</td><td>CASH_SUMMARY.GL_DATE</td><td>DatePicker</td><td>兑现单的入账日期</td><td>始终显示</td><td>必填，格式YYYY-MM-DD</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块2：兑现单列表(CASH_SUMMARY)">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>兑现单ID</td><td>CASH_SUMMARY.ID</td><td>NumberField</td><td>兑现单主键ID</td><td>始终显示</td><td>系统生成</td></tr>
+<tr><td>事业部ID</td><td>CASH_SUMMARY.ENT_ID</td><td>NumberField</td><td>事业部ID</td><td>始终显示</td><td>创建时写入</td></tr>
+<tr><td>经销商ID</td><td>CASH_SUMMARY.CUSTOMER_ID</td><td>NumberField</td><td>经销商ID</td><td>始终显示</td><td>创建时写入</td></tr>
+<tr><td>金额</td><td>CASH_SUMMARY.AMOUNT</td><td>NumberField</td><td>兑现总金额</td><td>始终显示</td><td>=该事业部下所有兑现明细金额之和</td></tr>
+<tr><td>入账日期</td><td>CASH_SUMMARY.GL_DATE</td><td>DatePicker</td><td>入账日期</td><td>始终显示</td><td>创建时填写</td></tr>
+<tr><td>兑现开始时间</td><td>CASH_SUMMARY.START_TIME</td><td>DatePicker</td><td>兑现开始时间</td><td>始终显示</td><td>创建时填写</td></tr>
+<tr><td>兑现结束时间</td><td>CASH_SUMMARY.END_TIME</td><td>DatePicker</td><td>兑现结束时间</td><td>始终显示</td><td>创建时填写</td></tr>
+<tr><td>推送状态</td><td>CASH_SUMMARY.PUSH_STATUS</td><td>Select</td><td>推送ERP的状态</td><td>始终显示</td><td>值集：SUCCESS(成功)/PENDING(未推送)/FAIL(失败)</td></tr>
+<tr><td>推送时间</td><td>CASH_SUMMARY.PUSH_TIME</td><td>DatePicker</td><td>推送ERP的时间</td><td>始终显示</td><td>推送成功后写入</td></tr>
+<tr><td>备注</td><td>CASH_SUMMARY.REMARKS</td><td>TextField</td><td>备注</td><td>始终显示</td><td>创建时填写</td></tr>
+<tr><td>创建时间</td><td>CASH_SUMMARY.CREATED</td><td>DatePicker</td><td>创建时间</td><td>始终显示</td><td>系统自动</td></tr>
+<tr><td>最后更新时间</td><td>CASH_SUMMARY.LAST_UPD</td><td>DatePicker</td><td>最后更新时间</td><td>始终显示</td><td>系统自动</td></tr>
+<tr><td>最后更新人</td><td>CASH_SUMMARY.LAST_UPD_BY</td><td>TextField</td><td>最后更新人</td><td>始终显示</td><td>系统自动</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块3：兑现明细列表(CASH_DETAILS)">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>兑现明细ID</td><td>CASH_DETAILS.ID</td><td>NumberField</td><td>兑现明细主键ID</td><td>始终显示</td><td>系统生成</td></tr>
+<tr><td>兑现单ID</td><td>CASH_DETAILS.CASH_SUMMARY_ID</td><td>NumberField</td><td>关联兑现单头ID</td><td>始终显示</td><td>FK → CASH_SUMMARY.ID</td></tr>
+<tr><td>法人ID</td><td>CASH_DETAILS.BILL_ID</td><td>NumberField</td><td>法人ID</td><td>始终显示</td><td>创建时写入</td></tr>
+<tr><td>经销商ID</td><td>CASH_DETAILS.CUSTOMER_ID</td><td>NumberField</td><td>经销商ID</td><td>始终显示</td><td>创建时写入</td></tr>
+<tr><td>交易公司ID</td><td>CASH_DETAILS.TRADING_COMPANY_ID</td><td>NumberField</td><td>交易公司ID</td><td>始终显示</td><td>创建时写入</td></tr>
+<tr><td>返点金额</td><td>CASH_DETAILS.REBATE_AMT</td><td>NumberField</td><td>返点金额(保留两位小数)</td><td>始终显示</td><td>创建时写入</td></tr>
+<tr><td>推送状态</td><td>CASH_DETAILS.PUSH_STATUS</td><td>Select</td><td>推送ERP的状态</td><td>始终显示</td><td>值集：SUCCESS/PENDING/FAIL</td></tr>
+<tr><td>推送时间</td><td>CASH_DETAILS.PUSH_TIME</td><td>DatePicker</td><td>推送ERP的时间</td><td>始终显示</td><td>推送成功后写入</td></tr>
+<tr><td>币种</td><td>CASH_DETAILS.CURRENCY</td><td>TextField</td><td>币种</td><td>始终显示</td><td>创建时写入</td></tr>
+<tr><td>创建时间</td><td>CASH_DETAILS.CREATED</td><td>DatePicker</td><td>创建时间</td><td>始终显示</td><td>系统自动</td></tr>
+<tr><td>最后更新时间</td><td>CASH_DETAILS.LAST_UPD</td><td>DatePicker</td><td>最后更新时间</td><td>始终显示</td><td>系统自动</td></tr>
+<tr><td>最后更新人</td><td>CASH_DETAILS.LAST_UPD_BY</td><td>TextField</td><td>最后更新人</td><td>始终显示</td><td>系统自动</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<blockquote>本页面为低代码页面(hlod)，无独立弹窗。创建兑现单时通过表单填写参数，提交后由后端operationCashBiz方法处理。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新建兑现单</td><td>创建兑现汇总单</td><td>列表页</td><td>始终可用</td><td>弹窗填写事业部/经销商/限定日期/入账日期，调用generate-rebate-summary接口</td></tr>
+<tr><td>推送ERP</td><td>推送兑现结果至ERP</td><td>列表页</td><td>选中兑现单且推送状态≠SUCCESS</td><td>调用request-composer接口，推送至ERP资金池</td></tr>
+<tr><td>查看</td><td>查看兑现单详情</td><td>列表页</td><td>选中一条兑现单</td><td>跳转详情页查看兑现单头和兑现明细</td></tr>
+<tr><td>编辑</td><td>编辑兑现单</td><td>列表页</td><td>选中一条兑现单且推送状态=PENDING</td><td>跳转编辑页修改兑现单信息</td></tr>
+</tbody>
+</table>
+<h4>按钮1：新建兑现单（列表页）</h4>
+<ul><li><strong>触发条件</strong>：点击"新建"按钮</li><li><strong>执行逻辑</strong>：</li><li>第1点：弹窗显示创建表单，包含事业部、经销商、限定日期开始、限定日期结束、入账日期</li><li>第2点：用户填写参数后点击确认</li><li>第3点：调用POST /v1/&#123;orgId&#125;/epm-sales-price-rebate/generate-rebate-summary接口</li><li>第4点：后端operationCashBiz方法先调用signRebateDetails()更新已签收返利明细的签收标识</li><li>第5点：调用generateCashDetails()按事业部+法人客户+经销商+交易主体获取兑现明细</li><li>第6点：按事业部分组，每个事业部生成一个兑现单头(CASH_SUMMARY)</li><li>第7点：保存兑现明细(CASH_DETAILS)，关联兑现单头ID</li><li>第8点：更新返利明细的兑现标识(REDEMPTION_FLAG=Y)</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/epm-sales-price-rebate/generate-rebate-summary</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 查询兑现单列表（按创建时间倒序）
+SELECT
+  cs.ID              AS 兑现单ID,
+  cs.ENT_ID          AS 事业部ID,
+  cs.CUSTOMER_ID     AS 经销商ID,
+  cs.AMOUNT          AS 兑现金额,
+  TO_CHAR(cs.GL_DATE, 'YYYY-MM-DD') AS 入账日期,
+  TO_CHAR(cs.START_TIME, 'YYYY-MM-DD') AS 兑现开始时间,
+  TO_CHAR(cs.END_TIME, 'YYYY-MM-DD') AS 兑现结束时间,
+  cs.PUSH_STATUS     AS 推送状态,
+  TO_CHAR(cs.PUSH_TIME, 'YYYY-MM-DD HH24:MI:SS') AS 推送时间,
+  cs.REMARKS         AS 备注
+FROM CASH_SUMMARY cs
+ORDER BY cs.CREATED DESC;
 
-| 按钮名称 | 按钮作用 |D所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 生成兑现汇总单 | 生成兑现汇总数据 | 列表页 | 有权限 | 调用generate-rebate-summary接口，签收+汇总+生成兑现单 |
-| 推送ERP | 推送兑现数据到ERP | 详情页 | 兑现单未推送或推送失败 | 调用request-composer接口，推送EBS |
+-- 查询兑现明细
+SELECT
+  cd.ID              AS 兑现明细ID,
+  cd.CASH_SUMMARY_ID AS 兑现单ID,
+  cd.BILL_ID         AS 法人ID,
+  cd.CUSTOMER_ID     AS 经销商ID,
+  cd.TRADING_COMPANY_ID AS 交易公司ID,
+  cd.REBATE_AMT      AS 返点金额,
+  cd.PUSH_STATUS     AS 推送状态,
+  TO_CHAR(cd.PUSH_TIME, 'YYYY-MM-DD HH24:MI:SS') AS 推送时间,
+  cd.CURRENCY        AS 币种
+FROM CASH_DETAILS cd
+WHERE cd.CASH_SUMMARY_ID = #{cashSummaryId}
+ORDER BY cd.ID;
 
+-- 查询返利明细的签收和兑现状态
+SELECT
+  rd.ID              AS 返利明细ID,
+  rd.BILL_ID         AS 法人ID,
+  rd.ENT_ID          AS 事业部ID,
+  rd.TRADING_COMPANY_ID AS 交易公司ID,
+  rd.CUSTOMER_ID     AS 经销商ID,
+  rd.ACTION_OPT      AS 操作类型,
+  rd.OPT_QTY         AS 操作数量,
+  rd.REBATE_QTY      AS 返点数量,
+  rd.REBATE_AMT      AS 返点金额,
+  rd.REBATE_SUMMARY_ID AS 返点记录控制ID,
+  rd.CASH_DETAILS_ID AS 兑现明细ID,
+  rd.REDEMPTION_FLAG AS 是否已兑现,
+  rd.SIGN_FLAG       AS 是否已签收,
+  rd.CURRENCY        AS 币种,
+  TO_CHAR(rd.CREATED, 'YYYY-MM-DD') AS 创建时间,
+  TO_CHAR(rd.LAST_UPD, 'YYYY-MM-DD') AS 最后更新时间,
+  rd.LAST_UPD_BY     AS 最后更新人
+FROM REBATE_DETAILS rd
+WHERE rd.SIGN_FLAG = 'N'
+  AND rd.REDEMPTION_FLAG = 'N'
+ORDER BY rd.CREATED DESC;</code></pre>
+<h4>按钮2：推送ERP（列表页）</h4>
+<ul><li><strong>触发条件</strong>：选中一条兑现单且推送状态≠SUCCESS</li><li><strong>执行逻辑</strong>：</li><li>第1点：校验cashId不为0，否则抛出"兑现单参数不能为空"</li><li>第2点：查询兑现单头(cashSummaryRepository.selectById)，不存在则抛出"兑现单异常，请稍后重试"</li><li>第3点：校验兑现单推送状态，已推送成功则抛出"当前兑现不允许推送,请重新核实"</li><li>第4点：查询未推送或推送失败的兑现明细(findListUnprocessedByCashId)，无明细则抛出"当前兑现单没有符合推送的明细"</li><li>第5点：组装推送数据(CashPoolDataDTO)，遍历兑现明细，查询法人账户ID(epmLegalEntityAccountRepository.getLegalEntityAccount)</li><li>第6点：调用ebsSdkService.synAdjustCashPoolToEbs推送至ERP资金池</li><li>第7点：解析ERP返回结果(X_DATA_TBL)，逐行判断PROCESS_STATUS是否为S(成功)</li><li>第8点：更新兑现明细和兑现单头的推送状态</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/epm-sales-price-rebate/request-composer?cashId=&#123;cashId&#125;</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 查询未推送或推送失败的兑现单
+SELECT
+  cs.ID              AS 兑现单ID,
+  cs.ENT_ID          AS 事业部ID,
+  cs.AMOUNT          AS 兑现金额,
+  cs.PUSH_STATUS     AS 推送状态,
+  TO_CHAR(cs.PUSH_TIME, 'YYYY-MM-DD HH24:MI:SS') AS 推送时间
+FROM CASH_SUMMARY cs
+WHERE cs.PUSH_STATUS IS NULL
+   OR cs.PUSH_STATUS = 'PENDING'
+   OR cs.PUSH_STATUS = 'FAIL'
+ORDER BY cs.CREATED DESC;
+
+-- 查询未推送的兑现明细
+SELECT
+  cd.ID              AS 兑现明细ID,
+  cd.CASH_SUMMARY_ID AS 兑现单ID,
+  cd.CUSTOMER_ID     AS 经销商ID,
+  cd.TRADING_COMPANY_ID AS 交易公司ID,
+  cd.REBATE_AMT      AS 返点金额,
+  cd.PUSH_STATUS     AS 推送状态
+FROM CASH_DETAILS cd
+WHERE cd.PUSH_STATUS IS NULL
+   OR cd.PUSH_STATUS != 'SUCCESS'
+ORDER BY cd.ID;
+
+-- 查询法人账户配置
+SELECT
+  lea.LEGAL_ENTITY_ACCOUNT_ID AS 法人账户ID,
+  lea.TRADING_COMPANY_ID      AS 交易公司ID,
+  lea.CUSTOMER_ID             AS 经销商ID,
+  lea.ACCOUNT_ID              AS 账户ID
+FROM EPM_LEGAL_ENTITY_ACCOUNT lea
+WHERE lea.TRADING_COMPANY_ID = #{tradingCompanyId}
+  AND lea.CUSTOMER_ID = #{customerId};</code></pre>
+<h4>按钮3：查看（列表页）</h4>
+<ul><li><strong>触发条件</strong>：选中一条兑现单</li><li><strong>执行逻辑</strong>：跳转详情页查看兑现单头和兑现明细</li><li><strong>接口调用</strong>：无，仅前端页面跳转</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM CASH_SUMMARY WHERE ID = #{id};
+SELECT * FROM CASH_DETAILS WHERE CASH_SUMMARY_ID = #{id};</code></pre>
+<h4>按钮4：编辑（列表页）</h4>
+<ul><li><strong>触发条件</strong>：选中一条兑现单且推送状态=PENDING</li><li><strong>执行逻辑</strong>：跳转编辑页修改兑现单信息</li><li><strong>接口调用</strong>：无，仅前端页面跳转</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM CASH_SUMMARY WHERE ID = #{id} AND PUSH_STATUS = 'PENDING';</code></pre>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：本次申请金额必须大于0 —— 确保兑现金额合法</KbSubTitle>
-
-- 第1点：服务费兑现提交时校验applyAmt&gt;0
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT APPLY_AMT FROM EPM_EXPENSE_TO_CASH WHERE CASHING_ID = :id
-```
-
+<ul><li>校验1：限定日期开始和结束不能为空 —— 确保查询返利明细的时间范围有效</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：generateCashDetails方法校验dto.getStartTime().isEmpty() || dto.getEndTime().isEmpty()</p>
+<p>- 第2点：为空时抛出CommonException("开始时间或结束时间不能为空")</p>
+<ul><li>系统体现：toast提醒"开始时间或结束时间不能为空"</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ID, START_TIME, END_TIME, GL_DATE
+    FROM CASH_SUMMARY
+    WHERE START_TIME IS NULL OR END_TIME IS NULL;</code></pre>
+<ul><li>校验2：入账日期不能为空 —— 确保兑现单有有效的入账日期</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：generateCashDetails方法校验dto.getGlDate().isEmpty()</p>
+<p>- 第2点：为空时抛出CommonException("入账日期不能为空")</p>
+<ul><li>系统体现：toast提醒"入账日期不能为空"</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ID, GL_DATE
+    FROM CASH_SUMMARY
+    WHERE GL_DATE IS NULL;</code></pre>
 </KbCard>
+
 <KbCard title="提交校验">
+<blockquote>本页面无审批流程，无工作流编码。生成兑现单后直接进入待推送状态。</blockquote>
 </KbCard>
+
 <KbCard title="状态机">
-### 状态机
-
-<KbSubTitle>状态机流转图</KbSubTitle>
-
-
-```text
-NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APPROVED(已审批) → 推送FSSC
-  ↑                         │
-  │                         ├──审批拒绝──→ REJECTED(已拒绝)
-  │                         └──终止──────→ INTERRUPT(已终止)
-  │
-  └──删除──→ (删除)
-```
-
-<KbSubTitle>状态机列表</KbSubTitle>
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 编辑、保存、提交、删除 |
-| RUN | 审批中 | 无(等待审批结果) |
-| APPROVED | 审批通过 | 无(流程结束) |
-| REJECTED | 审批拒绝 | 编辑、重新提交 |
-| INTERRUPT | 已终止 | 无(流程结束) |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：EPM_EXPENSE_TO_CASH（服务费兑现表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| CASHING_ID | BIGINT | 兑现记录ID(主键) | - | 自增主键 |
-| CASHING_NO | VARCHAR | 兑现记录编号 | 兑现记录编号 | 系统自动生成 |
-| CASHING_WAY | LONG | 兑现类型 | 兑现类型 | 值集epm.cashing_way |
-| ORGANIZATION_ID | BIGINT | 组织ID | - | 取用户上下文 |
-| CUSTOMER_ID | BIGINT | 经销商ID | 经销商编码 | 选择经销商后带入 |
-| CUSTOMER_CODE | VARCHAR | 经销商编码 | 经销商编码 | - |
-| CUSTOMER_NAME | VARCHAR | 经销商名称 | 经销商名称 | - |
-| SERVICE_AMT | DECIMAL | 服务费金额 | 服务费金额 | 来源服务费编号 |
-| CASHABLE_AMT_BEFORE | DECIMAL | 兑现前剩余可兑现金额 | - | - |
-| CASHABLE_AMT_AFTER | DECIMAL | 兑现后剩余可兑现金额 | - | =兑现前-本次申请 |
-| DEPOSIT_DEDUCT | DECIMAL | 应扣质保金 | 应扣质保金 | 自动计算 |
-| TAXES_DEDUCT | DECIMAL | 应扣税金 | 应扣税金 | 自动计算 |
-| OTHER_DEDUCT | LONG | 应扣其他 | 应扣其他 | - |
-| CASHABLE_AMT |B DECIMAL | 本次可兑现金额 | 本次可兑现金额 | =兑现前-质保金-税金-其他 |
-| APPLY_AMT | DECIMAL | 本次申请实际兑现金额 | 本次申请兑现金额 | 必填，用户输入 |
-| CONTRACT_ID | BIGINT | 合同ID | 合同编码 | 选择合同后带入 |
-| CONTRACT_CODE | VARCHAR | 合同编码 | 合同编码 | - |
-| TRADING_COMPANY_ID | BIGINT | 交易公司ID | 交易公司 | 选择后带入 |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司 | - |
-| RECEIVER | VARCHAR | 收款方 | 收款方 | 用户输入 |
-| BANK_NAME | VARCHAR | 开户银行 | 开户银行 | 用户输入 |
-| BANK_ACCOUNT | VARCHAR | 银行账号 | 银行账号 | 用户输入 |
-| PAYMENT_STATUS | LONG | 付款状态 | 付款状态 | 0=未付款/2=付款成功 |
-| HZ_INSTANCE_ID | BIGINT | 流程实例ID | - | 工作流启动后回写 |
-| HZ_APPROVE_STATUS | VARCHAR | 审批状态 | 审批状态 | 默认NEW |
-| CALLBACK_SOURCE | VARCHAR | 外部审批回调来源 | - | - |
-| CREATION_DATE | DATETIME | 创建时间 | - | 框架自动记录 |
-| OBJECT_VERSION_NUMBER | BIGINT | 乐观锁版本号 | - | 框架自动维护 |
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>新建兑现单 ──生成──→ PENDING(未推送) ──推送ERP──→ SUCCESS(推送成功)
+                                        │
+                                        └──→ FAIL(推送失败) ──重新推送──→ SUCCESS</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>PENDING</td><td>未推送</td><td>推送ERP、查看、编辑</td></tr>
+<tr><td>SUCCESS</td><td>推送成功</td><td>查看</td></tr>
+<tr><td>FAIL</td><td>推送失败</td><td>推送ERP(重试)、查看</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="表2：SA_SALEPRICE_LINE（销售价格行表，上游关联表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| SA_SALEPRICE_LINE_ID | BIGINT | 行ID(主键) | - | 自增主键 |
-| ITEM_ID | BIGINT | 物料ID | - | 关联产品主档 |
-| REBATE_MONTH | LONG | 月返点数% | - | 返利计算依据 |
-| REBATE_QUARTER | LONG | 季返点数% | - | 返利计算依据 |
-| REBATE_YEAR | LONG | 年返点数% | - | 返利计算依据 |
-| RATIO_RESOURCES | LONG | 资源点位% | - | 批准返利率% |
-| ALLOW_REBATE_AMT | LONG | 批准返利金额 | - | - |
-| DIVISION_ID | LONG | 事业部ID | - | 按事业部分组 |
-
----
-
+<KbCard title="表1：REBATE_DETAILS（返利明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>BIGINT</td><td>主键ID</td><td>返利明细ID</td><td>自增主键</td></tr>
+<tr><td>BILL_ID</td><td>BIGINT</td><td>法人ID</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>ENT_ID</td><td>BIGINT</td><td>事业部ID</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>TRADING_COMPANY_ID</td><td>BIGINT</td><td>交易公司ID</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>经销商ID</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>ACTION_OPT</td><td>VARCHAR</td><td>操作类型</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>OPT_QTY</td><td>DECIMAL</td><td>操作数量</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>REBATE_QTY</td><td>DECIMAL</td><td>返点数量</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>REBATE_AMT</td><td>DECIMAL</td><td>返点金额</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>REBATE_SUMMARY_ID</td><td>BIGINT</td><td>返点记录控制ID</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>CASH_DETAILS_ID</td><td>BIGINT</td><td>兑现明细ID</td><td>-</td><td>生成兑现明细时写入</td></tr>
+<tr><td>REDEMPTION_FLAG</td><td>VARCHAR</td><td>是否已兑现(Y/N)</td><td>-</td><td>生成兑现明细时更新为Y</td></tr>
+<tr><td>SIGN_FLAG</td><td>VARCHAR</td><td>是否已签收(Y/N)</td><td>-</td><td>签收更新时更新为Y</td></tr>
+<tr><td>CURRENCY</td><td>VARCHAR</td><td>币种</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>CREATED</td><td>DATE</td><td>创建时间</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPD</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPD_BY</td><td>VARCHAR</td><td>最后更新人</td><td>-</td><td>系统自动</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表2：CASH_SUMMARY（兑现记录表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>BIGINT</td><td>主键ID</td><td>兑现单ID</td><td>自增主键</td></tr>
+<tr><td>ENT_ID</td><td>BIGINT</td><td>事业部ID</td><td>事业部ID</td><td>创建时写入</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>经销商ID</td><td>经销商ID</td><td>创建时写入</td></tr>
+<tr><td>AMOUNT</td><td>DECIMAL</td><td>兑现总金额</td><td>金额</td><td>=该事业部下所有兑现明细金额之和</td></tr>
+<tr><td>GL_DATE</td><td>DATETIME</td><td>入账日期</td><td>入账日期</td><td>创建时填写</td></tr>
+<tr><td>START_TIME</td><td>DATE</td><td>兑现开始时间</td><td>兑现开始时间</td><td>创建时填写</td></tr>
+<tr><td>END_TIME</td><td>DATE</td><td>兑现结束时间</td><td>兑现结束时间</td><td>创建时填写</td></tr>
+<tr><td>PUSH_STATUS</td><td>VARCHAR</td><td>推送状态</td><td>推送状态</td><td>SUCCESS/PENDING/FAIL</td></tr>
+<tr><td>PUSH_TIME</td><td>DATETIME</td><td>推送时间</td><td>推送时间</td><td>推送成功后写入</td></tr>
+<tr><td>REMARKS</td><td>VARCHAR</td><td>备注</td><td>备注</td><td>创建时填写</td></tr>
+<tr><td>CREATED</td><td>DATETIME</td><td>创建时间</td><td>创建时间</td><td>系统自动</td></tr>
+<tr><td>LAST_UPD</td><td>DATETIME</td><td>最后更新时间</td><td>最后更新时间</td><td>系统自动</td></tr>
+<tr><td>LAST_UPD_BY</td><td>VARCHAR</td><td>最后更新人</td><td>最后更新人</td><td>系统自动</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="表3：CASH_DETAILS（兑现明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>BIGINT</td><td>主键ID</td><td>兑现明细ID</td><td>自增主键</td></tr>
+<tr><td>CASH_SUMMARY_ID</td><td>BIGINT</td><td>兑现单ID</td><td>兑现单ID</td><td>FK → CASH_SUMMARY.ID</td></tr>
+<tr><td>BILL_ID</td><td>BIGINT</td><td>法人ID</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>经销商ID</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>TRADING_COMPANY_ID</td><td>BIGINT</td><td>交易公司ID</td><td>-</td><td>创建时写入</td></tr>
+<tr><td>REBATE_AMT</td><td>DECIMAL</td><td>返点金额(保留两位小数)</td><td>返点金额</td><td>创建时写入</td></tr>
+<tr><td>PUSH_STATUS</td><td>VARCHAR</td><td>推送状态</td><td>推送状态</td><td>SUCCESS/PENDING/FAIL</td></tr>
+<tr><td>PUSH_TIME</td><td>DATETIME</td><td>推送时间</td><td>推送时间</td><td>推送成功后写入</td></tr>
+<tr><td>CURRENCY</td><td>VARCHAR</td><td>币种</td><td>币种</td><td>创建时写入</td></tr>
+<tr><td>CREATED</td><td>DATETIME</td><td>创建时间</td><td>创建时间</td><td>系统自动</td></tr>
+<tr><td>LAST_UPD</td><td>DATETIME</td><td>最后更新时间</td><td>最后更新时间</td><td>系统自动</td></tr>
+<tr><td>LAST_UPD_BY</td><td>VARCHAR</td><td>最后更新人</td><td>最后更新人</td><td>系统自动</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -513,72 +544,115 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">本次申请金额必须大于0</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">applyAmt≤0</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">ERP推送失败</td>
-            <td style="font-size:13px;">推送ERP</td>
-            <td style="font-size:13px;">EBS接口返回错误</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
+<tr><td>兑现单参数不能为空</td><td>推送ERP时</td><td>cashId为0，未选择有效的兑现单，需选择兑现单后推送</td><td>toast提醒</td><td>[查看](#报错1兑现单参数不能为空)</td></tr>
+<tr><td>兑现单异常，请稍后重试</td><td>推送ERP时</td><td>兑现单不存在(已被删除或ID被篡改)，刷新列表确认兑现单是否存在</td><td>toast提醒</td><td>[查看](#报错2兑现单异常请稍后重试)</td></tr>
+<tr><td>当前兑现不允许推送,请重新核实</td><td>推送ERP时</td><td>兑现单已推送成功(PUSH_STATUS=SUCCESS)，不可重复推送</td><td>toast提醒</td><td>[查看](#报错3当前兑现不允许推送请重新核实)</td></tr>
+<tr><td>当前兑现单没有符合推送的明细</td><td>推送ERP时</td><td>兑现明细均已推送或无有效明细，检查明细推送状态及法人账户配置</td><td>toast提醒</td><td>[查看](#报错4当前兑现单没有符合推送的明细)</td></tr>
+<tr><td>ERP返回数据异常，没有结果明细</td><td>推送ERP时</td><td>ERP接口synAdjustCashPoolToEbs返回结果格式异常，缺少X_DATA_TBL_ITEM节点，联系ERP运维</td><td>toast提醒</td><td>[查看](#报错5erp返回数据异常没有结果明细)</td></tr>
+<tr><td>没有可处理的明细</td><td>生成兑现汇总单时</td><td>查询无符合生成条件的返利明细，可能原因：上游核销未审批通过/返利明细已全部生成兑现/查询条件不匹配</td><td>toast提醒</td><td>[查看](#报错6没有可处理的明细)</td></tr>
+<tr><td>开始时间或结束时间不能为空</td><td>生成兑现汇总单时</td><td>限定日期开始或结束为空，需填写完整的时间范围</td><td>toast提醒</td><td>[查看](#报错7开始时间或结束时间不能为空)</td></tr>
+<tr><td>入账日期不能为空</td><td>生成兑现汇总单时</td><td>入账日期为空，需填写入账日期</td><td>toast提醒</td><td>[查看](#报错8入账日期不能为空)</td></tr>
+<tr><td>网络繁忙,请稍后再试</td><td>生成兑现汇总单时</td><td>后端处理异常(查询已生成兑现单但没有签收的数据异常/更新签收标识异常/汇总兑现明细数据异常)</td><td>toast提醒</td><td>[查看](#报错9网络繁忙请稍后再试)</td></tr>
+<tr><td>返利签收处理失败</td><td>生成兑现汇总单时</td><td>signRebateDetails方法处理异常，更新签收标识失败</td><td>toast提醒</td><td>[查看](#报错10返利签收处理失败)</td></tr>
+</tbody>
+</table>
+<h4>报错1：兑现单参数不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户点击"推送ERP"按钮，传入的cashId为0</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:66处校验cashId==0时抛出CommonException("兑现单参数不能为空")。该校验为前置参数校验，防止空指针和无效查询。需在列表页选中有效的兑现汇总单记录后再点击推送</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
+FROM CASH_SUMMARY
+WHERE ID = #{cashId};</code></pre>
+<h4>报错2：兑现单异常，请稍后重试</h4>
+<ul><li><strong>触发条件</strong>：用户选中兑现单点击"推送ERP"，但cashSummaryRepository.selectById(cashId)返回null</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:70处校验兑现单头不存在时抛出CommonException("兑现单异常，请稍后重试")。根因有三类：(1)兑现单已被其他用户删除；(2)兑现单ID被篡改；(3)并发操作导致数据不一致。需刷新列表确认兑现单是否存在</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
+FROM CASH_SUMMARY
+WHERE ID = #{cashId};</code></pre>
+<h4>报错3：当前兑现不允许推送,请重新核实</h4>
+<ul><li><strong>触发条件</strong>：用户选中已推送成功的兑现单再次点击"推送ERP"</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:73处校验cashH.getPushStatus()等于SUCCESS时抛出CommonException("当前兑现不允许推送,请重新核实")。该校验防止重复推送导致ERP资金池数据重复。需核实兑现单推送状态，仅PENDING或FAIL状态的兑现单可推送</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
+FROM CASH_SUMMARY
+WHERE ID = #{cashId} AND PUSH_STATUS = 'SUCCESS';</code></pre>
+<h4>报错4：当前兑现单没有符合推送的明细</h4>
+<ul><li><strong>触发条件</strong>：用户选中兑现单点击"推送ERP"，兑现明细均已推送或无有效明细</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:80处校验cashDetailsV为空时抛出CommonException("当前兑现单没有符合推送的明细")。根因有二：(1)兑现明细均已推送成功或推送失败，无PENDING状态明细；(2)兑现明细对应的交易公司、经销商在EPM_LEGAL_ENTITY_ACCOUNT中未配置账户ID，导致所有明细被过滤。需核查明细推送状态及法人账户配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 查询兑现明细的推送状态
+SELECT
+  cd.ID              AS 兑现明细ID,
+  cd.CASH_SUMMARY_ID AS 兑现单ID,
+  cd.REBATE_AMT      AS 返点金额,
+  cd.PUSH_STATUS     AS 推送状态,
+  cd.TRADING_COMPANY_ID AS 交易公司ID,
+  cd.CUSTOMER_ID     AS 经销商ID
+FROM CASH_DETAILS cd
+WHERE cd.CASH_SUMMARY_ID = #{cashId}
+  AND cd.PUSH_STATUS != 'SUCCESS';
 
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次申请金额必须大于0</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>applyAmt≤0</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>ERP推送失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>EBS接口返回错误</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+-- 核查法人账户配置
+SELECT
+  lea.LEGAL_ENTITY_ACCOUNT_ID AS 法人账户ID,
+  lea.TRADING_COMPANY_ID      AS 交易公司ID,
+  lea.CUSTOMER_ID             AS 经销商ID,
+  lea.ACCOUNT_ID              AS 账户ID
+FROM EPM_LEGAL_ENTITY_ACCOUNT lea
+WHERE lea.TRADING_COMPANY_ID = #{tradingCompanyId}
+  AND lea.CUSTOMER_ID = #{customerId};</code></pre>
+<h4>报错5：ERP返回数据异常，没有结果明细</h4>
+<ul><li><strong>触发条件</strong>：推送ERP后，ERP接口返回的X_DATA_TBL_ITEM为空或null</li><li><strong>逻辑分析</strong>：pushErp方法在EpmSalesPriceRebateServiceImpl.java:168处校验tblItemArr为空时抛出CommonException("ERP返回数据异常，没有结果明细")。该异常表示ERP接口synAdjustCashPoolToEbs调用成功但返回结果格式异常，缺少X_DATA_TBL_ITEM节点。根因有二：(1)ERP接口版本不匹配，返回格式变更；(2)ERP侧处理异常但未按约定格式返回错误。需联系ERP运维核查接口日志</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
+FROM CASH_SUMMARY
+WHERE ID = #{cashId};</code></pre>
+<h4>报错6：没有可处理的明细</h4>
+<ul><li><strong>触发条件</strong>：用户点击"生成兑现汇总单"按钮，operationCashBiz方法查询无符合生成条件的返利明细</li><li><strong>逻辑分析</strong>：operationCashBiz方法在EpmSalesPriceRebateServiceImpl.java:227处校验cashDetailsV为空时抛出CommonException("没有可处理的明细")。该方法先调用signRebateDetails更新已签收返点明细，再通过generateCashDetails按事业部+法人客户+经销商+交易主体获取兑现明细。无明细根因有三类：(1)上游发票真实性核销未审批通过，返利明细未生成；(2)返利明细已全部生成过兑现(REDEMPTION_FLAG=Y)；(3)查询条件(事业部/经销商/时间范围)不匹配。需核查返利明细的签收和兑现标志</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 查询未兑现且已签收的返利明细
+SELECT
+  rd.ID              AS 返利明细ID,
+  rd.ENT_ID          AS 事业部ID,
+  rd.CUSTOMER_ID     AS 经销商ID,
+  rd.REBATE_AMT      AS 返点金额,
+  rd.REDEMPTION_FLAG AS 是否已兑现,
+  rd.SIGN_FLAG       AS 是否已签收
+FROM REBATE_DETAILS rd
+WHERE rd.SIGN_FLAG = 'Y'
+  AND rd.REDEMPTION_FLAG = 'N'
+  AND rd.ENT_ID = #{entId}
+  AND (rd.CUSTOMER_ID = #{customerId} OR #{customerId} IS NULL);</code></pre>
+<h4>报错7：开始时间或结束时间不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户点击"生成兑现汇总单"按钮，但未填写限定日期开始或结束</li><li><strong>逻辑分析</strong>：generateCashDetails方法在EpmSalesPriceRebateServiceImpl.java:465处校验dto.getStartTime().isEmpty() || dto.getEndTime().isEmpty()时抛出CommonException("开始时间或结束时间不能为空")。需填写完整的限定日期范围</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ID, START_TIME, END_TIME
+FROM CASH_SUMMARY
+WHERE START_TIME IS NULL OR END_TIME IS NULL;</code></pre>
+<h4>报错8：入账日期不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户点击"生成兑现汇总单"按钮，但未填写入账日期</li><li><strong>逻辑分析</strong>：generateCashDetails方法在EpmSalesPriceRebateServiceImpl.java:470处校验dto.getGlDate().isEmpty()时抛出CommonException("入账日期不能为空")。需填写入账日期</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ID, GL_DATE
+FROM CASH_SUMMARY
+WHERE GL_DATE IS NULL;</code></pre>
+<h4>报错9：网络繁忙,请稍后再试</h4>
+<ul><li><strong>触发条件</strong>：生成兑现汇总单时，后端处理异常</li><li><strong>逻辑分析</strong>：可能原因：(1)查询已生成兑现单但没有签收的数据异常(getUnsignedDeliveryLineIds方法)；(2)更新签收标识异常(updateSignFlag方法)；(3)汇总兑现明细数据异常(generateCashDetails方法)。需检查后端日志确认具体异常</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查返利明细数据是否异常
+SELECT COUNT(*) FROM REBATE_DETAILS WHERE SIGN_FLAG IS NULL OR REDEMPTION_FLAG IS NULL;</code></pre>
+<h4>报错10：返利签收处理失败</h4>
+<ul><li><strong>触发条件</strong>：生成兑现汇总单时，signRebateDetails方法处理异常</li><li><strong>逻辑分析</strong>：signRebateDetails方法在EpmSalesPriceRebateServiceImpl.java:392-396处catch异常后抛出CommonException("RB001", "返利签收处理失败", e)。可能原因：(1)getUnsignedDeliveryLineId方法查询异常；(2)signedStatus方法查询签收状态异常；(3)updateSignFlag方法更新签收标识异常。需检查后端日志确认具体异常</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查返利明细的签收状态
+SELECT
+  rd.ID              AS 返利明细ID,
+  rd.SIGN_FLAG       AS 是否已签收,
+  rd.REDEMPTION_FLAG AS 是否已兑现,
+  rd.DELIVERY_LINE_ID AS 发货行ID
+FROM REBATE_DETAILS rd
+WHERE rd.SIGN_FLAG = 'N'
+  AND rd.REDEMPTION_FLAG = 'N';</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">兑现汇总单生成后无数据</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>无已签收且未兑现的返利明细<br>
-      <strong style="color:#7C3AED;">处理：</strong>先执行签收操作，确认有可兑现的返利数据
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">ERP推送部分成功部分失败</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>逐行推送，某行EBS调用失败不影响其他行<br>
-      <strong style="color:#7C3AED;">处理：</strong>查看失败行错误信息，修正后重新推送
-    </div>
-  </div>
-</div>
+<ul><li>问题1：兑现单生成后金额为0</li><li>原因：返利明细的REBATE_AMT为0或null，排查SQL：SELECT rd.ID, rd.REBATE_AMT, rd.REDEMPTION_FLAG FROM REBATE_DETAILS rd WHERE rd.REBATE_AMT IS NULL OR rd.REBATE_AMT = 0;</li><li>解决思路：检查上游发票真实性核销是否正确生成了返利金额</li></ul>
+<ul><li>问题2：推送ERP失败</li><li>原因：ERP系统不可用或推送数据异常(兑现金额为0/负数、经销商编码在ERP中不存在、项目编码不匹配)，排查SQL：SELECT cd.ID, cd.REBATE_AMT, cd.PUSH_STATUS, cd.TRADING_COMPANY_ID, cd.CUSTOMER_ID FROM CASH_DETAILS cd WHERE cd.PUSH_STATUS = 'FAIL';</li><li>解决思路：检查CASH_DETAILS.PUSH_STATUS为FAIL的记录，核实法人账户配置和经销商数据</li></ul>
+<ul><li>问题3：兑现明细对应的法人账户ID为空</li><li>原因：EPM_LEGAL_ENTITY_ACCOUNT表中未配置该交易公司和经销商对应的账户ID，排查SQL：SELECT lea.* FROM EPM_LEGAL_ENTITY_ACCOUNT lea WHERE lea.TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125; AND lea.CUSTOMER_ID = #&#123;customerId&#125;;</li><li>解决思路：在法人账户配置页面补充配置</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -587,14 +661,14 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-09-15 | - | - | 初始创建销售提价兑现功能 |
-
-> 要求：
-> 1. 按倒序展示
-> 2. 只需要包含2026年的提交记录
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-31</td><td>-</td><td>-</td><td>基于后端代码(EpmSalesPriceRebateServiceImpl/Controller/Entity)完整重写，补全界面模块(3个表单/列表共38字段)、10个报错条目(含排查SQL)、4个按钮详细逻辑、3张数据库表详解</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

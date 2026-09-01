@@ -127,35 +127,24 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 门店综合统计分析">
-<KbQuote>按经销商维度汇总展示门店的多维度统计数据，包括运营状态、经营属性、门店等级、门店类型、面积分段、装修风格（按品牌）、连锁属性、系统归属等，用于全面掌握经销商门店结构。</KbQuote>
-
-**具体逻辑**：
-
-- 1、以CUSTOMER为主表，LEFT JOIN CUSTOMER_ORG获取组织维度信息
-- 2、对MKT_TERMINAL按经销商(cust_id)做大量子查询COUNT统计
-- 3、仅展示有门店的经销商（EXISTS子查询过滤）
-- 4、支持按事业部、销售区域、运营中心、省份、城市、经销商编码筛选
-- 5、支持Excel导出
+<KbCard num="1" title="重点逻辑1：纯报表查询页面【只读查询】">
+<ul><li><strong>业务意义</strong>：供内部人员按经销商维度查看门店的多维度统计分布数据</li><li><strong>具体逻辑描述</strong>：</li><li>本页面为hlod低代码报表页面，无独立前端源码</li><li>仅提供查询和导出功能，不支持新增、修改、删除操作</li><li>数据来源于客户表关联客户组织表，通过大量子查询统计门店各维度数量</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 统计维度说明">
-**具体逻辑**：
-
-- 1、**运营状态**：运营中(terminal_stat=1)、撤店(terminal_stat=2)
-- 2、**经营属性**：直营专营(customer_class=1)、经销专营(2)、分销(3)
-- 3、**门店等级**：一级(store_area_level='1')、二级('2')、三级('3')
-- 4、**门店类型**：5种类型(terminal_type=1~5)
-- 5、**面积分段**：≤100㎡、100-200㎡、200-300㎡、&gt;300㎡
-- 6、**装修风格**：按品牌entid(101~109)×装修风格(decoration_style)组合统计
-- 7、**连锁**：is_ls=2为连锁门店
-- 8、**系统归属**：8种系统(sys_id=1~8)
+<KbCard num="2" title="重点逻辑2：多维度子查询统计">
+<ul><li><strong>业务意义</strong>：通过50+个子查询，按经销商维度统计门店的各维度数量</li><li><strong>具体逻辑描述</strong>：</li><li>运营状态：yunying(terminal_stat=1)、chedian(terminal_stat=2)</li><li>经营属性：zbzy(customer_class=1)、jxzy(customer_class=2)、fx(customer_class=3)</li><li>门店等级：level1/2/3(store_area_level='1'/'2'/'3')</li><li>门店类型：dian1~5(terminal_type=1~5)</li><li>门店面积：area1(&lt;=100)、area2(100-200)、area3(200-300)、area4(&gt;300)</li><li>装修风格：按entid(101~109)和decoration_style(1~3)交叉统计</li><li>连锁：is_ls(is_ls=2)</li><li>系统归属：dmg/hxmkl/hmlj/jrzj/oyd/yzjj/yxjj/other(sys_id=1~8)</li><li>每个子查询格式：<code>(SELECT COUNT(...) FROM epms.mkt_terminal t WHERE t.cust_id = c.customer_id AND t.某字段 = 某值 GROUP BY t.某字段)</code></li></ul>
 </KbCard>
 
-<KbCard num="3" title="2.3 装修风格与品牌映射">
-**具体逻辑**：
+<KbCard num="3" title="重点逻辑3：装修风格按事业部区分">
+<ul><li><strong>业务意义</strong>：不同事业部（entid）的装修风格编码含义不同，需分别统计</li><li><strong>具体逻辑描述</strong>：</li><li>entid=101：decoration_style=1(A6)、2(其他)</li><li>entid=102：decoration_style=1(V9)、2(V10)、3(其他)</li><li>entid=103：decoration_style=1(F1)、2(其他)</li><li>entid=104：decoration_style=1(A6)、2(其他)</li><li>entid=105：decoration_style=1(F11)、2(F1)、3(其他)</li><li>entid=106：decoration_style=1(A7UP)、2(A7)、3(其他)</li><li>entid=107~109：decoration_style=1(其他)</li></ul>
+</KbCard>
 
-- 1、--
+<KbCard num="4" title="重点逻辑4：导出Excel列定义">
+<ul><li><strong>业务意义</strong>：导出时按预定义的列顺序和标题输出Excel</li><li><strong>具体逻辑描述</strong>：</li><li>导出标题："终端分布报表"</li><li>使用@ExcelSheet和@ExcelColumn注解定义列顺序(order)和标题</li><li>异步导出阈值：asyncThreshold = 10000（超过1万条异步导出）</li><li>列顺序：事业部→经销商编码→经销商名称→省份→城市→区域→运营中心→运营→撤店→总部自营→经销自营→分销→一线及省会→地级市→县级→专卖→商超→家装→社区→乡镇→100平米以下→100~200→200~300→300以上→A6→其他→属于家具连锁→大明宫→红星美凯龙→华美立家→居然之家→欧亚达→银座家居→月星家居→其他</li></ul>
+</KbCard>
+
+<KbCard num="5" title="重点逻辑5：查询条件匹配规则">
+<ul><li><strong>业务意义</strong>：支持多维度灵活筛选门店统计数据</li><li><strong>具体逻辑描述</strong>：</li><li>精确查询：组织ID、事业部ID、销售区域ID、运营中心ID、省份ID、城市ID、经销商编码</li><li>经销商名称：未在SQL中作为查询条件（DTO中有但SQL未使用）</li><li>必须存在门店：<code>WHERE EXISTS (SELECT 1 FROM epms.mkt_terminal t WHERE t.cust_id = a.customer_id)</code></li></ul>
 </KbCard>
 
 </div>
@@ -165,91 +154,225 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
+<KbCard title="界面模块">
+<h4>查询条件区域</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>组织ID</td><td>ORG_ID</td><td>隐藏</td><td>当前用户组织ID</td><td>常显</td><td>自动获取，精确匹配</td></tr>
+<tr><td>品牌事业部ID</td><td>DIVISION_ID</td><td>下拉选择框</td><td>按事业部筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>销售区域ID</td><td>SALEZONE_ORG_ID</td><td>下拉选择框</td><td>按销售区域筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>运营中心ID</td><td>OPERAT_CENTER_ORG_ID</td><td>下拉选择框</td><td>按运营中心筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>省份ID</td><td>PROVINCE_ID</td><td>下拉选择框</td><td>按省份筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>城市ID</td><td>CITY_ID</td><td>下拉选择框</td><td>按城市筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>经销商编码</td><td>CUSTOMER_CODE</td><td>文本框</td><td>按经销商编码筛选</td><td>常显</td><td>用户输入，精确匹配</td></tr>
+<tr><td>经销商名称</td><td>CUSTOMER_NAME</td><td>文本框</td><td>按经销商名称筛选</td><td>常显</td><td>用户输入</td></tr>
+</tbody>
+</table>
+<h4>报表数据区域</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>事业部名称</td><td>DIVISION_NAME</td><td>文本</td><td>事业部名称</td><td>常显</td><td>子查询DIVISION_BASE_SET获取</td></tr>
+<tr><td>经销商编码</td><td>CUSTOMER_CODE</td><td>文本</td><td>经销商编码</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>经销商名称</td><td>CUSTOMER_NAME</td><td>文本</td><td>经销商名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>省份名称</td><td>PROVINCE_NAME</td><td>文本</td><td>省份名称</td><td>常显</td><td>关联CUSTOMER_ORG获取</td></tr>
+<tr><td>城市名称</td><td>CITY_NAME</td><td>文本</td><td>城市名称</td><td>常显</td><td>关联CUSTOMER_ORG获取</td></tr>
+<tr><td>销售区域名称</td><td>SALEZONE_ORG_NAME</td><td>文本</td><td>销售区域名称</td><td>常显</td><td>关联CUSTOMER_ORG获取</td></tr>
+<tr><td>运营中心名称</td><td>OPERAT_CENTER_ORG_NAME</td><td>文本</td><td>运营中心名称</td><td>常显</td><td>关联CUSTOMER_ORG获取</td></tr>
+<tr><td>运营中门店数量</td><td>YUNYING</td><td>数值</td><td>运营中门店数量</td><td>常显</td><td>COUNT(terminal_stat=1)</td></tr>
+<tr><td>撤店数量</td><td>CHEDIAN</td><td>数值</td><td>撤店数量</td><td>常显</td><td>COUNT(terminal_stat=2)</td></tr>
+<tr><td>直营专营店数量</td><td>ZBZY</td><td>数值</td><td>总部自营数量</td><td>常显</td><td>COUNT(customer_class=1)</td></tr>
+<tr><td>经销专营店数量</td><td>JXZY</td><td>数值</td><td>经销自营数量</td><td>常显</td><td>COUNT(customer_class=2)</td></tr>
+<tr><td>分销店数量</td><td>FX</td><td>数值</td><td>分销数量</td><td>常显</td><td>COUNT(customer_class=3)</td></tr>
+<tr><td>一级门店数量</td><td>LEVEL1</td><td>数值</td><td>一线及省会城市数量</td><td>常显</td><td>COUNT(store_area_level='1')</td></tr>
+<tr><td>二级门店数量</td><td>LEVEL2</td><td>数值</td><td>地级市城市数量</td><td>常显</td><td>COUNT(store_area_level='2')</td></tr>
+<tr><td>三级门店数量</td><td>LEVEL3</td><td>数值</td><td>县级及以下地区数量</td><td>常显</td><td>COUNT(store_area_level='3')</td></tr>
+<tr><td>专卖店数量</td><td>DIAN1</td><td>数值</td><td>专卖店数量</td><td>常显</td><td>COUNT(terminal_type=1)</td></tr>
+<tr><td>商超店数量</td><td>DIAN2</td><td>数值</td><td>商超店数量</td><td>常显</td><td>COUNT(terminal_type=2)</td></tr>
+<tr><td>家装店数量</td><td>DIAN3</td><td>数值</td><td>家装店数量</td><td>常显</td><td>COUNT(terminal_type=3)</td></tr>
+<tr><td>社区店数量</td><td>DIAN4</td><td>数值</td><td>社区店数量</td><td>常显</td><td>COUNT(terminal_type=4)</td></tr>
+<tr><td>乡镇店数量</td><td>DIAN5</td><td>数值</td><td>乡镇店数量</td><td>常显</td><td>COUNT(terminal_type=5)</td></tr>
+<tr><td>100平米以下数量</td><td>AREA1</td><td>数值</td><td>面积&lt;=100平米数量</td><td>常显</td><td>COUNT(terminal_area&lt;=100)</td></tr>
+<tr><td>100-200平米数量</td><td>AREA2</td><td>数值</td><td>面积100-200平米数量</td><td>常显</td><td>COUNT(100&lt;terminal_area&lt;=200)</td></tr>
+<tr><td>200-300平米数量</td><td>AREA3</td><td>数值</td><td>面积200-300平米数量</td><td>常显</td><td>COUNT(200&lt;terminal_area&lt;=300)</td></tr>
+<tr><td>300平米以上数量</td><td>AREA4</td><td>数值</td><td>面积&gt;300平米数量</td><td>常显</td><td>COUNT(terminal_area&gt;300)</td></tr>
+<tr><td>连锁门店数量</td><td>IS_LS</td><td>数值</td><td>属于家具连锁数量</td><td>常显</td><td>COUNT(is_ls=2)</td></tr>
+<tr><td>DMG系统数量</td><td>DMG</td><td>数值</td><td>大明宫数量</td><td>常显</td><td>COUNT(sys_id=1)</td></tr>
+<tr><td>红星美凯龙数量</td><td>HXMKL</td><td>数值</td><td>红星美凯龙数量</td><td>常显</td><td>COUNT(sys_id=2)</td></tr>
+<tr><td>华美立家数量</td><td>HMLJ</td><td>数值</td><td>华美立家数量</td><td>常显</td><td>COUNT(sys_id=3)</td></tr>
+<tr><td>居然之家数量</td><td>JRZJ</td><td>数值</td><td>居然之家数量</td><td>常显</td><td>COUNT(sys_id=4)</td></tr>
+<tr><td>欧亚达数量</td><td>OYD</td><td>数值</td><td>欧亚达数量</td><td>常显</td><td>COUNT(sys_id=5)</td></tr>
+<tr><td>银座家居数量</td><td>YZJJ</td><td>数值</td><td>银座家居数量</td><td>常显</td><td>COUNT(sys_id=6)</td></tr>
+<tr><td>月星家居数量</td><td>YXJJ</td><td>数值</td><td>月星家居数量</td><td>常显</td><td>COUNT(sys_id=7)</td></tr>
+<tr><td>其他系统数量</td><td>OTHER</td><td>数值</td><td>其他系统数量</td><td>常显</td><td>COUNT(sys_id=8)</td></tr>
+</tbody>
+</table>
+<h4>其他按钮</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询门店统计分析数据</td><td>列表页查询区域</td><td>常显</td><td>调用POST /mkt-terminal-distribution/search接口，分页返回统计数据</td></tr>
+<tr><td>导出</td><td>导出报表数据为Excel</td><td>列表页查询区域</td><td>常显</td><td>调用GET /mkt-terminal-distribution/export接口，导出Excel（标题"终端分布报表"），超过1万条异步导出</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（列表页查询区域）</h4>
+<ul><li><strong>业务意义</strong>：根据查询条件搜索门店统计分析数据</li><li><strong>具体逻辑描述</strong>：</li><li>点击查询按钮，触发POST <code>/v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/search</code> 接口</li><li>请求参数为MktTerminalDistributionSearchDTO</li><li>后端通过PageHelper.doPageAndSort实现分页查询</li><li>查询CUSTOMER+CUSTOMER_ORG关联，50+个子查询统计MKT_TERMINAL各维度数量</li><li>返回MktTerminalDistributionSearchVO分页结果</li></ul>
+<h4>按钮2：导出（列表页查询区域）</h4>
+<ul><li><strong>业务意义</strong>：将查询结果导出为Excel文件，标题"终端分布报表"</li><li><strong>具体逻辑描述</strong>：</li><li>点击导出按钮，触发GET <code>/v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/export</code> 接口</li><li>使用@ExcelExport注解，asyncThreshold=10000（超过1万条异步导出）</li><li>导出MktTerminalDistributionExportVO，按预定义列顺序输出</li></ul>
 </KbCard>
-<KbCard title="导入">
 
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口名称</th><th>请求方式</th><th>接口路径</th><th>权限</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>门店统计分析报表查询</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/search`</td><td>组织级权限</td><td>分页查询门店统计数据</td></tr>
+<tr><td>门店统计分析报表导出</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/export`</td><td>组织级权限</td><td>导出Excel，标题"终端分布报表"，asyncThreshold=10000</td></tr>
+</tbody>
+</table>
+<p><strong>接口入参（MktTerminalDistributionSearchDTO）：</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>参数名</th><th>类型</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>orgId</td><td>Long</td><td>组织ID（精确匹配）</td></tr>
+<tr><td>divisionId</td><td>Long</td><td>品牌事业部ID（精确匹配）</td></tr>
+<tr><td>salezoneOrgId</td><td>Long</td><td>销售区域ID（精确匹配）</td></tr>
+<tr><td>operatCenterOrgId</td><td>Long</td><td>运营中心ID（精确匹配）</td></tr>
+<tr><td>provinceId</td><td>Long</td><td>省份ID（精确匹配）</td></tr>
+<tr><td>cityId</td><td>Long</td><td>城市ID（精确匹配）</td></tr>
+<tr><td>customerCode</td><td>String</td><td>经销商编码（精确匹配）</td></tr>
+<tr><td>customerName</td><td>String</td><td>经销商名称</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="其他按钮">
 
-| 按钮 | 功能 | 显隐条件 |
-|------|------|---------|
-| 导出 | Excel导出门店统计数据 | 始终显示 |
-
-</KbCard>
-<KbCard title="保存校验">
-</KbCard>
-<KbCard title="提交校验">
-</KbCard>
 <KbCard title="状态机">
-
-无。纯查询报表，无状态流转。
-
----
-
-</KbCard>
-<KbCard num="1" title="MKT_TERMINAL（门店档案表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| terminal_id | BIGINT | 主键 | - |
-| terminal_code | VARCHAR | 门店编码 | - |
-| terminal_name | VARCHAR | 门店名称 | - |
-| cust_id | BIGINT | 所属经销商ID | 子查询关联键 |
-| entid | BIGINT | 组织ID/品牌ID | 101~109对应不同品牌 |
-| terminal_stat | INTEGER | 门店状态 | 1-运营中, 2-撤店 |
-| customer_class | INTEGER | 经营属性 | 1-直营专营, 2-经销专营, 3-分销 |
-| store_area_level | VARCHAR | 门店等级 | '1'/'2'/'3' |
-| terminal_type | INTEGER | 门店类型 | 1~5 |
-| terminal_area | DECIMAL | 门店面积 | 用于面积分段统计 |
-| decoration_style | INTEGER | 装修风格 | 按品牌不同含义不同 |
-| is_ls | INTEGER | 是否连锁 | 2-连锁 |
-| sys_id | INTEGER | 系统归属 | 1~8 |
-
+<blockquote>本页面为纯查询报表页面，无状态流转。</blockquote>
 </KbCard>
 
-<KbCard num="2" title="CUSTOMER（客户/经销商表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| customer_id | BIGINT | 客户ID | 主查询驱动键 |
-| customer_code | VARCHAR | 客户编码 | - |
-| customer_name | VARCHAR | 客户名称 | - |
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>客户表</td><td>数据来源</td><td>提供经销商基础信息</td><td>客户主数据已维护</td></tr>
+<tr><td>客户组织表</td><td>数据关联</td><td>提供经销商的组织信息（事业部、!省市区/销售区域/运营中心）</td><td>客户组织数据已维护</td></tr>
+<tr><td>门店表</td><td>数据来源</td><td>通过50+个子查询统计各维度门店数量</td><td>门店档案已创建</td></tr>
+<tr><td>事业部基础设置</td><td>数据关联</td><td>提供事业部名称</td><td>事业部已配置</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="3" title="CUSTOMER_ORG（客户组织关系表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| customer_id | BIGINT | 客户ID | - |
-| division_id | BIGINT | 事业部ID | - |
-| province_id | BIGINT | 省份ID | - |
-| province_name | VARCHAR | 省份名称 | - |
-| city_id | BIGINT | 城市ID | - |
-| city_name | VARCHAR | 城市名称 | - |
-| salezone_org_id | BIGINT | 销售区域ID | - |
-| salezone_org_name | VARCHAR | 销售区域名称 | - |
-| operat_center_org_id | BIGINT | 运营中心ID | - |
-| operat_center_org_name | VARCHAR | 运营中心名称 | - |
-| organization_id | BIGINT | 组织ID | - |
-
----
-
+<KbCard title="下游影响">
+<ul><li>门店多维度分布分析：管理层通过报表了解门店在运营状态、经营属性、等级、类型、面积、装修风格、连锁、系统归属等维度的分布</li><li>经销商门店统计：统计每个经销商的门店数量和分布情况</li><li>Excel导出归档：导出报表数据供内部管理决策与归档使用</li></ul>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="MKT_TERMINAL（门店表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CUST_ID</td><td>NUMBER</td><td>经销商ID</td><td>-</td><td>关联CUSTOMER</td></tr>
+<tr><td>TERMINAL_STAT</td><td>NUMBER</td><td>门店状态</td><td>运营/撤店</td><td>1=运营中, 2=撤店</td></tr>
+<tr><td>CUSTOMER_CLASS</td><td>NUMBER</td><td>经营属性</td><td>总部自营/经销自营/分销</td><td>1=直营专营, 2=经销专营, 3=分销</td></tr>
+<tr><td>STORE_AREA_LEVEL</td><td>VARCHAR2</td><td>门店等级</td><td>一线/地级/县级</td><td>'1'=一线及省会, '2'=地级市, '3'=县级及以下</td></tr>
+<tr><td>TERMINAL_TYPE</td><td>NUMBER</td><td>门店类型</td><td>专卖/商超/家装/社区/乡镇</td><td>1=专卖, 2=商超, 3=家装, 4=社区, 5=乡镇</td></tr>
+<tr><td>TERMINAL_AREA</td><td>NUMBER</td><td>门店面积</td><td>面积分段统计</td><td>&lt;=100/100-200/200-300/&gt;300</td></tr>
+<tr><td>DECORATION_STYLE</td><td>NUMBER</td><td>装修风格</td><td>按entid区分不同含义</td><td>1/2/3，含义随entid变化</td></tr>
+<tr><td>ENTID</td><td>NUMBER</td><td>企业ID</td><td>-</td><td>101~109，区分事业部</td></tr>
+<tr><td>IS_LS</td><td>NUMBER</td><td>连锁属性</td><td>属于家具连锁</td><td>2=连锁</td></tr>
+<tr><td>SYS_ID</td><td>NUMBER</td><td>系统归属</td><td>DMG/红星/华美/居然/欧亚/银座/月星/其他</td><td>1~8</td></tr>
+<tr><td>COUNTY_AREAID</td><td>NUMBER</td><td>区县区域ID</td><td>-</td><td>关联SCPAREA</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="CUSTOMER（客户表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CUSTOMER_ID</td><td>NUMBER</td><td>客户ID(主键)</td><td>-</td><td>关联MKT_TERMINAL.CUST_ID</td></tr>
+<tr><td>CUSTOMER_CODE</td><td>VARCHAR2</td><td>客户编码</td><td>经销商编码</td><td>表字段直接输出</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR2</td><td>客户名称</td><td>经销商名称</td><td>表字段直接输出</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>查询结果为空</td><td>查询按钮点击时</td><td>当前查询条件下无门店统计数据，请调整查询条件后重试</td><td>低</td><td>[查看](#报错1查询结果为空)</td></tr>
+<tr><td>子查询返回多行</td><td>查询结果展示时</td><td>某经销商的门店在某维度有多条分组记录，子查询返回多行</td><td>中</td><td>[查看](#报错2子查询返回多行)</td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错3网络请求失败接口调用异常)</td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错4权限不足未登录)</td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错5导出失败网络异常)</td></tr>
+</tbody>
+</table>
+<h4>报错1：查询结果为空</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，按当前查询条件（事业部、销售区域、运营中心、省份、城市、经销商等）查询CUSTOMER关联CUSTOMER_ORG返回空结果集</li><li><strong>逻辑分析</strong>：报表查询CUSTOMER关联CUSTOMER_ORG，并通过 <code>WHERE EXISTS (SELECT 1 FROM epms.mkt_terminal t WHERE t.cust_id = a.customer_id)</code> 筛选必须存在门店的经销商。若查询条件过严（如经销商编码拼写错误、事业部ID不匹配）、或经销商名下无门店（EXISTS条件不成立）、或用户组织ID与数据不匹配，均会返回空结果。该报错为提示性，不影响系统。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT c.customer_id        AS 客户ID,
+         c.customer_code      AS 经销商编码,
+         c.customer_name      AS 经销商名称,
+         COUNT(t.terminal_id) AS 门店数量
+  FROM   customer c
+  LEFT   JOIN mkt_terminal t ON t.cust_id = c.customer_id
+  WHERE  EXISTS (
+           SELECT 1 FROM mkt_terminal t2
+           WHERE t2.cust_id = c.customer_id
+         )
+  GROUP  BY c.customer_id, c.customer_code, c.customer_name
+  ORDER  BY 门店数量 DESC;</code></pre>
+<h4>报错2：子查询返回多行</h4>
+<ul><li><strong>触发条件</strong>：查询结果展示时，某经销商在某维度（如装修风格、门店面积等）的子查询 <code>(SELECT COUNT(...) FROM epms.mkt_terminal t WHERE t.cust_id = c.customer_id AND t.某字段 = 某值 GROUP BY t.某字段)</code> 返回多行</li><li><strong>逻辑分析</strong>：报表通过50+个子查询按经销商维度统计门店各维度数量，每个子查询格式为 <code>(SELECT COUNT(...) FROM epms.mkt_terminal t WHERE t.cust_id = c.customer_id AND t.某字段 = 某值 GROUP BY t.某字段)</code>。正常情况下GROUP BY后每个分组值仅返回一行，但若子查询的WHERE条件和GROUP BY字段不一致（如WHERE按terminal_stat筛选但GROUP BY按decoration_style分组）、或数据存在异常重复、或entid关联错误导致同一经销商门店跨事业部统计，子查询可能返回多行，Oracle抛出ORA-01427单行子查询返回多行错误，整条查询失败。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT t.cust_id           AS 客户ID,
+         t.decoration_style  AS 装修风格,
+         t.entid             AS 企业ID,
+         COUNT(*)            AS 门店数量
+  FROM   mkt_terminal t
+  GROUP  BY t.cust_id, t.decoration_style, t.entid
+  HAVING COUNT(DISTINCT t.entid) &gt; 1
+  ORDER  BY 门店数量 DESC;</code></pre>
+<h4>报错3：网络请求失败/接口调用异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/search或GET /mkt-terminal-distribution/export接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalDistributionSearch接口分页查询CUSTOMER关联CUSTOMER_ORG，并通过50+个子查询统计MKT_TERMINAL各维度数量。若后端ae-report服务未启动、Oracle数据库连接异常、50+子查询导致严重慢SQL、子查询返回多行触发ORA-01427、网络中断、或网关转发失败，均会导致接口调用异常。因子查询数量多，该接口对数据库性能敏感。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 客户总数,
+         COUNT(t.terminal_id) AS 门店总数
+  FROM   customer c
+  LEFT   JOIN mkt_terminal t ON t.cust_id = c.customer_id
+  WHERE  EXISTS (
+           SELECT 1 FROM mkt_terminal t2
+           WHERE t2.cust_id = c.customer_id
+         );</code></pre>
+<h4>报错4：权限不足/未登录</h4>
+<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre>
+<h4>报错5：导出失败：网络异常</h4>
+<ul><li><strong>触发条件</strong>：点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/export接口过程中，网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口通过@ExcelExport(value = MktTerminalDistributionExportVO.class, asyncThreshold = 10000)注解实现Excel导出，超过1万条数据异步导出。后端先全量查询CUSTOMER关联CUSTOMER_ORG及50+子查询统计数据再生成Excel文件流返回。若查询数据量较大导致响应超时、或异步导出任务排队失败、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定事业部、销售区域）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 有门店的经销商数量
+  FROM   customer c
+  WHERE  EXISTS (
+           SELECT 1 FROM mkt_terminal t
+           WHERE t.cust_id = c.customer_id
+         );</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -257,88 +380,17 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">查询无数据</td>
-            <td style="font-size:13px;">该组织下无门店或筛选条件过严</td>
-            <td style="font-size:13px;">放宽查询条件重试</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">查询性能慢</td>
-            <td style="font-size:13px;">大量子查询COUNT统计</td>
-            <td style="font-size:13px;">属于已知性能特征，建议缩小查询范围</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>放宽查询条件重试</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>查询性能慢</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>属于已知性能特征，建议缩小查询范围</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">为什么用子查询而不是GROUP BY？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>每个统计维度独立子查询，逻辑清晰但性能有代价
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">装修风格列名含义是什么？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>列名=风格简称+品牌entid后缀，如a6101表示品牌101的A6风格
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">系统归属有哪些？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>1-DMG, 2-华夏名酒连, 3-华美利嘉, 4-金融之家, 5-欧亚达, 6-月星家居, 7-月星家居, 8-其他
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">为什么只展示有门店的经销商？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>SQL使用EXISTS子查询过滤无门店的经销商，避免空行
-    </div>
-  </div>
-</div>
+<p><strong>Q1：报表统计哪些维度？</strong></p>
+<p>A：统计运营状态（运营/撤店）、经营属性（直营/经销/分销）、门店等级（一线/地级/县级）、门店类型（专卖/商超/家装/社区/乡镇）、门店面积（4段）、装修风格（按事业部区分）、连锁属性、系统归属（8类）等维度。</p>
+<p><strong>Q2：装修风格为什么按entid区分？</strong></p>
+<p>A：不同事业部（entid=101~109）的装修风格编码含义不同。例如entid=101时decoration_style=1表示A6风格，entid=102时decoration_style=1表示V9风格。</p>
+<p><strong>Q3：导出Excel的标题是什么？</strong></p>
+<p>A：标题为"终端分布报表"，超过1万条数据时异步导出。</p>
+<p><strong>Q4：报表是否支持新增/修改/删除？</strong></p>
+<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -347,10 +399,15 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 更新内容 | 更新人 |
-|------|------|---------|--------|
-| 2026-01-15 | v1.0.0 | 初始创建门店统计分析报表 | - |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-12-15</td><td>-</td><td>HZERO</td><td>初始创建门店统计分析报表查询和导出接口</td></tr>
+<tr><td>2025-12-10</td><td>-</td><td>HZERO</td><td>初始创建TerminalReportController</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

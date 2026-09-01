@@ -136,40 +136,8 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="照片类型配置">
-
-<KbQuote>配置门店装修申请时需要上传的装修前后照片项目，规范照片上传口径</KbQuote>
-
-**具体逻辑**：
-
-- 1、配置门店验收报销时需要上传的照片类型（照片项目）
-- 2、每项包含照片项目名称、照片项目说明、拍摄角度及要求
-- 3、照片分为装修前照片和装修后照片两类
-
-</KbCard>
-
-<KbCard num="2" title="照片上传要求">
-
-<KbQuote>明确装修前照片必填、装修后选填的约束，保障照片上传完整性</KbQuote>
-
-**具体逻辑**：
-
-- 1、拍摄角度及要求（shootRequire）描述该照片的拍摄规范
-- 2、装修前照片（docid/docname）为必填项
-- 3、装修后照片（afterDocId/afterDocName）为选填项
-
-</KbCard>
-
-<KbCard num="3" title="附件类型">
-
-<KbQuote>区分不同用途的附件类型，使照片设置可被多个下游模块引用</KbQuote>
-
-**具体逻辑**：
-
-- 1、doctype 字段标识附件类型，区分不同用途的照片
-- 2、照片设置项可被门店装修申请和验收报销两个模块引用
-- 3、--
-
+<KbCard num="1" title="重点逻辑1：照片项目配置">
+<ul><li><strong>业务意义</strong>：配置门店装修申请时需要上传的装修前后照片项目</li><li><strong>具体逻辑描述</strong>：</li><li>定义照片项目名称和说明</li><li>定义拍摄角度及要求</li><li>设置是否验收提供/装修提供及数量要求</li></ul>
 </KbCard>
 
 </div>
@@ -179,72 +147,94 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard title="界面模块">
+<p>本页面为hlod低代码页面，后端无独立Controller/Entity，查询接口嵌入在FinFeeApplyFinishedHeaderController的queryMktStorephotoSetLine方法中，通过FinFeeApplyFinishedHeaderMapper的mktStorePhotoSetHead/mktStorePhotoSetLine查询。</p>
+<h4>照片设置区</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>照片项目</td><td>PHOTO_ITEM</td><td>TextField</td><td>照片项目名称</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>照片说明</td><td>PHOTO_ITEM_NOTE</td><td>TextField</td><td>照片项目说明</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>拍摄要求</td><td>SHOOT_REQUIRE</td><td>TextField</td><td>拍摄角度及要求</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>是否验收提供</td><td>IS_YS_PROVIDE</td><td>Select</td><td>是否验收提供</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>验收提供数量</td><td>YS_PROVIDE_COUNT</td><td>NumberField</td><td>验收提供数量</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>是否装修提供</td><td>IS_ZX_PROVIDE</td><td>Select</td><td>是否装修提供</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>装修提供数量</td><td>ZX_PROVIDE_COUNT</td><td>NumberField</td><td>装修提供数量</td><td>始终</td><td>用户输入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口</th><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>查询照片设置</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-apply-finished-headers/storephoto-set-line`</td><td>查询门店照片设置(嵌入在FinFeeApplyFinishedHeaderController中)</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="选择弹窗">
+<p>本页面无选择弹窗。</p>
 </KbCard>
+
 <KbCard title="导入">
-不支持批量导入
-
+<p>本页面无导入功能。</p>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 操作说明 | 可用条件 |
-|---------|---------|---------|
-| 新增行 | 新增一条照片类型项 | 始终可用 |
-| 删除行 | 删除选中的照片类型项 | 选中行后可用 |
-| 保存 | 保存所有照片类型项 | 编辑状态 |
-| 上传照片 | 上传装修前/后照片附件 | 对应行可用 |
-
+<p>本页面无其他按钮。</p>
 </KbCard>
+
 <KbCard title="保存校验">
-- 照片项目名称不能为空
-
-- 门店装修申请ID不能为空（terminalApplyId）
-
+<ul><li>校验1：照片项目必填 —— 确保照片项目名称完整</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM MKT_STOREPHOTO_SET_LINE WHERE PHOTO_ITEM IS NULL</code></li></ul>
 </KbCard>
+
 <KbCard title="提交校验">
+<p>本页面为设置页面，无提交校验。</p>
 </KbCard>
+
 <KbCard title="状态机">
-
-```text
-编辑中 ──保存──→ 已保存（可继续编辑）
-```
-
----
-
-</KbCard>
-<KbCard num="1" title="4.1 FIN_FEE_CHECK_BX_PHOTO（门店装修申请及完成的照片明细表）">
-
-| 列名 | 类型 | 说明 | 约束 |
-|-----|------|------|------|
-| TERMINAL_APPLY_PHOTO_ID | BIGINT | 主键ID | PK, AUTO_INCREMENT |
-| TERMINAL_APPLY_ID | BIGINT | 门店装修申请ID | NOT NULL |
-| PHOTO_ITEM | VARCHAR | 照片项目名称 | |
-| PHOTO_ITEM_NOTE | VARCHAR | 照片项目说明 | |
-| SHOOT_REQUIRE | VARCHAR | 拍摄角度及要求 | |
-| DOCID | VARCHAR | 装修前照片ID | NOT NULL |
-| DOCNAME | VARCHAR | 装修前照片名称 | |
-| AFTER_DOC_ID | VARCHAR | 装修后照片ID | |
-| AFTER_DOC_NAME | VARCHAR | 装修后照片名称 | |
-| SEQ | BIGINT | 行ID | |
-| CHECK_BX_ID | BIGINT | 验收报销ID | |
-| DOCTYPE | VARCHAR | 附件类型 | |
-
----
-
+<p>本页面为设置页面，无状态机。</p>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="工作流">
+<p>本页面无工作流。</p>
 </KbCard>
+
+<KbCard title="MKT_STOREPHOTO_SET_HEAD（门店照片设置头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>STOREPHOTO_SET_ID</td><td>Long</td><td>照片设置头ID</td><td>-</td><td>自增</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>Long</td><td>组织ID</td><td>-</td><td>系统赋值</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="MKT_STOREPHOTO_SET_LINE（门店照片设置明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>STOREPHOTO_SET_ID</td><td>Long</td><td>照片设置头ID</td><td>-</td><td>关联头表</td></tr>
+<tr><td>PHOTO_ITEM</td><td>String</td><td>照片项目名称</td><td>照片项目</td><td>用户输入</td></tr>
+<tr><td>PHOTO_ITEM_NOTE</td><td>String</td><td>照片项目说明</td><td>照片说明</td><td>用户输入</td></tr>
+<tr><td>SHOOT_REQUIRE</td><td>String</td><td>拍摄角度及要求</td><td>拍摄要求</td><td>用户输入</td></tr>
+<tr><td>IS_YS_PROVIDE</td><td>Long</td><td>是否验收提供</td><td>是否验收提供</td><td>用户选择</td></tr>
+<tr><td>YS_PROVIDE_COUNT</td><td>Long</td><td>验收提供数量</td><td>验收提供数量</td><td>用户输入</td></tr>
+<tr><td>IS_ZX_PROVIDE</td><td>Long</td><td>是否装修提供</td><td>是否装修提供</td><td>用户选择</td></tr>
+<tr><td>ZX_PROVIDE_COUNT</td><td>Long</td><td>装修提供数量</td><td>装修提供数量</td><td>用户输入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -252,87 +242,11 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">照片项目名称不能为空</td>
-            <td style="font-size:13px;">未填写照片项目名称</td>
-            <td style="font-size:13px;">补充名称后保存</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">门店装修申请ID不能为空</td>
-            <td style="font-size:13px;">terminalApplyId为空</td>
-            <td style="font-size:13px;">确保关联有效的装修申请</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>照片项目名称不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>照片行信息中照片项目名称字段为空时触发校验。<br>该页面为hlod低代码页面，前端C7N内置必填校验。<br>排查是否存在未填写照片项目名称的历史异常数据。</div>
-    <div class="detail-tip" v-pre>toast提醒，提示后用户补充照片项目名称保存</div>
-
-```sql
-SELECT * FROM FIN_FEE_CHECK_BX_PHOTO WHERE PHOTO_ITEM IS NULL OR TRIM(PHOTO_ITEM) = '';
-```
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>门店装修申请ID不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>门店装修申请ID（terminalApplyId）为空时触发校验。<br>该字段为关联装修申请的外键，必须在创建照片行时正确关联。<br>排查前端传入的 terminalApplyId 参数是否缺失。</div>
-    <div class="detail-tip" v-pre>toast提醒，提示后确保关联有效的装修申请</div>
-
-```sql
-SELECT * FROM FIN_FEE_CHECK_BX_PHOTO WHERE TERMINAL_APPLY_ID IS NULL;
-```
-  </div>
-</div>
+<KbCard title="Q1：装修申请时无照片项目">
+<p><strong>根因</strong>：未配置门店照片设置</p>
+<p><strong>解决方案</strong>：在本页面配置照片项目和拍摄要求</p>
 </KbCard>
-<KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">照片设置如何被下游使用？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>门店验收报销和装修申请时，根据照片设置项生成待上传照片行，用户需按拍摄要求上传装修前/后照片。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">装修前照片和装修后照片的区别？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>装修前照片（docid）为必填，记录装修前门店状态；装修后照片（afterDocId）为选填，记录装修完成后的门店状态。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">该页面是hold低代码页面吗？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>是，该页面基于hold低代码平台配置，无独立Controller，通过FinFeeCheckBxPhoto实体直接访问。
-    </div>
-  </div>
-</div>
-</KbCard>
+
 </div>
 </div>
 </div>
@@ -341,10 +255,14 @@ SELECT * FROM FIN_FEE_CHECK_BX_PHOTO WHERE TERMINAL_APPLY_ID IS NULL;
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 修改内容 | 修改人 |
-|-----|------|---------|-------|
-| 2026-07-31 | V1.0 | 初始生成知识库文档 | AI |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

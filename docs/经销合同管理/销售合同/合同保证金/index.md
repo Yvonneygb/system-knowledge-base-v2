@@ -129,36 +129,19 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：EBS认款数据同步 【数据同步】">
-<KbQuote>从EBS共享系统定时同步认款数据，保证DMS系统保证金数据与EBS一致</KbQuote>
-
-**具体逻辑**：
-
-- 1、通过EBS接口分页查询认款数据，逐条处理入库
-- 2、同步时先保存历史记录到CM_DEPOSITS_PAYMENT_HISTORY表，再判断是否为手工调整数据
-- 3、若存在相同收款编号的历史记录，比较最后更新时间，以较新的为准更新认款状态
-- 4、若EBS标识为撤销（rkDisplay=N），则同步更新本地状态为撤销，并触发撤销认缴逻辑
+<KbCard num="1" title="重点逻辑1：保证金到款管理 {到款管理}">
+<ul><li><strong>业务意义</strong>：管理保证金到款记录，掌握保证金缴纳情况</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过search接口查询保证金到款记录</li></ul>
+<ul><li>第2点：支持撤销认款(cancelPayById)，通过EPM_PAYMENT_ALLOT_CANCEL工作流</li></ul>
+<ul><li>第3点：支持从认款记录发起认缴申请(respectively)</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：撤销认款 【状态变更】">
-<KbQuote>撤销已认款的保证金记录，恢复合同和认缴概况的缴清状态</KbQuote>
-
-**具体逻辑**：
-
-- 1、查找该认款记录关联的所有认缴记录，逐条更新认缴记录状态为"撤销"
-- 2、区分封顶认缴和普通认缴两种类型分别处理
-- 3、封顶认缴撤销时，更新法人下所有合同的认缴状态为未缴清，并推送CRM
-- 4、普通认缴撤销时，判断法人下是否存在封顶认缴且已缴清的记录，若有则更新对应合同认缴状态为未缴清，并推送CRM
-- 5、最后批量更新认缴概况表中相关记录的缴清标识
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：封顶认款转换处理 【金额计算】">
-<KbQuote>当普通认款被转换为封顶认款后，撤销时需回退封顶认款金额</KbQuote>
-
-**具体逻辑**：
-
-- 1、若认款记录已标记为转换为封顶认缴（convertCeilingFlag=Y），撤销时从封顶认款金额中扣减原认款金额
-- 2、扣减后若封顶认款金额小于封顶配置金额，则触发封顶认款的撤销
+<KbCard num="2" title="重点逻辑2：保证金封顶与标准 {配置管理}">
+<ul><li><strong>业务意义</strong>：通过封顶和标准配置控制保证金上限和缴纳标准</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：保证金封顶(CmDepositsCeiling)设置保证金上限</li></ul>
+<ul><li>第2点：保证金标准(CmDepositsPayStandard)配置缴纳标准</li></ul>
 </KbCard>
 
 </div>
@@ -169,191 +152,110 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="界面模块1：合同保证金列表页">
-<div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>认款单号</td>
-<td>文本框</td>
-<td>认款单据编号</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>-</td>
-<td>CM_DEPOSITS_PAYMENT.PAYMENT_NO</td>
-</tr>
-<tr>
-<td>法人编码</td>
-<td>文本框</td>
-<td>经销商对应的法人编码</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>-</td>
-<td>CM_DEPOSITS_PAYMENT.BILLING_UNIT_CODE</td>
-</tr>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>经销商编码</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>-</td>
-<td>CM_DEPOSITS_PAYMENT.CUSTOMER_CODE</td>
-</tr>
-<tr>
-<td>同步认款金额</td>
-<td>文本框</td>
-<td>从EBS同步的认款金额</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>大于0</td>
-<td>CM_DEPOSITS_PAYMENT.SYN_PAYMENT_AMOUNT</td>
-</tr>
-<tr>
-<td>已认款金额</td>
-<td>文本框</td>
-<td>已完成认缴的金额</td>
-<td>常显</td>
-<td>系统计算</td>
-<td>-</td>
-<td>CM_DEPOSITS_PAYMENT.PAYMENT_AMOUNT</td>
-</tr>
-<tr>
-<td>认款状态</td>
-<td>文本框</td>
-<td>认款当前状态</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>completepay(已认款)/cancelpay(撤销认款)</td>
-<td>CM_DEPOSITS_PAYMENT.PAYMENT_STATUS</td>
-</tr>
-<tr>
-<td>认缴类型</td>
-<td>文本框</td>
-<td>认缴的类型分类</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>normal(普通认缴)/ceiling(封顶认缴)</td>
-<td>CM_DEPOSITS_PAYMENT.PAYMENT_TYPE</td>
-</tr>
-<tr>
-<td>是否转封顶</td>
-<td>文本框</td>
-<td>是否已转换为封顶认缴</td>
-<td>常显</td>
-<td>系统赋值</td>
-<td>Y(是)/N(否)</td>
-<td>CM_DEPOSITS_PAYMENT.CONVERT_CEILING_FLAG</td>
-</tr>
-<tr>
-<td>同步时间</td>
-<td>文本框</td>
-<td>认款数据同步时间</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>-</td>
-<td>CM_DEPOSITS_PAYMENT.SYN_PAYMENT_TIME</td>
-</tr>
-<tr>
-<td>共享认款单号</td>
-<td>文本框</td>
-<td>共享系统的认款单号</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>-</td>
-<td>CM_DEPOSITS_PAYMENT.FSSC_DOC_NUMBER</td>
-</tr>
-<tr>
-<td>打款说明</td>
-<td>文本框</td>
-<td>打款备注说明</td>
-<td>常显</td>
-<td>同步EBS时赋值</td>
-<td>-</td>
-<td>CM_DEPOSITS_PAYMENT.RK_COMMENTS</td>
-</tr>
-</tbody></table></div>
+<tr><td>到款ID</td><td>CM_DEPOSITS_PAYMENT.PAYMENT_ID</td><td>文本框</td><td>到款记录ID</td><td>常显</td><td>系统生成</td></tr>
+<tr><td>合同编号</td><td>CM_DEPOSITS_PAYMENT.CONTRACT_NO</td><td>文本框</td><td>关联合同编号</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>经销商</td><td>CM_DEPOSITS_PAYMENT.CUSTOMER_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>到款金额</td><td>CM_DEPOSITS_PAYMENT.PAYMENT_AMT</td><td>数字显示框</td><td>到款金额</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>到款日期</td><td>CM_DEPOSITS_PAYMENT.PAYMENT_DATE</td><td>日期显示框</td><td>到款日期</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>认款状态</td><td>CM_DEPOSITS_PAYMENT.STATUS</td><td>文本框</td><td>认款状态</td><td>常显</td><td>系统更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<blockquote>本页面查询条件使用文本输入，无独立弹窗。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
-无
-
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 撤销认款 | 撤销当前认款记录 | 列表页 | 认款状态为"已认款"时可用 | 调用cancelPayById接口，更新认缴记录状态、合同缴清状态、推送CRM |
-| 认缴申请 | 跳转至认缴申请页面 | 列表页 | 认款状态非"撤销认款"且未转封顶时可用 | 调用respectively接口，返回认款详情用于认缴申请 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询保证金到款</td><td>列表页</td><td>始终可用</td><td>调用search接口</td></tr>
+<tr><td>撤销认款</td><td>撤销认款记录</td><td>列表页</td><td>选中可撤销记录</td><td>调用cancelPayById接口</td></tr>
+<tr><td>认缴申请</td><td>发起认缴申请</td><td>列表页</td><td>选中认款记录</td><td>调用respectively接口</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
+<blockquote>本页面为查询管理页面，无保存操作。</blockquote>
 </KbCard>
+
 <KbCard title="提交校验">
+<blockquote>本页面无提交操作。撤销认款通过EPM_PAYMENT_ALLOT_CANCEL工作流。</blockquote>
 </KbCard>
+
 <KbCard title="状态机">
-
-
-```text
-EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(cancelpay)
-```
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| completepay | 已认款 | 撤销认款、认缴申请 |
-| cancelpay | 撤销认款 | 无 |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：CM_DEPOSITS_PAYMENT（合同保证金/共享到款）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 主键ID | - | 自增 |
-| SYN_PAYMENT_AMOUNT | NUMBER | 同步认款金额 | 同步认款金额 | EBS同步时赋值 |
-| ENTID | NUMBER | 组织ID | - | EBS同步时根据事业部匹配赋值 |
-| BILLING_UNIT_CODE | VARCHAR2 | 法人编码 | 法人编码 | EBS同步时赋值 |
-| CUSTOMER_CODE | VARCHAR2 | 经销商编码 | 经销商编码 | EBS同步时赋值 |
-| PAYMENT_AMOUNT | NUMBER | 已认款金额 | 已认款金额 | 系统计算 |
-| RECEIPT_NUMBER | VARCHAR2 | 收款编号 | - | EBS同步时赋值，用于匹配历史记录 |
-| SYN_LAST_UPDATE_TIME | TIMESTAMP | 共享最后更新时间 | - | EBS同步时赋值，用于增量判断 |
-| PAYMENT_NO | VARCHAR2 | 认款单号 | 认款单号 | EBS同步时赋值 |
-| PAYMENT_STATUS | VARCHAR2 | 认款状态 | 认款状态 | EBS同步时赋值，completepay/cancelpay |
-| PAYMENT_TYPE | VARCHAR2 | 认缴类型 | 认缴类型 | EBS同步时赋值，normal/ceiling |
-| CONVERT_CEILING_FLAG | VARCHAR2 | 是否转封顶 | 是否转封顶 | 系统赋值，Y/N |
-| SYN_PAYMENT_TIME | TIMESTAMP | 同步时间 | 同步时间 | EBS同步时赋值 |
-| FSSC_DOC_NUMBER | VARCHAR2 | 共享认款单号 | 共享认款单号 | EBS同步时赋值 |
-| RK_COMMENTS | VARCHAR2 | 打款说明 | 打款说明 | EBS同步时赋值 |
-
----
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>到款 ──认缴申请──→ 已认缴 ──撤销认款──→ 已撤销</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>&gt;|</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>已到款</th><th>保证金已到款未认缴</th><th>查询、认缴申请</th></tr>
+</thead>
+<tbody>
+<tr><td>已撤销</td><td>认款已撤销</td><td>查询</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表1：CM_DEPOSITS_PAYMENT（保证金到款表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PAYMENT_ID</td><td>BIGINT</td><td>主键ID</td><td>到款ID</td><td>自增主键</td></tr>
+<tr><td>CONTRACT_NO</td><td>VARCHAR</td><td>合同编号</td><td>合同编号</td><td>系统带出</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>经销商</td><td>系统带出</td></tr>
+<tr><td>PAYMENT_AMT</td><td>DECIMAL</td><td>到款金额</td><td>到款金额</td><td>系统带出</td></tr>
+<tr><td>PAYMENT_DATE</td><td>DATE</td><td>到款日期</td><td>到款日期</td><td>系统带出</td></tr>
+<tr><td>STATUS</td><td>VARCHAR</td><td>认款状态</td><td>认款状态</td><td>系统更新</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="表2：CM_DEPOSITS_CEILING（保证金封顶表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CEILING_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="表3：CM_DEPOSITS_PAY_STANDARD（保证金标准表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PAY_STANDARD_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -361,140 +263,87 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">当前法人不存在，请联系it处理</td>
-            <td style="font-size:13px;">撤销认款</td>
-            <td style="font-size:13px;">撤销认款时根据法人编码查询客户信息为空</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">保证金ID不能空！</td>
-            <td style="font-size:13px;">认缴申请</td>
-            <td style="font-size:13px;">点击认缴申请时未传入保证金记录ID</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">该笔认款金额已进行撤销操作，不能进行认领</td>
-            <td style="font-size:13px;">认缴申请</td>
-            <td style="font-size:13px;">当前认款记录状态为撤销认款</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">该认款已转换为封顶认款，不能再进行认缴操作</td>
-            <td style="font-size:13px;">认缴申请</td>
-            <td style="font-size:13px;">普通认缴且已转封顶标识为Y</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">推送crm 认缴标识不能为空</td>
-            <td style="font-size:13px;">撤销认款</td>
-            <td style="font-size:13px;">推送CRM时认缴标识参数为空</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">事业部id 或 经销商id 或 合同类型 不能为空</td>
-            <td style="font-size:13px;">撤销认款</td>
-            <td style="font-size:13px;">推送CRM时关键参数为0</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>当前法人不存在，请联系it处理</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>撤销认款时根据法人编码查询客户信息为空</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>保证金ID不能空！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>点击认缴申请时未传入保证金记录ID</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>该笔认款金额已进行撤销操作，不能进行认领</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前认款记录状态为撤销认款</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>该认款已转换为封顶认款，不能再进行认缴操作</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>普通认缴且已转封顶标识为Y</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-5" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>推送crm 认缴标识不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>推送CRM时认缴标识参数为空</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-6" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>事业部id 或 经销商id 或 合同类型 不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>推送CRM时关键参数为0</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>撤销认款失败</td><td>撤销时</td><td>认款已被使用或状态不可撤销</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>保证金ID不能空</td><td>撤销/认缴时</td><td>未选中到款记录或记录ID丢失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>该笔认款金额已进行撤销操作，不能进行认领</td><td>认缴申请时</td><td>认款已撤销，不可再认领</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>该认款已转换为封顶认款，不能再进行认缴操作</td><td>认缴申请时</td><td>认款已用于封顶认缴</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>当前法人不存在，请联系it处理</td><td>认缴申请时</td><td>经销商未关联法人主数据</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>法人编码不能为空</td><td>认缴申请时</td><td>经销商法人编码缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>事业部id、经销商id不能为空</td><td>查询/认缴时</td><td>必填参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>合同类型不能为空</td><td>查询/认缴时</td><td>合同类型参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：撤销认款失败</h4>
+<ul><li><strong>触发条件</strong>：用户选中认款记录点击"撤销认款"，cancelPayById接口通过EPM_PAYMENT_ALLOT_CANCEL工作流撤销时返回失败</li><li><strong>逻辑分析</strong>：撤销认款通过EPM_PAYMENT_ALLOT_CANCEL工作流执行，撤销后恢复认款状态并回退保证金余额。失败根因有三类：(1)认款已被使用，如已关联保证金减免申请（CM_DEPOSITS_REDUCTION_HEAD）或已汇总到认缴概况（CM_CONTRACT_PAYMENT_SUMMARY），不可撤销；(2)认款状态不可撤销，STATUS非"已认缴"（如已撤销或已到款未认缴）；(3)工作流EPM_PAYMENT_ALLOT_CANCEL配置缺失或OA系统不可用。需核查认款使用情况及状态</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.CUSTOMER_NAME, P.PAYMENT_AMT, P.PAYMENT_DATE, P.STATUS,
+         (SELECT SUM(R.REDUCTION_AMT) FROM CM_DEPOSITS_REDUCTION_HEAD R
+          WHERE R.CONTRACT_ID = P.CONTRACT_ID AND R.HZ_APPROVE_STATUS = 'APPROVED') AS 已减免金额
+  FROM CM_DEPOSITS_PAYMENT P
+  WHERE P.PAYMENT_ID = #{paymentId};</code></pre>
+<h4>报错2：保证金ID不能空</h4>
+<ul><li><strong>触发条件</strong>：用户在列表页未选中记录或选中记录ID丢失，直接点击"撤销认款"或"认缴申请"按钮</li><li><strong>逻辑分析</strong>：cancelPayById与respectively接口在CmDepositsPaymentServiceImpl中前置校验PAYMENT_ID非空。保证金ID是到款记录的主键，未传入将导致后续查询、状态更新、工作流发起均无法定位记录。校验在Service层拦截，toast提示后阻断操作</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, PAYMENT_AMT, PAYMENT_DATE, STATUS
+  FROM CM_DEPOSITS_PAYMENT
+  WHERE PAYMENT_ID IS NULL OR PAYMENT_ID = 0;</code></pre>
+<h4>报错3：该笔认款金额已进行撤销操作，不能进行认领</h4>
+<ul><li><strong>触发条件</strong>：用户对已撤销的认款记录再次点击"认缴申请"按钮</li><li><strong>逻辑分析</strong>：认缴申请(respectively)接口校验认款状态，若该笔认款已执行过撤销操作（STATUS='CANCELLED'或已记录撤销历史），则不允许再发起认领。撤销操作会写入CmDepositsPaymentHistory历史表，再次认领将导致认款金额重复使用，破坏保证金余额一致性。需选择状态为"已到款"或"已认缴"的有效记录</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.PAYMENT_AMT, P.STATUS,
+         H.OPERATION_TYPE, H.OPERATION_DATE
+  FROM CM_DEPOSITS_PAYMENT P
+  LEFT JOIN CM_DEPOSITS_PAYMENT_HISTORY H ON P.PAYMENT_ID = H.PAYMENT_ID
+  WHERE P.STATUS = 'CANCELLED'
+    AND H.OPERATION_TYPE = 'CANCEL';</code></pre>
+<h4>报错4：该认款已转换为封顶认款，不能再进行认缴操作</h4>
+<ul><li><strong>触发条件</strong>：用户对已用于封顶认缴的认款记录点击"认缴申请"按钮</li><li><strong>逻辑分析</strong>：认款记录存在CONVERT_CEILING_FLAG字段标识是否已转换为封顶认款。当CONVERT_CEILING_FLAG='Y'时，该认款已纳入封顶认缴流程，再次发起普通认缴将导致同一笔款项被双重认缴。封顶认缴与普通认缴互斥，需先撤销封顶认缴再发起普通认缴</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, PAYMENT_AMT,
+         PAYMENT_STATUS, CONVERT_CEILING_FLAG, PAYMENT_TYPE
+  FROM CM_DEPOSITS_PAYMENT
+  WHERE CONVERT_CEILING_FLAG = 'Y'
+    AND PAYMENT_STATUS = 'SHARE_COMPLETE_PAY';</code></pre>
+<h4>报错5：当前法人不存在，请联系it处理</h4>
+<ul><li><strong>触发条件</strong>：用户发起认缴申请，respectively接口根据经销商查询法人主数据返回空</li><li><strong>逻辑分析</strong>：认缴申请需关联法人信息用于资金流向确认。CmDepositsPaymentServiceImpl根据经销商CUSTOMER_ID查询法人主数据表，若经销商未配置法人关联或法人主数据已失效，将抛出此异常。需联系IT在经销商主数据中维护法人关联关系</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CUSTOMER_NAME, P.BILLING_UNIT_CODE,
+         C.CUSTOMER_ID, C.CORPORATE_CODE, C.CORPORATE_NAME
+  FROM CM_DEPOSITS_PAYMENT P
+  LEFT JOIN CUSTOMER_CORPORATE_REL C ON P.BILLING_UNIT_CODE = C.CUSTOMER_CODE
+  WHERE C.CORPORATE_CODE IS NULL;</code></pre>
+<h4>报错6：法人编码不能为空</h4>
+<ul><li><strong>触发条件</strong>：认缴申请或保证金同步时，经销商对应的法人编码（CORPORATE_CODE）为空</li><li><strong>逻辑分析</strong>：法人编码是保证金认缴推送CRM、资金流向确认的关键标识。CmDepositsPaymentServiceImpl在同步保证金或发起认缴前校验法人编码非空。法人编码缺失将导致CRM侧无法匹配法人主体，资金流向无法确认。需在经销商主数据中维护法人编码</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.CUSTOMER_NAME, P.BILLING_UNIT_CODE,
+         C.CUSTOMER_CODE, C.CORPORATE_CODE
+  FROM CM_DEPOSITS_PAYMENT P
+  LEFT JOIN CUSTOMER C ON P.BILLING_UNIT_CODE = C.CUSTOMER_CODE
+  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_CODE = '';</code></pre>
+<h4>报错7：事业部id、经销商id不能为空</h4>
+<ul><li><strong>触发条件</strong>：查询保证金到款或发起认缴申请时，ENTID（事业部ID）或CUSTOMER_ID（经销商ID）参数为空</li><li><strong>逻辑分析</strong>：事业部和经销商是保证金数据隔离的核心维度。CmDepositsPaymentServiceImpl在查询、认缴、撤销等操作前校验ENTID和CUSTOMER_ID非空。参数为空将导致查询无数据范围或认缴无法定位保证金归属。通常由前端未正确传入当前事业部或未选择经销商导致</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, ENTID, BILLING_UNIT_CODE, CUSTOMER_NAME, PAYMENT_AMT
+  FROM CM_DEPOSITS_PAYMENT
+  WHERE ENTID IS NULL OR BILLING_UNIT_CODE IS NULL;</code></pre>
+<h4>报错8：合同类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：查询保证金或发起认缴申请时，CONTRACT_TYPE（合同类型）参数为空</li><li><strong>逻辑分析</strong>：合同类型区分年度经销合同、临时合同等不同类型，影响保证金标准和封顶配置的匹配。CmDepositsPaymentServiceImpl在查询和认缴前校验CONTRACT_TYPE非空。合同类型为空将导致保证金标准（CM_DEPOSITS_PAY_STANDARD）无法匹配，认缴金额计算无依据。需前端正确传入合同类型参数</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, PAYMENT_AMT
+  FROM CM_DEPOSITS_PAYMENT
+  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';</code></pre>
+<h4>报错9：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：前端调用cm-deposits-payments相关接口时，后端服务不可达或请求超时</li><li><strong>逻辑分析</strong>：前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre>
+<h4>报错10：权限不足，无法操作</h4>
+<ul><li><strong>触发条件</strong>：当前用户对撤销认款、认缴申请等操作无对应功能权限或数据权限</li><li><strong>逻辑分析</strong>：后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">EBS同步后认款数据未更新</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>EBS最后更新时间早于本地最后更新时间，系统跳过更新。排查SQL：<br>
-      <strong style="color:#7C3AED;">处理：</strong>确认EBS数据是否确实更新，若EBS时间较新但仍未同步，检查同步日志
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">撤销认款后合同缴清状态未变更</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>法人下存在封顶认缴且已缴清的记录，系统跳过普通认缴的合同状态更新<br>
-      <strong style="color:#7C3AED;">处理：</strong>确认该法人下封顶认缴的缴清状态是否正确
-    </div>
-  </div>
-</div>
+<ul><li>问题1：保证金余额不正确</li><li>原因：到款记录或撤销记录未及时更新</li><li>解决思路：检查SQL <code>SELECT SUM(PAYMENT_AMT) FROM CM_DEPOSITS_PAYMENT WHERE CONTRACT_NO = #&#123;contractNo&#125; AND STATUS = 'VALID'</code></li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -503,10 +352,14 @@ EBS同步 ──> 已认款(completepay) ──撤销认款──> 撤销认款(
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-09-18 | - | jiaqiang.fu01 | 初始创建合同保证金模块 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

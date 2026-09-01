@@ -199,58 +199,28 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：冻结类型决定解冻后的不同处理逻辑 冻结类型分支">
-<KbQuote>项目冻结原因不同（超有效期/进度超时），解冻后的处理逻辑也不同，尤其是有效期是否需要重置</KbQuote>
-
-**具体逻辑**：
-
-- 1、冻结类型=1或4（超项目有效期）时，解冻后需重置项目有效起止日期：起始日期=当前时间，结束日期=当前时间+有效周期天数+1天
-- 2、冻结类型=2（进度更新超时）时，解冻后不重置有效期，仅将项目有效状态恢复为2、冻结类型清零、冻结时间清空
-- 3、冻结类型=2时，更新项目进度时启用强制更新（FORCE_UPDATE=2），即使阶段描述未变也会更新
+<KbCard num="1" title="重点逻辑1：按冻结类型差异化处理">
+<ul><li><strong>业务意义</strong>：不同冻结原因解冻后恢复方式不同，超有效期需重置周期，进度超时需强制更新进度</li><li><strong>具体逻辑描述</strong>：</li><li>freezeType=1/4(超有效期)：PROJECT_VALID=2, UNFREEZE_TIME=now, VALID_START_DATE=now, VALID_END_DATE=now+effectiveCycle+1, FREEZE_TYPE=0, FREEZE_TIME=null</li><li>freezeType=2(进度超时)：PROJECT_VALID=2, UNFREEZE_TIME=now, FREEZE_TYPE=0, FREEZE_TIME=null，不重置有效周期，强制更新进度(forceUpdate=2)</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：审批通过后的多系统联动 审批回调联动">
-<KbQuote>解冻审批通过不仅影响本系统项目状态，还需同步到CRM和ES，确保各系统数据一致</KbQuote>
-
-**具体逻辑**：
-
-- 1、审批通过后，先执行doAudit更新项目状态和进度，再执行onWfComplete处理CRM推送和审核状态更新
-- 2、家装单体报备（MONOMER_TYPE=2）审批通过后，重置项目有效期，不推送CRM
-- 3、非家装单体报备审批通过后，查询报备和客户信息，推送解冻数据到CRM（validStatus=1），推送失败仅记录日志不阻断
-- 4、审批通过后，解冻申请单审核状态更新为"审核通过"
+<KbCard num="2" title="重点逻辑2：进度一致性校验">
+<ul><li><strong>业务意义</strong>：防止解冻申请提交后项目进度被其他单据变更，导致解冻后进度回退</li><li><strong>具体逻辑描述</strong>：</li><li>volidate和doAudit中均校验stageValueBefore不大于stageValueAfter</li><li>若stageValueBefore &gt; stageId(解冻后进度)，抛出"项目进度已变更，请驳回重审!"</li><li>doUpdate中校验解冻后阶段序号不小于解冻前阶段序号，否则抛出"阶段更新，只能前进，不能后退"</li></ul>
 </KbCard>
 
-<KbCard num="3" title="重点逻辑3：提交时附件校验 附件必填校验">
-<KbQuote>提交解冻申请时，根据项目信息确认标识和事业部配置判断是否必须上传附件及附件数量</KbQuote>
-
-**具体逻辑**：
-
-- 1、项目信息确认标识（CONTENT_CONFIRM）=Y时，跳过附件校验
-- 2、CONTENT_CONFIRM=N时，查询系统配置UnFreezeProjectConShow，若当前事业部ID不在配置值列表中，跳过校验
-- 3、需要校验的事业部，若未上传附件则报错"附件不能为空"
-- 4、从Redis获取content_confirm_count作为附件数量下限，若附件数小于该值则报错"附件必须上传且数量不少于【N】"
+<KbCard num="3" title="重点逻辑3：附件校验">
+<ul><li><strong>业务意义</strong>：确保解冻建立在真实、完整的项目信息之上</li><li><strong>具体逻辑描述</strong>：</li><li>onUserSubmit中调用checkContentConfirm校验附件</li><li>contentConfirm=Y时跳过校验</li><li>contentConfirm=N时，根据系统配置UnFreezeProjectConShow判断当前事业部是否需要校验附件</li><li>需校验时，附件不能为空且数量不少于Redis中content_confirm_count配置值</li></ul>
 </KbCard>
 
-<KbCard num="4" title="重点逻辑4：审批校验-项目进度一致性 进度变更校验">
-<KbQuote>审批过程中若项目进度已被其他操作变更，需驳回重审，避免解冻后进度回退</KbQuote>
-
-**具体逻辑**：
-
-- 1、在volidate方法和doAudit方法中，均校验解冻申请单中的解冻前进度（STAGE_VALUE_BEFORE）与解冻后进度（STAGE_VALUE_AFTER）的关系
-- 2、若STAGE_VALUE_BEFORE&gt;0且STAGE_VALUE_BEFORE&gt;STAGE_VALUE_AFTER，抛出异常"项目进度已变更，请驳回重审!"
-- 3、该校验在审批提交校验（volidate）和审批通过执行（doAudit）中均会执行，双重保障
+<KbCard num="4" title="重点逻辑4：多系统联动">
+<ul><li><strong>业务意义</strong>：解冻后需同步CRM和ES，确保各系统数据一致</li><li><strong>具体逻辑描述</strong>：</li><li>提交时(wfProcSubmit)：单体报备且有效结束日期小于延期开始日时推送ES数据(reportToEs)</li><li>审批通过(onWfComplete)：非家装单体报备推送CRM(validStatus=1)，家装单体报备仅恢复项目状态</li><li>审批拒绝(onUserReject)：删除ES数据(delEsDocByUser)</li><li>CRM推送失败仅记录日志，不影响主流程</li></ul>
 </KbCard>
 
-<KbCard num="5" title="重点逻辑5：阶段更新只能前进不能后退 阶段前进校验">
-<KbQuote>解冻审批通过后更新项目进度时，阶段只能向前推进，不能回退</KbQuote>
-
-**具体逻辑**：
-
-- 1、在doUpdate方法中，若阶段发生变更，查询新旧阶段的序号（SEQ）
-- 2、若新阶段序号小于旧阶段序号，抛出异常"阶段更新，只能前进，不能后退"
+<KbCard num="5" title="重点逻辑5：流程变量更新">
+<ul><li><strong>业务意义</strong>：将冻结时间和项目信息确认传递到工作流审批节点</li><li><strong>具体逻辑描述</strong>：</li><li>eventExecute中更新流程变量freezeTime和contentConfirm</li><li>供审批节点展示和校验使用</li></ul>
 </KbCard>
 
 </div>
@@ -260,553 +230,420 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：报备解冻申请详情页（低代码页面）">
-<div class="kb-field-scroll">
+<KbCard title="界面模块">
+<blockquote>本页面为hlod低代码页面，界面模块由低代码平台配置承载。以下基于后端Entity/DTO字段梳理。</blockquote>
+<h4>查询区</h4>
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>解冻申请单ID</td>
-<td>文本框</td>
-<td>系统自动生成的申请单ID</td>
-<td>常显</td>
-<td>自增主键；不可编辑</td>
-<td>系统自动生成</td>
-<td>EPM_PROJECT_UNFREEZE.PROJ_UNFREEZE_ID</td>
-</tr>
-<tr>
-<td>解冻申请单号</td>
-<td>文本框</td>
-<td>系统自动生成的申请单编号</td>
-<td>常显</td>
-<td>新建时自动生成；不可编辑</td>
-<td>系统自动生成</td>
-<td>EPM_PROJECT_UNFREEZE.PROJ_UNFREEZE_CODE</td>
-</tr>
-<tr>
-<td>工程ID</td>
-<td>文本框</td>
-<td>关联的工程项目ID</td>
-<td>常显</td>
-<td>从冻结项目带入；不可编辑；必填</td>
-<td>有效的工程项目ID</td>
-<td>EPM_PROJECT_UNFREEZE.PROJECT_ID</td>
-</tr>
-<tr>
-<td>工程编号</td>
-<td>文本框</td>
-<td>关联的工程项目编号</td>
-<td>常显</td>
-<td>从冻结项目自动带出；不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.PROJECT_CODE</td>
-</tr>
-<tr>
-<td>工程名称</td>
-<td>文本框</td>
-<td>关联的工程项目名称</td>
-<td>常显</td>
-<td>从冻结项目自动带出；不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.PROJECT_NAME</td>
-</tr>
-<tr>
-<td>冻结类型</td>
-<td>单选框</td>
-<td>冻结原因类型</td>
-<td>常显</td>
-<td>从冻结项目带入；1=超项目有效期，2=进度超时更新，4=超有效期已签合同；必填</td>
-<td>值集AE.EPM.PROJ.FREEZE_TYPE</td>
-<td>EPM_PROJECT_UNFREEZE.FREEZE_TYPE</td>
-</tr>
-<tr>
-<td>冻结时间</td>
-<td>日期时间</td>
-<td>项目被冻结的时间</td>
-<td>常显</td>
-<td>从冻结项目带入；不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.FREEZE_TIME</td>
-</tr>
-<tr>
-<td>解冻申请说明</td>
-<td>文本域</td>
-<td>解冻申请的原因说明</td>
-<td>常显</td>
-<td>可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.REASON</td>
-</tr>
-<tr>
-<td>跟进进度-解冻前</td>
-<td>数字框</td>
-<td>解冻前的项目进度阶段ID</td>
-<td>常显</td>
-<td>从冻结项目带入；不可编辑；必填</td>
-<td>有效的阶段ID</td>
-<td>EPM_PROJECT_UNFREEZE.STAGE_VALUE_BEFORE</td>
-</tr>
-<tr>
-<td>跟进进度-解冻后</td>
-<td>数字框</td>
-<td>解冻后的项目进度阶段ID</td>
-<td>常显</td>
-<td>可编辑；必填</td>
-<td>有效的阶段ID，序号不小于解冻前阶段</td>
-<td>EPM_PROJECT_UNFREEZE.STAGE_VALUE_AFTER</td>
-</tr>
-<tr>
-<td>跟进进度描述-解冻前</td>
-<td>文本框</td>
-<td>解冻前的进度描述</td>
-<td>常显</td>
-<td>从冻结项目带入；不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.STAGE_DESC_BEFORE</td>
-</tr>
-<tr>
-<td>跟进进度描述-解冻后</td>
-<td>文本域</td>
-<td>解冻后的进度描述</td>
-<td>常显</td>
-<td>可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.STAGE_DESC_AFTER</td>
-</tr>
-<tr>
-<td>跟进进度-解冻前最后更新日期</td>
-<td>日期时间</td>
-<td>解冻前进度的最后更新时间</td>
-<td>常显</td>
-<td>从冻结项目带入；不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.STAGE_DATE_BEFORE</td>
-</tr>
-<tr>
-<td>状态</td>
-<td>数字框</td>
-<td>单据审批状态</td>
-<td>常显</td>
-<td>新建=1，审批中=3，审批通过=5，审批拒绝=7；必填</td>
-<td>值集HWKF.APPROVE_STATUS</td>
-<td>EPM_PROJECT_UNFREEZE.STAT</td>
-</tr>
-<tr>
-<td>类型</td>
-<td>单选框</td>
-<td>区分工程单体和家装单体</td>
-<td>常显</td>
-<td>从报备项目带入；2=家装单体；必填</td>
-<td>1/2</td>
-<td>EPM_PROJECT_UNFREEZE.MONOMER_TYPE</td>
-</tr>
-<tr>
-<td>经销商销售区域</td>
-<td>文本框</td>
-<td>经销商所属销售区域</td>
-<td>常显</td>
-<td>从报备项目带入</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.SALE_REGION</td>
-</tr>
-<tr>
-<td>项目信息确认</td>
-<td>单选框</td>
-<td>是否确认项目信息，影响附件校验</td>
-<td>常显</td>
-<td>Y=无需校验附件，N=需校验附件</td>
-<td>Y/N</td>
-<td>EPM_PROJECT_UNFREEZE.CONTENT_CONFIRM</td>
-</tr>
-<tr>
-<td>审核人</td>
-<td>文本框</td>
-<td>审批通过的操作人</td>
-<td>审批通过后显示</td>
-<td>审批通过时自动记录当前用户名</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.AUDITOR</td>
-</tr>
-<tr>
-<td>审核时间</td>
-<td>日期时间</td>
-<td>审批通过的时间</td>
-<td>审批通过后显示</td>
-<td>审批通过时自动记录当前时间</td>
-<td>-</td>
-<td>EPM_PROJECT_UNFREEZE.AUDITTIME</td>
-</tr>
-<tr>
-<td>审核状态</td>
-<td>文本框</td>
-<td>审核结果</td>
-<td>审批通过后显示</td>
-<td>审批通过时更新为"审核通过"</td>
-<td>审核通过</td>
-<td>EPM_PROJECT_UNFREEZE.AUDIT_STAT</td>
-</tr>
-</tbody></table></div>
+<tr><td>解冻单号</td><td>EPM_PROJECT_UNFREEZE.PROJ_UNFREEZE_CODE</td><td>文本输入</td><td>模糊查询解冻单号</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>项目编码</td><td>EPM_PROJECT_UNFREEZE.PROJECT_CODE</td><td>文本输入</td><td>模糊查询项目</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>项目名称</td><td>EPM_PROJECT_UNFREEZE.PROJECT_NAME</td><td>文本输入</td><td>模糊查询项目</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>审批状态</td><td>EPM_PROJECT_UNFREEZE.HZ_APPROVE_STATUS</td><td>下拉框</td><td>查询审批状态</td><td>始终显示</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>冻结类型</td><td>EPM_PROJECT_UNFREEZE.FREEZE_TYPE</td><td>下拉框</td><td>查询冻结类型</td><td>始终显示</td><td>1=超有效期, 2=进度超时</td></tr>
+</tbody>
+</table>
+<h4>解冻申请单头信息</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>解冻申请单号</td><td>EPM_PROJECT_UNFREEZE.PROJ_UNFREEZE_CODE</td><td>文本</td><td>解冻申请单编号</td><td>始终显示</td><td>系统自动生成，不可编辑</td></tr>
+<tr><td>工程ID</td><td>EPM_PROJECT_UNFREEZE.PROJECT_ID</td><td>隐藏</td><td>关联工程项目</td><td>始终显示</td><td>选择项目弹窗回写，必填</td></tr>
+<tr><td>工程编号</td><td>EPM_PROJECT_UNFREEZE.PROJECT_CODE</td><td>文本</td><td>工程项目编号</td><td>始终显示</td><td>选择项目弹窗回写，不可编辑</td></tr>
+<tr><td>工程名称</td><td>EPM_PROJECT_UNFREEZE.PROJECT_NAME</td><td>文本</td><td>工程项目名称</td><td>始终显示</td><td>选择项目弹窗回写，不可编辑</td></tr>
+<tr><td>冻结类型</td><td>EPM_PROJECT_UNFREEZE.FREEZE_TYPE</td><td>下拉框</td><td>冻结类型</td><td>始终显示</td><td>1=超有效期, 2=进度超时, 4=其他，必填</td></tr>
+<tr><td>冻结时间</td><td>EPM_PROJECT_UNFREEZE.FREEZE_TIME</td><td>日期</td><td>项目冻结时间</td><td>始终显示</td><td>从项目档案自动带出</td></tr>
+<tr><td>解冻申请说明</td><td>EPM_PROJECT_UNFREEZE.REASON</td><td>文本域</td><td>解冻原因说明</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>解冻前进度</td><td>EPM_PROJECT_UNFREEZE.STAGE_VALUE_BEFORE</td><td>文本</td><td>解冻前跟进进度</td><td>始终显示</td><td>自动带出项目当前阶段，必填</td></tr>
+<tr><td>解冻后进度</td><td>EPM_PROJECT_UNFREEZE.STAGE_VALUE_AFTER</td><td>下拉框</td><td>解冻后跟进进度</td><td>编辑态显示</td><td>选择目标阶段，必填</td></tr>
+<tr><td>解冻前描述</td><td>EPM_PROJECT_UNFREEZE.STAGE_DESC_BEFORE</td><td>文本域</td><td>解冻前进度描述</td><td>始终显示</td><td>自动带出</td></tr>
+<tr><td>解冻后描述</td><td>EPM_PROJECT_UNFREEZE.STAGE_DESC_AFTER</td><td>文本域</td><td>解冻后进度描述</td><td>编辑态显示</td><td>手动输入</td></tr>
+<tr><td>项目信息确认</td><td>EPM_PROJECT_UNFREEZE.CONTENT_CONFIRM</td><td>单选</td><td>项目信息确认</td><td>编辑态显示</td><td>Y=是, N=否</td></tr>
+<tr><td>单体类型</td><td>EPM_PROJECT_UNFREEZE.MONOMER_TYPE</td><td>下拉框</td><td>报备类型</td><td>始终显示</td><td>2=家装单体，其他=工程单体，必填</td></tr>
+<tr><td>经销商销售区域</td><td>EPM_PROJECT_UNFREEZE.SALE_REGION</td><td>文本</td><td>经销商销售区域</td><td>始终显示</td><td>从报备项目自动带出</td></tr>
+<tr><td>事业部</td><td>EPM_PROJECT_UNFREEZE.DIVISION_NAME</td><td>文本</td><td>事业部名称</td><td>始终显示</td><td>自动带出</td></tr>
+<tr><td>审批状态</td><td>EPM_PROJECT_UNFREEZE.HZ_APPROVE_STATUS</td><td>文本</td><td>工作流审批状态</td><td>始终显示</td><td>系统自动回写</td></tr>
+<tr><td>审核人</td><td>EPM_PROJECT_UNFREEZE.AUDITOR</td><td>文本</td><td>审批人</td><td>审批通过后显示</td><td>审批通过时自动记录当前用户</td></tr>
+<tr><td>审核时间</td><td>EPM_PROJECT_UNFREEZE.AUDITTIME</td><td>日期</td><td>审批时间</td><td>审批通过后显示</td><td>审批通过时自动记录当前时间</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard title="界面模块2：报备列表页-有效状态转换逻辑">
-<div class="kb-field-scroll">
+<KbCard title="后端接口">
+<blockquote>本菜单无自定义Controller，所有操作通过低代码通用接口和工作流引擎完成。</blockquote>
+<p><strong>Service</strong>：<code>EpmProjectUnfreezeServiceImpl</code> (EpmProjectUnfreezeServiceImpl.java:50)</p>
 <table class="kb-field-tbl">
-<thead><tr>
-<th>原始状态</th>
-<th>解冻申请状态</th>
-<th>转换后显示值</th>
-<th>显示含义</th>
-</tr></thead>
+<thead>
+<tr><th>方法</th><th>参数</th><th>返回</th><th>说明</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>4（已冻结）</td>
-<td>epuStat=NEW或1</td>
-<td>6</td>
-<td>解冻草稿</td>
-</tr>
-<tr>
-<td>4（已冻结）</td>
-<td>epuStat=RUN或3</td>
-<td>8</td>
-<td>解冻申请中</td>
-</tr>
-<tr>
-<td>4（已冻结）</td>
-<td>epuStat=REJECTED/REBUT/RETURN</td>
-<td>7</td>
-<td>解冻拒绝</td>
-</tr>
-<tr>
-<td>4（已冻结）</td>
-<td>freezeType=1</td>
-<td>9</td>
-<td>已冻结(有效期内未签订合同)</td>
-</tr>
-<tr>
-<td>4（已冻结）</td>
-<td>freezeType=2</td>
-<td>10</td>
-<td>已冻结(进度更新超时)</td>
-</tr>
-<tr>
-<td>4（已冻结）</td>
-<td>freezeType=4</td>
-<td>12</td>
-<td>已冻结(有效期内已签合同)</td>
-</tr>
-</tbody></table></div>
+<tr><td>wfComplete</td><td>WfApproveDTO</td><td>Boolean</td><td>工作流审批完成回调</td></tr>
+<tr><td>wfProcSubmit</td><td>WfApproveDTO</td><td>Boolean</td><td>工作流提交回调(附件校验+ES推送)</td></tr>
+<tr><td>volidate</td><td>WfApproveDTO</td><td>Boolean</td><td>工作流校验回调(进度一致性)</td></tr>
+<tr><td>eventExecute</td><td>WfApproveDTO</td><td>Boolean</td><td>工作流事件执行(更新流程变量)</td></tr>
+<tr><td>doAudit</td><td>EpmProjectUnfreeze</td><td>void</td><td>审批通过核心处理</td></tr>
+<tr><td>doUpdate</td><td>EpmProjectUnfreezeDTO</td><td>void</td><td>更新项目进度</td></tr>
+<tr><td>onWfComplete</td><td>EpmProjectUnfreeze</td><td>void</td><td>审批通过后处理(CRM推送)</td></tr>
+<tr><td>onUserSubmit</td><td>EpmProjectUnfreeze</td><td>void</td><td>用户提交处理(附件校验+ES)</td></tr>
+<tr><td>onUserReject</td><td>EpmProjectUnfreeze</td><td>void</td><td>用户驳回处理(删除ES)</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="doAudit审批通过核心逻辑">
+<pre class="detail-sql" v-pre><code>1. 读取报备有效周期天数 effectiveCycle = sysParamRepository.queryValueByCodeAndOrgId(PROJ_EFFECTIVE_CYCLE, dept)
+2. 查询项目 epmProject = selectByPrimaryKey(projectId)
+3. 根据freezeType更新项目：
+   → freezeType=1/4(超有效期)：
+     PROJECT_VALID=2, UNFREEZE_TIME=now, VALID_START_DATE=now,
+     VALID_END_DATE=now+effectiveCycle+1, FREEZE_TYPE=0, FREEZE_TIME=null
+   → freezeType=2(进度超时)：
+     PROJECT_VALID=2, UNFREEZE_TIME=now, FREEZE_TYPE=0, FREEZE_TIME=null
+4. updateByPrimaryKey(epmProject)
+5. 构建进度更新DTO(stageId=stageValueAfter, stageDesc=stageDescAfter)
+6. freezeType=2时设置forceUpdate=2(强制更新)
+7. 校验进度一致性：stageValueBefore &gt; stageId时抛出"项目进度已变更，请驳回重审!"
+8. doUpdate更新项目进度
+9. 记录审批人auditor=当前用户名，审批时间audittime=now</code></pre>
+</KbCard>
+
+<KbCard title="doUpdate项目进度更新逻辑">
+<pre class="detail-sql" v-pre><code>1. 查询项目当前阶段
+2. 判断阶段是否改变(stageChanged)和阶段描述是否改变(stageDescChanged)
+3. 若阶段改变或描述改变或强制更新(forceUpdate=2)：
+   → 校验进度一致性：stageValueBefore &gt; stageId时抛异常
+   → 查询旧阶段和新阶段定义
+   → 校验新阶段序号不小于旧阶段序号，否则抛出"阶段更新，只能前进，不能后退"
+   → 更新项目档案STAGE_ID/STAGE_NAME/STAGE_NOTE
+   → 插入项目阶段历程记录(EPM_PROJECT_STAGE)</code></pre>
+</KbCard>
+
+<KbCard title="onWfComplete审批通过后处理">
+<pre class="detail-sql" v-pre><code>1. 读取报备有效周期(effectiveCycle)
+2. monomerType=2(家装单体)：
+   → PROJECT_VALID=2, UNFREEZE_TIME=now, VALID_START_DATE=now,
+     VALID_END_DATE=now+effectiveCycle+1, FREEZE_TYPE=0, FREEZE_TIME=null
+3. 其他(工程单体)：
+   → 查询项目报备EPM_REPORT
+   → 查询客户获取shortName
+   → 推送CRM(acctCode/acctName/acctAbbr/orgCode/reportNo/projectName/validStatus=1)
+   → CRM推送失败仅记录日志
+4. 更新auditStat="审核通过"</code></pre>
 </KbCard>
 
 <KbCard title="选择弹窗">
-<KbQuote>本菜单为低代码页面，选择弹窗由低代码平台配置，无独立前端源码。</KbQuote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>选择项</th><th>触发场景</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>已冻结项目选择弹窗</td><td>选择解冻项目时</td><td>选择PROJECT_VALID=4的已冻结项目，回写projectId/projectCode/projectName/freezeType/freezeTime</td></tr>
+<tr><td>解冻后进度选择弹窗</td><td>选择解冻后进度时</td><td>选择阶段定义(EPM_STAGE_DEF)，回写stageValueAfter，序号不小于解冻前阶段</td></tr>
+</tbody>
+</table>
+<p>本菜单为hlod低代码页面，选择行为通过低代码表单配置实现。</p>
 </KbCard>
+
 <KbCard title="导入">
-<KbQuote>本菜单不支持批量导入功能。</KbQuote>
+<p>不支持导入功能。解冻申请为单条创建并走审批流程，不支持Excel批量导入。</p>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 新建 | 新建报备解冻申请单 | 列表页/详情页 | 项目已冻结且无在途解冻申请 | 打开新建页面，从冻结项目带入信息 |
-| 提交 | 提交审批 | 详情页 | 单据状态为新建时 | 启动工作流，校验附件，推送ES |
-| 撤回 | 撤回已提交的审批 | 详情页 | 单据状态为审批中且为提交人 | 撤回工作流，单据状态变更为已撤回 |
-| 驳回 | 驳回审批 | 详情页 | 审批节点 | 驳回工作流，项目保持冻结 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>序号</th><th>按钮名</th><th>显示条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>新建</td><td>始终显示</td><td>新建报备解冻申请</td></tr>
+<tr><td>2</td><td>查看</td><td>始终显示</td><td>查看解冻申请详情</td></tr>
+<tr><td>3</td><td>编辑</td><td>新建/拒绝状态</td><td>修改解冻申请信息</td></tr>
+<tr><td>4</td><td>提交</td><td>新建/拒绝状态</td><td>启动工作流审批(ENGINEERING_REPORT_JDSQ_MAIN)</td></tr>
+<tr><td>5</td><td>驳回</td><td>审批中状态</td><td>驳回解冻申请，删除ES数据</td></tr>
+</tbody>
+</table>
+<h4>按钮1：新建（列表页）</h4>
+<ul><li><strong>业务意义</strong>：创建新的报备解冻申请</li><li><strong>具体逻辑描述</strong>：跳转低代码详情页，选择已冻结项目后填写解冻信息</li></ul>
+<h4>按钮2：提交（详情页）</h4>
+<ul><li><strong>业务意义</strong>：提交解冻申请走审批流程</li><li><strong>具体逻辑描述</strong>：仅在新建/拒绝状态下可提交，提交后触发工作流ENGINEERING_REPORT_JDSQ_MAIN，wfProcSubmit回调校验附件并推送ES</li></ul>
+<h4>按钮3：驳回（详情页）</h4>
+<ul><li><strong>业务意义</strong>：驳回解冻申请</li><li><strong>具体逻辑描述</strong>：审批中状态可驳回，onUserReject删除ES数据</li></ul>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：工程ID不能为空 —— 确保解冻申请单关联有效的工程项目</KbSubTitle>
-
-- 第1点：PROJECT_ID字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_UNFREEZE WHERE PROJECT_ID IS NULL;
-```
-
-<KbSubTitle>校验2：冻结类型不能为空 —— 确保解冻申请有明确的冻结原因</KbSubTitle>
-
-- 第1点：FREEZE_TYPE字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_UNFREEZE WHERE FREEZE_TYPE IS NULL;
-```
-
-<KbSubTitle>校验3：跟进进度-解冻前不能为空 —— 确保记录解冻前的进度状态</KbSubTitle>
-
-- 第1点：STAGE_VALUE_BEFORE字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_UNFREEZE WHERE STAGE_VALUE_BEFORE IS NULL;
-```
-
-<KbSubTitle>校验4：跟进进度-解冻后不能为空 —— 确保指定解冻后的目标进度</KbSubTitle>
-
-- 第1点：STAGE_VALUE_AFTER字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_UNFREEZE WHERE STAGE_VALUE_AFTER IS NULL;
-```
-
-<KbSubTitle>校验5：单据状态不能为空 —— 确保单据有明确的审批状态</KbSubTitle>
-
-- 第1点：STAT字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_UNFREEZE WHERE STAT IS NULL;
-```
-
-<KbSubTitle>校验6：组织ID不能为空 —— 确保单据归属正确的组织</KbSubTitle>
-
-- 第1点：ORGANIZATION_ID字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_UNFREEZE WHERE ORGANIZATION_ID IS NULL;
-```
-
-<KbSubTitle>校验7：类型（MONOMER_TYPE）不能为空 —— 确保区分工程单体和家装单体</KbSubTitle>
-
-- 第1点：MONOMER_TYPE字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_UNFREEZE WHERE MONOMER_TYPE IS NULL;
-```
-
+<ul><li>校验1：工程ID非空 —— 申请单必须关联有效的工程项目</li><li><strong>详细逻辑</strong>：PROJECT_ID字段标注@NotNull，框架自动校验</li><li><strong>系统体现</strong>：Entity注解校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM EPM_PROJECT_UNFREEZE WHERE PROJECT_ID IS NULL;</code></li></ul>
+<ul><li>校验2：冻结类型非空 —— 必须选择冻结类型</li><li><strong>详细逻辑</strong>：FREEZE_TYPE字段标注@NotNull，框架自动校验</li><li><strong>系统体现</strong>：Entity注解校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM EPM_PROJECT_UNFREEZE WHERE FREEZE_TYPE IS NULL;</code></li></ul>
+<ul><li>校验3：解冻后进度非空 —— 必须选择解冻后跟进进度</li><li><strong>详细逻辑</strong>：STAGE_VALUE_AFTER字段标注@NotNull，框架自动校验</li><li><strong>系统体现</strong>：Entity注解校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM EPM_PROJECT_UNFREEZE WHERE STAGE_VALUE_AFTER IS NULL;</code></li></ul>
+<ul><li>校验4：事业部非空 —— 必须归属有效事业部</li><li><strong>详细逻辑</strong>：DIVISION_ID字段标注@NotNull，框架自动校验</li><li><strong>系统体现</strong>：Entity注解校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM EPM_PROJECT_UNFREEZE WHERE DIVISION_ID IS NULL;</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<KbSubTitle>校验1：附件必填校验 —— 确保解冻申请提交时上传了必要的附件</KbSubTitle>
-
-- 第1点：CONTENT_CONFIRM=Y时跳过校验
-- 第2点：CONTENT_CONFIRM=N时，查询系统配置UnFreezeProjectConShow，若当前事业部ID不在配置值列表中，跳过校验
-- 第3点：需要校验的事业部，未上传附件则抛出异常"附件不能为空"
-- 第4点：附件数量少于Redis中content_confirm_count的值时，抛出异常"附件必须上传且数量不少于【N】"
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT EPU.PROJ_UNFREEZE_ID, EPU.CONTENT_CONFIRM, EPU.DIVISION_ID
-    FROM EPM_PROJECT_UNFREEZE EPU
-    WHERE EPU.CONTENT_CONFIRM = 'N'
-      AND EPU.DIVISION_ID NOT IN (
-        SELECT CAST(CONFVALUE AS BIGINT) FROM SCPSYSCONF WHERE CONFNAME = 'UnFreezeProjectConShow'
-      );
-```
-
-<KbSubTitle>校验2：项目进度一致性校验 —— 确保审批时项目进度未被其他操作变更</KbSubTitle>
-
-- 第1点：volidate方法中，若STAGE_VALUE_BEFORE&gt;0且STAGE_VALUE_BEFORE&gt;STAGE_VALUE_AFTER，抛出异常"项目进度已变更，请驳回重审!"
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT EPU.PROJ_UNFREEZE_ID, EPU.PROJ_UNFREEZE_CODE, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER
-    FROM EPM_PROJECT_UNFREEZE EPU
-    WHERE EPU.STAGE_VALUE_BEFORE > 0 AND EPU.STAGE_VALUE_BEFORE > EPU.STAGE_VALUE_AFTER;
-```
-
-</KbCard>
-
-<KbCard title="审批通过校验">
-<KbSubTitle>校验1：项目进度一致性校验（双重校验） —— 审批通过执行时再次校验进度一致性</KbSubTitle>
-
-- 第1点：doAudit方法中，若STAGE_VALUE_BEFORE&gt;0且STAGE_VALUE_BEFORE&gt;STAGE_VALUE_AFTER，抛出异常"项目进度已变更，请驳回重审!"
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER, EP.STAGE_ID
-    FROM EPM_PROJECT_UNFREEZE EPU
-    JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
-    WHERE EPU.STAGE_VALUE_BEFORE > 0 AND EPU.STAGE_VALUE_BEFORE > EPU.STAGE_VALUE_AFTER;
-```
-
-<KbSubTitle>校验2：阶段前进校验 —— 确保解冻后阶段只能前进不能后退</KbSubTitle>
-
-- 第1点：doUpdate方法中，若阶段变更且新阶段SEQ&lt;旧阶段SEQ，抛出异常"阶段更新，只能前进，不能后退"
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
-           ESD1.STAGE_NAME AS BEFORE_STAGE, ESD1.SEQ AS BEFORE_SEQ,
-           ESD2.STAGE_NAME AS AFTER_STAGE, ESD2.SEQ AS AFTER_SEQ
-    FROM EPM_PROJECT_UNFREEZE EPU
-    JOIN EPM_STAGE_DEF ESD1 ON EPU.STAGE_VALUE_BEFORE = ESD1.STAGE_ID
-    JOIN EPM_STAGE_DEF ESD2 ON EPU.STAGE_VALUE_AFTER = ESD2.STAGE_ID
-    WHERE ESD2.SEQ < ESD1.SEQ;
-```
-
+<ul><li>校验1：进度一致性 —— 解冻前进度不大于解冻后进度，防止进度回退</li><li><strong>详细逻辑</strong>：volidate中校验stageValueBefore &gt; stageId时抛出"项目进度已变更，请驳回重审!"</li><li><strong>系统体现</strong>：工作流校验回调volidate</li><li><strong>排查SQL</strong>：<code>SELECT PROJ_UNFREEZE_ID, STAGE_VALUE_BEFORE, STAGE_VALUE_AFTER FROM EPM_PROJECT_UNFREEZE WHERE STAGE_VALUE_BEFORE &gt; STAGE_VALUE_AFTER;</code></li></ul>
+<ul><li>校验2：附件校验 —— contentConfirm=N且事业部在UnFreezeProjectConShow配置中时必须上传附件</li><li><strong>详细逻辑</strong>：onUserSubmit中checkContentConfirm校验，附件为空抛出"附件不能为空"，数量不足抛出"附件必须上传且数量不少于【N】"</li><li><strong>系统体现</strong>：工作流提交回调wfProcSubmit</li><li><strong>排查SQL</strong>：<code>SELECT CONFVALUE FROM SCPSYSCONF WHERE CONFNAME = 'UnFreezeProjectConShow';</code></li></ul>
+<ul><li>校验3：阶段前进校验 —— 解冻后阶段序号不小于解冻前阶段序号</li><li><strong>详细逻辑</strong>：doUpdate中校验newStage.seq &lt; oldStage.seq时抛出"阶段更新，只能前进，不能后退"</li><li><strong>系统体现</strong>：审批通过回调doAudit→doUpdate</li><li><strong>排查SQL</strong>：<code>SELECT OLD.STAGE_ID, OLD.SEQ AS OLD_SEQ, NEW.STAGE_ID, NEW.SEQ AS NEW_SEQ FROM EPM_STAGE_DEF OLD, EPM_STAGE_DEF NEW WHERE OLD.STAGE_ID = #&#123;stageValueBefore&#125; AND NEW.STAGE_ID = #&#123;stageValueAfter&#125; AND NEW.SEQ &lt; OLD.SEQ;</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">
-### 状态机
-
-<KbSubTitle>状态机流转图</KbSubTitle>
-
-
-```text
-[新建] ──提交──> [审批中] ──审批通过──> [审批通过]
-  │                 │
-  │                 ├──审批拒绝──> [审批拒绝]
-  │                 │
-  │                 ├──退回──> [退回] ──修改提交──> [审批中]
-  │                 │
-  │                 └──撤回──> [已撤回]
-  │
-  └──删除──> (删除)
-```
-
-<KbSubTitle>状态机列表</KbSubTitle>
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 编辑、提交、删除 |
-| RUN | 审批中 | 撤回 |
-| APPROVED | 审批通过 | 无（终态，触发wfComplete回调） |
-| REJECTED | 审批拒绝 | 重新提交 |
-| RETURN | 退回 | 修改、重新提交 |
-| WITHDRAW | 已撤回 | 编辑、重新提交 |
-| INTERRUPT | 终止 | 无（终态） |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：EPM_PROJECT_UNFREEZE（项目解冻申请表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| PROJ_UNFREEZE_ID | BIGINT | 解冻申请单ID | - | 主键，自增 |
-| PROJ_UNFREEZE_CODE | VARCHAR | 解冻申请单号 | 解冻申请单号 | 新建时自动生成 |
-| PROJECT_ID | BIGINT | 工程ID | 工程ID | 必填，关联EPM_PROJECT.PROJECT_ID |
-| PROJECT_CODE | VARCHAR | 工程编号 | 工程编号 | 从项目信息带入 |
-| PROJECT_NAME | VARCHAR | 工程名称 | 工程名称 | 从项目信息带入 |
-| FREEZE_TYPE | BIGINT | 冻结类型 | 冻结类型 | 1=超项目有效期，2=进度超时更新，4=超有效期已签合同；必填 |
-| FREEZE_TIME | DATETIME | 冻结时间 | 冻结时间 | 从冻结项目带入 |
-| REASON | VARCHAR | 解冻申请说明 | 解冻申请说明 | 手动填写 |
-| STAGE_VALUE_BEFORE | BIGINT | 跟进进度-解冻前 | 跟进进度-解冻前 | 从冻结项目带入；必填 |
-| STAGE_VALUE_AFTER | BIGINT | 跟进进度-解冻后 | 跟进进度-解冻后 | 手动选择；必填；审批通过后更新到项目进度 |
-| STAGE_DESC_BEFORE | VARCHAR | 跟进进度描述-解冻前 | 跟进进度描述-解冻前 | 从冻结项目带入 |
-| STAGE_DESC_AFTER | VARCHAR | 跟进进度描述-解冻后 | 跟进进度描述-解冻后 | 手动填写；审批通过后更新到项目进度描述 |
-| STAGE_DATE_BEFORE | DATETIME | 跟进进度-解冻前最后更新日期 | 跟进进度-解冻前最后更新日期 | 从冻结项目带入 |
-| STAT | BIGINT | 单据状态 | 状态 | 新建=1，审批中=3，审批通过=5，审批拒绝=7；必填 |
-| WFID | BIGINT | 流程ID | - | 工作流实例ID，必填 |
-| WFFLAG | BIGINT | 流程标识 | - | 工作流标识，必填 |
-| CREATOR | VARCHAR | 创建人 | - | 自动记录创建人 |
-| CREATETIME | DATETIME | 创建时间 | - | 自动记录创建时间 |
-| UPDATOR | VARCHAR | 修改人 | - | 自动记录修改人 |
-| UPDATETIME | DATETIME | 修改时间 | - | 自动记录修改时间 |
-| AUDITOR | VARCHAR | 审核人 | 审核人 | 审批通过时自动记录当前用户名 |
-| AUDITTIME | DATETIME | 审核时间 | 审核时间 | 审批通过时自动记录当前时间 |
-| ORGANIZATION_ID | BIGINT | 组织ID | - | 必填，租户组织ID |
-| DIVISION_ID | BIGINT | 事业部ID | - | 必填，用于附件校验时判断是否需要校验 |
-| DIVISION_NAME | VARCHAR | 事业部名称 | - | 事业部名称 |
-| AUDIT_STAT | VARCHAR | 审核状态 | 审核状态 | 审批通过时更新为"审核通过" |
-| MONOMER_TYPE | BIGINT | 类型 | 类型 | 2=家装单体报备，其他=工程单体报备；必填 |
-| SALE_REGION | VARCHAR | 经销商销售区域 | 经销商销售区域 | 从报备项目带入 |
-| CONTENT_CONFIRM | VARCHAR | 项目信息确认 | 项目信息确认 | Y=无需校验附件，N=需校验附件 |
-| HZ_INSTANCE_ID | BIGINT | 流程实例ID | - | 关联hwkf_run_instance表 |
-| HZ_APPROVE_STATUS | VARCHAR | 审批状态 | - | 值集HWKF.APPROVE_STATUS，工作流启动时设为RUN |
-| CREATION_DATE | DATETIME | 审计字段-创建时间 | - | 框架审计字段 |
-| CREATED_BY | BIGINT | 审计字段-创建人 | - | 框架审计字段 |
-| LAST_UPDATED_BY | BIGINT | 审计字段-修改人 | - | 框架审计字段 |
-| LAST_UPDATE_DATE | DATETIME | 审计字段-修改时间 | - | 框架审计字段 |
-| OBJECT_VERSION_NUMBER | BIGINT | 乐观锁版本号 | - | 框架字段，更新时自动递增 |
-
+<pre class="lang-text" v-pre><code>┌──────────┐  提交   ┌──────────┐  审批通过  ┌──────────┐
+│  新建    │ ──────→ │ 审批中    │ ────────→ │ 审批通过  │
+│ (NEW)   │         │ (RUN)   │           │(APPROVED) │
+└──────────┘         └────┬─────┘           └──────────┘
+      ↑                   │
+      │              审批拒绝/驳回
+      │                   │
+      └───────────────────┘
+                  │
+              (REJECTED)</code></pre>
+<p><strong>审批通过后动作</strong>(doAudit)：</p>
+<ul><li>读取报备有效周期PROJ_EFFECTIVE_CYCLE</li><li>更新EPM_PROJECT：PROJECT_VALID=2, UNFREEZE_TIME=now, FREEZE_TYPE=0, FREEZE_TIME=null</li><li>freezeType=1/4：VALID_START_DATE=now, VALID_END_DATE=now+effectiveCycle+1</li><li>freezeType=2：强制更新项目进度(forceUpdate=2)</li><li>更新项目进度表，记录审批人、审批时间</li><li>推送CRM(validStatus=1)</li></ul>
 </KbCard>
 
-<KbCard num="2" title="表2：EPM_PROJECT（项目信息表）- 相关字段">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| PROJECT_ID | BIGINT | 项目ID | - | 主键，解冻申请通过此字段关联 |
-| PROJECT_VALID | BIGINT | 项目有效状态 | - | 审批通过后更新为2（已生效） |
-| FREEZE_TYPE | BIGINT | 冻结类型 | - | 审批通过后清零 |
-| FREEZE_TIME | DATETIME | 冻结时间 | - | 审批通过后清空 |
-| UNFREEZE_TIME | DATETIME | 解冻时间 | - | 审批通过后设为当前时间 |
-| VALID_START_DATE | DATETIME | 有效起始日期 | - | 超有效期冻结(1/4)或家装单体(2)解冻后重置为当前时间 |
-| VALID_END_DATE | DATETIME | 有效结束日期 | - | 超有效期冻结(1/4)或家装单体(2)解冻后重置为当前时间+有效周期+1天 |
-| STAGE_ID | BIGINT | 当前阶段ID | - | 审批通过后更新为解冻后阶段 |
-| STAGE_NAME | VARCHAR | 当前阶段名称 | - | 审批通过后更新 |
-| STAGE_NOTE | VARCHAR | 当前阶段备注 | - | 审批通过后更新 |
-| STAGE_DESC | VARCHAR | 当前阶段描述 | - | 审批通过后更新为解冻后描述 |
-| REPORT_ID | BIGINT | 报备ID | - | 关联EPM_REPORT |
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>项目档案(EPM_PROJECT)</td><td>数据依赖</td><td>读取项目冻结状态和冻结类型，审批后恢复PROJECT_VALID=2</td><td>项目存在且PROJECT_VALID=4(已冻结)</td></tr>
+<tr><td>项目报备(EPM_REPORT)</td><td>数据依赖</td><td>读取报备数据用于CRM推送和ES同步</td><td>报备数据存在</td></tr>
+<tr><td>阶段定义(EPM_STAGE_DEF)</td><td>数据依赖</td><td>校验解冻后进度有效性，阶段前进不后退</td><td>阶段定义已配置</td></tr>
+<tr><td>项目进度历程(EPM_PROJECT_STAGE)</td><td>数据依赖</td><td>解冻后更新项目进度，记录历程</td><td>项目存在进度历程</td></tr>
+<tr><td>系统参数(SYS_PARAM)</td><td>数据依赖</td><td>读取报备有效周期PROJ_EFFECTIVE_CYCLE</td><td>参数已配置</td></tr>
+<tr><td>系统配置(SCPSYSCONF)</td><td>数据依赖</td><td>读取UnFreezeProjectConShow判断是否校验附件</td><td>配置已维护</td></tr>
+<tr><td>经销商档案(CUSTOMER)</td><td>数据依赖</td><td>读取经销商简称推送CRM</td><td>报备关联客户存在</td></tr>
+<tr><td>工作流引擎</td><td>流程依赖</td><td>解冻申请提交走工作流审批</td><td>工作流编码ENGINEERING_REPORT_JDSQ_MAIN已配置</td></tr>
+<tr><td>CRM系统(ArrowEbsSdk)</td><td>接口依赖</td><td>推送报备解冻状态到CRM</td><td>arrowEbsSdk.indivireportAdd接口可用</td></tr>
+<tr><td>ES搜索引擎</td><td>接口依赖</td><td>提交时推送ES，拒绝时删除ES</td><td>ES服务可用</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="3" title="表3：EPM_REPORT（项目报备表）- 相关字段">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| REPORT_ID | BIGINT | 报备ID | - | 主键 |
-| PROJECT_ID | BIGINT | 项目ID | - | 与EPM_PROJECT_UNFREEZE.PROJECT_ID关联 |
-| REPORT_TYPE | BIGINT | 报备类型 | - | 1=单体报备时需操作ES索引 |
-| CUSTOMER_ID | BIGINT | 客户ID | - | 推送CRM时查询客户简称 |
-| CUSTOMER_CODE | VARCHAR | 客户编码 | - | 推送CRM时作为acctCode |
-| CUSTOMER_NAME | VARCHAR | 客户名称 | - | 推送CRM时作为acctName |
-| DIVISION_NAME | VARCHAR | 事业部名称 | - | 推送CRM时作为orgCode |
-| PROJECT_CODE | VARCHAR | 项目编码 | - | 推送CRM时作为reportNo |
-| PROJECT_NAME | VARCHAR | 项目名称 | - | 推送CRM时作为projectName |
-| ES_PUSH_STATUS | VARCHAR | ES推送状态 | - | 判断是否需要操作ES |
-
+<KbCard title="下游影响">
+<ul><li><strong>项目档案(EPM_PROJECT)</strong>：审批通过后PROJECT_VALID恢复为2(已生效)，FREEZE_TYPE=0，FREEZE_TIME=null，UNFREEZE_TIME记录解冻时间</li><li><strong>项目有效期</strong>：超有效期解冻(freezeType=1/4)重置VALID_START_DATE和VALID_END_DATE</li><li><strong>项目进度历程(EPM_PROJECT_STAGE)</strong>：解冻后更新项目进度，新增阶段历程记录</li><li><strong>CRM系统</strong>：同步报备有效状态validStatus=1，家装单体报备除外</li><li><strong>ES搜索索引</strong>：提交时推送ES文档，拒绝时删除ES文档</li><li><strong>项目商机查询</strong>：解冻后项目恢复在商机列表展示</li></ul>
 </KbCard>
 
-<KbCard num="4" title="表4：EPM_PROJECT_STAGE（项目阶段历程表）- 相关字段">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| PROJECT_ID | BIGINT | 项目ID | - | 关联项目 |
-| STAGE_ID | BIGINT | 阶段ID | - | 审批通过后插入新记录 |
-| STAGE_DESC | VARCHAR | 阶段描述 | - | 审批通过后插入解冻后描述 |
-| CREATED_BY | BIGINT | 创建人 | - | 取解冻申请单的创建人 |
-
+<KbCard title="EPM_PROJECT_UNFREEZE（报备解冻申请表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PROJ_UNFREEZE_ID</td><td>BIGINT</td><td>解冻申请单ID</td><td>-</td><td>主键，系统自动生成</td></tr>
+<tr><td>PROJ_UNFREEZE_CODE</td><td>VARCHAR</td><td>解冻申请单号</td><td>解冻申请单号</td><td>系统自动生成</td></tr>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>工程ID</td><td>工程ID</td><td>选择项目弹窗回写，必填</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>工程编号</td><td>工程编号</td><td>选择项目弹窗回写</td></tr>
+<tr><td>PROJECT_NAME</td><td>VARCHAR</td><td>工程名称</td><td>工程名称</td><td>选择项目弹窗回写</td></tr>
+<tr><td>FREEZE_TYPE</td><td>BIGINT</td><td>冻结类型</td><td>冻结类型</td><td>1=超有效期, 2=进度超时, 4=其他，必填</td></tr>
+<tr><td>FREEZE_TIME</td><td>DATETIME</td><td>冻结时间</td><td>冻结时间</td><td>从项目档案自动带出</td></tr>
+<tr><td>REASON</td><td>VARCHAR</td><td>解冻申请说明</td><td>解冻申请说明</td><td>手动输入，必填</td></tr>
+<tr><td>STAGE_VALUE_BEFORE</td><td>BIGINT</td><td>解冻前跟进进度</td><td>解冻前进度</td><td>自动带出项目当前阶段，必填</td></tr>
+<tr><td>STAGE_VALUE_AFTER</td><td>BIGINT</td><td>解冻后跟进进度</td><td>解冻后进度</td><td>选择弹窗回写，必填</td></tr>
+<tr><td>STAGE_DESC_BEFORE</td><td>VARCHAR</td><td>解冻前进度描述</td><td>解冻前描述</td><td>自动带出</td></tr>
+<tr><td>STAGE_DESC_AFTER</td><td>VARCHAR</td><td>解冻后进度描述</td><td>解冻后描述</td><td>手动输入</td></tr>
+<tr><td>STAGE_DATE_BEFORE</td><td>DATETIME</td><td>解冻前进度最后更新日期</td><td>-</td><td>自动带出</td></tr>
+<tr><td>STAT</td><td>BIGINT</td><td>单据状态</td><td>-</td><td>已弃用，使用HZ_APPROVE_STATUS</td></tr>
+<tr><td>WFID</td><td>BIGINT</td><td>流程ID</td><td>-</td><td>工作流引擎回写</td></tr>
+<tr><td>WFFLAG</td><td>BIGINT</td><td>流程标识</td><td>-</td><td>工作流引擎回写</td></tr>
+<tr><td>CREATOR</td><td>VARCHAR</td><td>创建人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>CREATETIME</td><td>DATETIME</td><td>创建时间</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>UPDATOR</td><td>VARCHAR</td><td>修改人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>UPDATETIME</td><td>DATETIME</td><td>修改时间</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>AUDITOR</td><td>VARCHAR</td><td>审核人</td><td>审核人</td><td>审批通过时自动记录当前用户</td></tr>
+<tr><td>AUDITTIME</td><td>DATETIME</td><td>审核时间</td><td>审核时间</td><td>审批通过时自动记录当前时间</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>BIGINT</td><td>组织ID</td><td>-</td><td>系统自动填充，必填</td></tr>
+<tr><td>DIVISION_ID</td><td>BIGINT</td><td>事业部ID</td><td>-</td><td>系统自动带出，必填</td></tr>
+<tr><td>DIVISION_NAME</td><td>VARCHAR</td><td>事业部名称</td><td>事业部</td><td>自动带出</td></tr>
+<tr><td>AUDIT_STAT</td><td>VARCHAR</td><td>审核状态</td><td>-</td><td>审批通过时设为"审核通过"</td></tr>
+<tr><td>MONOMER_TYPE</td><td>BIGINT</td><td>单体类型</td><td>单体类型</td><td>2=家装单体，其他=工程单体，必填</td></tr>
+<tr><td>SALE_REGION</td><td>VARCHAR</td><td>经销商销售区域</td><td>经销商销售区域</td><td>从报备项目自动带出</td></tr>
+<tr><td>CONTENT_CONFIRM</td><td>VARCHAR</td><td>项目信息确认</td><td>项目信息确认</td><td>Y=是, N=否，影响附件校验</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>BIGINT</td><td>H0流程实例ID</td><td>-</td><td>工作流引擎回写</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>H0流程审批状态</td><td>审批状态</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>CREATION_DATE</td><td>DATETIME</td><td>创建时间</td><td>-</td><td>框架审计字段</td></tr>
+<tr><td>CREATED_BY</td><td>BIGINT</td><td>创建人</td><td>-</td><td>框架审计字段</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATETIME</td><td>最后更新时间</td><td>-</td><td>框架审计字段</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>BIGINT</td><td>最后更新人</td><td>-</td><td>框架审计字段</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>BIGINT</td><td>乐观锁版本号</td><td>-</td><td>框架自动维护</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="5" title="表5：SCPSYSCONF（系统配置表）- 相关字段">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| CONFNAME | VARCHAR | 配置名称 | - | UnFreezeProjectConShow=解冻附件校验事业部配置 |
-| CONFVALUE | VARCHAR | 配置值 | - | 逗号分隔的事业部ID列表，在此列表中的事业部提交时需校验附件 |
-
----
-
+<KbCard title="EPM_PROJECT（项目档案表 - 解冻相关字段）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>项目ID</td><td>-</td><td>主键，关联EPM_PROJECT_UNFREEZE.PROJECT_ID</td></tr>
+<tr><td>PROJECT_VALID</td><td>BIGINT</td><td>项目有效状态</td><td>-</td><td>解冻后恢复为2(已生效)</td></tr>
+<tr><td>FREEZE_TYPE</td><td>BIGINT</td><td>冻结类型</td><td>-</td><td>解冻后置为0(未冻结)</td></tr>
+<tr><td>FREEZE_TIME</td><td>DATETIME</td><td>冻结时间</td><td>-</td><td>解冻后置为null</td></tr>
+<tr><td>UNFREEZE_TIME</td><td>DATETIME</td><td>解冻时间</td><td>-</td><td>审批通过时记录当前时间</td></tr>
+<tr><td>VALID_START_DATE</td><td>DATETIME</td><td>有效开始日期</td><td>-</td><td>超有效期解冻时重置为now</td></tr>
+<tr><td>VALID_END_DATE</td><td>DATETIME</td><td>有效结束日期</td><td>-</td><td>超有效期解冻时重置为now+effectiveCycle+1</td></tr>
+<tr><td>STAGE_ID</td><td>BIGINT</td><td>当前阶段ID</td><td>-</td><td>解冻后更新为stageValueAfter</td></tr>
+<tr><td>STAGE_NAME</td><td>VARCHAR</td><td>当前阶段名称</td><td>-</td><td>解冻后更新</td></tr>
+<tr><td>STAGE_NOTE</td><td>VARCHAR</td><td>当前阶段备注</td><td>-</td><td>解冻后更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="EPM_REPORT（项目报备表 - 解冻相关字段）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>REPORT_ID</td><td>BIGINT</td><td>报备ID</td><td>-</td><td>主键</td></tr>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>项目ID</td><td>-</td><td>关联EPM_PROJECT_UNFREEZE.PROJECT_ID</td></tr>
+<tr><td>REPORT_TYPE</td><td>BIGINT</td><td>报备类型</td><td>-</td><td>1=单体报备时操作ES索引</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>客户ID</td><td>-</td><td>推送CRM时查询客户简称</td></tr>
+<tr><td>CUSTOMER_CODE</td><td>VARCHAR</td><td>客户编码</td><td>-</td><td>CRM推送字段acctCode</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>客户名称</td><td>-</td><td>CRM推送字段acctName</td></tr>
+<tr><td>DIVISION_NAME</td><td>VARCHAR</td><td>事业部名称</td><td>-</td><td>CRM推送字段orgCode</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>项目编码</td><td>-</td><td>CRM推送字段reportNo</td></tr>
+<tr><td>PROJECT_NAME</td><td>VARCHAR</td><td>项目名称</td><td>-</td><td>CRM推送字段projectName</td></tr>
+<tr><td>ES_PUSH_STATUS</td><td>VARCHAR</td><td>ES推送状态</td><td>-</td><td>判断是否需要操作ES</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="EPM_PROJECT_STAGE（项目阶段历程表 - 解冻相关字段）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>项目ID</td><td>-</td><td>关联项目</td></tr>
+<tr><td>STAGE_ID</td><td>BIGINT</td><td>阶段ID</td><td>-</td><td>审批通过后插入解冻后阶段</td></tr>
+<tr><td>STAGE_DESC</td><td>VARCHAR</td><td>阶段描述</td><td>-</td><td>审批通过后插入解冻后描述</td></tr>
+<tr><td>CREATED_BY</td><td>BIGINT</td><td>创建人</td><td>-</td><td>取解冻申请单的创建人</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="SCPSYSCONF（系统配置表 - 附件校验相关）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CONFNAME</td><td>VARCHAR</td><td>配置名称</td><td>-</td><td>UnFreezeProjectConShow=解冻附件校验事业部配置</td></tr>
+<tr><td>CONFVALUE</td><td>VARCHAR</td><td>配置值</td><td>-</td><td>逗号分隔的事业部ID列表，在此列表中的事业部提交时需校验附件</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="查询SQL">
+<pre class="detail-sql" v-pre><code>-- 查询解冻申请列表
+SELECT * FROM EPM_PROJECT_UNFREEZE
+WHERE ORGANIZATION_ID = #{organizationId}
+ORDER BY PROJ_UNFREEZE_ID DESC;
+
+-- 查询已冻结项目
+SELECT PROJECT_ID, PROJECT_CODE, PROJECT_VALID, FREEZE_TYPE, FREEZE_TIME
+FROM EPM_PROJECT
+WHERE PROJECT_VALID = 4;
+
+-- 解冻更新项目状态(超有效期)
+UPDATE EPM_PROJECT
+SET PROJECT_VALID = 2,
+    UNFREEZE_TIME = SYSDATE,
+    FREEZE_TYPE = 0,
+    FREEZE_TIME = NULL,
+    VALID_START_DATE = SYSDATE,
+    VALID_END_DATE = SYSDATE + #{effectiveCycle} + 1
+WHERE PROJECT_ID = #{projectId};
+
+-- 查询报备有效周期配置
+SELECT PARAM_VALUE FROM SYS_PARAM
+WHERE PARAM_CODE = 'Proj_Effective_Cycle'
+  AND ORGANIZATION_ID = #{orgId};</code></pre>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>项目进度已变更，请驳回重审!</td><td>提交校验/审批通过</td><td>stageValueBefore &gt; stageValueAfter，项目进度已被其他单据变更，驳回重审</td><td>高</td><td>volidate和doAudit中进度一致性校验</td></tr>
+<tr><td>附件不能为空</td><td>提交时</td><td>contentConfirm=N且事业部在UnFreezeProjectConShow配置中但未上传附件，上传至少1个附件</td><td>高</td><td>checkContentConfirm附件校验</td></tr>
+<tr><td>附件必须上传且数量不少于【N】</td><td>提交时</td><td>附件数量小于Redis中content_confirm_count配置值，上传足够数量附件</td><td>高</td><td>checkContentConfirm附件数量校验</td></tr>
+<tr><td>阶段更新，只能前进，不能后退</td><td>审批通过时</td><td>解冻后阶段序号小于解冻前阶段序号，修改解冻后阶段为更高级阶段</td><td>高</td><td>doUpdate阶段前进校验</td></tr>
+<tr><td>推送冻结报备到CRM时出错</td><td>审批通过回调</td><td>CRM接口调用异常，检查EBS接口连通性，不影响主流程</td><td>低</td><td>onWfComplete中CRM推送try-catch</td></tr>
+<tr><td>工程ID不能为空</td><td>保存时</td><td>PROJECT_ID为空，选择项目后重新保存</td><td>高</td><td>@NotNull注解校验</td></tr>
+<tr><td>冻结类型不能为空</td><td>保存时</td><td>FREEZE_TYPE为空，选择冻结类型后保存</td><td>高</td><td>@NotNull注解校验</td></tr>
+<tr><td>解冻后进度必填</td><td>保存时</td><td>STAGE_VALUE_AFTER为空，选择解冻后进度后保存</td><td>高</td><td>@NotNull注解校验</td></tr>
+</tbody>
+</table>
+<h4>报错1：项目进度已变更，请驳回重审!</h4>
+<ul><li><strong>触发条件</strong>：提交校验或审批通过时，stageValueBefore &gt; stageValueAfter(解冻前进度大于解冻后进度)</li><li><strong>逻辑分析</strong>：volidate和doAudit方法中校验进度一致性，解冻申请提交时记录了解冻前进度stageValueBefore，若提交后项目进度被其他单据变更导致stageValueBefore大于当前进度，则解冻后进度会回退，需驳回重审</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epu.PROJ_UNFREEZE_ID, epu.PROJ_UNFREEZE_CODE, epu.PROJECT_ID,
+         epu.STAGE_VALUE_BEFORE, epu.STAGE_VALUE_AFTER, epu.HZ_APPROVE_STATUS,
+         ep.STAGE_ID AS 项目当前阶段ID
+  FROM EPM_PROJECT_UNFREEZE epu
+  JOIN EPM_PROJECT ep ON epu.PROJECT_ID = ep.PROJECT_ID
+  WHERE epu.STAGE_VALUE_BEFORE &gt; epu.STAGE_VALUE_AFTER
+  -- 查出进度回退的解冻申请</code></pre>
+<h4>报错2：附件不能为空</h4>
+<ul><li><strong>触发条件</strong>：提交解冻申请时，contentConfirm=N且事业部在UnFreezeProjectConShow配置中，但未上传附件</li><li><strong>逻辑分析</strong>：checkContentConfirm方法中按ORGANIZATION_ID查询UnFreezeProjectConShow配置，若该事业部需附件确认且contentConfirm=N，则校验附件列表非空。该报错为阻断性报错</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epu.PROJ_UNFREEZE_ID, epu.PROJ_UNFREEZE_CODE, epu.CONTENT_CONFIRM, epu.ORGANIZATION_ID,
+         (SELECT COUNT(*) FROM HPFM_ATTACHMENT ha
+          WHERE ha.OBJECT_ID = epu.PROJ_UNFREEZE_ID
+            AND ha.OBJECT_TYPE IN (8003, 9009)) AS 附件数量
+  FROM EPM_PROJECT_UNFREEZE epu
+  WHERE epu.CONTENT_CONFIRM = 'N'
+    AND epu.ORGANIZATION_ID IN (SELECT CONFIG_VALUE FROM SYS_PARAM WHERE PARAM_CODE = 'UnFreezeProjectConShow')
+  -- 查出需附件但附件数量为0的解冻申请</code></pre>
+<h4>报错3：附件必须上传且数量不少于【N】</h4>
+<ul><li><strong>触发条件</strong>：提交解冻申请时，附件数量小于Redis中content_confirm_count配置值</li><li><strong>逻辑分析</strong>：checkContentConfirm方法中从Redis读取content_confirm_count配置的最小附件数N，若实际附件数&lt;N则抛出阻断性报错。需上传足够数量附件后重新提交</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epu.PROJ_UNFREEZE_ID, epu.PROJ_UNFREEZE_CODE, epu.CONTENT_CONFIRM,
+         (SELECT COUNT(*) FROM HPFM_ATTACHMENT ha
+          WHERE ha.OBJECT_ID = epu.PROJ_UNFREEZE_ID
+            AND ha.OBJECT_TYPE IN (8003, 9009)) AS 附件数量
+  FROM EPM_PROJECT_UNFREEZE epu
+  WHERE epu.CONTENT_CONFIRM = 'N'
+  -- 对比附件数量与Redis配置content_confirm_count</code></pre>
+<h4>报错4：阶段更新，只能前进，不能后退</h4>
+<ul><li><strong>触发条件</strong>：解冻审批通过时，解冻后阶段(STAGE_VALUE_AFTER)的SEQ小于解冻前阶段(STAGE_VALUE_BEFORE)的SEQ</li><li><strong>逻辑分析</strong>：doUpdate方法中查询EPM_STAGE_DEF获取新旧阶段SEQ，若newStage.seq &lt; oldStage.seq则抛出阻断性报错。需修改解冻后阶段为更高级阶段</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT esd.STAGE_ID, esd.STAGE_NAME, esd.SEQ, esd.ORGANIZATION_ID
+  FROM EPM_STAGE_DEF esd
+  WHERE esd.ORGANIZATION_ID = :organizationId
+  ORDER BY esd.SEQ
+  -- 对比解冻后阶段与解冻前阶段的SEQ</code></pre>
+<h4>报错5：推送冻结报备到CRM时出错</h4>
+<ul><li><strong>触发条件</strong>：解冻审批通过回调(onWfComplete)中调用CRM接口推送冻结报备状态失败</li><li><strong>逻辑分析</strong>：try-catch捕获CRM推送异常仅记录日志，不阻断主流程。可能原因：EBS接口连通性异常、CRM系统不可用、报备数据字段缺失。家装单体报备(monomerType=2)不推送CRM</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epu.PROJ_UNFREEZE_ID, epu.PROJ_UNFREEZE_CODE, epu.PROJECT_ID, epu.MONOMER_TYPE,
+         er.REPORT_ID, er.REPORT_CODE, er.CUSTOMER_CODE, er.DIVISION_NAME
+  FROM EPM_PROJECT_UNFREEZE epu
+  LEFT JOIN EPM_REPORT er ON epu.PROJECT_ID = er.PROJECT_ID
+  WHERE epu.PROJ_UNFREEZE_ID = :projUnfreezeId
+    AND epu.MONOMER_TYPE &lt;&gt; 2
+  -- 检查非家装单体报备的CRM推送参数完整性</code></pre>
+<h4>报错6：工程ID不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存解冻申请时，PROJECT_ID参数为空</li><li><strong>逻辑分析</strong>：PROJECT_ID参数标注@NotNull，Spring校验框架自动校验。需选择项目后重新保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ep.PROJECT_ID, ep.PROJECT_CODE, ep.PROJECT_NAME, ep.PROJECT_VALID, ep.FREEZE_TYPE
+  FROM EPM_PROJECT ep
+  WHERE ep.PROJECT_ID = :projectId
+  -- 校验项目ID是否存在且为冻结状态(PROJECT_VALID=4)</code></pre>
+<h4>报错7：冻结类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存解冻申请时，FREEZE_TYPE参数为空</li><li><strong>逻辑分析</strong>：FREEZE_TYPE参数标注@NotNull，Spring校验框架自动校验。该字段区分超有效期冻结(1)/进度超时冻结(2)等类型，影响解冻后处理逻辑。需选择冻结类型后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epu.PROJ_UNFREEZE_ID, epu.PROJ_UNFREEZE_CODE, epu.FREEZE_TYPE, epu.PROJECT_ID
+  FROM EPM_PROJECT_UNFREEZE epu
+  WHERE epu.FREEZE_TYPE IS NULL
+  -- 查出冻结类型为空的异常数据</code></pre>
+<h4>报错8：解冻后进度必填</h4>
+<ul><li><strong>触发条件</strong>：保存解冻申请时，STAGE_VALUE_AFTER参数为空</li><li><strong>逻辑分析</strong>：STAGE_VALUE_AFTER参数标注@NotNull，Spring校验框架自动校验。该字段指定解冻后项目推进到的目标阶段，需选择解冻后进度后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epu.PROJ_UNFREEZE_ID, epu.PROJ_UNFREEZE_CODE, epu.STAGE_VALUE_BEFORE, epu.STAGE_VALUE_AFTER
+  FROM EPM_PROJECT_UNFREEZE epu
+  WHERE epu.STAGE_VALUE_AFTER IS NULL
+  -- 查出解冻后进度为空的异常数据</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -814,200 +651,42 @@ SELECT EPU.PROJ_UNFREEZE_ID, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">附件不能为空</td>
-            <td style="font-size:13px;">提交时</td>
-            <td style="font-size:13px;">CONTENT_CONFIRM=N且当前事业部在UnFreezeProjectConShow配置中，但未上传附件。解决方案：上传至少1个附件</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">附件必须上传且数量不少于【N】</td>
-            <td style="font-size:13px;">提交时</td>
-            <td style="font-size:13px;">附件数量小于Redis中content_confirm_count的值。解决方案：上传足够数量的附件</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">项目进度已变更，请驳回重审!</td>
-            <td style="font-size:13px;">审批校验/审批通过</td>
-            <td style="font-size:13px;">解冻申请单中解冻前进度大于解冻后进度，说明项目进度已被其他操作变更。解决方案：驳回解冻申请，重新提交</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">阶段更新，只能前进，不能后退</td>
-            <td style="font-size:13px;">审批通过</td>
-            <td style="font-size:13px;">解冻后阶段的序号小于解冻前阶段序号。解决方案：修改解冻后阶段为更高级阶段</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">推送冻结报备到CRM时出错</td>
-            <td style="font-size:13px;">审批通过回调</td>
-            <td style="font-size:13px;">审批通过后调用EBS接口INDIVIREPORT_ADD推送解冻信息到CRM失败。解决方案：检查EBS接口连通性和CRM系统状态</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>附件不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>CONTENT_CONFIRM=N且当前事业部在UnFreezeProjectConShow配置中，但未上传附件。解决方案：上传至少1个附件</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>附件必须上传且数量不少于【N】</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>附件数量小于Redis中content_confirm_count的值。解决方案：上传足够数量的附件</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>项目进度已变更，请驳回重审!</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>解冻申请单中解冻前进度大于解冻后进度，说明项目进度已被其他操作变更。解决方案：驳回解冻申请，重新提交</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>阶段更新，只能前进，不能后退</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>解冻后阶段的序号小于解冻前阶段序号。解决方案：修改解冻后阶段为更高级阶段</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-5" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>推送冻结报备到CRM时出错</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过后调用EBS接口INDIVIREPORT_ADD推送解冻信息到CRM失败。解决方案：检查EBS接口连通性和CRM系统状态</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
+<KbCard title="Q1: 什么情况下项目报备会被冻结？">
+<p>项目报备后超过系统参数设定的有效周期(PROJ_EFFECTIVE_CYCLE)未产生合同，系统自动冻结(FREEZE_TYPE=1)；或进度超时更新冻结(FREEZE_TYPE=2)。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT PROJECT_ID, PROJECT_CODE, PROJECT_VALID, FREEZE_TYPE, FREEZE_TIME
+FROM EPM_PROJECT
+WHERE PROJECT_VALID = 4;</code></pre>
 </KbCard>
-<KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">审批通过后项目有效状态仍为冻结</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>审批结果不是APPROVED，wfComplete方法中判断approveResult等于REJECTED时执行onUserReject，否则才执行doAudit和onWfComplete
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, EPU.STAT, EPU.AUDIT_STAT, EP.PROJECT_VALID, EP.FREEZE_TYPE
-FROM EPM_PROJECT_UNFREEZE EPU
-JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
-WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>检查审批结果是否为APPROVED，确认工作流配置正确
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">家装单体报备解冻后CRM未收到推送</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>MONOMER_TYPE=2时，onWfComplete方法中跳过CRM推送逻辑，这是正常业务逻辑，非异常
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, EPU.MONOMER_TYPE
-FROM EPM_PROJECT_UNFREEZE EPU
-WHERE EPU.MONOMER_TYPE = 2;</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>确认该报备确实是家装单体类型，家装单体报备解冻不推送CRM是设计如此
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">超有效期冻结解冻后有效期未重置</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>仅FREEZE_TYPE=1或4时才重置有效期，FREEZE_TYPE=2（进度超时）不重置
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, EPU.FREEZE_TYPE, EP.VALID_START_DATE, EP.VALID_END_DATE
-FROM EPM_PROJECT_UNFREEZE EPU
-JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
-WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>检查冻结类型，FREEZE_TYPE=2不重置有效期是正常逻辑
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">进度超时冻结解冻后项目进度未更新</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>进度超时解冻时启用强制更新（FORCE_UPDATE=2），但若阶段和描述均未改变，doUpdate中需满足stageChanged||stageDescChanged||forceUpdate==2条件
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, EPU.STAGE_VALUE_BEFORE, EPU.STAGE_VALUE_AFTER,
-       EPU.STAGE_DESC_BEFORE, EPU.STAGE_DESC_AFTER, EP.STAGE_ID, EP.STAGE_DESC
-FROM EPM_PROJECT_UNFREEZE EPU
-JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
-WHERE EPU.FREEZE_TYPE = 2 AND EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>确认解冻后阶段或描述是否有变更，FREEZE_TYPE=2时强制更新会确保进度更新执行
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q5</span>
-      <span style="font-size:15px;">提交解冻申请时提示附件不能为空但已上传附件</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>附件类型（OBJ_TYPE）不匹配，工程单体报备OBJ_TYPE=8003，家装单体报备OBJ_TYPE=9009
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_ID, EPU.MONOMER_TYPE, OAR.OBJ_TYPE, OAR.OBJ_ID
-FROM EPM_PROJECT_UNFREEZE EPU
-LEFT JOIN OBJ_ATTACH_REL OAR ON OAR.OBJ_ID = EPU.PROJ_UNFREEZE_ID
-WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>确认附件的OBJ_TYPE是否正确，工程单体应为8003，家装单体应为9009
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q6</span>
-      <span style="font-size:15px;">解冻申请提交后ES数据未同步</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>仅单体报备（REPORT_TYPE=1）且项目有效结束日期小于冻结延期开始日时才操作ES
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPU.PROJ_UNFREEZE_CODE, ER.REPORT_TYPE, ER.ES_PUSH_STATUS, EP.VALID_END_DATE
-FROM EPM_PROJECT_UNFREEZE EPU
-JOIN EPM_PROJECT EP ON EPU.PROJECT_ID = EP.PROJECT_ID
-JOIN EPM_REPORT ER ON EP.REPORT_ID = ER.REPORT_ID
-WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>确认报备类型是否为单体报备（REPORT_TYPE=1），且有效结束日期是否小于冻结延期开始日
-    </div>
-  </div>
-</div>
+
+<KbCard title="Q2: 超项目有效期解冻和进度超时解冻的区别？">
+<p>超有效期解冻(freezeType=1/4)重置有效周期(VALID_START_DATE=now, VALID_END_DATE=now+effectiveCycle+1)；进度超时解冻(freezeType=2)仅恢复状态，强制更新进度(forceUpdate=2)，不重置有效周期。</p>
 </KbCard>
+
+<KbCard title="Q3: 为什么需要进度一致性校验？">
+<p>解冻申请提交时记录了解冻前进度stageValueBefore，若提交后项目进度被其他单据变更，导致stageValueBefore大于当前进度，则解冻后进度会回退，因此需驳回重审。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT PROJ_UNFREEZE_ID, STAGE_VALUE_BEFORE, STAGE_VALUE_AFTER
+FROM EPM_PROJECT_UNFREEZE
+WHERE STAGE_VALUE_BEFORE &gt; STAGE_VALUE_AFTER;</code></pre>
+</KbCard>
+
+<KbCard title="Q4: 项目信息确认(contentConfirm)的作用？">
+<p>contentConfirm作为工作流变量传递到审批节点，供审批人确认项目信息是否准确。Y表示已确认(跳过附件校验)，N表示未确认(需校验附件)。</p>
+</KbCard>
+
+<KbCard title="Q5: 解冻后项目有效期如何计算？">
+<p>超有效期解冻时，VALID_START_DATE=当前时间，VALID_END_DATE=当前时间+PROJ_EFFECTIVE_CYCLE+1天，给予新的有效周期。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT PROJECT_ID, PROJECT_VALID, UNFREEZE_TIME, VALID_START_DATE, VALID_END_DATE
+FROM EPM_PROJECT
+WHERE PROJECT_ID = #{projectId};</code></pre>
+</KbCard>
+
+<KbCard title="Q6: 家装单体报备解冻有何特殊处理？">
+<p>家装单体报备(monomerType=2)不推送CRM，仅恢复项目状态和更新有效期。附件对象类型为9009L，工程单体为8003L。</p>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -1016,10 +695,16 @@ WHERE EPU.PROJ_UNFREEZE_ID = {申请单ID};</code></pre>
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-11-21 | - | jiaqiang.fu01 | 初始创建项目解冻申请功能（EpmProjectUnfreeze实体、Service、Repository、Mapper） |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写，补充代码梳理：后端ServiceImpl/Entity完整分析，界面模块6列表格、数据库表5列表格、报错一览表5列、上游依赖4列、下游影响bullet points、选择弹窗、保存校验、提交校验、状态机等</td></tr>
+<tr><td>2026-08-28</td><td>-</td><td>-</td><td>内容增强，修正表名为EPM_PROJECT_UNFREEZE，补充业务流程图、界面模块、冻结类型分支、FAQ</td></tr>
+<tr><td>2025-11-21</td><td>-</td><td>jiaqiang.fu01</td><td>初始版本，报备解冻申请功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

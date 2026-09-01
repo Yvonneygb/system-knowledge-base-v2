@@ -307,63 +307,28 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：OCR发票自动识别 OCR识别">
-
-<KbQuote>上传发票凭证附件后，系统自动调用OCR接口识别发票内容，减少手工录入工作量</KbQuote>
-
-**具体逻辑**：
-
-- 仅凭证类型为"发票"或"收据"时，上传凭证附件后自动触发OCR识别
-- OCR识别成功后，自动填充发票主要信息(发票代码、号码、开票日期、购买方、销售方、金额)和详细信息(产品名称、规格型号、数量、单价、金额、税率、税额)
-- OCR识别的数据标记操作标识为2(OCR识别)，与手工录入(0)和手工修改(1)区分
-- OCR识别失败时，前端提示错误信息，用户可点击"重新识别"按钮重试
-- 非发票类型(凭证类型=1)不触发OCR识别，也不返回详细信息
-
+<KbCard num="1" title="重点逻辑1：OCR发票校验 `发票识别`">
+<ul><li><strong>业务意义</strong>：通过OCR自动识别发票影像信息，减少手工录入</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：上传发票影像后调用OCR接口自动识别发票信息</li></ul>
+<ul><li>第2点：OCR识别结果回填到发票主信息字段</li></ul>
+<ul><li>第3点：识别后自动校验发票是否重复</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：凭证号码与发票号码关联机制 凭证关联">
-
-<KbQuote>一个凭证号码下可能有多张发票，需要建立凭证与发票的对应关系</KbQuote>
-
-**具体逻辑**：
-
-- 新建发票影像行时，系统自动生成凭证号码(调用编码规则生成)
-- 非发票类型(凭证类型=1)时，系统自动为该凭证号码下的主要信息生成子号码(格式：凭证号码-01、凭证号码-02...)，作为发票号码和发票代码
-- 发票类型(凭证类型=2)时，发票号码和发票代码由OCR识别或手工录入
-- 删除发票影像行时，同步清除该凭证号码关联的主要信息和详细信息
-- 变更凭证类型时，重新计算关联的发票号码
-
+<KbCard num="2" title="重点逻辑2：发票重复校验 `防重`">
+<ul><li><strong>业务意义</strong>：防止同一发票被重复核销</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：保存时调用check-invoice接口校验发票号码是否已存在</li></ul>
+<ul><li>第2点：重复时阻断保存并提示</li></ul>
 </KbCard>
 
-<KbCard num="3" title="重点逻辑3：发票重复校验 防重复">
-
-<KbQuote>确保同一发票不会被重复核销，避免财务数据冲突</KbQuote>
-
-**具体逻辑**：
-
-- 前端在修改发票代码或发票号码时，实时调用后端接口校验该发票是否已被其他核销单使用
-- 后端保存前(beforeSave)统一校验所有发票代码+发票号码组合是否重复(同一单内和跨单)
-- 导入明细时也会校验凭证号码是否存在于当前发票影像列表中
-
-<KbWarn>同一发票代码 + 发票号码不得被重复核销,跨单由后端 beforeSave 统一校验。</KbWarn>
-
+<KbCard num="3" title="重点逻辑3：终止与撤回 `流程控制`">
+<ul><li><strong>业务意义</strong>：支持审批流程的终止和撤回操作</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：终止操作将流程标记为终止状态</li></ul>
+<ul><li>第2点：撤回终止可恢复流程到终止前状态</li></ul>
 </KbCard>
 
-<KbCard num="4" title="重点逻辑4：家装与工程共用后端代码 共用代码">
-
-<KbQuote>家装核销发票上传和工程核销发票上传共用同一套后端代码，通过isHome参数区分</KbQuote>
-
-**具体逻辑**：
-
-- 家装标识isHome=2，工程为其他值
-- 家装使用编码规则AE.JZ_INVOICE_VERIFER_NO生成核销单号，工程使用AE.INVOICE_VERIFER_NO
-- 家装使用工作流编码INVOICE_JZHXFPSC_AW，工程使用INVOICE_WF_UPLOAD_AW
-- 家装导出使用homeExport接口，工程使用export接口
-- 家装项目LOV查询传参isHome=2，限制只查家装项目
-
-<KbTip>家装 isHome=2,工程为其他值;编码规则 (AE.JZ_INVOICE_VERIFER_NO / AE.INVOICE_VERIFER_NO) 与工作流编码 (INVOICE_JZHXFPSC_AW / INVOICE_WF_UPLOAD_AW) 均不同。</KbTip>
-
-</KbCard>
 </div>
 </div>
 </div>
@@ -371,545 +336,116 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="界面模块1：列表页">
-
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：家装核销发票上传列表页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead>
-<tbody><tr><td>审批状态</td><td>下拉选择框</td><td>单据审批状态</td><td>常显(查询栏+列表)</td><td>值集HWKF.APPROVE_STATUS</td><td>HWKF.APPROVE_STATUS值集；排查SQL：`SELECT * FROM HPFM_VALUE_SET_VL WHERE VALUE_SET_CODE = &#x27;HWKF.APPROVE_STATUS&#x27;`</td><td>EPM_UPLOAD_INVOICE_VERIFER.HZ_APPROVE_STATUS</td></tr><tr><td>流程状态</td><td>文本框</td><td>当前流程节点名称</td><td>常显(列表)</td><td>由工作流返回</td><td>-</td><td>-</td></tr><tr><td>核销单号</td><td>文本框</td><td>系统自动生成的单据编号</td><td>常显(查询栏+列表)</td><td>点击可跳转详情页</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.INVOICE_VERIFER_NO</td></tr><tr><td>发票上传日期</td><td>日期选择框</td><td>单据创建日期</td><td>常显(查询栏+列表)</td><td>日期范围查询</td><td>日期范围</td><td>EPM_UPLOAD_INVOICE_VERIFER.CREATION_DATE</td></tr><tr><td>项目编码</td><td>文本框</td><td>家装项目编码</td><td>常显(查询栏+列表)</td><td>-</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.PROJECT_CODE</td></tr><tr><td>项目名称</td><td>文本框</td><td>家装项目名称</td><td>常显(查询栏+列表)</td><td>-</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.PROJECT_NAME</td></tr><tr><td>经销商编码</td><td>文本框</td><td>经销商编码</td><td>常显(查询栏+列表)</td><td>-</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.CUSTOMER_CODE</td></tr><tr><td>经销商名称</td><td>文本框</td><td>经销商名称</td><td>常显(查询栏+列表)</td><td>-</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.CUSTOMER_NAME</td></tr><tr><td>交易公司</td><td>文本框</td><td>交易公司名称</td><td>常显(查询栏+列表)</td><td>-</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.TRADING_COMPANY_NAME</td></tr><tr><td>验真通过</td><td>复选框</td><td>是否通过一次验真</td><td>常显(查询栏+列表)</td><td>trueValue=2, falseValue=1</td><td>0-未通过，2-已通过</td><td>EPM_UPLOAD_INVOICE_VERIFER.IS_FIRST_PASSED</td></tr><tr><td>二次验真通过</td><td>复选框</td><td>是否通过二次验真</td><td>常显(查询栏+列表)</td><td>trueValue=2, falseValue=1</td><td>0-未通过，2-已通过</td><td>EPM_UPLOAD_INVOICE_VERIFER.IS_SECOND_PASSED</td></tr><tr><td>申请人</td><td>文本框</td><td>创建人姓名</td><td>常显(查询栏+列表)</td><td>-</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.CREATOR_NAME</td></tr><tr><td>修改人</td><td>文本框</td><td>最后修改人姓名</td><td>常显(列表)</td><td>-</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.UPDATOR_NAME</td></tr><tr><td>修改时间</td><td>日期选择框</td><td>最后修改时间</td><td>常显(查询栏+列表)</td><td>日期范围查询</td><td>日期范围</td><td>EPM_UPLOAD_INVOICE_VERIFER.LAST_UPDATE_DATE</td></tr></tbody>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>核销单号</td><td>EPM_VERIFER_INVOICE_HEADERS.INVOICE_VERIFER_NO</td><td>文本框</td><td>核销单唯一标识</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>审核状态</td><td>EPM_VERIFER_INVOICE_HEADERS.HZ_APPROVE_STATUS</td><td>下拉选择框</td><td>审批状态</td><td>常显</td><td>1. 来源：值集HWKF.APPROVE_STATUS</td></tr>
+<tr><td>发票上传日期</td><td>EPM_VERIFER_INVOICE_HEADERS.CREATION_DATE</td><td>日期选择框</td><td>发票上传日期</td><td>常显</td><td>1. 查询为范围查询</td></tr>
+<tr><td>项目编码</td><td>EPM_VERIFER_INVOICE_HEADERS.PROJECT_CODE</td><td>文本框</td><td>关联项目编码</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>项目名称</td><td>EPM_VERIFER_INVOICE_HEADERS.PROJECT_NAME</td><td>文本框</td><td>项目名称</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>经销商编码</td><td>EPM_VERIFER_INVOICE_HEADERS.CUSTOMER_CODE</td><td>文本框</td><td>经销商编码</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>经销商名称</td><td>EPM_VERIFER_INVOICE_HEADERS.CUSTOMER_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>交易公司</td><td>EPM_VERIFER_INVOICE_HEADERS.TRADING_COMPANY_NAME</td><td>文本框</td><td>交易公司名称</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>验真通过</td><td>EPM_VERIFER_INVOICE_HEADERS.IS_FIRST_PASSED</td><td>文本框</td><td>首次验真是否通过</td><td>常显</td><td>1. 可编辑：否</td></tr>
+<tr><td>二次验真通过</td><td>EPM_VERIFER_INVOICE_HEADERS.IS_SECOND_PASSED</td><td>文本框</td><td>二次验真是否通过</td><td>常显</td><td>1. 可编辑：否</td></tr>
+<tr><td>申请人</td><td>EPM_VERIFER_INVOICE_HEADERS.CREATOR_NAME</td><td>文本框</td><td>申请人姓名</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>修改人</td><td>EPM_VERIFER_INVOICE_HEADERS.UPDATOR_NAME</td><td>文本框</td><td>修改人姓名</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+</tbody>
 </table>
-</div>
-
 </KbCard>
 
-<KbCard num="2" title="界面模块2：详情页-基础信息">
-
-<div class="kb-field-scroll">
+<KbCard title="界面模块2：家装核销发票上传详情页-头信息">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead>
-<tbody><tr><td>核销单号</td><td>文本框</td><td>系统自动生成的单据编号</td><td>常显</td><td>新建时保存后自动生成，不可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.INVOICE_VERIFER_NO</td></tr><tr><td>发票上传日期</td><td>文本框</td><td>单据创建日期</td><td>常显</td><td>系统自动赋值，不可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.CREATION_DATE</td></tr><tr><td>申请人</td><td>文本框</td><td>当前登录用户姓名</td><td>常显</td><td>默认值=当前登录用户realName，不可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.CREATOR_NAME</td></tr><tr><td>单据状态</td><td>下拉选择框</td><td>审批状态</td><td>常显</td><td>值集HWKF.APPROVE_STATUS，默认值NEW，不可编辑</td><td>HWKF.APPROVE_STATUS值集</td><td>EPM_UPLOAD_INVOICE_VERIFER.HZ_APPROVE_STATUS</td></tr><tr><td>项目编码</td><td>LOV弹窗</td><td>选择家装项目</td><td>核销类型=1时显示</td><td>LOV:AE.UPLOAD_WRITE_OFF_INVOICE_PROJECT_VIEW，传参isHome=2和customerId；选择后自动带出项目名称、项目ID、项目地址、交易公司、经销商信息</td><td>当前用户有权限的家装项目；排查SQL：`SELECT * FROM EPM_PROJECT WHERE IS_HOME = 2`</td><td>EPM_UPLOAD_INVOICE_VERIFER.PROJECT_CODE</td></tr><tr><td>项目名称</td><td>文本框</td><td>项目名称</td><td>核销类型=1时显示</td><td>由项目LOV自动带出，不可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.PROJECT_NAME</td></tr><tr><td>经销商编码</td><td>LOV弹窗</td><td>选择经销商</td><td>核销类型=1或3时显示</td><td>LOV:BASIC_CUSTOM_ORG_LOV_2，传参searchFlag=142；经销商登录时自动填充且不可编辑；选择后自动带出经销商名称、清空交易公司和开票单位</td><td>生效的经销商；排查SQL：`SELECT * FROM BASIC_CUSTOMER WHERE SEARCH_FLAG = 142`</td><td>EPM_UPLOAD_INVOICE_VERIFER.CUSTOMER_CODE</td></tr><tr><td>经销商名称</td><td>文本框</td><td>经销商名称</td><td>核销类型=1或3时显示</td><td>由经销商LOV自动带出，不可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.CUSTOMER_NAME</td></tr><tr><td>核销类型</td><td>下拉选择框</td><td>核销业务类型</td><td>核销类型=1或3时显示</td><td>值集AE.VERIFER_TYPE，必填；变更时清空项目、经销商、交易公司、开票单位等关联字段</td><td>AE.VERIFER_TYPE值集；排查SQL：`SELECT * FROM HPFM_VALUE_SET_VL WHERE VALUE_SET_CODE = &#x27;AE.VERIFER_TYPE&#x27;`</td><td>EPM_UPLOAD_INVOICE_VERIFER.VERIFER_TYPE</td></tr><tr><td>交易公司</td><td>LOV弹窗</td><td>选择交易公司</td><td>核销类型=1或3时显示</td><td>LOV:TRADING_LEGAL_SQL_V，传参customerId和isHome=2；核销类型=3时才可编辑；选择后自动带出开票单位(法人的legalEntity)</td><td>经销商关联的交易公司；排查SQL：`SELECT * FROM EPM_TRADING_COMPANY WHERE CUSTOMER_ID = ? AND IS_HOME = 2`</td><td>EPM_UPLOAD_INVOICE_VERIFER.TRADING_COMPANY_NAME</td></tr><tr><td>开票单位</td><td>文本框</td><td>开票单位名称</td><td>核销类型=3时显示</td><td>由交易公司LOV自动带出(取法人的legalEntityName)，不可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.BILLING_UNIT_NAME</td></tr><tr><td>备注</td><td>多行文本框</td><td>备注信息</td><td>核销类型=1或3时显示</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_VERIFER.REMARK</td></tr></tbody>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>核销单号</td><td>EPM_VERIFER_INVOICE_HEADERS.INVOICE_VERIFER_NO</td><td>文本框</td><td>核销单唯一标识</td><td>常显</td><td>1. 默认值：无 2. 保存时自动生成 3. 可编辑：否</td></tr>
+<tr><td>发票上传日期</td><td>EPM_VERIFER_INVOICE_HEADERS.CREATION_DATE</td><td>日期选择框</td><td>发票上传日期</td><td>常显</td><td>1. 默认值：当前日期 2. 可编辑：否</td></tr>
+<tr><td>申请人</td><td>EPM_VERIFER_INVOICE_HEADERS.CREATOR_NAME</td><td>文本框</td><td>申请人</td><td>常显</td><td>1. 默认值：当前用户 2. 可编辑：否</td></tr>
+<tr><td>单据状态</td><td>EPM_VERIFER_INVOICE_HEADERS.HZ_APPROVE_STATUS</td><td>下拉选择框</td><td>审批状态</td><td>常显</td><td>1. 默认值：NEW 2. 来源：值集HWKF.APPROVE_STATUS 3. 可编辑：否</td></tr>
+<tr><td>项目编码</td><td>EPM_VERIFER_INVOICE_HEADERS.PROJECT_CODE</td><td>LOV选择</td><td>关联项目编码</td><td>常显</td><td>1. 来源：LOV AE.UPLOAD_WRITE_OFF_INVOICE_PROJECT_VIEW（isHome=2） 2. 必填</td></tr>
+<tr><td>项目名称</td><td>EPM_VERIFER_INVOICE_HEADERS.PROJECT_NAME</td><td>文本框</td><td>项目名称</td><td>常显</td><td>1. 来源：选择项目后自动带出 2. 可编辑：否</td></tr>
+<tr><td>经销商编码</td><td>EPM_VERIFER_INVOICE_HEADERS.CUSTOMER_CODE</td><td>LOV选择</td><td>经销商编码</td><td>常显</td><td>1. 来源：LOV BASIC_CUSTOM_ORG_LOV_2（searchFlag=142） 2. 必填</td></tr>
+<tr><td>经销商名称</td><td>EPM_VERIFER_INVOICE_HEADERS.CUSTOMER_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>1. 来源：选择经销商后自动带出 2. 可编辑：否</td></tr>
+<tr><td>核销类型</td><td>EPM_VERIFER_INVOICE_HEADERS.VERIFER_TYPE</td><td>下拉选择框</td><td>核销类型</td><td>常显</td><td>1. 来源：值集AE.VERIFER_TYPE 2. 必填</td></tr>
+<tr><td>交易公司</td><td>EPM_VERIFER_INVOICE_HEADERS.TRADING_COMPANY_NAME</td><td>LOV选择</td><td>交易公司</td><td>常显</td><td>1. 来源：LOV TRADING_LEGAL_SQL_V（isHome=2）</td></tr>
+<tr><td>开票单位</td><td>EPM_VERIFER_INVOICE_HEADERS.BILLING_UNIT_NAME</td><td>文本框</td><td>开票单位</td><td>常显</td><td>1. 可编辑：是</td></tr>
+<tr><td>备注</td><td>EPM_VERIFER_INVOICE_HEADERS.REMARK</td><td>文本框</td><td>备注</td><td>常显</td><td>1. 可编辑：是</td></tr>
+</tbody>
 </table>
-</div>
-
 </KbCard>
 
-<KbCard num="3" title="界面模块3：详情页-发票影像信息">
-
-<div class="kb-field-scroll">
+<KbCard title="其他按钮">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead>
-<tbody><tr><td>凭证类型</td><td>下拉选择框</td><td>凭证类型：1-非发票、2-发票、3-收据</td><td>常显</td><td>值集AE.EPM.VERIFY_VOUCHER_TYPE，必填；变更时触发发票号码重新计算</td><td>AE.EPM.VERIFY_VOUCHER_TYPE值集：1-非发票、2-发票、3-收据</td><td>EPM_UPLOAD_INVOICE.VERIFY_VOUCHER_TYPE</td></tr><tr><td>凭证号码</td><td>文本框</td><td>系统生成的凭证号码</td><td>常显</td><td>新建行时自动生成(调用generate-invoice接口)，不可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE.NOUCHER_NUMBER</td></tr><tr><td>凭证附件</td><td>文件上传</td><td>发票凭证图片/PDF</td><td>常显</td><td>必填；上传后自动触发OCR识别(凭证类型=2或3时)；支持上传/下载/预览/删除</td><td>图片/PDF文件</td><td>EPM_UPLOAD_INVOICE.DOCNAME</td></tr><tr><td>清单附件</td><td>文件上传</td><td>发票清单附件</td><td>常显</td><td>非必填；仅支持pdf和jpg格式；支持上传/下载/预览/删除</td><td>仅pdf和jpg格式</td><td>EPM_UPLOAD_INVOICE.DOC_NAME</td></tr><tr><td>备注</td><td>文本框</td><td>发票影像备注</td><td>常显</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE.INVOICE_NOTE</td></tr></tbody>
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新建</td><td>新建核销发票</td><td>列表页</td><td>常显</td><td>跳转详情页新建态</td></tr>
+<tr><td>导出</td><td>导出核销发票列表</td><td>列表页</td><td>常显</td><td>调用home-export接口导出</td></tr>
+<tr><td>保存</td><td>保存核销发票</td><td>详情页</td><td>编辑态显示</td><td>保存发票信息</td></tr>
+<tr><td>提交</td><td>提交审批</td><td>详情页</td><td>状态为NEW或REJECTED时显示</td><td>触发工作流INVOICE_JZHXFPSC_AW</td></tr>
+<tr><td>终止</td><td>终止流程</td><td>详情页</td><td>审批中状态显示</td><td>终止审批流程</td></tr>
+<tr><td>撤回终止</td><td>撤回终止</td><td>详情页</td><td>已终止状态显示</td><td>恢复流程到终止前状态</td></tr>
+<tr><td>删除</td><td>删除核销发票</td><td>详情页</td><td>新建状态显示</td><td>删除当前记录</td></tr>
+<tr><td>OCR校验</td><td>发票OCR识别</td><td>详情页</td><td>编辑态显示</td><td>调用invoice-identify接口识别发票</td></tr>
+<tr><td>明细导入</td><td>导入发票明细</td><td>详情页</td><td>编辑态显示</td><td>调用import-line接口导入明细</td></tr>
+</tbody>
 </table>
-</div>
-
 </KbCard>
 
-<KbCard num="4" title="界面模块4：详情页-发票主要信息">
-
-<div class="kb-field-scroll">
+<KbCard title="状态机">
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>NEW（新建） ──提交──→ RUN（审批中） ──审批通过──→ APPROVED（已审核）
+                         │                    │
+                         ├──审核拒绝──→ REJECTED ──提交──→ RUN
+                         ├──终止──→ TERMINATED ──撤回终止──→ RUN
+                         └──撤回──→ NEW</code></pre>
+<h4>状态机列表</h4>
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead>
-<tbody><tr><td>有效状态</td><td>下拉选择框</td><td>发票有效状态</td><td>常显</td><td>值集AE.INVOICEEFFECTSTATUS</td><td>AE.INVOICEEFFECTSTATUS值集：invalid-未生效、valid-已生效、obsolete-已作废</td><td>EPM_UPLOAD_INVOICE_INFO.EFFECT_STATUS</td></tr><tr><td>操作标识</td><td>下拉选择框</td><td>0-手工添加/1-手工修改/2-OCR识别</td><td>常显</td><td>值集AE.OPERATION_FLAG，默认值0</td><td>AE.OPERATION_FLAG值集：0-手工添加、1-手工修改、2-OCR识别</td><td>EPM_UPLOAD_INVOICE_INFO.OPERATION_FLAG</td></tr><tr><td>凭证号码</td><td>下拉选择框</td><td>关联发票影像的凭证号码</td><td>常显</td><td>必填；下拉选项来自发票影像信息的凭证号码列表</td><td>当前发票影像行已有的凭证号码</td><td>EPM_UPLOAD_INVOICE_INFO.NOUCHER_NUMBER</td></tr><tr><td>发票代码</td><td>文本框</td><td>发票代码</td><td>常显</td><td>必填；修改时触发发票重复校验</td><td>-</td><td>EPM_UPLOAD_INVOICE_INFO.INVOICE_CODE</td></tr><tr><td>发票号码</td><td>文本框</td><td>发票号码</td><td>常显</td><td>必填；修改时触发发票重复校验</td><td>-</td><td>EPM_UPLOAD_INVOICE_INFO.INVOICE_NUMBER</td></tr><tr><td>开票日期</td><td>日期选择框</td><td>发票开票日期</td><td>常显</td><td>可编辑</td><td>日期</td><td>EPM_UPLOAD_INVOICE_INFO.INVOICE_DATE</td></tr><tr><td>购买方名称</td><td>文本框</td><td>发票购买方名称</td><td>常显</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_INFO.BUYER_NAME</td></tr><tr><td>销售方名称</td><td>文本框</td><td>发票销售方名称</td><td>常显</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_INFO.SELLER_NAME</td></tr><tr><td>购买方联系电话</td><td>文本框</td><td>购买方联系电话</td><td>常显</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_INFO.BUYER_MOB</td></tr><tr><td>楼号</td><td>文本框</td><td>购买方楼号</td><td>常显</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_INFO.BUILDING_NUMBER</td></tr><tr><td>总额</td><td>金额输入框</td><td>发票金额(不含税额)</td><td>常显</td><td>可编辑；列表底部显示合计</td><td>金额，精度2位</td><td>EPM_UPLOAD_INVOICE_INFO.ALL_AMOUNT</td></tr><tr><td>作废发票操作人</td><td>文本框</td><td>作废发票的操作人</td><td>常显</td><td>系统自动赋值</td><td>-</td><td>EPM_UPLOAD_INVOICE_INFO.OBSOLETE_OPERATOR</td></tr><tr><td>作废时间</td><td>文本框</td><td>发票作废时间</td><td>常显</td><td>系统自动赋值</td><td>-</td><td>EPM_UPLOAD_INVOICE_INFO.OBSOLETE_TIME</td></tr></tbody>
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>新建</td><td>编辑、保存、提交、删除</td></tr>
+<tr><td>RUN</td><td>审批中</td><td>查看、终止</td></tr>
+<tr><td>APPROVED</td><td>已审核</td><td>查看</td></tr>
+<tr><td>REJECTED</td><td>审核拒绝</td><td>编辑、保存、提交</td></tr>
+<tr><td>TERMINATED</td><td>已终止</td><td>撤回终止</td></tr>
+</tbody>
 </table>
-</div>
-
 </KbCard>
 
-<KbCard num="5" title="界面模块5：详情页-发票详细信息">
-
-<div class="kb-field-scroll">
+<KbCard title="表1：EPM_VERIFER_INVOICE_HEADERS（核销发票上传头表）">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead>
-<tbody><tr><td>有效状态</td><td>下拉选择框</td><td>发票明细有效状态</td><td>常显</td><td>值集AE.INVOICEEFFECTSTATUS</td><td>AE.INVOICEEFFECTSTATUS值集：invalid-未生效、valid-已生效、canceled-已取消</td><td>EPM_UPLOAD_INVOICE_DETAILS.EFFECT_STATUS</td></tr><tr><td>操作标识</td><td>下拉选择框</td><td>0-手工添加/1-手工修改/2-OCR识别</td><td>常显</td><td>值集AE.OPERATION_FLAG，默认值0</td><td>AE.OPERATION_FLAG值集：0-手工添加、1-手工修改、2-OCR识别</td><td>EPM_UPLOAD_INVOICE_DETAILS.OPERATION_FLAG</td></tr><tr><td>凭证号码</td><td>下拉选择框</td><td>关联发票影像的凭证号码</td><td>常显</td><td>必填；下拉选项来自发票影像信息的凭证号码列表</td><td>当前发票影像行已有的凭证号码</td><td>EPM_UPLOAD_INVOICE_DETAILS.NOUCHER_NUMBER</td></tr><tr><td>发票代码</td><td>文本框</td><td>发票代码</td><td>常显</td><td>修改时校验是否存在于主要信息中</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.INVOICE_CODE</td></tr><tr><td>发票号码</td><td>文本框</td><td>发票号码</td><td>常显</td><td>必填；修改时校验是否存在于主要信息中</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.INVOICE_NUMBER</td></tr><tr><td>产品名称</td><td>文本框</td><td>货物或服务名称</td><td>常显</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.SERVICES_NAME</td></tr><tr><td>产品编码</td><td>文本框</td><td>产品编码</td><td>常显</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.SERVICES_CODE</td></tr><tr><td>规格型号</td><td>文本框</td><td>规格型号</td><td>常显</td><td>必填；修改时自动匹配基本单位</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.SPEC_MODEL</td></tr><tr><td>发票数量</td><td>数字输入框</td><td>发票上的数量</td><td>常显</td><td>必填，最小值0；修改时自动计算：可核销数量=发票数量×转换率(保留3位小数)、剩余可核销数量=发票数量×转换率(保留3位小数)、基本单位数量=发票数量×转换率(保留3位小数)</td><td>正数</td><td>EPM_UPLOAD_INVOICE_DETAILS.MDF_ITEM_NUMBER</td></tr><tr><td>转换率</td><td>数字输入框</td><td>发票数量到基本单位的转换率</td><td>常显</td><td>必填，精度5位，最小值0；组织ID不在[104,105,106]范围时默认值1；修改时自动计算：可核销数量=发票数量×转换率(保留3位小数)、剩余可核销数量=发票数量×转换率(保留3位小数)、基本单位数量=发票数量×转换率(保留3位小数)</td><td>正数，精度5位</td><td>EPM_UPLOAD_INVOICE_DETAILS.CONVERSION_RATE</td></tr><tr><td>基本单位</td><td>LOV弹窗</td><td>基本计量单位</td><td>常显</td><td>必填；LOV:AE.BASE_UNIT_VIEW；规格型号修改时自动匹配</td><td>AE.BASE_UNIT_VIEW值集</td><td>EPM_UPLOAD_INVOICE_DETAILS.BASE_UOM_NAME</td></tr><tr><td>基本单位数量</td><td>数字输入框</td><td>基本单位下的数量</td><td>常显</td><td>自动计算=发票数量×转换率(保留3位小数)，默认值0</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.BASE_UOM_NUMBER</td></tr><tr><td>可核销数量</td><td>数字输入框</td><td>可用于核销的数量</td><td>常显</td><td>自动计算=发票数量×转换率(保留3位小数)，默认值0</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.CAN_CHECK_NUMBER</td></tr><tr><td>剩余可核销数量</td><td>数字输入框</td><td>剩余可核销的数量</td><td>常显</td><td>自动计算=发票数量×转换率(保留3位小数)，默认值0</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.UNAPPLIE_QUANTITY</td></tr><tr><td>发票单位</td><td>文本框</td><td>发票上的计量单位</td><td>常显</td><td>可编辑</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.UOM</td></tr><tr><td>单价</td><td>数字输入框</td><td>产品单价</td><td>常显</td><td>必填，最小值0；修改时自动计算：税额=金额×税率/100(保留3位小数)</td><td>正数</td><td>EPM_UPLOAD_INVOICE_DETAILS.UNIT_PRICE</td></tr><tr><td>金额</td><td>数字输入框</td><td>金额</td><td>常显</td><td>精度2位，最小值0；修改时自动计算：税额=金额×税率/100(保留3位小数)</td><td>正数，精度2位</td><td>EPM_UPLOAD_INVOICE_DETAILS.AMOUNT</td></tr><tr><td>税率(%)</td><td>数字输入框</td><td>税率百分比</td><td>常显</td><td>最小值0；修改时自动计算：税额=金额×税率/100(保留3位小数)</td><td>0-100</td><td>EPM_UPLOAD_INVOICE_DETAILS.TAX_RATE</td></tr><tr><td>税额</td><td>数字输入框</td><td>税额</td><td>常显</td><td>自动计算=金额×税率/100(保留3位小数)</td><td>-</td><td>EPM_UPLOAD_INVOICE_DETAILS.TAX</td></tr></tbody>
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>INVOICE_VERIFER_ID</td><td>NUMBER</td><td>主键</td><td>无（隐藏）</td><td>自增生成</td></tr>
+<tr><td>INVOICE_VERIFER_NO</td><td>VARCHAR</td><td>核销单号</td><td>核销单号</td><td>保存时自动生成</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>审批状态</td><td>单据状态</td><td>默认NEW，值集HWKF.APPROVE_STATUS</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>项目编码</td><td>项目编码</td><td>关联项目主档</td></tr>
+<tr><td>PROJECT_NAME</td><td>VARCHAR</td><td>项目名称</td><td>项目名称</td><td>冗余字段</td></tr>
+<tr><td>CUSTOMER_CODE</td><td>VARCHAR</td><td>经销商编码</td><td>经销商编码</td><td>关联经销商主档</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>经销商名称</td><td>冗余字段</td></tr>
+<tr><td>VERIFER_TYPE</td><td>VARCHAR</td><td>核销类型</td><td>核销类型</td><td>值集AE.VERIFER_TYPE</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>VARCHAR</td><td>交易公司</td><td>交易公司</td><td>-</td></tr>
+<tr><td>BILLING_UNIT_NAME</td><td>VARCHAR</td><td>开票单位</td><td>开票单位</td><td>-</td></tr>
+<tr><td>REMARK</td><td>VARCHAR</td><td>备注</td><td>备注</td><td>选填</td></tr>
+<tr><td>IS_FIRST_PASSED</td><td>VARCHAR</td><td>首次验真通过</td><td>验真通过</td><td>-</td></tr>
+<tr><td>IS_SECOND_PASSED</td><td>VARCHAR</td><td>二次验真通过</td><td>二次验真通过</td><td>-</td></tr>
+<tr><td>CREATION_DATE</td><td>TIMESTAMP</td><td>创建时间</td><td>发票上传日期</td><td>框架自动填充</td></tr>
+<tr><td>CREATED_BY</td><td>NUMBER</td><td>创建人</td><td>无</td><td>框架自动填充</td></tr>
+</tbody>
 </table>
-</div>
-
 </KbCard>
 
-<KbCard num="6" title="界面模块6：异动记录">
-
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead>
-<tbody><tr><td>用户名称</td><td>文本框</td><td>操作人姓名</td><td>常显</td><td>系统自动赋值，不可编辑</td><td>-</td><td>INVOICE_TRUTH_CANCEL_RECORD.CREATED_NAME</td></tr><tr><td>操作</td><td>文本框</td><td>操作类型(终止/撤销终止)</td><td>常显</td><td>系统自动赋值，不可编辑</td><td>disEnable-终止、enable-撤销终止</td><td>INVOICE_TRUTH_CANCEL_RECORD.HANDLE_TYPE</td></tr><tr><td>流程id</td><td>文本框</td><td>关联的工作流实例ID</td><td>常显</td><td>系统自动赋值，不可编辑</td><td>-</td><td>INVOICE_TRUTH_CANCEL_RECORD.WF_ID</td></tr><tr><td>操作时间</td><td>文本框</td><td>操作时间</td><td>常显</td><td>系统自动赋值，不可编辑</td><td>-</td><td>INVOICE_TRUTH_CANCEL_RECORD.LAST_UPD</td></tr><tr><td>操作原因</td><td>文本框</td><td>操作原因</td><td>常显</td><td>用户填写，不可编辑</td><td>-</td><td>INVOICE_TRUTH_CANCEL_RECORD.REASON</td></tr></tbody>
-</table>
-</div>
-
-</KbCard>
-
-<KbCard num="7" title="选择弹窗">
-
-<KbSubTitle>弹窗1：项目选择LOV <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| isHome | 是否家装 | 2表示家装 | 2 |
-
-**数据范围**
-
-```sql
-`SELECT * FROM EPM_PROJECT WHERE IS_HOME = 2`；若传了customerId则追加过滤：`AND PROJECT_ID IN (SELECT PROJECT_ID FROM EPM_PROJECT_CUSTOMER WHERE CUSTOMER_ID = #{customerId})`；同时查询AE.STAT值集翻译项目状态名称
-```
-
-<KbSubTitle>弹窗2：经销商选择LOV <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| searchFlag | 搜索标识 | 142表示核销发票上传场景 | 142 |
-
-**数据范围**
-
-```sql
-SELECT * FROM BASIC_CUSTOMER WHERE SEARCH_FLAG = 142 AND ENABLED_FLAG = 'Y'
-```
-
-<KbSubTitle>弹窗3：交易公司选择LOV <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| customerId | 经销商ID | 当前选中的经销商ID | 100001 |
-| isHome | 是否家装 | 2表示家装 | 2 |
-
-**数据范围**
-
-```sql
-SELECT * FROM EPM_TRADING_COMPANY WHERE CUSTOMER_ID = #{customerId} AND IS_HOME = 2
-```
-
-<KbSubTitle>弹窗4：基本单位选择LOV <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**数据范围**
-
-```sql
-SELECT * FROM HPFM_UOM WHERE ENABLED_FLAG = 'Y'
-```
-
-```sql
-SELECT * FROM HPFM_UOM WHERE ENABLED_FLAG = 'Y'
-```
-
-</KbCard>
-
-<KbCard num="8" title="导入">
-
-<KbSubTitle title="前置约定" />
-
-- 模板文件：发票上传导入模板.xlsx
-- 格式：Excel
-- 前置条件：必须先维护发票影像信息
-
-<KbSubTitle title="字段映射" />
-
-| 字段含义 | 是否必输 | 字段格式 | 重复判定字段 |
-|---------|---------|---------|------------|
-| 凭证号码 | 是 | 文本 | 凭证号码+序号 |
-| 发票代码 | 是 | 文本 | - |
-| 发票号码 | 是 | 文本 | - |
-| 开票日期 | 否 | 日期 | - |
-| 购买方名称 | 否 | 文本 | - |
-| 销售方名称 | 否 | 文本 | - |
-| 购买方联系电话 | 否 | 文本 | - |
-| 楼号 | 否 | 文本 | - |
-| 产品名称 | 否 | 文本 | - |
-| 产品编码 | 否 | 文本 | - |
-| 规格型号 | 是 | 文本 | - |
-| 发票数量 | 是 | 正整数 | - |
-| 单位 | 否 | 文本 | - |
-| 单价 | 是 | 数字 | - |
-| 金额 | 否 | 数字 | - |
-| 税率(%) | 否 | 数字(0-100) | - |
-| 税额 | 否 | 数字 | - |
-| 主要信息序号 | 否 | 数字 | - |
-| 明细信息序号 | 否 | 数字 | - |
-| 转换率 | 是 | 数字 | - |
-| 基本单位 | 否 | 文本 | - |
-
-<KbSubTitle title="处理逻辑" />
-
-- **校验逻辑**：
-  1. 凭证号码必须在发票影像列表中存在
-  2. 发票号码、发票代码、发票数量、单价、转换率、规格型号不可为空
-  3. 发票数量必须大于 0
-  4. 税率范围 0-100
-
-- **导入逻辑**：
-  1. 根据凭证号码匹配凭证类型
-  2. 发票类型（凭证类型=2）：按「凭证号码 + 发票号码 + 发票代码」匹配主要信息
-  3. 非发票类型：按「凭证号码」匹配主要信息
-  4. 匹配到已有数据 → 覆盖更新（OCR 数据修改操作标识置为 1）
-  5. 未匹配到 → 新增
-- **重复处理策略**：覆盖(匹配到已有数据时覆盖更新)
-- **性能方案**：同步处理
-
-<KbSubTitle title="异常与结果约定" />
-
-- 存在校验错误时，收集所有错误信息返回前端展示，导入不成功
-- 部分行错误时，正确行也不入库
-
-<KbSubTitle title="运维保障" />
-
-- 日志记录：后端LOGGER记录导入过程
-- 断点续传/重试机制：不支持
-
-</KbCard>
-
-<KbCard num="9" title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 新建 | 新建核销发票上传单 | 列表页 | 常显 | 跳转到详情页新建模式 |
-| 导出 | 导出家装核销发票上传列表 | 列表页 | 常显 | 调用home-export接口导出Excel |
-| 查看 | 查看核销发票上传详情 | 列表页(行操作) | 常显 | 跳转到详情页查看模式 |
-| 删除 | 删除核销发票上传单 | 列表页(行操作) | 审批状态非RUN/APPROVED/SUSPEND/RETURN时显示 | 调用delete接口删除主表及所有子表数据 |
-| 保存 | 保存当前编辑数据 | 详情页 | 非审批中/审批通过/暂停/退回状态 | 调用insert或update接口保存 |
-| 保存并提交 | 保存并提交审批 | 详情页 | 非审批中/审批通过/暂停/退回状态 | 先保存再调用workflow/proc-submit提交审批 |
-| 关闭 | 返回列表页 | 详情页 | 常显 | 返回列表页 |
-| 刷新 | 刷新详情页数据 | 详情页 | 常显 | 重新查询详情数据 |
-| 新建(详情) | 新建另一张核销发票上传单 | 详情页 | 常显 | 跳转到新建详情页 |
-| 删除(详情) | 删除当前核销发票上传单 | 详情页 | 非审批中/审批通过/暂停/退回状态 | 调用delete接口 |
-| 编辑 | 进入编辑模式 | 详情页 | 非审批中/审批通过/暂停/退回状态 | 切换为可编辑状态 |
-| 取消编辑 | 退出编辑模式 | 详情页 | 编辑状态下 | 切换为只读状态 |
-| 新建(发票影像行) | 新增一行发票影像 | 详情页-发票影像 | 编辑状态下 | 自动生成凭证号码 |
-| 删除(发票影像行) | 删除选中的发票影像行 | 详情页-发票影像 | 编辑状态下 | 同步删除关联的主要信息和详细信息 |
-| 重新识别 | 重新OCR识别发票 | 详情页-发票影像 | OCR识别失败(orcStatus=P)且凭证类型=2或3且编辑状态 | 重新调用OCR识别接口 |
-| 新建(主要信息行) | 新增一行发票主要信息 | 详情页-发票主要信息 | 编辑状态下，且发票影像已选择凭证类型和上传附件 | 默认isOcr=0, operationFlag=0 |
-| 删除(主要信息行) | 删除选中的主要信息行 | 详情页-发票主要信息 | 编辑状态下 | 同步删除关联的详细信息 |
-| 明细导入 | 导入发票详细信息 | 详情页-发票详细信息 | 编辑状态下 | 调用import-upload-invoice-info接口 |
-| 模板下载 | 下载导入模板 | 详情页-发票详细信息 | 编辑状态下 | 下载"发票上传导入模板.xlsx" |
-| 新建(详细信息行) | 新增一行发票详细信息 | 详情页-发票详细信息 | 编辑状态下 | 默认isOcr=0, operationFlag=0 |
-| 删除(详细信息行) | 删除选中的详细信息行 | 详情页-发票详细信息 | 编辑状态下 | - |
-| 全部清空 | 清空所有详细信息 | 详情页-发票详细信息 | 编辑状态下 | 清空详细信息表格 |
-
-</KbCard>
-
-<KbCard num="10" title="保存校验">
-
-<KbSubTitle title="明细行基本单位不能为空 —— 确保每条发票详细信息都有基本单位" />
-
-- 遍历发票详细信息所有行，检查baseUomName是否为空
-
-<KbTip>toast错误提醒&quot;明细行基本单位不能为空！&quot;</KbTip>
-
-```sql
-SELECT * FROM EPM_UPLOAD_INVOICE_DETAILS D
-    WHERE D.INVOICE_VERIFER_ID = ? AND (D.BASE_UOM_NAME IS NULL OR D.BASE_UOM_NAME = '')
-```
-
-<KbSubTitle title="详细信息必须存在于主要信息中 —— 确保每条详细信息的凭证号码+发票代码+发票号码在主要信息中有对应记录" />
-
-- 构建主要信息的凭证号码+发票代码+发票号码组合集合
-
-<KbTip>toast错误提醒&quot;明细第X、Y行，未存在头信息，请检查！&quot;</KbTip>
-
-```sql
-SELECT D.NOUCHER_NUMBER, D.INVOICE_CODE, D.INVOICE_NUMBER
-    FROM EPM_UPLOAD_INVOICE_DETAILS D
-    WHERE D.INVOICE_VERIFER_ID = ?
-    AND NOT EXISTS (
-      SELECT 1 FROM EPM_UPLOAD_INVOICE_INFO I
-      WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
-      AND I.NOUCHER_NUMBER = D.NOUCHER_NUMBER
-      AND I.INVOICE_CODE = D.INVOICE_CODE
-      AND I.INVOICE_NUMBER = D.INVOICE_NUMBER
-    )
-```
-
-<KbSubTitle title="详细信息转换率不能为0 —— 确保转换率有效" />
-
-- 遍历详细信息所有行，检查conversionRate是否为空或小于等于0
-
-<KbTip>toast错误提醒&quot;发票详细信息中第X行转换率不能为0&quot;</KbTip>
-
-```sql
-SELECT * FROM EPM_UPLOAD_INVOICE_DETAILS
-    WHERE INVOICE_VERIFER_ID = ? AND (CONVERSION_RATE IS NULL OR CONVERSION_RATE <= 0)
-```
-
-<KbSubTitle title="发票重复校验(后端beforeSave) —— 确保发票代码+发票号码不重复" />
-
-- 遍历主要信息，检查同一单内发票代码+发票号码是否重复
-
-<KbTip>阻断性报错&quot;发票主要明细校验异常:xxx&quot;或&quot;发票详细明细校验异常:xxx&quot;</KbTip>
-
-```sql
-SELECT INVOICE_CODE, INVOICE_NUMBER, COUNT(*)
-    FROM EPM_UPLOAD_INVOICE_INFO
-    WHERE INVOICE_VERIFER_ID = ?
-    GROUP BY INVOICE_CODE, INVOICE_NUMBER
-    HAVING COUNT(*) > 1
-```
-
-<KbWarn>所有保存校验均在前端 toast 提示或后端阻断性报错,任一校验失败将阻断操作。</KbWarn>
-
-</KbCard>
-
-<KbCard num="11" title="提交校验">
-
-<KbSubTitle title="非发票类型主要信息只能存在一行 —— 确保非发票类型凭证号码下只有一条主要信息" />
-
-- 收集凭证类型为1(非发票)的凭证号码集合
-
-<KbTip>toast错误提醒&quot;非发票类型主要信息以下行：第X行主要信息只能存在一行&quot;</KbTip>
-
-```sql
-SELECT I.NOUCHER_NUMBER, COUNT(*)
-    FROM EPM_UPLOAD_INVOICE_INFO I
-    JOIN EPM_UPLOAD_INVOICE U ON U.NOUCHER_NUMBER = I.NOUCHER_NUMBER AND U.INVOICE_VERIFER_ID = I.INVOICE_VERIFER_ID
-    WHERE I.INVOICE_VERIFER_ID = ? AND U.VERIFY_VOUCHER_TYPE = 1
-    GROUP BY I.NOUCHER_NUMBER
-    HAVING COUNT(*) > 1
-```
-
-<KbSubTitle title="发票类型发票号码或发票代码不能为空 —— 确保发票类型的主要信息和详细信息都有完整的发票标识" />
-
-- 遍历主要信息，非非发票类型的记录，发票号码或发票代码为空的行号收集
-
-<KbTip>toast错误提醒&quot;发票类型主要信息的以下行：第X行发票号码或发票代码不能为空&quot;</KbTip>
-
-```sql
-SELECT * FROM EPM_UPLOAD_INVOICE_INFO
-    WHERE INVOICE_VERIFER_ID = ? AND (INVOICE_NUMBER IS NULL OR INVOICE_CODE IS NULL)
-```
-
-<KbSubTitle title="详细信息转换率不能为0 —— 同保存校验" />
-
-- 遍历详细信息所有行，检查conversionRate是否为空或小于等于0
-
-<KbTip>toast错误提醒&quot;第X行转换率不能为0&quot;</KbTip>
-
-```sql
-SELECT * FROM EPM_UPLOAD_INVOICE_DETAILS
-    WHERE INVOICE_VERIFER_ID = ? AND (CONVERSION_RATE IS NULL OR CONVERSION_RATE <= 0)
-```
-
-<KbSubTitle title="后端金额校验(verifyData) —— 确保详细信息行金额与主要信息总额一致" />
-
-- 校验详细信息每行：单价×数量是否等于金额(允许0.01元差异)
-
-<KbTip>阻断性报错&quot;发票号码[xxx],详情行计算金额[xxx]有误&quot;或&quot;发票号码[xxx],详情信息行汇总金额与主要总金额不一致&quot;</KbTip>
-
-```sql
-SELECT I.INVOICE_NUMBER, I.ALL_AMOUNT,
-      SUM(D.UNIT_PRICE * D.MDF_ITEM_NUMBER) AS DETAIL_SUM
-    FROM EPM_UPLOAD_INVOICE_INFO I
-    LEFT JOIN EPM_UPLOAD_INVOICE_DETAILS D ON D.INVOICE_VERIFER_ID = I.INVOICE_VERIFER_ID
-      AND D.INVOICE_NUMBER = I.INVOICE_NUMBER
-    WHERE I.INVOICE_VERIFER_ID = ?
-    GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
-```
-
-<KbSubTitle title="发票主要信息和详细信息不能为空(后端wfProcSubmit) —— 确保提交时至少有一条主要信息和详细信息" />
-
-- 查询该核销单的主要信息列表，为空则报错
-
-<KbTip>阻断性报错&quot;单据[xxx],发票主要信息不能为空&quot;或&quot;单据[xxx],发票详细信息不能为空&quot;</KbTip>
-
-```sql
-SELECT COUNT(*) FROM EPM_UPLOAD_INVOICE_INFO WHERE INVOICE_VERIFER_ID = ?;
-    SELECT COUNT(*) FROM EPM_UPLOAD_INVOICE_DETAILS WHERE INVOICE_VERIFER_ID = ?;
-```
-
-<KbWarn>提交校验包含后端金额一致性校验,主要信息总额必须等于详细信息行金额汇总。</KbWarn>
-
-</KbCard>
-
-<KbCard num="12" title="状态机">
-
-<KbSubTitle title="状态机流转图" />
-
-```text
-[NEW 新建] --保存--> [NEW 新建]
-[NEW 新建] --保存并提交--> [RUN 审批中]
-[RUN 审批中] --审批通过--> [APPROVED 审批通过]
-[RUN 审批中] --审批拒绝--> [REJECTED 审批拒绝]
-[RUN 审批中] --撤回--> [WITHDRAW 已撤回]
-[RUN 审批中] --终止--> [INTERRUPT 终止]
-[INTERRUPT 终止] --撤销终止--> [原状态]
-[REJECTED 审批拒绝] --修改后重新提交--> [RUN 审批中]
-[WITHDRAW 已撤回] --修改后重新提交--> [RUN 审批中]
-```
-
-<KbSubTitle title="状态机列表" />
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 保存、编辑、删除、保存并提交 |
-| RUN | 审批中 | 查看 |
-| APPROVED | 审批通过 | 查看 |
-| REJECTED | 审批拒绝 | 查看、编辑、保存并提交 |
-| WITHDRAW | 已撤回 | 查看、编辑、保存并提交 |
-| INTERRUPT | 终止 | 查看、撤销终止 |
-| SUSPEND | 暂停 | 查看 |
-| RETURN | 退回 | 查看 |
-
----
-
-<KbTip>新建后默认 NEW 状态;只有 NEW / REJECTED / WITHDRAW 三种状态可执行"保存并提交"。</KbTip>
-
-</KbCard>
-
-<KbCard num="1" title="表1：EPM_UPLOAD_INVOICE_VERIFER（核销发票上传主表）" :hover="false">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| INVOICE_VERIFER_ID | BIGINT | 核销发票上传id/主键 | - | 自增主键 |
-| INVOICE_VERIFER_NO | VARCHAR | 核销单号 | 核销单号 | 家装编码规则AE.JZ_INVOICE_VERIFER_NO自动生成 |
-| PROJECT_ID | BIGINT | 工程id | 项目编码(LOV) | 由项目LOV选择带入 |
-| PROJECT_NAME | VARCHAR | 工程名称 | 项目名称 | 由项目LOV选择带入 |
-| PROJECT_CODE | VARCHAR | 工程编码 | 项目编码 | 由项目LOV选择带入 |
-| CONTRACT_ID | BIGINT | 合同id | - | 由经销商LOV选择带入 |
-| CONTRACT_NAME | VARCHAR | 合同名称 | - | - |
-| CONTRACT_CODE | VARCHAR | 合同编码 | - | - |
-| TRADING_COMPANY_ID | BIGINT | 交易公司ID | 交易公司(LOV) | 由交易公司LOV选择带入 |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司 | 由交易公司LOV选择带入 |
-| BILLING_UNIT_ID | BIGINT | 开票单位客户ID | 开票单位 | 由交易公司LOV选择带入(取法人的legalEntityId) |
-| BILLING_UNIT_NAME | VARCHAR | 开票单位名称 | 开票单位 | 由交易公司LOV选择带入(取法人的legalEntityName) |
-| IS_FIRST_PASSED | INTEGER | 验真通过 | 验真通过 | 0-未通过，2-已通过 |
-| IS_SECOND_PASSED | INTEGER | 二次验真通过 | 二次验真通过 | 0-未通过，2-已通过 |
-| CREATE_TIME | DATETIME | 制单时间/发票上传时间 | 发票上传日期 | 系统自动赋值 |
-| CREATOR | VARCHAR | 创建人 | - | 系统自动赋值 |
-| UPDATE_TIME | DATETIME | 更新时间 | - | 系统自动赋值 |
-| UPDATOR | VARCHAR | 更新人 | - | 系统自动赋值 |
-| WFID | BIGINT | 流程id | - | 提交审批时由工作流返回 |
-| WFFLAG | INTEGER | 流程标识 | - | - |
-| STAT | INTEGER | 单据状态(已弃用) | - | 使用HZ_APPROVE_STATUS字段 |
-| CUSTOMER_ID | BIGINT | 经销商id | 经销商编码(LOV) | 由经销商LOV选择带入；经销商登录时自动填充 |
-| CUSTOMER_CODE | VARCHAR | 经销商编码 | 经销商编码 | 由经销商LOV选择带入 |
-| CUSTOMER_NAME | VARCHAR | 经销商名称 | 经销商名称 | 由经销商LOV选择带入 |
-| ORGANIZATION_ID | BIGINT | 组织id | - | 取当前用户additionInfo.DEPT |
-| CREATOR_NAME | VARCHAR | 创建人姓名 | 申请人 | 默认值=当前登录用户realName |
-| UPDATOR_NAME | VARCHAR | 更新人姓名 | - | 更新时赋值当前登录用户realName |
-| IS_HOME | INTEGER | 是否为家装 | - | 家装=2，工程=其他值 |
-| DISCOUNT_POLICY_ID | BIGINT | 折扣政策id | - | - |
-| DISCOUNT_POLICY_CODE | VARCHAR | 折扣政策编码 | - | - |
-| DISCOUNT_POLICY_NAME | VARCHAR | 折扣政策名称 | - | - |
-| VERIFER_TYPE | INTEGER | 核销类型 | 核销类型 | 值集AE.VERIFER_TYPE |
-| AUDIT_STAT | VARCHAR | 审核状态 | - | 新建时默认"新建" |
-| REMARK | VARCHAR | 备注 | 备注 | 用户填写 |
-| HZ_INSTANCE_ID | BIGINT | H0流程实例id | - | 提交审批时由工作流返回 |
-| HZ_APPROVE_STATUS | VARCHAR | H0流程审批状态 | 单据状态 | 值集HWKF.APPROVE_STATUS，默认值NEW |
-
-</KbCard>
-
-<KbCard num="2" title="表2：EPM_UPLOAD_INVOICE（发票影像信息表）" :hover="false">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| PK_ID | BIGINT | 主键 | - | 自增主键 |
-| INVOICE_ID | BIGINT | 发票id/附件id | - | - |
-| INVOICE_VERIFER_ID | BIGINT | 主表id/核销发票上传id | - | 关联EPM_UPLOAD_INVOICE_VERIFER.INVOICE_VERIFER_ID |
-| DOCID | BIGINT | 发票id/附件id | - | 凭证附件ID |
-| INVOICE_NOTE | VARCHAR | 发票备注 | 备注 | 用户填写 |
-| DOCNAME | VARCHAR | 附件名称 | 凭证附件 | 凭证附件文件名 |
-| VERIFY_VOUCHER_TYPE | BIGINT | 核销凭证类型 | 凭证类型 | 1-非发票/2-发票/3-收据，值集AE.EPM.VERIFY_VOUCHER_TYPE |
-| MSG | VARCHAR | 接口返回信息 | - | OCR识别返回信息，ok表示成功 |
-| CODE | VARCHAR | OCR返回码 | - | 0表示成功 |
-| NOUCHER_NUMBER | VARCHAR | 凭证号码 | 凭证号码 | 自动生成 |
-| DOC_ID | BIGINT | 清单附件id | - | 清单附件ID |
-| DOC_NAME | VARCHAR | 清单附件名称 | 清单附件 | 清单附件文件名 |
-| SEND_STAT | BIGINT | 推送状态 | - | 2-已推送/1-未推送 |
-| VOUCHER_ATT_UUID | VARCHAR | 凭证附件UUID | - | 同HZERO.HFLE_FILE.ATTACHMENT_UUID |
-| LIST_ATT_UUID | VARCHAR | 清单附件UUID | - | 同HZERO.HFLE_FILE.ATTACHMENT_UUID |
-
-</KbCard>
-
-<KbCard num="3" title="表3：EPM_UPLOAD_INVOICE_INFO（发票主要信息表）" :hover="false">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| PK_ID | BIGINT | 主键 | - | 自增主键 |
-| INVOICE_INFO_ID | BIGINT | 主要信息id | - | - |
-| INVOICE_VERIFER_ID | BIGINT | 主表id/核销上传id | - | 关联EPM_UPLOAD_INVOICE_VERIFER.INVOICE_VERIFER_ID |
-| INVOICE_CODE | VARCHAR | 发票代码 | 发票代码 | 必填 |
-| INVOICE_NUMBER | VARCHAR | 发票号码 | 发票号码 | 必填 |
-| INVOICE_DATE | DATETIME | 开票日期 | 开票日期 | - |
-| BUYER_NAME | VARCHAR | 购买方名称 | 购买方名称 | - |
-| SELLER_NAME | VARCHAR | 销售方名称 | 销售方名称 | - |
-| IS_OCR | BIGINT | 是否OCR回传数据 | - | 2-是 |
-| OPERATION_FLAG | BIGINT | 操作标识 | 操作标识 | 0-手工添加/1-手工修改/2-OCR识别 |
-| BF_INVOICE_CODE | VARCHAR | OCR原始发票代码 | - | OCR识别时的原始值 |
-| BF_INVOICE_NUMBER | VARCHAR | OCR原始发票号码 | - | OCR识别时的原始值 |
-| BF_INVOICE_DATE | DATE | OCR原始开票日期 | - | OCR识别时的原始值 |
-| BF_BUYER_NAME | VARCHAR | OCR原始购买方名称 | - | OCR识别时的原始值 |
-| BF_SELLER_NAME | VARCHAR | OCR原始销售方名称 | - | OCR识别时的原始值 |
-| BUILDING_NUMBER | VARCHAR | 购买方楼号 | 楼号 | - |
-| BF_BUILDING_NUMBER | VARCHAR | OCR原始楼号 | - | OCR识别时的原始值 |
-| BUYER_MOB | VARCHAR | 购买方联系电话 | 购买方联系电话 | - |
-| BF_BUYER_MOB | VARCHAR | OCR原始联系电话 | - | OCR识别时的原始值 |
-| NOUCHER_NUMBER | VARCHAR | 凭证号码 | 凭证号码 | 关联EPM_UPLOAD_INVOICE.NOUCHER_NUMBER |
-| ALL_AMOUNT | VARCHAR | 发票金额(不含税额) | 总额 | - |
-| EFFECT_STATUS | VARCHAR | 有效状态 | 有效状态 | invalid-未生效/valid-已生效/obsolete-已作废 |
-| OBSOLETE_OPERATOR | VARCHAR | 作废发票操作人 | 作废发票操作人 | - |
-| OBSOLETE_TIME | DATETIME | 作废发票操作时间 | 作废时间 | - |
-| OBSOLETE_OPERATOR_BY | BIGINT | 作废发票操作人ID | - | - |
-
-</KbCard>
-
-<KbCard num="4" title="表4：EPM_UPLOAD_INVOICE_DETAILS（发票详细信息表）" :hover="false">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| INVOICE_DETAILS_ID | BIGINT | 发票详细信息id | - | 自增主键 |
-| INVOICE_VERIFER_ID | BIGINT | 主表id/核销id | - | 关联EPM_UPLOAD_INVOICE_VERIFER.INVOICE_VERIFER_ID |
-| INVOICE_NUMBER | VARCHAR | 发票号码 | 发票号码 | 必填 |
-| SERVICES_NAME | VARCHAR | 货物或服务名称 | 产品名称 | - |
-| UOM | VARCHAR | 单位 | 发票单位 | - |
-| UNIT_PRICE | VARCHAR | 单价 | 单价 | 必填 |
-| AMOUNT | VARCHAR | 金额 | 金额 | - |
-| TAX_RATE | VARCHAR | 税率 | 税率(%) | - |
-| TAX | VARCHAR | 税额 | 税额 | 自动计算 |
-| SPEC_MODEL | VARCHAR | 规格型号 | 规格型号 | 必填；修改时自动匹配基本单位 |
-| ITEM_NUMBER | VARCHAR | 数量 | - | OCR原始数量 |
-| UNAPPLIE_QUANTITY | VARCHAR | 剩余未核销数量 | 剩余可核销数量 | 自动计算 |
-| IS_OCR | BIGINT | 是否OCR回传数据 | - | 2-是，必填 |
-| MDF_ITEM_NUMBER | VARCHAR | 修改后数量/发票数量 | 发票数量 | 必填 |
-| CAN_CHECK_NUMBER | VARCHAR | 可核销数量 | 可核销数量 | 自动计算 |
-| OPERATION_FLAG | BIGINT | 操作标识 | 操作标识 | 0-手工添加/1-手工修改/2-OCR识别 |
-| BF_INVOICE_NUMBER | VARCHAR | OCR原始发票号码 | - | - |
-| BF_SERVICES_NAME | VARCHAR | OCR原始产品名称 | - | - |
-| BF_UOM | VARCHAR | OCR原始单位 | - | - |
-| BF_UNIT_PRICE | VARCHAR | OCR原始单价 | - | - |
-| BF_AMOUNT | VARCHAR | OCR原始金额 | - | - |
-| BF_TAX_RATE | VARCHAR | OCR原始税率 | - | - |
-| BF_TAX | VARCHAR | OCR原始税额 | - | - |
-| BF_SPEC_MODEL | VARCHAR | OCR原始规格型号 | - | - |
-| BF_ITEM_NUMBER | VARCHAR | OCR原始数量 | - | - |
-| NOUCHER_NUMBER | VARCHAR | 凭证号码 | 凭证号码 | 关联EPM_UPLOAD_INVOICE.NOUCHER_NUMBER |
-| BF_SERVICES_CODE | VARCHAR | OCR原始产品编码 | - | - |
-| SERVICES_CODE | VARCHAR | 产品编码 | 产品编码 | - |
-| INVOICE_CODE | VARCHAR | 发票代码 | 发票代码 | - |
-| BF_INVOICE_CODE | VARCHAR | OCR原始发票代码 | - | - |
-| BASE_UOM_ID | BIGINT | 基本单位ID | - | 根据规格型号自动匹配HPFM_UOM |
-| CONVERSION_RATE | DECIMAL | 转换率 | 转换率 | 必填 |
-| EFFECT_STATUS | VARCHAR | 有效状态 | 有效状态 | invalid-未生效/valid-已生效/canceled-已取消 |
-
----
-
-</KbCard>
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
-</KbCard>
 </div>
 </div>
 </div>
@@ -917,442 +453,149 @@ SELECT COUNT(*) FROM EPM_UPLOAD_INVOICE_INFO WHERE INVOICE_VERIFER_ID = ?;
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">明细行基本单位不能为空！</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">发票详细信息中存在基本单位为空的行，需补充基本单位</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">明细第X行，未存在头信息，请检查！</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">详细信息中的凭证号码+发票代码+发票号码组合在主要信息中不存在</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">发票详细信息中第X行转换率不能为0</td>
-            <td style="font-size:13px;">保存/提交</td>
-            <td style="font-size:13px;">详细信息中转换率为空或小于等于0</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">非发票类型主要信息以下行：第X行主要信息只能存在一行</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">非发票类型凭证号码下有多条主要信息</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">发票类型主要信息的以下行：第X行发票号码或发票代码不能为空</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">发票类型的主要信息缺少发票号码或发票代码</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">发票代码-发票号码(xxx-xxx)已在第X行存在</td>
-            <td style="font-size:13px;">发票主要信息编辑</td>
-            <td style="font-size:13px;">同一核销单内发票代码+发票号码重复</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">xxx已被其它单进行核销.</td>
-            <td style="font-size:13px;">发票主要信息编辑/保存</td>
-            <td style="font-size:13px;">该发票已被其他核销单使用</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先选择凭证类型或附件</td>
-            <td style="font-size:13px;">新增主要信息/详细信息</td>
-            <td style="font-size:13px;">发票影像行未选择凭证类型或未上传凭证附件</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先维护发票影像信息！</td>
-            <td style="font-size:13px;">明细导入</td>
-            <td style="font-size:13px;">未添加任何发票影像行</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">附件uuid:xxx未找到对应的附件</td>
-            <td style="font-size:13px;">OCR识别</td>
-            <td style="font-size:13px;">上传的附件UUID在文件服务中找不到</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">附件uuid:xxx ocr接口识别失败</td>
-            <td style="font-size:13px;">OCR识别</td>
-            <td style="font-size:13px;">OCR识别接口返回失败</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">发票主要明细校验异常:xxx</td>
-            <td style="font-size:13px;">保存(后端)</td>
-            <td style="font-size:13px;">发票号码/代码为空、重复、或已被其他单核销</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">发票详细明细校验异常:xxx</td>
-            <td style="font-size:13px;">保存(后端)</td>
-            <td style="font-size:13px;">详细信息的发票代码+号码在主要信息中不存在</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">单据[xxx],发票主要信息不能为空</td>
-            <td style="font-size:13px;">提交审批(后端)</td>
-            <td style="font-size:13px;">核销单没有发票主要信息</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">单据[xxx],发票详细信息不能为空</td>
-            <td style="font-size:13px;">提交审批(后端)</td>
-            <td style="font-size:13px;">核销单没有发票详细信息</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">发票号码[xxx],详情行计算金额[xxx]有误</td>
-            <td style="font-size:13px;">提交审批(后端)</td>
-            <td style="font-size:13px;">详细信息行单价×数量≠金额</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">发票号码[xxx],详情信息行汇总金额与主要总金额不一致</td>
-            <td style="font-size:13px;">提交审批(后端)</td>
-            <td style="font-size:13px;">详细信息行汇总金额≠主要信息总额</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">提交流程发票详细信息不能为空!</td>
-            <td style="font-size:13px;">流程节点完成(后端)</td>
-            <td style="font-size:13px;">审批通过时发票详细信息为空</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">未查找到核销信息:xxx</td>
-            <td style="font-size:13px;">终止/撤销终止(后端)</td>
-            <td style="font-size:13px;">根据invoiceVeriferId查不到主表数据</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">OCR校验异常，返回开票时间错误</td>
-            <td style="font-size:13px;">OCR识别(后端)</td>
-            <td style="font-size:13px;">OCR返回的开票日期格式无法解析</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-20" class="view-btn">查看</a></td>
-          </tr>
+<tr><td>发票重复</td><td>保存/OCR校验</td><td>发票号码已存在于系统中。确认发票是否已核销</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>明细行基本单位不能为空</td><td>保存</td><td>发票明细行基本单位未带出。检查单位换算配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>转换率不能为0</td><td>保存/提交</td><td>发票明细行转换率未维护或为0。维护单位换算率</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>明细行未存在头信息</td><td>保存</td><td>发票明细行的凭证号码在头信息中不存在。核对头明细凭证号码</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>发票代码-号码重复</td><td>发票主要信息编辑</td><td>同一发票代码+号码在主要信息中重复。删除重复行</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>凭证类型或附件未选择</td><td>新增明细行</td><td>发票影像行未选择凭证类型或上传附件。先维护影像信息</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>OCR识别失败</td><td>OCR校验</td><td>发票影像不清晰或OCR服务异常。重新上传清晰影像</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>发票主要信息不能为空</td><td>提交</td><td>未维护发票主要信息。先添加发票主要信息再提交</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>发票详细信息不能为空</td><td>提交</td><td>未维护发票详细信息。先添加发票详细信息再提交</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>详情行汇总金额与主要总金额不一致</td><td>提交</td><td>发票明细行单价×数量之和与头金额不一致。核对金额</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>未查找到核销信息</td><td>终止/撤回</td><td>核销单ID在系统中不存在或已被删除。刷新列表重试</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>请求失败</td><td>删除附件</td><td>附件删除接口调用失败。检查网络或附件存储服务</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>暂无数据</td><td>列表查询</td><td>查询条件无匹配数据。调整查询条件</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>会话过期</td><td>任意操作</td><td>登录态失效。重新登录</td><td>阻断性报错</td><td>[查看]</td></tr>
 </tbody>
 </table>
-</div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>明细行基本单位不能为空！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 遍历invoiceDetailTableDS所有行，检查baseUomName是否为空字符串、null或undefined<br>(2) 任一行为空则阻断保存</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>明细第X行，未存在头信息，请检查！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 构建主要信息集合：key=noucherNumber-invoiceCode-invoiceNumber<br>(2) 遍历详细信息，检查每行的key是否在集合中<br>(3) 排查SQL见下方代码块</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-    
-
-```sql
-SELECT D.NOUCHER_NUMBER, D.INVOICE_CODE, D.INVOICE_NUMBER
-FROM EPM_UPLOAD_INVOICE_DETAILS D
-WHERE D.INVOICE_VERIFER_ID = ?
-  AND NOT EXISTS (SELECT 1
-FROM EPM_UPLOAD_INVOICE_INFO I
-WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
-  AND I.NOUCHER_NUMBER = D.NOUCHER_NUMBER
-  AND I.INVOICE_CODE = D.INVOICE_CODE
-  AND I.INVOICE_NUMBER = D.INVOICE_NUMBER)
-```
-
-  </div>
-</div>
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>发票详细信息中第X行转换率不能为0</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>详细信息中转换率为空或小于等于0</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>非发票类型主要信息以下行：第X行主要信息只能存在一行</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>非发票类型凭证号码下有多条主要信息</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-<div id="err-detail-5" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>发票类型主要信息的以下行：第X行发票号码或发票代码不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>发票类型的主要信息缺少发票号码或发票代码</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-<div id="err-detail-6" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>发票代码-发票号码(xxx-xxx)已在第X行存在</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>同一核销单内发票代码+发票号码重复</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-<div id="err-detail-7" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>xxx已被其它单进行核销.</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 调用后端check-invoice接口，传入invoiceValid(发票代码-发票号码)和invoiceVeriferId<br>(2) 后端查询EPM_UPLOAD_INVOICE_INFO中除当前核销单外是否存在相同发票代码+号码<br>(3) 排查SQL见下方代码块</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-    
-
-```sql
-SELECT COUNT(*)
-FROM EPM_UPLOAD_INVOICE_INFO
-WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
-  AND INVOICE_VERIFER_ID != ?
-```
-
-  </div>
-</div>
-<div id="err-detail-8" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请先选择凭证类型或附件</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>发票影像行未选择凭证类型或未上传凭证附件</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-<div id="err-detail-9" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请先维护发票影像信息！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未添加任何发票影像行</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-<div id="err-detail-10" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>附件uuid:xxx未找到对应的附件</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>上传的附件UUID在文件服务中找不到</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-<div id="err-detail-11" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>附件uuid:xxx ocr接口识别失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OCR识别接口返回失败</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-<div id="err-detail-12" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>发票主要明细校验异常:xxx</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 遍历主要信息，检查发票代码和号码是否为空<br>(2) 检查同一单内发票代码+号码是否重复<br>(3) 调用checkInvoices校验跨单重复<br>(4) 遍历详细信息，检查发票代码+号码是否在主要信息中存在</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-<div id="err-detail-13" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>发票详细明细校验异常:xxx</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>详细信息的发票代码+号码在主要信息中不存在</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-<div id="err-detail-14" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据[xxx],发票主要信息不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>核销单没有发票主要信息</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-<div id="err-detail-15" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据[xxx],发票详细信息不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>核销单没有发票详细信息</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-<div id="err-detail-16" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>发票号码[xxx],详情行计算金额[xxx]有误</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 查询详细信息，计算每行：单价×数量，与金额字段比较(允许0.01差异)<br>(2) 排查SQL见下方代码块</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-    
-
-```sql
-SELECT INVOICE_NUMBER, UNIT_PRICE, MDF_ITEM_NUMBER, AMOUNT
-FROM EPM_UPLOAD_INVOICE_DETAILS
-WHERE INVOICE_VERIFER_ID = ?
-```
-
-  </div>
-</div>
-<div id="err-detail-17" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>发票号码[xxx],详情信息行汇总金额与主要总金额不一致</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>(1) 按发票号码汇总详细信息行金额，与主要信息的ALL_AMOUNT比较<br>(2) 排查SQL见下方代码块</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-    
-
-```sql
-SELECT I.INVOICE_NUMBER, I.ALL_AMOUNT, SUM(D.UNIT_PRICE * D.MDF_ITEM_NUMBER) AS DETAIL_SUM
-FROM EPM_UPLOAD_INVOICE_INFO I
-LEFT
-JOIN EPM_UPLOAD_INVOICE_DETAILS D ON D.INVOICE_VERIFER_ID = I.INVOICE_VERIFER_ID
-  AND D.INVOICE_NUMBER = I.INVOICE_NUMBER
-WHERE I.INVOICE_VERIFER_ID = ?
-GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
-```
-
-  </div>
-</div>
-<div id="err-detail-18" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>提交流程发票详细信息不能为空!</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过时发票详细信息为空</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-<div id="err-detail-19" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未查找到核销信息:xxx</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>根据invoiceVeriferId查不到主表数据</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-<div id="err-detail-20" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>OCR校验异常，返回开票时间错误</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>OCR返回的开票日期格式无法解析</div>
-    <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-  </div>
-</div>
-
-
+<h4>报错1：发票重复</h4>
+<ul><li><strong>触发条件</strong>：保存核销发票或OCR校验时，发票号码已存在于系统中</li><li><strong>逻辑分析</strong>：后端check-invoice接口根据发票号码查询EPM_VERIFER_INVOICE相关表，若同一发票号码已存在未作废的核销记录，则阻断保存并提示"发票重复"。OCR识别成功后也会自动触发此校验，防止同一发票被重复核销。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT H.INVOICE_VERIFER_NO AS 核销单号, H.HZ_APPROVE_STATUS AS 审核状态,
+         H.PROJECT_CODE AS 项目编码, H.CUSTOMER_CODE AS 经销商编码,
+         H.CREATION_DATE AS 创建时间
+  FROM EPM_VERIFER_INVOICE_HEADERS H
+    LEFT JOIN EPM_VERIFER_INVOICE_LINES L ON L.HEAD_ID = H.INVOICE_VERIFER_ID
+  WHERE L.INVOICE_NO = :invoiceNo
+    AND H.HZ_APPROVE_STATUS &lt;&gt; 'CANCELLED'
+  ORDER BY H.CREATION_DATE DESC;</code></pre>
+<h4>报错2：明细行基本单位不能为空</h4>
+<ul><li><strong>触发条件</strong>：详情页点击"保存"按钮时，发票明细行（InvoiceDetailTableDS）中存在baseUomName为空字符串/null/undefined的记录</li><li><strong>逻辑分析</strong>：前端handleBeforeSave校验遍历invoiceDetailTableDS.records，若任一行的baseUomName为空则阻断保存并提示"明细行基本单位不能为空！"。基本单位由getBaseUom接口根据辅助单位（transformTmp）换算带出，若产品未维护单位换算关系则带出失败。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT D.INVOICE_VERIFER_ID AS 核销ID, D.ITEM_CODE AS 产品编码,
+         D.UOM_NAME AS 单位, D.BASE_UOM_NAME AS 基本单位
+  FROM EPM_VERIFER_INVOICE_DETAILS D
+  WHERE D.INVOICE_VERIFER_ID = :invoiceVeriferId
+    AND (D.BASE_UOM_NAME IS NULL OR D.BASE_UOM_NAME = '');</code></pre>
+<h4>报错3：转换率不能为0</h4>
+<ul><li><strong>触发条件</strong>：详情页保存或提交时，发票明细行的conversionRate为空或小于等于0</li><li><strong>逻辑分析</strong>：前端handleBeforeSave和handleBeforeSubmit均会遍历invoiceDetailTableDS.records，校验conversionRate不为空且大于0。转换率由单位换算接口根据辅助单位与基本单位关系计算，若未维护换算关系则为0。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT D.INVOICE_VERIFER_ID AS 核销ID, D.ITEM_CODE AS 产品编码,
+         D.UOM_NAME AS 单位, D.CONVERSION_RATE AS 转换率
+  FROM EPM_VERIFER_INVOICE_DETAILS D
+  WHERE D.INVOICE_VERIFER_ID = :invoiceVeriferId
+    AND (D.CONVERSION_RATE IS NULL OR D.CONVERSION_RATE &lt;= 0);</code></pre>
+<h4>报错4：明细行未存在头信息</h4>
+<ul><li><strong>触发条件</strong>：详情页保存时，发票明细行的凭证号码(noucherNumber)-发票代码(invoiceCode)-发票号码(invoiceNumber)组合在发票主要信息中不存在</li><li><strong>逻辑分析</strong>：前端handleBeforeSave构建invoiceMainObj（头信息凭证号码-代码-号码键值对），遍历明细行校验是否在头信息中存在。若不存在则提示"明细第X行，未存在头信息，请检查！"。通常由头行凭证号码不一致或删除头信息未同步删除明细导致。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT D.NOUCHER_NUMBER AS 凭证号码, D.INVOICE_CODE AS 发票代码,
+         D.INVOICE_NUMBER AS 发票号码
+  FROM EPM_VERIFER_INVOICE_DETAILS D
+  WHERE D.INVOICE_VERIFER_ID = :invoiceVeriferId
+    AND NOT EXISTS (
+      SELECT 1 FROM EPM_VERIFER_INVOICE_INFO I
+      WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
+        AND I.NOUCHER_NUMBER = D.NOUCHER_NUMBER
+        AND I.INVOICE_CODE = D.INVOICE_CODE
+        AND I.INVOICE_NUMBER = D.INVOICE_NUMBER
+    );</code></pre>
+<h4>报错5：发票代码-号码重复</h4>
+<ul><li><strong>触发条件</strong>：发票主要信息行编辑发票号码或发票代码时，同一发票代码+号码组合已在其他行存在</li><li><strong>逻辑分析</strong>：前端InvoiceMain的handleCheckInvoice校验遍历dataSet.records，若发现非当前行的invoiceNumber和invoiceCode与当前行相同，则提示"发票代码-发票号码(X-Y)已在第N行存在"并回滚编辑值。防止同一发票在主要信息中重复录入。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT I.INVOICE_CODE AS 发票代码, I.INVOICE_NUMBER AS 发票号码,
+         COUNT(*) AS 重复次数
+  FROM EPM_VERIFER_INVOICE_INFO I
+  WHERE I.INVOICE_VERIFER_ID = :invoiceVeriferId
+  GROUP BY I.INVOICE_CODE, I.INVOICE_NUMBER
+  HAVING COUNT(*) &gt; 1;</code></pre>
+<h4>报错6：凭证类型或附件未选择</h4>
+<ul><li><strong>触发条件</strong>：详情页点击"新增"发票主要信息或明细行时，发票影像行(invoiceImageTableDS)存在verifyVoucherType为空或docname为空的记录</li><li><strong>逻辑分析</strong>：前端checkVoucher校验遍历invoiceImageTableDS.records，若任一行verifyVoucherType或docname为空，则提示"第X行，请先选择凭证类型或附件"并阻断新增。凭证类型和附件是发票影像的必填前置信息。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT V.NOUCHER_NUMBER AS 凭证号码, V.VERIFY_VOUCHER_TYPE AS 凭证类型,
+         V.DOCNAME AS 附件名称
+  FROM EPM_VERIFER_INVOICE V
+  WHERE V.INVOICE_VERIFER_ID = :invoiceVeriferId
+    AND (V.VERIFY_VOUCHER_TYPE IS NULL OR V.DOCNAME IS NULL);</code></pre>
+<h4>报错7：OCR识别失败</h4>
+<ul><li><strong>触发条件</strong>：详情页上传发票影像后触发OCR识别，OCR接口返回失败或影像不清晰</li><li><strong>逻辑分析</strong>：前端ocrIdentify调用后端invoice-identify接口，后端EpmUploadInvoiceVeriferServiceImpl调用外部OCR服务。若附件未找到、OCR接口返回失败或开票时间解析异常，后端抛出"附件uuid:X ocr接口识别失败"或"OCR校验异常，返回开票时间错误"。前端展示后端返回的失败message。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT V.INVOICE_VERIFER_ID AS 核销ID, V.NOUCHER_NUMBER AS 凭证号码,
+         V.DOCNAME AS 附件名称, V.VOUCHER_ATT_UUID AS 附件UUID
+  FROM EPM_VERIFER_INVOICE V
+  WHERE V.INVOICE_VERIFER_ID = :invoiceVeriferId
+    AND V.DOCNAME IS NOT NULL
+  ORDER BY V.CREATION_DATE DESC;</code></pre>
+<h4>报错8：发票主要信息不能为空</h4>
+<ul><li><strong>触发条件</strong>：详情页点击"提交"按钮时，发票主要信息（epmUploadInvoiceInfos）为空集合</li><li><strong>逻辑分析</strong>：后端wfProcSubmit方法根据invoiceVeriferId查询EPM_VERIFER_INVOICE_INFO，若集合为空则抛出"单据【X】，发票主要信息不能为空"。提交前必须至少维护一条发票主要信息。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT H.INVOICE_VERIFER_NO AS 核销单号, H.HZ_APPROVE_STATUS AS 审核状态,
+         (SELECT COUNT(*) FROM EPM_VERIFER_INVOICE_INFO I
+          WHERE I.INVOICE_VERIFER_ID = H.INVOICE_VERIFER_ID) AS 主要信息数量
+  FROM EPM_VERIFER_INVOICE_HEADERS H
+  WHERE H.INVOICE_VERIFER_ID = :invoiceVeriferId;</code></pre>
+<h4>报错9：发票详细信息不能为空</h4>
+<ul><li><strong>触发条件</strong>：详情页点击"提交"按钮时，发票详细信息（epmUploadInvoiceDetailss）为空集合</li><li><strong>逻辑分析</strong>：后端wfProcSubmit和onProcComplete方法根据invoiceVeriferId查询EPM_VERIFER_INVOICE_DETAILS，若集合为空则抛出"单据【X】，发票详细信息不能为空"或"提交流程发票详细信息不能为空!"。提交前必须至少维护一条发票详细信息。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT H.INVOICE_VERIFER_NO AS 核销单号, H.HZ_APPROVE_STATUS AS 审核状态,
+         (SELECT COUNT(*) FROM EPM_VERIFER_INVOICE_DETAILS D
+          WHERE D.INVOICE_VERIFER_ID = H.INVOICE_VERIFER_ID) AS 详细信息数量
+  FROM EPM_VERIFER_INVOICE_HEADERS H
+  WHERE H.INVOICE_VERIFER_ID = :invoiceVeriferId;</code></pre>
+<h4>报错10：详情行汇总金额与主要总金额不一致</h4>
+<ul><li><strong>触发条件</strong>：详情页提交时，发票明细行的单价×数量汇总金额与发票主要信息的总金额不一致</li><li><strong>逻辑分析</strong>：后端verifyData方法校验每个发票号码下明细行金额(单价×数量)汇总是否等于主要信息总金额(allAmount)。若不一致则抛出"发票号码[X]，详情信息行汇总金额与主要总金额不一致"。通常由修改明细行单价/数量未同步更新头金额或精度丢失导致。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT I.INVOICE_NUMBER AS 发票号码,
+         I.ALL_AMOUNT AS 主要总金额,
+         NVL(SUM(D.UNIT_PRICE * D.MDF_ITEM_NUMBER), 0) AS 明细汇总金额,
+         I.ALL_AMOUNT - NVL(SUM(D.UNIT_PRICE * D.MDF_ITEM_NUMBER), 0) AS 差额
+  FROM EPM_VERIFER_INVOICE_INFO I
+    LEFT JOIN EPM_VERIFER_INVOICE_DETAILS D
+      ON D.INVOICE_VERIFER_ID = I.INVOICE_VERIFER_ID
+     AND D.INVOICE_NUMBER = I.INVOICE_NUMBER
+  WHERE I.INVOICE_VERIFER_ID = :invoiceVeriferId
+  GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
+  HAVING I.ALL_AMOUNT &lt;&gt; NVL(SUM(D.UNIT_PRICE * D.MDF_ITEM_NUMBER), 0);</code></pre>
+<h4>报错11：未查找到核销信息</h4>
+<ul><li><strong>触发条件</strong>：详情页执行终止、撤回终止或取消操作时，根据invoiceVeriferId未查询到核销头表记录</li><li><strong>逻辑分析</strong>：后端handle方法根据invoiceVeriferId查询EPM_VERIFER_INVOICE_HEADERS，若集合为空则抛出"未查找到核销信息:X"。通常由记录被他人删除或会话过期使用了缓存的ID导致。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT H.INVOICE_VERIFER_ID AS 核销ID, H.INVOICE_VERIFER_NO AS 核销单号,
+         H.HZ_APPROVE_STATUS AS 审核状态
+  FROM EPM_VERIFER_INVOICE_HEADERS H
+  WHERE H.INVOICE_VERIFER_ID = :invoiceVeriferId;</code></pre>
+<h4>报错12：请求失败</h4>
+<ul><li><strong>触发条件</strong>：详情页删除发票影像附件时，附件删除接口调用异常</li><li><strong>逻辑分析</strong>：前端handleDel调用deleteFile接口删除附件，若接口抛出异常则catch块提示"请求失败"。通常由网络异常、附件存储服务（ARROW_OSS）不可用或附件已被删除导致。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT V.NOUCHER_NUMBER AS 凭证号码, V.DOCNAME AS 附件名称,
+         V.DOCNAME_URL AS 附件URL
+  FROM EPM_VERIFER_INVOICE V
+  WHERE V.INVOICE_VERIFER_ID = :invoiceVeriferId
+    AND V.DOCNAME IS NOT NULL;</code></pre>
+<h4>报错13：暂无数据</h4>
+<ul><li><strong>触发条件</strong>：列表页查询时，查询条件无匹配的核销发票记录</li><li><strong>逻辑分析</strong>：前端列表DataSet查询返回空集合时框架提示"暂无数据"。通常由查询条件过严、数据未生成或权限不足导致。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*) AS 记录数
+  FROM EPM_VERIFER_INVOICE_HEADERS H
+  WHERE H.HZ_APPROVE_STATUS = NVL(:status, H.HZ_APPROVE_STATUS)
+    AND H.PROJECT_CODE LIKE NVL(:projectCode, '%')
+    AND H.CREATION_DATE BETWEEN NVL(:dateFrom, H.CREATION_DATE) AND NVL(:dateTo, H.CREATION_DATE);</code></pre>
+<h4>报错14：会话过期</h4>
+<ul><li><strong>触发条件</strong>：任意操作时，用户登录态失效（token过期或被踢出）</li><li><strong>逻辑分析</strong>：前端请求拦截器检测到响应401状态码时提示"会话过期"并跳转登录页。通常由长时间未操作、多端登录或服务端session过期导致。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 会话过期为前端拦截，无对应数据查询
+  -- 可检查用户最近登录时间
+  SELECT U.USER_ID AS 用户ID, U.LOGIN_NAME AS 登录名,
+         U.LAST_LOGIN_DATE AS 最近登录时间
+  FROM HPFM_USER U
+  WHERE U.USER_ID = :userId;</code></pre>
 </KbCard>
-
-
 
 <KbCard title="常见问题">
-
-<div class="faq-qa-wrap">
-<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-    <span class="kl-num">Q1</span>
-    <span style="font-size:15px;">OCR识别后发票信息未自动填充</span>
-  </div>
-  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>凭证类型为"非发票"(1)时不会返回详细信息；OCR接口返回失败(code非0)；附件UUID无效<br>
-    <strong style="color:#7C3AED;">处理：</strong>检查凭证类型是否为发票或收据；检查OCR返回的msg和code字段；确认附件已成功上传
-  </div>
-</div>
-<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-    <span class="kl-num">Q2</span>
-    <span style="font-size:15px;">保存时提示发票已被其他单核销</span>
-  </div>
-  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>该发票代码+发票号码已存在于其他核销单的主要信息中<br>
-    <strong style="color:#7C3AED;">排查SQL：</strong>
-    
-
-```sql
-SELECT V.INVOICE_VERIFER_NO, I.INVOICE_CODE, I.INVOICE_NUMBER
-FROM EPM_UPLOAD_INVOICE_INFO I
-JOIN EPM_UPLOAD_INVOICE_VERIFER V ON V.INVOICE_VERIFER_ID = I.INVOICE_VERIFER_ID
-WHERE I.INVOICE_CODE = ?
-  AND I.INVOICE_NUMBER = ?
-```
-
-  </div>
-</div>
-<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-    <span class="kl-num">Q3</span>
-    <span style="font-size:15px;">提交审批时提示金额不一致</span>
-  </div>
-  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>详细信息行的单价×数量汇总与主要信息的总额不匹配<br>
-    <strong style="color:#7C3AED;">处理：</strong>检查详细信息行的金额计算是否正确，确认主要信息的总额与详细信息汇总一致
-  </div>
-</div>
-<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-    <span class="kl-num">Q4</span>
-    <span style="font-size:15px;">转换率默认值问题</span>
-  </div>
-  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>组织ID不在[104,105,106]范围内时，新建详细信息行转换率默认为1；否则无默认值需手工填写<br>
-    <strong style="color:#7C3AED;">处理：</strong>确认当前用户的组织ID，若在特殊组织范围内需手工填写转换率
-  </div>
-</div>
-</div>
-
+<ul><li>问题1：OCR识别失败</li><li>原因：发票影像不清晰或OCR服务异常</li><li>解决思路：重新上传清晰的发票影像，或手动填写发票信息</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -1360,12 +603,15 @@ WHERE I.INVOICE_CODE = ?
 <div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="更新记录" :hover="false">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| - | - | - | 暂无2026年提交记录 |
-
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-29</td><td>-</td><td>-</td><td>按skill规范完整重写，基于前后端代码梳理</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
@@ -1381,221 +627,4 @@ WHERE I.INVOICE_CODE = ?
 </KbCard>
 </div>
 </div>
-</div>
-
-<div id="manual" style="display:none;" class="kb-manual" markdown="1">
-
-> **适用模块：** 家装管理 → 家装往来 → 家装核销发票上传  
-> **适用角色：** 经销商、家装业务操作员  
-> **前置条件：** 已有家装项目出库记录，且持有交易发票/收据凭证
-
----
-
-## 一、功能说明
-
-本菜单用于将家装项目出库后的交易发票凭证上传到系统，作为真实性核销的第一手证据。
-
-**核心能力：**
-
-| 能力 | 说明 |
-|------|------|
-| 发票上传 | 上传发票/收据/非发票等交易凭证 |
-| OCR自动识别 | 上传凭证后自动识别发票代码、号码、金额、明细，减少手工录入 |
-| 防重复核销 | 同一发票代码+发票号码不得被重复核销，系统自动校验 |
-| 审批流转 | 提交后进入OA审批流程，审批通过后发票生效，可供真实性核销引用 |
-
-## 二、操作步骤
-
-### 2.1 进入列表页
-
-1. 登录系统，在左侧菜单栏点击 **家装管理 → 家装往来 → 家装核销发票上传**
-2. 进入列表页，默认不自动查询数据
-
-### 2.2 新建核销发票上传单
-
-#### 步骤1：点击新建
-
-在列表页点击 **新建** 按钮，进入详情页新建态。
-
-#### 步骤2：填写基础信息
-
-| 字段 | 是否必填 | 填写说明 |
-|------|---------|---------|
-| 核销单号 | — | 保存后系统自动生成，不可编辑 |
-| 发票上传日期 | — | 系统自动赋值为当前日期 |
-| 申请人 | — | 系统自动填充当前登录用户姓名 |
-| 单据状态 | — | 默认"新建"，不可编辑 |
-| 核销类型 | **必填** | 下拉选择，变更时清空关联字段 |
-| 项目编码 | 条件必填 | 核销类型为"家装项目"时必选，通过弹窗选择家装项目 |
-| 经销商编码 | 条件必填 | 核销类型为"家装项目"或"收据"时必选，通过弹窗选择经销商 |
-| 交易公司 | 条件必填 | 选择经销商后可选，通过弹窗选择交易公司 |
-| 开票单位 | — | 由交易公司自动带出，不可编辑 |
-| 备注 | 选填 | 可输入备注信息 |
-
-#### 步骤3：维护发票影像信息
-
-在 **发票影像信息** 区域逐行维护发票影像，每新增一行按以下三步操作：
-
-**① 新增影像行** — 点击 **新建（发票影像行）**，系统自动生成 **凭证号码**。
-
-**② 选择凭证类型（必填）** — 凭证类型决定该凭证是否触发OCR自动识别：
-
-| 凭证类型 | 是否触发OCR | 说明 |
-|---------|------------|------|
-| 非发票 | 否 | 不触发OCR识别 |
-| 发票 | 是 | 上传附件后自动触发OCR识别 |
-| 收据 | 是 | 上传附件后自动触发OCR识别 |
-
-**③ 上传附件并填写备注**
-
-| 项目 | 必填 | 说明 |
-|------|------|------|
-| 凭证附件 | **必填** | 支持图片 / PDF 格式 |
-| 清单附件 | 选填 | 仅支持 PDF 和 JPG 格式 |
-| 备注 | 选填 | 可填写补充说明 |
-
-> **OCR提示：** 凭证类型为"发票"或"收据"时，上传附件后系统自动调用OCR识别接口，识别成功后自动填充发票主要信息和详细信息。OCR识别失败时可点击"重新识别"。
-
-#### 步骤4：维护发票主要信息
-
-在 **发票主要信息** 区域：
-
-1. 点击 **新建（主要信息行）** 新增一行
-2. 填写以下字段：
-
-| 字段 | 是否必填 | 填写说明 |
-|------|---------|---------|
-| 凭证号码 | **必填** | 下拉选择，来自发票影像行的凭证号码 |
-| 发票代码 | **必填** | 输入发票代码，修改时触发重复校验 |
-| 发票号码 | **必填** | 输入发票号码，修改时触发重复校验 |
-| 开票日期 | 选填 | 选择开票日期 |
-| 购买方名称 | 选填 | 输入购买方名称 |
-| 销售方名称 | 选填 | 输入销售方名称 |
-| 购买方联系电话 | 选填 | 输入联系电话 |
-| 楼号 | 选填 | 输入楼号 |
-| 总额 | 选填 | 输入发票金额（不含税额），精度2位 |
-
-#### 步骤5：维护发票详细信息
-
-在 **发票详细信息** 区域：
-
-1. 点击 **新建（详细信息行）** 新增一行，或点击 **明细导入** 批量导入
-2. 填写以下字段：
-
-| 字段 | 是否必填 | 填写说明 |
-|------|---------|---------|
-| 凭证号码 | **必填** | 下拉选择，来自发票影像行 |
-| 发票代码 | 选填 | 输入发票代码 |
-| 发票号码 | **必填** | 输入发票号码 |
-| 产品名称 | 选填 | 输入货物或服务名称 |
-| 产品编码 | 选填 | 输入产品编码 |
-| 规格型号 | **必填** | 输入规格型号，修改时自动匹配基本单位 |
-| 发票数量 | **必填** | 输入发票上的数量，最小值0 |
-| 转换率 | **必填** | 发票数量到基本单位的转换率，精度5位，最小值0 |
-| 基本单位 | **必填** | 通过弹窗选择基本计量单位 |
-| 发票单位 | 选填 | 输入发票上的计量单位 |
-| 单价 | **必填** | 输入产品单价，最小值0 |
-| 金额 | 选填 | 输入金额，精度2位 |
-| 税率(%) | 选填 | 输入税率，范围0-100 |
-| 税额 | 选填 | 自动计算 = 金额 × 税率 / 100 |
-
-> **批量导入：** 可点击"模板下载"获取导入模板，按模板填写后点击"明细导入"批量上传。
-
-#### 步骤6：保存并提交
-
-点击 **保存并提交** 按钮，系统执行必填项与发票唯一性校验，校验通过后推送OA审批流程，单据状态变更为"审批中"。任一校验失败将阻断提交。
-
----
-
-## 三、其他操作
-
-### 3.1 导出
-
-在列表页点击 **导出** 按钮，系统按当前查询条件异步导出Excel，默认全选。
-
-### 3.2 删除
-
-在列表页选中某行，点击 **删除** 按钮。
-
-**可删除状态：** 新建、审批拒绝、已撤回、终止  
-**不可删除状态：** 审批中、审批通过、挂起、退回
-
-### 3.3 查看详情
-
-在列表页双击某行或点击 **查看** 按钮，进入详情页查看模式。
-
----
-
-## 四、常见问题
-
-### Q1：OCR识别后发票信息未自动填充？
-
-**可能原因：**
-- 凭证类型为"非发票"，不会触发OCR识别
-- 发票图片不清晰或格式不支持
-- 附件上传失败
-
-**处理步骤：**
-1. 确认凭证类型是否为"发票"或"收据"
-2. 检查发票图片是否清晰完整
-3. 若OCR识别失败，点击"重新识别"按钮重试
-4. 若仍失败，尝试重新上传附件
-
-### Q2：保存时提示"xxx已被其它单进行核销"？
-
-**可能原因：** 该发票代码+发票号码已存在于其他核销单中。
-
-**处理步骤：**
-1. 在列表页查询该发票号码，确认是否已上传过
-2. 若为误操作重复上传，删除其中一张即可
-3. 若确实需要重新核销，需先在原核销单中作废该发票
-
-### Q3：提交审批时提示"金额不一致"？
-
-**可能原因：** 详细信息行的单价×数量汇总与主要信息的总额不匹配。
-
-**处理步骤：**
-1. 检查详细信息每行的单价和数量是否正确
-2. 确认主要信息的总额与详细信息汇总一致
-3. 系统允许0.01元的差异
-
-### Q4：列表页查询不到数据？
-
-**可能原因：**
-- 当前用户没有对应的家装核销发票上传数据
-- 查询条件过于狭窄
-
-**处理步骤：**
-1. 清空所有查询条件，点击查询查看全量数据
-2. 确认当前登录账号是否有家装业务数据权限
-3. 联系系统管理员确认数据权限分配
-
-### Q5：无法删除核销单？
-
-**可能原因：** 审批状态为审批中/审批通过/挂起/退回时不可删除。
-
-**处理步骤：**
-1. 查看该单据的审批状态
-2. 若为审批中，需先撤回或等待审批完成后再处理
-3. 若为审批通过，需走作废流程而非删除
-
-### Q6：转换率默认值是什么？
-
-**说明：** 大部分组织下，新建详细信息行转换率默认为1。个别特殊组织需手工填写转换率。
-
----
-
-## 五、相关菜单
-
-| 相关菜单 | 关系说明 |
-|---------|---------|
-| 家装管理 → 家装往来 → 家装真实性核销 | 下游：本菜单审批通过的发票数据供真实性核销引用 |
-| 家装管理 → 项目交付 → 家装折扣政策申请 | 关联：折扣政策信息与核销发票上传关联 |
-
----
-
-> **文档版本：** v1.0  
-> **最后更新：** 2026-08-29  
-> **基于源码分析文档：** 家装管理-家装往来-家装核销发票上传.md
-
 </div>

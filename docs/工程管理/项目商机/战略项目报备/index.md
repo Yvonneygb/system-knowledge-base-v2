@@ -166,119 +166,32 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="报备类型区分">
-
-<KbQuote>战略报备按报备类型区分处理逻辑</KbQuote>
-
-<KbQuote>战略报备按报备类型区分处理逻辑</KbQuote>
-
-战略项目报备与单体项目报备、家装战略报备、家装单体报备共用同一套后端代码，通过报备类型参数区分。战略项目报备的报备类型值为2。四种报备类型共用同一张报备主表，通过该字段区分不同业务流程。
-
+<KbCard num="1" title="重点逻辑1：两次OA审批流程">
+<ul><li><strong>业务意义</strong>：战略项目报备需经过一次和二次两个OA审批流程，一次建项目档案、二次补充信息，保障项目数据完整性</li><li><strong>具体逻辑描述</strong>：</li><li>工作流编码：PROJECT_ZLBB（战略项目报备）</li><li>一次报备：单据名称"战略项目报备一次"，OA审批通过后执行doStrategicProjectResp生成项目档案</li><li>二次报备：单据名称"战略项目报备二次"，OA审批通过后更新项目档案相关字段</li><li>OA表单配置通过OA_BILL_REF表维护，提交时校验对应关系存在</li></ul>
 </KbCard>
 
-<KbCard num="2" title="两次报备机制">
-
-<KbQuote>战略项目支持首次报备和二次报备两次报备流程</KbQuote>
-
-<KbQuote>战略项目支持首次报备和二次报备两次报备流程</KbQuote>
-
-战略项目报备支持两次报备流程：
-- **一次报备**：首次提交时走"战略项目报备一次"OA审批流程，通过后在项目档案中新增一条项目记录，设置项目有效起始日期和有效结束日期（根据公司参数配置的有效周期天数计算）
-- **二次报备**：一次报备通过后，可发起二次报备，走"战略项目报备二次"OA审批流程，通过后更新项目档案中的相关信息（如项目进度、交易公司、项目经理、甲乙方信息等）
-
+<KbCard num="2" title="重点逻辑2：审核通过写入项目档案">
+<ul><li><strong>业务意义</strong>：一次报备审核通过后将报备数据复制到项目档案表，生成可跟进的正式项目</li><li><strong>具体逻辑描述</strong>：</li><li>将EPM_REPORT数据复制到EPM_PROJECT（忽略部分不需要复制的字段）</li><li>新增项目授权记录（EPM_PROJECT_AUTH，将报备经销商授权转为项目授权）</li><li>新增乙方信息记录</li><li>更新项目进度阶段</li><li>设置项目有效状态为有效(2)，计算有效起始/结束日期（基于Proj_Effective_Cycle参数）</li><li>推送项目报备至CRM系统</li></ul>
 </KbCard>
 
-<KbCard num="3" title="OA审批推送">
-
-<KbQuote>报备数据推送到OA系统审批并同步审批结果</KbQuote>
-
-<KbQuote>报备数据推送到OA系统审批并同步审批结果</KbQuote>
-
-战略报备提交后，根据报备次数（一次或二次）查找对应的OA表单配置，将报备信息（项目编码、管理类型、产品线、甲乙方信息、经销商列表等）推送到OA系统进行审批。OA审批结果通过回调接口回写系统。
-
+<KbCard num="3" title="重点逻辑3：项目查重拦截">
+<ul><li><strong>业务意义</strong>：避免重复报备同一项目，战略报备通过SQL方式查重（非ES相似度）</li><li><strong>具体逻辑描述</strong>：</li><li>前端调用GET /epm-reports接口执行doCheckReport查重</li><li>战略报备不执行ES相似度查重，通过SQL方式匹配同城市相似项目</li><li>查重命中时标记DUPLICATE_REPORTING='Y'，需通过申诉重新提交</li><li>单体报备执行ES相似度搜索（战略报备跳过此逻辑）</li></ul>
 </KbCard>
 
-<KbCard num="4" title="审核通过后写入项目档案">
-
-<KbQuote>审批通过后自动创建或更新项目档案</KbQuote>
-
-<KbQuote>审批通过后自动创建或更新项目档案</KbQuote>
-
-一次报备审核通过时：
-- 将报备数据复制到项目档案表（忽略部分不需要复制的字段）
-- 新增项目授权记录（将报备经销商授权转为项目授权）
-- 新增乙方信息记录
-- 更新项目进度阶段
-- 设置项目有效状态为有效
-
-二次报备审核通过时：
-- 更新项目档案中已有记录的相关字段
-- 重新生成项目授权和乙方信息
-
+<KbCard num="4" title="重点逻辑4：申诉机制">
+<ul><li><strong>业务意义</strong>：被查重拦截标记为重复申报的报备，可通过申诉重新提交</li><li><strong>具体逻辑描述</strong>：</li><li>申诉前校验DUPLICATE_REPORTING='Y'，否则提示"非重复申报，不能申诉"</li><li>校验本月可用申诉次数（SCPSYSCONF配置ReportAppealNum，或EPM_REPORT_APPEAL_CONFIG按经销商/年/月配置）</li><li>超过限制提示"本月申诉次数已到达限制:&#123;n&#125;次"</li><li>申诉成功后更新拦截记录并重置重复申报标记</li></ul>
 </KbCard>
 
-<KbCard num="5" title="战略报备流程发起前校验">
-
-<KbQuote>发起报备前校验项目信息和经销商授权的有效性</KbQuote>
-
-<KbQuote>发起报备前校验项目信息和经销商授权的有效性</KbQuote>
-
-二次报备提交时校验：
-- 若管理类型为经销商操作(2)或公司自营(3)，必须分配具体经销商，否则提示"该战略工程涉及经销商服务，请分配具体经销商"
-
+<KbCard num="5" title="重点逻辑5：流程发起前校验">
+<ul><li><strong>业务意义</strong>：提交审批前校验业务条件是否满足，避免无效提交</li><li><strong>具体逻辑描述</strong>：</li><li>前端调用GET /work-flow-start-volidate接口</li><li>二次报备且管理类型为经销商操作(2)或公司自营(3)时，必须分配具体经销商，否则提示"该战略工程涉及经销商服务，请分配具体经销商"</li><li>校验OA表单对应关系存在（OA_BILL_REF中维护"战略项目报备一次"/"战略项目报备二次"）</li><li>校验通过返回成功，失败返回错误信息</li></ul>
 </KbCard>
 
-<KbCard num="6" title="查重拦截">
-
-<KbQuote>防止同一项目被多个经销商重复报备</KbQuote>
-
-<KbQuote>防止同一项目被多个经销商重复报备</KbQuote>
-
-单体报备提交时进行查重拦截（通过ES相似度搜索），战略报备不执行ES查重拦截逻辑。战略报备的查重通过SQL方式实现（项目查重接口）。
-
-</KbCard>
-
-<KbCard num="7" title="申诉机制">
-
-<KbQuote>查重被拦截后支持发起申诉</KbQuote>
-
-<KbQuote>查重被拦截后支持发起申诉</KbQuote>
-
-被查重拦截标记为重复申报的报备，可通过申诉重新提交。申诉时校验本月可用申诉次数，超过限制则不允许申诉。申诉成功后更新拦截记录并重置重复申报标记。
-
-</KbCard>
-
-<KbCard num="8" title="项目编码生成">
-
-<KbQuote>审批通过后自动生成唯一项目编码</KbQuote>
-
-<KbQuote>审批通过后自动生成唯一项目编码</KbQuote>
-
-新建报备时自动生成项目编码，编码规则通过编码规则引擎生成，规则编码为AE.HOME_SINGLE_PROJECT_CODE（家装）或PROJECT_CODE（工程）。
-
-</KbCard>
-
-<KbCard num="9" title="报备状态流转">
-
-<KbQuote>报备状态按审批结果自动流转</KbQuote>
-
-<KbQuote>报备状态按审批结果自动流转</KbQuote>
-
-| 状态 | 说明 |
-|------|------|
-| 新建 | 保存后的初始状态 |
-| 一次报备提交 | 一次报备提交OA审批 |
-| 一次报备通过 | OA一次审批通过 |
-| 一次报备拒绝 | OA一次审批拒绝 |
-| 二次报备提交 | 二次报备提交OA审批 |
-| 二次报备通过 | OA二次审批通过 |
-| 二次报备拒绝 | OA二次审批拒绝 |
-
----
-
+<KbCard num="6" title="重点逻辑6：项目编码自动生成">
+<ul><li><strong>业务意义</strong>：新建报备时自动生成唯一项目编码，保证项目可追溯</li><li><strong>具体逻辑描述</strong>：</li><li>编码规则通过编码规则引擎生成</li><li>工程类规则编码为PROJECT_CODE</li><li>家装类规则编码为AE.HOME_SINGLE_PROJECT_CODE</li></ul>
 </KbCard>
 
 </div>
@@ -288,603 +201,842 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="界面模块">
-
-<KbSubTitle>列表页</KbSubTitle>
-
-- **查询条件**：项目编码、项目名称、客户编码、客户名称、修改时间（范围）、甲方名称、客户简称、申报日期（范围）、乙方名称、本地/异地、省、市、区、详细地址、审核状态、有效状态、流程状态、工程类型
-- **列表字段**：项目编码、项目名称、客户编码、客户名称、客户简称、申报日期、省/市/区、详细地址、本地/异地、报备有效期至、币种、报备方式、甲方/乙方信息、项目当前进度、所属事业部、已生成折扣单/合同、交易公司、项目经理、产品线、工程类型、经办人信息、战略项目编码/名称、管理类型、缴纳保证金、业主类型、背景关系、预估合同金额、工程建筑面积、工程用量、海外、工程施工进度、竣工日期、工程意向产品、竞争对手、产品送样/报价、创建/修改人及时间
-- **操作按钮**：查看、编辑、删除（仅新建状态可删）、批量删除
-
-<KbSubTitle>详情页</KbSubTitle>
-
-- **基本信息Tab**：项目名称、工程类型(战略工程)、报备次数、项目进度阶段、业主类型、省/市/区/详细地址、客户信息、交易公司、甲乙方信息、管理类型、产品线、战略对接阶段、背景关系、预计签订日期、预计销售收入、预估项目数量、预估产品用量、工程意向产品、竞争品牌、竞争对手、工程建筑面积、工程施工阶段、完工日期、产品送样/报价、缴纳保证金、保证金金额/备注、本地/异地、海外、任务划分比例、售后服务金划分比例、合作区域、战略合作范围涉及区域、经办人信息、经销商现场跟进人、公司现场跟进人、项目经理、地标建筑、项目分类
-- **经销商授权Tab**：分配的经销商列表（经销商编码、名称、经办人、经办人电话）
-- **网点信息Tab**：家装网点信息（网点名称、营业执照名称、网点法人、地址、联系人、联系电话、报备经销商编码/名称）
-- **附件Tab**：附件上传（对象类型8005对应战略报备）
-- **审批流程Tab**：流程审批历史
-
+<KbCard title="界面模块">
+<blockquote>本页面为hlod低代码页面，界面模块由低代码平台配置承载。以下基于后端Entity/DTO字段梳理。</blockquote>
+<h4>查询区</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>项目编码</td><td>EPM_REPORT.PROJECT_CODE</td><td>文本输入</td><td>模糊查询项目编码</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>项目名称</td><td>EPM_REPORT.PROJECT_NAME</td><td>文本输入</td><td>模糊查询项目名称</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>客户编码</td><td>EPM_REPORT.CUSTOMER_CODE</td><td>文本输入</td><td>模糊查询客户编码</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>客户名称</td><td>EPM_REPORT.CUSTOMER_NAME</td><td>文本输入</td><td>模糊查询客户名称</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>甲方名称</td><td>EPM_REPORT.PARTY_A_NAME</td><td>文本输入</td><td>模糊查询甲方名称</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>审核状态</td><td>EPM_REPORT.HZ_APPROVE_STATUS</td><td>下拉框</td><td>查询审批状态</td><td>始终显示</td><td>RUN/APPROVED/REJECTED</td></tr>
+<tr><td>有效状态</td><td>EPM_PROJECT.PROJECT_VALID</td><td>下拉框</td><td>查询项目有效状态</td><td>始终显示</td><td>2=有效, 3=失效, 4=冻结</td></tr>
+<tr><td>本地/异地</td><td>EPM_REPORT.IS_LOCAL</td><td>下拉框</td><td>查询本地异地</td><td>始终显示</td><td>1=异地, 2=本地, 3=本地特约</td></tr>
+<tr><td>省/市/区</td><td>EPM_REPORT.PROVINCE/CITY/AREA</td><td>级联选择</td><td>查询区域</td><td>始终显示</td><td>级联选择回写ID和名称</td></tr>
+<tr><td>申报日期</td><td>EPM_REPORT.REPORT_TIME</td><td>日期范围</td><td>查询报备时间范围</td><td>始终显示</td><td>手动选择日期范围</td></tr>
+<tr><td>工程类型</td><td>EPM_REPORT.PROJECT_SOURCE</td><td>下拉框</td><td>查询工程类型</td><td>始终显示</td><td>1=常规工程, 2=战略工程</td></tr>
+</tbody>
+</table>
+<h4>报备单头信息</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>报备ID</td><td>EPM_REPORT.REPORT_ID</td><td>隐藏</td><td>报备主键</td><td>始终显示</td><td>系统自动生成</td></tr>
+<tr><td>项目编码</td><td>EPM_REPORT.PROJECT_CODE</td><td>文本</td><td>项目编码</td><td>始终显示</td><td>系统自动生成(编码规则PROJECT_CODE)</td></tr>
+<tr><td>项目名称</td><td>EPM_REPORT.PROJECT_NAME</td><td>文本输入</td><td>项目名称</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>报备次数</td><td>EPM_REPORT.REPORT_TIMES</td><td>文本</td><td>报备次数</td><td>始终显示</td><td>1=一次报备, 2=二次报备</td></tr>
+<tr><td>报备类型</td><td>EPM_REPORT.REPORT_TYPE</td><td>隐藏</td><td>报备类型</td><td>始终显示</td><td>固定值2(战略报备)</td></tr>
+<tr><td>工程类型</td><td>EPM_REPORT.PROJECT_SOURCE</td><td>下拉框</td><td>项目来源</td><td>始终显示</td><td>1=常规工程, 2=战略工程</td></tr>
+<tr><td>业主类型</td><td>EPM_REPORT.PROJECT_TYPE</td><td>下拉框</td><td>项目类型/业主类型</td><td>始终显示</td><td>值集epm.project_type</td></tr>
+<tr><td>项目进度阶段</td><td>EPM_REPORT.STAGE_NAME</td><td>下拉框</td><td>项目进度阶段</td><td>始终显示</td><td>值集配置，回写stageId/stageName/stageNote</td></tr>
+<tr><td>省/市/区</td><td>EPM_REPORT.PROVINCE/CITY/AREA</td><td>级联选择</td><td>项目地址</td><td>始终显示</td><td>级联选择回写ID和名称，必填</td></tr>
+<tr><td>详细地址</td><td>EPM_REPORT.ADDRESS</td><td>文本输入</td><td>详细地址</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>客户编码</td><td>EPM_REPORT.CUSTOMER_CODE</td><td>文本</td><td>客户编码</td><td>始终显示</td><td>选择客户弹窗回写，必填</td></tr>
+<tr><td>客户名称</td><td>EPM_REPORT.CUSTOMER_NAME</td><td>文本</td><td>客户名称</td><td>始终显示</td><td>选择客户弹窗回写</td></tr>
+<tr><td>交易公司</td><td>EPM_REPORT.TRADING_COMPANY_NAME</td><td>下拉框</td><td>交易公司</td><td>始终显示</td><td>选择交易公司弹窗回写，必填</td></tr>
+<tr><td>所属事业部</td><td>EPM_REPORT.DIVISION_NAME</td><td>文本</td><td>所属事业部</td><td>始终显示</td><td>系统自动带出</td></tr>
+<tr><td>甲方名称</td><td>EPM_REPORT.PARTY_A_NAME</td><td>文本输入</td><td>甲方名称</td><td>始终显示</td><td>手动输入或选择客户回写，必填</td></tr>
+<tr><td>甲方联系人</td><td>EPM_REPORT.PARTY_A_LINK_PERSON</td><td>文本输入</td><td>甲方联系人</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>甲方电话</td><td>EPM_REPORT.PARTY_A_PHONE</td><td>文本输入</td><td>甲方联系电话</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>乙方名称</td><td>EPM_REPORT.PARTY_B_NAME</td><td>文本输入</td><td>乙方名称</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>乙方联系人</td><td>EPM_REPORT.PARTY_B_LINK_PERSON</td><td>文本输入</td><td>乙方联系人</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>乙方电话</td><td>EPM_REPORT.PARTY_B_PHONE</td><td>文本输入</td><td>乙方联系电话</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>管理类型</td><td>EPM_REPORT.OPERATING_MODE</td><td>下拉框</td><td>管理类型</td><td>始终显示</td><td>1=经销商操作, 2=公司自营</td></tr>
+<tr><td>产品线</td><td>EPM_REPORT.PDT_LINE</td><td>下拉框</td><td>产品线</td><td>始终显示</td><td>值集配置，必填</td></tr>
+<tr><td>预计签订日期</td><td>EPM_REPORT.PREDICT_SIGN_DATE</td><td>日期选择</td><td>预计合同签订日期</td><td>始终显示</td><td>手动选择</td></tr>
+<tr><td>预计销售收入</td><td>EPM_REPORT.PREDICT_SALES_AMOUNT</td><td>数值输入</td><td>预计合同金额(元)</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>背景关系</td><td>EPM_REPORT.BACKGROUND</td><td>下拉框</td><td>背景关系</td><td>始终显示</td><td>值集配置，必填</td></tr>
+<tr><td>预估项目数量</td><td>EPM_REPORT.PREDICT_PROJ_QTY</td><td>文本输入</td><td>预估生成单体项目数量</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>预估产品用量</td><td>EPM_REPORT.PREDICT_PDT_QTY</td><td>文本输入</td><td>预估产品用量</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>工程意向产品</td><td>EPM_REPORT.INTENT_PRODUCT</td><td>文本输入</td><td>工程意向产品</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>竞争品牌</td><td>EPM_REPORT.COMPETITIVE_BRAND</td><td>文本输入</td><td>竞争品牌</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>竞争对手</td><td>EPM_REPORT.COMPETITOR</td><td>文本输入</td><td>竞争对手</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>工程建筑面积</td><td>EPM_REPORT.SITE_AREA</td><td>数值输入</td><td>工程建筑面积</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>工程施工阶段</td><td>EPM_REPORT.CONSTRUCTION_STAGE</td><td>文本输入</td><td>工程施工阶段</td><td>始终显示</td><td>手动输入，必填</td></tr>
+<tr><td>完工日期</td><td>EPM_REPORT.COMPLETION_DATE</td><td>日期选择</td><td>完工日期</td><td>始终显示</td><td>手动选择，必填</td></tr>
+<tr><td>产品送样</td><td>EPM_REPORT.NEED_SAMPLE</td><td>下拉框</td><td>是否产品送样</td><td>始终显示</td><td>Y/N，必填</td></tr>
+<tr><td>产品报价</td><td>EPM_REPORT.NEED_QUOTE</td><td>下拉框</td><td>是否产品报价</td><td>始终显示</td><td>Y/N，必填</td></tr>
+<tr><td>缴纳保证金</td><td>EPM_REPORT.NEED_DEPOSIT</td><td>下拉框</td><td>是否缴纳保证金</td><td>始终显示</td><td>1=同意, 2=不同意，必填</td></tr>
+<tr><td>保证金金额</td><td>EPM_REPORT.DEPOSIT_AMOUNT</td><td>数值输入</td><td>保证金金额</td><td>needDeposit=1时显示</td><td>手动输入</td></tr>
+<tr><td>保证金备注</td><td>EPM_REPORT.DEPOSIT_NOTE</td><td>文本输入</td><td>保证金备注</td><td>needDeposit=1时显示</td><td>手动输入</td></tr>
+<tr><td>本地/异地</td><td>EPM_REPORT.IS_LOCAL</td><td>下拉框</td><td>本地/异地</td><td>始终显示</td><td>1=异地, 2=本地, 3=本地特约，必填</td></tr>
+<tr><td>海外</td><td>EPM_REPORT.IS_FOREIGN</td><td>下拉框</td><td>是否海外</td><td>始终显示</td><td>Y/N</td></tr>
+<tr><td>任务划分比例</td><td>EPM_REPORT.TASK_SHARED_RATE</td><td>数值输入</td><td>任务划分比例</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>售后服务金划分比例</td><td>EPM_REPORT.SERVICE_FEE_SHARED_RATE</td><td>数值输入</td><td>售后服务金划分比例</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>合作区域</td><td>EPM_REPORT.COOPERATION_AREA</td><td>文本输入</td><td>合作区域</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>战略合作范围涉及区域</td><td>EPM_REPORT.STRAC_COOP_INV_REGION</td><td>文本输入</td><td>战略合作范围涉及区域</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>经办人</td><td>EPM_REPORT.AGENT</td><td>文本</td><td>经办人</td><td>始终显示</td><td>系统自动带出当前用户</td></tr>
+<tr><td>经办人电话</td><td>EPM_REPORT.AGENT_PHONE</td><td>文本</td><td>经办人电话</td><td>始终显示</td><td>系统自动带出</td></tr>
+<tr><td>经销商现场跟进人</td><td>EPM_REPORT.DEALER_FOLLOWER</td><td>文本输入</td><td>经销商现场跟进人</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>经销商跟进人电话</td><td>EPM_REPORT.DEALER_FOLLOWER_PHONE</td><td>文本输入</td><td>经销商跟进人电话</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>公司现场跟进人</td><td>EPM_REPORT.OWN_FOLLOWER</td><td>文本输入</td><td>公司现场跟进人</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>公司跟进人电话</td><td>EPM_REPORT.OWN_FOLLOWER_PHONE</td><td>文本输入</td><td>公司跟进人电话</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>项目经理</td><td>EPM_REPORT.MANAGER</td><td>文本输入</td><td>项目经理姓名</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>项目经理工号</td><td>EPM_REPORT.EMPID</td><td>文本输入</td><td>项目经理工号</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>战略对接阶段</td><td>EPM_REPORT.STRATEGIC_STAGE</td><td>文本输入</td><td>战略对接阶段</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>地标建筑</td><td>EPM_REPORT.LANDMARK_FLAG</td><td>下拉框</td><td>是否地标建筑</td><td>始终显示</td><td>Y/N，默认N</td></tr>
+<tr><td>项目分类</td><td>EPM_REPORT.PROJECT_CATEGORY</td><td>下拉框</td><td>项目分类</td><td>始终显示</td><td>normal=标准项目, small=小型项目</td></tr>
+<tr><td>经度</td><td>EPM_REPORT.LONGITUDE</td><td>数值</td><td>经度</td><td>始终显示</td><td>地图选点回写</td></tr>
+<tr><td>纬度</td><td>EPM_REPORT.LATITUDE</td><td>数值</td><td>纬度</td><td>始终显示</td><td>地图选点回写</td></tr>
+<tr><td>审批状态</td><td>EPM_REPORT.HZ_APPROVE_STATUS</td><td>文本</td><td>工作流审批状态</td><td>始终显示</td><td>系统自动回写</td></tr>
+<tr><td>查重拦截标记</td><td>EPM_REPORT.DUPLICATE_REPORTING</td><td>文本</td><td>查重标记</td><td>始终显示</td><td>Y=重复申报, N=正常</td></tr>
+</tbody>
+</table>
+<h4>经销商授权明细</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>经销商ID</td><td>EPM_REPORT_AUTH.CUSTOMER_ID</td><td>隐藏</td><td>经销商ID</td><td>始终显示</td><td>选择经销商弹窗回写</td></tr>
+<tr><td>经销商编码</td><td>EPM_REPORT_AUTH.CUSTOMER_CODE</td><td>文本</td><td>经销商编码</td><td>始终显示</td><td>选择经销商弹窗回写</td></tr>
+<tr><td>经销商名称</td><td>EPM_REPORT_AUTH.CUSTOMER_NAME</td><td>文本</td><td>经销商名称</td><td>始终显示</td><td>选择经销商弹窗回写</td></tr>
+<tr><td>经办人</td><td>EPM_REPORT_AUTH.CONTACT</td><td>文本输入</td><td>经办人</td><td>始终显示</td><td>手动输入</td></tr>
+<tr><td>经办人电话</td><td>EPM_REPORT_AUTH.TELE</td><td>文本输入</td><td>经办人电话</td><td>始终显示</td><td>手动输入</td></tr>
+</tbody>
+</table>
+<h4>网点信息明细</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>网点ID</td><td>EPM_REPORT_AUTH_BRANCH.BRANCH_MESSAGE_ID</td><td>隐藏</td><td>网点ID</td><td>始终显示</td><td>选择网点弹窗回写</td></tr>
+<tr><td>对应经销商编码</td><td>EPM_REPORT_AUTH_BRANCH.REL_CUSTOMER_CODE</td><td>文本</td><td>对应经销商编码</td><td>始终显示</td><td>关联经销商授权行</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="选择弹窗">
-
-<KbSubTitle>经销商选择弹窗</KbSubTitle>
-
-- **数据范围**：有效的经销商主数据
-- **排查SQL**：
-```sql
-SELECT CUSTOMER_ID, CUSTOMER_CODE, CUSTOMER_NAME, SHORT_NAME
-FROM CUSTOMER_ORG
-WHERE DISABLED_FLAG = 0
-```
-
-<KbSubTitle>交易公司选择弹窗</KbSubTitle>
-
-- **数据范围**：与当前事业部关联的有效交易公司
-- **排查SQL**：
-```sql
-SELECT TC.TRADING_COMPANY_ID, TC.TRADING_COMPANY_NAME
-FROM EPM_TRADING_COMPANY TC
-INNER JOIN DIVISION_TRADING_REL DTR ON TC.TRADING_COMPANY_ID = DTR.TRADING_COMPANY_ID
-WHERE TC.DISABLED_FLAG = 0 AND DTR.DIVISION_ID = :divisionId
-```
-
-<KbSubTitle>关联战略项目选择弹窗（单体报备关联战略时使用）</KbSubTitle>
-
-- **数据范围**：报备类型为战略报备且审核通过的有效项目
-- **排查SQL**：
-```sql
-SELECT PROJECT_ID, PROJECT_CODE, PROJECT_NAME
-FROM EPM_PROJECT
-WHERE REPORT_TYPE = 2 AND HZ_APPROVE_STATUS = 'APPROVED' AND PROJECT_VALID = 2
-```
-
-<KbSubTitle>项目进度阶段选择弹窗</KbSubTitle>
-
-- **数据范围**：系统值集配置的项目进度阶段
-
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>POST</td><td>`/v1/&#123;organizationId&#125;/epm-reports`</td><td>报备保存/编辑</td></tr>
+<tr><td>GET</td><td>`/v1/&#123;organizationId&#125;/epm-reports`</td><td>项目查重(doCheckReport)</td></tr>
+<tr><td>GET</td><td>`/v1/&#123;organizationId&#125;/epm-reports/work-flow-start-volidate`</td><td>流程发起前校验</td></tr>
+<tr><td>GET</td><td>`/v1/&#123;organizationId&#125;/epm-reports/appeal`</td><td>申诉</td></tr>
+<tr><td>POST</td><td>`/v1/&#123;organizationId&#125;/epm-reports/query-nearby-project`</td><td>查询周边范围项目数据</td></tr>
+<tr><td>POST</td><td>`/v1/&#123;organizationId&#125;/epm-reports/query-current-project`</td><td>查询当前项目数据</td></tr>
+<tr><td>GET</td><td>`/v1/&#123;organizationId&#125;/epm-reports/get-small-disc-rate`</td><td>查询小折扣率</td></tr>
+</tbody>
+</table>
+<p><strong>Controller</strong>：<code>EpmReportController</code> (EpmReportController.java:34)</p>
+<p><strong>Service</strong>：<code>EpmReportServiceImpl</code> (EpmReportServiceImpl.java)</p>
 </KbCard>
 
-<KbCard num="3" title="导入">
-
-战略项目报备不支持批量导入，仅支持单条新建/编辑。
-
+<KbCard title="saveData保存逻辑">
+<pre class="detail-sql" v-pre><code>入参：EpmReportAddDTO (reportType=2)
+1. validObject校验DTO参数非空
+2. 校验项目名称、工程类型、项目进度阶段、业主类型、区域、详细地址、客户编码、交易公司、甲乙方信息等必填
+3. 校验交易公司事业部关联关系存在
+4. 校验报备所在区域非禁用区域
+5. 编辑时校验报备ID对应记录存在
+6. 保存EPM_REPORT主表数据
+7. 保存EPM_REPORT_AUTH经销商授权
+8. 保存EPM_REPORT_AUTH_BRANCH网点信息
+9. 保存EPM_REPORT_PARTYB乙方信息
+10. 返回EpmReport</code></pre>
 </KbCard>
 
-<KbCard num="4" title="其他按钮">
+<KbCard title="doCheckReport查重逻辑">
+<pre class="detail-sql" v-pre><code>入参：EpmReportCheckDTO
+1. 根据项目名称、地址、区域等条件查询相似项目
+2. 战略报备通过SQL方式查重(不执行ES相似度搜索)
+3. 返回List&lt;EpmReportCheckVO&gt;查重结果列表</code></pre>
+</KbCard>
 
-| 按钮 | 条件 | 说明 |
-|------|------|------|
-| 保存 | 编辑模式 | 保存报备信息及经销商授权、网点信息 |
-| 保存并提交 | 编辑模式且新建状态 | 保存后发起OA审批流程 |
-| 删除 | 新建状态 | 删除报备记录（仅新建状态可删） |
-| 申诉 | 被查重拦截(Y) | 申诉并重新提交，校验本月可用申诉次数 |
-| 查重 | 编辑模式 | 手动触发项目查重，查询相似项目 |
-| 查询周边项目 | 详情模式且有经纬度 | 按距离查询周边项目 |
-| 二次报备 | 一次报备通过 | 发起二次报备流程 |
+<KbCard title="workFlowStartVolidate流程发起前校验逻辑">
+<pre class="detail-sql" v-pre><code>入参：EpmReportDTO
+1. 二次报备且管理类型为经销商操作(2)或公司自营(3)时：
+   → 校验EPM_REPORT_AUTH中已分配经销商
+   → 未分配返回"该战略工程涉及经销商服务，请分配具体经销商"
+2. 校验OA表单对应关系存在(OA_BILL_REF)
+3. 校验通过返回null(成功)，失败返回错误信息</code></pre>
+</KbCard>
 
+<KbCard title="doStrategicProjectResp OA审批回调逻辑">
+<pre class="detail-sql" v-pre><code>一次报备审批通过：
+1. 将EPM_REPORT数据复制到EPM_PROJECT(忽略部分字段)
+2. 新增项目授权EPM_PROJECT_AUTH(从EPM_REPORT_AUTH转换)
+3. 新增乙方信息
+4. 更新项目进度阶段
+5. 设置项目有效状态为有效(2)
+6. 计算有效起始/结束日期(基于Proj_Effective_Cycle参数)
+7. 推送CRM
+
+二次报备审批通过：
+1. 更新EPM_PROJECT相关字段
+2. 重新生成项目授权和乙方信息</code></pre>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>选择项</th><th>触发场景</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>经销商选择弹窗</td><td>添加经销商授权时</td><td>选择有效经销商，回写customerId/customerCode/customerName</td></tr>
+<tr><td>交易公司选择弹窗</td><td>选择交易公司时</td><td>选择与当前事业部关联的有效交易公司，回写tradingCompanyId/tradingCompanyName</td></tr>
+<tr><td>关联战略项目选择弹窗</td><td>单体报备关联战略时</td><td>选择reportType=2且HZ_APPROVE_STATUS='APPROVED'且PROJECT_VALID=2的项目</td></tr>
+<tr><td>项目进度阶段选择弹窗</td><td>选择项目进度时</td><td>选择值集配置的项目进度阶段，回写stageId/stageName/stageNote</td></tr>
+<tr><td>客户选择弹窗</td><td>选择甲方/客户时</td><td>选择客户主数据，回写customerId/customerCode/customerName</td></tr>
+<tr><td>网点选择弹窗</td><td>添加网点信息时</td><td>选择经销商下的网点，回写branchMessageId</td></tr>
+<tr><td>区域级联选择</td><td>选择省/市/区时</td><td>级联选择行政区域，回写provinceId/cityId/areaId及名称</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="导入">
+<p>不支持导入功能。战略项目报备仅支持单条新建/编辑，不支持Excel批量导入。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>序号</th><th>按钮名</th><th>显示条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>保存</td><td>编辑模式</td><td>保存报备信息及经销商授权、网点信息</td></tr>
+<tr><td>2</td><td>保存并提交</td><td>编辑模式且新建状态</td><td>保存后发起OA审批流程</td></tr>
+<tr><td>3</td><td>删除</td><td>新建状态</td><td>删除报备记录（仅新建状态可删）</td></tr>
+<tr><td>4</td><td>申诉</td><td>被查重拦截(DUPLICATE_REPORTING=Y)</td><td>申诉并重新提交，校验本月可用申诉次数</td></tr>
+<tr><td>5</td><td>查重</td><td>编辑模式</td><td>手动触发项目查重，查询相似项目</td></tr>
+<tr><td>6</td><td>查询周边项目</td><td>详情模式且有经纬度</td><td>按距离查询周边项目</td></tr>
+<tr><td>7</td><td>二次报备</td><td>一次报备通过</td><td>发起二次报备流程</td></tr>
+</tbody>
+</table>
+<h4>按钮1：保存（详情页）</h4>
+<ul><li><strong>业务意义</strong>：保存报备信息及关联的经销商授权、网点信息、乙方信息</li><li><strong>具体逻辑描述</strong>：调用POST /epm-reports接口，触发saveData保存逻辑，含必填校验和交易公司事业部关联校验</li></ul>
+<h4>按钮2：保存并提交（详情页）</h4>
+<ul><li><strong>业务意义</strong>：保存后直接发起OA审批流程</li><li><strong>具体逻辑描述</strong>：先执行保存逻辑，再调用work-flow-start-volidate校验，通过后触发工作流PROJECT_ZLBB</li></ul>
+<h4>按钮3：删除（列表页）</h4>
+<ul><li><strong>业务意义</strong>：删除未提交的报备记录</li><li><strong>具体逻辑描述</strong>：仅新建状态(HZ_APPROVE_STATUS='NEW')可删除，校验"存在不为新建状态的数据,不可删除"</li></ul>
+<h4>按钮4：申诉（列表页）</h4>
+<ul><li><strong>业务意义</strong>：对被查重拦截的报备进行申诉重新提交</li><li><strong>具体逻辑描述</strong>：调用GET /appeal接口，校验DUPLICATE_REPORTING='Y'和本月申诉次数限制</li></ul>
+<h4>按钮5：查重（详情页）</h4>
+<ul><li><strong>业务意义</strong>：手动触发项目查重，查询相似项目</li><li><strong>具体逻辑描述</strong>：调用GET /epm-reports接口执行doCheckReport查重</li></ul>
+<h4>按钮6：查询周边项目（详情页）</h4>
+<ul><li><strong>业务意义</strong>：按距离查询当前项目周边的其他项目</li><li><strong>具体逻辑描述</strong>：调用POST /query-nearby-project接口，需先维护经纬度</li></ul>
+<h4>按钮7：二次报备（列表页）</h4>
+<ul><li><strong>业务意义</strong>：对一次报备通过的项目发起二次报备</li><li><strong>具体逻辑描述</strong>：校验一次报备已通过且无在途二次报备，发起二次报备流程(reportTimes=2)</li></ul>
 </KbCard>
 
 <KbCard title="保存校验">
-<KbSubTitle>项目名称</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>工程类型</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>项目进度阶段</KbSubTitle>
-
-**校验规则：** ID和名称不能为空
-
-```sql
--
-```
-
-<KbSubTitle>业主类型</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>省份/地市/区县</KbSubTitle>
-
-**校验规则：** ID和名称不能为空
-
-```sql
--
-```
-
-<KbSubTitle>详细地址</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>客户编码</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>交易公司</KbSubTitle>
-
-**校验规则：** ID和名称不能为空，ID必须大于0
-
-```sql
--
-```
-
-<KbSubTitle>甲方名称/联系人/电话</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>乙方名称/联系人/电话</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>本地/异地</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>产品线</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>预计合同金额</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>背景关系</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>工程用量</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>工程意向产品</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>竞争对手</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>工程施工进度</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>竣工日期</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>产品送样/报价</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>缴纳保证金</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>报备方式</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>流程编码</KbSubTitle>
-
-**校验规则：** 不能为空
-
-```sql
--
-```
-
-<KbSubTitle>报备信息存在性</KbSubTitle>
-
-**校验规则：** 编辑时校验报备ID对应记录存在
-
-```sql
-SELECT COUNT(1) FROM EPM_REPORT WHERE REPORT_ID = :reportId
-```
-
-<KbSubTitle>交易公司事业部关联</KbSubTitle>
-
-**校验规则：** 交易公司需维护事业部关联关系
-
-```sql
-SELECT COUNT(1) FROM DIVISION_TRADING_REL WHERE TRADING_COMPANY_ID = :tradingCompanyId
-```
-
-<KbSubTitle>禁用区域校验</KbSubTitle>
-
-**校验规则：** 报备所在区域不能为禁用区域
-
-```sql
-SELECT COUNT(1) FROM EPM_REPORT WHERE REPORT_ID = :reportId AND AREA_ID IN (SELECT AREA_ID FROM DISABLED_AREA_CONFIG)
-```
-
+<ul><li>校验1：项目名称非空 —— 报备必须填写项目名称</li><li><strong>详细逻辑</strong>：saveData中校验projectName非空，为空抛出"项目名称不能为空"</li><li><strong>系统体现</strong>：后端saveData方法校验</li><li><strong>排查SQL</strong>：<code>SELECT REPORT_ID FROM EPM_REPORT WHERE PROJECT_NAME IS NULL;</code></li></ul>
+<ul><li>校验2：工程类型非空 —— 报备必须选择工程类型</li><li><strong>详细逻辑</strong>：saveData中校验projectSource非空</li><li><strong>系统体现</strong>：后端saveData方法校验</li><li><strong>排查SQL</strong>：<code>SELECT REPORT_ID FROM EPM_REPORT WHERE PROJECT_SOURCE IS NULL;</code></li></ul>
+<ul><li>校验3：区域信息非空 —— 省/市/区ID和名称必须完整</li><li><strong>详细逻辑</strong>：saveData中校验provinceId/cityId/areaId及对应名称非空</li><li><strong>系统体现</strong>：后端saveData方法校验</li><li><strong>排查SQL</strong>：<code>SELECT REPORT_ID FROM EPM_REPORT WHERE PROVINCE_ID IS NULL OR CITY_ID IS NULL OR AREA_ID IS NULL;</code></li></ul>
+<ul><li>校验4：交易公司事业部关联 —— 交易公司必须维护事业部关联关系</li><li><strong>详细逻辑</strong>：saveData中校验DIVISION_TRADING_REL中存在交易公司关联记录</li><li><strong>系统体现</strong>：后端saveData方法校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(1) FROM DIVISION_TRADING_REL WHERE TRADING_COMPANY_ID = #&#123;tradingCompanyId&#125;;</code></li></ul>
+<ul><li>校验5：禁用区域校验 —— 报备所在区域不能为禁用区域</li><li><strong>详细逻辑</strong>：saveData中校验AREA_ID不在DISABLED_AREA_CONFIG中</li><li><strong>系统体现</strong>：后端saveData方法校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(1) FROM EPM_REPORT WHERE REPORT_ID = #&#123;reportId&#125; AND AREA_ID IN (SELECT AREA_ID FROM DISABLED_AREA_CONFIG);</code></li></ul>
+<ul><li>校验6：报备信息存在性 —— 编辑时校验报备ID对应记录存在</li><li><strong>详细逻辑</strong>：编辑模式下校验EPM_REPORT中存在该REPORT_ID的记录</li><li><strong>系统体现</strong>：后端saveData方法校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(1) FROM EPM_REPORT WHERE REPORT_ID = #&#123;reportId&#125;;</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<KbSubTitle>查重拦截标记</KbSubTitle>
-
-**校验规则：** 若被标记为重复申报(Y)，必须通过申诉提交
-
-```sql
-SELECT DUPLICATE_REPORTING FROM EPM_REPORT WHERE REPORT_ID = :reportId
-```
-
-<KbSubTitle>可报备数量</KbSubTitle>
-
-**校验规则：** 检查经销商可报备数量是否超限
-
-```sql
-SELECT CONFVALUE FROM SCPSYSCONF WHERE CONFNAME = 'ReportCustomerApplyNum'
-```
-
-<KbSubTitle>查重拦截</KbSubTitle>
-
-**校验规则：** 通过ES相似度搜索检查同城市是否存在相似项目（战略报备不执行ES查重）
-
-```sql
--
-```
-
-<KbSubTitle>战略二次报备经销商</KbSubTitle>
-
-**校验规则：** 二次报备且管理类型为经销商操作/公司自营时，必须分配经销商
-
-```sql
-SELECT COUNT(1) FROM EPM_REPORT_AUTH WHERE REPORT_ID = :reportId
-```
-
-<KbSubTitle>EPMS-OA对应关系</KbSubTitle>
-
-**校验规则：** 需维护OA表单对应关系
-
-```sql
-SELECT COUNT(1) FROM OA_BILL_REF WHERE BILL( BILL_NAME = '战略项目报备一次' OR BILL_NAME = '战略项目报备二次' )
-```
-
-<KbSubTitle>项目有效周期参数</KbSubTitle>
-
-**校验规则：** 需配置公司参数Proj_Effective_Cycle
-
-```sql
-SELECT COUNT(1) FROM SYS_PARAM WHERE PARAM_CODE = 'Proj_Effective_Cycle' AND ORGANIZATION_ID = :orgId
-```
-
-<KbSubTitle>附件校验</KbSubTitle>
-
-**校验规则：** 检查必传附件类型是否已上传
-
-```sql
-SELECT * FROM OBJ_ATTACH_TYPE WHERE ATTACH_CONF_ID = 8005 AND MIN_ATTACH_NEED > 0
-```
-
+<ul><li>校验1：查重拦截标记 —— 被标记为重复申报(Y)时必须通过申诉提交</li><li><strong>详细逻辑</strong>：提交时校验DUPLICATE_REPORTING，为Y时需先申诉</li><li><strong>系统体现</strong>：提交前前端校验</li><li><strong>排查SQL</strong>：<code>SELECT DUPLICATE_REPORTING FROM EPM_REPORT WHERE REPORT_ID = #&#123;reportId&#125;;</code></li></ul>
+<ul><li>校验2：可报备数量 —— 检查经销商可报备数量是否超限</li><li><strong>详细逻辑</strong>：从SCPSYSCONF读取ReportCustomerApplyNum配置，校验经销商可报备数量</li><li><strong>系统体现</strong>：提交时后端校验</li><li><strong>排查SQL</strong>：<code>SELECT CONFVALUE FROM SCPSYSCONF WHERE CONFNAME = 'ReportCustomerApplyNum';</code></li></ul>
+<ul><li>校验3：战略二次报备经销商 —— 二次报备且管理类型为经销商操作/公司自营时必须分配经销商</li><li><strong>详细逻辑</strong>：workFlowStartVolidate中校验EPM_REPORT_AUTH中已分配经销商，未分配返回"该战略工程涉及经销商服务，请分配具体经销商"</li><li><strong>系统体现</strong>：GET /work-flow-start-volidate接口校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(1) FROM EPM_REPORT_AUTH WHERE REPORT_ID = #&#123;reportId&#125;;</code></li></ul>
+<ul><li>校验4：EPMS-OA对应关系 —— 需维护OA表单对应关系</li><li><strong>详细逻辑</strong>：提交时校验OA_BILL_REF中存在"战略项目报备一次"/"战略项目报备二次"配置</li><li><strong>系统体现</strong>：提交时后端校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(1) FROM OA_BILL_REF WHERE BILLNAME IN ('战略项目报备一次', '战略项目报备二次');</code></li></ul>
+<ul><li>校验5：项目有效周期参数 —— 需配置公司参数Proj_Effective_Cycle</li><li><strong>详细逻辑</strong>：审核通过时校验SYS_PARAM中存在Proj_Effective_Cycle配置</li><li><strong>系统体现</strong>：审核通过回调时校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(1) FROM SYS_PARAM WHERE PARAM_CODE = 'Proj_Effective_Cycle' AND ORGANIZATION_ID = #&#123;orgId&#125;;</code></li></ul>
+<ul><li>校验6：附件校验 —— 检查必传附件类型是否已上传</li><li><strong>详细逻辑</strong>：提交时校验OBJ_ATTACH_TYPE中MIN_ATTACH_NEED&gt;0的附件类型已上传</li><li><strong>系统体现</strong>：提交时后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM OBJ_ATTACH_TYPE WHERE ATTACH_CONF_ID = 8005 AND MIN_ATTACH_NEED &gt; 0;</code></li></ul>
 </KbCard>
 
-<KbCard num="7" title="状态机">
-
-```
-新建(NEW) ──提交──→ 一次报备提交 ──OA同意──→ 一次报备通过(APPROVED)
-                      │                        │
-                      │──OA拒绝──→ 一次报备拒绝   │──发起二次报备──→ 二次报备提交
-                      │                        │                    │
-                      │──中断──→ 新建(重置查重标记) │                    ├──OA同意──→ 二次报备通过
-                                               │                    │
-                                               │                    └──OA拒绝──→ 二次报备拒绝
+<KbCard title="状态机">
+<pre class="lang-text" v-pre><code>┌──────────┐  提交   ┌──────────┐  一次OA通过  ┌──────────┐
+│  新建    │ ──────→ │ 一次报备  │ ──────────→ │ 一次通过  │
+│ (NEW)   │         │ 提交(RUN) │            │(APPROVED) │
+└──────────┘         └────┬─────┘            └────┬─────┘
+      ↑                   │                       │
+      │              一次OA拒绝              发起二次报备
+      │                   │                       │
+      └───────────────────┘                       ▼
+                                          ┌──────────┐  二次OA通过  ┌──────────┐
+                                          │ 二次报备  │ ──────────→ │ 二次通过  │
+                                          │ 提交(RUN) │            │(APPROVED) │
+                                          └────┬─────┘            └──────────┘
                                                │
-                                               └──失效──→ 已失效
-```
-
----
-
+                                         二次OA拒绝
+                                               │
+                                          ┌────▼─────┐
+                                          │ 二次拒绝  │
+                                          │(REJECTED) │
+                                          └──────────┘</code></pre>
 </KbCard>
 
-<KbCard num="1" title="EPM_REPORT（项目报备主表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| REPORT_ID | BIGINT | 报备ID，主键 |
-| REPORT_TIMES | BIGINT | 报备次数（1=一次报备，2=二次报备） |
-| STAT | BIGINT | 单据状态(已弃用)，使用HZ_APPROVE_STATUS |
-| WFID | BIGINT | 流程ID |
-| WFFLAG | BIGINT | 流程标识 |
-| ORGANIZATION_ID | BIGINT | 组织ID(租户ID) |
-| PROJECT_ID | BIGINT | 项目ID(关联项目档案) |
-| PROJECT_CODE | VARCHAR | 项目编码(自动生成) |
-| PROJECT_NAME | VARCHAR | 项目名称 |
-| REL_PROJECT_ID | BIGINT | 关联战略项目ID |
-| REL_PROJECT_CODE | VARCHAR | 关联战略项目编码 |
-| REL_PROJECT_NAME | VARCHAR | 关联战略项目名称 |
-| PROJECT_SOURCE | VARCHAR | 项目来源(1=常规工程，2=战略工程) |
-| REPORT_TIME | DATETIME | 报备时间 |
-| REPORT_TYPE | BIGINT | 报备类型(**2=战略报备**) |
-| STAGE_ID | BIGINT | 项目进度阶段ID |
-| STAGE_DESC | VARCHAR | 项目进度描述 |
-| STAGE_NAME | VARCHAR | 项目进度阶段名称 |
-| STAGE_NOTE | VARCHAR | 项目进度阶段备注 |
-| PROJECT_TYPE | VARCHAR | 项目类型/业主类型 |
-| PROVINCE_ID | BIGINT | 省ID |
-| PROVINCE_NAME | VARCHAR | 省名称 |
-| CITY_ID | BIGINT | 市ID |
-| CITY_NAME | VARCHAR | 市名称 |
-| AREA_ID | BIGINT | 区县ID |
-| AREA_NAME | VARCHAR | 区县名称 |
-| ADDRESS | VARCHAR | 详细地址 |
-| DIVISION_ID | BIGINT | 所属事业部ID |
-| DIVISION_NAME | VARCHAR | 所属事业部名称 |
-| CUSTOMER_ID | BIGINT | 客户/经销商ID |
-| CUSTOMER_CODE | VARCHAR | 客户编码 |
-| CUSTOMER_NAME | VARCHAR | 客户名称 |
-| TRADING_COMPANY_ID | BIGINT | 交易公司ID |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 |
-| PARTY_A_ID | BIGINT | 甲方客户ID |
-| PARTY_A_NAME | VARCHAR | 甲方名称 |
-| PARTY_A_LINK_PERSON | VARCHAR | 甲方联系人 |
-| PARTY_A_PHONE | VARCHAR | 甲方联系电话 |
-| PARTY_B_ID | BIGINT | 乙方客户ID |
-| PARTY_B_NAME | VARCHAR | 乙方名称 |
-| PARTY_B_LINK_PERSON | VARCHAR | 乙方联系人 |
-| PARTY_B_PHONE | VARCHAR | 乙方联系电话 |
-| DEALER_FOLLOWER | VARCHAR | 经销商现场跟进人 |
-| DEALER_FOLLOWER_PHONE | VARCHAR | 经销商现场跟进人电话 |
-| OWN_FOLLOWER | VARCHAR | 公司现场跟进人 |
-| OWN_FOLLOWER_PHONE | VARCHAR | 公司现场跟进人电话 |
-| IS_LOCAL | BIGINT | 本地/异地(1=异地，2=本地，3=本地特约) |
-| OPERATING_MODE | BIGINT | 管理类型(1=经销商操作，2=公司自营) |
-| PDT_LINE | BIGINT | 产品线 |
-| PREDICT_SIGN_DATE | DATETIME | 预计签订日期 |
-| PREDICT_SALES_AMOUNT | DECIMAL | 预计销售收入(元) |
-| BACKGROUND | BIGINT | 背景关系 |
-| PREDICT_PROJ_QTY | VARCHAR | 预估生成单体项目数量 |
-| PREDICT_PDT_QTY | VARCHAR | 预估产品用量 |
-| INTENT_PRODUCT | VARCHAR | 工程意向产品 |
-| COMPETITIVE_BRAND | VARCHAR | 竞争品牌 |
-| COMPETITOR | VARCHAR | 竞争对手 |
-| SITE_AREA | DECIMAL | 工程建筑面积 |
-| CONSTRUCTION_STAGE | VARCHAR | 工程施工阶段 |
-| COMPLETION_DATE | DATETIME | 完工日期 |
-| AGENT | VARCHAR | 经办人 |
-| AGENT_PHONE | VARCHAR | 经办人电话 |
-| NEED_SAMPLE | VARCHAR | 产品送样(是否) |
-| NEED_QUOTE | VARCHAR | 产品报价(是否) |
-| AUDITOR | VARCHAR | 审核人 |
-| AUDITTIME | DATETIME | 审核时间 |
-| MANAGER | VARCHAR | 项目经理 |
-| STRATEGIC_STAGE | VARCHAR | 战略对接阶段 |
-| BELONG_TO | BIGINT | 工程操作性质 |
-| NEED_DEPOSIT | BIGINT | 是否同意缴纳保证金(1=同意，2=不同意) |
-| IS_FOREIGN | VARCHAR | 是否海外 |
-| AREA_FULL_NAME | VARCHAR | 行政区域全名 |
-| IS_INIT | BIGINT | 为2时表示初始化产生的数据 |
-| AGENT_OPINION | VARCHAR | 经办人意见 |
-| EXT_PROJECT_ID | VARCHAR | 外部系统项目ID |
-| AUDIT_STAT | VARCHAR | 审核状态(新建/一次报备提交/一次报备通过/一次报备拒绝/二次报备提交/二次报备通过/二次报备拒绝) |
-| DEPOSIT_AMOUNT | DECIMAL | 保证金金额 |
-| DEPOSIT_NOTE | VARCHAR | 保证金备注 |
-| REMOTE_SHARED | BIGINT | 2=启用异地划分 |
-| TASK_SHARED_RATE | DECIMAL | 任务划分比例 |
-| SERVICE_FEE_SHARED_RATE | DECIMAL | 售后服务金划分比例 |
-| COOPERATION_AREA | VARCHAR | 合作区域 |
-| STRAC_COOP_INV_REGION | VARCHAR | 战略合作范围涉及区域 |
-| DUPLICATE_REPORTING | VARCHAR | 查重拦截标记(Y=重复申报，N=正常) |
-| LONGITUDE | DECIMAL | 经度 |
-| LATITUDE | DECIMAL | 纬度 |
-| ES_PUSH_STATUS | VARCHAR | ES推送状态(never_push/pending_push/push_success/push_fail/pending_del) |
-| LANDMARK_FLAG | VARCHAR | 是否地标建筑(默认N) |
-| PROJECT_CATEGORY | VARCHAR | 项目分类(normal=标准项目，small=小型项目) |
-| HZ_INSTANCE_ID | BIGINT | H0流程实例ID |
-| HZ_APPROVE_STATUS | VARCHAR | H0流程审批状态 |
-| IS_APPEAL_SUBMIT | VARCHAR | 是否申诉提交 |
-| CALLBACK_SOURCE | VARCHAR | 外部审批回调来源 |
-| BUSINESS_UNIT_TYPE | VARCHAR | 业务单元类型(权限控制) |
-| CREATION_DATE | DATETIME | 创建时间 |
-| CREATED_BY | BIGINT | 创建人ID |
-| LAST_UPDATE_DATE | DATETIME | 最后更新时间 |
-| LAST_UPDATED%BY | BIGINT | 最后更新人ID |
-| OBJECT_VERSION_NUMBER | BIGINT | 乐观锁版本号 |
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>经销商主数据(CUSTOMER_ORG)</td><td>数据依赖</td><td>报备关联经销商，经销商授权分配</td><td>经销商存在且DISABLED_FLAG=0</td></tr>
+<tr><td>交易公司(EPM_TRADING_COMPANY)</td><td>数据依赖</td><td>报备选择交易公司</td><td>交易公司存在且维护了事业部关联</td></tr>
+<tr><td>事业部(DIVISION)</td><td>数据依赖</td><td>报备所属事业部</td><td>当前用户归属事业部有效</td></tr>
+<tr><td>行政区域</td><td>数据依赖</td><td>报备项目地址省/市/区</td><td>区域非禁用区域</td></tr>
+<tr><td>值集配置</td><td>数据依赖</td><td>业主类型、产品线、背景关系等值集</td><td>值集已配置</td></tr>
+<tr><td>OA系统</td><td>流程依赖</td><td>报备提交走OA审批</td><td>OA_BILL_REF中维护表单对应关系</td></tr>
+<tr><td>工作流引擎</td><td>流程依赖</td><td>报备提交触发工作流</td><td>工作流编码PROJECT_ZLBB已配置</td></tr>
+<tr><td>编码规则引擎</td><td>数据依赖</td><td>自动生成项目编码</td><td>编码规则PROJECT_CODE已配置</td></tr>
+<tr><td>公司参数(SYS_PARAM)</td><td>数据依赖</td><td>项目有效周期计算</td><td>Proj_Effective_Cycle参数已配置</td></tr>
+<tr><td>CRM系统</td><td>接口依赖</td><td>审核通过推送项目报备</td><td>CRM推送接口可用</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="EPM_REPORT_AUTH（项目报备经销商授权表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| ID | BIGINT | 主键ID |
-| REPORT_ID | BIGINT | 报备ID(关联EPM_REPORT) |
-| CUSTOMER_ID | BIGINT | 经销商ID |
-| CUSTOMER_CODE | VARCHAR | 经销商编码 |
-| CUSTOMER_NAME | VARCHAR | 经销商名称 |
-| IS_INIT | BIGINT | 为2时表示初始化产生的数据 |
-| DISABLED | BIGINT | 2=禁用 |
-| CONTACT | VARCHAR | 经办人 |
-| TELE |/VARCHAR | 经办人电话 |
-| EXT_PROJECT_ID | VARCHAR | 外部系统项目ID |
-| EXT_CUSTOMER_ID | VARCHAR | 外部系统客户ID |
-
+<KbCard title="下游影响">
+<ul><li><strong>项目档案(EPM_PROJECT)</strong>：一次报备审核通过后生成项目记录，二次报备通过后更新项目字段</li><li><strong>项目授权(EPM_PROJECT_AUTH)</strong>：审核通过后从报备经销商授权转为项目授权</li><li><strong>项目乙方信息</strong>：审核通过后生成项目乙方信息记录</li><li><strong>合同</strong>：项目档案生成后可关联创建工程合同</li><li><strong>折扣政策</strong>：项目档案生成后可关联创建折扣政策</li><li><strong>CRM系统</strong>：审核通过后推送项目报备数据至CRM</li><li><strong>项目透视</strong>：项目档案可供项目透视查询</li></ul>
 </KbCard>
 
-<KbCard num="3" title="EPM_REPORT_AUTH_BRANCH（经销商网点信息表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| PK*PK_ID | BIGINT | 主键 |
-| REPORT_ID | BIGINT | 报备ID(关联EPM_REPORT) |
-| REL_CUSTOMER_CODE | VARCHAR | 对应经销商编码 |
-| BRANCH_MESSAGE_ID | BIGINT | 网点ID |
-| DISABLED | BIGINT | 2=禁用 |
-
+<KbCard title="EPM_REPORT（项目报备主表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>REPORT_ID</td><td>BIGINT</td><td>报备ID，主键</td><td>报备ID</td><td>系统自动生成</td></tr>
+<tr><td>REPORT_TIMES</td><td>BIGINT</td><td>报备次数</td><td>报备次数</td><td>1=一次报备, 2=二次报备</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>BIGINT</td><td>组织ID</td><td>-</td><td>系统自动填充</td></tr>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>项目ID</td><td>-</td><td>审核通过后关联项目档案</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>项目编码</td><td>项目编码</td><td>编码规则引擎自动生成</td></tr>
+<tr><td>PROJECT_NAME</td><td>VARCHAR</td><td>项目名称</td><td>项目名称</td><td>手动输入，必填</td></tr>
+<tr><td>REL_PROJECT_ID</td><td>BIGINT</td><td>关联战略项目ID</td><td>-</td><td>单体报备关联战略时使用</td></tr>
+<tr><td>PROJECT_SOURCE</td><td>VARCHAR</td><td>项目来源</td><td>工程类型</td><td>1=常规工程, 2=战略工程</td></tr>
+<tr><td>REPORT_TIME</td><td>DATETIME</td><td>报备时间</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>REPORT_TYPE</td><td>BIGINT</td><td>报备类型</td><td>-</td><td>固定值2(战略报备)</td></tr>
+<tr><td>STAGE_ID</td><td>BIGINT</td><td>项目进度阶段ID</td><td>项目进度阶段</td><td>选择弹窗回写</td></tr>
+<tr><td>STAGE_NAME</td><td>VARCHAR</td><td>项目进度阶段名称</td><td>项目进度阶段</td><td>选择弹窗回写</td></tr>
+<tr><td>PROJECT_TYPE</td><td>VARCHAR</td><td>业主类型</td><td>业主类型</td><td>值集epm.project_type</td></tr>
+<tr><td>PROVINCE_ID</td><td>BIGINT</td><td>省ID</td><td>省</td><td>级联选择回写，必填</td></tr>
+<tr><td>CITY_ID</td><td>BIGINT</td><td>市ID</td><td>市</td><td>级联选择回写，必填</td></tr>
+<tr><td>AREA_ID</td><td>BIGINT</td><td>区县ID</td><td>区</td><td>级联选择回写，必填</td></tr>
+<tr><td>ADDRESS</td><td>VARCHAR</td><td>详细地址</td><td>详细地址</td><td>手动输入，必填</td></tr>
+<tr><td>DIVISION_ID</td><td>BIGINT</td><td>所属事业部ID</td><td>所属事业部</td><td>系统自动带出</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>客户/经销商ID</td><td>客户编码</td><td>选择弹窗回写，必填</td></tr>
+<tr><td>CUSTOMER_CODE</td><td>VARCHAR</td><td>客户编码</td><td>客户编码</td><td>选择弹窗回写</td></tr>
+<tr><td>TRADING_COMPANY_ID</td><td>BIGINT</td><td>交易公司ID</td><td>交易公司</td><td>选择弹窗回写，必填</td></tr>
+<tr><td>PARTY_A_NAME</td><td>VARCHAR</td><td>甲方名称</td><td>甲方名称</td><td>手动输入，必填</td></tr>
+<tr><td>PARTY_A_LINK_PERSON</td><td>VARCHAR</td><td>甲方联系人</td><td>甲方联系人</td><td>手动输入，必填</td></tr>
+<tr><td>PARTY_A_PHONE</td><td>VARCHAR</td><td>甲方电话</td><td>甲方电话</td><td>手动输入，必填</td></tr>
+<tr><td>PARTY_B_NAME</td><td>VARCHAR</td><td>乙方名称</td><td>乙方名称</td><td>手动输入，必填</td></tr>
+<tr><td>PARTY_B_LINK_PERSON</td><td>VARCHAR</td><td>乙方联系人</td><td>乙方联系人</td><td>手动输入，必填</td></tr>
+<tr><td>PARTY_B_PHONE</td><td>VARCHAR</td><td>乙方电话</td><td>乙方电话</td><td>手动输入，必填</td></tr>
+<tr><td>DEALER_FOLLOWER</td><td>VARCHAR</td><td>经销商现场跟进人</td><td>经销商现场跟进人</td><td>手动输入</td></tr>
+<tr><td>OWN_FOLLOWER</td><td>VARCHAR</td><td>公司现场跟进人</td><td>公司现场跟进人</td><td>手动输入</td></tr>
+<tr><td>IS_LOCAL</td><td>BIGINT</td><td>本地/异地</td><td>本地/异地</td><td>1=异地, 2=本地, 3=本地特约，必填</td></tr>
+<tr><td>OPERATING_MODE</td><td>BIGINT</td><td>管理类型</td><td>管理类型</td><td>1=经销商操作, 2=公司自营</td></tr>
+<tr><td>PDT_LINE</td><td>BIGINT</td><td>产品线</td><td>产品线</td><td>值集配置，必填</td></tr>
+<tr><td>PREDICT_SIGN_DATE</td><td>DATETIME</td><td>预计签订日期</td><td>预计签订日期</td><td>手动选择</td></tr>
+<tr><td>PREDICT_SALES_AMOUNT</td><td>DECIMAL</td><td>预计销售收入</td><td>预计销售收入</td><td>手动输入，必填</td></tr>
+<tr><td>BACKGROUND</td><td>BIGINT</td><td>背景关系</td><td>背景关系</td><td>值集配置，必填</td></tr>
+<tr><td>PREDICT_PROJ_QTY</td><td>VARCHAR</td><td>预估项目数量</td><td>预估项目数量</td><td>手动输入</td></tr>
+<tr><td>PREDICT_PDT_QTY</td><td>VARCHAR</td><td>预估产品用量</td><td>预估产品用量</td><td>手动输入，必填</td></tr>
+<tr><td>INTENT_PRODUCT</td><td>VARCHAR</td><td>工程意向产品</td><td>工程意向产品</td><td>手动输入，必填</td></tr>
+<tr><td>COMPETITIVE_BRAND</td><td>VARCHAR</td><td>竞争品牌</td><td>竞争品牌</td><td>手动输入</td></tr>
+<tr><td>COMPETITOR</td><td>VARCHAR</td><td>竞争对手</td><td>竞争对手</td><td>手动输入，必填</td></tr>
+<tr><td>SITE_AREA</td><td>DECIMAL</td><td>工程建筑面积</td><td>工程建筑面积</td><td>手动输入</td></tr>
+<tr><td>CONSTRUCTION_STAGE</td><td>VARCHAR</td><td>工程施工阶段</td><td>工程施工阶段</td><td>手动输入，必填</td></tr>
+<tr><td>COMPLETION_DATE</td><td>DATETIME</td><td>完工日期</td><td>完工日期</td><td>手动选择，必填</td></tr>
+<tr><td>AGENT</td><td>VARCHAR</td><td>经办人</td><td>经办人</td><td>系统自动带出</td></tr>
+<tr><td>NEED_SAMPLE</td><td>VARCHAR</td><td>产品送样</td><td>产品送样</td><td>Y/N，必填</td></tr>
+<tr><td>NEED_QUOTE</td><td>VARCHAR</td><td>产品报价</td><td>产品报价</td><td>Y/N，必填</td></tr>
+<tr><td>MANAGER</td><td>VARCHAR</td><td>项目经理</td><td>项目经理</td><td>手动输入</td></tr>
+<tr><td>EMPID</td><td>VARCHAR</td><td>项目经理工号</td><td>项目经理工号</td><td>手动输入</td></tr>
+<tr><td>STRATEGIC_STAGE</td><td>VARCHAR</td><td>战略对接阶段</td><td>战略对接阶段</td><td>手动输入</td></tr>
+<tr><td>NEED_DEPOSIT</td><td>BIGINT</td><td>缴纳保证金</td><td>缴纳保证金</td><td>1=同意, 2=不同意，必填</td></tr>
+<tr><td>DEPOSIT_AMOUNT</td><td>DECIMAL</td><td>保证金金额</td><td>保证金金额</td><td>needDeposit=1时填写</td></tr>
+<tr><td>DEPOSIT_NOTE</td><td>VARCHAR</td><td>保证金备注</td><td>保证金备注</td><td>needDeposit=1时填写</td></tr>
+<tr><td>IS_FOREIGN</td><td>VARCHAR</td><td>是否海外</td><td>海外</td><td>Y/N</td></tr>
+<tr><td>TASK_SHARED_RATE</td><td>DECIMAL</td><td>任务划分比例</td><td>任务划分比例</td><td>手动输入</td></tr>
+<tr><td>SERVICE_FEE_SHARED_RATE</td><td>DECIMAL</td><td>售后服务金划分比例</td><td>售后服务金划分比例</td><td>手动输入</td></tr>
+<tr><td>COOPERATION_AREA</td><td>VARCHAR</td><td>合作区域</td><td>合作区域</td><td>手动输入</td></tr>
+<tr><td>STRAC_COOP_INV_REGION</td><td>VARCHAR</td><td>战略合作范围涉及区域</td><td>战略合作范围涉及区域</td><td>手动输入</td></tr>
+<tr><td>DUPLICATE_REPORTING</td><td>VARCHAR</td><td>查重拦截标记</td><td>查重拦截标记</td><td>Y=重复申报, N=正常</td></tr>
+<tr><td>LONGITUDE</td><td>DECIMAL</td><td>经度</td><td>经度</td><td>地图选点回写</td></tr>
+<tr><td>LATITUDE</td><td>DECIMAL</td><td>纬度</td><td>纬度</td><td>地图选点回写</td></tr>
+<tr><td>LANDMARK_FLAG</td><td>VARCHAR</td><td>地标建筑</td><td>地标建筑</td><td>Y/N，默认N</td></tr>
+<tr><td>PROJECT_CATEGORY</td><td>VARCHAR</td><td>项目分类</td><td>项目分类</td><td>normal=标准项目, small=小型项目</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>BIGINT</td><td>H0流程实例ID</td><td>-</td><td>工作流引擎回写</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>H0流程审批状态</td><td>审批状态</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>AUDIT_STAT</td><td>VARCHAR</td><td>审核状态</td><td>-</td><td>新建/一次报备提交/一次报备通过/一次报备拒绝/二次报备提交/二次报备通过/二次报备拒绝</td></tr>
+<tr><td>CREATION_DATE</td><td>DATETIME</td><td>创建时间</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>CREATED_BY</td><td>BIGINT</td><td>创建人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATETIME</td><td>最后更新时间</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>BIGINT</td><td>最后更新人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>BIGINT</td><td>乐观锁版本号</td><td>-</td><td>系统自动维护</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="4" title="EPM_REPORT_PARTYB（项目报备乙方信息表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| PK_ID | BIGINT | 主键 |
-| REPORT_ID | BIGINT | 主表ID(关联EPM_REPORT) |
-| SEQ | BIGINT | 序号 |
-| PARTYB_NAME | VARCHAR | 乙方名称 |
-| PARTYB_LINK_PERSON | VARCHAR | 乙方联系人 |
-| PARTYB_PHONE | VARCHAR | 乙方联系电话 |
-
+<KbCard title="EPM_REPORT_AUTH（项目报备经销商授权表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>系统自动生成</td></tr>
+<tr><td>REPORT_ID</td><td>BIGINT</td><td>报备ID</td><td>-</td><td>关联EPM_REPORT</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>经销商ID</td><td>经销商ID</td><td>选择经销商弹窗回写</td></tr>
+<tr><td>CUSTOMER_CODE</td><td>VARCHAR</td><td>经销商编码</td><td>经销商编码</td><td>选择经销商弹窗回写</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>经销商名称</td><td>选择经销商弹窗回写</td></tr>
+<tr><td>CONTACT</td><td>VARCHAR</td><td>经办人</td><td>经办人</td><td>手动输入</td></tr>
+<tr><td>TELE</td><td>VARCHAR</td><td>经办人电话</td><td>经办人电话</td><td>手动输入</td></tr>
+<tr><td>DISABLED</td><td>BIGINT</td><td>禁用标记</td><td>-</td><td>2=禁用</td></tr>
+<tr><td>IS_INIT</td><td>BIGINT</td><td>初始化标记</td><td>-</td><td>2=初始化产生</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="5" title="EPM_PROJECT（项目档案表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| PROJECT_ID | BIGINT | 项目ID，主键 |
-| PROJECT_CODE | VARCHAR | 项目编码 |
-| PROJECT_NAME | VARCHAR | 项目名称 |
-| REPORT_ID | BIGINT | 报备ID(关联EPM_REPORT) |
-| REPORT_TYPE | BIGINT | 报备类型(2=战略报备) |
-| REPORT_TIMES | BIGINT | 报备次数 |
-) | HZ_APPROVE_STATUS | VARCHAR | 流程审批状态 |
-| PROJECT_VALID | BIGINT | 有效状态(2=有效，4=已冻结) |
-| VALID_START_DATE | DATETIME | 有效起始日期 |
-| VALID_END_DATE | DATETIME | 有效结束日期 |
-| FREEZE_TYPE | BIGINT | 冻结类型(0=未冻结，1=有效期内未签合同，2=进度更新超时，4=有效期内已签合同) |
-| (其余字段同EPM_REPORT) | | �!报备审核通过时从EPM_REPORT复制 |
-
+<KbCard title="EPM_REPORT_AUTH_BRANCH（经销商网点信息表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PK_ID</td><td>BIGINT</td><td>主键</td><td>-</td><td>系统自动生成</td></tr>
+<tr><td>REPORT_ID</td><td>BIGINT</td><td>报备ID</td><td>-</td><td>关联EPM_REPORT</td></tr>
+<tr><td>REL_CUSTOMER_CODE</td><td>VARCHAR</td><td>对应经销商编码</td><td>对应经销商编码</td><td>关联经销商授权行</td></tr>
+<tr><td>BRANCH_MESSAGE_ID</td><td>BIGINT</td><td>网点ID</td><td>网点ID</td><td>选择网点弹窗回写</td></tr>
+<tr><td>DISABLED</td><td>BIGINT</td><td>禁用标记</td><td>-</td><td>2=禁用</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="6" title="EPM_PROJECT_AUTH（项目授权表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| PK_ID | BIGINT | 主键 |
-| PROJECT_ID | BIGINT | 项目ID(关联EPM_PROJECT) |
-| CUSTOMER_ID | BIGINT | 经销商ID |
-| CUSTOMER_CODE | VARCHAR | 经-经销商编码 |
-| CUSTOMER_NAME | VARCHAR | 经销商名称 |
-
+<KbCard title="EPM_REPORT_PARTYB（项目报备乙方信息表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PK_ID</td><td>BIGINT</td><td>主键</td><td>-</td><td>系统自动生成</td></tr>
+<tr><td>REPORT_ID</td><td>BIGINT</td><td>报备ID</td><td>-</td><td>关联EPM_REPORT</td></tr>
+<tr><td>SEQ</td><td>BIGINT</td><td>序号</td><td>-</td><td>系统自动生成</td></tr>
+<tr><td>PARTYB_NAME</td><td>VARCHAR</td><td>乙方名称</td><td>乙方名称</td><td>手动输入</td></tr>
+<tr><td>PARTYB_LINK_PERSON</td><td>VARCHAR</td><td>乙方联系人</td><td>乙方联系人</td><td>手动输入</td></tr>
+<tr><td>PARTYB_PHONE</td><td>VARCHAR</td><td>乙方联系电话</td><td>乙方电话</td><td>手动输入</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="7" title="OA_BILL_REF（OA表单对应关系表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| ID | BIGINT | 主键 |
-| BILLNAME | VARCHAR | 单据名称(战略项目报备一次/战略项目报备二次) |
-| OABILLID | VARCHAR | OA表单ID |
-
+<KbCard title="EPM_PROJECT（项目档案表 - 报备审核通过生成）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>项目ID，主键</td><td>-</td><td>审核通过后自动生成</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>项目编码</td><td>-</td><td>从EPM_REPORT复制</td></tr>
+<tr><td>PROJECT_NAME</td><td>VARCHAR</td><td>项目名称</td><td>-</td><td>从EPM_REPORT复制</td></tr>
+<tr><td>REPORT_ID</td><td>BIGINT</td><td>报备ID</td><td>-</td><td>关联EPM_REPORT</td></tr>
+<tr><td>REPORT_TYPE</td><td>BIGINT</td><td>报备类型</td><td>-</td><td>2=战略报备</td></tr>
+<tr><td>REPORT_TIMES</td><td>BIGINT</td><td>报备次数</td><td>-</td><td>从EPM_REPORT复制</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>审批状态</td><td>-</td><td>从EPM_REPORT复制</td></tr>
+<tr><td>PROJECT_VALID</td><td>BIGINT</td><td>有效状态</td><td>-</td><td>2=有效, 3=失效, 4=冻结</td></tr>
+<tr><td>VALID_START_DATE</td><td>DATETIME</td><td>有效起始日期</td><td>-</td><td>审核通过时设置</td></tr>
+<tr><td>VALID_END_DATE</td><td>DATETIME</td><td>有效结束日期</td><td>-</td><td>基于Proj_Effective_Cycle计算</td></tr>
+<tr><td>FREEZE_TYPE</td><td>BIGINT</td><td>冻结类型</td><td>-</td><td>0=未冻结, 1=未签合同, 2=进度超时, 4=已签合同</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="8" title="EPM_REPORT_APPEAL_CONFIG（报备申诉次数配置表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| ID | BIGINT | 主键 |
-| CUSTOMER_ID | BIGINT | 经销商ID |
-| APPEAL_YEAR | BIGINT | 申诉年份 |
-| APPEAL_MONTH | BIGINT | 申诉月份 |
-| APPEAL_NUM | BIGINT | 可申诉次数 |
-| APPEAL_NUM_TMP | BIGINT | 临时追加申诉次数 |
-
+<KbCard title="EPM_PROJECT_AUTH（项目授权表 - 报备审核通过生成）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PK_ID</td><td>BIGINT</td><td>主键</td><td>-</td><td>系统自动生成</td></tr>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>项目ID</td><td>-</td><td>关联EPM_PROJECT</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>经销商ID</td><td>-</td><td>从EPM_REPORT_AUTH转换</td></tr>
+<tr><td>CUSTOMER_CODE</td><td>VARCHAR</td><td>经销商编码</td><td>-</td><td>从EPM_REPORT_AUTH转换</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>-</td><td>从EPM_REPORT_AUTH转换</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="9" title="EPM_REPORT_INTERCEPT_HEAD（报备查重拦截头表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| ID | BIGINT | 主键 |
-| REPORT_ID | BIGINT | 报备ID |
-| CUSTOMER_ID | BIGINT | 经销商ID |
-| INTERCEPT_DATE | DATETIME | 拦截日期 |
-| APPEALER | VARCHAR | 申诉人 |
-| APPEAL_DATE | DATETIME | 申诉日期 |
-| APPEAL_PROJECT_NAME | VARCHAR | 申诉项目名称 |
-| APPEAL_ADDRESS | VARCHAR | 申诉项目地址 |
-
----
-
+<KbCard title="OA_BILL_REF（OA表单对应关系表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>BIGINT</td><td>主键</td><td>-</td><td>系统自动生成</td></tr>
+<tr><td>BILLNAME</td><td>VARCHAR</td><td>单据名称</td><td>-</td><td>"战略项目报备一次"/"战略项目报备二次"</td></tr>
+<tr><td>OABILLID</td><td>VARCHAR</td><td>OA表单ID</td><td>-</td><td>OA系统配置</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="EPM_REPORT_APPEAL_CONFIG（报备申诉次数配置表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>BIGINT</td><td>主键</td><td>-</td><td>系统自动生成</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>经销商ID</td><td>-</td><td>按经销商配置申诉次数</td></tr>
+<tr><td>APPEAL_YEAR</td><td>BIGINT</td><td>申诉年份</td><td>-</td><td>按年配置</td></tr>
+<tr><td>APPEAL_MONTH</td><td>BIGINT</td><td>申诉月份</td><td>-</td><td>按月配置</td></tr>
+<tr><td>APPEAL_NUM</td><td>BIGINT</td><td>可申诉次数</td><td>-</td><td>基础申诉次数</td></tr>
+<tr><td>APPEAL_NUM_TMP</td><td>BIGINT</td><td>临时追加次数</td><td>-</td><td>临时追加的申诉次数</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="EPM_REPORT_INTERCEPT_HEAD（报备查重拦截头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>BIGINT</td><td>主键</td><td>-</td><td>系统自动生成</td></tr>
+<tr><td>REPORT_ID</td><td>BIGINT</td><td>报备ID</td><td>-</td><td>关联EPM_REPORT</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>经销商ID</td><td>-</td><td>拦截关联经销商</td></tr>
+<tr><td>INTERCEPT_DATE</td><td>DATETIME</td><td>拦截日期</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>APPEALER</td><td>VARCHAR</td><td>申诉人</td><td>-</td><td>申诉时记录</td></tr>
+<tr><td>APPEAL_DATE</td><td>DATETIME</td><td>申诉日期</td><td>-</td><td>申诉时记录</td></tr>
+<tr><td>APPEAL_PROJECT_NAME</td><td>VARCHAR</td><td>申诉项目名称</td><td>-</td><td>申诉时记录</td></tr>
+<tr><td>APPEAL_ADDRESS</td><td>VARCHAR</td><td>申诉项目地址</td><td>-</td><td>申诉时记录</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="查询SQL">
+<pre class="detail-sql" v-pre><code>-- 查询战略项目报备列表
+SELECT * FROM EPM_REPORT
+WHERE REPORT_TYPE = 2
+  AND ORGANIZATION_ID = #{organizationId}
+ORDER BY REPORT_ID DESC;
+
+-- 查询报备经销商授权
+SELECT * FROM EPM_REPORT_AUTH
+WHERE REPORT_ID = #{reportId}
+  AND DISABLED != 2;
+
+-- 查询报备网点信息
+SELECT * FROM EPM_REPORT_AUTH_BRANCH
+WHERE REPORT_ID = #{reportId}
+  AND DISABLED != 2;
+
+-- 查询在途二次报备
+SELECT * FROM EPM_REPORT
+WHERE PROJECT_CODE = #{projectCode}
+  AND REPORT_TIMES = 2
+  AND HZ_APPROVE_STATUS = 'APPROVED';
+
+-- 查询本月申诉次数
+SELECT COUNT(1) FROM EPM_REPORT_INTERCEPT_HEAD
+WHERE CUSTOMER_ID = #{customerId}
+  AND INTERCEPT_DATE BETWEEN #{startDate} AND #{endDate};</code></pre>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>参数不能为空</td><td>保存时</td><td>必填参数缺失，补全必填参数后重新保存</td><td>高</td><td>saveData中validObject校验</td></tr>
+<tr><td>项目名称不能为空</td><td>保存时</td><td>projectName为空，补填项目名称</td><td>高</td><td>saveData必填校验</td></tr>
+<tr><td>未找到经销商ID</td><td>保存时</td><td>根据projectId未查到经销商，先维护经销商信息</td><td>高</td><td>saveData经销商校验</td></tr>
+<tr><td>工程类型不能为空</td><td>保存时</td><td>projectSource为空，选择工程类型</td><td>高</td><td>saveData必填校验</td></tr>
+<tr><td>交易公司id必须大于0</td><td>保存时</td><td>tradingCompanyId&lt;=0，检查前端传参</td><td>高</td><td>saveData交易公司校验</td></tr>
+<tr><td>&#123;tradingCompany&#125;交易公司未维护事业部关联关系</td><td>保存时</td><td>交易公司未关联事业部，先维护DIVISION_TRADING_REL</td><td>高</td><td>saveData事业部关联校验</td></tr>
+<tr><td>当前区域为禁用区域</td><td>保存时</td><td>报备区域在DISABLED_AREA_CONFIG中，更换区域</td><td>高</td><td>saveData禁用区域校验</td></tr>
+<tr><td>报备信息不存在</td><td>编辑保存时</td><td>报备ID对应记录不存在，检查REPORT_ID</td><td>高</td><td>saveData编辑校验</td></tr>
+<tr><td>该战略工程涉及经销商服务，请分配具体经销商</td><td>二次报备提交时</td><td>管理类型为经销商操作/公司自营但未分配经销商，先分配经销商</td><td>高</td><td>workFlowStartVolidate校验</td></tr>
+<tr><td>请先维护EPMS单据和OA表单对应关系表</td><td>提交时</td><td>OA_BILL_REF中缺少表单配置，维护OA表单对应关系</td><td>高</td><td>提交时OA对应关系校验</td></tr>
+<tr><td>非重复申报，不能申诉</td><td>申诉时</td><td>DUPLICATE_REPORTING不为Y，仅重复申报可申诉</td><td>中</td><td>appeal校验</td></tr>
+<tr><td>本月申诉次数已到达限制:&#123;n&#125;次</td><td>申诉时</td><td>本月申诉次数超限，下月再申诉或申请追加次数</td><td>中</td><td>appeal申诉次数校验</td></tr>
+<tr><td>项目【&#123;code&#125;】已二次报备，请选择其他项目</td><td>发起二次报备时</td><td>该项目已有审核通过的二次报备，选择其他项目</td><td>高</td><td>二次报备前校验</td></tr>
+<tr><td>请配置&#123;orgId&#125;公司参数'Proj_Effective_Cycle'</td><td>审核通过时</td><td>未配置项目有效周期参数，配置SYS_PARAM</td><td>高</td><td>审核回调校验</td></tr>
+<tr><td>经销商可报备数量剩余&#123;n&#125;条</td><td>提交时</td><td>经销商可报备数量不足，检查ReportCustomerApplyNum配置</td><td>中</td><td>提交时可报备数量校验</td></tr>
+<tr><td>战略项目报备一次OA回调处理异常</td><td>OA回调时</td><td>OA一次审批回调处理异常，检查OA回调参数及报备数据</td><td>高</td><td>doStrategicProjectResp异常</td></tr>
+<tr><td>战略项目报备二次OA回调处理异常</td><td>OA回调时</td><td>OA二次审批回调异常，检查OA回调参数及报备数据</td><td>高</td><td>doStrategicProjectResp异常</td></tr>
+<tr><td>存在不为新建状态的数据,不可删除</td><td>删除时</td><td>选中的数据中有非新建状态，仅新建状态可删除</td><td>中</td><td>删除前状态校验</td></tr>
+<tr><td>请先维护经纬度再查询</td><td>查询周边项目时</td><td>经纬度为空，先维护经纬度</td><td>低</td><td>queryNearbyProject校验</td></tr>
+<tr><td>项目【&#123;code&#125;】已二次报备，但尚未启动流程</td><td>发起二次报备时</td><td>该项目已有二次报备记录但流程未启动，等待流程启动或选择其他项目</td><td>高</td><td>二次报备前校验HZ_APPROVE_STATUS非APPROVED</td></tr>
+<tr><td>ID不能为空</td><td>OA回调时</td><td>OA回调时ID参数为空或&lt;=0，检查OA回调配置</td><td>高</td><td>doProcessOA校验id非空</td></tr>
+<tr><td>报备数据不存在！</td><td>OA回调时</td><td>根据ID查询EPM_REPORT无数据，检查报备是否被删除</td><td>高</td><td>doProcessOA中selectByPrimaryKey返回null</td></tr>
+<tr><td>没有找到项目报备信息！</td><td>ES查重时</td><td>根据reportId查询报备无数据，检查报备数据</td><td>高</td><td>getRepetitionReport中selectByPrimaryKey返回null</td></tr>
+<tr><td>未找到报备信息</td><td>查询详情时</td><td>根据查询条件无报备数据，检查查询参数</td><td>高</td><td>getHomeDecorationReportDetail查询为空</td></tr>
+<tr><td>项目报备不允许取消归档</td><td>取消归档时</td><td>报备不支持取消归档操作</td><td>高</td><td>cancelArchive校验</td></tr>
+<tr><td>请通过申诉提交</td><td>提交时</td><td>报备被查重拦截(DUPLICATE_REPORTING=Y)，需通过申诉重新提交</td><td>高</td><td>提交时校验DUPLICATE_REPORTING</td></tr>
+<tr><td>请先配置报备的可申诉次数</td><td>申诉时</td><td>未配置申诉次数(SCPSYSCONF或EPM_REPORT_APPEAL_CONFIG)，先维护配置</td><td>高</td><td>appeal校验申诉次数配置</td></tr>
+<tr><td>申诉失败:&#123;msg&#125;</td><td>申诉时</td><td>申诉处理异常，检查申诉参数及报备数据</td><td>高</td><td>appeal异常try-catch</td></tr>
+<tr><td>OA回传单号不存在，请检查！</td><td>OA回调时</td><td>OA回调时根据ID查不到报备记录，可能数据被删除或ID传递错误</td><td>高</td><td>doProcessOA中selectByPrimaryKey返回null</td></tr>
+<tr><td>查询参数不能为空</td><td>查询时</td><td>查询参数为空，补全查询参数</td><td>高</td><td>查询方法校验参数非空</td></tr>
+<tr><td>主键不能为空!</td><td>查询详情时</td><td>详情查询时未传入主键ID</td><td>高</td><td>detail方法校验reportId为空</td></tr>
+<tr><td>操作数据不能为空</td><td>删除时</td><td>删除时未选择数据，先选择待删除数据</td><td>高</td><td>delete方法校验reportIdList非空</td></tr>
+<tr><td>&#123;tradingCompanyName&#125;交易公司不存在,请先维护!</td><td>保存时</td><td>交易公司在EPM_TRADING_COMPANY中不存在，先维护交易公司主数据</td><td>高</td><td>saveData交易公司存在性校验</td></tr>
+<tr><td>本月总可用申诉次数(&#123;totalNum&#125;次)小于等于已用申诉次数(&#123;usedNum&#125;次)，无法进行申诉</td><td>申诉时</td><td>本月可用申诉次数已用完，下月再申诉或申请追加次数</td><td>中</td><td>appeal校验可用次数&lt;=已用次数</td></tr>
+<tr><td>请先配置系统参数-经销商可报备数量:ReportCustomerApplyNum</td><td>提交时</td><td>未配置经销商可报备数量参数，先维护SCPSYSCONF配置</td><td>高</td><td>提交时校验ReportCustomerApplyNum配置</td></tr>
+<tr><td>当前事业部数据异常</td><td>保存时</td><td>当前用户所属事业部数据异常，检查事业部配置</td><td>高</td><td>saveData事业部校验</td></tr>
+</tbody>
+</table>
+<h4>报错1：参数不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，必填参数缺失</li><li><strong>逻辑分析</strong>：saveData方法中通过validObject校验DTO必填字段，缺失则抛出阻断性报错。需补全必填参数后重新保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_CODE, er.PROJECT_NAME, er.CUSTOMER_CODE,
+         er.TRADING_COMPANY_ID, er.PROJECT_SOURCE, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+  -- 检查关键字段是否完整</code></pre>
+<h4>报错2：项目名称不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，projectName为空</li><li><strong>逻辑分析</strong>：saveData方法中校验PROJECT_NAME非空，因项目名称为报备必填项。需补填项目名称</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_NAME
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND (er.PROJECT_NAME IS NULL OR TRIM(er.PROJECT_NAME) = '')</code></pre>
+<h4>报错3：未找到经销商ID</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，根据projectId未查到经销商</li><li><strong>逻辑分析</strong>：saveData方法中按PROJECT_ID查询经销商信息，若未查到则抛出阻断性报错。需先维护经销商信息</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.PROJECT_ID, er.CUSTOMER_ID, er.CUSTOMER_CODE, er.CUSTOMER_NAME
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND er.CUSTOMER_ID IS NULL</code></pre>
+<h4>报错4：工程类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，projectSource(工程类型)为空</li><li><strong>逻辑分析</strong>：saveData方法中校验PROJECT_SOURCE非空，因工程类型决定报备后续流程。需选择工程类型</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_SOURCE
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND er.PROJECT_SOURCE IS NULL</code></pre>
+<h4>报错5：交易公司id必须大于0</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，tradingCompanyId&lt;=0</li><li><strong>逻辑分析</strong>：saveData方法中校验TRADING_COMPANY_ID&gt;0，因交易公司为报备必选关联主数据。需检查前端传参</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.TRADING_COMPANY_ID, er.TRADING_COMPANY_NAME
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND (er.TRADING_COMPANY_ID IS NULL OR er.TRADING_COMPANY_ID &lt;= 0)</code></pre>
+<h4>报错6：&#123;tradingCompany&#125;交易公司未维护事业部关联关系</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，交易公司未关联事业部(DIVISION_TRADING_REL)</li><li><strong>逻辑分析</strong>：saveData方法中按TRADING_COMPANY_ID查询DIVISION_TRADING_REL，若为空则抛出阻断性报错。需先维护DIVISION_TRADING_REL</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.TRADING_COMPANY_ID, er.TRADING_COMPANY_NAME,
+         dtr.DIVISION_ID AS 事业部关联存在性
+  FROM EPM_REPORT er
+  LEFT JOIN DIVISION_TRADING_REL dtr ON er.TRADING_COMPANY_ID = dtr.TRADING_COMPANY_ID
+  WHERE er.REPORT_ID = :reportId
+    AND dtr.DIVISION_ID IS NULL</code></pre>
+<h4>报错7：当前区域为禁用区域</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，报备区域在DISABLED_AREA_CONFIG中</li><li><strong>逻辑分析</strong>：saveData方法中按区域编码查询DISABLED_AREA_CONFIG，若存在则抛出阻断性报错。需更换区域</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.AREA_CODE, er.AREA_FULL_NAME,
+         dac.DISABLED_AREA_ID, dac.AREA_CODE AS 禁用区域编码
+  FROM EPM_REPORT er
+  JOIN DISABLED_AREA_CONFIG dac ON er.AREA_CODE = dac.AREA_CODE
+  WHERE er.REPORT_ID = :reportId</code></pre>
+<h4>报错8：报备信息不存在</h4>
+<ul><li><strong>触发条件</strong>：编辑保存战略项目报备时，报备ID对应记录不存在</li><li><strong>逻辑分析</strong>：saveData编辑分支中按REPORT_ID查询EPM_REPORT，若返回null则抛出阻断性报错。需检查REPORT_ID有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_CODE, er.HZ_APPROVE_STATUS, er.VALID
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+  -- 若返回空，说明报备信息不存在</code></pre>
+<h4>报错9：该战略工程涉及经销商服务，请分配具体经销商</h4>
+<ul><li><strong>触发条件</strong>：二次报备提交时，管理类型为经销商操作/公司自营但未分配经销商</li><li><strong>逻辑分析</strong>：workFlowStartVolidate方法中校验管理类型为经销商操作或公司自营时必须分配具体经销商，若未分配则抛出阻断性报错。需先分配经销商</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.MANAGE_TYPE, er.CUSTOMER_ID, er.CUSTOMER_CODE
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND er.MANAGE_TYPE IN ('DEALER_OPERATE', 'COMPANY_SELF')
+    AND er.CUSTOMER_ID IS NULL</code></pre>
+<h4>报错10：请先维护EPMS单据和OA表单对应关系表</h4>
+<ul><li><strong>触发条件</strong>：提交战略项目报备时，OA_BILL_REF中缺少表单配置</li><li><strong>逻辑分析</strong>：提交方法中按BILL_NAME查询EPM_OA_BILL_REF，若为空则抛出阻断性报错。需维护OA表单对应关系</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT eoaf.OA_BILL_REF_ID, eoaf.BILL_NAME, eoaf.OA_BILL_ID, eoaf.OA_FORM_KEY
+  FROM EPM_OA_BILL_REF eoaf
+  WHERE eoaf.BILL_NAME IN ('战略项目报备一次', '战略项目报备二次')
+  -- 若返回空，则需维护OA单据关系</code></pre>
+<h4>报错11：非重复申报，不能申诉</h4>
+<ul><li><strong>触发条件</strong>：申诉时，DUPLICATE_REPORTING不为Y</li><li><strong>逻辑分析</strong>：appeal方法中校验DUPLICATE_REPORTING=Y，仅重复申报(查重拦截)可申诉。该报错为中等优先级</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.DUPLICATE_REPORTING, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND er.DUPLICATE_REPORTING &lt;&gt; 'Y'</code></pre>
+<h4>报错12：本月申诉次数已到达限制:&#123;n&#125;次</h4>
+<ul><li><strong>触发条件</strong>：申诉时，本月申诉次数超过限制</li><li><strong>逻辑分析</strong>：appeal方法中按CUSTOMER_ID和年月查询EPM_REPORT_APPEAL_CONFIG，若申诉次数超限则抛出中等优先级报错。需下月再申诉或申请追加次数</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT erac.CUSTOMER_ID, erac.APPEAL_YEAR, erac.APPEAL_MONTH,
+         erac.APPEAL_NUM, erac.APPEAL_NUM_TMP
+  FROM EPM_REPORT_APPEAL_CONFIG erac
+  WHERE erac.CUSTOMER_ID = :customerId
+    AND erac.APPEAL_YEAR = EXTRACT(YEAR FROM SYSDATE)
+    AND erac.APPEAL_MONTH = EXTRACT(MONTH FROM SYSDATE)</code></pre>
+<h4>报错13：项目【&#123;code&#125;】已二次报备，请选择其他项目</h4>
+<ul><li><strong>触发条件</strong>：发起二次报备时，该项目已有审核通过的二次报备</li><li><strong>逻辑分析</strong>：二次报备前校验中按PROJECT_CODE查询EPM_REPORT筛选REPORT_TIMES=2且HZ_APPROVE_STATUS='APPROVED'，若存在则抛出阻断性报错。需选择其他项目</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_CODE, er.REPORT_TIMES, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.PROJECT_CODE = :projectCode
+    AND er.REPORT_TIMES = 2
+    AND er.HZ_APPROVE_STATUS = 'APPROVED'</code></pre>
+<h4>报错14：请配置&#123;orgId&#125;公司参数'Proj_Effective_Cycle'</h4>
+<ul><li><strong>触发条件</strong>：审核通过时，未配置项目有效周期参数(PROJ_EFFECTIVE_CYCLE)</li><li><strong>逻辑分析</strong>：审核回调中按ORGANIZATION_ID和PARAM_CODE='Proj_Effective_Cycle'查询SYS_PARAM，若为空则抛出阻断性报错。需配置SYS_PARAM</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT sp.PARAM_ID, sp.PARAM_CODE, sp.PARAM_NAME, sp.VALUE, sp.ORGANIZATION_ID
+  FROM SYS_PARAM sp
+  WHERE sp.PARAM_CODE = 'Proj_Effective_Cycle'
+    AND sp.ORGANIZATION_ID = :orgId
+  -- 若返回空，则需补充配置</code></pre>
+<h4>报错15：经销商可报备数量剩余&#123;n&#125;条</h4>
+<ul><li><strong>触发条件</strong>：提交战略项目报备时，经销商可报备数量不足</li><li><strong>逻辑分析</strong>：提交校验中按CUSTOMER_ID查询ReportCustomerApplyNum配置的可报备数量，若剩余不足则抛出中等优先级报错。需检查ReportCustomerApplyNum配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT rcapn.CUSTOMER_ID, rcapn.APPLY_NUM, rcapn.USED_NUM,
+         rcapn.APPLY_NUM - rcapn.USED_NUM AS 剩余可报备数量
+  FROM REPORT_CUSTOMER_APPLY_NUM rcapn
+  WHERE rcapn.CUSTOMER_ID = :customerId</code></pre>
+<h4>报错16：战略项目报备一次OA回调处理异常</h4>
+<ul><li><strong>触发条件</strong>：OA一次审批回调处理异常</li><li><strong>逻辑分析</strong>：doStrategicProjectResp方法中处理一次报备OA回调，若异常则抛出阻断性报错。需检查OA回调参数及报备数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.REPORT_TIMES, er.HZ_APPROVE_STATUS,
+         er.HZ_INSTANCE_ID, er.CALLBACK_SOURCE
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND er.REPORT_TIMES = 1</code></pre>
+<h4>报错17：战略项目报备二次OA回调处理异常</h4>
+<ul><li><strong>触发条件</strong>：OA二次审批回调处理异常</li><li><strong>逻辑分析</strong>：doStrategicProjectResp方法中处理二次报备OA回调，若异常则抛出阻断性报错。需检查OA回调参数及报备数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.REPORT_TIMES, er.HZ_APPROVE_STATUS,
+         er.HZ_INSTANCE_ID, er.CALLBACK_SOURCE
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND er.REPORT_TIMES = 2</code></pre>
+<h4>报错18：存在不为新建状态的数据,不可删除</h4>
+<ul><li><strong>触发条件</strong>：删除战略项目报备时，选中的数据中有非新建状态</li><li><strong>逻辑分析</strong>：删除前校验中检查所有选中数据状态为NEW，若存在非NEW状态则抛出中等优先级报错。仅新建状态可删除</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.HZ_APPROVE_STATUS, er.VALID
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID IN (:reportIdList)
+    AND er.HZ_APPROVE_STATUS &lt;&gt; 'NEW'
+  -- 查出非新建状态的数据</code></pre>
+<h4>报错19：请先维护经纬度再查询</h4>
+<ul><li><strong>触发条件</strong>：查询周边项目时，经纬度为空</li><li><strong>逻辑分析</strong>：queryNearbyProject方法中校验LATITUDE和LONGITUDE非空，因周边项目查询需基于经纬度计算距离。需先维护经纬度</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.LATITUDE, er.LONGITUDE, er.ADDRESS
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND (er.LATITUDE IS NULL OR er.LONGITUDE IS NULL)</code></pre>
+<h4>报错20：项目【&#123;code&#125;】已二次报备，但尚未启动流程</h4>
+<ul><li><strong>触发条件</strong>：发起二次报备时，该项目已有二次报备记录(REPORT_TIMES=2)但审批状态非APPROVED(流程未启动或审批中)</li><li><strong>逻辑分析</strong>：二次报备前校验中按PROJECT_CODE查询EPM_REPORT筛选REPORT_TIMES=2，若存在且HZ_APPROVE_STATUS非APPROVED则抛出阻断性报错。需等待原二次报备流程完成或选择其他项目</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_CODE, er.REPORT_TIMES,
+         er.HZ_APPROVE_STATUS, er.HZ_INSTANCE_ID
+  FROM EPM_REPORT er
+  WHERE er.PROJECT_CODE = :projectCode
+    AND er.REPORT_TIMES = 2
+    AND er.HZ_APPROVE_STATUS &lt;&gt; 'APPROVED'
+  -- 查出未完成的二次报备记录</code></pre>
+<h4>报错21：ID不能为空</h4>
+<ul><li><strong>触发条件</strong>：OA审批回调(doProcessOA)时，传入的ID参数为空或&lt;=0</li><li><strong>逻辑分析</strong>：doProcessOA方法中校验dto.getId()非空且&gt;0，因OA回调需按ID查询EPM_REPORT报备记录。需检查OA回调配置和参数传递</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.HZ_APPROVE_STATUS, er.HZ_INSTANCE_ID
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :id
+  -- 校验传入的ID是否存在</code></pre>
+<h4>报错22：报备数据不存在！</h4>
+<ul><li><strong>触发条件</strong>：OA审批回调(doProcessOA)时，根据ID查询EPM_REPORT返回null</li><li><strong>逻辑分析</strong>：doProcessOA方法中epmReportRepository.selectByPrimaryKey(id)按REPORT_ID查询报备，若报备被物理删除或ID错误则返回null。需检查报备数据是否完整</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_CODE, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+  -- 若返回空，说明报备数据不存在</code></pre>
+<h4>报错23：没有找到项目报备信息！</h4>
+<ul><li><strong>触发条件</strong>：ES查重(getRepetitionReport)时，根据reportId查询EPM_REPORT返回null</li><li><strong>逻辑分析</strong>：getRepetitionReport方法中按REPORT_ID查询报备信息用于ES查重，若返回null则抛出阻断性报错。需检查报备数据是否存在</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_CODE, er.REPORT_TYPE
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+  -- 若返回空，说明报备信息不存在</code></pre>
+<h4>报错24：未找到报备信息</h4>
+<ul><li><strong>触发条件</strong>：查询报备详情(getHomeDecorationReportDetail)时，根据查询条件无匹配报备数据</li><li><strong>逻辑分析</strong>：getHomeDecorationReportDetail方法中按查询条件查询报备列表，若为空则抛出阻断性报错。需检查查询参数(reportId等)是否正确</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_CODE, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+  -- 若返回空，说明未找到报备信息</code></pre>
+<h4>报错25：项目报备不允许取消归档</h4>
+<ul><li><strong>触发条件</strong>：对项目报备执行取消归档操作时</li><li><strong>逻辑分析</strong>：cancelArchive方法中直接抛出阻断性报错，因项目报备不支持取消归档操作。需通过其他方式(如失效申请)处理报备状态</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.HZ_APPROVE_STATUS, er.VALID
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+  -- 查出报备当前状态</code></pre>
+<h4>报错26：请通过申诉提交</h4>
+<ul><li><strong>触发条件</strong>：提交战略项目报备时，报备被查重拦截标记为重复申报(DUPLICATE_REPORTING=Y)</li><li><strong>逻辑分析</strong>：提交方法中校验DUPLICATE_REPORTING=Y时，将报备状态重置为NEW并抛出阻断性报错。被查重拦截的报备必须通过appeal接口申诉重新提交</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.DUPLICATE_REPORTING, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+    AND er.DUPLICATE_REPORTING = 'Y'
+  -- 查出被查重拦截的报备</code></pre>
+<h4>报错27：请先配置报备的可申诉次数</h4>
+<ul><li><strong>触发条件</strong>：申诉时，未配置报备的可申诉次数(SCPSYSCONF中ReportAppealNum或EPM_REPORT_APPEAL_CONFIG)</li><li><strong>逻辑分析</strong>：appeal方法中按CUSTOMER_ID和年月查询EPM_REPORT_APPEAL_CONFIG，若为空则查询SCPSYSCONF中ReportAppealNum配置，两者都为空则抛出阻断性报错。需先维护申诉次数配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT s.CONFNAME, s.CONFVALUE
+  FROM SCPSYSCONF s
+  WHERE s.CONFNAME = 'ReportAppealNum'
+  UNION ALL
+  SELECT 'EPM_REPORT_APPEAL_CONFIG' AS CONFNAME,
+         TO_CHAR(erac.APPEAL_NUM + NVL(erac.APPEAL_NUM_TMP, 0)) AS CONFVALUE
+  FROM EPM_REPORT_APPEAL_CONFIG erac
+  WHERE erac.CUSTOMER_ID = :customerId
+    AND erac.APPEAL_YEAR = EXTRACT(YEAR FROM SYSDATE)
+    AND erac.APPEAL_MONTH = EXTRACT(MONTH FROM SYSDATE)
+  -- 若两者都为空，则需配置申诉次数</code></pre>
+<h4>报错28：申诉失败:&#123;msg&#125;</h4>
+<ul><li><strong>触发条件</strong>：申诉处理过程中抛出异常</li><li><strong>逻辑分析</strong>：appeal方法中try-catch捕获申诉处理异常，将异常消息拼接后抛出。可能原因：报备数据异常、拦截记录不存在、更新失败。需检查申诉参数及报备数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.DUPLICATE_REPORTING, er.HZ_APPROVE_STATUS,
+         erih.ID AS 拦截记录ID, erih.INTERCEPT_DATE, erih.APPEAL_DATE
+  FROM EPM_REPORT er
+  LEFT JOIN EPM_REPORT_INTERCEPT_HEAD erih ON er.REPORT_ID = erih.REPORT_ID
+  WHERE er.REPORT_ID = :reportId
+  -- 检查报备及拦截记录数据完整性</code></pre>
+<h4>报错29：OA回传单号不存在，请检查！</h4>
+<ul><li><strong>触发条件</strong>：OA审批回调(doProcessOA)时，根据传入ID查询EPM_REPORT报备记录返回null</li><li><strong>逻辑分析</strong>：doProcessOA方法中selectByPrimaryKey按REPORT_ID查询报备，若返回null则抛出阻断性报错。可能原因：报备被删除、OA传递的ID错误、ID类型转换异常</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.HZ_APPROVE_STATUS, er.CALLBACK_SOURCE
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :oaCallbackId
+  -- 若返回空，说明OA回传的ID在系统中不存在</code></pre>
+<h4>报错30：查询参数不能为空</h4>
+<ul><li><strong>触发条件</strong>：查询报备列表或详情时，查询参数为空</li><li><strong>逻辑分析</strong>：查询方法中校验查询参数非空，因查询需基于有效参数过滤。需补全查询参数后重新查询</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_CODE, er.PROJECT_NAME
+  FROM EPM_REPORT er
+  WHERE er.REPORT_TYPE = 2
+  -- 校验查询参数是否完整</code></pre>
+<h4>报错31：主键不能为空!</h4>
+<ul><li><strong>触发条件</strong>：查询报备详情(detail方法)时，未传入报备主键ID(reportId为空)</li><li><strong>逻辑分析</strong>：detail方法中校验reportId非空，因详情查询需按主键关联EPM_REPORT及子表。该报错为阻断性报错</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID = :reportId
+  -- 校验传入的主键ID是否存在</code></pre>
+<h4>报错32：操作数据不能为空</h4>
+<ul><li><strong>触发条件</strong>：删除战略项目报备时，未选择待删除数据(reportIdList为空)</li><li><strong>逻辑分析</strong>：delete方法中校验reportIdList非空，因删除操作需指定目标数据。需先选择待删除数据后执行删除</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.REPORT_ID IN (:reportIdList)
+  -- 校验待删除数据是否存在</code></pre>
+<h4>报错33：&#123;tradingCompanyName&#125;交易公司不存在,请先维护!</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，交易公司在EPM_TRADING_COMPANY中不存在</li><li><strong>逻辑分析</strong>：saveData方法中按TRADING_COMPANY_ID查询交易公司主数据，若返回null则抛出阻断性报错。需先维护交易公司主数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.TRADING_COMPANY_ID, er.TRADING_COMPANY_NAME,
+         etc.TRADING_COMPANY_ID AS 交易公司档案ID
+  FROM EPM_REPORT er
+  LEFT JOIN EPM_TRADING_COMPANY etc ON er.TRADING_COMPANY_ID = etc.TRADING_COMPANY_ID
+  WHERE er.REPORT_ID = :reportId
+    AND etc.TRADING_COMPANY_ID IS NULL
+  -- 查出交易公司档案不存在的报备</code></pre>
+<h4>报错34：本月总可用申诉次数(&#123;totalNum&#125;次)小于等于已用申诉次数(&#123;usedNum&#125;次)，无法进行申诉</h4>
+<ul><li><strong>触发条件</strong>：申诉时，本月总可用申诉次数&lt;=已用申诉次数</li><li><strong>逻辑分析</strong>：appeal方法中计算本月总可用申诉次数(基础次数+临时追加次数)和已用申诉次数，若可用&lt;=已用则抛出中等优先级报错。需下月再申诉或申请追加临时次数</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT erac.CUSTOMER_ID, erac.APPEAL_YEAR, erac.APPEAL_MONTH,
+         erac.APPEAL_NUM, NVL(erac.APPEAL_NUM_TMP, 0) AS APPEAL_NUM_TMP,
+         erac.APPEAL_NUM + NVL(erac.APPEAL_NUM_TMP, 0) AS 总可用次数,
+         (SELECT COUNT(1) FROM EPM_REPORT_INTERCEPT_HEAD erih
+          WHERE erih.CUSTOMER_ID = erac.CUSTOMER_ID
+            AND erih.APPEAL_DATE IS NOT NULL
+            AND EXTRACT(YEAR FROM erih.APPEAL_DATE) = erac.APPEAL_YEAR
+            AND EXTRACT(MONTH FROM erih.APPEAL_DATE) = erac.APPEAL_MONTH) AS 已用次数
+  FROM EPM_REPORT_APPEAL_CONFIG erac
+  WHERE erac.CUSTOMER_ID = :customerId
+    AND erac.APPEAL_YEAR = EXTRACT(YEAR FROM SYSDATE)
+    AND erac.APPEAL_MONTH = EXTRACT(MONTH FROM SYSDATE)
+  -- 查出可用次数&lt;=已用次数的配置</code></pre>
+<h4>报错35：请先配置系统参数-经销商可报备数量:ReportCustomerApplyNum</h4>
+<ul><li><strong>触发条件</strong>：提交战略项目报备时，未配置系统参数ReportCustomerApplyNum(经销商可报备数量)</li><li><strong>逻辑分析</strong>：提交校验中按CONFNAME='ReportCustomerApplyNum'查询SCPSYSCONF，若为空则抛出阻断性报错。需先维护SCPSYSCONF配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT s.CONFNAME, s.CONFVALUE, s.ORGANIZATION_ID
+  FROM SCPSYSCONF s
+  WHERE s.CONFNAME = 'ReportCustomerApplyNum'
+  -- 若返回空，则需补充配置</code></pre>
+<h4>报错36：当前事业部数据异常</h4>
+<ul><li><strong>触发条件</strong>：保存战略项目报备时，当前用户所属事业部数据异常(为空或不存在)</li><li><strong>逻辑分析</strong>：saveData方法中获取当前用户所属事业部，若事业部数据为空或不存在则抛出阻断性报错。需检查用户事业部配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT u.USER_ID, u.REAL_NAME, u.ORGANIZATION_ID,
+         o.ORGANIZATION_ID AS 事业部ID, o.ORGANIZATION_NAME
+  FROM IAM_USER u
+  LEFT JOIN IAM_ORGANIZATION o ON u.ORGANIZATION_ID = o.ORGANIZATION_ID
+  WHERE u.USER_ID = :currentUserId
+  -- 检查当前用户事业部数据是否完整</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -892,250 +1044,64 @@ SELECT * FROM OBJ_ATTACH_TYPE WHERE ATTACH_CONF_ID = 8005 AND MIN_ATTACH_NEED > 
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:18%"><col style="width:40%"><col style="width:15%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与排查方向</th><th>等级</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">ID不能为空</td>
-            <td style="font-size:13px;">OA回调时报备ID为空</td>
-            <td style="font-size:13px;">检查OA回调参数ID字段</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">报备数据不存在！</td>
-            <td style="font-size:13px;">OA回调时根据ID查不到报备记录</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE REPORT_ID = :id`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">战略项目报备一次OA回调处理异常！</td>
-            <td style="font-size:13px;">OA一次审批回调处理异常</td>
-            <td style="font-size:13px;">检查OA回调参数及报备数据完整性</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">战略项目报备二次OA回调处理异常！</td>
-            <td style="font-size:13px;">OA二次审批回调异常</td>
-            <td style="font-size:13px;">检查OA回调参数及报备数据完整性</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先维护EPMS单据和OA表单对应关系表</td>
-            <td style="font-size:13px;">提交时查不到OA表单配置</td>
-            <td style="font-size:13px;">`SELECT * FROM OA_BILL_REF WHERE BILL_NAME IN ('战略项目报备一次','战略项目报备二次')`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">项目【{code}】已二次报备，请选择其他项目</td>
-            <td style="font-size:13px;">发起二次报备时该项目已有审核通过的二次报备</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE PROJECT_CODE = :code AND REPORT_TIMES = 2 AND HZ_APPROVE_STATUS = 'APPROVED'`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">项目【{code}】已二次报备，但尚未启动流程</td>
-            <td style="font-size:13px;">发起二次报备时该项目已有二次报备但未审核</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE PROJECT_CODE = :code AND REPORT_TIMES = 2 AND HZ_APPROVE_STATUS != 'APPROVED'`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">该战略工程涉及经销商服务，请分配具体经销商</td>
-            <td style="font-size:13px;">二次报备提交时管理类型为经销商操作/公司自营但未分配经销商</td>
-            <td style="font-size:13px;">`SELECT COUNT(1) FROM EPM_REPORT_AUTH WHERE REPORT_ID = :reportId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">项目报备不允许取消归档</td>
-            <td style="font-size:13px;">尝试取消归档操作</td>
-            <td style="font-size:13px;">战略报备不支持取消归档</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">没有找到项目报备信息！</td>
-            <td style="font-size:13px;">查重时根据报备ID查不到记录</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE REPORT_ID = :reportId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">未找到报备信息</td>
-            <td style="font-size:13px;">查询报备详情时无数据</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE REPORT_ID = :reportId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">报备信息不存在</td>
-            <td style="font-size:13px;">保存编辑时原记录不存在</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE REPORT_ID = :reportId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">非重复申报，不能申诉</td>
-            <td style="font-size:13px;">申诉时查重拦截标记不为Y</td>
-            <td style="font-size:13px;">`SELECT DUPLICATE_REPORTING FROM EPM_REPORT WHERE REPORT_ID = :reportId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先配置报备的可申诉次数</td>
-            <td style="font-size:13px;">申诉时未配置可申诉次数</td>
-            <td style="font-size:13px;">`SELECT * FROM SCPSYSCONF WHERE CONFNAME = 'ReportAppealNum'`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">本月申诉次数已到达限制:{n}次</td>
-            <td style="font-size:13px;">本月已用申诉次数&gt;=可申诉次数</td>
-            <td style="font-size:13px;">`SELECT COUNT(1) FROM EPM_REPORT_INTERCEPT_HEAD WHERE CUSTOMER_ID = :customerId AND INTERCEPT_DATE BETWEEN :startDate AND :endDate`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">申诉失败:{msg}</td>
-            <td style="font-size:13px;">申诉处理异常</td>
-            <td style="font-size:13px;">检查拦截记录及分布式锁</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">OA回传单号不存在，请检查！</td>
-            <td style="font-size:13px;">OA回调时根据ID查不到记录</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE REPORT_ID = :id`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">查询参数不能为空</td>
-            <td style="font-size:13px;">查询周边项目时ID为空</td>
-            <td style="font-size:13px;">检查前端传参</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先维护经纬度再查询</td>
-            <td style="font-size:13px;">查询周边项目时经纬度为空</td>
-            <td style="font-size:13px;">`SELECT LONGITUDE, LATITUDE FROM EPM_REPORT WHERE REPORT_ID = :reportId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">主键不能为空!</td>
-            <td style="font-size:13px;">更新流程信息时报备ID为空</td>
-            <td style="font-size:13px;">检查流程回调参数</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">操作数据不能为空</td>
-            <td style="font-size:13px;">删除时未选择数据</td>
-            <td style="font-size:13px;">检查前端选择</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">存在不为新建状态的数据,不可删除</td>
-            <td style="font-size:13px;">删除的数据中有非新建状态</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE REPORT_ID IN (:ids) AND H(Z_APPROVE_STATUS != 'NEW'`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">经纬度不能为空</td>
-            <td style="font-size:13px;">单体报备保存时经纬度为空(战略报备不校验)</td>
-            <td style="font-size:13px;">-</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">项目地址经纬度异常，经纬度为0</td>
-            <td style="font-size:13px;">经纬度值为0</td>
-            <td style="font-size:13px;">`SELECT * FROM EPM_REPORT WHERE REPORT_ID = :reportId AND (LONGITUDE = 0 OR LATITUDE = 0)`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">收货人不能为空</td>
-            <td style="font-size:13px;">含运费经销商报备时收货人为空</td>
-            <td style="font-size:13px;">`SELECT * FROM CUSTOMER_ORG WHERE CUSTOMER_ID = :customerId AND INCLUDE_FREIGHT_FLAG = 'Y'`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">收货人号码不能为空</td>
-            <td style="font-size:13px;">含运费经销商报备时收货人电话为空</td>
-            <td style="font-size:13px;">同上</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">项目档案表（epm_project）缺失以下字段</td>
-            <td style="font-size:13px;">审核通过写入项目档案时字段不匹配</td>
-            <td style="font-size:13px;">检查EPM_PROJECT表结构是否与EPM_REPORT一致</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请配置{orgId}公司参数'Proj_Effective_Cycle'</td>
-            <td style="font-size:13px;">审核通过时未配置项目有效周期</td>
-            <td style="font-size:13px;">`SELECT * FROM SYS_PARAM WHERE PARAM_CODE = 'Proj_Effective_Cycle' AND ORGANIZATION_ID = :orgId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先配置系统参数-经销商可报备数量:ReportCustomerApplyNum</td>
-            <td style="font-size:13px;">提交时未配置可报备数量</td>
-            <td style="font-size:13px;">`SELECT * FROM SCPSYSCONF WHERE CONFNAME = 'ReportCustomerApplyNum'`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">经销商可报备数量剩余{n}条</td>
-            <td style="font-size:13px;">经销商可报备数量不足</td>
-            <td style="font-size:13px;">`SELECT CONFVALUE FROM SCPSYSCONF WHERE CONFNAME = 'ReportCustomerApplyNum'`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先配置拦截相似度:ReportSimilarThreshold</td>
-            <td style="font-size:13px;">查重拦截时未配置相似度阈值</td>
-            <td style="font-size:13px;">`SELECT * FROM SCPSYSCONF WHERE CONFNAME = 'ReportSimilarThreshold'`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">交易公司id必须大于0</td>
-            <td style="font-size:13px;">家装报备保存时交易公司ID&lt;=0</td>
-            <td style="font-size:13px;">检查前端传参</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">{tradingCompany}交易公司未维护事业部关联关系,请先维护!</td>
-            <td style="font-size:13px;">交易公司未关联事业部</td>
-            <td style="font-size:13px;">`SELECT COUNT(1) FROM DIVISION_TRADING_REL WHERE TRADING_COMPANY_ID = :tradingCompanyId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">{tradingCompany}交易公司不存在,请先维护!</td>
-            <td style="font-size:13px;">交易公司不存在</td>
-            <td style="font-size:13px;">`SELECT COUNT(1) FROM EPM_TRADING_COMPANY WHERE TRADING_COMPANY_ID = :tradingCompanyId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">当前事业部数据异常</td>
-            <td style="font-size:13px;">获取小型项目折扣率时事业部信息异常</td>
-            <td style="font-size:13px;">检查用户附加信息DEPT字段</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">当前事业部未设置小型项目标准折扣</td>
-            <td style="font-size:13px;">事业部未配置小型项目折扣率</td>
-            <td style="font-size:13px;">`SELECT SMALL_PROJECT_RATE FROM DIVISION_BASE_SET WHERE ORGANIZATION_ID = :orgId`</td>
-            <td style="font-size:13px;">toast提醒</td>
-          </tr>
-</tbody></table></div>
+<KbCard title="Q1: 战略项目报备需要几次审批？">
+<p>需要两次OA审批：战略项目报备一次和战略项目报备二次。一次报备通过后生成项目档案，二次报备通过后更新项目档案信息。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT REPORT_ID, REPORT_TIMES, HZ_APPROVE_STATUS, AUDIT_STAT
+FROM EPM_REPORT
+WHERE REPORT_ID = #{reportId};</code></pre>
 </KbCard>
 
-<KbCard title="常见问题">
+<KbCard title="Q2: 查重不通过怎么办？">
+<p>可通过appeal接口进行申诉，由管理员审核申诉请求。申诉前校验本月可用申诉次数。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT DUPLICATE_REPORTING FROM EPM_REPORT WHERE REPORT_ID = #{reportId};
+SELECT COUNT(1) FROM EPM_REPORT_INTERCEPT_HEAD
+WHERE CUSTOMER_ID = #{customerId}
+  AND INTERCEPT_DATE BETWEEN #{startDate} AND #{endDate};</code></pre>
+</KbCard>
 
-**Q1: 战略项目报备与单体项目报备有什么区别？**
-A: 战略项目报备(REPORT_TYPE=2)支持两次报备流程，走OA审批；单体项目报备(REPORT_TYPE=1)只有一次报备，走H0工作流审批。战略报备不执行ES查重拦截，单体报备会执行。战略报备审核通过后写入项目档案，单体报备审核通过后还会推送CRM。
+<KbCard title="Q3: 一次报备通过后如何发起二次报备？">
+<p>一次报备通过后，在列表页对应记录上点击"二次报备"按钮发起二次报备流程。若管理类型为经销商操作或公司自营，必须先分配具体经销商。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT REPORT_ID, REPORT_TIMES, HZ_APPROVE_STATUS
+FROM EPM_REPORT
+WHERE PROJECT_CODE = #{projectCode}
+ORDER BY REPORT_TIMES;</code></pre>
+</KbCard>
 
-**Q2: 二次报备提交时提示"该战略工程涉及经销商服务，请分配具体经销商"？**
-A: 当管理类型为经销商操作(2)或公司自营(3)时，必须在经销商授权Tab中分配具体经销商。排查SQL：`SELECT COUNT(1) FROM EPM_REPORT_AUTH WHERE REPORT_ID = :reportId AND DISABLED != 2`
+<KbCard title="Q4: 审核通过后项目有效期如何计算？">
+<p>根据公司参数Proj_Effective_Cycle配置的有效周期天数，从审核通过日期起计算项目有效起始日期和有效结束日期。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT PARAM_CODE, PARAM_VALUE FROM SYS_PARAM
+WHERE PARAM_CODE = 'Proj_Effective_Cycle'
+  AND ORGANIZATION_ID = #{orgId};</code></pre>
+</KbCard>
 
-**Q3: 战略报备提交后OA没有收到审批？**
-A: 检查OA_BILL_REF表中是否维护了"战略项目报备一次"或"战略项目报备二次"的OA表单对应关系。排查SQL：`SELECT * FROM OA_BILL_REF WHERE BILL_NAME IN ('战略项目报备一次','战略项目报备二次')`
+<KbCard title="Q5: 申诉次数有限制吗？">
+<p>是的，可申诉次数通过SCPSYSCONF配置（CONFNAME='ReportAppealNum'），也可通过EPM_REPORT_APPEAL_CONFIG表按经销商/年/月配置。超过限制则不允许申诉。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT CONFVALUE FROM SCPSYSCONF WHERE CONFNAME = 'ReportAppealNum';
+SELECT * FROM EPM_REPORT_APPEAL_CONFIG
+WHERE CUSTOMER_ID = #{customerId}
+  AND APPEAL_YEAR = #{year}
+  AND APPEAL_MONTH = #{month};</code></pre>
+</KbCard>
 
-**Q4: 审核通过后项目档案没有生成？**
-A: 检查：1)公司参数Proj_Effective_Cycle是否配置；2)EPM_PROJECT表是否缺少EPM_REPORT中的字段；3)审核时间是否已存在(避免重复执行)。排查SQL：`SELECT * FROM EPM_PROJECT WHERE REPORT_ID = :reportId`
+<KbCard title="Q6: 项目编码如何生成？">
+<p>新建报备时自动生成项目编码，编码规则通过编码规则引擎生成，工程类规则编码为PROJECT_CODE。</p>
+</KbCard>
 
-**Q5: 战略报备变更如何发起？**
-A: 战略报备审核通过后，可通过$以发起"战略报备变更"(工作流编码STRATEGIC_REPORT_CHANGE_MAIN)或"家装战略报备经销商变更"(工作流编码AE_HOME_STRATEGIC_CHANGE_MAIN)。变更审核通过后会更新(新增、失效)战略项目报备的经销商明细。
+<KbCard title="Q7: 战略报备支持批量导入吗？">
+<p>不支持，战略项目报备仅支持单条新建/编辑。</p>
+</KbCard>
 
----
-
+<KbCard title="Q8: OA审批回调异常如何排查？">
+<p>检查OA回调参数完整性及报备数据是否存在。搜索日志关键字"战略项目报备一次OA回调处理异常"或"战略项目报备二次OA回调处理异常"。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT REPORT_ID, REPORT_CODE, REPORT_TIMES, HZ_APPROVE_STATUS, HZ_INSTANCE_ID
+FROM EPM_REPORT
+WHERE REPORT_ID = #{reportId};</code></pre>
 </KbCard>
 
 </div>
@@ -1146,19 +1112,16 @@ A: 战略报备审核通过后，可通过$以发起"战略报备变更"(工作�
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 类型 | 说明 |
-|------|------|------|
-| 2025-10-29 | 重构 | 从老系统ReportServiceImpl迁移战略项目报备逻辑到新架构EpmReportServiceImpl，支持HZERO工作流框架 |
-| 2025-11-17 | 新增 | 新增项目报备乙方信息表(EPM_REPORT_PARTYB)支持多乙方 |
-| 2025-09-17 | 新增 | 新增项目报备经销商授权(ReportAuth)实体及相关CRUD |
-| 2025-10-29 | 新增 | 新增家装战略报备保存/编辑接口(EpmReportController.saveData) |
-| 2025-10-29 | 新增 | 新增家装战略报备项目查重接口(EpmReportController.doCheckReport) |
-| 2025-10-29 | 新增 | 新增流程发起前校验接口(workFlowStartVolidate) |
-| 2025-10-29 | 新增 | 新增申诉接口(appeal) |
-| 2025-10-29 | 新增 | 新增查询周边项目接口(queryNearbyProject) |
-| 2025-10-29 | 新增 | 新增查询当前项目接口(queryCurrentProject) |
-| 2025-10-29 | 新增 | 新增获取小型项目折扣率接口(getSmallDiscRate) |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写，补充代码梳理：后端Controller/Entity完整分析，界面模块6列表格、数据库表5列表格、报错一览表5列、上游依赖4列、下游影响bullet points、选择弹窗、保存校验、提交校验、状态机等</td></tr>
+<tr><td>2026-08-29</td><td>-</td><td>CodeArts</td><td>对比网站内容补充：两次报备机制、界面模块、选择弹窗、保存校验、提交校验、状态机、9张数据库表详解、报错一览表、FAQ</td></tr>
+<tr><td>2025-10-29</td><td>-</td><td>liuyk</td><td>初始版本，战略项目报备功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

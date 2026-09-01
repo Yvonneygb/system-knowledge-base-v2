@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -78,6 +79,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -131,77 +133,283 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑">
-<KbQuote>设计师饱和度监控设计师工作量状态和排期可用性</KbQuote>
-<ul><li><strong>饱和度计算</strong>：饱和度 = 已排期时间 / 可排期时间 × 100%，超过100%表示超负荷</li><li><strong>两种查询维度</strong>：<ul><li><code>getSaturationByCode</code>：按设计师编码查询</li><li><code>getSaturationByUser</code>：按用户编码查询</li></ul></li><li><strong>值集依赖</strong>：页面展示依赖4个值集<ul><li><code>MBO.DESIGN_APPLY_TYPE</code>：设计点将类型</li><li><code>MBO.DESIGN_STATE</code>：设计状态</li><li><code>MBO.DESIGN_LECTURER_LEVEL</code>：设计师级别</li><li><code>MBO.APPLY_APPROVAL_STATE</code>：审批状态</li></ul></li><li><strong>数据来源</strong>：饱和度数据由点将执行模块自动计算和更新</li></ul></KbCard>
-
-<KbQuote>设计师饱和度监控设计师工作量状态和排期可用性</KbQuote>
-
-<KbQuote>设计师饱和度监控设计师工作量状态和排期可用性</KbQuote>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：饱和度计算">
+<ul><li><strong>业务意义</strong>：用已用天数占总点将天数的比例衡量设计师还有多少可派服务的余量</li><li><strong>具体逻辑描述</strong>：饱和度 = 已用天数 / 总点将天数 × 100%，超过100%表示超负荷，比例越接近满档说明可承接空间越小</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：纯查询统计">
+<ul><li><strong>业务意义</strong>：本页面仅做查询统计，不涉及工作流和审批操作</li><li><strong>具体逻辑描述</strong>：通过 page 接口查询饱和度数据，支持按设计师姓名、讲师类型、负责事业部、时间范围筛选</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：数据自动回写">
+<ul><li><strong>业务意义</strong>：饱和度不是人工填报的指标，而是由执行环节自动形成</li><li><strong>具体逻辑描述</strong>：饱和度数据由设计点将执行模块在完成确认时自动计算和更新，数据准确性取决于执行环节是否及时做完成确认</li></ul>
+</KbCard>
+
+<KbCard num="4" title="重点逻辑4：值集依赖">
+<ul><li><strong>业务意义</strong>：页面展示依赖多个值集用于下拉选项和状态展示</li><li><strong>具体逻辑描述</strong>：依赖值集 MBO.DESIGN_APPLY_TYPE(设计点将类型)、MBO.DESIGN_STATE(设计状态)、MBO.DESIGN_LECTURER_LEVEL(设计师级别)、MBO.APPLY_APPROVAL_STATE(审批状态)</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 列表页"><ul><li><strong>前端路由</strong>：<code>/general/designGeneral/designSaturation/list</code></li><li><strong>API</strong>：<code>mlt/maLecturerSaturation/page</code></li><li><strong>Entity</strong>：<code>MaLecturerSaturation</code></li><li><strong>查询条件</strong>：设计师姓名、设计师级别、饱和度范围、统计周期</li><li><strong>列表字段</strong>：设计师编码、设计师姓名、设计师级别、可排期天数、已排期天数、饱和度、统计周期</li><li><strong>值集加载</strong>：页面初始化时加载4个值集用于下拉选项和状态展示</li></ul></KbCard>
-<KbCard title="3.2 按设计师编码查询"><ul><li><strong>API</strong>：<code>mlt/maLecturerSaturation/getSaturationByCode</code></li><li><strong>参数</strong>：lecturerCode（设计师编码）</li><li><strong>返回</strong>：该设计师的饱和度详情，包含各时间段的排期明细</li></ul></KbCard>
-<KbCard title="3.3 按用户编码查询"><ul><li><strong>API</strong>：<code>mlt/maLecturerSaturation/getSaturationByUser</code></li><li><strong>参数</strong>：userCode（用户编码）</li><li><strong>返回</strong>：该用户关联设计师的饱和度详情</li></ul></KbCard>
-<KbCard title="3.4 值集说明"><table class="kl-table"><thead><tr><th>值集编码</th><th>值集名称</th><th>用途</th></tr></thead><tbody><tr><td>MBO.DESIGN_APPLY_TYPE</td><td>设定点将类型</td><td>区分不同类型的点将申请</td></tr><tr><td>MBO.DESIGN_STATE</td><td>设计状态</td><td>标识设计点将的当前状态</td></tr><tr><td>MBO.DESIGN_LECTURER_LEVEL</td><td>设计师级别</td><td>标识设计师的级别分类</td></tr><tr><td>MBO.APPLY_APPROVAL_STATE</td><td>审批状态</td><td>标识申请的审批状态</td></tr></tbody></table></KbCard>
-<KbCard title="3.5 选择弹窗"><p class='kl-tip'>无选择弹窗。页面主体是SaturationForm饱和度查询表单+待作业申请列表Table。</p></KbCard>
-<KbCard title="3.6 导入"><p class='kl-tip'>不支持导入功能。</p></KbCard>
-<KbCard title="3.7 其他按钮"><p class='kl-tip'>无其他按钮（纯查询页）。</p></KbCard>
-<KbCard title="3.8 保存校验"><p class='kl-tip'>无保存功能。</p></KbCard>
-<KbCard title="3.9 提交校验"><p class='kl-tip'>无提交/审批功能。纯查询类页面。</p></KbCard>
-<KbCard title="ma_lecturer_saturation（讲师饱和度统计表）"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>saturation_id</td><td>NUMBER</td><td>饱和度ID（主键）</td></tr><tr><td>lecturer_code</td><td>VARCHAR2</td><td>设计师编码</td></tr><tr><td>lecturer_name</td><td>VARCHAR2</td><td>设计师姓名</td></tr><tr><td>lecturer_level</td><td>VARCHAR2</td><td>设计师级别</td></tr><tr><td>user_code</td><td>VARCHAR2</td><td>用户编码</td></tr><tr><td>available_days</td><td>NUMBER</td><td>可排期天数</td></tr><tr><td>scheduled_days</td><td>NUMBER</td><td>已排期天数</td></tr><tr><td>saturation_rate</td><td>NUMBER</td><td>饱和度（百分比）</td></tr><tr><td>stat_period</td><td>VARCHAR2</td><td>统计周期</td></tr><tr><td>apply_type</td><td>VARCHAR2</td><td>点将类型</td></tr><tr><td>design_state</td><td>VARCHAR2</td><td>设计状态</td></tr><tr><td>approval_state</td><td>VARCHAR2</td><td>审批状态</td></tr><tr><td>created_by</td><td>VARCHAR2</td><td>创建人</td></tr><tr><td>creation_date</td><td>DATE</td><td>创建时间</td></tr><tr><td>last_updated_by</td><td>VARCHAR2</td><td>最后更新人</td></tr><tr><td>last_update_date</td><td>DATE</td><td>最后更新时间</td></tr></tbody></table></KbCard>
+<KbCard title="界面模块">
+<p>页面由三部分组成：<code>Header</code>（标题"设计师饱和度"）、<code>SaturationForm</code>（作业饱和度只读卡片）、待作业申请列表（<code>Table</code>）。页面加载时 <code>SaturationForm</code> 自动调用饱和度接口获取当前用户数据并回填表单，同时通过 <code>onDetail</code> 回调将明细列表数据传给父组件 <code>loadData</code> 注入到待作业申请列表，全过程无查询栏、无按钮、无弹窗。</p>
+<p>数据来源接口（<code>generalCommonApi</code>，定义于 <code>src/api/general/common.ts</code>）：</p>
+<ul><li>无 <code>lecturerArchivesCode</code> 时（本页面场景）：<code>GET mlt/maLecturerSaturation/getByLecturerCode</code>（按当前登录用户取饱和度）</li><li>有 <code>lecturerArchivesCode</code> 时（组件被详情页等复用）：<code>GET mlt/maLecturerSaturation/&#123;lecturerArchivesCode&#125;</code>（按讲师档案编码取饱和度）</li></ul>
+<blockquote>说明：本页面饱和度接口位于 <code>api/general/common.ts</code> 的 <code>generalCommonApi</code>，而非任务指定的 <code>api/general/designApply.ts</code>。<code>designApply.ts</code> 中的接口（<code>page</code>、<code>detail</code>、各类审批/执行接口等）属于设计点将申请模块，本页面不直接调用。</blockquote>
+<h4>作业饱和度卡片（SaturationForm 只读表单）</h4>
+<p>组件位于 <code>src/pages/general/components/SaturationForm</code>。<code>Form</code> 组件 <code>disabled</code>（只读），<code>columns=2</code>，字段以 <code>TextField</code> 渲染。DataSet <code>autoCreate=true</code>、<code>autoQuery=false</code>，数据由 <code>getSaturationData</code> 接口返回后通过 <code>saturationFormDS.current?.set(saturationInfo)</code> 整体回填，并额外 <code>set('totalQueues', saturationInfo.lecturerDesignApplyTVOList?.length ?? 0)</code>。</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>当前作业数量(家)</td><td>CURRENT_QUANTITY</td><td>TextField</td><td>当前作业数量（家）</td><td>始终显示</td><td>接口返回 saturationInfo.currentQuantity</td></tr>
+<tr><td>当前作业面积(㎡)</td><td>CURRENT_AREA</td><td>TextField</td><td>当前作业面积（㎡）</td><td>始终显示</td><td>接口返回 saturationInfo.currentArea</td></tr>
+<tr><td>标准作业数量(家)</td><td>STANDARD_QUANTITY</td><td>TextField</td><td>标准作业数量（家）</td><td>始终显示</td><td>接口返回 saturationInfo.standardQuantity</td></tr>
+<tr><td>标准作业面积(㎡)</td><td>STANDARD_AREA</td><td>TextField</td><td>标准作业面积（㎡）</td><td>始终显示</td><td>接口返回 saturationInfo.standardArea</td></tr>
+<tr><td>当前排队数量</td><td>TOTAL_QUEUES</td><td>TextField</td><td>当前排队数量（即待作业申请条数）</td><td>`showTotalQueues=true` 时显示</td><td>saturationInfo.lecturerDesignApplyTVOList.length</td></tr>
+</tbody>
+</table>
+<blockquote>本页面（<code>designSaturation/list.tsx</code>）调用 <code>SaturationForm</code> 时未传 <code>showTotalQueues</code>，故"当前排队数量"字段不显示；该组件被其他页面复用时按需开启。</blockquote>
+<h4>待作业申请列表（Table）</h4>
+<p>DataSet 配置 <code>saturationListDSProps</code>（<code>designSaturation/config.tsx</code>）：<code>autoQuery=false</code>、<code>paging=false</code>、<code>dataKey='data'</code>、无 <code>transport</code>。数据不通过接口查询，而由 <code>SaturationForm</code> 的 <code>onDetail</code> 回调传出 <code>saturationInfo.lecturerDesignApplyTVOList</code>，经 <code>list.tsx</code> 的 <code>getDetail</code> 调用 <code>saturationListDS.loadData(lecturerDesignApplyTVOList)</code> 注入。<code>fields</code> 仅声明 4 个值集字段（<code>applyType</code>/<code>designState</code>/<code>lecturerLevel</code>/<code>approvalState</code>）用于列的 lookupCode 渲染。</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>序号</td><td>-</td><td>-</td><td>行序号</td><td>始终显示</td><td>dataSet.indexOf(record)+1，lock 锁定左侧，width=60</td></tr>
+<tr><td>点将申请编号</td><td>APPLY_CODE</td><td>TextField</td><td>点将申请编号</td><td>始终显示</td><td>name=applyCode</td></tr>
+<tr><td>申请面积</td><td>STORE_AREA</td><td>TextField</td><td>申请面积</td><td>始终显示</td><td>name=storeArea</td></tr>
+<tr><td>讲师姓名</td><td>LECTURER_NAME</td><td>TextField</td><td>讲师姓名</td><td>始终显示</td><td>name=lecturerName</td></tr>
+<tr><td>级别</td><td>LECTURER_LEVEL</td><td>Select</td><td>讲师级别</td><td>始终显示</td><td>name=lecturerLevel，值集 MBO.DESIGN_LECTURER_LEVEL</td></tr>
+<tr><td>报价</td><td>PRICE</td><td>TextField</td><td>报价</td><td>始终显示</td><td>name=price</td></tr>
+<tr><td>申请类型</td><td>APPLY_TYPE</td><td>Select</td><td>申请类型</td><td>始终显示</td><td>name=applyType，值集 MBO.DESIGN_APPLY_TYPE</td></tr>
+<tr><td>所属部门</td><td>ORG_NAME</td><td>TextField</td><td>所属部门</td><td>始终显示</td><td>name=orgName</td></tr>
+<tr><td>审批状态</td><td>APPROVAL_STATE</td><td>Select</td><td>审批状态</td><td>始终显示</td><td>name=approvalState，值集 MBO.APPLY_APPROVAL_STATE</td></tr>
+<tr><td>设计状态</td><td>DESIGN_STATE</td><td>Select</td><td>设计状态</td><td>始终显示</td><td>name=designState，值集 MBO.DESIGN_STATE</td></tr>
+<tr><td>点将申请时间</td><td>CREATE_DATE</td><td>DatePicker</td><td>点将申请时间</td><td>始终显示</td><td>name=createDate</td></tr>
+</tbody>
+</table>
+<h4>选择弹窗</h4>
+<p>无。本页面（<code>list.tsx</code>）不含 <code>Modal.open</code> 弹窗逻辑，所有信息直接在页面内卡片与列表中展示。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<p>无。本页面 <code>Header</code> 未配置任何按钮，待作业申请列表 <code>saturationListColumns</code> 中无操作列，无行操作按钮。</p>
+</KbCard>
+
+<KbCard title="保存/提交校验">
+<p>本页面为纯展示页面，<code>SaturationForm</code> 表单 <code>disabled</code>（只读），无保存和提交操作。</p>
+</KbCard>
+
+<KbCard title="状态机">
+<p>本页面无状态机，纯展示。</p>
+</KbCard>
+
+<KbCard title="导入">
+<p>不支持导入功能。</p>
+</KbCard>
+
+<KbCard title="DESIGNER_SATURATION（设计师饱和度统计表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>SATURATION_ID</td><td>NUMBER</td><td>饱和度ID</td><td>-</td><td>主键，自增</td></tr>
+<tr><td>LECTURER_CODE</td><td>VARCHAR2(64)</td><td>设计师编码</td><td>-</td><td>关联讲师档案</td></tr>
+<tr><td>LECTURER_NAME</td><td>VARCHAR2(64)</td><td>设计师姓名</td><td>设计师姓名</td><td>-</td></tr>
+<tr><td>LECTURER_LEVEL</td><td>VARCHAR2(32)</td><td>讲师类型</td><td>讲师类型</td><td>值集 MBO.DESIGN_LECTURER_LEVEL</td></tr>
+<tr><td>ORG_NAME</td><td>VARCHAR2(128)</td><td>负责事业部</td><td>负责事业部</td><td>-</td></tr>
+<tr><td>TOTAL_DAYS</td><td>NUMBER</td><td>总点将天数</td><td>总点将天数</td><td>可排期总天数</td></tr>
+<tr><td>USED_DAYS</td><td>NUMBER</td><td>已用天数</td><td>已用天数</td><td>已排期天数</td></tr>
+<tr><td>REMAINING_DAYS</td><td>NUMBER</td><td>剩余天数</td><td>剩余天数</td><td>TOTAL_DAYS - USED_DAYS</td></tr>
+<tr><td>SATURATION_RATE</td><td>NUMBER</td><td>饱和度百分比</td><td>饱和度百分比</td><td>USED_DAYS/TOTAL_DAYS×100</td></tr>
+<tr><td>SATURATION_STATUS</td><td>VARCHAR2(32)</td><td>状态</td><td>状态</td><td>正常/接近满档/超负荷</td></tr>
+<tr><td>STAT_PERIOD</td><td>VARCHAR2(32)</td><td>统计周期</td><td>-</td><td>-</td></tr>
+<tr><td>USER_CODE</td><td>VARCHAR2(64)</td><td>用户编码</td><td>-</td><td>关联用户</td></tr>
+<tr><td>CREATED_BY</td><td>NUMBER</td><td>创建人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>CREATION_DATE</td><td>DATE</td><td>创建时间</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>NUMBER</td><td>最后更新人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>系统自动</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="DESIGN_APPLY（设计点将申请表-统计来源）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>APPLY_CODE</td><td>VARCHAR2(64)</td><td>申请编码</td><td>-</td><td>关联饱和度统计</td></tr>
+<tr><td>LECTURER_NAME</td><td>VARCHAR2(64)</td><td>设计师姓名</td><td>-</td><td>统计来源</td></tr>
+<tr><td>LECTURER_ARCHIVES_CODE</td><td>VARCHAR2(64)</td><td>讲师档案编码</td><td>-</td><td>关联讲师档案</td></tr>
+<tr><td>APPROVAL_STATE</td><td>VARCHAR2(32)</td><td>审批状态</td><td>-</td><td>值集 MBO.APPLY_APPROVAL_STATE</td></tr>
+<tr><td>DESIGN_STATE</td><td>VARCHAR2(32)</td><td>设计状态</td><td>-</td><td>值集 MBO.DESIGN_STATE</td></tr>
+<tr><td>SERVICE_START_DATE</td><td>DATE</td><td>服务开始时间</td><td>-</td><td>排期计算来源</td></tr>
+<tr><td>SERVICE_END_DATE</td><td>DATE</td><td>服务结束时间</td><td>-</td><td>排期计算来源</td></tr>
+</tbody>
+</table>
+<p>查询SQL：</p>
+<pre class="detail-sql" v-pre><code>SELECT MLS.LECTURER_NAME    AS "设计师姓名",
+       MLS.LECTURER_LEVEL   AS "讲师类型",
+       MLS.ORG_NAME         AS "负责事业部",
+       MLS.TOTAL_DAYS       AS "总点将天数",
+       MLS.USED_DAYS        AS "已用天数",
+       MLS.TOTAL_DAYS - MLS.USED_DAYS AS "剩余天数",
+       MLS.SATURATION_RATE  AS "饱和度百分比",
+       MLS.SATURATION_STATUS AS "状态"
+FROM DESIGNER_SATURATION MLS
+WHERE (:lecturerName IS NULL OR MLS.LECTURER_NAME LIKE '%' || :lecturerName || '%')
+  AND (:lecturerLevel IS NULL OR MLS.LECTURER_LEVEL = :lecturerLevel)
+  AND (:orgName IS NULL OR MLS.ORG_NAME = :orgName)
+  AND (:startDate IS NULL OR MLS.STAT_PERIOD &gt;= :startDate)
+  AND (:endDate IS NULL OR MLS.STAT_PERIOD &lt;= :endDate)
+ORDER BY MLS.SATURATION_RATE DESC;</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>请求失败</td><td>查询饱和度</td><td>后端服务异常，检查后端服务状态及网络连接</td><td>error</td><td>后端接口返回非200状态码</td></tr>
+<tr><td>数据为空</td><td>页面加载完成</td><td>当前用户未关联讲师档案或无饱和度数据，检查用户与讲师档案关联关系</td><td>warning</td><td>查询返回空列表</td></tr>
+<tr><td>网络异常/接口超时</td><td>查询饱和度</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
+<tr><td>权限不足</td><td>页面访问</td><td>当前用户无饱和度查询权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
+<tr><td>导出失败</td><td>点击导出</td><td>导出接口异常或数据量超限，检查后端导出服务及数据量</td><td>error</td><td>导出接口返回失败</td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.DESIGN_LECTURER_LEVEL 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
+<tr><td>时间范围校验失败</td><td>查询条件</td><td>开始时间大于结束时间，检查时间范围选择</td><td>error</td><td>前端校验 startDate &lt;= endDate</td></tr>
+</tbody>
+</table>
+<h4>报错1：请求失败</h4>
+<ul><li><strong>触发条件</strong>：调用 mlt/designApply/* 查询接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_NAME AS 设计师姓名,
+         LECTURER_LEVEL AS 讲师类型,
+         ORG_NAME AS 负责事业部,
+         SATURATION_RATE AS 饱和度百分比,
+         SATURATION_STATUS AS 状态,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM DESIGNER_SATURATION
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错2：数据为空</h4>
+<ul><li><strong>触发条件</strong>：页面加载完成查询饱和度数据时，返回空列表</li><li><strong>逻辑分析</strong>：前端查询饱和度数据返回空列表，提示"数据为空"。常见根因包括：当前用户未关联讲师档案（LECTURER_CODE 为空）、设计师无设计点将执行记录、查询条件过滤过严、统计周期内无数据等。需检查用户与讲师档案关联关系、查询条件、设计点将执行记录</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_CODE AS 设计师编码,
+         LECTURER_NAME AS 设计师姓名,
+         LECTURER_LEVEL AS 讲师类型,
+         ORG_NAME AS 负责事业部,
+         TOTAL_DAYS AS 总点将天数,
+         USED_DAYS AS 已用天数,
+         SATURATION_STATUS AS 状态
+  FROM DESIGNER_SATURATION
+   WHERE LECTURER_CODE IS NULL
+      OR TOTAL_DAYS IS NULL
+      OR USED_DAYS IS NULL;</code></pre>
+<h4>报错3：网络异常/接口超时</h4>
+<ul><li><strong>触发条件</strong>：查询饱和度数据时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、统计SQL执行时间长等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_NAME AS 设计师姓名,
+         SATURATION_STATUS AS 状态,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM DESIGNER_SATURATION
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错4：权限不足</h4>
+<ul><li><strong>触发条件</strong>：访问设计师饱和度页面或点击导出按钮时，当前用户无对应权限码</li><li><strong>逻辑分析</strong>：HZERO 框架校验当前用户角色是否包含饱和度查询/导出权限码，未包含则页面或按钮不可见。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名,
+         R.ROLE_NAME AS 角色名,
+         P.PERMISSION_CODE AS 权限码
+  FROM SYS_USER U
+  LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
+  LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
+  LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
+  LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
+  WHERE P.PERMISSION_CODE LIKE '%design_saturation%'
+  ORDER BY U.USER_NAME;</code></pre>
+<h4>报错5：导出失败</h4>
+<ul><li><strong>触发条件</strong>：点击导出按钮，导出接口返回失败或导出数据量超过限制</li><li><strong>逻辑分析</strong>：前端调用导出接口，后端生成Excel文件流返回。常见根因：导出数据量过大超过内存限制、OSS存储异常、文件生成异常、查询条件过宽导致全表扫描等。需缩小查询范围、检查后端导出服务配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*) AS 总记录数,
+         SUM(CASE WHEN SATURATION_STATUS = 'overload' THEN 1 ELSE 0 END) AS 超负荷数,
+         SUM(CASE WHEN SATURATION_STATUS = 'near_full' THEN 1 ELSE 0 END) AS 接近满档数
+  FROM DESIGNER_SATURATION
+  WHERE STAT_PERIOD BETWEEN :startDate AND :endDate;</code></pre>
+<h4>报错6：值集数据不显示</h4>
+<ul><li><strong>触发条件</strong>：查询条件或列表中讲师类型、状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.DESIGN_LECTURER_LEVEL、MBO.DESIGN_APPLY_TYPE、MBO.DESIGN_STATE、MBO.APPLY_APPROVAL_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码,
+         LOOKUP_VALUE_CODE AS 值编码,
+         LOOKUP_VALUE_NAME AS 值名称,
+         ENABLE_FLAG AS 启用标记
+  FROM SYS_LOOKUP_VALUE
+  WHERE LOOKUP_CODE IN ('MBO.DESIGN_LECTURER_LEVEL','MBO.DESIGN_APPLY_TYPE','MBO.DESIGN_STATE','MBO.APPLY_APPROVAL_STATE')
+    AND ENABLE_FLAG = 'N'
+  ORDER BY LOOKUP_CODE;</code></pre>
+<h4>报错7：时间范围校验失败</h4>
+<ul><li><strong>触发条件</strong>：查询条件时间范围中，开始时间大于结束时间</li><li><strong>逻辑分析</strong>：前端 DatePicker(range) 组件校验时间范围合法性，若 startDate &gt; endDate 则阻止查询并提示。需检查时间范围选择是否正确</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_NAME AS 设计师姓名,
+         STAT_PERIOD AS 统计周期,
+         TO_CHAR(CREATION_DATE,'YYYY-MM-DD') AS 创建日期
+  FROM DESIGNER_SATURATION
+  WHERE STAT_PERIOD IS NOT NULL
+  ORDER BY STAT_PERIOD DESC;</code></pre>
+</KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>问题</th><th>排查方式</th></tr>
+</thead>
+<tbody>
+<tr><td>饱和度超过100%是什么意思</td><td>表示设计师已用天数超过总点将天数，处于超负荷状态，需调整排期</td></tr>
+<tr><td>饱和度数据什么时候更新</td><td>设计师点将执行完成时自动更新</td></tr>
+<tr><td>值集数据不显示</td><td>检查值集 MBO.DESIGN_APPLY_TYPE、MBO.DESIGN_STATE、MBO.DESIGN_LECTURER_LEVEL、MBO.APPLY_APPROVAL_STATE 是否已配置</td></tr>
+<tr><td>饱和度列表无数据</td><td>检查查询条件是否正确，确认设计师已有点将执行记录</td></tr>
+<tr><td>剩余天数为负数</td><td>表示设计师超负荷排期，需调整排期或增加可排期天数</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
+</div>
+</div>
+
+<div id="changelog" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-11-12</td><td>-</td><td>hfy</td><td>初始创建</td></tr>
+<tr><td>2026-08-28</td><td>-</td><td>-</td><td>完整重写，补充饱和度计算、查询模式、待作业申请列表等</td></tr>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范格式重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="常见问题"><p><strong>Q1：饱和度超过100%是什么意思？</strong></p>
-<p>A：表示设计师已排期时间超过可排期时间，处于超负荷状态，需调整排期。</p>
-<p><strong>Q2：饱和度数据什么时候更新？</strong></p>
-<p>A：设计师点将执行完成时自动更新，也可手动触发重新计算。</p>
-<p><strong>Q3：getSaturationByCode和getSaturationByUser的区别？</strong></p>
-<p>A：<code>getSaturationByCode</code>按设计师编码查询，适用于管理员查看任意设计师；<code>getSaturationByUser</code>按用户编码查询，适用于设计师查看自己的饱和度。</p>
-<p><strong>Q4：值集数据不显示？</strong></p>
-<p>A：检查值集<code>MBO.DESIGN_APPLY_TYPE</code>、<code>MBO.DESIGN_STATE</code>、<code>MBO.DESIGN_LECTURER_LEVEL</code>、<code>MBO.APPLY_APPROVAL_STATE</code>是否已配置。</p></KbCard>
-</div>
-</div>
-</div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>版本</th><th>更新内容</th><th>更新人</th></tr></thead><tbody><tr><td>2026-08-03</td><td>v1.0</td><td>初始创建</td><td>AI生成</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

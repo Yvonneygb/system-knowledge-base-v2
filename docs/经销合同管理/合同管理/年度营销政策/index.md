@@ -150,42 +150,19 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：生效互斥逻辑 {互斥控制}">
-<KbQuote>同一事业部+同一年度只能有一条生效的政策，保证政策唯一性</KbQuote>
-
-**具体逻辑**：
-
-- 1、**业务意义**：同一事业部+同一年度只能有一条生效的政策，保证政策唯一性
-- 2、具体逻辑描述
-- 3、第1点：生效前检查同事业部+同年度下是否已有生效状态的政策
-- 4、第2点：若已存在生效政策，先将其状态改为失效，再将当前政策改为生效
-- 5、第3点：只有"未失效"状态的政策才能执行生效操作
+<KbCard num="1" title="重点逻辑1：政策生效与失效 {状态管理}">
+<ul><li><strong>业务意义</strong>：营销政策有有效期控制，生效后才能被引用，失效后不再适用</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过makeEffective接口使政策生效</li></ul>
+<ul><li>第2点：通过failure接口使政策失效</li></ul>
+<ul><li>第3点：仅生效状态的政策可被合同引用</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：修改先删后插逻辑 {全量替换}">
-<KbQuote>修改政策时采用全量替换策略，保证数据一致性</KbQuote>
-
-**具体逻辑**：
-
-- 1、**业务意义**：修改政策时采用全量替换策略，保证数据一致性
-- 2、具体逻辑描述
-- 3、第1点：修改时先删除原有行数据及关联的合同类型、阶梯区间数据
-- 4、第2点：违约金类型行只删除合同类型数据；次年折扣/返点类型行同时删除合同类型和阶梯区间数据
-- 5、第3点：删除完成后，再调用新增逻辑重新插入所有数据
-- 6、第4点：只有"未失效"状态的政策才允许修改
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：执行类型决定子表结构 {动态子表}">
-<KbQuote>不同执行类型对应不同的配置项，控制界面字段显隐和数据存储</KbQuote>
-
-**具体逻辑**：
-
-- 1、**业务意义**：不同执行类型对应不同的配置项，控制界面字段显隐和数据存储
-- 2、具体逻辑描述
-- 3、第1点：违约金(breach)类型：需要配置执行值、执行值类型、适用合同类型，无需阶梯区间
-- 4、第2点：次年折扣(discount)类型：需要配置计算方式、适用合同类型、阶梯区间(开始区间/结束区间/区间数值)
-- 5、第3点：返点(rebate)类型：需要配置计算方式、适用合同类型、阶梯区间(开始区间/结束区间/区间数值)
-- 6、--
+<KbCard num="2" title="重点逻辑2：ERP/CRM推送 {数据推送}">
+<ul><li><strong>业务意义</strong>：营销政策需推送至ERP和CRM系统，确保下游系统数据同步</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过pushErpAndCrm接口推送政策至ERP和CRM</li></ul>
+<ul><li>第2点：支持更新ERP总账日期(modifyLegerDate)</li></ul>
 </KbCard>
 
 </div>
@@ -195,355 +172,111 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：年度营销政策详情页">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：年度营销政策列表页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>事业部</td>
-<td>LOV选择框</td>
-<td>所属事业部</td>
-<td>常显</td>
-<td>LOV: AE.ORG_LOV，必输</td>
-<td>事业部LOV可选范围</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.ENTID</td>
-</tr>
-<tr>
-<td>销售年度</td>
-<td>年份选择框</td>
-<td>政策适用年度</td>
-<td>常显</td>
-<td>必输，格式YYYY</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.POLICY_YEAR</td>
-</tr>
-<tr>
-<td>开始时间</td>
-<td>日期选择框</td>
-<td>政策有效期开始</td>
-<td>常显</td>
-<td>必输，格式YYYY-MM-DD</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.START_DATE</td>
-</tr>
-<tr>
-<td>结束时间</td>
-<td>日期选择框</td>
-<td>政策有效期结束</td>
-<td>常显</td>
-<td>必输，格式YYYY-MM-DD，不能早于开始时间</td>
-<td>大于等于开始时间</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.END_DATE</td>
-</tr>
-<tr>
-<td>状态</td>
-<td>下拉选择框</td>
-<td>政策当前状态</td>
-<td>常显</td>
-<td>默认值notenable(未失效)，值集AE.POLICY_STATUS，不可编辑</td>
-<td>enable/disenable/notenable</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.POLICY_STATUS</td>
-</tr>
-<tr>
-<td>创建人</td>
-<td>文本框</td>
-<td>创建人</td>
-<td>常显</td>
-<td>系统自动填充</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.CREATED_BY_BAK</td>
-</tr>
-<tr>
-<td>创建日期</td>
-<td>日期选择框</td>
-<td>创建日期</td>
-<td>常显</td>
-<td>系统自动填充</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.CREATED</td>
-</tr>
-<tr>
-<td>更新人</td>
-<td>文本框</td>
-<td>最后更新人</td>
-<td>常显</td>
-<td>系统自动填充</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.LAST_UPD_BY</td>
-</tr>
-<tr>
-<td>更新日期</td>
-<td>日期选择框</td>
-<td>最后更新日期</td>
-<td>常显</td>
-<td>系统自动填充</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_HEAD.LAST_UPD</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块2：配置类型行表格">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>执行类型</td>
-<td>下拉选择框</td>
-<td>执行类型(违约金/次年折扣/返点)</td>
-<td>常显</td>
-<td>值集AE.EXECUTE_TYPE，必输，未失效状态可编辑</td>
-<td>breach/discount/rebate</td>
-<td>ANNUAL_DEALER_POLICY_LINE.EXECUTE_TYPE</td>
-</tr>
-<tr>
-<td>计算方式</td>
-<td>下拉选择框</td>
-<td>计算方式(正价/非正价)</td>
-<td>执行类型为返点时</td>
-<td>值集AE.CALCULATION_METHOD，返点类型必输</td>
-<td>regular_price/other_price</td>
-<td>ANNUAL_DEALER_POLICY_LINE.CALCULATION_METHOD</td>
-</tr>
-<tr>
-<td>执行值</td>
-<td>数值输入框</td>
-<td>违约金执行值</td>
-<td>执行类型为违约金时</td>
-<td>违约金类型必输</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_LINE.EXECUTE_VAL</td>
-</tr>
-<tr>
-<td>执行值类型</td>
-<td>下拉选择框</td>
-<td>执行值类型(比例/金额)</td>
-<td>执行类型为违约金时</td>
-<td>值集AE.EXECUTE_VAL_TYPE，违约金类型必输</td>
-<td>ratio/amount</td>
-<td>ANNUAL_DEALER_POLICY_LINE.EXECUTE_VAL_TYPE</td>
-</tr>
-<tr>
-<td>合同类型</td>
-<td>下拉选择框</td>
-<td>适用合同类型</td>
-<td>常显</td>
-<td>值集AE.SALES_CONTRACT_TYPE，必输</td>
-<td>合同类型值集可选范围</td>
-<td>ANNUAL_DEALER_POLICY_CONTRACT.CONTRACT_TYPE</td>
-</tr>
-<tr>
-<td>开始区间</td>
-<td>数值输入框</td>
-<td>阶梯区间起点</td>
-<td>执行类型为次年折扣或返点时</td>
-<td>必输，小于结束区间</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_TIERS.START_POINT</td>
-</tr>
-<tr>
-<td>结束区间</td>
-<td>数值输入框</td>
-<td>阶梯区间终点</td>
-<td>执行类型为次年折扣或返点时</td>
-<td>必输，大于开始区间</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_TIERS.END_POINT</td>
-</tr>
-<tr>
-<td>区间数值</td>
-<td>数值输入框</td>
-<td>阶梯区间对应的执行数值</td>
-<td>执行类型为次年折扣或返点时</td>
-<td>必输</td>
-<td>-</td>
-<td>ANNUAL_DEALER_POLICY_TIERS.TIER_VAL</td>
-</tr>
-</tbody></table></div>
+<tr><td>政策头ID</td><td>ANNUAL_DEALER_POLICY_HEAD.POLICY_HEAD_ID</td><td>文本框</td><td>政策头ID</td><td>常显</td><td>系统生成</td></tr>
+<tr><td>年度</td><td>ANNUAL_DEALER_POLICY_HEAD.POLICY_YEAR</td><td>文本框</td><td>政策年度</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>经销商</td><td>ANNUAL_DEALER_POLICY_HEAD.CUSTOMER_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>选择经销商带出</td></tr>
+<tr><td>事业部</td><td>ANNUAL_DEALER_POLICY_HEAD.ENTNAME</td><td>文本框</td><td>事业部名称</td><td>常显</td><td>选择事业部带出</td></tr>
+<tr><td>政策状态</td><td>ANNUAL_DEALER_POLICY_HEAD.STATUS</td><td>文本框</td><td>政策状态</td><td>常显</td><td>系统更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
-<KbSubTitle>弹窗1：事业部LOV <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| entid | 事业部ID | 组织ID | 101 |
-
-**数据范围**
-
-```sql
-AE.ORG_LOV值对象
-```
-
+<blockquote>本页面查询条件使用文本输入和下拉选择，无独立弹窗。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
-
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 保存 | 保存当前政策配置 | 详情页 | 新增或编辑状态，状态为未失效 | 调用insert或update接口 |
-| 生效 | 使当前政策生效 | 详情页 | 状态为未失效(notenable) | 调用make-effective接口，互斥失效同事业部同年度已有生效政策 |
-| 失效 | 使当前政策失效 | 详情页 | 状态为生效(enable) | 调用failure接口，将状态改为disenable |
-| 编辑 | 进入编辑模式 | 详情页 | 非编辑状态 | 切换界面为可编辑状态 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新增</td><td>新建营销政策</td><td>列表页</td><td>始终可用</td><td>打开新建页面</td></tr>
+<tr><td>保存</td><td>保存政策信息</td><td>编辑页</td><td>编辑状态</td><td>调用insert或update接口</td></tr>
+<tr><td>生效</td><td>使政策生效</td><td>编辑页</td><td>已保存状态</td><td>调用makeEffective接口</td></tr>
+<tr><td>失效</td><td>使政策失效</td><td>编辑页</td><td>已生效状态</td><td>调用failure接口</td></tr>
+<tr><td>推送ERP</td><td>推送至ERP/CRM</td><td>列表页</td><td>已生效状态</td><td>调用pushErpAndCrm接口</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：配置类型行不能为空 —— 保证至少有一条配置行</KbSubTitle>
-
-- 第1点：提交的lines列表为空时抛出异常
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM ANNUAL_DEALER_POLICY_LINE WHERE HEAD_ID = :headId
-```
-
-<KbSubTitle>校验2：违约金类型行执行值类型不能为空 —— 违约金必须指定执行值类型</KbSubTitle>
-
-- 第1点：当执行类型为breach时，executeValType不能为空
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM ANNUAL_DEALER_POLICY_LINE WHERE HEAD_ID = :headId AND EXECUTE_TYPE = 'breach' AND (EXECUTE_VAL_TYPE IS NULL OR EXECUTE_VAL IS NULL)
-```
-
-<KbSubTitle>校验3：结束时间不能早于开始时间 —— 保证时间区间合法</KbSubTitle>
-
-- 第1点：前端DataSet校验，endDate不能早于startDate
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
-```
-
+<ul><li>校验1：年度不能为空 —— 确保政策归属明确年度</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：保存时校验年度不为空</p>
+<ul><li>系统体现：toast提醒</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;</code></pre>
 </KbCard>
+
 <KbCard title="提交校验">
-- 无工作流，无提交校验
-
+<blockquote>本页面无提交审批流程，通过生效操作控制政策可用性。</blockquote>
 </KbCard>
+
 <KbCard title="状态机">
-
-
-```text
-[新建/未失效] ──生效──→ [生效] ──失效──→ [失效]
-[未失效]     ──修改──→ [未失效]
-[生效]       ──失效──→ [失效]
-```
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| notenable | 未失效(新建/修改后) | 修改、生效、保存 |
-| enable | 生效 | 失效 |
-| disenable | 失效 | 无(终态) |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：ANNUAL_DEALER_POLICY_HEAD（年度营销政策头表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 主键ID | - | 自增主键 |
-| ENTID | NUMBER | 组织ID(事业部) | 事业部 | LOV选择带入 |
-| POLICY_YEAR | NUMBER | 销售年度 | 销售年度 | 年份选择框 |
-| POLICY_STATUS | VARCHAR | 有效状态 | 状态 | 默认notenable，生效时改为enable，失效时改为disenable |
-| START_DATE | DATE | 开始日期 | 开始时间 | - |
-| END_DATE | DATE | 结束日期 | 结束时间 | - |
-| CREATED | DATE | 创建时间 | 创建日期 | 系统自动填充 |
-| CREATED_BY_BAK | VARCHAR | 创建人 | 创建人 | 系统自动填充 |
-| LAST_UPD | DATE | 更新时间 | 更新日期 | 系统自动填充 |
-| LAST_UPD_BY | VARCHAR | 更新人 | 更新人 | 系统自动填充 |
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──生效──→ 已生效 ──失效──→ 已失效</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>已保存</td><td>已保存未生效</td><td>编辑、保存、生效</td></tr>
+<tr><td>已生效</td><td>政策已生效</td><td>失效、推送ERP</td></tr>
+<tr><td>已失效</td><td>政策已失效</td><td>查看</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="表2：ANNUAL_DEALER_POLICY_LINE（年度合同类型配置表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 主键ID | - | 自增主键 |
-| EXECUTE_TYPE | VARCHAR | 执行类型 | 执行类型 | 值集AE.EXECUTE_TYPE：breach/discount/rebate |
-| CALCULATION_METHOD | VARCHAR | 计算方式 | 计算方式 | 值集AE.CALCULATION_METHOD：regular_price/other_price |
-| EXECUTE_VAL | NUMBER | 执行值 | 执行值 | 违约金类型必输 |
-| EXECUTE_VAL_TYPE | VARCHAR | 执行值类型 | 执行值类型 | 值集AE.EXECUTE_VAL_TYPE：ratio/amount |
-| HEAD_ID | NUMBER | 配置头表ID | - | 关联ANNUAL_DEALER_POLICY_HEAD.ID |
-| CREATED | DATE | 创建时间 | - | 系统自动填充 |
-| CREATED_BY_BAK | VARCHAR | 创建人 | - | 系统自动填充 |
-| LAST_UPD | DATE | 更新时间 | - | 系统自动填充 |
-| LAST_UPD_BY | VARCHAR | 更新人 | - | 系统自动填充 |
-
+<KbCard title="表1：ANNUAL_DEALER_POLICY_HEAD（年度经销商政策头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>POLICY_HEAD_ID</td><td>BIGINT</td><td>主键ID</td><td>政策头ID</td><td>自增主键</td></tr>
+<tr><td>POLICY_YEAR</td><td>VARCHAR</td><td>政策年度</td><td>年度</td><td>手动选择</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>经销商</td><td>选择经销商带出</td></tr>
+<tr><td>ENTNAME</td><td>VARCHAR</td><td>事业部名称</td><td>事业部</td><td>选择事业部带出</td></tr>
+<tr><td>STATUS</td><td>VARCHAR</td><td>政策状态</td><td>政策状态</td><td>系统更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="3" title="表3：ANNUAL_DEALER_POLICY_TIERS（年度营销政策阶梯区间表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 主键ID | - | 自增主键 |
-| LINE_ID | NUMBER | 行表ID | - | 关联ANNUAL_DEALER_POLICY_LINE.ID |
-| START_POINT | NUMBER | 开始区间 | 开始区间 | 次年折扣/返点类型行才有 |
-| END_POINT | NUMBER | 结束区间 | 结束区间 | 次年折扣/返点类型行才有 |
-| TIER_VAL | NUMBER | 区间数值 | 区间数值 | 次年折扣/返点类型行才有 |
-| CREATED | DATE | 创建时间 | - | 系统自动填充 |
-| CREATED_BY_BAK | VARCHAR | 创建人 | - | 系统自动填充 |
-| LAST_UPD | DATE | 更新时间 | - | 系统自动填充 |
-| LAST_UPD_BY | VARCHAR | 更新人 | - | 系统自动填充 |
-
+<KbCard title="表2：SA_POLICY_YEAR_HEADER（年度政策头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>SA_POLICY_YEAR_HEADER_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="4" title="表4：ANNUAL_DEALER_POLICY_CONTRACT（年度营销政策适用合同类型表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 主键ID | - | 自增主键 |
-| CONTRACT_TYPE | NUMBER | 合同类型 | 合同类型 | 值集AE.SALES_CONTRACT_TYPE |
-| LINE_ID | NUMBER | 行表ID | - | 关联ANNUAL_DEALER_POLICY_LINE.ID |
-| CREATED | DATE | 创建时间 | - | 系统自动填充 |
-| CREATED_BY_BAK | VARCHAR | 创建人 | - | 系统自动填充 |
-| LAST_UPD | DATE | 更新时间 | - | 系统自动填充 |
-| LAST_UPD_BY | VARCHAR | 更新人 | - | 系统自动填充 |
-
----
-
+<KbCard title="表3：SA_POLICY_YEAR_LINE（年度政策行表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>SA_POLICY_YEAR_LINE_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+<tr><td>SA_POLICY_YEAR_HEADER_ID</td><td>BIGINT</td><td>关联头表ID</td><td>-</td><td>FK → SA_POLICY_YEAR_HEADER</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
-</KbCard>
 </div>
 </div>
 </div>
@@ -551,123 +284,106 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">参数id 不能为空</td>
-            <td style="font-size:13px;">查询详情</td>
-            <td style="font-size:13px;">传入的id参数为null，检查前端路由参数</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">配置类型行不能为空</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">提交时lines列表为空，需至少添加一行配置</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">执行值类型不能为空</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">违约金类型行缺少执行值类型或执行值</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">数据的审核状态异常，请重新核实</td>
-            <td style="font-size:13px;">修改</td>
-            <td style="font-size:13px;">当前政策状态不是未失效(notenable)，不允许修改</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">数据的状态异常，请联系IT处理</td>
-            <td style="font-size:13px;">生效</td>
-            <td style="font-size:13px;">当前政策状态不是未失效(notenable)，不允许生效</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>参数id 不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>传入的id参数为null，检查前端路由参数</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>配置类型行不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>提交时lines列表为空，需至少添加一行配置</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>执行值类型不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>违约金类型行缺少执行值类型或执行值</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>数据的审核状态异常，请重新核实</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前政策状态不是未失效(notenable)，不允许修改</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-5" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>数据的状态异常，请联系IT处理</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>当前政策状态不是未失效(notenable)，不允许生效</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>年度不能为空</td><td>保存时</td><td>未选择年度，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>ERP推送失败</td><td>推送ERP时</td><td>ERP系统不可用或数据异常</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>参数id不能为空</td><td>查询详情时</td><td>未传入政策头ID，重新进入页面</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>配置类型行不能为空</td><td>保存时</td><td>未添加政策配置行，添加行后保存</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>数据的审核状态异常</td><td>修改时</td><td>政策状态非"未生效"，需先失效再修改</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>数据的状态异常</td><td>生效时</td><td>政策状态非"未生效"，无法生效</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>执行值类型不能为空</td><td>保存时</td><td>违约金行未配置执行值类型，补全后保存</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>经销商信息异常</td><td>推送ERP时</td><td>经销商编码在系统中无对应等级，核对经销商主数据</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>对应的出库总额未找到</td><td>推送ERP时</td><td>合同无出库总额记录，先确认出库数据</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>次年折扣分段区间未找到对应数值</td><td>推送ERP时</td><td>完成率未落入任何折扣区间，补全区间配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>返点政策行配置为空</td><td>推送ERP时</td><td>合同关联返点行已删除，重新关联合同</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>违约金政策行配置为空</td><td>推送ERP时</td><td>合同关联违约金行已删除，重新关联合同</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>未找到对应的B/B1类系统参数值</td><td>推送ERP时</td><td>系统参数未配置B/B1类折扣比例，联系管理员</td><td>阻断性报错</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：年度不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择政策年度（POLICY_YEAR）直接点击保存</li><li><strong>逻辑分析</strong>：年度营销政策按年度（POLICY_YEAR）归属，年度是政策生效期和合同引用的前置维度。未选择年度将导致政策无法被年度经销合同按年度引用，也无法推送ERP（ERP按年度建账）。校验POLICY_YEAR非空，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME, ENTNAME, STATUS
+  FROM ANNUAL_DEALER_POLICY_HEAD
+  WHERE POLICY_YEAR IS NULL;</code></pre>
+<h4>报错2：ERP推送失败</h4>
+<ul><li><strong>触发条件</strong>：用户对已生效政策点击"推送ERP"，pushErpAndCrm接口推送至ERP/CRM时返回失败</li><li><strong>逻辑分析</strong>：推送接口将营销政策推送至ERP和CRM系统，支持更新ERP总账日期（modifyLegerDate）。失败根因有三类：(1)ERP/CRM系统不可用或网络中断；(2)推送数据异常，如政策年度在ERP中不存在、经销商编码在ERP中不匹配、政策行明细数据缺失；(3)ERP侧重复推送或政策状态非"已生效"（仅已生效政策可推送）。需确认政策STATUS为已生效及ERP/CRM连接状态</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME, ENTNAME, STATUS
+  FROM ANNUAL_DEALER_POLICY_HEAD
+  WHERE STATUS = '已生效';
+  -- 核查年度政策头表推送相关字段
+  SELECT SA_POLICY_YEAR_HEADER_ID, PUSH_STATUS, PUSH_TIME, ERROR_MSG
+  FROM SA_POLICY_YEAR_HEADER
+  WHERE PUSH_STATUS != 'SUCCESS' OR PUSH_STATUS IS NULL;</code></pre>
+<h4>报错3：参数id不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户进入年度营销政策详情页，detail接口未传入政策头ID（id为null）</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.detail方法首行校验id非空，id为null时抛CommonException。根因是前端跳转详情页时未携带POLICY_HEAD_ID参数，或URL参数丢失。需重新从列表页点击"查看"进入详情页</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME FROM ANNUAL_DEALER_POLICY_HEAD
+  WHERE POLICY_HEAD_ID = #{id};</code></pre>
+<h4>报错4：配置类型行不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户新建营销政策未添加任何配置类型行（lines为空集合）直接点击保存</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.insert方法校验dto.getLines()非空，政策头必须关联至少一行配置（折扣/返点/违约金）。无配置行的政策无业务意义，无法被合同引用计算折扣返点。需在编辑页点击"增加行"添加配置类型行后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT H.POLICY_HEAD_ID, H.POLICY_YEAR, COUNT(L.LINE_ID) AS 配置行数
+  FROM ANNUAL_DEALER_POLICY_HEAD H
+  LEFT JOIN ANNUAL_DEALER_POLICY_LINE L ON H.POLICY_HEAD_ID = L.HEAD_ID
+  GROUP BY H.POLICY_HEAD_ID, H.POLICY_YEAR
+  HAVING COUNT(L.LINE_ID) = 0;</code></pre>
+<h4>报错5：数据的审核状态异常</h4>
+<ul><li><strong>触发条件</strong>：用户对状态非"未生效"（POLICY_STATUS_DIS_NOT_ENABLE）的政策点击修改并提交update接口</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.update方法校验dto.getPolicyStatus()必须为POLICY_STATUS_DIS_NOT_ENABLE（未生效），其他状态（已生效、已失效）不允许修改。已生效政策被合同引用，修改会影响已结算数据；已失效政策为历史归档。需先将政策失效再修改</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, POLICY_STATUS FROM ANNUAL_DEALER_POLICY_HEAD
+  WHERE POLICY_HEAD_ID = #{id} AND POLICY_STATUS != 'DIS_NOT_ENABLE';</code></pre>
+<h4>报错6：数据的状态异常</h4>
+<ul><li><strong>触发条件</strong>：用户对状态非"未生效"的政策点击"生效"按钮，makeEffective接口校验不通过</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.makeEffective方法校验dto非空且POLICY_STATUS为POLICY_STATUS_DIS_NOT_ENABLE（未生效），其他状态无法生效。生效逻辑会先将同事业部+年度已生效政策置为失效，再将当前政策置为已生效。需确认政策状态为未生效再生效</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, ENTID, POLICY_STATUS FROM ANNUAL_DEALER_POLICY_HEAD
+  WHERE POLICY_HEAD_ID = #{id} AND POLICY_STATUS != 'DIS_NOT_ENABLE';</code></pre>
+<h4>报错7：执行值类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户添加违约金类型（EXECUTE_TYPE_BREACH）配置行，未填写执行值类型（EXECUTE_VAL_TYPE）或执行值（EXECUTE_VAL）直接保存</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.validateLine方法对违约金行校验executeValType和executeVal非空。违约金计算需依据执行值类型（按金额或按比例）和执行值，缺失将导致违约金无法计算。需补全执行值类型和执行值后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LINE_ID, HEAD_ID, EXECUTE_TYPE, EXECUTE_VAL_TYPE, EXECUTE_VAL
+  FROM ANNUAL_DEALER_POLICY_LINE
+  WHERE EXECUTE_TYPE = 'BREACH'
+    AND (EXECUTE_VAL_TYPE IS NULL OR EXECUTE_VAL IS NULL);</code></pre>
+<h4>报错8：经销商信息异常</h4>
+<ul><li><strong>触发条件</strong>：推送ERP/CRM时，saPolicyYearHeaderMapper.getCustomerOrgRankByCode返回空，经销商在系统中无对应等级</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.getSuccessfulRecords方法通过getCustomerOrgRankByCode查询经销商等级（rank），rank为空时抛CommonException。等级用于决定折扣修正值计算方式（1=直营，2=B类，3=B1类）。需核对经销商主数据是否配置等级</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT C.CUSTOMER_ID, C.CUSTOMER_CODE, C.CUSTOMER_NAME, C.RANK
+  FROM CUSTOMER C
+  WHERE C.CUSTOMER_CODE = #{custCode} AND (C.RANK IS NULL OR C.RANK = '');</code></pre>
+<h4>报错9：对应的出库总额未找到</h4>
+<ul><li><strong>触发条件</strong>：推送ERP/CRM计算完成率或返点时，ANNUAL_OUTBOUND_AMOUNT表无该合同的出库总额记录</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.getCompletionRate方法查询ANNUAL_OUTBOUND_AMOUNT表，若结果集为空抛CommonException。出库总额是完成率计算的分母来源，缺失意味着合同从未执行出库总额计算任务。需先执行出库总额计算任务（MktSaPolicyYearIntfJob）</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SA_CONTR_HEAD_ID, S.CONTRACT_NO, A.SALE_AMOUNT AS 出库总额
+  FROM SA_SALE_CONTRACT_HEAD S
+  LEFT JOIN ANNUAL_OUTBOUND_AMOUNT A ON S.SALE_CONTRACT_HEAD_ID = A.SA_CONTR_HEAD_ID
+  WHERE S.SALE_CONTRACT_HEAD_ID = #{saContrHeadId} AND A.SALE_AMOUNT IS NULL;</code></pre>
+<h4>报错10：次年折扣分段区间未找到对应数值</h4>
+<ul><li><strong>触发条件</strong>：推送ERP/CRM计算次年折扣时，合同完成率未落入任何折扣分段区间（START_POINT, END_POINT）</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.calculateDiscount方法通过matchingInterval匹配完成率所在区间，未匹配时tierVal为0，抛CommonException。根因是政策行未配置覆盖该完成率的区间（如完成率105%但区间仅配置到100%）。需在政策编辑页补全区间配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT T.LINE_ID, T.START_POINT, T.END_POINT, T.TIER_VAL
+  FROM ANNUAL_DEALER_POLICY_TIERS T
+  WHERE T.LINE_ID = #{discountId}
+    AND #{completionRate} BETWEEN T.START_POINT AND T.END_POINT;</code></pre>
+<h4>报错11：返点政策行配置为空</h4>
+<ul><li><strong>触发条件</strong>：推送ERP/CRM计算返点时，annualDealerPolicyLineRepository.selectByPrimaryKey(rebateId)返回null</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.calculateRatesAndDiscounts方法在完成率≥100%时查询返点政策行，policyLine为null时抛CommonException。根因是合同关联的返点行（REBATE_ID）已被删除或不存在。需重新为合同关联有效的返点政策行</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.REBATE_ID, L.LINE_ID
+  FROM SA_SALE_CONTRACT_HEAD S
+  LEFT JOIN ANNUAL_DEALER_POLICY_LINE L ON S.REBATE_ID = L.LINE_ID
+  WHERE S.REBATE_ID IS NOT NULL AND L.LINE_ID IS NULL;</code></pre>
+<h4>报错12：违约金政策行配置为空</h4>
+<ul><li><strong>触发条件</strong>：推送ERP/CRM计算违约金时，annualDealerPolicyLineRepository.selectByPrimaryKey(breachId)返回null</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.calculateBreach方法查询违约金政策行，policyLine为null时抛CommonException。根因是合同关联的违约金行（BREACH_ID）已被删除或不存在。需重新为合同关联有效的违约金政策行</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.BREACH_ID, L.LINE_ID
+  FROM SA_SALE_CONTRACT_HEAD S
+  LEFT JOIN ANNUAL_DEALER_POLICY_LINE L ON S.BREACH_ID = L.LINE_ID
+  WHERE S.BREACH_ID IS NOT NULL AND L.LINE_ID IS NULL;</code></pre>
+<h4>报错13：未找到对应的B/B1类系统参数值</h4>
+<ul><li><strong>触发条件</strong>：推送ERP/CRM计算修正值时，经销商等级为B类(2)或B1类(3)，但系统参数未配置Rank_B_Discount或Rank_B1_Discount</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.getCorrectionValue方法根据经销商等级查询系统参数（SYS_PARAM），B类查询Rank_B_Discount，B1类查询Rank_B1_Discount，未找到时抛CommonException。修正值用于调整非直营经销商的出库总额计算。需联系管理员在系统参数配置中补全B/B1类折扣比例</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT PARAM_CODE, PARAM_VALUE FROM SYS_PARAM
+  WHERE ENTID = #{entId}
+    AND PARAM_CODE IN ('Rank_B_Discount', 'Rank_B1_Discount');</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">生效后同事业部同年度原有政策自动失效</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>生效逻辑中会查询同事业部+同年度的已生效政策，将其状态改为disenable<br>
-      <strong style="color:#7C3AED;">处理：</strong>这是正常业务逻辑，如需保留原政策请确认是否真的需要生效新政策
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">修改政策后原有子表数据丢失</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>修改采用先删后插策略，原有行、合同类型、阶梯区间数据全部删除后重新插入<br>
-      <strong style="color:#7C3AED;">处理：</strong>这是设计如此，修改前请确认数据已正确填写
-    </div>
-  </div>
-</div>
+<ul><li>问题1：政策无法被合同引用</li><li>原因：政策状态不是"已生效"</li><li>解决思路：检查SQL <code>SELECT STATUS FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_HEAD_ID = #&#123;id&#125;</code>，确认状态为已生效</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -676,11 +392,14 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE START_DATE > END_DATE
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2026-01-22 | - | jiaqiang.fu01 | 年度营销政策头实体类更新 |
-| 2026-01-23 | - | jiaqiang.fu01 | 年度合同类型配置表/阶梯区间/适用合同类型实体类更新 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

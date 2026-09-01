@@ -193,37 +193,28 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：失效与恢复生效共用同一实体，通过类型字段区分 TYPE区分">
-<KbQuote>报备失效申请和报备恢复生效申请共用同一张表和同一个服务，通过TYPE字段区分业务类型，减少冗余代码</KbQuote>
-
-**具体逻辑**：
-
-- 1、TYPE=1表示报备失效申请，TYPE=2（非1）表示报备恢复生效申请
-- 2、两种类型使用不同的编码规则生成单号：失效使用AE.PROJECT_DISABLE_CODE，恢复生效使用AE.PROJECT_DISABLE_ENABLE_CODE
-- 3、审批通过后，根据TYPE值决定将项目有效状态更新为3（已失效）或2（已生效）
+<KbCard num="1" title="重点逻辑1：失效与恢复生效通过TYPE字段区分">
+<ul><li><strong>业务意义</strong>：失效与恢复生效共用同一张表和同一个服务，通过TYPE字段区分，减少冗余代码</li><li><strong>具体逻辑描述</strong>：</li><li>TYPE=1表示报备失效申请，TYPE=2表示报备恢复生效申请</li><li>两种类型使用不同的编码规则生成单号：失效使用AE.PROJECT_DISABLE_CODE，恢复生效使用AE.PROJECT_DISABLE_ENABLE_CODE</li><li>审批通过后，TYPE=1将PROJECT_VALID更新为3(失效)，TYPE=2更新为2(生效)</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：审批通过后的多系统联动 审批回调联动">
-<KbQuote>报备有效状态变更不仅影响本系统，还需同步到CRM和ES，确保各系统数据一致</KbQuote>
-
-**具体逻辑**：
-
-- 1、审批通过后，首先更新项目有效状态，然后记录审批人和审批时间
-- 2、非家装单体报备失效（MONOMER_TYPE≠2）时，推送报备有效状态变更信息到CRM系统
-- 3、单体报备（REPORT_TYPE=1）时，失效删除ES索引数据，恢复生效推送ES索引数据
-- 4、CRM推送失败不影响主流程，仅记录错误日志；ES操作失败同样仅记录日志不阻断
+<KbCard num="2" title="重点逻辑2：审批通过后多系统联动">
+<ul><li><strong>业务意义</strong>：报备有效状态变更需同步到CRM和ES，确保各系统数据一致</li><li><strong>具体逻辑描述</strong>：</li><li>审批通过后首先更新项目有效状态(PROJECT_VALID)，记录审批人和审批时间</li><li>非家装单体报备(monomerType!=2)时，推送报备有效状态到CRM(arrowEbsSdk.indivireportAdd)</li><li>单体报备(reportType=1)时，失效删除ES索引(delEsDocByUser)，生效推送ES索引(reportToEs)</li><li>CRM推送失败仅记录日志(LOGGER.error)，不阻断主流程；ES操作失败同样仅记录日志</li></ul>
 </KbCard>
 
-<KbCard num="3" title="重点逻辑3：家装单体报备失效不推送CRM 家装特殊处理">
-<KbQuote>家装单体报备失效（MONOMER_TYPE=2）不需要推送到CRM系统，与工程单体报备失效区分处理</KbQuote>
+<KbCard num="3" title="重点逻辑3：家装单体报备失效不推送CRM">
+<ul><li><strong>业务意义</strong>：家装单体报备失效(monomerType=2)不需要推送到CRM，与工程单体报备区分处理</li><li><strong>具体逻辑描述</strong>：</li><li>当MONOMER_TYPE=2时，跳过CRM推送逻辑</li><li>家装单体报备仍会执行项目有效状态更新和ES数据同步(如果reportType=1)</li></ul>
+</KbCard>
 
-**具体逻辑**：
+<KbCard num="4" title="重点逻辑4：双编码规则">
+<ul><li><strong>业务意义</strong>：失效和恢复生效使用不同编码规则，便于区分单据类型</li><li><strong>具体逻辑描述</strong>：</li><li>saveData中根据type选择编码规则</li><li>type=1失效：codeRuleBuilder.generateCode(PROJECT_DISABLE_CODE)</li><li>type=2恢复生效：codeRuleBuilder.generateCode(PROJECT_DISABLE_ENABLE_CODE)</li></ul>
+</KbCard>
 
-- 1、当MONOMER_TYPE=2时，跳过CRM推送逻辑
-- 2、家装单体报备失效仍会执行项目有效状态更新和ES数据同步（如果报备类型为单体报备）
+<KbCard num="5" title="重点逻辑5：上一次失效查询">
+<ul><li><strong>业务意义</strong>：避免重复申请，查询项目上一次失效记录供前端参考</li><li><strong>具体逻辑描述</strong>：</li><li>queryLastDisable查询EPM_PROJECT_DISABLE中PROJECT_ID匹配且TYPE=1的记录</li><li>按LAST_UPDATE_DATE倒序取第一条返回</li><li>为空时返回空VO</li></ul>
 </KbCard>
 
 </div>
@@ -233,314 +224,372 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：报备失效/生效申请详情页（低代码页面）">
-<div class="kb-field-scroll">
+<KbCard title="界面模块">
+<blockquote>本页面为hlod低代码页面，界面模块由低代码平台配置承载。以下基于后端Entity/DTO字段梳理。</blockquote>
+<h4>查询区</h4>
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>报备失效申请单号</td>
-<td>文本框</td>
-<td>系统自动生成的申请单编号</td>
-<td>常显</td>
-<td>新建时自动生成：失效申请使用编码规则AE.PROJECT_DISABLE_CODE，恢复生效申请使用AE.PROJECT_DISABLE_ENABLE_CODE；不可编辑</td>
-<td>系统自动生成</td>
-<td>EPM_PROJECT_DISABLE.PROJ_DISABLE_CODE</td>
-</tr>
-<tr>
-<td>工程ID</td>
-<td>文本框</td>
-<td>关联的工程项目ID</td>
-<td>常显</td>
-<td>从报备项目带入；不可编辑</td>
-<td>有效的工程项目ID</td>
-<td>EPM_PROJECT_DISABLE.PROJECT_ID</td>
-</tr>
-<tr>
-<td>工程编号</td>
-<td>文本框</td>
-<td>关联的工程项目编号</td>
-<td>常显</td>
-<td>从报备项目自动带出；不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_DISABLE.PROJECT_CODE</td>
-</tr>
-<tr>
-<td>工程名称</td>
-<td>文本框</td>
-<td>关联的工程项目名称</td>
-<td>常显</td>
-<td>从报备项目自动带出；不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_DISABLE.PROJECT_NAME</td>
-</tr>
-<tr>
-<td>申请类型</td>
-<td>单选框</td>
-<td>区分失效申请和恢复生效申请</td>
-<td>常显</td>
-<td>新建时选择：1=失效申请，2=恢复生效申请；选择后不可更改</td>
-<td>1（失效）/2（恢复生效）</td>
-<td>EPM_PROJECT_DISABLE.TYPE</td>
-</tr>
-<tr>
-<td>类型</td>
-<td>单选框</td>
-<td>区分工程单体和家装单体</td>
-<td>常显</td>
-<td>从报备项目带入；2=家装单体报备失效</td>
-<td>2（家装单体报备失效）</td>
-<td>EPM_PROJECT_DISABLE.MONOMER_TYPE</td>
-</tr>
-<tr>
-<td>失效申请说明</td>
-<td>文本域</td>
-<td>失效申请的原因说明</td>
-<td>TYPE=1时显示</td>
-<td>可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_DISABLE.REASON</td>
-</tr>
-<tr>
-<td>恢复生效申请说明</td>
-<td>文本域</td>
-<td>恢复生效申请的原因说明</td>
-<td>TYPE=2时显示</td>
-<td>可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT_DISABLE.ENABLE_REASON</td>
-</tr>
-<tr>
-<td>经销商销售区域</td>
-<td>文本框</td>
-<td>经销商所属销售区域</td>
-<td>常显</td>
-<td>从报备项目带入</td>
-<td>-</td>
-<td>EPM_PROJECT_DISABLE.SALE_REGION</td>
-</tr>
-<tr>
-<td>状态</td>
-<td>文本框</td>
-<td>单据审批状态</td>
-<td>常显</td>
-<td>新建=1，审批中=3，审批通过=5，审批拒绝=7，已撤回=96</td>
-<td>值集HWKF.APPROVE_STATUS</td>
-<td>EPM_PROJECT_DISABLE.STAT</td>
-</tr>
-<tr>
-<td>审核人</td>
-<td>文本框</td>
-<td>审批通过的操作人</td>
-<td>审批通过后显示</td>
-<td>审批通过时自动记录当前用户名</td>
-<td>-</td>
-<td>EPM_PROJECT_DISABLE.AUDITOR</td>
-</tr>
-<tr>
-<td>审核时间</td>
-<td>文本框</td>
-<td>审批通过的时间</td>
-<td>审批通过后显示</td>
-<td>审批通过时自动记录当前时间</td>
-<td>-</td>
-<td>EPM_PROJECT_DISABLE.AUDITTIME</td>
-</tr>
-</tbody></table></div>
+<tr><td>申请单号</td><td>EPM_PROJECT_DISABLE.PROJ_DISABLE_CODE</td><td>文本输入</td><td>模糊查询申请单号</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>项目编码</td><td>EPM_PROJECT_DISABLE.PROJECT_CODE</td><td>文本输入</td><td>模糊查询项目</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>项目名称</td><td>EPM_PROJECT_DISABLE.PROJECT_NAME</td><td>文本输入</td><td>模糊查询项目</td><td>始终显示</td><td>手动输入，模糊匹配</td></tr>
+<tr><td>审批状态</td><td>EPM_PROJECT_DISABLE.HZ_APPROVE_STATUS</td><td>下拉框</td><td>查询审批状态</td><td>始终显示</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>申请类型</td><td>EPM_PROJECT_DISABLE.TYPE</td><td>下拉框</td><td>查询申请类型</td><td>始终显示</td><td>1=失效, 2=恢复生效</td></tr>
+</tbody>
+</table>
+<h4>申请单头信息</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>申请单号</td><td>EPM_PROJECT_DISABLE.PROJ_DISABLE_CODE</td><td>文本</td><td>申请单编号</td><td>始终显示</td><td>系统自动生成，不可编辑</td></tr>
+<tr><td>申请类型</td><td>EPM_PROJECT_DISABLE.TYPE</td><td>单选框</td><td>失效/恢复生效</td><td>始终显示</td><td>1=失效申请, 2=恢复生效申请，选择后不可更改</td></tr>
+<tr><td>工程ID</td><td>EPM_PROJECT_DISABLE.PROJECT_ID</td><td>隐藏</td><td>关联工程项目</td><td>始终显示</td><td>选择项目弹窗回写，必填</td></tr>
+<tr><td>工程编号</td><td>EPM_PROJECT_DISABLE.PROJECT_CODE</td><td>文本</td><td>工程项目编号</td><td>始终显示</td><td>选择项目弹窗回写，不可编辑</td></tr>
+<tr><td>工程名称</td><td>EPM_PROJECT_DISABLE.PROJECT_NAME</td><td>文本</td><td>工程项目名称</td><td>始终显示</td><td>选择项目弹窗回写，不可编辑</td></tr>
+<tr><td>失效申请说明</td><td>EPM_PROJECT_DISABLE.REASON</td><td>文本域</td><td>失效原因说明</td><td>type=1时显示</td><td>手动输入，必填</td></tr>
+<tr><td>恢复生效申请说明</td><td>EPM_PROJECT_DISABLE.ENABLE_REASON</td><td>文本域</td><td>恢复生效原因说明</td><td>type=2时显示</td><td>手动输入，必填</td></tr>
+<tr><td>单体类型</td><td>EPM_PROJECT_DISABLE.MONOMER_TYPE</td><td>下拉框</td><td>报备类型</td><td>始终显示</td><td>2=家装单体报备失效，其他=工程单体</td></tr>
+<tr><td>经销商销售区域</td><td>EPM_PROJECT_DISABLE.SALE_REGION</td><td>文本</td><td>经销商销售区域</td><td>始终显示</td><td>从报备项目自动带出</td></tr>
+<tr><td>审批状态</td><td>EPM_PROJECT_DISABLE.HZ_APPROVE_STATUS</td><td>文本</td><td>工作流审批状态</td><td>始终显示</td><td>系统自动回写</td></tr>
+<tr><td>审核人</td><td>EPM_PROJECT_DISABLE.AUDITOR</td><td>文本</td><td>审批人</td><td>审批通过后显示</td><td>审批通过时自动记录当前用户</td></tr>
+<tr><td>审核时间</td><td>EPM_PROJECT_DISABLE.AUDITTIME</td><td>日期</td><td>审批时间</td><td>审批通过后显示</td><td>审批通过时自动记录当前时间</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>GET</td><td>`/v1/&#123;organizationId&#125;/epm-project-disables/query-last-disable`</td><td>查询上一次失效数据</td></tr>
+</tbody>
+</table>
+<p><strong>Controller</strong>：<code>EpmProjectDisableController</code> (EpmProjectDisableController.java:29)</p>
+<p><strong>Service</strong>：<code>EpmProjectDisableServiceImpl</code> (EpmProjectDisableServiceImpl.java:49)</p>
+</KbCard>
+
+<KbCard title="saveData保存逻辑">
+<pre class="detail-sql" v-pre><code>入参：List&lt;EpmProjectDisable&gt;
+1. 按projDisableId是否为空分为insertList和updateList
+2. 遍历insertList生成单号：
+   → projDisableCode为空时：
+     → type=1失效：codeRuleBuilder.generateCode(PROJECT_DISABLE_CODE)
+     → type=2恢复生效：codeRuleBuilder.generateCode(PROJECT_DISABLE_ENABLE_CODE)
+3. batchInsertSelective(insertList)
+4. batchUpdateByPrimaryKeySelective(updateList)</code></pre>
+</KbCard>
+
+<KbCard title="queryLastDisable逻辑">
+<pre class="detail-sql" v-pre><code>入参：EpmProjectDisableDTO (projectId)
+1. 查询EPM_PROJECT_DISABLE中PROJECT_ID=projectId且TYPE=1的记录
+2. 按LAST_UPDATE_DATE倒序
+3. 为空返回空VO，非空取第一条转为VO返回</code></pre>
+</KbCard>
+
+<KbCard title="wfComplete审批通过回调逻辑">
+<pre class="detail-sql" v-pre><code>入参：WfApproveDTO dto
+1. 判断approveResult == APPROVED，不是则return true
+2. 查询申请单 epmProjectDisable = selectByPrimaryKey(objId)
+3. 查询项目 epmProject = selectByPrimaryKey(projectId)
+4. 根据type更新项目有效状态：
+   → type=1失效：epmProject.setProjectValid(3)
+   → type=2生效：epmProject.setProjectValid(2)
+5. updateOptional(epmProject, PROJECT_VALID)
+6. 记录审批人auditor=当前用户名，审批时间audittime=now
+7. 查询项目报备 EPM_REPORT where PROJECT_ID = projectId
+8. 报备为空 → 抛出 CommonException("项目报备数据不存在")
+9. monomerType != 2时推送CRM：
+   → 查询客户获取shortName
+   → 构建推送数据(acctCode/acctName/acctAbbr/orgCode/reportNo/projectName/validStatus)
+   → validStatus: type=1→"0"(失效), type=2→"1"(生效)
+   → arrowEbsSdk.indivireportAdd(resources)
+   → 异常try-catch仅记录日志
+10. reportType=1单体报备时操作ES：
+    → type=1失效：epmReportService.delEsDocByUser(report) 删除ES文档
+    → type=2生效：epmReportService.reportToEs(reportId) 推送ES文档
+    → 异常try-catch仅记录日志
+11. return true</code></pre>
 </KbCard>
 
 <KbCard title="选择弹窗">
-<KbQuote>本菜单为低代码页面，选择弹窗由低代码平台配置，无独立前端源码。</KbQuote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>选择项</th><th>触发场景</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>项目选择弹窗</td><td>选择失效/生效项目时</td><td>选择已报备的项目，回写projectId/projectCode/projectName</td></tr>
+</tbody>
+</table>
+<p>本菜单为hlod低代码页面，选择行为通过低代码表单配置实现。</p>
 </KbCard>
+
 <KbCard title="导入">
-<KbQuote>本菜单不支持批量导入功能。</KbQuote>
+<p>不支持导入功能。申请单为单条创建并走审批流程，不支持Excel批量导入。</p>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 新建 | 新建报备失效/恢复生效申请单 | 列表页 | 有新建权限 | 打开新建页面，选择申请类型后填写申请信息 |
-| 提交 | 提交审批 | 详情页 | 单据状态为新建时 | 启动工作流，单据状态变更为审批中 |
-| 撤回 | 撤回已提交的审批 | 详情页 | 单据状态为审批中且为提交人 | 撤回工作流，单据状态变更为已撤回 |
-| 查询上一次失效数据 | 查询该项目上一次失效申请记录 | 详情页 | 常显 | 调用接口/v1/{organizationId}/epm-project-disables/query-last-disable，返回该项目最近一次TYPE=1的失效记录 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>序号</th><th>按钮名</th><th>显示条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>新建</td><td>始终显示</td><td>新建报备失效/恢复生效申请单</td></tr>
+<tr><td>2</td><td>查看</td><td>始终显示</td><td>查看申请单详情</td></tr>
+<tr><td>3</td><td>编辑</td><td>新建/拒绝状态</td><td>修改申请单信息</td></tr>
+<tr><td>4</td><td>提交</td><td>新建/拒绝状态</td><td>启动工作流审批(PROJECT_DISABLE_ENABLE_MAIN)</td></tr>
+<tr><td>5</td><td>撤回</td><td>审批中状态</td><td>撤回已提交的审批</td></tr>
+<tr><td>6</td><td>查询上一次失效数据</td><td>详情页</td><td>查询该项目上一次失效申请记录</td></tr>
+<tr><td>7</td><td>恢复生效</td><td>已失效项目</td><td>发起恢复生效申请(type=2)</td></tr>
+</tbody>
+</table>
+<h4>按钮1：新建（列表页）</h4>
+<ul><li><strong>业务意义</strong>：创建新的报备失效/恢复生效申请</li><li><strong>具体逻辑描述</strong>：跳转低代码详情页，选择申请类型后填写申请信息</li></ul>
+<h4>按钮2：提交（详情页）</h4>
+<ul><li><strong>业务意义</strong>：提交申请单走审批流程</li><li><strong>具体逻辑描述</strong>：仅在新建/拒绝状态下可提交，提交后触发工作流PROJECT_DISABLE_ENABLE_MAIN</li></ul>
+<h4>按钮3：查询上一次失效数据（详情页）</h4>
+<ul><li><strong>业务意义</strong>：查询该项目上一次失效申请记录，避免重复申请</li><li><strong>具体逻辑描述</strong>：调用GET /query-last-disable接口，返回该项目最近一次TYPE=1的失效记录</li></ul>
+<h4>按钮4：恢复生效（列表页）</h4>
+<ul><li><strong>业务意义</strong>：对已失效项目发起恢复生效申请</li><li><strong>具体逻辑描述</strong>：新建type=2的申请单，使用编码规则AE.PROJECT_DISABLE_ENABLE_CODE</li></ul>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：工程ID不能为空 —— 确保申请单关联有效的工程项目</KbSubTitle>
-
-- 第1点：PROJECT_ID字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_DISABLE WHERE PROJECT_ID IS NULL;
-```
-
-<KbSubTitle>校验2：单据状态不能为空 —— 确保单据有明确的审批状态</KbSubTitle>
-
-- 第1点：STAT字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_DISABLE WHERE STAT IS NULL;
-```
-
-<KbSubTitle>校验3：组织ID不能为空 —— 确保单据归属正确的组织</KbSubTitle>
-
-- 第1点：ORGANIZATION_ID字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_DISABLE WHERE ORGANIZATION_ID IS NULL;
-```
-
-<KbSubTitle>校验4：类型（MONOMER_TYPE）不能为空 —— 确保区分工程单体和家装单体</KbSubTitle>
-
-- 第1点：MONOMER_TYPE字段标注@NotNull，保存时框架自动校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EPM_PROJECT_DISABLE WHERE MONOMER_TYPE IS NULL;
-```
-
+<ul><li>校验1：工程ID非空 —— 申请单必须关联有效的工程项目</li><li><strong>详细逻辑</strong>：PROJECT_ID字段标注@NotNull，框架自动校验</li><li><strong>系统体现</strong>：Entity注解校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM EPM_PROJECT_DISABLE WHERE PROJECT_ID IS NULL;</code></li></ul>
+<ul><li>校验2：单体类型非空 —— 必须区分工程单体和家装单体</li><li><strong>详细逻辑</strong>：MONOMER_TYPE字段标注@NotNull，框架自动校验</li><li><strong>系统体现</strong>：Entity注解校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM EPM_PROJECT_DISABLE WHERE MONOMER_TYPE IS NULL;</code></li></ul>
+<ul><li>校验3：组织ID非空 —— 单据必须归属正确的组织</li><li><strong>详细逻辑</strong>：ORGANIZATION_ID字段标注@NotNull，框架自动校验</li><li><strong>系统体现</strong>：Entity注解校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM EPM_PROJECT_DISABLE WHERE ORGANIZATION_ID IS NULL;</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<KbSubTitle>校验1：项目报备数据必须存在 —— 确保审批通过后能查询到报备信息用于推送CRM和操作ES</KbSubTitle>
-
-- 第1点：审批通过回调（wfComplete）中，根据PROJECT_ID查询EPM_REPORT表
-- 第2点：如果查询结果为空，抛出异常"项目报备数据不存在"，阻断流程
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT EPD.PROJECT_ID, EPD.PROJ_DISABLE_CODE
-    FROM EPM_PROJECT_DISABLE EPD
-    LEFT JOIN EPM_REPORT ER ON EPD.PROJECT_ID = ER.PROJECT_ID
-    WHERE ER.REPORT_ID IS NULL;
-```
-
+<ul><li>校验1：项目报备数据必须存在 —— 审批通过后需查询报备信息用于推送CRM和操作ES</li><li><strong>详细逻辑</strong>：wfComplete中根据PROJECT_ID查询EPM_REPORT，为空抛出"项目报备数据不存在"</li><li><strong>系统体现</strong>：审批通过回调时校验</li><li><strong>排查SQL</strong>：<code>SELECT EPD.PROJECT_ID, EPD.PROJ_DISABLE_CODE FROM EPM_PROJECT_DISABLE EPD LEFT JOIN EPM_REPORT ER ON EPD.PROJECT_ID = ER.PROJECT_ID WHERE ER.REPORT_ID IS NULL;</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">
-### 状态机
-
-<KbSubTitle>状态机流转图</KbSubTitle>
-
-
-```text
-[新建] ──提交──> [审批中] ──审批通过──> [审批通过]
-  │                 │
-  │                 ├──审批拒绝──> [审批拒绝]
-  │                 │
-  │                 ├──退回──> [退回] ──修改提交──> [审批中]
-  │                 │
-  │                 └──撤回──> [已撤回]
-  │
-  └──删除──> (删除)
-```
-
-<KbSubTitle>状态机列表</KbSubTitle>
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 编辑、提交、删除 |
-| RUN | 审批中 | 撤回 |
-| APPROVED | 审批通过 | 无（终态，触发wfComplete回调） |
-| REJECTED | 审批拒绝 | 重新提交 |
-| RETURN | 退回 | 修改、重新提交 |
-| WITHDRAW | 已撤回 | 编辑、重新提交 |
-| INTERRUPT | 终止 | 无（终态） |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：EPM_PROJECT_DISABLE（报备失效申请表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| PROJ_DISABLE_ID | BIGINT | 报备失效申请单ID | - | 主键，自增 |
-| PROJ_DISABLE_CODE | VARCHAR | 报备失效申请单号 | 报备失效申请单号 | 新建时自动生成：TYPE=1使用编码规则AE.PROJECT_DISABLE_CODE，TYPE=2使用AE.PROJECT_DISABLE_ENABLE_CODE |
-| PROJECT_ID | BIGINT | 工程ID | 工程ID | 必填，关联EPM_PROJECT.PROJECT_ID |
-| PROJECT_CODE | VARCHAR | 工程编号 | 工程编号 | 从项目信息带入 |
-| PROJECT_NAME | VARCHAR | 工程名称 | 工程名称 | 从项目信息带入 |
-| REASON | VARCHAR | 失效申请说明 | 失效申请说明 | TYPE=1时填写 |
-| STAT | BIGINT | 单据状态 | 状态 | 新建=1，审批中=3，审批通过=5，审批拒绝=7，已撤回=96 |
-| WFID | BIGINT | 流程ID | - | 工作流实例ID，必填 |
-| WFFLAG | BIGINT | 流程标识 | - | 工作流标识，必填 |
-| CREATOR | VARCHAR | 创建人 | - | 自动记录创建人 |
-| CREATETIME | DATETIME | 创建时间 | - | 自动记录创建时间 |
-| UPDATOR | VARCHAR | 修改人 | - | 自动记录修改人 |
-| UPDATETIME | DATETIME | 修改时间 | - | 自动记录修改时间 |
-| AUDITOR | VARCHAR | 审核人 | 审核人 | 审批通过时自动记录当前用户名 |
-| AUDITTIME | DATETIME | 审核时间 | 审核时间 | 审批通过时自动记录当前时间 |
-| ORGANIZATION_ID | BIGINT | 组织ID | - | 必填，租户组织ID |
-| MONOMER_TYPE | BIGINT | 类型 | 类型 | 2=家装单体报备失效，其他值=工程单体报备失效；必填 |
-| SALE_REGION | VARCHAR | 经销商销售区域 | 经销商销售区域 | 从报备项目带入 |
-| ENABLE_REASON | VARCHAR | 恢复生效申请说明 | 恢复生效申请说明 | TYPE=2时填写 |
-| TYPE | BIGINT | 生效/失效 | 申请类型 | 1=失效申请，2=恢复生效申请 |
-| CREATION_DATE | DATETIME | 审计字段-创建时间 | - | 框架审计字段 |
-| CREATED_BY | BIGINT | 审计字段-创建人 | - | 框架审计字段 |
-| LAST_UPDATED_BY | BIGINT | 审计字段-修改人 | - | 框架审计字段 |
-| LAST_UPDATE_DATE | DATETIME | 审计字段-修改时间 | - | 框架审计字段，用于queryLastDisable排序 |
-| OBJECT_VERSION_NUMBER | BIGINT | 乐观锁版本号 | - | 框架字段，更新时自动递增 |
-
+<pre class="lang-text" v-pre><code>┌──────────┐  提交   ┌──────────┐  审批通过  ┌──────────┐
+│  新建    │ ──────→ │ 审批中    │ ────────→ │ 审批通过  │
+│ (NEW)   │         │ (RUN)   │           │(APPROVED) │
+└──────────┘         └────┬─────┘           └──────────┘
+      ↑                   │
+      │              审批拒绝/退回
+      │                   │
+      └───────────────────┘
+                  │
+              (REJECTED)</code></pre>
+<p><strong>审批通过后动作</strong>：</p>
+<ul><li>type=1失效：EPM_PROJECT.PROJECT_VALID=3，推送CRM validStatus=0，删除ES数据</li><li>type=2生效：EPM_PROJECT.PROJECT_VALID=2，推送CRM validStatus=1，推送ES数据</li></ul>
 </KbCard>
 
-<KbCard num="2" title="表2：EPM_PROJECT（项目信息表）- 相关字段">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| PROJECT_ID | BIGINT | 项目ID | - | 主键，报备失效申请通过此字段关联 |
-| PROJECT_VALID | BIGINT | 项目有效状态 | - | 审批通过后更新：失效申请设为3，恢复生效申请设为2 |
-| PROJECT_CODE | VARCHAR | 项目编码 | - | 关联字段 |
-| PROJECT_NAME | VARCHAR | 项目名称 | - | 关联字段 |
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>项目档案(EPM_PROJECT)</td><td>数据依赖</td><td>读取项目信息，审批后更新PROJECT_VALID</td><td>项目存在且已报备</td></tr>
+<tr><td>项目报备(EPM_REPORT)</td><td>数据依赖</td><td>读取报备数据用于CRM推送和ES同步</td><td>报备数据存在</td></tr>
+<tr><td>经销商档案(CUSTOMER)</td><td>数据依赖</td><td>读取经销商简称shortName推送CRM</td><td>报备关联客户存在</td></tr>
+<tr><td>编码规则引擎</td><td>数据依赖</td><td>生成申请单号</td><td>编码规则PROJECT_DISABLE_CODE/PROJECT_DISABLE_ENABLE_CODE已配置</td></tr>
+<tr><td>工作流引擎</td><td>流程依赖</td><td>申请提交走工作流审批</td><td>工作流编码PROJECT_DISABLE_ENABLE_MAIN已配置</td></tr>
+<tr><td>CRM系统(ArrowEbsSdk)</td><td>接口依赖</td><td>推送报备失效/生效信息</td><td>arrowEbsSdk.indivireportAdd接口可用</td></tr>
+<tr><td>ES搜索引擎</td><td>接口依赖</td><td>失效删除ES文档，生效推送ES文档</td><td>ES服务可用</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="3" title="表3：EPM_REPORT（项目报备表）- 相关字段">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| REPORT_ID | BIGINT | 报备ID | - | 主键 |
-| PROJECT_ID | BIGINT | 项目ID | - | 与EPM_PROJECT_DISABLE.PROJECT_ID关联 |
-| REPORT_TYPE | BIGINT | 报备类型 | - | 1=单体报备时需操作ES索引 |
-| CUSTOMER_ID | BIGINT | 客户ID | - | 推送CRM时查询客户简称 |
-| CUSTOMER_CODE | VARCHAR | 客户编码 | - | 推送CRM时作为acctCode |
-| CUSTOMER_NAME | VARCHAR | 客户名称 | - | 推送CRM时作为acctName |
-| DIVISION_NAME | VARCHAR | 事业部名称 | - | 推送CRM时作为orgCode |
-| PROJECT_CODE | VARCHAR | 项目编码 | - | 推送CRM时作为reportNo |
-| PROJECT_NAME | VARCHAR | 项目名称 | - | 推送CRM时作为projectName |
-
----
-
+<KbCard title="下游影响">
+<ul><li><strong>项目档案(EPM_PROJECT)</strong>：审批通过后PROJECT_VALID更新为3(失效)或2(生效)</li><li><strong>CRM系统</strong>：同步报备有效状态validStatus(0=失效, 1=生效)，家装单体报备除外</li><li><strong>ES搜索索引</strong>：单体报备失效时删除ES文档，生效时推送ES文档</li><li><strong>项目商机查询</strong>：失效后项目不在商机列表展示，生效后恢复展示</li></ul>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="EPM_PROJECT_DISABLE（报备失效申请表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PROJ_DISABLE_ID</td><td>BIGINT</td><td>报备失效申请单ID</td><td>-</td><td>主键，系统自动生成</td></tr>
+<tr><td>PROJ_DISABLE_CODE</td><td>VARCHAR</td><td>申请单号</td><td>申请单号</td><td>新建时自动生成：type=1用AE.PROJECT_DISABLE_CODE，type=2用AE.PROJECT_DISABLE_ENABLE_CODE</td></tr>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>工程ID</td><td>工程ID</td><td>选择项目弹窗回写，必填</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>工程编号</td><td>工程编号</td><td>选择项目弹窗回写</td></tr>
+<tr><td>PROJECT_NAME</td><td>VARCHAR</td><td>工程名称</td><td>工程名称</td><td>选择项目弹窗回写</td></tr>
+<tr><td>REASON</td><td>VARCHAR</td><td>失效申请说明</td><td>失效申请说明</td><td>type=1时填写</td></tr>
+<tr><td>STAT</td><td>BIGINT</td><td>单据状态</td><td>-</td><td>已弃用，使用HZ_APPROVE_STATUS</td></tr>
+<tr><td>WFID</td><td>BIGINT</td><td>流程ID</td><td>-</td><td>工作流引擎回写</td></tr>
+<tr><td>WFFLAG</td><td>BIGINT</td><td>流程标识</td><td>-</td><td>工作流引擎回写</td></tr>
+<tr><td>CREATOR</td><td>VARCHAR</td><td>创建人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>CREATETIME</td><td>DATETIME</td><td>创建时间</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>UPDATOR</td><td>VARCHAR</td><td>修改人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>UPDATETIME</td><td>DATETIME</td><td>修改时间</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>AUDITOR</td><td>VARCHAR</td><td>审核人</td><td>审核人</td><td>审批通过时自动记录当前用户名</td></tr>
+<tr><td>AUDITTIME</td><td>DATETIME</td><td>审核时间</td><td>审核时间</td><td>审批通过时自动记录当前时间</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>BIGINT</td><td>组织ID</td><td>-</td><td>系统自动填充，必填</td></tr>
+<tr><td>MONOMER_TYPE</td><td>BIGINT</td><td>单体类型</td><td>单体类型</td><td>2=家装单体报备失效，其他=工程单体，必填</td></tr>
+<tr><td>SALE_REGION</td><td>VARCHAR</td><td>经销商销售区域</td><td>经销商销售区域</td><td>从报备项目自动带出</td></tr>
+<tr><td>ENABLE_REASON</td><td>VARCHAR</td><td>恢复生效申请说明</td><td>恢复生效申请说明</td><td>type=2时填写</td></tr>
+<tr><td>TYPE</td><td>BIGINT</td><td>申请类型</td><td>申请类型</td><td>1=失效申请, 2=恢复生效申请</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>BIGINT</td><td>H0流程实例ID</td><td>-</td><td>工作流引擎回写</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>H0流程审批状态</td><td>审批状态</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>CREATION_DATE</td><td>DATETIME</td><td>创建时间</td><td>-</td><td>框架审计字段</td></tr>
+<tr><td>CREATED_BY</td><td>BIGINT</td><td>创建人</td><td>-</td><td>框架审计字段</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATETIME</td><td>最后更新时间</td><td>-</td><td>框架审计字段，queryLastDisable排序依据</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>BIGINT</td><td>最后更新人</td><td>-</td><td>框架审计字段</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>BIGINT</td><td>乐观锁版本号</td><td>-</td><td>框架自动维护</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="EPM_PROJECT（项目信息表 - 生失效相关字段）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>项目ID</td><td>-</td><td>主键，关联EPM_PROJECT_DISABLE.PROJECT_ID</td></tr>
+<tr><td>PROJECT_VALID</td><td>BIGINT</td><td>项目有效状态</td><td>-</td><td>审批通过后更新：失效设为3，恢复生效设为2</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>项目编码</td><td>-</td><td>关联字段</td></tr>
+<tr><td>PROJECT_NAME</td><td>VARCHAR</td><td>项目名称</td><td>-</td><td>关联字段</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="EPM_REPORT（项目报备表 - 生失效相关字段）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>REPORT_ID</td><td>BIGINT</td><td>报备ID</td><td>-</td><td>主键</td></tr>
+<tr><td>PROJECT_ID</td><td>BIGINT</td><td>项目ID</td><td>-</td><td>关联EPM_PROJECT_DISABLE.PROJECT_ID</td></tr>
+<tr><td>REPORT_TYPE</td><td>BIGINT</td><td>报备类型</td><td>-</td><td>1=单体报备时操作ES索引</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>客户ID</td><td>-</td><td>推送CRM时查询客户简称</td></tr>
+<tr><td>CUSTOMER_CODE</td><td>VARCHAR</td><td>客户编码</td><td>-</td><td>CRM推送字段acctCode</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>客户名称</td><td>-</td><td>CRM推送字段acctName</td></tr>
+<tr><td>DIVISION_NAME</td><td>VARCHAR</td><td>事业部名称</td><td>-</td><td>CRM推送字段orgCode</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>项目编码</td><td>-</td><td>CRM推送字段reportNo</td></tr>
+<tr><td>PROJECT_NAME</td><td>VARCHAR</td><td>项目名称</td><td>-</td><td>CRM推送字段projectName</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="查询SQL">
+<pre class="detail-sql" v-pre><code>-- 查询报备失效申请列表
+SELECT * FROM EPM_PROJECT_DISABLE
+WHERE ORGANIZATION_ID = #{organizationId}
+ORDER BY PROJ_DISABLE_ID DESC;
+
+-- 查询上一次失效数据
+SELECT * FROM EPM_PROJECT_DISABLE
+WHERE PROJECT_ID = #{projectId}
+  AND TYPE = 1
+ORDER BY LAST_UPDATE_DATE DESC;
+
+-- 审批通过更新项目状态(失效)
+UPDATE EPM_PROJECT SET PROJECT_VALID = 3
+WHERE PROJECT_ID = #{projectId};
+
+-- 审批通过更新项目状态(恢复生效)
+UPDATE EPM_PROJECT SET PROJECT_VALID = 2
+WHERE PROJECT_ID = #{projectId};
+
+-- 查询项目报备用于CRM推送
+SELECT * FROM EPM_REPORT
+WHERE PROJECT_ID = #{projectId};</code></pre>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>项目报备数据不存在</td><td>审批通过回调</td><td>根据PROJECT_ID查询EPM_REPORT无数据，检查项目报备是否被删除</td><td>高</td><td>wfComplete中查询报备为空时抛出</td></tr>
+<tr><td>推送CRM数据失败</td><td>审批通过回调</td><td>CRM接口调用异常，检查EBS接口连通性和CRM系统状态，不影响主流程</td><td>低</td><td>arrowEbsSdk.indivireportAdd异常try-catch</td></tr>
+<tr><td>删除es数据失败</td><td>审批通过回调(失效)</td><td>失效后删除ES索引失败，检查ES服务状态，不影响主流程</td><td>低</td><td>delEsDocByUser异常try-catch</td></tr>
+<tr><td>推送es数据失败</td><td>审批通过回调(恢复生效)</td><td>生效后推送ES索引失败，检查ES服务状态，不影响主流程</td><td>低</td><td>reportToEs异常try-catch</td></tr>
+<tr><td>工程ID不能为空</td><td>保存时</td><td>PROJECT_ID为空，选择项目后重新保存</td><td>高</td><td>@NotNull注解校验</td></tr>
+<tr><td>类型不能为空</td><td>保存时</td><td>MONOMER_TYPE为空，选择单体类型后重新保存</td><td>高</td><td>@NotNull注解校验</td></tr>
+<tr><td>NullPointerException: epmProjectDisable</td><td>审批通过回调</td><td>申请单ID(objId)在EPM_PROJECT_DISABLE中不存在，检查申请单是否被删除</td><td>高</td><td>wfComplete中selectByPrimaryKey返回null</td></tr>
+<tr><td>NullPointerException: epmProject</td><td>审批通过回调</td><td>PROJECT_ID在EPM_PROJECT中不存在，检查项目档案是否被删除</td><td>高</td><td>wfComplete中selectByPrimaryKey返回null</td></tr>
+<tr><td>NullPointerException: customer.getShortName()</td><td>审批通过回调(非家装单体)</td><td>报备关联客户在CUSTOMER表中不存在，检查客户主数据</td><td>高</td><td>wfComplete中customerRepository.selectByPrimaryKey返回null</td></tr>
+</tbody>
+</table>
+<h4>报错1：项目报备数据不存在</h4>
+<ul><li><strong>触发条件</strong>：审批通过回调(wfComplete)时，根据PROJECT_ID查询EPM_REPORT返回null</li><li><strong>逻辑分析</strong>：wfComplete中按PROJECT_ID查询EPM_REPORT获取报备数据用于CRM/ES同步，若返回null则抛出阻断性报错。可能原因：项目报备被物理删除、PROJECT_ID传递错误</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epd.PROJ_DISABLE_ID, epd.PROJ_DISABLE_CODE, epd.PROJECT_ID, epd.TYPE, epd.HZ_APPROVE_STATUS,
+         er.REPORT_ID, er.REPORT_CODE, er.REPORT_TYPE
+  FROM EPM_PROJECT_DISABLE epd
+  LEFT JOIN EPM_REPORT er ON epd.PROJECT_ID = er.PROJECT_ID
+  WHERE epd.PROJ_DISABLE_ID = :projDisableId
+  -- 若REPORT_ID为空，说明报备数据不存在</code></pre>
+<h4>报错2：推送CRM数据失败</h4>
+<ul><li><strong>触发条件</strong>：审批通过回调中调用arrowEbsSdk.indivireportAdd推送CRM失败</li><li><strong>逻辑分析</strong>：try-catch捕获CRM推送异常仅记录日志，不阻断主流程。可能原因：EBS接口连通性异常、CRM系统不可用、报备数据字段缺失。检查后端日志关键字"推送CRM数据失败"</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT er.REPORT_ID, er.REPORT_CODE, er.PROJECT_ID, er.CUSTOMER_ID, er.CUSTOMER_CODE,
+         er.DIVISION_NAME, er.HZ_APPROVE_STATUS, er.VALID
+  FROM EPM_REPORT er
+  WHERE er.PROJECT_ID = :projectId
+  -- 检查报备数据完整性，作为CRM推送参数</code></pre>
+<h4>报错3：删除es数据失败</h4>
+<ul><li><strong>触发条件</strong>：失效审批通过回调中调用delEsDocByUser删除ES索引失败</li><li><strong>逻辑分析</strong>：try-catch捕获ES删除异常仅记录日志，不阻断主流程。可能原因：ES服务不可用、网络异常、索引不存在。仅单体报备(reportType=1)才会操作ES数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epd.PROJ_DISABLE_ID, epd.PROJ_DISABLE_CODE, epd.TYPE, er.REPORT_TYPE, er.CUSTOMER_CODE
+  FROM EPM_PROJECT_DISABLE epd
+  JOIN EPM_REPORT er ON epd.PROJECT_ID = er.PROJECT_ID
+  WHERE epd.PROJ_DISABLE_ID = :projDisableId
+    AND epd.TYPE = 1
+    AND er.REPORT_TYPE = 1
+  -- 查出失效且为单体报备的申请，检查ES服务状态</code></pre>
+<h4>报错4：推送es数据失败</h4>
+<ul><li><strong>触发条件</strong>：恢复生效审批通过回调中调用reportToEs推送ES索引失败</li><li><strong>逻辑分析</strong>：try-catch捕获ES推送异常仅记录日志，不阻断主流程。可能原因：ES服务不可用、网络异常、报备数据序列化失败。仅单体报备(reportType=1)才会操作ES数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epd.PROJ_DISABLE_ID, epd.PROJ_DISABLE_CODE, epd.TYPE, er.REPORT_TYPE, er.CUSTOMER_CODE
+  FROM EPM_PROJECT_DISABLE epd
+  JOIN EPM_REPORT er ON epd.PROJECT_ID = er.PROJECT_ID
+  WHERE epd.PROJ_DISABLE_ID = :projDisableId
+    AND epd.TYPE = 2
+    AND er.REPORT_TYPE = 1
+  -- 查出恢复生效且为单体报备的申请，检查ES服务状态</code></pre>
+<h4>报错5：工程ID不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存报备失效申请时，PROJECT_ID参数为空</li><li><strong>逻辑分析</strong>：PROJECT_ID参数标注@NotNull，Spring校验框架自动校验。需选择项目后重新保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ep.PROJECT_ID, ep.PROJECT_CODE, ep.PROJECT_NAME, ep.PROJECT_VALID
+  FROM EPM_PROJECT ep
+  WHERE ep.PROJECT_ID = :projectId
+  -- 校验项目ID是否存在</code></pre>
+<h4>报错6：类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存报备失效申请时，MONOMER_TYPE参数为空</li><li><strong>逻辑分析</strong>：MONOMER_TYPE参数标注@NotNull，Spring校验框架自动校验。该字段区分单体报备(1)/战略报备(2)等类型，影响后续CRM/ES同步逻辑。需选择单体类型后重新保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epd.PROJ_DISABLE_ID, epd.PROJ_DISABLE_CODE, epd.PROJECT_ID, epd.MONOMER_TYPE, epd.TYPE
+  FROM EPM_PROJECT_DISABLE epd
+  WHERE epd.MONOMER_TYPE IS NULL
+  -- 查出单体类型为空的异常数据</code></pre>
+<h4>报错7：NullPointerException: epmProjectDisable</h4>
+<ul><li><strong>触发条件</strong>：审批通过回调(wfComplete)时，根据objId查询EPM_PROJECT_DISABLE返回null，后续调用epmProjectDisable.getProjectId()抛出NullPointerException</li><li><strong>逻辑分析</strong>：wfComplete中selectByPrimaryKey(dto.getObjId())按PROJ_DISABLE_ID查询申请单，若申请单被物理删除或工作流回传的objId错误，则返回null。需检查申请单数据是否完整、工作流businessKey配置是否正确</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epd.PROJ_DISABLE_ID, epd.PROJ_DISABLE_CODE, epd.PROJECT_ID, epd.TYPE,
+         epd.HZ_APPROVE_STATUS, epd.HZ_INSTANCE_ID
+  FROM EPM_PROJECT_DISABLE epd
+  WHERE epd.PROJ_DISABLE_ID = :objId
+  -- 若返回空，说明工作流回传的申请单ID在系统中不存在</code></pre>
+<h4>报错8：NullPointerException: epmProject</h4>
+<ul><li><strong>触发条件</strong>：审批通过回调(wfComplete)中，根据PROJECT_ID查询EPM_PROJECT返回null，后续调用epmProject.setProjectValid()抛出NullPointerException</li><li><strong>逻辑分析</strong>：wfComplete中epmProjectRepository.selectByPrimaryKey(epmProjectDisable.getProjectId())按PROJECT_ID查询项目档案，若项目档案被删除或PROJECT_ID指向不存在的项目，则返回null。需检查项目档案是否存在</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epd.PROJ_DISABLE_ID, epd.PROJ_DISABLE_CODE, epd.PROJECT_ID, epd.PROJECT_CODE,
+         ep.PROJECT_ID AS 项目档案ID, ep.PROJECT_VALID, ep.PROJECT_CODE AS 项目档案编码
+  FROM EPM_PROJECT_DISABLE epd
+  LEFT JOIN EPM_PROJECT ep ON epd.PROJECT_ID = ep.PROJECT_ID
+  WHERE epd.PROJ_DISABLE_ID = :projDisableId
+  -- 若项目档案ID为空，说明项目档案不存在</code></pre>
+<h4>报错9：NullPointerException: customer.getShortName()</h4>
+<ul><li><strong>触发条件</strong>：审批通过回调(wfComplete)中，非家装单体报备(monomerType!=2)时，根据报备CUSTOMER_ID查询CUSTOMER返回null，后续调用customer.getShortName()抛出NullPointerException</li><li><strong>逻辑分析</strong>：wfComplete中customerRepository.selectByPrimaryKey(epmReport.getCustomerId())按CUSTOMER_ID查询客户主文件，若客户被删除或报备CUSTOMER_ID指向不存在的客户，则返回null。需检查客户主数据是否完整</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epd.PROJ_DISABLE_ID, epd.PROJ_DISABLE_CODE, epd.MONOMER_TYPE,
+         er.REPORT_ID, er.CUSTOMER_ID, er.CUSTOMER_CODE,
+         c.CUSTOMER_ID AS 客户档案ID, c.SHORT_NAME AS 客户简称
+  FROM EPM_PROJECT_DISABLE epd
+  JOIN EPM_REPORT er ON epd.PROJECT_ID = er.PROJECT_ID
+  LEFT JOIN CUSTOMER c ON er.CUSTOMER_ID = c.CUSTOMER_ID
+  WHERE epd.PROJ_DISABLE_ID = :projDisableId
+    AND epd.MONOMER_TYPE != 2
+    AND c.CUSTOMER_ID IS NULL
+  -- 查出客户档案不存在的申请单</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -548,146 +597,52 @@ SELECT EPD.PROJECT_ID, EPD.PROJ_DISABLE_CODE
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">项目报备数据不存在</td>
-            <td style="font-size:13px;">审批通过回调</td>
-            <td style="font-size:13px;">审批通过时根据PROJECT_ID查询EPM_REPORT表无数据。解决方案：检查项目报备数据是否被删除，或PROJECT_ID是否正确</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">推送CRM数据失败</td>
-            <td style="font-size:13px;">审批通过回调</td>
-            <td style="font-size:13px;">审批通过后调用EBS接口INDIVIREPORT_ADD推送报备有效状态变更到CRM失败。解决方案：检查EBS接口连通性和CRM系统状态</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">删除es数据失败</td>
-            <td style="font-size:13px;">审批通过回调（失效）</td>
-            <td style="font-size:13px;">失效审批通过后删除ES索引数据失败。解决方案：检查ES服务状态和索引配置</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">推送es数据失败</td>
-            <td style="font-size:13px;">审批通过回调（恢复生效）</td>
-            <td style="font-size:13px;">恢复生效审批通过后推送ES索引数据失败。解决方案：检查ES服务状态和索引配置</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>项目报备数据不存在</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过时根据PROJECT_ID查询EPM_REPORT表无数据。解决方案：检查项目报备数据是否被删除，或PROJECT_ID是否正确</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>推送CRM数据失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>审批通过后调用EBS接口INDIVIREPORT_ADD推送报备有效状态变更到CRM失败。解决方案：检查EBS接口连通性和CRM系统状态</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>删除es数据失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>失效审批通过后删除ES索引数据失败。解决方案：检查ES服务状态和索引配置</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>推送es数据失败</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>恢复生效审批通过后推送ES索引数据失败。解决方案：检查ES服务状态和索引配置</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
+<KbCard title="Q1: 报备失效申请前为什么要查询上一次失效数据？">
+<p>避免重复申请，通过queryLastDisable查询该项目上一次失效记录(type=1)，若已有进行中的失效申请则不允许再次发起。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT * FROM EPM_PROJECT_DISABLE
+WHERE PROJECT_ID = #{projectId} AND TYPE = 1
+ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
 </KbCard>
-<KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">审批通过后项目有效状态未变更</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>审批结果不是APPROVED，wfComplete方法中判断approveResult不等于APPROVED时直接返回true，不执行状态更新逻辑
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPD.PROJ_DISABLE_CODE, EPD.STAT, EPD.PROJECT_ID, EP.PROJECT_VALID
-FROM EPM_PROJECT_DISABLE EPD
-JOIN EPM_PROJECT EP ON EPD.PROJECT_ID = EP.PROJECT_ID
-WHERE EPD.PROJ_DISABLE_ID = {申请单ID};</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>检查审批结果是否为APPROVED，确认工作流配置正确
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">家装单体报备失效后CRM未收到推送</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>MONOMER_TYPE=2时，代码中跳过了CRM推送逻辑，这是正常业务逻辑，非异常
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPD.PROJ_DISABLE_CODE, EPD.MONOMER_TYPE
+
+<KbCard title="Q2: 失效和恢复生效的区别？">
+<p>失效(type=1)将项目状态置为3，推送CRM validStatus=0，删除ES数据；恢复生效(type=2)将项目状态置为2，推送CRM validStatus=1，推送ES数据。两者使用不同编码规则。</p>
+</KbCard>
+
+<KbCard title="Q3: 家装单体报备失效有何特殊处理？">
+<p>家装单体报备(monomerType=2)不推送CRM，仅更新项目状态和ES数据，因为家装业务线CRM同步逻辑独立。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT EPD.PROJ_DISABLE_CODE, EPD.MONOMER_TYPE, EPD.TYPE
 FROM EPM_PROJECT_DISABLE EPD
 WHERE EPD.MONOMER_TYPE = 2 AND EPD.TYPE = 1;</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>确认该报备确实是家装单体类型，家装单体报备失效不推送CRM是设计如此
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">恢复生效申请单号格式与失效申请单号不同</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>两种类型使用不同的编码规则：失效使用AE.PROJECT_DISABLE_CODE，恢复生效使用AE.PROJECT_DISABLE_ENABLE_CODE（格式HFSX+YY+MM+DD+3位流水号）
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT PROJ_DISABLE_CODE, TYPE FROM EPM_PROJECT_DISABLE WHERE PROJECT_ID = {项目ID} ORDER BY CREATETIME DESC;</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>检查编码规则AE.PROJECT_DISABLE_ENABLE_CODE的配置是否正确
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">审批通过后ES数据未同步</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>仅单体报备（REPORT_TYPE=1）才会操作ES数据，战略报备等其他类型不操作ES
-      <br>
-      <pre style="background:#1e1e1e;color:#d4d4d4;padding:10px 12px;border-radius:6px;overflow:auto;font-size:12px;margin:8px 0;white-space:pre;"><code>SELECT EPD.PROJ_DISABLE_CODE, ER.REPORT_TYPE, ER.ES_PUSH_STATUS
+</KbCard>
+
+<KbCard title="Q4: 审批通过后项目有效状态未变更？">
+<p>原因是审批结果不是APPROVED，wfComplete中判断approveResult不等于APPROVED时直接返回true，不执行状态更新。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT EPD.PROJ_DISABLE_CODE, EPD.HZ_APPROVE_STATUS, EP.PROJECT_VALID
+FROM EPM_PROJECT_DISABLE EPD
+JOIN EPM_PROJECT EP ON EPD.PROJECT_ID = EP.PROJECT_ID
+WHERE EPD.PROJ_DISABLE_ID = #{申请单ID};</code></pre>
+</KbCard>
+
+<KbCard title="Q5: 恢复生效申请单号格式与失效申请单号不同？">
+<p>两种类型使用不同编码规则：失效使用AE.PROJECT_DISABLE_CODE，恢复生效使用AE.PROJECT_DISABLE_ENABLE_CODE。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT PROJ_DISABLE_CODE, TYPE FROM EPM_PROJECT_DISABLE
+WHERE PROJECT_ID = #{projectId}
+ORDER BY CREATETIME DESC;</code></pre>
+</KbCard>
+
+<KbCard title="Q6: 审批通过后ES数据未同步？">
+<p>仅单体报备(reportType=1)才会操作ES数据，战略报备等其他类型不操作ES。</p>
+<p><strong>排查SQL:</strong></p>
+<pre class="detail-sql" v-pre><code>SELECT EPD.PROJ_DISABLE_CODE, ER.REPORT_TYPE
 FROM EPM_PROJECT_DISABLE EPD
 JOIN EPM_REPORT ER ON EPD.PROJECT_ID = ER.PROJECT_ID
-WHERE EPD.PROJ_DISABLE_ID = {申请单ID};</code></pre>
-      <br>
-      <strong style="color:#7C3AED;">处理：</strong>确认报备类型是否为单体报备（REPORT_TYPE=1），非单体报备不操作ES是正常逻辑
-    </div>
-  </div>
-</div>
+WHERE EPD.PROJ_DISABLE_ID = #{申请单ID};</code></pre>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -696,10 +651,16 @@ WHERE EPD.PROJ_DISABLE_ID = {申请单ID};</code></pre>
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-11-20 | - | jiaqiang.fu01 | 初始创建报备失效申请功能（EpmProjectDisable实体、Controller、Service、Repository） |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写，补充代码梳理：后端Controller/ServiceImpl/Entity完整分析，界面模块6列表格、数据库表5列表格、报错一览表5列、上游依赖4列、下游影响bullet points、选择弹窗、保存校验、提交校验、状态机等</td></tr>
+<tr><td>2026-08-28</td><td>-</td><td>-</td><td>内容增强，补充业务流程图、界面模块、CRM/ES同步逻辑、FAQ</td></tr>
+<tr><td>2025-11-20</td><td>-</td><td>jiaqiang.fu01</td><td>初始创建报备失效申请功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

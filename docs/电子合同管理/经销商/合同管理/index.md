@@ -184,46 +184,20 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 Tab分类展示">
-
-<KbQuote>合同列表按4类业务类型分Tab展示，加全部Tab统览</KbQuote>
-
-<KbQuote>合同列表按4类业务类型分Tab展示，加全部Tab统览</KbQuote>
-**具体逻辑**：
-
-- 1、合同列表按类型分Tab展示，共4个类型Tab加1个全部Tab
-- 2、**经销合同(distribution_contract)**：经销商与品牌方的经销合作合同
-- 3、**装修协议(decoration_agreement)**：门店装修相关协议
-- 4、**广告协议(advertising_agreement)**：广告投放相关协议
-- 5、**点将合同(dj_contract)**：点将业务相关合同
-- 6、默认展示"全部"Tab，可切换到具体类型Tab筛选
+<KbCard num="1" title="重点逻辑1：经销商数据隔离">
+<ul><li><strong>业务意义</strong>：经销商仅能查看和管理自己作为签署方的合同，互不越权</li><li><strong>具体逻辑描述</strong>：数据隔离通过 API ch/contract/process/pageForAgent 实现，仅返回当前经销商的合同</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 经销商视角权限">
-
-<KbQuote>经销商仅可见自身合同，跨经销商数据相互隔离</KbQuote>
-
-<KbQuote>经销商仅可见自身合同，跨经销商数据相互隔离</KbQuote>
-**具体逻辑**：
-
-- 1、经销商仅能查看和管理自己作为签署方的合同
-- 2、数据隔离通过API `ch/contract/process/pageForAgent` 实现，仅返回当前经销商的合同
-- 3、经销商可执行操作：查看详情、在线签署、拒签、下载合同PDF
-- 4、经销商不可修改合同内容，仅能签署或拒签
+<KbCard num="2" title="重点逻辑2：合同类型分详情接口">
+<ul><li><strong>业务意义</strong>：不同合同类型关联不同业务申请，需调用对应详情接口获取关联信息</li><li><strong>具体逻辑描述</strong>：活动点将合同调用 mlt/activityApply/detail，特训营点将合同调用 mlt/trainCampApply/detail，设计点将合同调用 mlt/designApply/detail</li></ul>
 </KbCard>
 
-<KbCard num="3" title="2.3 签署操作">
+<KbCard num="3" title="重点逻辑3：签署与拒签">
+<ul><li><strong>业务意义</strong>：经销商可在线签署或拒签，签署即确认合作条款，拒签则留痕终止</li><li><strong>具体逻辑描述</strong>：签署前需阅读并同意合同条款，签署通过电子签章完成，拒签需填写拒签原因</li></ul>
+</KbCard>
 
-<KbQuote>经销商可在线签署或填写原因拒签，签署后状态自动流转</KbQuote>
-
-<KbQuote>经销商可在线签署或填写原因拒签，签署后状态自动流转</KbQuote>
-**具体逻辑**：
-
-- 1、经销商收到待签署合同后，可在线签署或拒签
-- 2、签署前需阅读并同意合同条款
-- 3、签署通过电子签章完成，签署后合同状态自动流转
-- 4、拒签需填写拒签原因，拒签后合同进入拒签状态
-- 5、--
+<KbCard num="4" title="重点逻辑4：经销商不可修改合同">
+<ul><li><strong>业务意义</strong>：合同内容由品牌方维护，经销商仅能签署或拒签</li><li><strong>具体逻辑描述</strong>：经销商不可修改合同内容，仅能查看合同详情、在线签署、拒签、下载合同PDF</li></ul>
 </KbCard>
 
 </div>
@@ -233,123 +207,222 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
-<KbSubTitle>选择弹窗</KbSubTitle>
-
-- 本菜单无选择弹窗
-
+<KbCard title="界面模块">
+<h4>查询条件</h4>
+<blockquote>前端代码：<code>contract/management/stores/listConfig.tsx</code> 的 <code>listDS.queryFields</code>。DataSet 通过 <code>transport.read</code> 调用 <code>contractManagementApi.query</code>（POST <code>ch/contract/process/pageForAgent</code>）。页面通过 <code>Tabs</code> 切换不同合同类型，切换时设置 <code>setQueryParameter('contractType', key)</code> 后重新查询。</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>合同编号</td><td>ELECTRONIC_CONTRACT_CODE</td><td>TextField</td><td>按合同编号查询</td><td>始终显示</td><td>手动输入，模糊查询</td></tr>
+<tr><td>签署状态</td><td>STATUS</td><td>Select</td><td>按签署状态筛选</td><td>始终显示</td><td>options: contractStatusDS，包含"未处理"（value='waiting_seal'）和"已处理"（value=''），defaultValue: 'waiting_seal'</td></tr>
+<tr><td>合同发起日期</td><td>INITIATE_TIME</td><td>DatePicker(range)</td><td>按合同发起日期范围查询</td><td>始终显示</td><td>range: ['initiateTimeStart', 'initiateTimeEnd']，defaultValue: 当月起止时间（initiateTimeDefaultValue），DJ类型时disabled且清空</td></tr>
+</tbody>
+</table>
+<h4>列表表格</h4>
+<blockquote>前端代码：<code>contract/management/stores/listConfig.tsx</code> 的 <code>listDScolumns</code>。Table 使用 <code>queryBar=&#123;TableQueryBarType.professionalBar&#125;</code>，<code>customizedCode="column-group"</code>。列根据当前激活的合同类型（activeTab）动态显隐：<code>isDistribution</code>（经销合同）、<code>isDJ</code>（点将合同）控制不同列的显示。</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>序号</td><td>-</td><td>TextField</td><td>行序号</td><td>始终显示</td><td>commonLineNum 渲染，左锁定列（lock: true）</td></tr>
+<tr><td>合同统一编号</td><td>UNIFY_CONTRACT_CODE</td><td>TextField</td><td>合同统一编号</td><td>始终显示</td><td>-</td></tr>
+<tr><td>合同编号</td><td>ELECTRONIC_CONTRACT_CODE</td><td>Button(link)</td><td>合同业务编号</td><td>始终显示</td><td>点击调用 `handleRowClick` 跳转详情页</td></tr>
+<tr><td>来源合同编号</td><td>SOURCE_DOCUMENT_CODE</td><td>TextField</td><td>来源合同编号</td><td>合同类型为 `DJ`（点将合同）时显示</td><td>-</td></tr>
+<tr><td>合同类型</td><td>CONTRACT_TYPE_NAME</td><td>TextField</td><td>合同类型名称</td><td>合同类型为 `DJ`（点将合同）时显示</td><td>后端返回 contractTypeName</td></tr>
+<tr><td>合同年度</td><td>CONTRACT_YEAR</td><td>TextField</td><td>合同年度</td><td>合同类型为 `DISTRIBUTION`（经销合同）时显示</td><td>-</td></tr>
+<tr><td>子合同类型</td><td>CONTRACT_SUB_TYPE_NAME</td><td>TextField</td><td>子合同类型名称</td><td>合同类型为 `DISTRIBUTION`（经销合同）或 `DJ`（点将合同）时显示</td><td>后端返回 contractSubTypeName</td></tr>
+<tr><td>经销商</td><td>AGENT_NAME</td><td>TextField</td><td>经销商名称</td><td>始终显示</td><td>-</td></tr>
+<tr><td>交易公司</td><td>TRADE_COMPANY_NAME</td><td>TextField</td><td>交易公司名称</td><td>合同类型非 `DJ`（点将合同）时显示</td><td>-</td></tr>
+<tr><td>合同有效期</td><td>CONTRACT_VIOLD_TIME</td><td>TextField</td><td>合同有效期（起-止）</td><td>合同类型为 `DISTRIBUTION`（经销合同）时显示</td><td>渲染为 `$&#123;moment(beginDate).format(DEFAULT_DATE_FORMAT)&#125; ~ $&#123;moment(endDate).format(DEFAULT_DATE_FORMAT)&#125;`</td></tr>
+<tr><td>法人编码</td><td>BILL_ACCT_CODE</td><td>TextField</td><td>法人编码</td><td>始终显示</td><td>-</td></tr>
+<tr><td>法人名称</td><td>BILL_ACCT_NAME</td><td>TextField</td><td>法人名称</td><td>始终显示</td><td>-</td></tr>
+<tr><td>状态</td><td>CONTRACT_STATUS_NAME</td><td>TextField</td><td>合同状态名称</td><td>始终显示</td><td>后端返回 contractStatusName</td></tr>
+<tr><td>创建人</td><td>CREATE_USER_NAME</td><td>TextField</td><td>创建人</td><td>始终显示</td><td>-</td></tr>
+<tr><td>创建时间</td><td>CREATE_TIME</td><td>TextField</td><td>创建时间</td><td>始终显示</td><td>-</td></tr>
+<tr><td>发起人</td><td>INITIATOR</td><td>TextField</td><td>发起人</td><td>合同类型非 `DJ`（点将合同）时显示</td><td>-</td></tr>
+<tr><td>发起时间</td><td>INITIATE_TIME</td><td>TextField</td><td>发起时间</td><td>合同类型非 `DJ`（点将合同）时显示</td><td>-</td></tr>
+<tr><td>完成时间</td><td>COMPLETE_TIME</td><td>TextField</td><td>完成时间</td><td>合同类型非 `DJ`（点将合同）时显示</td><td>-</td></tr>
+</tbody>
+</table>
+<p>查询SQL：</p>
+<pre class="detail-sql" v-pre><code>SELECT EC.UNIFY_CONTRACT_CODE       AS "合同统一编号",
+       EC.ELECTRONIC_CONTRACT_CODE  AS "合同编号",
+       EC.SOURCE_DOCUMENT_CODE      AS "来源合同编号",
+       EC.CONTRACT_TYPE_NAME        AS "合同类型",
+       EC.CONTRACT_YEAR             AS "合同年度",
+       EC.CONTRACT_SUB_TYPE_NAME    AS "子合同类型",
+       EC.AGENT_NAME                AS "经销商",
+       EC.TRADE_COMPANY_NAME        AS "交易公司",
+       EC.CONTRACT_VIOLD_TIME       AS "合同有效期",
+       EC.BILL_ACCT_CODE            AS "法人编码",
+       EC.BILL_ACCT_NAME            AS "法人名称",
+       EC.CONTRACT_STATUS_NAME      AS "状态",
+       EC.CREATE_USER_NAME          AS "创建人",
+       TO_CHAR(EC.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS "创建时间",
+       EC.INITIATOR                 AS "发起人",
+       TO_CHAR(EC.INITIATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS "发起时间",
+       TO_CHAR(EC.COMPLETE_TIME,'YYYY-MM-DD HH24:MI:SS') AS "完成时间"
+FROM ELECTRONIC_CONTRACT EC
+WHERE EC.AGENT_ID = :currentAgentId
+  AND EC.CONTRACT_TYPE = :contractType
+  AND (:electronicContractCode IS NULL OR EC.ELECTRONIC_CONTRACT_CODE LIKE '%' || :electronicContractCode || '%')
+  AND (:status IS NULL OR EC.CONTRACT_STATUS = :status)
+  AND (:initiateTimeStart IS NULL OR EC.INITIATE_TIME &gt;= TO_DATE(:initiateTimeStart, 'YYYY-MM-DD'))
+  AND (:initiateTimeEnd IS NULL OR EC.INITIATE_TIME &lt; TO_DATE(:initiateTimeEnd, 'YYYY-MM-DD') + 1)
+ORDER BY EC.CREATE_TIME DESC;</code></pre>
 </KbCard>
-<KbCard title="导入">
-- 本菜单无导入功能
 
+<KbCard title="标签页（Tabs）">
+<blockquote>前端代码：<code>contract/management/list.tsx</code> 的 <code>tableTabs</code> + <code>handleChangeTab</code>。页面通过 <code>Tabs</code> 组件切换不同合同类型，切换时调用 <code>handleChangeTab</code> 重新查询列表。</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>标签页名称</th><th>合同类型 key</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>经销合同</td><td>DISTRIBUTION</td><td>经销合同列表</td></tr>
+<tr><td>装修协议</td><td>DECORATION</td><td>装修协议列表</td></tr>
+<tr><td>广告协议</td><td>ADVERTISING</td><td>广告协议列表</td></tr>
+<tr><td>点将合同</td><td>DJ</td><td>点将合同列表（设计/活动/特训营）</td></tr>
+</tbody>
+</table>
+<h4>标签页切换逻辑</h4>
+<p>1. 点击标签页调用 <code>handleChangeTab(key)</code></p>
+<p>2. <code>setActiveTab(key)</code> 设置当前激活标签页</p>
+<p>3. <code>tableDS?.queryDataSet?.getField('initiateTime')?.set('disabled', isDJ)</code> 根据合同类型禁用/启用合同发起日期查询字段（DJ类型时禁用）</p>
+<p>4. <code>tableDS?.queryDataSet?.current?.set('initiateTime', isDJ ? undefined : initiateTimeDefaultValue)</code> 设置合同发起日期默认值（DJ类型时清空，其他类型设置为当月起止时间）</p>
+<p>5. <code>tableDS.setQueryParameter('contractType', key)</code> 设置查询参数 contractType</p>
+<p>6. <code>tableDS.query()</code> 重新查询列表</p>
 </KbCard>
+
+<KbCard title="行点击跳转详情页">
+<blockquote>前端代码：<code>contract/management/list.tsx</code> 的 <code>handleRowClick</code>。点击合同编号列调用 <code>handleRowClick(record)</code>，根据当前激活的标签页（合同类型）跳转不同详情页。跳转时传入 <code>state: &#123; from: 'dealer', applyCode: record?.get('sourceDocumentCode') &#125;</code>。</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>合同类型</th><th>跳转路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>DISTRIBUTION（经销合同）</td><td>`/contract/distribution/detail/&#123;electronicContractId&#125;`</td><td>经销合同详情页</td></tr>
+<tr><td>DECORATION（装修协议）</td><td>`/contract/decoration/detail/&#123;electronicContractId&#125;`</td><td>装修协议详情页</td></tr>
+<tr><td>ADVERTISING（广告协议）</td><td>`/contract/advertising/detail/&#123;electronicContractId&#125;`</td><td>广告协议详情页</td></tr>
+<tr><td>DJ（点将合同）</td><td>根据合同子类型跳转</td><td>见下表</td></tr>
+</tbody>
+</table>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>合同子类型</th><th>跳转路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>design_apply / design_settle</td><td>`/contract/dj/design/detail/&#123;electronicContractId&#125;`</td><td>设计点将详情页</td></tr>
+<tr><td>camp_apply / camp_settle</td><td>`/contract/dj/camp/detail/&#123;electronicContractId&#125;`</td><td>特训营点将详情页</td></tr>
+<tr><td>activity_apply / activity_settle</td><td>`/contract/dj/activity/detail/&#123;electronicContractId&#125;`</td><td>活动点将详情页</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮 | 位置 | 操作说明 | 可用状态 |
-|------|------|---------|---------|
-| 查看详情 | 行操作 | 查看合同详细信息 | 所有状态 |
-| 在线签署 | 行操作 | 进入签署页面完成签署 | waiting_sign(待签署) |
-| 拒签 | 行操作 | 填写拒签原因后拒签 | waiting_sign(待签署) |
-| 下载合同 | 行操作 | 下载合同PDF文件 | completed(已完成) |
-| 查看签署记录 | 行操作 | 查看签署过程记录 | 所有状态 |
-
+<blockquote>前端代码：<code>contract/management/list.tsx</code> 的 <code>getHeaderButtons</code>。头部按钮通过 <code>Header</code> 组件渲染。</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>所在位置</th><th>显隐条件</th><th>权限码</th><th>功能说明</th></tr>
+</thead>
+<tbody>
+<tr><td>法大大门户</td><td>头部按钮</td><td>始终显示</td><td>-</td><td>调用 `handleOpenFDD`（来自 `useFDD` hook）打开法大大门户</td></tr>
+</tbody>
+</table>
+<h4>按钮1：法大大门户（头部按钮）</h4>
+<p>始终显示，点击后调用 <code>handleOpenFDD</code>（来自 <code>useFDD</code> hook）打开法大大门户。法大大门户用于经销商进行电子签章实名认证、签署合同等操作。</p>
 </KbCard>
-<KbCard title="保存校验">
-- 本菜单以查看和签署操作为主，无独立保存逻辑
 
+<KbCard title="保存/提交校验">
+<ul><li>校验1：签署前需勾选同意合同条款 —— 确保经销商已确认合作条款</li><li>校验2：拒签时拒签原因必填 —— 确保拒签原因可追溯</li><li>校验3：签署时电子签章服务可用 —— 确保签署服务正常</li></ul>
 </KbCard>
-<KbCard title="提交校验">
-</KbCard>
+
 <KbCard title="状态机">
-
-```
-[品牌方发起签署] --> [waiting_sign(待经销商签署)]
-                            |
-                  +---------+---------+
-                  v                   v
-            [经销商签署]          [经销商拒签]
-                  |                   |
-                  v                   v
-          [signed(已签署)]     [refuse_seal(拒签)]
-                  |
-                  v
-          [品牌方继续处理]
-```
-
-| 状态 | 状态说明 | 经销商可执行操作 |
-|------|---------|----------------|
-| temporary | 临时/草稿 | 无（品牌方编辑中） |
-| waiting_sign | 待签署 | 在线签署、拒签、查看详情 |
-| waiting_seal | 待用印 | 查看详情、查看签署记录 |
-| completed | 已完成 | 查看详情、下载合同、查看签署记录 |
-| refuse_seal | 拒签 | 查看详情 |
-| reject_oa | OA驳回 | 查看详情 |
-| pending | OA审批中 | 查看详情 |
-| push_portal | 已推送门户 | 查看详情、下载合同 |
-
----
-
-</KbCard>
-<KbCard num="1" title="ELECTRONIC_CONTRACT（电子合同表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| electronic_contract_id | NUMBER | 合同ID，主键 |
-| electronic_contract_code | VARCHAR2 | 合同业务编码 |
-| unify_contract_code | VARCHAR2 | 统一合同编码 |
-| contract_type | VARCHAR2 | 合同类型（distribution_contract/decoration_agreement/advertising_agreement/dj_contract） |
-| sub_type | VARCHAR2 | 合同子类型 |
-| template_id | NUMBER | 关联模板ID |
-| brand_id | NUMBER | 品牌方ID |
-| brand_name | VARCHAR2 | 品牌方名称 |
-| agent_id | NUMBER | 经销商ID |
-| agent_name | VARCHAR2 | 经销商名称 |
-| contract_status | VARCHAR2 | 合同状态 |
-| sign_url | VARCHAR2 | 签署链接 |
-| contract_content | CLOB | 合同内容JSON |
-| clause_content | CLOB | 条款内容 |
-| pdf_url | VARCHAR2 | 合同PDF地址 |
-| object_version_number | NUMBER | 乐观锁版本号 |
-| created_by | NUMBER | 创建人 |
-| creation_date | DATE | 创建时间 |
-| last_updated_by | NUMBER | 最后更新人 |
-| last_update_date | DATE | 最后更新时间 |
-
+<pre class="detail-sql" v-pre><code>[品牌方发起签署] --推送--&gt; [待签署(waiting_sign)]
+                                |
+                      +---------+---------+
+                      v                   v
+                [经销商签署]          [经销商拒签]
+                      |                   |
+                      v                   v
+              [已签署(signed)]     [拒签(refuse_seal)]
+                      |                   |
+                      v                   v
+              [品牌方继续处理]     [品牌方异常处理]</code></pre>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态</th><th>状态说明</th><th>经销商可执行操作</th></tr>
+</thead>
+<tbody>
+<tr><td>temporary</td><td>临时/草稿</td><td>无(品牌方编辑中)</td></tr>
+<tr><td>waiting_sign</td><td>待签署</td><td>签署合同、查看详情</td></tr>
+<tr><td>signed</td><td>已签署</td><td>查看详情、下载合同</td></tr>
+<tr><td>refuse_seal</td><td>拒签</td><td>查看详情</td></tr>
+<tr><td>completed</td><td>已完成</td><td>查看详情、下载合同</td></tr>
+<tr><td>reject_oa</td><td>OA驳回</td><td>查看详情</td></tr>
+<tr><td>pending</td><td>OA审批中</td><td>查看详情</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="ELECTRONIC_CONTRACT_SIGN_RECORD（电子合同签署记录表）">
-
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| sign_record_id | NUMBER | 签署记录ID，主键 |
-| electronic_contract_id | NUMBER | 关联合同ID |
-| sign_node | VARCHAR2 | 签署节点 |
-| sign_type | VARCHAR2 | 签署类型 |
-| sign_status | VARCHAR2 | 签署状态 |
-| sign_time | DATE | 签署时间 |
-| sign_user | VARCHAR2 | 签署人 |
-| sign_result | VARCHAR2 | 签署结果 |
-| sign_remark | VARCHAR2 | 签署备注 |
-| object_version_number | NUMBER | 乐观锁版本号 |
-| created_by | NUMBER | 创建人 |
-| creation_date | DATE | 创建时间 |
-
----
-
+<KbCard title="导入">
+<p>不支持导入功能。</p>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="ELECTRONIC_CONTRACT（电子合同表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ELECTRONIC_CONTRACT_ID</td><td>NUMBER</td><td>合同ID</td><td>-</td><td>主键</td></tr>
+<tr><td>ELECTRONIC_CONTRACT_CODE</td><td>VARCHAR2(64)</td><td>合同业务编码</td><td>合同编号</td><td>系统自动生成</td></tr>
+<tr><td>UNIFY_CONTRACT_CODE</td><td>VARCHAR2(64)</td><td>统一合同编码</td><td>-</td><td>跨系统关联</td></tr>
+<tr><td>CONTRACT_NAME</td><td>VARCHAR2(256)</td><td>合同名称</td><td>合同名称</td><td>-</td></tr>
+<tr><td>CONTRACT_TYPE</td><td>VARCHAR2(32)</td><td>合同类型</td><td>合同类型</td><td>活动点将/特训营点将/设计点将</td></tr>
+<tr><td>CONTRACT_STATUS</td><td>VARCHAR2(32)</td><td>合同状态</td><td>签署状态</td><td>值集 MBO.CONTRACT_STATUS</td></tr>
+<tr><td>SIGN_TIME</td><td>DATE</td><td>签署时间</td><td>签署时间</td><td>经销商签署时记录</td></tr>
+<tr><td>AGENT_ID</td><td>NUMBER</td><td>经销商ID</td><td>-</td><td>关联经销商</td></tr>
+<tr><td>AGENT_NAME</td><td>VARCHAR2(128)</td><td>经销商名称</td><td>经销商</td><td>-</td></tr>
+<tr><td>BRAND_ID</td><td>NUMBER</td><td>品牌方ID</td><td>-</td><td>-</td></tr>
+<tr><td>TEMPLATE_ID</td><td>NUMBER</td><td>关联模板ID</td><td>-</td><td>-</td></tr>
+<tr><td>SIGN_URL</td><td>VARCHAR2(512)</td><td>签署链接</td><td>-</td><td>-</td></tr>
+<tr><td>PDF_URL</td><td>VARCHAR2(512)</td><td>合同PDF地址</td><td>-</td><td>签署完成后生成</td></tr>
+<tr><td>REFUSE_REASON</td><td>VARCHAR2(512)</td><td>拒签原因</td><td>-</td><td>拒签时填写</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>NUMBER</td><td>乐观锁版本号</td><td>-</td><td>-</td></tr>
+<tr><td>CREATED_BY</td><td>NUMBER</td><td>创建人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>CREATION_DATE</td><td>DATE</td><td>创建时间</td><td>创建时间</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>NUMBER</td><td>最后更新人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>系统自动</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="ELECTRONIC_CONTRACT_SIGN_RECORD（电子合同签署记录表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>SIGN_RECORD_ID</td><td>NUMBER</td><td>签署记录ID</td><td>-</td><td>主键</td></tr>
+<tr><td>ELECTRONIC_CONTRACT_ID</td><td>NUMBER</td><td>关联合同ID</td><td>-</td><td>外键</td></tr>
+<tr><td>SIGN_NODE</td><td>VARCHAR2(32)</td><td>签署节点</td><td>-</td><td>-</td></tr>
+<tr><td>SIGN_TYPE</td><td>VARCHAR2(32)</td><td>签署类型</td><td>-</td><td>-</td></tr>
+<tr><td>SIGN_STATUS</td><td>VARCHAR2(32)</td><td>签署状态</td><td>-</td><td>-</td></tr>
+<tr><td>SIGN_TIME</td><td>DATE</td><td>签署时间</td><td>-</td><td>-</td></tr>
+<tr><td>SIGN_USER</td><td>VARCHAR2(64)</td><td>签署人</td><td>-</td><td>-</td></tr>
+<tr><td>SIGN_RESULT</td><td>VARCHAR2(32)</td><td>签署结果</td><td>-</td><td>-</td></tr>
+<tr><td>SIGN_REMARK</td><td>VARCHAR2(512)</td><td>签署备注</td><td>-</td><td>-</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>NUMBER</td><td>乐观锁版本号</td><td>-</td><td>-</td></tr>
+<tr><td>CREATED_BY</td><td>NUMBER</td><td>创建人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>CREATION_DATE</td><td>DATE</td><td>创建时间</td><td>-</td><td>系统自动</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -357,122 +430,137 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先阅读并同意合同条款</td>
-            <td style="font-size:13px;">签署前未勾选同意条款</td>
-            <td style="font-size:13px;">勾选同意条款复选框后签署</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请填写拒签原因</td>
-            <td style="font-size:13px;">拒签时拒签原因为空</td>
-            <td style="font-size:13px;">填写拒签原因后提交</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">合同PDF生成中，请稍后</td>
-            <td style="font-size:13px;">合同完成但PDF未生成</td>
-            <td style="font-size:13px;">稍后刷新页面重试下载</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">签署服务不可用</td>
-            <td style="font-size:13px;">电子签章系统异常</td>
-            <td style="font-size:13px;">联系运维检查签章系统</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请先阅读并同意合同条款</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>勾选同意条款复选框后签署</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请填写拒签原因</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>填写拒签原因后提交</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>合同PDF生成中，请稍后</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>稍后刷新页面重试下载</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>签署服务不可用</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>联系运维检查签章系统</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
+<tr><td>请先阅读并同意合同条款</td><td>签署前未勾选同意条款</td><td>勾选同意条款复选框后签署</td><td>warning</td><td>前端校验同意条款复选框</td></tr>
+<tr><td>请填写拒签原因</td><td>拒签时拒签原因为空</td><td>填写拒签原因后提交</td><td>error</td><td>前端校验 REFUSE_REASON 非空</td></tr>
+<tr><td>合同PDF生成中，请稍后</td><td>合同完成但PDF未生成</td><td>稍后刷新页面重试下载</td><td>warning</td><td>PDF异步生成未完成</td></tr>
+<tr><td>签署服务不可用</td><td>电子签章系统异常</td><td>联系运维检查签章系统</td><td>error</td><td>签章服务接口返回失败</td></tr>
+<tr><td>签署异常</td><td>签署时</td><td>电子签署失败，检查签署服务</td><td>error</td><td>签章接口返回非成功状态</td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
+<tr><td>权限不足</td><td>签署/拒签</td><td>当前用户无对应操作权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
+<tr><td>合同不存在</td><td>查看/签署</td><td>合同编码不存在或已删除，检查 ELECTRONIC_CONTRACT_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
+<tr><td>状态不允许操作</td><td>签署/拒签</td><td>合同状态不允许该操作，如已签署不可重复签署，检查 CONTRACT_STATUS</td><td>error</td><td>后端校验状态机失败</td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.CONTRACT_STATUS 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
+<tr><td>短信验证码错误</td><td>签署验证</td><td>短信验证码输入错误或已过期，重新获取验证码</td><td>error</td><td>后端校验验证码失败</td></tr>
+</tbody>
+</table>
+<h4>报错1：请先阅读并同意合同条款</h4>
+<ul><li><strong>触发条件</strong>：点击签署按钮时，未勾选同意合同条款复选框</li><li><strong>逻辑分析</strong>：前端校验同意条款复选框是否勾选，未勾选则阻止签署并提示"请先阅读并同意合同条款"。确保经销商已阅读并确认合作条款，具备签署意愿的法律依据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+         CONTRACT_NAME AS 合同名称,
+         CONTRACT_STATUS AS 签署状态,
+         AGENT_NAME AS 经销商
+  FROM ELECTRONIC_CONTRACT
+  WHERE CONTRACT_STATUS = 'waiting_sign'
+  ORDER BY CREATION_DATE DESC;</code></pre>
+<h4>报错2：请填写拒签原因</h4>
+<ul><li><strong>触发条件</strong>：拒签提交时，REFUSE_REASON 字段为空</li><li><strong>逻辑分析</strong>：前端拒签弹窗对 refuseReason 字段配置 required 校验，提交前校验拒签原因是否填写，为空则阻止提交并提示"请填写拒签原因"。拒签原因用于记录经销商拒签依据，便于品牌方后续处理</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+         CONTRACT_NAME AS 合同名称,
+         CONTRACT_STATUS AS 签署状态,
+         REFUSE_REASON AS 拒签原因,
+         TO_CHAR(SIGN_TIME,'YYYY-MM-DD HH24:MI:SS') AS 签署时间
+  FROM ELECTRONIC_CONTRACT
+  WHERE CONTRACT_STATUS = 'refuse_seal'
+    AND (REFUSE_REASON IS NULL OR REFUSE_REASON = '');</code></pre>
+<h4>报错3：合同PDF生成中，请稍后</h4>
+<ul><li><strong>触发条件</strong>：下载合同PDF时，合同已完成但PDF未生成</li><li><strong>逻辑分析</strong>：前端校验 PDF_URL 字段非空，若为空说明PDF异步生成未完成，提示"合同PDF生成中，请稍后"。合同PDF由签署完成后异步生成，通常几秒内完成，刷新页面后重试即可</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+         CONTRACT_NAME AS 合同名称,
+         CONTRACT_STATUS AS 签署状态,
+         PDF_URL AS 合同PDF地址,
+         TO_CHAR(SIGN_TIME,'YYYY-MM-DD HH24:MI:SS') AS 签署时间
+  FROM ELECTRONIC_CONTRACT
+  WHERE CONTRACT_STATUS IN ('signed', 'completed')
+    AND (PDF_URL IS NULL OR PDF_URL = '');</code></pre>
+<h4>报错4：签署服务不可用</h4>
+<ul><li><strong>触发条件</strong>：调用电子签章接口时，签章系统异常</li><li><strong>逻辑分析</strong>：后端调用电子签章系统接口，若签章服务不可用、网络异常、签章参数错误等则接口返回失败，提示"签署服务不可用"。需联系运维检查签章系统运行状态、网络连通性、签章服务配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+         CONTRACT_NAME AS 合同名称,
+         CONTRACT_STATUS AS 签署状态,
+         AGENT_NAME AS 经销商,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM ELECTRONIC_CONTRACT
+  WHERE CONTRACT_STATUS = 'waiting_sign'
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错5：签署异常</h4>
+<ul><li><strong>触发条件</strong>：调用签章接口时，返回非成功状态</li><li><strong>逻辑分析</strong>：后端调用签章接口，若签章流程异常、签署人信息错误、合同内容异常、签章服务超时等则接口返回非成功状态，提示"签署异常: &#123;具体错误信息&#125;"。需检查签章服务日志、签署人信息、合同内容完整性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+         CONTRACT_NAME AS 合同名称,
+         CONTRACT_STATUS AS 签署状态,
+         AGENT_NAME AS 经销商,
+         SIGN_URL AS 签署链接
+  FROM ELECTRONIC_CONTRACT
+  WHERE CONTRACT_STATUS = 'waiting_sign'
+    AND (SIGN_URL IS NULL OR SIGN_URL = '');</code></pre>
+<h4>报错6：网络异常/接口超时</h4>
+<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、签章系统响应慢等。需检查网络连通性、后端服务负载、签章系统状态</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
+         CONTRACT_STATUS AS 签署状态,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM ELECTRONIC_CONTRACT
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错7：权限不足</h4>
+<ul><li><strong>触发条件</strong>：点击签署、拒签等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+  FROM SYS_USER U
+  LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
+  LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
+  LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
+  LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
+  WHERE P.PERMISSION_CODE LIKE '%electronic_contract%' ORDER BY U.USER_NAME;</code></pre>
+<h4>报错8：合同不存在</h4>
+<ul><li><strong>触发条件</strong>：查看、签署等操作时，接口返回数据为空或合同编码不存在</li><li><strong>逻辑分析</strong>：前端通过 contractCode 调用详情接口，后端查询 ELECTRONIC_CONTRACT 表无对应记录或记录已逻辑删除，返回空数据。常见根因：合同编码错误、合同已被删除、跨租户查询、数据权限隔离等。需检查 ELECTRONIC_CONTRACT_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
+         CONTRACT_STATUS AS 签署状态, DELETE_FLAG AS 删除标记
+  FROM ELECTRONIC_CONTRACT
+  WHERE DELETE_FLAG = 'Y' OR ELECTRONIC_CONTRACT_CODE IS NULL;</code></pre>
+<h4>报错9：状态不允许操作</h4>
+<ul><li><strong>触发条件</strong>：点击签署、拒签等按钮时，合同状态不允许该操作</li><li><strong>逻辑分析</strong>：后端校验状态机，如已签署（signed）不可重复签署、已完成（completed）不可拒签等。状态不匹配时后端返回业务异常。需检查合同当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
+         CONTRACT_STATUS AS 签署状态, ERROR_INFO AS 异常问题
+  FROM ELECTRONIC_CONTRACT
+  WHERE CONTRACT_STATUS NOT IN ('waiting_sign','signed','completed','refuse_seal')
+  ORDER BY CREATE_DATE DESC;</code></pre>
+<h4>报错10：值集数据不显示</h4>
+<ul><li><strong>触发条件</strong>：查询条件或列表中合同状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.CONTRACT_STATUS 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+         LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
+  FROM SYS_LOOKUP_VALUE
+  WHERE LOOKUP_CODE IN ('MBO.CONTRACT_STATUS','MBO.CONTRACT_TYPE')
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+<h4>报错11：短信验证码错误</h4>
+<ul><li><strong>触发条件</strong>：签署验证时，短信验证码输入错误或已过期</li><li><strong>逻辑分析</strong>：后端校验短信验证码与发送记录是否一致且在有效期内，校验失败则返回业务异常。需重新获取验证码后输入</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, AGENT_NAME AS 经销商,
+         SMS_SEND_TIME AS 短信发送时间, SMS_EXPIRE_TIME AS 短信过期时间,
+         VERIFY_STATUS AS 验证状态
+  FROM ELECTRONIC_CONTRACT_SMS
+  WHERE VERIFY_STATUS = 'fail'
+    AND SMS_SEND_TIME &gt;= SYSDATE - 1
+  ORDER BY SMS_SEND_TIME DESC;</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">经销商能修改合同内容吗？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>不能。经销商仅能查看合同内容并进行签署或拒签操作，合同内容由品牌方维护。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">拒签后还能重新签署吗？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>不能。拒签后合同进入拒签状态，需品牌方重新发起签署流程。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">合同列表为什么看不到某些合同？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>经销商仅能看到自己作为签署方的合同，数据通过pageForAgent接口隔离。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">下载合同PDF提示生成中怎么办？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>合同完成后PDF异步生成，通常几秒内完成，刷新页面后重试即可。
-    </div>
-  </div>
-</div>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>问题</th><th>排查方式</th></tr>
+</thead>
+<tbody>
+<tr><td>经销商能修改合同内容吗</td><td>不能，经销商仅能查看合同内容并进行签署或拒签，合同内容由品牌方维护</td></tr>
+<tr><td>拒签后还能重新签署吗</td><td>不能，拒签后合同进入拒签状态，需品牌方重新发起签署流程</td></tr>
+<tr><td>合同列表为什么看不到某些合同</td><td>经销商仅能看到自己作为签署方的合同，数据通过 pageForAgent 接口隔离</td></tr>
+<tr><td>下载合同PDF提示生成中怎么办</td><td>合同完成后PDF异步生成，通常几秒内完成，刷新页面后重试即可</td></tr>
+<tr><td>不同合同类型查看详情跳转不同页面</td><td>活动点将调用 activityApply/detail，特训营点将调用 trainCampApply/detail，设计点将调用 designApply/detail</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -481,10 +569,16 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 更新内容 | 更新人 |
-|------|------|---------|--------|
-| 2026-08-03 | v1.0 | 初始创建文档 | AI |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-11-12</td><td>-</td><td>hfy</td><td>初始创建</td></tr>
+<tr><td>2026-07-31</td><td>-</td><td>AI</td><td>对比网站补充定义、详细逻辑、数据库表字段等</td></tr>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范格式重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

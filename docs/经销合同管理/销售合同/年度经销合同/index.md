@@ -193,45 +193,19 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：保存合同数据 【数据保存】">
-<KbQuote>新建或编辑年度经销合同，保存合同头、区域、任务拆分等多维度信息</KbQuote>
-
-**具体逻辑**：
-
-- 1、新增时自动获取当前事业部ID和组织ID
-- 2、区分归档合同和普通合同两种保存逻辑（isPigeonhole=2为归档合同）
-- 3、保存时同步保存附件信息
-- 4、合同编号通过编码规则自动生成
+<KbCard num="1" title="重点逻辑1：OA审批流程 {审批流转}">
+<ul><li><strong>业务意义</strong>：年度经销合同需经OA审批，确保合同合规</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：保存并提交时通过workFlowStart发起OA审批(DISTRIBUTION_CONTRACT_DKHB)</li></ul>
+<ul><li>第2点：workFlowStartValid方法进行流程启动前校验</li></ul>
+<ul><li>第3点：审批通过后合同生效，可进行归档和变更</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：保存并提交 【审批提交】">
-<KbQuote>保存合同并启动工作流审批，审批通过后合同生效</KbQuote>
-
-**具体逻辑**：
-
-- 1、提交前校验流程编码不能为空
-- 2、先执行保存逻辑，再启动工作流
-- 3、工作流参数包含合同ID、事业部ID、经销商ID、流程编码、合同类型
-- 4、工作流启动后，更新审核状态为"已提交"
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：区域校验 【业务校验】">
-<KbQuote>校验合同授权区域是否与其他合同存在冲突</KbQuote>
-
-**具体逻辑**：
-
-- 1、保存时校验授权区域是否与同经销商其他生效合同存在重叠
-- 2、若存在区域冲突，返回冲突提示信息但不阻断保存
-- 3、合同类型为"合同信息变更"(changeType=2)且特定合同类型时触发区域校验
-</KbCard>
-
-<KbCard num="4" title="重点逻辑4：合同日期校验 【业务校验】">
-<KbQuote>校验合同开始日期和结束日期的合法性</KbQuote>
-
-**具体逻辑**：
-
-- 1、合同开始日期必须为合同年度第一天
-- 2、合同结束日期必须为合同年度最后一天
+<KbCard num="2" title="重点逻辑2：合同区域校验 {区域校验}">
+<ul><li><strong>业务意义</strong>：合同需校验销售区域合法性</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过doCheckAreaNew/doCheckArea方法校验区域</li></ul>
+<ul><li>第2点：校验经销商在选定区域内的合法性</li></ul>
 </KbCard>
 
 </div>
@@ -242,402 +216,107 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="界面模块1：年度经销合同列表页">
-<div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>合同编号</td>
-<td>文本框</td>
-<td>销售合同编号</td>
-<td>常显</td>
-<td>新增时编码规则自动生成</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.SA_CONTR_HEAD_CODE</td>
-</tr>
-<tr>
-<td>经销商</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>弹窗选择后自动带出</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.CUST_NAME</td>
-</tr>
-<tr>
-<td>合同类型</td>
-<td>下拉选择框</td>
-<td>销售合同类型</td>
-<td>常显</td>
-<td>从值集选择</td>
-<td>值集内有效项</td>
-<td>SA_SALE_CONTRACT_HEAD.SALES_CONTRACT_TYPE</td>
-</tr>
-<tr>
-<td>合同开始日期</td>
-<td>日期选择框</td>
-<td>合同生效起始日期</td>
-<td>常显</td>
-<td>手工选择，校验为年度第一天</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.START_DATE</td>
-</tr>
-<tr>
-<td>合同截止日期</td>
-<td>日期选择框</td>
-<td>合同生效截止日期</td>
-<td>常显</td>
-<td>手工选择，校验为年度最后一天</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.END_DATE</td>
-</tr>
-<tr>
-<td>交易公司</td>
-<td>文本框</td>
-<td>甲方交易公司</td>
-<td>常显</td>
-<td>弹窗选择后自动带出</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>法人</td>
-<td>文本框</td>
-<td>法人名称</td>
-<td>常显</td>
-<td>根据交易公司自动带出</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.CORPORATE</td>
-</tr>
-<tr>
-<td>保证金(万元)</td>
-<td>数字输入框</td>
-<td>合同保证金金额</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>大于等于0</td>
-<td>SA_SALE_CONTRACT_HEAD.DEPOSIT_AMT</td>
-</tr>
-<tr>
-<td>销售任务总额</td>
-<td>数字输入框</td>
-<td>合同销售任务总额</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>大于等于0</td>
-<td>SA_SALE_CONTRACT_HEAD.TOTAL_TASK</td>
-</tr>
-<tr>
-<td>审核状态</td>
-<td>文本框</td>
-<td>外部系统审核状态</td>
-<td>常显</td>
-<td>系统自动维护</td>
-<td>新建/已提交/已批准/已驳回</td>
-<td>SA_SALE_CONTRACT_HEAD.AUDIT_STAT</td>
-</tr>
-<tr>
-<td>是否缴清</td>
-<td>文本框</td>
-<td>保证金是否缴清</td>
-<td>常显</td>
-<td>系统自动维护</td>
-<td>Y/N</td>
-<td>SA_SALE_CONTRACT_HEAD.PAY_COMPLETE</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块2：年度经销合同详情页-基本信息">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>经销商编码</td>
-<td>文本框</td>
-<td>经销商编码</td>
-<td>常显</td>
-<td>选择经销商后自动带出</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.CUST_CODE</td>
-</tr>
-<tr>
-<td>经销商简称</td>
-<td>文本框</td>
-<td>经销商简称</td>
-<td>常显</td>
-<td>选择经销商后自动带出</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.SHORT_NAME</td>
-</tr>
-<tr>
-<td>授信余额</td>
-<td>文本框</td>
-<td>交易公司授信余额</td>
-<td>常显</td>
-<td>查询交易公司授信信息</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.CREDIT_BALANCE</td>
-</tr>
-<tr>
-<td>货款余额</td>
-<td>文本框</td>
-<td>经销商货款余额</td>
-<td>常显</td>
-<td>查询经销商货款信息</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.BALANCE</td>
-</tr>
-<tr>
-<td>客户等级</td>
-<td>文本框</td>
-<td>客户等级</td>
-<td>常显</td>
-<td>查询经销商等级信息</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.RANK</td>
-</tr>
-<tr>
-<td>市场推广服务费率(%)</td>
-<td>数字输入框</td>
-<td>市场推广服务费率</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>0-100</td>
-<td>SA_SALE_CONTRACT_HEAD.MKT_COST_RATE</td>
-</tr>
-<tr>
-<td>指导价下浮比例(%)</td>
-<td>数字输入框</td>
-<td>指导价下浮比例</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>0-100</td>
-<td>SA_SALE_CONTRACT_HEAD.PRICE_DOWN_RATE</td>
-</tr>
-<tr>
-<td>专卖店建设任务(个)</td>
-<td>数字输入框</td>
-<td>专卖店建设任务数</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>非负整数</td>
-<td>SA_SALE_CONTRACT_HEAD.NEW_STORE_TASK</td>
-</tr>
-<tr>
-<td>新开网点任务</td>
-<td>数字输入框</td>
-<td>新开网点任务数</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>非负整数</td>
-<td>SA_SALE_CONTRACT_HEAD.NEW_OUTLETS_TASK</td>
-</tr>
-<tr>
-<td>备注</td>
-<td>文本框</td>
-<td>合同备注</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.NOTE</td>
-</tr>
-<tr>
-<td>币种</td>
-<td>下拉选择框</td>
-<td>合同币种</td>
-<td>常显</td>
-<td>根据事业部自动带出</td>
-<td>-</td>
-<td>SA_SALE_CONTRACT_HEAD.CURRENCY</td>
-</tr>
-</tbody></table></div>
+<tr><td>合同编号</td><td>SA_SALE_CONTRACT_HEAD.CONTRACT_NO</td><td>文本框</td><td>合同编号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>经销商</td><td>SA_SALE_CONTRACT_HEAD.CUSTOMER_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>选择经销商带出</td></tr>
+<tr><td>合同年度</td><td>SA_SALE_CONTRACT_HEAD.CONTRACT_YEAR</td><td>文本框</td><td>合同年度</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>事业部</td><td>SA_SALE_CONTRACT_HEAD.ENTNAME</td><td>文本框</td><td>事业部名称</td><td>常显</td><td>选择事业部带出</td></tr>
+<tr><td>交易公司</td><td>SA_SALE_CONTRACT_HEAD.TRADING_COMPANY_NAME</td><td>文本框</td><td>交易公司名称</td><td>常显</td><td>选择交易公司带出</td></tr>
+<tr><td>H0流程审批状态</td><td>SA_SALE_CONTRACT_HEAD.HZ_APPROVE_STATUS</td><td>文本框</td><td>流程审批状态</td><td>常显</td><td>流程回调更新</td></tr>
+<tr><td>归档状态</td><td>SA_SALE_CONTRACT_HEAD.STATE_PIGEONHOLE</td><td>文本框</td><td>合同归档状态</td><td>常显</td><td>归档后更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
-<KbSubTitle>弹窗1：经销商选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| entid | 事业部ID | 限定事业部范围 | 111 |
-
-**数据范围**
-
-```sql
-当前事业部下有效经销商
-```
-
-<KbSubTitle>弹窗2：交易公司选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| custId | 经销商ID | 限定经销商范围 | 1001 |
-
-**数据范围**
-
-```sql
-该经销商关联的有效交易公司
-```
-
+<blockquote>本页面查询条件使用文本输入和下拉选择，无独立弹窗。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
-无
-
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 新增 | 新建年度经销合同 | 列表页 | 常显 | 跳转新建页面 |
-| 保存 | 保存合同 | 新建/编辑页 | 常显 | 调用save接口保存合同及关联数据 |
-| 保存并提交 | 保存并提交审批 | 新建/编辑页 | 审核状态为新建时可用 | 调用saveAndSubmit接口，启动工作流 |
-| 删除 | 删除合同 | 列表页 | 审核状态为新建时可用 | 删除合同头、区域、任务拆分等关联数据 |
-| 校验区域 | 校验授权区域冲突 | 编辑页 | 常显 | 调用check-area接口，返回冲突提示 |
-| 导出 | 导出合同列表 | 列表页 | 常显 | 导出Excel |
-| 合同完成情况 | 查看合同完成情况 | 列表页 | 合同已生效时可用 | 调用deliver接口查询 |
-| 变更 | 发起合同变更 | 列表页 | 合同已生效时可用 | 跳转合同变更页面 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新增</td><td>新建年度经销合同</td><td>列表页</td><td>始终可用</td><td>打开新建页面</td></tr>
+<tr><td>保存</td><td>保存合同信息</td><td>编辑页</td><td>编辑状态</td><td>调用save接口</td></tr>
+<tr><td>保存并提交</td><td>发起OA审批</td><td>编辑页</td><td>保存后</td><td>发起DISTRIBUTION_CONTRACT_DKHB流程</td></tr>
+<tr><td>删除</td><td>删除合同</td><td>列表页</td><td>选中未提交记录</td><td>调用remove接口</td></tr>
+<tr><td>导出</td><td>导出合同列表</td><td>列表页</td><td>有数据时</td><td>调用selectExportList接口</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：交易公司必填 —— 确保合同有甲方信息</KbSubTitle>
-
-- 第1点：tradingCompanyId字段标注@NotNull，保存时校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SA_CONTR_HEAD_ID = :id AND TRADING_COMPANY_ID IS NULL;
-```
-
-<KbSubTitle>校验2：生效状态必填 —— 确保合同有生效标识</KbSubTitle>
-
-- 第1点：valid字段标注@NotNull
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SA_CONTR_HEAD_ID = :id AND VALID IS NULL;
-```
-
+<ul><li>校验1：经销商不能为空 —— 确保合同关联明确经销商</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：保存时校验经销商ID不为空</p>
+<ul><li>系统体现：toast提醒</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE CUSTOMER_ID IS NULL;</code></pre>
 </KbCard>
+
 <KbCard title="提交校验">
-<KbSubTitle>校验1：流程编码不能为空 —— 确保选择了审批流程</KbSubTitle>
-
-- 第1点：saveAndSubmit方法入口校验flowCode为空时报错
-
-<KbTip>阻断性报错，提示"流程编码缺失，请选择流程！"</KbTip>
-
-```sql
--- 无需SQL，前端参数校验
-```
-
-<KbSubTitle>校验2：流程启动校验 —— workFlowStartValid接口校验</KbSubTitle>
-
-- 第1点：提交前调用workFlowStartValid接口进行业务校验
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
--- 具体校验逻辑在ServiceImpl中
-```
-
+<ul><li>校验1：流程启动校验 —— 确保合同数据完整</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：通过workFlowStartValid方法进行流程启动前校验</p>
+<p>- 第2点：校验区域合法性(doCheckArea)</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUSTOMER_ID IS NULL OR CONTRACT_YEAR IS NULL);</code></pre>
 </KbCard>
+
 <KbCard title="状态机">
-
-
-```text
-新建 ──保存──> 新建 ──提交──> 已提交/审批中 ──审批通过──> 已生效(valid=1)
-                                        │
-                                    审批驳回
-                                        │
-                                        v
-                                     新建(可重新提交)
-```
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 编辑、保存、提交、删除 |
-| 已提交 | 已提交审批 | 无（等待审批） |
-| APPROVED | 已批准/已生效 | 查看、发起变更 |
-| REJECTED | 已驳回 | 编辑、重新提交 |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：SA_SALE_CONTRACT_HEAD（年度经销合同头）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| SA_CONTR_HEAD_ID | NUMBER | 销售合同ID | - | 主键，自增 |
-| SA_CONTR_HEAD_CODE | VARCHAR2 | 销售合同编号 | 合同编号 | 编码规则自动生成 |
-| START_DATE | DATE | 合同开始日期 | 合同开始日期 | 手工输入，校验为年度第一天 |
-| END_DATE | DATE | 合同截止日期 | 合同截止日期 | 手工输入，校验为年度最后一天 |
-| TRADING_COMPANY_ID | NUMBER | 交易公司ID | 交易公司 | 弹窗选择，必填 |
-| TRADING_COMPANY_NAME | VARCHAR2 | 交易公司名称 | 交易公司 | 选择后自动带出 |
-| TRADING_COMPANY_CODE | VARCHAR2 | 交易公司编码 | - | 选择后自动带出 |
-| CUST_ID | NUMBER | 经销商ID | 经销商 | 弹窗选择 |
-| CUST_CODE | VARCHAR2 | 经销商编码 | 经销商编码 | 选择后自动带出 |
-| CUST_NAME | VARCHAR2 | 经销商名称 | 经销商 | 选择后自动带出 |
-| ENTID | NUMBER | 组织ID | - | 新增时自动获取当前事业部 |
-| SALES_CONTRACT_TYPE | NUMBER | 销售合同类型 | 合同类型 | 从值集选择 |
-| DEPOSIT_AMT | NUMBER | 保证金(万元) | 保证金 | 手工输入 |
-| TOTAL_TASK | NUMBER | 销售任务总额 | 销售任务总额 | 手工输入 |
-| TOTAL_TASK_AMT | NUMBER | 合同任务总额 | 合同任务总额 | 手工输入 |
-| MKT_COST_RATE | NUMBER | 市场推广服务费率(%) | 市场推广服务费率 | 手工输入 |
-| PRICE_DOWN_RATE | NUMBER | 指导价下浮比例(%) | 指导价下浮比例 | 手工输入 |
-| NEW_STORE_TASK | NUMBER | 专卖店建设任务(个) | 专卖店建设任务 | 手工输入 |
-| NEW_OUTLETS_TASK | NUMBER | 新开网点任务 | 新开网点任务 | 手工输入 |
-| VALID | NUMBER | 生效状态 | - | 必填，1=生效 |
-| AUDIT_STAT | VARCHAR2 | 外部系统审核状态 | 审核状态 | 系统维护 |
-| PAY_COMPLETE | VARCHAR2 | 是否缴清 | 是否缴清 | 系统维护，Y/N |
-| CORPORATE_CODE | VARCHAR2 | 法人编码 | - | 根据交易公司自动带出 |
-| CURRENCY | VARCHAR2 | 币种 | 币种 | 根据事业部自动带出 |
-| NOTE | VARCHAR2 | 备注 | 备注 | 手工输入 |
-| DIVISION_ID | NUMBER | 事业部ID | - | 新增时自动获取 |
-| SA_CONTR_ADD_ID | NUMBER | 合同变更单ID | - | 通过变更创建时关联 |
-| CRM_ID | VARCHAR2 | CRM合同ID | - | 推送CRM后返回 |
-| IS_PUSH_CRM | VARCHAR2 | 记录推送CRM | - | 推送后标记 |
-
----
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审批 ──归档──→ 已归档
+                                │
+                                └──OA审批拒绝──→ 已拒绝</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>已保存未提交</td><td>编辑、保存、提交、删除</td></tr>
+<tr><td>RUN</td><td>OA审批中</td><td>无（等待审批结果）</td></tr>
+<tr><td>APPROVED</td><td>OA审批通过</td><td>查看、归档、变更</td></tr>
+<tr><td>REJECTED</td><td>OA审批拒绝</td><td>修改、重新提交</td></tr>
+<tr><td>ARCHIVED</td><td>已归档</td><td>查看</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表1：SA_SALE_CONTRACT_HEAD（年度经销合同头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>SALE_CONTRACT_HEAD_ID</td><td>BIGINT</td><td>主键ID</td><td>合同ID</td><td>自增主键</td></tr>
+<tr><td>CONTRACT_NO</td><td>VARCHAR</td><td>合同编号</td><td>合同编号</td><td>自动生成</td></tr>
+<tr><td>CUSTOMER_ID</td><td>BIGINT</td><td>经销商ID</td><td>-</td><td>选择经销商带出</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>经销商</td><td>选择经销商带出</td></tr>
+<tr><td>CONTRACT_YEAR</td><td>VARCHAR</td><td>合同年度</td><td>合同年度</td><td>手动选择</td></tr>
+<tr><td>ENTID</td><td>BIGINT</td><td>事业部ID</td><td>-</td><td>选择事业部带出</td></tr>
+<tr><td>ENTNAME</td><td>VARCHAR</td><td>事业部名称</td><td>事业部</td><td>选择事业部带出</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>VARCHAR</td><td>交易公司名称</td><td>交易公司</td><td>选择交易公司带出</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>H0流程审批状态</td><td>H0流程审批状态</td><td>流程回调更新</td></tr>
+<tr><td>STATE_PIGEONHOLE</td><td>VARCHAR</td><td>合同归档状态</td><td>归档状态</td><td>归档后更新</td></tr>
+<tr><td>PIGEONHOLE_DATE</td><td>DATE</td><td>应归档时间</td><td>-</td><td>系统带出</td></tr>
+<tr><td>ACTUAL_PIGEONHOLE_DATE</td><td>DATE</td><td>实际归档时间</td><td>-</td><td>归档后更新</td></tr>
+<tr><td>PIGEONHOLE_BY</td><td>VARCHAR</td><td>归档人</td><td>-</td><td>归档后更新</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -645,55 +324,144 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SA_CONTR_HEAD_ID = :id AND VALID IS NU
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">流程编码缺失，请选择流程！</td>
-            <td style="font-size:13px;">保存并提交</td>
-            <td style="font-size:13px;">未选择审批流程编码</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
+<tr><td>经销商不能为空</td><td>保存时</td><td>未选择经销商</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>区域校验失败</td><td>提交时</td><td>经销商在选定区域不合法，重新选择区域</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>合同ID为空，请检查</td><td>保存/提交时</td><td>合同ID参数丢失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>当前合同有效结束时间小于当前时间，不允许新建</td><td>保存时</td><td>合同结束日期已过期</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>合同有效开始时间必须小于等于结束时间</td><td>保存时</td><td>开始日期大于结束日期</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>合同开始日期须为月度第一天</td><td>保存时</td><td>开始日期非月初</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>法人编码不存在</td><td>保存时</td><td>经销商法人编码主数据缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>关联合同不存在，请稍后再试</td><td>保存时</td><td>关联的母合同不存在</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>提前结束合同，必须为合同结束日期前至少一整月</td><td>保存时</td><td>提前结束日期不满足整月要求</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>当前已存在同类型经销合同，无法再签订</td><td>保存时</td><td>经销期限内已存在同类型合同</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>未能获取合同保证金标准，不能创建合同</td><td>保存时</td><td>保证金标准未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>未配置经销合同延期归档天数，请联系管理员</td><td>归档时</td><td>系统参数未配置</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>该合同应归档日期为空，请联系管理员</td><td>归档时</td><td>合同应归档日期缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>经销商编码不能为空</td><td>校验时</td><td>经销商编码参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：经销商不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择经销商直接点击保存</li><li><strong>逻辑分析</strong>：保存接口sa-sale-contract-heads/save在写入SA_SALE_CONTRACT_HEAD前校验CUSTOMER_ID非空。经销商是年度经销合同的核心主体，未选择经销商将导致后续交易公司、事业部、销售区域无法带出，合同任务拆分和保证金关联也无从执行。校验在Controller层前置拦截，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_ID, CUSTOMER_NAME,
+         CONTRACT_YEAR, HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE CUSTOMER_ID IS NULL OR CUSTOMER_NAME IS NULL;</code></pre>
+<h4>报错2：区域校验失败</h4>
+<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，workFlowStartValid方法调用doCheckAreaNew/doCheckArea校验区域不通过</li><li><strong>逻辑分析</strong>：提交前通过doCheckAreaNew/doCheckArea方法校验经销商在选定销售区域（SALE_AREA）内的合法性，确保合同授权区域与经销商实际授权区域一致。校验失败根因有三类：(1)经销商在选定区域无销售授权（经销商主数据中未配置该区域）；(2)合同销售区域与经销商授权区域不匹配；(3)区域数据未维护或已失效。此为阻断性报错，阻止OA流程（DISTRIBUTION_CONTRACT_DKHB）发起，需重新选择区域或联系主数据维护经销商授权区域</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.SALE_AREA, S.HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD S
+  WHERE S.SALE_CONTRACT_HEAD_ID = #{id}
+    AND S.HZ_APPROVE_STATUS IN ('NEW', 'RUN');
+  -- 核查经销商授权区域（经销商主数据，具体表名以主数据为准）
+  SELECT CUSTOMER_CODE, CUSTOMER_NAME, SALE_AREA, ENABLED
+  FROM CUSTOMER_SALE_AREA
+  WHERE CUSTOMER_CODE = #{customerCode};</code></pre>
+<h4>报错3：流程编码缺失，请选择流程</h4>
+<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，workFlowStartValid方法校验OA流程编码为空</li><li><strong>逻辑分析</strong>：年度经销合同提交需发起OA审批流程（DISTRIBUTION_CONTRACT_DKHB）。SaSaleContractHeadServiceImpl在saveAndSubmit中校验流程编码非空，流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置DISTRIBUTION_CONTRACT_DKHB流程编码；(2)合同类型未关联对应流程编码。需在流程配置中维护对应关系</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CONTRACT_TYPE, HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE SALE_CONTRACT_HEAD_ID = #{id}
+    AND HZ_APPROVE_STATUS = 'NEW';</code></pre>
+<h4>报错4：合同ID为空，请检查</h4>
+<ul><li><strong>触发条件</strong>：用户编辑或提交合同时，SALE_CONTRACT_HEAD_ID参数为空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl在更新、提交、归档等操作前校验合同ID非空。合同ID是主键，缺失将导致无法定位合同记录，后续所有操作均无法执行。通常由前端未正确传入选中记录ID导致</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE SALE_CONTRACT_HEAD_ID IS NULL OR SALE_CONTRACT_HEAD_ID = 0;</code></pre>
+<h4>报错5：当前合同有效结束时间小于当前时间，不允许新建</h4>
+<ul><li><strong>触发条件</strong>：用户新建合同时，填写的合同结束日期小于当前系统日期</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl校验合同结束日期（END_DATE）必须大于等于当前日期。结束日期已过期意味着合同生效即失效，无业务意义。校验在保存前拦截，toast提示后阻断保存。需修改合同结束日期为未来日期</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE,
+         HZ_APPROVE_STATUS, SYSDATE AS 当前日期
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE END_DATE &lt; SYSDATE
+    AND HZ_APPROVE_STATUS = 'NEW';</code></pre>
+<h4>报错6：合同有效开始时间必须小于等于结束时间</h4>
+<ul><li><strong>触发条件</strong>：用户填写的合同开始日期大于结束日期</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl校验START_DATE &lt;= END_DATE。开始日期大于结束日期违反时间逻辑，合同有效期区间为空。校验在保存前拦截，需重新确认合同起止日期</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE, HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE START_DATE &gt; END_DATE;</code></pre>
+<h4>报错7：合同开始日期须为月度第一天</h4>
+<ul><li><strong>触发条件</strong>：用户填写的合同开始日期非月初（如2026-08-15）</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl校验合同开始日期必须为月度第一天（如yyyy-MM-01）。经销合同按月度维度拆分任务和结算，非月初将导致月度任务拆分异常。校验在保存前拦截，需将开始日期调整为月初</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE,
+         EXTRACT(DAY FROM START_DATE) AS 开始日
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE EXTRACT(DAY FROM START_DATE) != 1;</code></pre>
+<h4>报错8：法人编码不存在</h4>
+<ul><li><strong>触发条件</strong>：用户选择经销商后保存合同，根据经销商查询法人编码返回空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl根据经销商CUSTOMER_ID查询法人主数据，若经销商未配置法人关联或法人编码（CORPORATE_CODE）在主数据中不存在，将抛出此异常。法人编码是合同归档、CRM推送的关键标识。需在经销商主数据中维护法人关联</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.CUSTOMER_ID, S.CUSTOMER_NAME,
+         C.CORPORATE_CODE, C.CORPORATE_NAME
+  FROM SA_SALE_CONTRACT_HEAD S
+  LEFT JOIN CUSTOMER C ON S.CUSTOMER_ID = C.CUSTOMER_ID
+  WHERE C.CORPORATE_CODE IS NULL;</code></pre>
+<h4>报错9：关联合同不存在，请稍后再试</h4>
+<ul><li><strong>触发条件</strong>：用户保存合同时，关联的母合同或关联合同在SA_SALE_CONTRACT_HEAD中查询不到</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl校验关联合同存在性。关联合同不存在根因有三类：(1)母合同已被删除；(2)母合同ID传入错误；(3)数据同步延迟（母合同在CRM侧创建但未同步到AE）。需确认母合同存在且已同步</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.PARENT_CONTRACT_ID,
+         P.CONTRACT_NO AS 母合同编号, P.HZ_APPROVE_STATUS AS 母合同状态
+  FROM SA_SALE_CONTRACT_HEAD S
+  LEFT JOIN SA_SALE_CONTRACT_HEAD P ON S.PARENT_CONTRACT_ID = P.SALE_CONTRACT_HEAD_ID
+  WHERE S.PARENT_CONTRACT_ID IS NOT NULL AND P.SALE_CONTRACT_HEAD_ID IS NULL;</code></pre>
+<h4>报错10：提前结束合同，必须为合同结束日期前至少一整月</h4>
+<ul><li><strong>触发条件</strong>：用户对已生效合同执行提前结束操作，提前结束日期不满足整月要求</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl校验提前结束合同的操作，要求提前结束日期必须在原合同结束日期前至少一整月。此校验确保月度任务拆分和结算完整。需调整提前结束日期至整月前</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE,
+         ACTUAL_END_DATE, HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE ACTUAL_END_DATE IS NOT NULL
+    AND ADD_MONTHS(ACTUAL_END_DATE, 1) &gt; END_DATE;</code></pre>
+<h4>报错11：当前已存在同类型经销合同，无法再签订</h4>
+<ul><li><strong>触发条件</strong>：用户新建合同时，校验发现当前经销商在经销期限内已存在同合同类型的有效合同</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl校验同一经销商在同一经销期限内不允许签订同类型的多个经销合同。重复签订将导致保证金重复计算、任务重复拆分。需调整合同期限或变更合同类型，或先终止已有合同</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT CUSTOMER_ID, CUSTOMER_NAME, CONTRACT_TYPE, CONTRACT_NO,
+         START_DATE, END_DATE, HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE CUSTOMER_ID = #{customerId}
+    AND CONTRACT_TYPE = #{contractType}
+    AND HZ_APPROVE_STATUS = 'APPROVED'
+    AND START_DATE &lt;= #{newEndDate}
+    AND END_DATE &gt;= #{newStartDate};</code></pre>
+<h4>报错12：未能获取合同保证金标准，不能创建合同</h4>
+<ul><li><strong>触发条件</strong>：用户新建合同时，根据事业部、合同类型查询保证金标准（CM_DEPOSITS_PAY_STANDARD）返回空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl在创建合同前查询保证金标准，保证金标准是计算合同应缴保证金的依据。标准未配置将导致合同保证金金额无法计算。需先在保证金标准配置中维护对应事业部和合同类型的标准</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.ENTID, S.CONTRACT_TYPE,
+         P.PAY_STANDARD_ID, P.STANDARD_AMT
+  FROM SA_SALE_CONTRACT_HEAD S
+  LEFT JOIN CM_DEPOSITS_PAY_STANDARD P ON S.ENTID = P.ENTID AND S.CONTRACT_TYPE = P.CONTRACT_TYPE
+  WHERE P.PAY_STANDARD_ID IS NULL
+    AND S.HZ_APPROVE_STATUS = 'NEW';</code></pre>
+<h4>报错13：未配置经销合同延期归档天数，请联系管理员</h4>
+<ul><li><strong>触发条件</strong>：合同归档时，系统参数中未配置延期归档天数</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl在归档时读取系统参数（经销合同延期归档天数），参数缺失将导致无法计算应归档日期。需联系管理员在系统参数中配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT PARAM_CODE, PARAM_NAME, PARAM_VALUE
+  FROM SYS_PARAM
+  WHERE PARAM_CODE = 'SALE_CONTRACT_DELAY_PIGEONHOLE_DAYS';</code></pre>
+<h4>报错14：该合同应归档日期为空，请联系管理员</h4>
+<ul><li><strong>触发条件</strong>：合同归档时，PIGEONHOLE_DATE（应归档时间）字段为空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl校验合同应归档日期非空。应归档日期由合同审批通过时间加延期归档天数计算得出，为空将导致归档流程无法判断归档时机。需联系管理员补充应归档日期</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, HZ_APPROVE_STATUS,
+         PIGEONHOLE_DATE, ACTUAL_PIGEONHOLE_DATE, PIGEONHOLE_BY
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE HZ_APPROVE_STATUS = 'APPROVED'
+    AND PIGEONHOLE_DATE IS NULL;</code></pre>
+<h4>报错15：经销商编码不能为空</h4>
+<ul><li><strong>触发条件</strong>：校验合同或出库单时，经销商编码（CUSTOMER_CODE）参数为空</li><li><strong>逻辑分析</strong>：SaSaleContractHeadServiceImpl在多处校验经销商编码非空。经销商编码是关联经销商主数据的关键字段，为空将导致经销商信息无法带出，合同与出库单关联无法建立。需前端正确传入经销商编码</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_ID, CUSTOMER_NAME, CUST_CODE
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE CUST_CODE IS NULL OR CUST_CODE = '';</code></pre>
+<h4>报错16：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：前端调用sa-sale-contract-heads相关接口时，后端服务不可达或请求超时</li><li><strong>逻辑分析</strong>：前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre>
+<h4>报错17：权限不足，无法操作</h4>
+<ul><li><strong>触发条件</strong>：当前用户对合同保存、提交、归档等操作无对应功能权限或数据权限</li><li><strong>逻辑分析</strong>：后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre>
+</KbCard>
 
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择审批流程编码</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">合同提交后区域校验提示冲突</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>同经销商下其他生效合同的授权区域与当前合同存在重叠<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查区域配置，确认是否需要调整授权区域范围。排查SQL：
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">合同审批通过后未推送CRM</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>CRM接口调用失败或网络异常<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查CRM推送日志和接口可用性
-    </div>
-  </div>
-</div>
+<ul><li>问题1：合同无法归档</li><li>原因：合同未审批通过或不满足归档条件</li><li>解决思路：检查SQL <code>SELECT HZ_APPROVE_STATUS, STATE_PIGEONHOLE FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #&#123;id&#125;</code></li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -702,10 +470,14 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SA_CONTR_HEAD_ID = :id AND VALID IS NU
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-09-10 | - | hfy | 初始创建年度经销合同模块 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

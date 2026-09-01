@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -109,6 +110,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -170,91 +172,411 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 排期管理">
-<KbQuote>讲师排期管理培训课程的讲师时间调度和资源分配</KbQuote>
-<ul><li>讲师排期用于管理讲师的时间可用性</li><li>添加排期后，对应时间段讲师被标记为"已排期"</li><li>取消排期后，对应时间段讲师恢复为"可用"</li><li>排期信息是点将业务中查询讲师可用时间的基础数据</li></ul></KbCard>
-<KbCard title="2.2 与点将业务的关联">
-<KbQuote>排期数据影响点将执行时讲师的可用性和任务分配</KbQuote>
-<ul><li>点将业务选择讲师时，需查询讲师排期判断可用性</li><li>已排期时间段不可重复排期（防冲突）</li><li>排期状态影响讲师在点将列表中的可用标识</li></ul></KbCard>
-<KbCard title="2.3 无工作流">
-<KbQuote>讲师排期无审批流程，维护后直接生效</KbQuote>
-<ul><li>讲师排期不涉及审批工作流</li><li>添加排期和取消排期均为即时生效操作</li></ul></KbCard>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：同期不可重复">
+<ul><li><strong>业务意义</strong>：从源头避免讲师被重复点用，保证排期数据的唯一性</li><li><strong>具体逻辑描述</strong>：</li><li>已排期的时间段不允许再次排期</li><li>添加时做冲突校验：新排期时间段与已有排期时间段存在交集即为冲突</li><li>冲突时提示"该讲师在指定时间段已有排期，请重新选择"</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：即时生效">
+<ul><li><strong>业务意义</strong>：便于业务临时调整讲师安排，无需等待审批</li><li><strong>具体逻辑描述</strong>：</li><li>排期不走审批流程</li><li>添加与取消均立即生效</li><li>无工作流编码</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：驱动可用标识">
+<ul><li><strong>业务意义</strong>：排期是点将选人与饱和度统计的基础数据</li><li><strong>具体逻辑描述</strong>：</li><li>排期结果决定讲师在点将选人列表中的可用标识</li><li>排期数据是讲师饱和度统计的数据来源</li><li>已排期时间段讲师在点将列表中标记为不可用</li></ul>
+</KbCard>
+
+<KbCard num="4" title="重点逻辑4：新建排期">
+<ul><li><strong>业务意义</strong>：登记讲师时间占用，标记不可用时段</li><li><strong>具体逻辑描述</strong>：</li></ul>
+<p>1. 点击"新建排期"按钮，打开 Modal 弹窗</p>
+<p>2. 填写日期类型（dateType，Select 必填，值集 MBO.DATE_TYPE）</p>
+<p>3. 填写日期（date，DatePicker 范围必填，转换为 startDate 和 endDate）</p>
+<p>4. 填写原因（reason，TextField 选填）</p>
+<p>5. 提交时将日期数组转换为 startDate 和 endDate（格式 YYYY-MM-DD）</p>
+<p>6. 调用 <code>POST mlt/maLecturerSchedule/save</code> 接口</p>
+<p>7. 成功后通过 <code>setToggleTag(!toggleTag)</code> 刷新日历组件</p>
+</KbCard>
+
+<KbCard num="5" title="重点逻辑5：取消排期">
+<ul><li><strong>业务意义</strong>：释放讲师时间占用，恢复可用状态</li><li><strong>具体逻辑描述</strong>：</li></ul>
+<p>1. 点击"取消排期"按钮，打开 Modal 弹窗</p>
+<p>2. 填写日期（date，DatePicker 范围必填）</p>
+<p>3. 提交时转换为 startDate 和 endDate，通过 params 参数传递</p>
+<p>4. 调用 <code>POST mlt/maLecturerSchedule/cancel</code> 接口</p>
+<p>5. 成功后刷新日历</p>
+</KbCard>
+
+<KbCard num="6" title="重点逻辑6：日历刷新机制">
+<ul><li><strong>业务意义</strong>：保证排期操作后日历视图及时更新</li><li><strong>具体逻辑描述</strong>：</li><li>通过 <code>toggleTag</code> 状态变量控制日历刷新</li><li>新建/取消排期成功后执行 <code>setToggleTag(!toggleTag)</code></li><li>LecturerCalendar 组件接收 <code>refresh</code> 属性，值变化时重新加载数据</li></ul>
+</KbCard>
+
+<KbCard num="7" title="重点逻辑7：表单动态渲染">
+<ul><li><strong>业务意义</strong>：复用弹窗结构，按字段配置动态渲染表单项</li><li><strong>具体逻辑描述</strong>：</li><li>新建和取消弹窗的表单项通过 <code>createDSProps.fields</code> 和 <code>cancelDSProps.fields</code> 动态渲染</li><li><code>dateType</code> 字段渲染为 Select 组件</li><li><code>date</code> 字段渲染为 DatePicker 组件</li><li>其他字段渲染为 TextField 组件</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 列表页"><ul><li><strong>路由</strong>: <code>/general/base/lecturerSchedule</code></li><li><strong>API</strong>: <code>mlt/maLecturerSchedule/scheduleList</code>（分页查询）</li><li><strong>查询条件</strong>: 讲师姓名、排期日期范围、排期状态等</li><li><strong>列表字段</strong>: 讲师姓名、排期日期、开始时间、结束时间、排期状态、关联点将单号、创建时间等</li><li><strong>操作按钮</strong>:<ul><li>添加排期：打开排期弹窗，选择讲师和时间段</li><li>取消排期：确认后取消排期，释放讲师时间</li><li>查看详情：查看排期详细信息</li></ul></li></ul></KbCard>
-<KbCard title="3.2 添加排期逻辑（addSchedule）"><p>1. 点击"添加排期"按钮，打开排期弹窗 2. 选择讲师（支持搜索，关联讲师档案） 3. 填写排期信息：</p>
-<ul><li>排期日期</li><li>开始时间</li><li>结束时间</li><li>排期备注</li></ul>
-<p>4. 校验逻辑：</p>
-<ul><li>排期时间段不可与该讲师已有排期冲突</li><li>开始时间必须早于结束时间</li><li>排期日期不可为过去日期</li></ul>
-<p>5. 校验通过后调用 <code>mlt/maLecturerSchedule/addSchedule</code> 保存 6. 保存成功后刷新列表</p></KbCard>
-<KbCard title="3.3 取消排期逻辑（cancelSchedule）"><p>1. 选择需要取消的排期记录 2. 点击"取消排期"按钮 3. 弹出确认提示 4. 确认后调用 <code>mlt/maLecturerSchedule/cancelSchedule</code> 5. 取消成功后：</p>
-<ul><li>排期状态更新为"已取消"</li><li>讲师对应时间段释放为可用</li></ul>
-<p>6. 刷新列表</p></KbCard>
-<KbCard title="3.4 排期冲突校验"><ul><li>添加排期时，系统自动校验该讲师在目标时间段内是否已有排期</li><li>冲突规则：新排期时间段与已有排期时间段存在交集即为冲突</li><li>冲突时提示用户"该讲师在指定时间段已有排期，请重新选择"</li></ul></KbCard>
-<KbCard title="3.5 API清单"><table class="kl-table"><thead><tr><th>API路径</th><th>方法</th><th>说明</th></tr></thead><tbody><tr><td>mlt/maLecturerSchedule/scheduleList</td><td>GET</td><td>查询排期列表</td></tr><tr><td>mlt/maLecturerSchedule/addSchedule</td><td>POST</td><td>添加排期</td></tr><tr><td>mlt/maLecturerSchedule/cancelSchedule</td><td>POST</td><td>取消排期</td></tr></tbody></table></KbCard>
-<KbCard title="3.6 选择弹窗"><p class='kl-tip'>无选择弹窗。页面主体是LecturerCalendar日历组件展示排期。</p></KbCard>
-<KbCard title="3.7 导入"><p class='kl-tip'>不支持导入功能。</p></KbCard>
-<KbCard title="3.8 其他按钮"><table class="kl-table"><thead><tr><th>按钮</th><th>说明</th></tr></thead><tbody><tr><td>新建排期</td><td>Modal.open表单，调用ddSchedule</td></tr><tr><td>取消排期</td><td>Modal.open表单，调用cancelSchedule</td></tr></tbody></table></KbCard>
-<KbCard title="3.9 保存校验"><table class="kl-table"><thead><tr><th>场景</th><th>校验项</th></tr></thead><tbody><tr><td>新建排期</td><td>dateType(日期类型)必填、date(日期范围)必填、reason(原因)</td></tr><tr><td>取消排期</td><td>date(日期范围)必填</td></tr></tbody></table></KbCard>
-<KbCard title="3.10 提交校验"><p class='kl-tip'>无审批/工作流，直接保存生效。</p></KbCard>
-<KbCard title="4.1 主表：ma_lecturer_schedule（讲师排期表）"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th><th>备注</th></tr></thead><tbody><tr><td>lecturer_schedule_id</td><td>VARCHAR2</td><td>主键ID</td><td>主键</td></tr><tr><td>lecturer_schedule_code</td><td>VARCHAR2</td><td>排期编码</td><td>业务唯一键</td></tr><tr><td>lecturer_archives_code</td><td>VARCHAR2</td><td>关联讲师档案编码</td><td>外键关联ma_lecturer_archive</td></tr><tr><td>lecturer_name</td><td>VARCHAR2</td><td>讲师姓名</td><td>冗余存储便于查询</td></tr><tr><td>schedule_date</td><td>DATE</td><td>排期日期</td><td></td></tr><tr><td>start_time</td><td>VARCHAR2</td><td>开始时间</td><td>格式HH:mm</td></tr><tr><td>end_time</td><td>VARCHAR2</td><td>结束时间</td><td>格式HH:mm</td></tr><tr><td>schedule_status</td><td>VARCHAR2</td><td>排期状态</td><td>有效/已取消</td></tr><tr><td>related_order_code</td><td>VARCHAR2</td><td>关联点将单号</td><td>点将业务创建时回写</td></tr><tr><td>schedule_remark</td><td>VARCHAR2</td><td>排期备注</td><td></td></tr><tr><td>created_by</td><td>VARCHAR2</td><td>创建人</td><td></td></tr><tr><td>creation_date</td><td>DATE</td><td>创建时间</td><td></td></tr><tr><td>last_updated_by</td><td>VARCHAR2</td><td>最后更新人</td><td></td></tr><tr><td>last_update_date</td><td>DATE</td><td>最后更新时间</td><td></td></tr><tr><td>object_version_number</td><td>NUMBER</td><td>乐观锁版本号</td><td></td></tr></tbody></table></KbCard>
-<KbCard title="4.2 关键索引"><table class="kl-table"><thead><tr><th>索引名</th><th>字段</th><th>说明</th></tr></thead><tbody><tr><td>idx_schedule_lecturer</td><td>lecturer_archives_code, schedule_date</td><td>按讲师+日期查询排期，用于冲突校验</td></tr><tr><td>idx_schedule_status</td><td>schedule_status</td><td>按状态过滤有效排期</td></tr></tbody></table></KbCard>
+<KbCard title="列表页">
+<ul><li><strong>路由</strong>：<code>/general/base/lecturerSchedule</code></li><li><strong>主查询 API</strong>：<code>POST mlt/maLecturerSchedule/list</code></li><li><strong>页面主体</strong>：LecturerCalendar 日历组件展示排期</li><li><strong>操作按钮</strong>：新建排期、取消排期</li></ul>
+</KbCard>
+
+<KbCard title="界面模块">
+<h4>新建排期弹窗字段</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>日期类型</td><td>DATE_TYPE</td><td>Select</td><td>排期日期类型</td><td>始终显示</td><td>必填，值集 MBO.DATE_TYPE</td></tr>
+<tr><td>日期</td><td>START_DATE/END_DATE</td><td>DatePicker(range)</td><td>排期日期范围</td><td>始终显示</td><td>必填，转换为 startDate/endDate（YYYY-MM-DD）</td></tr>
+<tr><td>原因</td><td>REASON</td><td>TextField</td><td>排期原因说明</td><td>始终显示</td><td>选填</td></tr>
+</tbody>
+</table>
+<h4>取消排期弹窗字段</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>日期</td><td>START_DATE/END_DATE</td><td>DatePicker(range)</td><td>取消排期日期范围</td><td>始终显示</td><td>必填，转换为 startDate/endDate（YYYY-MM-DD）</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<p>无选择弹窗。页面主体是 LecturerCalendar 日历组件展示排期。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新建排期</td><td>弹窗填写排期信息并提交</td><td>列表表头</td><td>始终显示</td><td>调用 save 接口，刷新日历</td></tr>
+<tr><td>取消排期</td><td>弹窗填写日期范围并取消</td><td>列表表头</td><td>始终显示</td><td>调用 cancel 接口，刷新日历</td></tr>
+</tbody>
+</table>
+<h4>按钮1：新建排期（列表表头）</h4>
+<ul><li><strong>可点击条件</strong>：始终可点击</li><li><strong>业务逻辑</strong>：打开新建排期弹窗 → 填写日期类型、日期范围、原因 → 提交 <code>POST mlt/maLecturerSchedule/save</code></li><li><strong>成功后处理</strong>：<code>setToggleTag(!toggleTag)</code> 刷新日历</li><li><strong>权限编码</strong>：<code>hzero.general_manage.base_manage.lecturer_schedule.ps.save</code></li></ul>
+<h4>按钮2：取消排期（列表表头）</h4>
+<ul><li><strong>可点击条件</strong>：始终可点击</li><li><strong>业务逻辑</strong>：打开取消排期弹窗 → 填写日期范围 → 提交 <code>POST mlt/maLecturerSchedule/cancel</code></li><li><strong>成功后处理</strong>：刷新日历</li><li><strong>权限编码</strong>：<code>hzero.general_manage.base_manage.lecturer_schedule.ps.cancel</code></li></ul>
+</KbCard>
+
+<KbCard title="保存/提交校验">
+<ul><li>校验1：新建排期时 dateType（日期类型）必填 —— 区分排期类型便于统计</li><li><strong>详细逻辑</strong>：dateType 字段为空时阻止提交</li><li><strong>系统体现</strong>：前端表单校验，提示"日期类型不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE, START_DATE, END_DATE
+    FROM MA_LECTURER_SCHEDULE
+    WHERE DATE_TYPE IS NULL OR DATE_TYPE = '';</code></pre>
+<ul><li>校验2：新建排期时 date（日期范围）必填 —— 排期时间区间是排期的核心数据</li><li><strong>详细逻辑</strong>：date 字段为空时阻止提交，提交时转换为 startDate/endDate</li><li><strong>系统体现</strong>：前端表单校验，提示"日期不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE
+    FROM MA_LECTURER_SCHEDULE
+    WHERE START_DATE IS NULL OR END_DATE IS NULL;</code></pre>
+<ul><li>校验3：取消排期时 date（日期范围）必填 —— 明确取消的时间区间</li><li><strong>详细逻辑</strong>：date 字段为空时阻止提交</li><li><strong>系统体现</strong>：前端表单校验，提示"日期不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE, STATUS
+    FROM MA_LECTURER_SCHEDULE
+    WHERE STATUS = 'cancelled' AND (START_DATE IS NULL OR END_DATE IS NULL);</code></pre>
+<ul><li>校验4：排期时间段不可与该讲师已有排期冲突 —— 避免讲师被重复点用</li><li><strong>详细逻辑</strong>：新排期时间段与已有有效排期时间段存在交集即冲突</li><li><strong>系统体现</strong>：后端 save 接口校验，冲突时返回业务异常</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT a.LECTURER_SCHEDULE_ID AS 排期1, b.LECTURER_SCHEDULE_ID AS 排期2,
+           a.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+           TO_CHAR(a.START_DATE,'YYYY-MM-DD') AS 排期1开始,
+           TO_CHAR(a.END_DATE,'YYYY-MM-DD') AS 排期1结束,
+           TO_CHAR(b.START_DATE,'YYYY-MM-DD') AS 排期2开始,
+           TO_CHAR(b.END_DATE,'YYYY-MM-DD') AS 排期2结束
+    FROM MA_LECTURER_SCHEDULE a
+    JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_ID
+      AND a.LECTURER_ARCHIVES_ID = b.LECTURER_ARCHIVES_ID
+      AND a.STATUS = 'active' AND b.STATUS = 'active'
+      AND a.START_DATE &lt;= b.END_DATE AND a.END_DATE &gt;= b.START_DATE;</code></pre>
+</KbCard>
+
+<KbCard title="状态机">
+<pre class="detail-sql" v-pre><code>有效(active) ──取消排期──→ 已取消(cancelled)</code></pre>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>有效（active）</td><td>排期生效中，讲师对应时间段被占用</td><td>取消排期</td></tr>
+<tr><td>已取消（cancelled）</td><td>排期已取消，讲师对应时间段释放为可用</td><td>无（终态）</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="值集依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>值集编码</th><th>用途</th><th>使用位置</th></tr>
+</thead>
+<tbody>
+<tr><td>MBO.DATE_TYPE</td><td>日期类型</td><td>新建排期弹窗-日期类型字段</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="API 清单">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>API 路径</th><th>方法</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>mlt/maLecturerSchedule/list</td><td>POST</td><td>查询排期列表</td></tr>
+<tr><td>mlt/maLecturerSchedule/save</td><td>POST</td><td>添加排期</td></tr>
+<tr><td>mlt/maLecturerSchedule/cancel</td><td>POST</td><td>取消排期</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="导入">
+<p>不支持导入功能。</p>
+</KbCard>
+
+<KbCard title="MA_LECTURER_SCHEDULE（讲师排期表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>LECTURER_SCHEDULE_ID</td><td>VARCHAR2</td><td>主键ID</td><td>-</td><td>主键，序列自增</td></tr>
+<tr><td>LECTURER_SCHEDULE_CODE</td><td>VARCHAR2</td><td>排期编码</td><td>-</td><td>业务唯一键，系统生成</td></tr>
+<tr><td>LECTURER_ARCHIVES_ID</td><td>NUMBER</td><td>讲师档案ID</td><td>-</td><td>关联 MA_LECTURER_ARCHIVE</td></tr>
+<tr><td>LECTURER_ARCHIVES_CODE</td><td>VARCHAR2(64)</td><td>关联讲师档案编码</td><td>-</td><td>外键关联 MA_LECTURER_ARCHIVE</td></tr>
+<tr><td>LECTURER_NAME</td><td>VARCHAR2</td><td>讲师姓名</td><td>-</td><td>冗余存储便于查询</td></tr>
+<tr><td>DATE_TYPE</td><td>VARCHAR2(32)</td><td>日期类型</td><td>日期类型</td><td>值集 MBO.DATE_TYPE</td></tr>
+<tr><td>START_DATE</td><td>DATE</td><td>排期开始日期</td><td>日期(起)</td><td>新建排期时填写</td></tr>
+<tr><td>END_DATE</td><td>DATE</td><td>排期结束日期</td><td>日期(止)</td><td>新建排期时填写</td></tr>
+<tr><td>REASON</td><td>VARCHAR2(2000)</td><td>排期原因</td><td>原因</td><td>新建排期时填写</td></tr>
+<tr><td>STATUS</td><td>VARCHAR2(32)</td><td>排期状态</td><td>-</td><td>active/cancelled</td></tr>
+<tr><td>RELATED_ORDER_CODE</td><td>VARCHAR2</td><td>关联点将单号</td><td>-</td><td>点将业务创建时回写</td></tr>
+<tr><td>CREATE_DATE</td><td>TIMESTAMP</td><td>创建时间</td><td>-</td><td>系统自动</td></tr>
+<tr><td>CREATE_BY</td><td>VARCHAR2(64)</td><td>创建人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>CANCEL_DATE</td><td>TIMESTAMP</td><td>取消时间</td><td>-</td><td>取消排期时写入</td></tr>
+<tr><td>CANCEL_BY</td><td>VARCHAR2(64)</td><td>取消人</td><td>-</td><td>取消排期时写入</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>VARCHAR2</td><td>最后更新人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>系统自动</td></tr>
+<tr><td>OBJECT_VERSION_NUMBER</td><td>NUMBER</td><td>乐观锁版本号</td><td>-</td><td>框架自动维护</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="关键索引">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>索引名</th><th>字段</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>IDX_SCHEDULE_LECTURER</td><td>LECTURER_ARCHIVES_CODE, START_DATE</td><td>按讲师+日期查询排期，用于冲突校验</td></tr>
+<tr><td>IDX_SCHEDULE_STATUS</td><td>STATUS</td><td>按状态过滤有效排期</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="排查SQL">
+<pre class="detail-sql" v-pre><code>-- 查询讲师排期列表
+SELECT
+  ls.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+  la.LECTURER_NAME     AS 讲师姓名,
+  ls.DATE_TYPE         AS 日期类型,
+  TO_CHAR(ls.START_DATE, 'YYYY-MM-DD') AS 开始日期,
+  TO_CHAR(ls.END_DATE, 'YYYY-MM-DD') AS 结束日期,
+  ls.REASON            AS 原因,
+  ls.STATUS            AS 状态
+FROM MA_LECTURER_SCHEDULE ls
+LEFT JOIN MA_LECTURER_ARCHIVE la ON ls.LECTURER_ARCHIVES_ID = la.LECTURER_ARCHIVES_ID
+WHERE ls.STATUS = 'active'
+ORDER BY ls.START_DATE DESC;
+
+-- 查询某日期范围内有排期的讲师
+SELECT DISTINCT
+  ls.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+  la.LECTURER_NAME     AS 讲师姓名,
+  TO_CHAR(ls.START_DATE, 'YYYY-MM-DD') AS 排期开始,
+  TO_CHAR(ls.END_DATE, 'YYYY-MM-DD') AS 排期结束
+FROM MA_LECTURER_SCHEDULE ls
+LEFT JOIN MA_LECTURER_ARCHIVE la ON ls.LECTURER_ARCHIVES_ID = la.LECTURER_ARCHIVES_ID
+WHERE ls.STATUS = 'active'
+  AND ls.START_DATE &lt;= TO_DATE('2026-12-31', 'YYYY-MM-DD')
+  AND ls.END_DATE &gt;= TO_DATE('2026-01-01', 'YYYY-MM-DD');
+
+-- 查询排期冲突的讲师（同一讲师排期日期重叠）
+SELECT
+  a.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+  TO_CHAR(a.START_DATE, 'YYYY-MM-DD') AS 排期1开始,
+  TO_CHAR(a.END_DATE, 'YYYY-MM-DD') AS 排期1结束,
+  TO_CHAR(b.START_DATE, 'YYYY-MM-DD') AS 排期2开始,
+  TO_CHAR(b.END_DATE, 'YYYY-MM-DD') AS 排期2结束
+FROM MA_LECTURER_SCHEDULE a
+JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_ID
+  AND a.LECTURER_ARCHIVES_ID = b.LECTURER_ARCHIVES_ID
+  AND a.STATUS = 'active' AND b.STATUS = 'active'
+  AND a.START_DATE &lt;= b.END_DATE AND a.END_DATE &gt;= b.START_DATE;</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>日期类型不能为空</td><td>新建排期提交</td><td>未选择日期类型；选择日期类型后提交</td><td>提示</td><td>前端校验 dateType 必填</td></tr>
+<tr><td>日期不能为空</td><td>新建/取消排期提交</td><td>未选择日期范围；选择日期范围后提交</td><td>提示</td><td>前端校验 date 必填</td></tr>
+<tr><td>该讲师在指定时间段已有排期，请重新选择</td><td>新建排期提交</td><td>排期时间段冲突；更换时间段或先取消已有排期</td><td>提示</td><td>后端冲突校验，时间段交集判断</td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查 mbo-business 微服务状态</td><td>错误</td><td>HTTP 状态码非 2xx</td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
+<tr><td>数据不存在</td><td>取消排期</td><td>排期ID不存在或已删除，检查 LECTURER_SCHEDULE_ID 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
+<tr><td>状态不允许操作</td><td>取消排期</td><td>排期状态不允许取消，如已取消不可重复取消，检查 STATUS</td><td>error</td><td>后端校验状态机失败</td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.SCHEDULE_DATE_TYPE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
+<tr><td>讲师不能为空</td><td>新建排期提交</td><td>未选择讲师，选择讲师后提交</td><td>error</td><td>前端校验 LECTURER_ARCHIVES_CODE 非空</td></tr>
+</tbody>
+</table>
+<h4>报错1：日期类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：新建排期提交时，dateType 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 dateType 字段配置 required 校验，提交前执行字段校验，若值为空则阻止提交并提示"日期类型不能为空"。dateType 用于区分排期类型（如出差、休假、培训等），是排期统计的分类依据，必须填写</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID,
+         LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+         LECTURER_NAME AS 讲师姓名,
+         TO_CHAR(START_DATE,'YYYY-MM-DD') AS 开始日期,
+         TO_CHAR(END_DATE,'YYYY-MM-DD') AS 结束日期
+  FROM MA_LECTURER_SCHEDULE
+  WHERE DATE_TYPE IS NULL OR DATE_TYPE = '';</code></pre>
+<h4>报错2：日期不能为空</h4>
+<ul><li><strong>触发条件</strong>：新建排期或取消排期提交时，date 日期范围字段为空</li><li><strong>逻辑分析</strong>：前端 DatePicker(range) 组件对 date 字段配置 required 校验，提交前校验日期范围是否填写，为空则阻止提交并提示"日期不能为空"。日期范围是排期的核心数据，新建时用于确定占用时段，取消时用于确定释放时段，必须填写</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID,
+         LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+         LECTURER_NAME AS 讲师姓名,
+         DATE_TYPE AS 日期类型,
+         STATUS AS 状态
+  FROM MA_LECTURER_SCHEDULE
+  WHERE START_DATE IS NULL OR END_DATE IS NULL;</code></pre>
+<h4>报错3：该讲师在指定时间段已有排期，请重新选择</h4>
+<ul><li><strong>触发条件</strong>：新建排期提交时，新排期时间段与该讲师已有有效排期（STATUS='active'）时间段存在交集</li><li><strong>逻辑分析</strong>：后端 save 接口在保存前执行冲突校验，查询 MA_LECTURER_SCHEDULE 表中同一讲师（LECTURER_ARCHIVES_ID 相同）且状态为 active 的排期记录，判断新排期的 [START_DATE, END_DATE] 与已有排期的 [START_DATE, END_DATE] 是否存在交集（新排期.START_DATE &lt;= 已有.END_DATE AND 新排期.END_DATE &gt;= 已有.START_DATE）。若存在交集则抛出业务异常，提示"该讲师在指定时间段已有排期，请重新选择"。此校验从源头避免讲师被重复点用，保证排期数据唯一性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT a.LECTURER_SCHEDULE_ID AS 排期1ID,
+         b.LECTURER_SCHEDULE_ID AS 排期2ID,
+         a.LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+         a.LECTURER_NAME AS 讲师姓名,
+         TO_CHAR(a.START_DATE,'YYYY-MM-DD') AS 排期1开始,
+         TO_CHAR(a.END_DATE,'YYYY-MM-DD') AS 排期1结束,
+         TO_CHAR(b.START_DATE,'YYYY-MM-DD') AS 排期2开始,
+         TO_CHAR(b.END_DATE,'YYYY-MM-DD') AS 排期2结束
+  FROM MA_LECTURER_SCHEDULE a
+  JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID &lt; b.LECTURER_SCHEDULE_ID
+    AND a.LECTURER_ARCHIVES_ID = b.LECTURER_ARCHIVES_ID
+    AND a.STATUS = 'active' AND b.STATUS = 'active'
+    AND a.START_DATE &lt;= b.END_DATE AND a.END_DATE &gt;= b.START_DATE;</code></pre>
+<h4>报错4：请求失败</h4>
+<ul><li><strong>触发条件</strong>：调用 mlt/maLecturerSchedule/save、cancel 或 list 接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 检查近期异常排期记录（结合后端日志时间排查）
+  SELECT LECTURER_SCHEDULE_ID AS 排期ID,
+         LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+         LECTURER_NAME AS 讲师姓名,
+         STATUS AS 状态,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间,
+         LAST_UPDATED_BY AS 最后更新人
+  FROM MA_LECTURER_SCHEDULE
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错5：网络异常/接口超时</h4>
+<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
+         STATUS AS 状态,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM MA_LECTURER_SCHEDULE
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错6：权限不足</h4>
+<ul><li><strong>触发条件</strong>：点击新建、取消排期等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+  FROM SYS_USER U
+  LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
+  LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
+  LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
+  LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
+  WHERE P.PERMISSION_CODE LIKE '%lecturer_schedule%' ORDER BY U.USER_NAME;</code></pre>
+<h4>报错7：数据不存在</h4>
+<ul><li><strong>触发条件</strong>：取消排期等操作时，接口返回数据为空或排期ID不存在</li><li><strong>逻辑分析</strong>：前端通过 lecturerScheduleId 调用接口，后端查询 MA_LECTURER_SCHEDULE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：排期ID错误、排期已被删除、跨租户查询、数据权限隔离等。需检查 LECTURER_SCHEDULE_ID 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
+         STATUS AS 状态, DELETE_FLAG AS 删除标记
+  FROM MA_LECTURER_SCHEDULE
+  WHERE DELETE_FLAG = 'Y' OR LECTURER_SCHEDULE_ID IS NULL;</code></pre>
+<h4>报错8：状态不允许操作</h4>
+<ul><li><strong>触发条件</strong>：点击取消排期按钮时，排期状态不允许取消</li><li><strong>逻辑分析</strong>：后端校验状态机，如已取消（cancelled）不可重复取消、已过期不可取消等。状态不匹配时后端返回业务异常。需检查排期当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
+         STATUS AS 状态, ERROR_INFO AS 异常问题
+  FROM MA_LECTURER_SCHEDULE
+  WHERE STATUS NOT IN ('active','cancelled','expired')
+  ORDER BY CREATE_DATE DESC;</code></pre>
+<h4>报错9：值集数据不显示</h4>
+<ul><li><strong>触发条件</strong>：查询条件或新建排期弹窗中日期类型等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.SCHEDULE_DATE_TYPE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+         LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
+  FROM SYS_LOOKUP_VALUE
+  WHERE LOOKUP_CODE IN ('MBO.SCHEDULE_DATE_TYPE')
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+<h4>报错10：讲师不能为空</h4>
+<ul><li><strong>触发条件</strong>：新建排期提交时，LECTURER_ARCHIVES_CODE 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 lecturerArchivesCode 字段配置 required 校验，提交前校验讲师是否选择，为空则阻止提交并提示"讲师不能为空"。讲师是排期的核心对象，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
+         LECTURER_ARCHIVES_CODE AS 讲师档案编码, STATUS AS 状态
+  FROM MA_LECTURER_SCHEDULE
+  WHERE LECTURER_ARCHIVES_CODE IS NULL OR LECTURER_NAME IS NULL;</code></pre>
+</KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
+<ul><li><strong>Q1：添加排期时时间冲突如何处理？</strong></li></ul>
+<p>A：系统自动校验排期冲突，如该讲师在目标时间段已有排期，会提示冲突信息，不允许保存。</p>
+<ul><li><strong>Q2：取消排期后能否恢复？</strong></li></ul>
+<p>A：取消排期为即时生效操作，取消后需重新添加排期。</p>
+<ul><li><strong>Q3：排期是否需要审批？</strong></li></ul>
+<p>A：不需要。讲师排期无工作流，添加和取消均为即时生效。</p>
+<ul><li><strong>Q4：排期与点将业务如何关联？</strong></li></ul>
+<p>A：点将业务选择讲师时，通过查询讲师排期判断可用性。点将单创建成功后会回写关联单号（RELATED_ORDER_CODE）到排期记录。</p>
+<ul><li><strong>Q5：一个讲师一天可以有多少个排期？</strong></li></ul>
+<p>A：无数量限制，但同一讲师的排期时间段不可重叠（冲突校验）。</p>
+<ul><li><strong>Q6：日历不显示排期？</strong></li></ul>
+<p>A：检查 LecturerCalendar 组件 refresh 属性，确认排期数据存在。</p>
+<ul><li><strong>Q7：新建排期后日历未刷新？</strong></li></ul>
+<p>A：检查 setToggleTag 是否执行，onSuccess 回调是否触发。</p>
+<ul><li><strong>Q8：取消排期失败？</strong></li></ul>
+<p>A：检查日期范围内是否有排期数据，cancel 接口返回内容。</p>
+</KbCard>
+
 </div>
+</div>
+</div>
+
+<div id="changelog" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-11-12</td><td>-</td><td>hfy</td><td>初始创建</td></tr>
+<tr><td>2026-07-31</td><td>-</td><td>AI</td><td>对比网站补充详细逻辑、数据库表字段等</td></tr>
+<tr><td>2026-08-28</td><td>-</td><td>AI</td><td>完整重写，补充业务流程、界面模块、数据库表、FAQ等</td></tr>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按 skill 规范格式重写，删除定义章节，调整章节顺序与表格列数</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="常见问题"><p><strong>Q1: 添加排期时时间冲突如何处理？</strong></p>
-<p>A: 系统自动校验排期冲突，如该讲师在目标时间段已有排期，会提示冲突信息，不允许保存。</p>
-<p><strong>Q2: 取消排期后能否恢复？</strong></p>
-<p>A: 取消排期为即时生效操作，取消后需重新添加排期。</p>
-<p><strong>Q3: 排期是否需要审批？</strong></p>
-<p>A: 不需要。讲师排期无工作流，添加和取消均为即时生效。</p>
-<p><strong>Q4: 排期与点将业务如何关联？</strong></p>
-<p>A: 点将业务选择讲师时，通过查询讲师排期判断可用性。点将单创建成功后会回写关联单号（related_order_code）到排期记录。</p>
-<p><strong>Q5: 一个讲师一天可以有多少个排期？</strong></p>
-<p>A: 无数量限制，但同一讲师的排期时间段不可重叠（冲突校验）。</p>
-<p><strong>Q6: 排期时间格式是什么？</strong></p>
-<p>A: 开始时间和结束时间使用HH:mm格式存储，如09:00、17:30。</p></KbCard>
-</div>
-</div>
-</div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>版本</th><th>更新内容</th><th>更新人</th></tr></thead><tbody><tr><td>2026-08-03</td><td>v1.0</td><td>初始创建</td><td>AI</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

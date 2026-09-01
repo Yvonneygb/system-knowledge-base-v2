@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -118,6 +119,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -172,36 +174,24 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 页面性质">
-<KbQuote>本菜单为低代码页面（hold）或基础数据维护页面，前后端均未找到独立实现代码</KbQuote>
-<ul>
-<li>后端实体中存在 background 字段（对应系统词汇 epm.background）</li>
-<li>页面通过低代码平台配置渲染，字段配置由低代码平台维护</li>
-<li>属于基础数据维护类页面，用于管理服务费业务背景数据</li>
-</ul>
-</KbCard>
-<KbCard title="2.2 上游依赖">
-<table class="kl-table"><thead><tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr></thead><tbody><tr><td>低代码平台</td><td>配置依赖</td><td>页面通过低代码配置渲染</td><td>配置已完成</td></tr></tbody></table>
-</KbCard>
-<KbCard title="2.3 下游影响">
-<KbQuote>业务背景数据作为服务费兑现和报销的背景依据</KbQuote>
-<ul>
-<li><strong>影响1：服务费业务</strong> — 业务背景数据作为服务费兑现和报销的背景依据</li>
-</ul>
-</KbCard>
+<!-- 无重点逻辑 -->
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="界面模块1：服务费业务背景（低代码页面）">
-<p class='kl-tip'>低代码页面，字段配置由低代码平台维护</p>
-<table class="kl-table">
-<thead><tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr></thead>
+<blockquote>低代码页面，字段配置由低代码平台维护</blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
 <tr><td>背景编码</td><td>-</td><td>文本框</td><td>业务背景编码</td><td>常显</td><td>1. 可编辑：是</td></tr>
 <tr><td>背景名称</td><td>-</td><td>文本框</td><td>业务背景名称</td><td>常显</td><td>1. 可编辑：是</td></tr>
@@ -209,139 +199,106 @@
 </tbody>
 </table>
 </KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="报错一览表">
-<table class="kl-table">
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-<tr><td>背景编码不能为空</td><td>保存时</td><td>背景编码未填写。填写背景编码后保存</td><td>高</td><td><a href="javascript:void(0)" onclick="document.getElementById('error-detail-1').style.display='block'">[查看]</a></td></tr>
-<tr><td>背景名称不能为空</td><td>保存时</td><td>背景名称未填写。填写背景名称后保存</td><td>高</td><td><a href="javascript:void(0)" onclick="document.getElementById('error-detail-2').style.display='block'">[查看]</a></td></tr>
-<tr><td>背景编码已存在</td><td>保存时</td><td>背景编码重复。修改为唯一编码</td><td>高</td><td><a href="javascript:void(0)" onclick="document.getElementById('error-detail-3').style.display='block'">[查看]</a></td></tr>
-<tr><td>请选择一条数据</td><td>删除/编辑时</td><td>未选中列表行即点击操作按钮。先选中一条数据再操作</td><td>中</td><td><a href="javascript:void(0)" onclick="document.getElementById('error-detail-4').style.display='block'">[查看]</a></td></tr>
-<tr><td>请求失败，请稍后重试</td><td>任意操作时</td><td>后端服务异常或网络中断。稍后重试，仍失败联系IT</td><td>中</td><td><a href="javascript:void(0)" onclick="document.getElementById('error-detail-5').style.display='block'">[查看]</a></td></tr>
-<tr><td>权限不足</td><td>访问页面/操作时</td><td>当前用户无该菜单或操作权限。联系管理员分配权限</td><td>高</td><td><a href="javascript:void(0)" onclick="document.getElementById('error-detail-6').style.display='block'">[查看]</a></td></tr>
-<tr><td>操作失败，数据已被其他用户修改</td><td>编辑保存时</td><td>并发修改导致乐观锁失败。刷新数据后重新编辑</td><td>高</td><td><a href="javascript:void(0)" onclick="document.getElementById('error-detail-7').style.display='block'">[查看]</a></td></tr>
+<tr><td>背景编码不能为空</td><td>保存时</td><td>背景编码未填写。填写背景编码后保存</td><td>高</td><td>[查看]</td></tr>
+<tr><td>背景名称不能为空</td><td>保存时</td><td>背景名称未填写。填写背景名称后保存</td><td>高</td><td>[查看]</td></tr>
+<tr><td>背景编码已存在</td><td>保存时</td><td>背景编码重复。修改为唯一编码</td><td>高</td><td>[查看]</td></tr>
+<tr><td>请选择一条数据</td><td>删除/编辑时</td><td>未选中列表行即点击操作按钮。先选中一条数据再操作</td><td>中</td><td>[查看]</td></tr>
+<tr><td>请求失败，请稍后重试</td><td>任意操作时</td><td>后端服务异常或网络中断。稍后重试，仍失败联系IT</td><td>中</td><td>[查看]</td></tr>
+<tr><td>权限不足</td><td>访问页面/操作时</td><td>当前用户无该菜单或操作权限。联系管理员分配权限</td><td>高</td><td>[查看]</td></tr>
+<tr><td>操作失败，数据已被其他用户修改</td><td>编辑保存时</td><td>并发修改导致乐观锁失败。刷新数据后重新编辑</td><td>高</td><td>[查看]</td></tr>
 </tbody>
 </table>
+<h4>报错1：背景编码不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存服务费业务背景时，背景编码字段为空</li><li><strong>逻辑分析</strong>：保存校验中检查背景编码非空，因背景编码为业务背景的唯一标识。需填写背景编码后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
+  FROM EPM_SERVICE_FEE_BG esfb
+  WHERE esfb.BG_CODE IS NULL OR TRIM(esfb.BG_CODE) = ''
+  -- 查出背景编码为空的异常数据</code></pre>
+<h4>报错2：背景名称不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存服务费业务背景时，背景名称字段为空</li><li><strong>逻辑分析</strong>：保存校验中检查背景名称非空，因背景名称为业务背景的显示名称。需填写背景名称后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
+  FROM EPM_SERVICE_FEE_BG esfb
+  WHERE esfb.BG_NAME IS NULL OR TRIM(esfb.BG_NAME) = ''
+  -- 查出背景名称为空的异常数据</code></pre>
+<h4>报错3：背景编码已存在</h4>
+<ul><li><strong>触发条件</strong>：保存服务费业务背景时，背景编码已存在其他记录</li><li><strong>逻辑分析</strong>：保存校验中按BG_CODE查询EPM_SERVICE_FEE_BG，若存在(排除当前记录)则抛出阻断性报错。需修改为唯一编码</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME
+  FROM EPM_SERVICE_FEE_BG esfb
+  WHERE esfb.BG_CODE = :bgCode
+    AND esfb.BG_ID &lt;&gt; :currentBgId
+  -- 查出背景编码重复的记录</code></pre>
+<h4>报错4：请选择一条数据</h4>
+<ul><li><strong>触发条件</strong>：在列表页未选中任何行即点击"删除"或"编辑"按钮</li><li><strong>逻辑分析</strong>：前端按钮事件中校验列表选中行数，若selectedRecords.length=0则弹出提示。需先选中一条数据再操作</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 前端校验，无对应SQL
+  SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME
+  FROM EPM_SERVICE_FEE_BG esfb
+  WHERE esfb.BG_ID = :selectedBgId
+  -- 校验选中行是否存在</code></pre>
+<h4>报错5：请求失败，请稍后重试</h4>
+<ul><li><strong>触发条件</strong>：任意操作时后端服务异常或网络中断</li><li><strong>逻辑分析</strong>：前端axios请求捕获异常后统一弹出，可能原因：后端服务未启动、数据库连接异常、网络中断。稍后重试，仍失败需联系IT排查后端日志</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 系统级错误，检查后端服务状态
+  SELECT COUNT(*) AS 服务费背景总数 FROM EPM_SERVICE_FEE_BG esfb
+  -- 校验数据库连接是否正常</code></pre>
+<h4>报错6：权限不足</h4>
+<ul><li><strong>触发条件</strong>：当前用户无该菜单访问权限或操作权限</li><li><strong>逻辑分析</strong>：低代码平台权限校验中检查用户角色是否包含该菜单权限编码，若无则抛出阻断性报错。需联系管理员分配对应权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT iu.USER_ID, iu.LOGIN_NAME, iur.ROLE_ID, ir.ROLE_NAME
+  FROM IAM_USER iu
+  JOIN IAM_USER_ROLE iur ON iu.USER_ID = iur.USER_ID
+  JOIN IAM_ROLE ir ON iur.ROLE_ID = ir.ROLE_ID
+  WHERE iu.USER_ID = :currentUserId
+  -- 查出当前用户角色，确认是否包含服务费背景维护权限</code></pre>
+<h4>报错7：操作失败，数据已被其他用户修改</h4>
+<ul><li><strong>触发条件</strong>：编辑保存时，该记录已被其他用户并发修改，OBJECT_VERSION_NUMBER不一致</li><li><strong>逻辑分析</strong>：乐观锁校验中检查OBJECT_VERSION_NUMBER，若与编辑时获取的版本号不一致则抛出阻断性报错。需刷新数据后重新编辑</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME,
+         esfb.OBJECT_VERSION_NUMBER, esfb.LAST_UPDATE_DATE, esfb.LAST_UPDATED_BY
+  FROM EPM_SERVICE_FEE_BG esfb
+  WHERE esfb.BG_ID = :bgId
+  -- 对比OBJECT_VERSION_NUMBER判断是否被并发修改</code></pre>
 </KbCard>
 
-<div id="error-detail-1" class="error-detail-box" style="display:none;">
-<h3>报错1：背景编码不能为空</h3>
-<p><strong>触发条件：</strong>保存服务费业务背景时，背景编码字段为空</p>
-<p><strong>逻辑分析：</strong>保存校验中检查背景编码非空，因背景编码为业务背景的唯一标识。需填写背景编码后保存</p>
-<p><strong>排查SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
-FROM EPM_SERVICE_FEE_BG esfb
-WHERE esfb.BG_CODE IS NULL OR TRIM(esfb.BG_CODE) = ''
--- 查出背景编码为空的异常数据</code></pre>
+<KbCard title="常见问题">
+<ul><li>问题1：页面无法访问</li><li>原因：低代码平台配置未完成</li><li>解决思路：检查低代码平台配置</li></ul>
+</KbCard>
+
+</div>
+</div>
 </div>
 
-<div id="error-detail-2" class="error-detail-box" style="display:none;">
-<h3>报错2：背景名称不能为空</h3>
-<p><strong>触发条件：</strong>保存服务费业务背景时，背景名称字段为空</p>
-<p><strong>逻辑分析：</strong>保存校验中检查背景名称非空，因背景名称为业务背景的显示名称。需填写背景名称后保存</p>
-<p><strong>排查SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
-FROM EPM_SERVICE_FEE_BG esfb
-WHERE esfb.BG_NAME IS NULL OR TRIM(esfb.BG_NAME) = ''
--- 查出背景名称为空的异常数据</code></pre>
-</div>
-
-<div id="error-detail-3" class="error-detail-box" style="display:none;">
-<h3>报错3：背景编码已存在</h3>
-<p><strong>触发条件：</strong>保存服务费业务背景时，背景编码已存在其他记录</p>
-<p><strong>逻辑分析：</strong>保存校验中按BG_CODE查询EPM_SERVICE_FEE_BG，若存在（排除当前记录）则抛出阻断性报错。需修改为唯一编码</p>
-<p><strong>排查SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME
-FROM EPM_SERVICE_FEE_BG esfb
-WHERE esfb.BG_CODE = :bgCode
-  AND esfb.BG_ID &lt;&gt; :currentBgId
--- 查出背景编码重复的记录</code></pre>
-</div>
-
-<div id="error-detail-4" class="error-detail-box" style="display:none;">
-<h3>报错4：请选择一条数据</h3>
-<p><strong>触发条件：</strong>在列表页未选中任何行即点击"删除"或"编辑"按钮</p>
-<p><strong>逻辑分析：</strong>前端按钮事件中校验列表选中行数，若selectedRecords.length=0则弹出提示。需先选中一条数据再操作</p>
-<p><strong>排查SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>-- 前端校验，无对应SQL
-SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME
-FROM EPM_SERVICE_FEE_BG esfb
-WHERE esfb.BG_ID = :selectedBgId
--- 校验选中行是否存在</code></pre>
-</div>
-
-<div id="error-detail-5" class="error-detail-box" style="display:none;">
-<h3>报错5：请求失败，请稍后重试</h3>
-<p><strong>触发条件：</strong>任意操作时后端服务异常或网络中断</p>
-<p><strong>逻辑分析：</strong>前端axios请求捕获异常后统一弹出，可能原因：后端服务未启动、数据库连接异常、网络中断。稍后重试，仍失败需联系IT排查后端日志</p>
-<p><strong>排查SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>-- 系统级错误，检查后端服务状态
-SELECT COUNT(*) AS 服务费背景总数 FROM EPM_SERVICE_FEE_BG esfb
--- 校验数据库连接是否正常</code></pre>
-</div>
-
-<div id="error-detail-6" class="error-detail-box" style="display:none;">
-<h3>报错6：权限不足</h3>
-<p><strong>触发条件：</strong>当前用户无该菜单访问权限或操作权限</p>
-<p><strong>逻辑分析：</strong>低代码平台权限校验中检查用户角色是否包含该菜单权限编码，若无则抛出阻断性报错。需联系管理员分配对应权限</p>
-<p><strong>排查SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>SELECT iu.USER_ID, iu.LOGIN_NAME, iur.ROLE_ID, ir.ROLE_NAME
-FROM IAM_USER iu
-JOIN IAM_USER_ROLE iur ON iu.USER_ID = iur.USER_ID
-JOIN IAM_ROLE ir ON iur.ROLE_ID = ir.ROLE_ID
-WHERE iu.USER_ID = :currentUserId
--- 查出当前用户角色，确认是否包含服务费背景维护权限</code></pre>
-</div>
-
-<div id="error-detail-7" class="error-detail-box" style="display:none;">
-<h3>报错7：操作失败，数据已被其他用户修改</h3>
-<p><strong>触发条件：</strong>编辑保存时，该记录已被其他用户并发修改，OBJECT_VERSION_NUMBER不一致</p>
-<p><strong>逻辑分析：</strong>乐观锁校验中检查OBJECT_VERSION_NUMBER，若与编辑时获取的版本号不一致则抛出阻断性报错。需刷新数据后重新编辑</p>
-<p><strong>排查SQL：</strong></p>
-<pre class="detail-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME,
-       esfb.OBJECT_VERSION_NUMBER, esfb.LAST_UPDATE_DATE, esfb.LAST_UPDATED_BY
-FROM EPM_SERVICE_FEE_BG esfb
-WHERE esfb.BG_ID = :bgId
--- 对比OBJECT_VERSION_NUMBER判断是否被并发修改</code></pre>
-</div>
-</div>
-</div>
-</div>
 <div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-<table class="kl-table">
-<thead><tr><th>日期</th><th>版本</th><th>更新内容</th><th>更新人</th></tr></thead>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
 <tbody>
-<tr><td>2026-08-29</td><td>v1.0</td><td>按skill规范完整重写，基于后端代码梳理（低代码页面）</td><td>AI</td></tr>
+<tr><td>2026-08-29</td><td>-</td><td>-</td><td>按skill规范完整重写，基于后端代码梳理（低代码页面）</td></tr>
 </tbody>
 </table>
 </KbCard>
 </div>
 </div>
 </div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="历史排查记录">
-
-<!-- 空白:待补充 -->
-
-</KbCard>
-</div>
-</div>
-</div>
-<div id="manual" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="操作手册">
 
 <!-- 空白:待补充 -->
 

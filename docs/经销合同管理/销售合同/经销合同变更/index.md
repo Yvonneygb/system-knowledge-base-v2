@@ -194,43 +194,19 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：新建变更校验 【前置校验】">
-<KbQuote>确保原合同满足变更条件，避免重复变更或对无效合同发起变更</KbQuote>
-
-**具体逻辑**：
-
-- 1、校验原合同是否存在正在归档的单据，若有则不允许变更
-- 2、校验原合同是否存在未审核完的变更单，若有则不允许重复变更
-- 3、自动获取最新的经销商名称和法人名称，确保信息最新
+<KbCard num="1" title="重点逻辑1：变更回写原合同 {变更回写}">
+<ul><li><strong>业务意义</strong>：变更审批通过后将变更内容回写到原年度经销合同</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过oldSaSale接口查询原销售合同信息</li></ul>
+<ul><li>第2点：变更审批通过后回写原合同的区域、任务拆分等信息</li></ul>
+<ul><li>第3点：支持变更区域(SaleContractAddArea)和变更任务拆分(SaleContractAddTaskSplit)</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：变更编号生成 【编码规则】">
-<KbQuote>为每个变更单生成唯一编号，编号包含原合同编号和变更次数</KbQuote>
-
-**具体逻辑**：
-
-- 1、查询原合同已有的变更单数量
-- 2、变更编号=原合同编号+"_"+变更次数（如：HT001_1、HT001_2）
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：区域校验 【业务校验】">
-<KbQuote>变更类型为"合同信息变更"时，校验授权区域是否冲突</KbQuote>
-
-**具体逻辑**：
-
-- 1、变更类型为2（合同信息变更）且特定合同类型时触发区域校验
-- 2、事业部ID非111且合同类型为1或6时触发
-- 3、若区域冲突，标记repeatArea=2并返回冲突提示，但不阻断保存
-</KbCard>
-
-<KbCard num="4" title="重点逻辑4：保存并提交 【审批提交】">
-<KbQuote>保存变更单并启动工作流审批</KbQuote>
-
-**具体逻辑**：
-
-- 1、提交前校验流程编码不能为空
-- 2、先执行保存逻辑，再启动工作流
-- 3、工作流参数包含变更单ID、事业部ID、经销商ID、流程编码
+<KbCard num="2" title="重点逻辑2：OA审批流程 {审批流转}">
+<ul><li><strong>业务意义</strong>：合同变更需经OA审批，确保变更合规</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：保存并提交时发起OA审批(CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS)</li></ul>
+<ul><li>第2点：validBeforeSubmit方法进行提交前校验</li></ul>
 </KbCard>
 
 </div>
@@ -241,320 +217,135 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="界面模块1：经销合同变更列表页">
-<div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>变更编号</td>
-<td>文本框</td>
-<td>合同变更单编号</td>
-<td>常显</td>
-<td>新增时自动生成(原合同编号_次数)</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.SA_CONTR_HEAD_ADD_CODE</td>
-</tr>
-<tr>
-<td>原合同编号</td>
-<td>文本框</td>
-<td>被变更的原合同编号</td>
-<td>常显</td>
-<td>选择原合同后带出</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.SA_CONTR_HEAD_CODE</td>
-</tr>
-<tr>
-<td>变更类型</td>
-<td>下拉选择框</td>
-<td>合同变更类型</td>
-<td>常显</td>
-<td>从值集选择</td>
-<td>1(合同增补)/2(合同信息变更)/3(合同延期)</td>
-<td>SALE_CONTRACT_ADD_HEAD.CHANGE_TYPE</td>
-</tr>
-<tr>
-<td>经销商</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>选择原合同后自动带出</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.CUST_NAME</td>
-</tr>
-<tr>
-<td>申请人</td>
-<td>文本框</td>
-<td>变更申请人</td>
-<td>常显</td>
-<td>自动取当前登录用户</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.CREATOR</td>
-</tr>
-<tr>
-<td>申请日期</td>
-<td>日期选择框</td>
-<td>变更申请日期</td>
-<td>常显</td>
-<td>默认当前日期</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.CREATE_TIME</td>
-</tr>
-<tr>
-<td>审核状态</td>
-<td>文本框</td>
-<td>审核状态</td>
-<td>常显</td>
-<td>系统自动维护</td>
-<td>新建/已提交/已批准/已驳回</td>
-<td>SALE_CONTRACT_ADD_HEAD.AUDIT_STAT</td>
-</tr>
-</tbody></table></div>
-</KbCard>
-
-<KbCard title="界面模块2：经销合同变更详情页">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>合同开始日期</td>
-<td>日期选择框</td>
-<td>变更后合同开始日期</td>
-<td>常显</td>
-<td>默认取原合同，可修改</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.START_DATE</td>
-</tr>
-<tr>
-<td>合同截止日期</td>
-<td>日期选择框</td>
-<td>变更后合同截止日期</td>
-<td>常显</td>
-<td>默认取原合同，可修改</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.END_DATE</td>
-</tr>
-<tr>
-<td>变更说明</td>
-<td>文本框</td>
-<td>变更原因说明</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.CHANGE_EXPLAIN</td>
-</tr>
-<tr>
-<td>保证金(万元)</td>
-<td>数字输入框</td>
-<td>变更后保证金金额</td>
-<td>常显</td>
-<td>默认取原合同，可修改</td>
-<td>大于等于0</td>
-<td>SALE_CONTRACT_ADD_HEAD.DEPOSIT_AMT</td>
-</tr>
-<tr>
-<td>销售任务总额</td>
-<td>数字输入框</td>
-<td>变更后合同任务总额</td>
-<td>常显</td>
-<td>默认取原合同，可修改</td>
-<td>大于等于0</td>
-<td>SALE_CONTRACT_ADD_HEAD.TOTAL_TASK_AMT</td>
-</tr>
-<tr>
-<td>市场推广服务费率(%)</td>
-<td>数字输入框</td>
-<td>变更后市场推广服务费率</td>
-<td>常显</td>
-<td>默认取原合同，可修改</td>
-<td>0-100</td>
-<td>SALE_CONTRACT_ADD_HEAD.MKT_COST_RATE</td>
-</tr>
-<tr>
-<td>指导价下浮比例(%)</td>
-<td>数字输入框</td>
-<td>变更后指导价下浮比例</td>
-<td>常显</td>
-<td>默认取原合同，可修改</td>
-<td>0-100</td>
-<td>SALE_CONTRACT_ADD_HEAD.PRICE_DOWN_RATE</td>
-</tr>
-<tr>
-<td>备注</td>
-<td>文本框</td>
-<td>变更备注</td>
-<td>常显</td>
-<td>手工输入</td>
-<td>-</td>
-<td>SALE_CONTRACT_ADD_HEAD.NOTE</td>
-</tr>
-</tbody></table></div>
+<tr><td>变更单号</td><td>SALE_CONTRACT_ADD_HEAD.ADD_HEAD_NO</td><td>文本框</td><td>变更申请单号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>原合同编号</td><td>SALE_CONTRACT_ADD_HEAD.ORIGINAL_CONTRACT_NO</td><td>文本框</td><td>原合同编号</td><td>常显</td><td>选择原合同带出</td></tr>
+<tr><td>经销商</td><td>SALE_CONTRACT_ADD_HEAD.CUSTOMER_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>变更类型</td><td>SALE_CONTRACT_ADD_HEAD.CHANGE_TYPE</td><td>下拉选择框</td><td>变更类型</td><td>常显</td><td>手动选择</td></tr>
+<tr><td>H0流程审批状态</td><td>SALE_CONTRACT_ADD_HEAD.HZ_APPROVE_STATUS</td><td>文本框</td><td>流程审批状态</td><td>常显</td><td>流程回调更新</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
-<KbSubTitle>弹窗1：原合同选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| entid | 事业部ID | 限定事业部范围 | 111 |
-
-**数据范围**
-
-```sql
-已生效且未被归档、无未完成变更的合同
-```
-
+<h4>弹窗1：原合同选择（单选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>contractNo</td><td>合同编号</td><td>原合同编号</td><td>"HT001"</td><td>已审批通过的年度经销合同</td></tr>
+</tbody>
+</table>
+<blockquote>查询SQL（后端接口oldSaSale）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR
+FROM SA_SALE_CONTRACT_HEAD 
+WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL</code></pre>
 </KbCard>
+
 <KbCard title="导入">
-无
-
+<blockquote>本页面无导入功能。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 新增 | 新建合同变更 | 列表页 | 常显 | 跳转新建页面，需先选择原合同 |
-| 保存 | 保存变更 | 新建/编辑页 | 常显 | 调用save接口保存变更及关联数据 |
-| 保存并提交 | 保存并提交审批 | 新建/编辑页 | 审核状态为新建时可用 | 调用saveAndSubmit接口，启动工作流 |
-| 删除 | 删除变更 | 列表页 | 审核状态为新建时可用 | 删除变更头、区域、任务拆分等关联数据 |
-| 校验区域 | 校验授权区域冲突 | 编辑页 | 变更类型为信息变更时可用 | 调用check-area接口 |
-| 校验原合同 | 判断原合同是否可变更 | 新建页 | 选择原合同后 | 调用check-contract接口 |
-| 提交前校验 | 提交前业务校验 | 编辑页 | 提交前 | 调用valid-before-submit接口 |
-| 导出 | 导出变更列表 | 列表页 | 常显 | 导出Excel |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新增</td><td>新建变更申请</td><td>列表页</td><td>始终可用</td><td>打开新建页面</td></tr>
+<tr><td>保存</td><td>保存变更信息</td><td>编辑页</td><td>编辑状态</td><td>调用save接口</td></tr>
+<tr><td>保存并提交</td><td>发起OA审批</td><td>编辑页</td><td>保存后</td><td>发起CONTRACT_ADD_EVENT流程</td></tr>
+<tr><td>删除</td><td>删除变更申请</td><td>列表页</td><td>选中未提交记录</td><td>调用remove接口</td></tr>
+<tr><td>导出</td><td>导出变更列表</td><td>列表页</td><td>有数据时</td><td>调用selectExportList接口</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：原合同编号必填 —— 确保选择了要变更的原合同</KbSubTitle>
-
-- 第1点：saContrHeadCode字段标注@NotBlank
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_ADD_ID = :id AND SA_CONTR_HEAD_CODE IS NULL;
-```
-
-<KbSubTitle>校验2：原合同不存在正在归档的单据 —— 确保原合同未被归档流程占用</KbSubTitle>
-
-- 第1点：doCheckContra方法校验原合同是否存在归档单据
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
--- 具体逻辑在ServiceImpl中
-```
-
-<KbSubTitle>校验3：原合同不存在未审核完的变更单 —— 避免重复变更</KbSubTitle>
-
-- 第1点：doCheckContactEcn方法校验原合同是否存在未完成的变更单
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_STAT NOT IN ('APPROVED','REJECTED');
-```
-
+<ul><li>校验1：原合同不能为空 —— 确保变更关联明确合同</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：保存时校验原合同ID不为空</p>
+<ul><li>系统体现：toast提醒</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ORIGINAL_CONTRACT_ID IS NULL;</code></pre>
 </KbCard>
+
 <KbCard title="提交校验">
-<KbSubTitle>校验1：流程编码不能为空 —— 确保选择了审批流程</KbSubTitle>
-
-- 第1点：saveAndSubmit方法入口校验flowCode为空时报错
-
-<KbTip>阻断性报错，提示"流程编码缺失，请选择流程！"</KbTip>
-
-```sql
--- 无需SQL，前端参数校验
-```
-
+<ul><li>校验1：提交前校验 —— 确保变更数据完整</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：通过validBeforeSubmit方法进行提交前校验</p>
+<p>- 第2点：校验变更区域合法性(checkContract)</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONTRACT_ID IS NULL;</code></pre>
 </KbCard>
+
 <KbCard title="状态机">
-
-
-```text
-新建 ──保存──> 新建 ──提交──> 已提交/审批中 ──审批通过──> 已批准(生成新合同)
-                                        │
-                                    审批驳回
-                                        │
-                                        v
-                                     新建(可重新提交)
-```
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 编辑、保存、提交、删除 |
-| 已提交 | 已提交审批 | 无（等待审批） |
-| APPROVED | 已批准 | 查看（已生成新合同） |
-| REJECTED | 已驳回 | 编辑、重新提交 |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：SALE_CONTRACT_ADD_HEAD（经销合同变更头）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| SA_CONTR_ADD_ID | NUMBER | 销售合同变更单ID | - | 主键，自增 |
-| SA_CONTR_HEAD_CODE | VARCHAR2 | 原销售合同编号 | 原合同编号 | 选择原合同后带出，必填 |
-| SA_CONTR_HEAD_ADD_CODE | VARCHAR2 | 销售合同变更编号 | 变更编号 | 自动生成：原编号_次数，必填 |
-| CHANGE_TYPE | NUMBER | 变更类型 | 变更类型 | 1=合同增补/2=合同信息变更/3=合同延期 |
-| SA_CONTR_HEAD_ID | NUMBER | 原销售合同ID | - | 选择原合同后带出 |
-| CUST_ID | NUMBER | 经销商ID | - | 选择原合同后带出 |
-| CUST_CODE | VARCHAR2 | 经销商编码 | - | 选择原合同后带出 |
-| CUST_NAME | VARCHAR2 | 经销商名称 | 经销商 | 选择原合同后带出 |
-| START_DATE | DATE | 合同开始日期 | 合同开始日期 | 默认取原合同 |
-| END_DATE | DATE | 合同截止日期 | 合同截止日期 | 默认取原合同 |
-| CHANGE_EXPLAIN | VARCHAR2 | 变更说明 | 变更说明 | 手工输入 |
-| DEPOSIT_AMT | NUMBER | 保证金(万元) | 保证金 | 默认取原合同 |
-| TOTAL_TASK_AMT | NUMBER | 合同任务总额 | 销售任务总额 | 默认取原合同 |
-| MKT_COST_RATE | NUMBER | 市场推广服务费率(%) | 市场推广服务费率 | 默认取原合同 |
-| PRICE_DOWN_RATE | NUMBER | 指导价下浮比例(%) | 指导价下浮比例 | 默认取原合同 |
-| FREQUENCY | NUMBER | 变更次数 | - | 新增时为0 |
-| ENTID | NUMBER | 事业部ID | - | 新增时自动获取 |
-| DIVISION_ID | NUMBER | 事业部ID | - | 新增时自动获取 |
-| AUDIT_STAT | VARCHAR2 | 外部系统审核状态 | 审核状态 | 系统维护 |
-| NOTE | VARCHAR2 | 备注 | 备注 | 手工输入 |
-| CORPORATE_CODE | VARCHAR2 | 法人编码 | - | 根据交易公司带出 |
-| CURRENCY | VARCHAR2 | 币种 | - | 根据事业部带出 |
-| REPEAT_AREA | NUMBER | 是否存在重复区域 | - | 1=不是/2=是 |
-| ERROR | VARCHAR2 | 提示信息 | - | 区域冲突时赋值 |
-
----
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审核(回写原合同)
+                                │
+                                └──OA审批拒绝──→ 已拒绝</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>已保存未提交</td><td>编辑、保存、提交、删除</td></tr>
+<tr><td>RUN</td><td>OA审批中</td><td>无（等待审批结果）</td></tr>
+<tr><td>APPROVED</td><td>OA审批通过(已回写)</td><td>查看</td></tr>
+<tr><td>REJECTED</td><td>OA审批拒绝</td><td>修改、重新提交</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表1：SALE_CONTRACT_ADD_HEAD（经销合同变更头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ADD_HEAD_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+<tr><td>ADD_HEAD_NO</td><td>VARCHAR</td><td>变更单号</td><td>变更单号</td><td>自动生成</td></tr>
+<tr><td>ORIGINAL_CONTRACT_ID</td><td>BIGINT</td><td>原合同ID</td><td>-</td><td>选择原合同带出</td></tr>
+<tr><td>ORIGINAL_CONTRACT_NO</td><td>VARCHAR</td><td>原合同编号</td><td>原合同编号</td><td>选择原合同带出</td></tr>
+<tr><td>CUSTOMER_NAME</td><td>VARCHAR</td><td>经销商名称</td><td>经销商</td><td>系统带出</td></tr>
+<tr><td>CHANGE_TYPE</td><td>VARCHAR</td><td>变更类型</td><td>变更类型</td><td>手动选择</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>H0流程审批状态</td><td>H0流程审批状态</td><td>流程回调更新</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="表2：SALE_CONTRACT_ADD_AREA（变更区域表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ADD_AREA_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+<tr><td>ADD_HEAD_ID</td><td>BIGINT</td><td>关联变更头ID</td><td>-</td><td>FK → SALE_CONTRACT_ADD_HEAD</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="表3：SALE_CONTRACT_ADD_TASK_SPLIT（变更任务拆分表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ADD_TASK_SPLIT_ID</td><td>BIGINT</td><td>主键ID</td><td>-</td><td>自增主键</td></tr>
+<tr><td>ADD_HEAD_ID</td><td>BIGINT</td><td>关联变更头ID</td><td>-</td><td>FK → SALE_CONTRACT_ADD_HEAD</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -562,106 +353,136 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">未找到该记录！</td>
-            <td style="font-size:13px;">查看详情</td>
-            <td style="font-size:13px;">变更单ID不存在</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">合同信息不匹配</td>
-            <td style="font-size:13px;">查看详情</td>
-            <td style="font-size:13px;">变更单关联的原合同不存在</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">无法匹配合同类型与销售渠道关联关系！</td>
-            <td style="font-size:13px;">查看详情</td>
-            <td style="font-size:13px;">原合同的合同类型未配置渠道关联</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">流程编码缺失，请选择流程！</td>
-            <td style="font-size:13px;">保存并提交</td>
-            <td style="font-size:13px;">未选择审批流程编码</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未找到该记录！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>变更单ID不存在</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>合同信息不匹配</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>变更单关联的原合同不存在</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>无法匹配合同类型与销售渠道关联关系！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>原合同的合同类型未配置渠道关联</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>未选择审批流程编码</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>原合同不能为空</td><td>保存时</td><td>未选择原合同</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>原合同未归档</td><td>选择原合同时</td><td>原合同未审批通过或未归档</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>未找到该记录</td><td>查询/编辑时</td><td>变更单据不存在或已被删除</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>合同信息不匹配</td><td>编辑时</td><td>变更单与原合同关联异常</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>不能删除非制单状态的单据</td><td>删除时</td><td>仅未提交的单据可删除</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>电子合同签署中，不允许变更</td><td>提交时</td><td>原合同电子签章流程未完成</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>销售合同编码不能为空</td><td>校验时</td><td>原合同编码参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>该合同已有单据在走合同归档，请先归档完再变更</td><td>提交时</td><td>原合同存在未完成归档单据</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>已经存在未审核完的合同变更单</td><td>提交时</td><td>同一原合同已有未审核变更单</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>经销商或者法人不存在</td><td>校验时</td><td>经销商或法人主数据缺失</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>合同不存在</td><td>校验时</td><td>原合同或新合同不存在</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>单据信息不合法</td><td>提交时</td><td>变更单据状态或数据不合法</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>MBO作废原合同失败</td><td>审批回调时</td><td>MBO侧作废原合同异常</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：原合同不能为空</h4>
+<ul><li><strong>触发条件</strong>：用户在新建变更申请页未选择原合同直接点击保存</li><li><strong>逻辑分析</strong>：保存接口sale-contract-add-heads/save在写入SALE_CONTRACT_ADD_HEAD前校验ORIGINAL_CONTRACT_ID非空。原合同是变更的对象，未选择原合同将导致变更内容无回写目标，后续变更区域（SaleContractAddArea）和变更任务拆分（SaleContractAddTaskSplit）也无从关联。校验在Controller层前置拦截，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
+         CUSTOMER_NAME, CHANGE_TYPE, HZ_APPROVE_STATUS
+  FROM SALE_CONTRACT_ADD_HEAD
+  WHERE ORIGINAL_CONTRACT_ID IS NULL OR ORIGINAL_CONTRACT_NO IS NULL;</code></pre>
+<h4>报错2：原合同未归档</h4>
+<ul><li><strong>触发条件</strong>：用户在原合同选择弹窗中选择合同，oldSaSale接口校验发现合同未审批通过或未归档</li><li><strong>逻辑分析</strong>：原合同选择弹窗调用oldSaSale接口查询SA_SALE_CONTRACT_HEAD表，要求HZ_APPROVE_STATUS='APPROVED'（审批通过）且STATE_PIGEONHOLE IS NOT NULL（已归档）。未归档根因有二：(1)合同未审批通过（HZ_APPROVE_STATUS为NEW/RUN/REJECTED），变更需基于已审批合同；(2)合同已审批但未归档（STATE_PIGEONHOLE为空），变更需基于已归档合同。需先完成原合同的审批和归档再发起变更</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR,
+         HZ_APPROVE_STATUS, STATE_PIGEONHOLE, ACTUAL_PIGEONHOLE_DATE
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE CONTRACT_NO = #{contractNo}
+    AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NULL);</code></pre>
+<h4>报错3：未找到该记录</h4>
+<ul><li><strong>触发条件</strong>：用户编辑或查看变更申请时，根据ADD_HEAD_ID查询SALE_CONTRACT_ADD_HEAD返回空</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在doSelect、doUpdate等操作前根据主键查询变更单，若记录不存在或已被删除将抛出此异常。根因有三类：(1)变更单已被其他用户删除；(2)ADD_HEAD_ID传入错误；(3)数据权限隔离导致当前用户不可见。需确认变更单存在且当前用户有权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_NO, CUSTOMER_NAME,
+         CHANGE_TYPE, HZ_APPROVE_STATUS
+  FROM SALE_CONTRACT_ADD_HEAD
+  WHERE ADD_HEAD_ID = #{addHeadId};</code></pre>
+<h4>报错4：合同信息不匹配</h4>
+<ul><li><strong>触发条件</strong>：用户编辑变更申请时，变更单关联的原合同信息与实际原合同不一致</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl校验变更单（SALE_CONTRACT_ADD_HEAD）关联的原合同（ORIGINAL_CONTRACT_ID）与SA_SALE_CONTRACT_HEAD中的实际记录是否一致。不一致根因有二：(1)原合同已被变更或删除；(2)变更单ORIGINAL_CONTRACT_ID指向错误。需重新选择原合同</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.ADD_HEAD_NO, A.ORIGINAL_CONTRACT_ID, A.ORIGINAL_CONTRACT_NO,
+         S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS
+  FROM SALE_CONTRACT_ADD_HEAD A
+  LEFT JOIN SA_SALE_CONTRACT_HEAD S ON A.ORIGINAL_CONTRACT_ID = S.SALE_CONTRACT_HEAD_ID
+  WHERE A.ORIGINAL_CONTRACT_ID IS NOT NULL
+    AND (S.SALE_CONTRACT_HEAD_ID IS NULL OR A.ORIGINAL_CONTRACT_NO != S.CONTRACT_NO);</code></pre>
+<h4>报错5：不能删除非制单状态的单据</h4>
+<ul><li><strong>触发条件</strong>：用户选中已提交或已审批的变更单点击"删除"按钮</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在remove方法中校验变更单状态，仅HZ_APPROVE_STATUS='NEW'（制单状态）的单据可删除。已提交（RUN）或已审批（APPROVED）的单据已进入OA流程或已回写原合同，删除将导致流程数据不一致。需先撤回OA流程再删除</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_NO, HZ_APPROVE_STATUS
+  FROM SALE_CONTRACT_ADD_HEAD
+  WHERE ADD_HEAD_ID = #{addHeadId}
+    AND HZ_APPROVE_STATUS != 'NEW';</code></pre>
+<h4>报错6：流程编码缺失，请选择流程</h4>
+<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，校验OA流程编码（CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS）为空</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在saveAndSubmit中校验流程编码非空。流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS流程编码；(2)变更类型未关联对应流程编码。需在流程配置中维护对应关系</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, CHANGE_TYPE, HZ_APPROVE_STATUS
+  FROM SALE_CONTRACT_ADD_HEAD
+  WHERE ADD_HEAD_ID = #{addHeadId}
+    AND HZ_APPROVE_STATUS = 'NEW';</code></pre>
+<h4>报错7：电子合同签署中，不允许变更</h4>
+<ul><li><strong>触发条件</strong>：用户对原合同发起变更申请时，原合同正处于电子签章流程中</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl校验原合同的电子签章状态，若原合同正在电子签章流程中（签署中状态），不允许发起变更。变更将导致原合同内容变化，电子签章数据失效。需先完成或中止原合同电子签章流程再发起变更</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS,
+         S.ELECTRONIC_SIGN_STATUS, S.STATE_PIGEONHOLE
+  FROM SA_SALE_CONTRACT_HEAD S
+  WHERE S.SALE_CONTRACT_HEAD_ID = #{originalContractId}
+    AND S.ELECTRONIC_SIGN_STATUS = 'SIGNING';</code></pre>
+<h4>报错8：销售合同编码不能为空</h4>
+<ul><li><strong>触发条件</strong>：校验变更申请时，原合同编码（ORIGINAL_CONTRACT_NO或SA_CONTR_HEAD_CODE）参数为空</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在多处校验销售合同编码非空。合同编码是关联原合同的关键字段，为空将导致原合同信息无法带出，变更回写无目标。需前端正确传入原合同编码</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
+         CHANGE_TYPE, HZ_APPROVE_STATUS
+  FROM SALE_CONTRACT_ADD_HEAD
+  WHERE ORIGINAL_CONTRACT_NO IS NULL OR ORIGINAL_CONTRACT_NO = '';</code></pre>
+<h4>报错9：该合同已有单据在走合同归档，请先归档完再变更</h4>
+<ul><li><strong>触发条件</strong>：用户对原合同发起变更申请时，原合同存在未完成的归档单据</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl校验原合同是否存在归档流程中的单据。若原合同有单据正在归档流程中，发起变更将导致归档单据与变更后合同数据不一致。需先完成原合同相关单据的归档流程再发起变更</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS,
+         S.STATE_PIGEONHOLE, S.IS_PIGEONHOLE
+  FROM SA_SALE_CONTRACT_HEAD S
+  WHERE S.SALE_CONTRACT_HEAD_ID = #{originalContractId}
+    AND S.IS_PIGEONHOLE = 1
+    AND S.STATE_PIGEONHOLE IS NULL;</code></pre>
+<h4>报错10：已经存在未审核完的合同变更单</h4>
+<ul><li><strong>触发条件</strong>：用户对原合同发起变更申请时，同一原合同已存在未审核完成的变更单</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl校验同一原合同（ORIGINAL_CONTRACT_ID）不允许存在多个未审核完成的变更单（HZ_APPROVE_STATUS为NEW或RUN）。重复发起变更将导致变更内容冲突，回写原合同时数据不一致。需先完成或中止已有变更单再发起新变更</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
+         ADD_HEAD_ID, ADD_HEAD_NO, HZ_APPROVE_STATUS
+  FROM SALE_CONTRACT_ADD_HEAD
+  WHERE ORIGINAL_CONTRACT_ID = #{originalContractId}
+    AND HZ_APPROVE_STATUS IN ('NEW', 'RUN');</code></pre>
+<h4>报错11：经销商或者法人不存在</h4>
+<ul><li><strong>触发条件</strong>：变更申请校验时，经销商或法人主数据查询返回空</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl根据经销商ID查询经销商和法人主数据，若经销商已被删除或法人关联未配置将抛出此异常。经销商和法人是变更回写和CRM推送的关键主体。需确认经销商存在且已配置法人关联</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.CUSTOMER_NAME, C.CUSTOMER_ID, C.CORPORATE_CODE,
+         C.CORPORATE_NAME
+  FROM SALE_CONTRACT_ADD_HEAD A
+  LEFT JOIN CUSTOMER C ON A.CUSTOMER_ID = C.CUSTOMER_ID
+  WHERE C.CUSTOMER_ID IS NULL OR C.CORPORATE_CODE IS NULL;</code></pre>
+<h4>报错12：合同不存在</h4>
+<ul><li><strong>触发条件</strong>：变更申请校验或回写时，原合同或新合同在SA_SALE_CONTRACT_HEAD中查询不到</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在多处校验合同存在性。合同不存在根因有三类：(1)合同已被删除；(2)合同ID传入错误；(3)数据同步延迟。需确认合同存在且已同步</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.ORIGINAL_CONTRACT_ID, A.ORIGINAL_CONTRACT_NO,
+         S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO
+  FROM SALE_CONTRACT_ADD_HEAD A
+  LEFT JOIN SA_SALE_CONTRACT_HEAD S ON A.ORIGINAL_CONTRACT_ID = S.SALE_CONTRACT_HEAD_ID
+  WHERE A.ORIGINAL_CONTRACT_ID IS NOT NULL AND S.SALE_CONTRACT_HEAD_ID IS NULL;</code></pre>
+<h4>报错13：单据信息不合法</h4>
+<ul><li><strong>触发条件</strong>：变更申请提交或审批回调时，变更单据状态或数据不满足操作前提</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在多处校验单据合法性。不合法根因有多类：(1)单据状态非预期（如已审批单据再次提交）；(2)必填字段缺失；(3)关联数据异常。需核查变更单状态和完整数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
+         CUSTOMER_NAME, CHANGE_TYPE, HZ_APPROVE_STATUS
+  FROM SALE_CONTRACT_ADD_HEAD
+  WHERE ADD_HEAD_ID = #{addHeadId};</code></pre>
+<h4>报错14：MBO作废原合同失败</h4>
+<ul><li><strong>触发条件</strong>：变更审批通过后回写原合同，调用MBO接口作废原合同返回失败</li><li><strong>逻辑分析</strong>：SaleContractAddHeadServiceImpl在变更审批通过后调用MBO接口作废原合同（变更回写场景）。MBO作废失败根因有三类：(1)MBO系统不可用；(2)原合同在MBO侧状态不允许作废；(3)MBO接口认证失败。需联系MBO管理员核查</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.ADD_HEAD_NO, A.HZ_APPROVE_STATUS,
+         S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS AS 原合同状态
+  FROM SALE_CONTRACT_ADD_HEAD A
+  JOIN SA_SALE_CONTRACT_HEAD S ON A.ORIGINAL_CONTRACT_ID = S.SALE_CONTRACT_HEAD_ID
+  WHERE A.HZ_APPROVE_STATUS = 'APPROVED';</code></pre>
+<h4>报错15：网络请求失败</h4>
+<ul><li><strong>触发条件</strong>：前端调用sale-contract-add-heads相关接口时，后端服务不可达或请求超时</li><li><strong>逻辑分析</strong>：前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre>
+<h4>报错16：权限不足，无法操作</h4>
+<ul><li><strong>触发条件</strong>：当前用户对变更保存、提交、删除等操作无对应功能权限或数据权限</li><li><strong>逻辑分析</strong>：后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">新建变更时提示原合同正在走变更</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>该原合同已存在未审核完成的变更单。排查SQL：<br>
-      <strong style="color:#7C3AED;">处理：</strong>等待已有变更单审批完成后再发起新变更
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">变更审批通过后未生成新合同</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>工作流回调逻辑异常或新合同保存失败<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查工作流回调日志和新合同生成逻辑
-    </div>
-  </div>
-</div>
+<ul><li>问题1：变更未回写原合同</li><li>原因：变更审批未通过或回写逻辑异常</li><li>解决思路：检查SQL <code>SELECT HZ_APPROVE_STATUS FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #&#123;id&#125;</code>，确认状态为APPROVED</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -670,10 +491,14 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE SA_CONTR_HEAD_CODE = :code AND AUDIT_
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2025-09-16 | - | hfy | 初始创建经销合同变更模块 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

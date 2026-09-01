@@ -197,46 +197,20 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：定时任务自动生成冲销数据 定时生成">
-<KbQuote>按时间段自动汇总工程服务费预提数据，生成冲销单，避免人工遗漏</KbQuote>
-
-**具体逻辑**：
-
-- 1、定时任务ExpenseWriteoffInQuotaJob接收startDate和endDate参数，格式yyyy-MM
-- 2、调用generateExpenseWriteoffInQuotaQuery查询预提源数据
-- 3、按isHome区分工程/家装：工程前缀GCCX，家装前缀JZCX
-- 4、冲销头单号writeoffHeadno=前缀+交易公司编码+年月(去横线)，若已存在则复用
-- 5、含税金额writeoffTaxAmt=SUM_TOTAL_UNCASH_AMT(未兑现总额)，不含税=含税/税率
-- 6、若该维度无记录或billStatus=7(作废)，则新增(insert)；若billStatus=1(制单)，则更新(update)
-- 7、其他状态(如3-审批中)不更新，保护已推送数据
+<KbCard num="1" title="重点逻辑1：定时任务生成冲销数据 {数据生成}">
+<ul><li><strong>业务意义</strong>：通过定时任务定期生成冲销数据，确保数据及时更新</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：ExpenseWriteoffInQuotaJob定时任务按配置间隔执行</li></ul>
+<ul><li>第2点：从工程服务费兑现审批通过的数据中提取冲销信息</li></ul>
+<ul><li>第3点：生成冲销记录写入EXPENSE_WRITEOFF_IN_QUOTA表</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：推送FSSC共享 推送">
-<KbQuote>将冲销数据推送到共享财务系统(FSSC)进行预算释放，实现财务冲销入账</KbQuote>
-
-**具体逻辑**：
-
-- 1、推送前校验headNo(冲销单号)不能为空，为空则报错"请传入冲销单号！"
-- 2、按headNo查询冲销头数据(ExpenseWriteoffInQuotaPushVO)
-- 3、预提金额和批准金额均取负数("-"+原金额)，表示冲销方向
-- 4、sourceOrderId和sourceOrderCode设为apportionCode(分配编码)
-- 5、按userId查询申请人编码(empid)和部门编码(orgId)，设置applyLdapCode/orgLdapCode
-- 6、获取申请人职位编码positionLdapCode，LOV编码AE.SIE.POSITION_LDAP_CODE，含义值expense_writeoff_in_quota
-- 7、费用发生日期=attribute2年月的下月第1天-1天(即月末)，设置approveDate/creationDate/lastUpdateDate
-- 8、行明细查询(selectDealerDetail)，每行设置币种/汇率/ERP类型/来源系统/来源单据类型
-- 9、行金额取负数，按事业部查询成本中心编码(Scpcostcenter, channel=4)设置orgSourceId
-- 10、调用fsccSdkService.postToSie推送，processStatus="S"则成功，更新billStatus=3(审批中)
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：冲销单号生成规则">
-<KbQuote>冲销头单号按规则生成，同批次数据共享同一头单号</KbQuote>
-
-**具体逻辑**：
-
-- 1、工程冲销前缀GCCX，家装冲销前缀JZCX
-- 2、头单号=前缀+交易公司编码+年月(去横线)，如GCCX001202607
-- 3、定时任务生成时，若同前缀的头单号已存在则复用，否则新建
-- 4、冲销明细单号writeoffNo按编码规则AE.WRITE_OFF_NO生成，变量DIVISION_CODE
+<KbCard num="2" title="重点逻辑2：推送共享财务系统 {数据推送}">
+<ul><li><strong>业务意义</strong>：冲销数据推送至共享财务系统(GCCX)，确保财务核算同步</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：通过doserviceWithHolding接口推送冲销数据</li></ul>
+<ul><li>第2点：推送到共享财务系统(GCCX)，单据类型在SharedBillTypeEnum中定义</li></ul>
+<ul><li>第3点：编码规则在CodeRuleConstants中定义（工程服务费冲销）</li></ul>
 </KbCard>
 
 </div>
@@ -246,261 +220,112 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：hlod低代码查询页面">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：工程服务费冲销列表页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>冲销单号</td>
-<td>文本框</td>
-<td>冲销明细单号</td>
-<td>常显</td>
-<td>按编码规则AE.WRITE_OFF_NO生成</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_NO</td>
-</tr>
-<tr>
-<td>冲销头单号</td>
-<td>文本框</td>
-<td>冲销批次头单号</td>
-<td>常显</td>
-<td>前缀+交易公司+年月</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_HEADNO</td>
-</tr>
-<tr>
-<td>年月</td>
-<td>文本框</td>
-<td>冲销年月</td>
-<td>常显</td>
-<td>格式yyyy-MM</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.YEARMONTH</td>
-</tr>
-<tr>
-<td>法人编码</td>
-<td>文本框</td>
-<td>法人编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.BILLING_UNIT_CODE</td>
-</tr>
-<tr>
-<td>法人名称</td>
-<td>文本框</td>
-<td>法人名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.BILLING_UNIT_NAME</td>
-</tr>
-<tr>
-<td>事业部</td>
-<td>文本框</td>
-<td>事业部名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.ENTNAME</td>
-</tr>
-<tr>
-<td>交易公司编码</td>
-<td>文本框</td>
-<td>交易公司编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.TRADING_COMPANY_CODE</td>
-</tr>
-<tr>
-<td>交易公司</td>
-<td>文本框</td>
-<td>交易公司名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>冲销含税金额</td>
-<td>数值框</td>
-<td>冲销含税总额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_TAX_AMT</td>
-</tr>
-<tr>
-<td>冲销不含税金额</td>
-<td>数值框</td>
-<td>冲销不含税总额</td>
-<td>常显</td>
-<td>含税/税率</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_NOTAX_AMT</td>
-</tr>
-<tr>
-<td>出库冲销总额</td>
-<td>数值框</td>
-<td>出库冲销总额</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_SUMAMT</td>
-</tr>
-<tr>
-<td>单据状态</td>
-<td>下拉选择框</td>
-<td>冲销单状态</td>
-<td>常显</td>
-<td>1-制单/3-审批中/7-作废</td>
-<td>1,3,7</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.BILL_STATUS</td>
-</tr>
-<tr>
-<td>是否家装</td>
-<td>下拉选择框</td>
-<td>是否家装合同</td>
-<td>常显</td>
-<td>1-工程/2-家装</td>
-<td>1,2</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.IS_HOME</td>
-</tr>
-<tr>
-<td>成本中心编码</td>
-<td>文本框</td>
-<td>成本中心编码</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.COST_CENTER_CODE</td>
-</tr>
-<tr>
-<td>成本中心名称</td>
-<td>文本框</td>
-<td>成本中心名称</td>
-<td>常显</td>
-<td>-</td>
-<td>-</td>
-<td>EXPENSE_WRITEOFF_IN_QUOTA.COST_CENTER_NAME</td>
-</tr>
-</tbody></table></div>
+<tr><td>冲销单号</td><td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_NO</td><td>文本框</td><td>冲销单号</td><td>常显</td><td>系统生成</td></tr>
+<tr><td>冲销头单据编码</td><td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_HEADNO</td><td>文本框</td><td>关联冲销头单据</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>年月</td><td>EXPENSE_WRITEOFF_IN_QUOTA.YEARMONTH</td><td>文本框</td><td>冲销年月</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>法人编码</td><td>EXPENSE_WRITEOFF_IN_QUOTA.BILLING_UNIT_CODE</td><td>文本框</td><td>法人编码</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>法人名称</td><td>EXPENSE_WRITEOFF_IN_QUOTA.BILLING_UNIT_NAME</td><td>文本框</td><td>法人客户名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>事业部</td><td>EXPENSE_WRITEOFF_IN_QUOTA.ENTNAME</td><td>文本框</td><td>事业部名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>成本中心</td><td>EXPENSE_WRITEOFF_IN_QUOTA.COST_CENTER_NAME</td><td>文本框</td><td>成本中心名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>交易公司</td><td>EXPENSE_WRITEOFF_IN_QUOTA.TRADING_COMPANY_NAME</td><td>文本框</td><td>交易公司名称</td><td>常显</td><td>系统带出</td></tr>
+<tr><td>冲销含税总额</td><td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_TAX_AMT</td><td>数字显示框</td><td>冲销含税金额</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>冲销不含税总额</td><td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_NOTAX_AMT</td><td>数字显示框</td><td>冲销不含税金额</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>出库冲销总额</td><td>EXPENSE_WRITEOFF_IN_QUOTA.WRITEOFF_SUMAMT</td><td>数字显示框</td><td>出库冲销总额</td><td>常显</td><td>系统计算</td></tr>
+<tr><td>同步时间</td><td>EXPENSE_WRITEOFF_IN_QUOTA.SYNC_ITEM</td><td>日期显示框</td><td>同步时间</td><td>常显</td><td>推送后更新</td></tr>
+<tr><td>单据状态</td><td>EXPENSE_WRITEOFF_IN_QUOTA.BILL_STATUS</td><td>文本框</td><td>单据状态</td><td>常显</td><td>系统更新</td></tr>
+<tr><td>是否家装</td><td>EXPENSE_WRITEOFF_IN_QUOTA.IS_HOME</td><td>文本框</td><td>是否家装合同</td><td>常显</td><td>2=是</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<blockquote>本页面为查询页面，无独立弹窗。</blockquote>
 </KbCard>
+
 <KbCard title="导入">
+<blockquote>本页面无导入功能。冲销数据由定时任务自动生成。</blockquote>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 查询 | 查询冲销数据 | 查询区域 | 查询条件已填写 | 调用list接口分页查询 |
-| 查看明细 | 查看冲销明细 | 列表行操作 | 常显 | 调用/{writeoffId}/detail接口 |
-| 推送FSSC | 推送冲销数据到共享财务系统 | 详情页 | 单据状态=制单 | 调用/v1/{orgId}/expense-writeoff-in-quotas/push-data-fscc，推送成功后状态→审批中 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>按条件查询冲销列表</td><td>列表页</td><td>始终可用</td><td>调用list接口</td></tr>
+<tr><td>查看明细</td><td>查看冲销明细</td><td>列表页</td><td>选中一条记录</td><td>调用detail接口</td></tr>
+<tr><td>推送共享财务</td><td>推送冲销数据至共享财务系统</td><td>列表页</td><td>选中未推送记录</td><td>调用doserviceWithHolding接口</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（列表页）</h4>
+<ul><li><strong>触发条件</strong>：始终可用</li><li><strong>执行逻辑</strong>：按年月、事业部、交易公司、法人等条件查询冲销数据</li><li><strong>接口调用</strong>：GET <code>/v1/&#123;organizationId&#125;/expense-writeoff-in-quotas/list</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA 
+WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
+  AND (ENTID = #{entid} OR #{entid} IS NULL)
+ORDER BY YEARMONTH DESC, WRITEOFF_NO</code></pre>
+<h4>按钮2：推送共享财务（列表页）</h4>
+<ul><li><strong>触发条件</strong>：选中未推送记录</li><li><strong>执行逻辑</strong>：</li><li>第1点：将选中冲销数据推送到共享财务系统(GCCX)</li><li>第2点：更新同步时间和单据状态</li><li><strong>接口调用</strong>：POST <code>/v1/&#123;organizationId&#125;/expense-writeoff-in-quotas/doserviceWithHolding</code></li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_STATUS != 1;</code></pre>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：推送时冲销单号不能为空 —— 确保推送数据可定位</KbSubTitle>
-
-- 第1点：headNo参数为空时抛出CommonException"请传入冲销单号！"
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOFF_HEADNO = ''
-```
-
-<KbSubTitle>校验2：定时任务时间格式校验 —— 确保参数正确</KbSubTitle>
-
-- 第1点：startDate和endDate必须符合yyyy-MM格式
-- 第2点：格式错误时抛出CommonException"【xxx】该时间格式错误，请输入正确的时间格式：yyyy-MM"
-
-<KbTip>阻断性报错</KbTip>
-
+<blockquote>本页面为查询页面，无保存操作。</blockquote>
 </KbCard>
+
 <KbCard title="提交校验">
+<blockquote>本页面无提交操作。</blockquote>
 </KbCard>
+
 <KbCard title="状态机">
-### 状态机
-
-> 本菜单有工作流审批(FIN_SVC_EXP_ACC)，单据状态流转如下：
-
-<KbSubTitle>状态机流转图</KbSubTitle>
-
-
-```text
-[制单1] ──推送FSSC──> [审批中3]
-[制单1] ──提交审批──> [审批中3] (工作流FIN_SVC_EXP_ACC)
-[审批中3] ──审批通过──> [已审批]
-[审批中3] ──审批驳回──> [制单1]
-[任意状态] ──作废──> [作废7]
-[作废7] ──定时任务重新生成──> [制单1] (新记录)
-```
-
-<KbSubTitle>状态机列表</KbSubTitle>
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| 1 | 制单 | 推送FSSC、提交审批、编辑 |
-| 3 | 审批中 | 审批通过、审批驳回 |
-| 7 | 作废 | 无(定时任务可重新生成新记录) |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：EXPENSE_WRITEOFF_IN_QUOTA（工程服务费冲销数据表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| WRITEOFF_ID | BIGINT | 冲销主键ID | - | 自增主键 |
-| WRITEOFF_NO | VARCHAR | 冲销单号 | 冲销单号 | 按编码规则AE.WRITE_OFF_NO生成 |
-| WRITEOFF_HEADNO | VARCHAR | 冲销头单据编码 | 冲销头单号 | 前缀+交易公司编码+年月 |
-| YEARMONTH | VARCHAR | 年月 | 年月 | 格式yyyy-MM |
-| BILLING_UNIT_CODE | VARCHAR | 法人编码 | 法人编码 | 来源于预提数据 |
-| BILLING_UNIT_NAME | VARCHAR | 法人名称 | 法人名称 | 来源于预提数据 |
-| DIVISION_ID | BIGINT | 事业部词汇值 | - | 来源于DivisionBaseSet |
-| ENTID | BIGINT | 组织ID | - | 来源于预提数据 |
-| ENTNAME | VARCHAR | 事业部名称 | 事业部 | 来源于DivisionBaseSet |
-| COST_CENTER_CODE | VARCHAR | 成本中心编码 | 成本中心编码 | 来源于预提数据 |
-| COST_CENTER_NAME | VARCHAR | 成本中心名称 | 成本中心名称 | 来源于预提数据 |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | 交易公司 | 来源于预提数据 |
-| TRADING_COMPANY_CODE | VARCHAR | 交易公司编码 | 交易公司编码 | 来源于预提数据 |
-| WRITEOFF_TAX_AMT | DECIMAL | 冲销含税总额 | 冲销含税金额 | =未兑现总额 |
-| WRITEOFF_NOTAX_AMT | DECIMAL | 冲销不含税总额 | 冲销不含税金额 | =含税/税率 |
-| WRITEOFF_SUMAMT | DECIMAL | 出库冲销总额 | 出库冲销总额 | - |
-| SYNC_ITEM | DATE | 同步时间 | - | 数据生成时间 |
-| BILL_STATUS | BIGINT | 单据状态 | 单据状态 | 1-制单/3-审批中/7-作废 |
-| IS_HOME | BIGINT | 是否家装合同 | 是否家装 | 1-工程/2-家装 |
-
----
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>定时任务生成 ──→ 待推送 ──推送共享财务──→ 已推送</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>0</td><td>待推送</td><td>查询、查看明细、推送共享财务</td></tr>
+<tr><td>1</td><td>已推送</td><td>查询、查看明细</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表1：EXPENSE_WRITEOFF_IN_QUOTA（工程服务费冲销数据表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>WRITEOFF_ID</td><td>BIGINT</td><td>冲销主键</td><td>-</td><td>自增主键</td></tr>
+<tr><td>WRITEOFF_NO</td><td>VARCHAR</td><td>冲销单号</td><td>冲销单号</td><td>系统生成</td></tr>
+<tr><td>WRITEOFF_HEADNO</td><td>VARCHAR</td><td>冲销头单据编码</td><td>冲销头单据编码</td><td>系统带出</td></tr>
+<tr><td>YEARMONTH</td><td>VARCHAR</td><td>年月</td><td>年月</td><td>系统带出</td></tr>
+<tr><td>BILLING_UNIT_CODE</td><td>VARCHAR</td><td>法人编码</td><td>法人编码</td><td>系统带出</td></tr>
+<tr><td>BILLING_UNIT_NAME</td><td>VARCHAR</td><td>法人客户名称</td><td>法人名称</td><td>系统带出</td></tr>
+<tr><td>DIVISION_ID</td><td>BIGINT</td><td>事业部词汇值</td><td>-</td><td>系统带出</td></tr>
+<tr><td>ENTID</td><td>BIGINT</td><td>组织ID</td><td>-</td><td>系统带出</td></tr>
+<tr><td>ENTNAME</td><td>VARCHAR</td><td>事业部名称</td><td>事业部</td><td>系统带出</td></tr>
+<tr><td>COST_CENTER_CODE</td><td>VARCHAR</td><td>成本中心编码</td><td>-</td><td>系统带出</td></tr>
+<tr><td>COST_CENTER_NAME</td><td>VARCHAR</td><td>成本中心名称</td><td>成本中心</td><td>系统带出</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>VARCHAR</td><td>交易公司</td><td>交易公司</td><td>系统带出</td></tr>
+<tr><td>TRADING_COMPANY_CODE</td><td>VARCHAR</td><td>交易公司编码</td><td>-</td><td>系统带出</td></tr>
+<tr><td>WRITEOFF_TAX_AMT</td><td>DECIMAL</td><td>冲销含税总额</td><td>冲销含税总额</td><td>系统计算</td></tr>
+<tr><td>WRITEOFF_NOTAX_AMT</td><td>DECIMAL</td><td>冲销不含税总额</td><td>冲销不含税总额</td><td>系统计算</td></tr>
+<tr><td>WRITEOFF_SUMAMT</td><td>DECIMAL</td><td>出库冲销总额</td><td>出库冲销总额</td><td>系统计算</td></tr>
+<tr><td>SYNC_ITEM</td><td>DATE</td><td>同步时间</td><td>同步时间</td><td>推送后更新</td></tr>
+<tr><td>BILL_STATUS</td><td>BIGINT</td><td>单据状态</td><td>单据状态</td><td>系统更新</td></tr>
+<tr><td>IS_HOME</td><td>BIGINT</td><td>是否家装合同</td><td>是否家装</td><td>2=是</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -508,122 +333,56 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请传入冲销单号！</td>
-            <td style="font-size:13px;">推送FSSC</td>
-            <td style="font-size:13px;">headNo参数为空，需传入冲销头单号</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">推共享预提 时间转换异常</td>
-            <td style="font-size:13px;">推送FSSC</td>
-            <td style="font-size:13px;">attribute2年月格式错误，无法转换为日期</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">服务费冲销推送共享异常：xxx</td>
-            <td style="font-size:13px;">推送FSSC</td>
-            <td style="font-size:13px;">共享系统处理失败，错误信息为共享返回的processMsgData</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">【xxx】该时间格式错误，请输入正确的时间格式：yyyy-MM</td>
-            <td style="font-size:13px;">定时任务</td>
-            <td style="font-size:13px;">时间参数格式不符合yyyy-MM</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请传入冲销单号！</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>headNo参数为空，需传入冲销头单号</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>推共享预提 时间转换异常</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>attribute2年月格式错误，无法转换为日期</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>服务费冲销推送共享异常：xxx</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>共享系统处理失败，错误信息为共享返回的processMsgData</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>【xxx】该时间格式错误，请输入正确的时间格式：yyyy-MM</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>时间参数格式不符合yyyy-MM</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>推送共享财务失败</td><td>推送时</td><td>共享财务系统不可用或数据异常，检查GCCX系统状态</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>冲销数据未生成</td><td>查询时</td><td>定时任务未执行，确认ExpenseWriteoffInQuotaJob已运行</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>请传入冲销单号</td><td>推送时</td><td>未传入冲销头单号，需选择有效冲销记录</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>推共享预提时间转换异常</td><td>推送时</td><td>冲销年月格式错误或为空，检查YEARMONTH字段</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>时间格式错误，请输入正确的时间格式：yyyy-MM</td><td>定时任务</td><td>定时任务参数startDate/endDate格式错误</td><td>toast提醒</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：推送共享财务失败</h4>
+<ul><li><strong>触发条件</strong>：用户选中未推送记录点击"推送共享财务"，doserviceWithHolding接口推送至GCCX系统时返回失败</li><li><strong>逻辑分析</strong>：推送接口将EXPENSE_WRITEOFF_IN_QUOTA冲销数据推送至共享财务系统（GCCX），单据类型在SharedBillTypeEnum中定义，编码规则在CodeRuleConstants中定义。失败根因有三类：(1)GCCX共享财务系统不可用或网络中断；(2)推送数据异常，如冲销含税/不含税金额为0、法人编码（BILLING_UNIT_CODE）在GCCX中不存在、成本中心编码不匹配；(3)GCCX侧重复推送校验。推送失败需检查SYNC_ITEM和BILL_STATUS字段，修复后重推</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILLING_UNIT_CODE, BILLING_UNIT_NAME,
+         WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, WRITEOFF_SUMAMT, SYNC_ITEM, BILL_STATUS
+  FROM EXPENSE_WRITEOFF_IN_QUOTA
+  WHERE BILL_STATUS != 1 OR SYNC_ITEM IS NULL;</code></pre>
+<h4>报错2：冲销数据未生成</h4>
+<ul><li><strong>触发条件</strong>：用户按年月/事业部/交易公司查询冲销数据，EXPENSE_WRITEOFF_IN_QUOTA表返回空结果集</li><li><strong>逻辑分析</strong>：冲销数据由定时任务ExpenseWriteoffInQuotaJob定期执行生成，从工程服务费兑现（EXPENSE_TO_CASH）审批通过的数据中提取冲销信息写入EXPENSE_WRITEOFF_IN_QUOTA表。无数据根因有三类：(1)定时任务ExpenseWriteoffInQuotaJob未配置或未启动；(2)上游工程服务费兑现单未审批通过，无冲销数据来源；(3)查询的年月/事业部区间内无冲销记录。需先确认定时任务执行日志，再核查上游兑现审批状态</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, ENTNAME, TRADING_COMPANY_NAME,
+         WRITEOFF_TAX_AMT, BILL_STATUS, SYNC_ITEM
+  FROM EXPENSE_WRITEOFF_IN_QUOTA
+  WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
+    AND (ENTID = #{entid} OR #{entid} IS NULL)
+  ORDER BY YEARMONTH DESC, WRITEOFF_NO;</code></pre>
+<h4>报错3：请传入冲销单号</h4>
+<ul><li><strong>触发条件</strong>：用户点击"推送共享财务"但未传入冲销头单号（headNo为空或空字符串）</li><li><strong>逻辑分析</strong>：doserviceWithHolding接口在ExpenseWriteoffInQuotaServiceImpl.java:93处通过StringUtils.isBlank(headNo)校验冲销单号为空时抛出CommonException("请传入冲销单号！")。该校验为前置参数校验，headNo用于查询表头数据（selectHead）和经销商明细（selectDealerDetail）。需在列表页选中有效的冲销记录后再点击推送</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, WRITEOFF_HEADNO, YEARMONTH, BILL_STATUS
+  FROM EXPENSE_WRITEOFF_IN_QUOTA
+  WHERE WRITEOFF_HEADNO = #{headNo};</code></pre>
+<h4>报错4：推共享预提时间转换异常</h4>
+<ul><li><strong>触发条件</strong>：推送共享财务时，冲销记录的YEARMONTH（年月）字段格式错误或为空，LocalDate.parse解析失败</li><li><strong>逻辑分析</strong>：doserviceWithHolding接口在ExpenseWriteoffInQuotaServiceImpl.java:161和193处对ATTRIBUTE2（年月）和feeHappendDate进行LocalDate.parse解析，格式为yyyy-MM-dd。当YEARMONTH格式非yyyy-MM（如空值、乱码、缺少分隔符）时抛出CommonException("推共享预提 时间转换异常")。根因有二：(1)定时任务生成冲销数据时YEARMONTH字段写入异常；(2)历史数据YEARMONTH格式不规范。需核查冲销记录的YEARMONTH字段格式</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILL_STATUS
+  FROM EXPENSE_WRITEOFF_IN_QUOTA
+  WHERE WRITEOFF_HEADNO = #{headNo}
+    AND (YEARMONTH IS NULL OR LENGTH(YEARMONTH) != 7 OR INSTR(YEARMONTH, '-') != 5);</code></pre>
+<h4>报错5：时间格式错误，请输入正确的时间格式：yyyy-MM</h4>
+<ul><li><strong>触发条件</strong>：定时任务ExpenseWriteoffInQuotaJob执行时，传入的startDate或endDate参数格式不符合yyyy-MM</li><li><strong>逻辑分析</strong>：generateExpenseWriteoffInQuota方法在ExpenseWriteoffInQuotaServiceImpl.java:351处通过checkDateFormat校验时间格式，使用SimpleDateFormat("yyyy-MM")解析，解析失败抛出CommonException("【" + dateStr + "】该时间格式错误，请输入正确的时间格式：yyyy-MM")。该异常针对定时任务参数配置，非页面操作触发。需检查定时任务参数配置中PARAM_START_DATE和PARAM_END_DATE的格式</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 核查定时任务参数配置（伪SQL，具体表名依定时任务框架而定）
+  SELECT JOB_NAME, PARAM_START_DATE, PARAM_END_DATE
+  FROM JOB_CONFIG
+  WHERE JOB_NAME = 'com.arrow.dms.ae.biz.job.api.ExpenseWriteoffInQuotaJob';</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">定时任务执行后未生成冲销数据</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>generateWriteoffInQuotaQuery查询结果为空，预提数据中无未兑现的服务费<br>
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">推送FSSC后状态未更新为审批中</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>共享接口返回成功但更新billStatus执行异常，或headNo对应多条记录<br>
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">家装冲销单号前缀错误</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>isHome字段值不正确，应为2(家装)时使用了GCCX前缀而非JZCX<br>
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">成本中心查询为空导致推送失败</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>Scpcostcenter表中无对应事业部+渠道(channel=4)的成本中心配置<br>
-    </div>
-  </div>
-</div>
+<ul><li>问题1：冲销数据不及时</li><li>原因：定时任务ExpenseWriteoffInQuotaJob未执行或执行间隔过长</li><li>解决思路：检查定时任务配置，确认执行频率</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -632,14 +391,15 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_HEADNO IS NULL OR WRITEOF
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2026-07-31 | - | - | 初始生成知识库文档 |
-
-> 要求：
-> 1. 按倒序展示
-> 2. 只需要包含2026年的提交记录
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写，补充界面模块、数据库表详解</td></tr>
+<tr><td>2025-10-29</td><td>-</td><td>-</td><td>初始创建ExpenseWriteoffInQuota实体</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

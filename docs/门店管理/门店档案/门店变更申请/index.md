@@ -193,69 +193,33 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 变更前后数据双记录">
-
-<KbQuote>变更申请表同时记录变更前和后数据，保留变更前后对比</KbQuote>
-**具体逻辑**：
-
-- 1、变更申请表同时记录变更前数据（字段名后缀_H）和变更后数据
-- 2、变更前数据从门店档案中读取并自动填入，变更后数据由用户编辑
-- 3、业务意义：保留变更前后对比记录，便于审批人查看变更内容，也便于数据追溯
+<KbCard num="1" title="重点逻辑1：双字段变更前/后设计">
+<ul><li><strong>业务意义</strong>：同时保存变更前和变更后数据，便于审批对比和回溯</li><li><strong>具体逻辑描述</strong>：</li><li>变更后字段：无后缀，如custId、custCode、custName、addr、brand、terminalArea等</li><li>变更前字段：H后缀，如custIdH、custCodeH、custNameH、addrH、brandH、terminalAreaH等</li><li>审批通过后将变更后字段写回门店档案表</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 撤店前校验">
-
-<KbQuote>撤店前须确保该门店无未审批完成的装修和报销流程</KbQuote>
-**具体逻辑**：
-
-- 1、当变更后门店状态为撤店(terminalStat=2)时，提交审批前执行`validTerminalStat`校验
-- 2、校验该门店是否存在未审批完成的门店装修申请与进度更新单（hzApproveStatus非APPROVED且非INTERRUPT）
-- 3、校验该门店是否存在未审批完成的门店验收与报销单（hzApproveStatus非APPROVED且非INTERRUPT）
-- 4、存在未审完单据时抛出异常，阻止提交
-- 5、业务意义：撤店前必须先完成或作废所有关联的装修和报销流程
+<KbCard num="2" title="重点逻辑2：工作流审批驱动">
+<ul><li><strong>业务意义</strong>：门店变更需经OA审批通过后才能更新门店档案</li><li><strong>具体逻辑描述</strong>：</li><li>工作流编码：SUB_STORE_UPDATE_APPLY（"门店变更申请"）</li><li>提交审批：wfProcSubmit方法组装流程参数，调用workflowClient.startInstanceByFlowKey发起流程</li><li>流程参数包含：terminalModifyId、operatCenterOrgId、salezoneOrgId、terminalStat、terminalType、tradeYear、startRealName、customerId</li><li>审批状态：SAVE(保存) → RUN(审批中) → APPROVED(已审批) / REJECTED(已驳回)</li></ul>
 </KbCard>
 
-<KbCard num="3" title="2.3 审批通过更新门店档案">
-
-<KbQuote>审批通过后将变更后数据写入门店档案并记录审核信息</KbQuote>
-**具体逻辑**：
-
-- 1、审批通过后调用`onWfComplete`方法
-- 2、通过MapStruct的`toMktTerminalByModify`方法将变更后数据转换为门店档案实体
-- 3、使用变更单的terminalId定位门店档案记录，执行updateByPrimaryKeySelective更新
-- 4、同时记录审核人和审核时间
-- 5、业务意义：确保门店档案的变更必须经过审批，变更可追溯
+<KbCard num="3" title="重点逻辑3：撤店前置校验">
+<ul><li><strong>业务意义</strong>：撤店前确保该门店下所有关联单据已处理完毕，避免遗留未审完单据</li><li><strong>具体逻辑描述</strong>：</li><li>当变更后terminalStat==2（撤店）时，validTerminalStat方法执行校验：</li></ul>
+<p>1. 校验FinFeeApplyFinishedHeader（门店装修申请与进度更新单）必须全部为APPROVED或INTERRUPT状态</p>
+<p>2. 校验FinFeeCheckBxHeader（门店验收与报销单）必须全部为APPROVED或INTERRUPT状态</p>
+<ul><li>校验不通过抛异常："请先审批通过/作废未审完的门店装修申请与进度更新单"</li></ul>
 </KbCard>
 
-<KbCard num="4" title="2.4 变更单编码自动生成">
-
-<KbQuote>新建变更申请时通过编码规则引擎自动生成变更单编码</KbQuote>
-**具体逻辑**：
-
-- 1、新建变更申请时通过CodeRuleBuilder生成变更单编码
-- 2、编码规则：RuleCodeEnum.TERMINAL_MODIFY_CODE，参数包含divisionCode
-- 3、业务意义：变更单编码唯一标识一次变更申请
+<KbCard num="4" title="重点逻辑4：编码规则">
+<ul><li><strong>业务意义</strong>：自动生成门店变更单号，确保编码规范统一</li><li><strong>具体逻辑描述</strong>：</li><li>编码规则：AE.TERMINAL_MODIFY_CODE</li><li>通过codeRuleBuilder.generateCode生成，参数含divisionCode</li><li>新增时自动生成，更新时不重新生成</li></ul>
 </KbCard>
 
-<KbCard num="5" title="2.5 工作流提交参数构造">
-
-<KbQuote>提交工作流时传递业务参数实现按变更类型分路审批</KbQuote>
-**具体逻辑**：
-
-- 1、提交工作流时传递关键业务参数：terminalModifyId、operatCenterOrgId、salezoneOrgId、terminalStat、terminalType、tradeYear、startRealName、customerId
-- 2、工作流根据运营中心、销售区域、门店状态、门店类型等参数进行审批人路由
-- 3、业务意义：不同类型的变更（如撤店）走不同的审批路径
-</KbCard>
-
-<KbCard num="6" title="2.6 工作流回调统一处理">
-
-<KbQuote>继承抽象类统一分发审批结果，通过/驳回分别处理</KbQuote>
-**具体逻辑**：
-
-- 1、继承AbstractTerminalServiceImpl的`workFlowEvent`方法统一分发审批结果
-- 2、审批通过(APPROVED) → onWfComplete：更新门店档案
-- 3、驳回(REBUT)/退回(RETURN)/终止(INTERRUPT)/撤回(WITHDRAW)/拒绝(REJECTED) → onWfBreak：仅更新审批状态
-- 4、--
+<KbCard num="5" title="重点逻辑5：审批通过写回门店档案">
+<ul><li><strong>业务意义</strong>：审批通过后将变更后数据同步到门店档案表</li><li><strong>具体逻辑描述</strong>：</li><li>onWfComplete方法：</li></ul>
+<p>1. 查询变更申请单</p>
+<p>2. 查询门店档案MktTerminal</p>
+<p>3. 通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到门店</p>
+<p>4. 回写terminalId、审计字段、checkTime、checkor</p>
+<p>5. 更新门店档案</p>
+<p>6. 单据状态置为APPROVED</p>
 </KbCard>
 
 </div>
@@ -265,201 +229,299 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
-<KbSubTitle>选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| 经销商选择 | cust_id/cust_code/cust_name | 选择变更后所属经销商 |  |
-| 分销商选择 | d_cust_id/d_cust_code/d_cust_name | 选择变更后所属分销商 |  |
-| 行政区划选择 | province_areaid/city_areaid/county_areaid | 选择变更后省市区 |  |
-
+<KbCard title="界面模块">
+<h4>门店变更单头表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>变更单ID</td><td>TERMINAL_MODIFY_ID</td><td>隐藏</td><td>主键</td><td>常显</td><td>系统自动生成</td></tr>
+<tr><td>变更单编码</td><td>TERMINAL_MODIFY_CODE</td><td>文本</td><td>变更单号</td><td>常显</td><td>编码规则AE.TERMINAL_MODIFY_CODE生成</td></tr>
+<tr><td>门店ID</td><td>TERMINAL_ID</td><td>隐藏</td><td>门店ID</td><td>常显</td><td>选择门店时带入</td></tr>
+<tr><td>门店编码</td><td>TERMINAL_CODE</td><td>文本</td><td>门店编码</td><td>常显</td><td>选择门店时带入，不可编辑</td></tr>
+<tr><td>门店名称</td><td>TERMINAL_NAME</td><td>文本框</td><td>门店名称</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>变更类型</td><td>CHANGE_TYPE</td><td>下拉选择框</td><td>变更类型</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>变更说明</td><td>NOTE</td><td>文本域</td><td>变更说明</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>门店状态</td><td>TERMINAL_STAT</td><td>下拉选择框</td><td>门店状态</td><td>常显</td><td>用户选择（1=运营中/2=撤店），撤店时触发校验</td></tr>
+<tr><td>撤店日期</td><td>SHUT_DATE</td><td>日期选择器</td><td>撤店日期</td><td>terminalStat=2时显示</td><td>用户选择</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>文本</td><td>经销商编码</td><td>常显</td><td>选择门店时带入</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>文本</td><td>经销商名称</td><td>常显</td><td>选择门店时带入</td></tr>
+<tr><td>门店详细地址</td><td>ADDR</td><td>文本框</td><td>门店详细地址</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>门店面积</td><td>TERMINAL_AREA</td><td>数值输入框</td><td>门店面积</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>面积变动说明</td><td>TERMINAL_AREA_CHANGE</td><td>文本域</td><td>面积变动说明</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>经营属性</td><td>CUSTOMER_CLASS</td><td>下拉选择框</td><td>经营属性</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>门店类型</td><td>TERMINAL_TYPE</td><td>下拉选择框</td><td>门店类型</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>经营品牌</td><td>BRAND</td><td>文本框</td><td>经营品牌</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>是否连锁</td><td>IS_LS</td><td>下拉选择框</td><td>是否连锁</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>装修风格</td><td>DECORATION_STYLE</td><td>下拉选择框</td><td>装修风格</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>门店装修等级</td><td>FIXUP_GRADE</td><td>下拉选择框</td><td>门店装修等级</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>店长姓名</td><td>SORE_MANAGERS_NAME</td><td>文本框</td><td>店长姓名</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>店长联系电话</td><td>SORE_MANAGERS_TEL</td><td>文本框</td><td>店长联系电话</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>店长数量</td><td>SORE_MANAGERS_COUNT</td><td>数值输入框</td><td>店长数量</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>导购员数量</td><td>GUIDE_COUNT</td><td>数值输入框</td><td>导购员数量</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>设计师数量</td><td>DESIGNER_COUNT</td><td>数值输入框</td><td>设计师数量</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>服务工程师数量</td><td>SERVICE_ENGINEER_COUNT</td><td>数值输入框</td><td>服务工程师数量</td><td>常显</td><td>用户输入（变更后）</td></tr>
+<tr><td>开店日期</td><td>IN_SHOP_DATE</td><td>日期选择器</td><td>开店日期</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>最新装修日期</td><td>LATEST_DECORATION_DATE</td><td>日期选择器</td><td>最新装修日期</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>开始经营日期</td><td>START_SALEME_DATE</td><td>日期选择器</td><td>开始经营我司产品日期</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>店面租赁到期日</td><td>LEASE_EXPIRATION_DATE</td><td>日期选择器</td><td>店面租赁到期日</td><td>常显</td><td>用户选择（变更后）</td></tr>
+<tr><td>营业年限</td><td>TRADE_YEARS</td><td>数值输入框</td><td>营业年限</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>其他情况</td><td>OTHER_CONDITION</td><td>文本域</td><td>其他情况</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>H0流程实例ID</td><td>HZ_INSTANCE_ID</td><td>隐藏</td><td>工作流实例ID</td><td>常显</td><td>提交审批时自动赋值</td></tr>
+<tr><td>H0流程审批状态</td><td>HZ_APPROVE_STATUS</td><td>文本</td><td>审批状态</td><td>常显</td><td>SAVE/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>申请人</td><td>CREATOR</td><td>文本</td><td>申请人</td><td>常显</td><td>系统自动赋值当前用户</td></tr>
+<tr><td>申请日期</td><td>CREATE_TIME</td><td>日期</td><td>申请日期</td><td>常显</td><td>系统自动赋值当前时间</td></tr>
+<tr><td>审核人</td><td>CHECKOR</td><td>文本</td><td>审核人</td><td>审批通过后显示</td><td>审批通过时自动赋值</td></tr>
+<tr><td>审核时间</td><td>CHECK_TIME</td><td>日期</td><td>审核时间</td><td>审批通过后显示</td><td>审批通过时自动赋值</td></tr>
+</tbody>
+</table>
+<h4>其他按钮</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>保存</td><td>保存草稿</td><td>详情页</td><td>常显</td><td>调用POST /mkt-terminal-modifys，stat=SAVE</td></tr>
+<tr><td>提交</td><td>提交审批</td><td>详情页</td><td>hzApproveStatus=SAVE</td><td>调用POST /mkt-terminal-modifys/submit，发起工作流</td></tr>
+</tbody>
+</table>
+<h4>按钮1：保存（详情页）</h4>
+<ul><li><strong>业务意义</strong>：保存门店变更申请草稿数据</li><li><strong>具体逻辑描述</strong>：</li><li>调用saveData方法，事务保护</li><li>新增时生成编码（AE.TERMINAL_MODIFY_CODE），设置stat=SAVE</li><li>更新时直接updateByPrimaryKeySelective</li><li>批量插入附件关系</li></ul>
+<h4>按钮2：提交（详情页）</h4>
+<ul><li><strong>业务意义</strong>：提交门店变更申请进入OA审批流程</li><li><strong>具体逻辑描述</strong>：</li><li>调用wfProcSubmit方法</li><li>撤店时先执行validTerminalStat校验</li><li>组装流程参数，调用workflowClient.startInstanceByFlowKey发起流程（FlowKey=SUB_STORE_UPDATE_APPLY）</li><li>回写hzInstanceId和hzApproveStatus=RUN</li></ul>
 </KbCard>
-<KbCard title="导入">
-无导入功能。
 
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口名称</th><th>请求方式</th><th>接口路径</th><th>权限</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>保存变更申请</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/mkt-terminal-modifys`</td><td>permissionLogin=true</td><td>创建或更新（保存草稿）</td></tr>
+<tr><td>提交变更申请</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/mkt-terminal-modifys/submit`</td><td>permissionLogin=true</td><td>创建或更新并提交审批</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="其他按钮">
 
-| 按钮名称 | 功能说明 |
-|---------|---------|
-| 新增 | 新建门店变更申请，选择门店后自动带出变更前数据 |
-| 保存 | 保存草稿(POST /v1/{organizationId}/mkt-terminal-modifys)，不提交审批 |
-| 提交 | 保存并提交工作流审批(POST /v1/{organizationId}/mkt-terminal-modifys/submit) |
-
-</KbCard>
-<KbCard title="保存校验">
-- Controller层调用`validObject(modifyDTO)`进行DTO基础校验
-
-- 新建时自动生成变更单编码
-
-- 新建时自动设置stat=SAVE、divisionId、entid、entname
-
-</KbCard>
-<KbCard title="提交校验">
-- 校验变更单数据必须存在，否则抛出"单据信息不匹配"
-
-- 撤店校验(validTerminalStat)：当terminalStat=2时，检查是否存在未审完的装修申请或报销单
-
-</KbCard>
 <KbCard title="状态机">
-
-```
-[新建/草稿(SAVE)] --提交--> [审批中(RUN)] --审批通过--> [已批准(APPROVED)]
-                               |
-                               +--驳回--> [已驳回(REBUT)]
-                               +--退回--> [已退回(RETURN)]
-                               +--终止--> [已终止(INTERRUPT)]
-                               +--撤回--> [已撤回(WITHDRAW)]
-                               +--拒绝--> [已拒绝(REJECTED)]
-```
-
----
-
-</KbCard>
-<KbCard num="1" title="MKT_TERMINAL_MODIFY">
-
-| 列名 | 类型 | 说明 | 是否可空 | 默认值 |
-|-----|------|------|---------|-------|
-| terminal_modify_id | BIGINT | 门店变更单ID(主键) | N | 自增 |
-| terminal_modify_code | VARCHAR | 门店变更单编码 | Y | - |
-| stat | BIGINT | 单据状态 | Y | - |
-| wfid | BIGINT | 流程ID | Y | - |
-| wfflag | BIGINT | 流程FLAG | Y | - |
-| terminal_id | BIGINT | 门店ID | Y | - |
-| terminal_code | VARCHAR | 门店编码 | Y | - |
-| terminal_name | VARCHAR | 门店名称 | Y | - |
-| cust_id | BIGINT | 所属经销商ID(变更后) | Y | - |
-| cust_code | VARCHAR | 所属经销商编码(变更后) | Y | - |
-| cust_name | VARCHAR | 所属经销商名称(变更后) | Y | - |
-| addr | VARCHAR | 门店详细地址(变更后) | Y | - |
-| brand | BIGINT | 经销品牌(变更后) | Y | - |
-| creator | VARCHAR | 申请人 | Y | - |
-| create_time | DATETIME | 申请日期 | Y | - |
-| updator | VARCHAR | 更新人 | Y | - |
-| update_time | DATETIME | 更新日期 | Y | - |
-| note | VARCHAR | 变更说明 | Y | - |
-| sys_id | BIGINT | 连锁商场ID(变更后) | Y | - |
-| sys_code | VARCHAR | 连锁商场编码(变更后) | Y | - |
-| shopmanager_name | VARCHAR | 负责人(变更后) | Y | - |
-| shopmanager_mob | VARCHAR | 负责人电话(变更后) | Y | - |
-| city_areaid | BIGINT | 门店所属市ID(变更后) | Y | - |
-| city_areaname | VARCHAR | 门店所属市名称(变更后) | Y | - |
-| entid | BIGINT | 组织ID | Y | - |
-| is_ls | BIGINT | 是否连锁(变更后) | Y | - |
-| terminal_area | VARCHAR | 门店面积(变更后) | Y | - |
-| customer_class | BIGINT | 经营属性(变更后) | Y | - |
-| province_areaid | BIGINT | 门店所属省ID(变更后) | Y | - |
-| province_areaname | VARCHAR | 门店所属省名称(变更后) | Y | - |
-| county_areaid | BIGINT | 门店所在地区/县ID(变更后) | Y | - |
-| county_areaname | VARCHAR | 门店所在地区/县名称(变更后) | Y | - |
-| checkor | VARCHAR | 审核人 | Y | - |
-| check_time | DATETIME | 审核时间 | Y | - |
-| areaname | VARCHAR | 拼接省市区名称(变更后) | Y | - |
-| terminal_type | BIGINT | 门店类型(变更后) | Y | - |
-| cust_id_h | BIGINT | 所属经销商ID(变更前) | Y | - |
-| cust_code_h | VARCHAR | 所属经销商编码(变更前) | Y | - |
-| cust_name_h | VARCHAR | 所属经销商名称(变更前) | Y | - |
-| addr_h | VARCHAR | 门店详细地址(变更前) | Y | - |
-| brand_h | BIGINT | 经销品牌(变更前) | Y | - |
-| sys_id_h | BIGINT | 连锁商场ID(变更前) | Y | - |
-| sys_code_h | VARCHAR | 连锁商场编码(变更前) | Y | - |
-| shopmanager_name_h | VARCHAR | 负责人(变更前) | Y | - |
-| shopmanager_mob_h | VARCHAR | 负责人电话(变更前) | Y | - |
-| city_areaid_h | BIGINT | 门店所属市ID(变更前) | Y | - |
-| city_areaname_h | VARCHAR | 门店所属市名称(变更前) | Y | - |
-| is_ls_h | BIGINT | 是否连锁(变更前) | Y | - |
-| terminal_area_h | VARCHAR | 门店面积(变更前) | Y | - |
-| customer_class_h | BIGINT | 经营属性(变更前) | Y | - |
-| province_areaid_h | BIGINT | 门店所属省ID(变更前) | Y | - |
-| province_areaname_h | VARCHAR | 门店所属省名称(变更前) | Y | - |
-| county_areaid_h | BIGINT | 门店所在地区/县ID(变更前) | Y | - |
-| county_areaname_h | VARCHAR | 门店所在地区/县名称(变更前) | Y | - |
-| areaname_h | VARCHAR | 拼接省市区名称(变更前) | Y | - |
-| terminal_type_h | BIGINT | 门店类型(变更前) | Y | - |
-| change_type | BIGINT | 变更类型 | Y | - |
-| division_id | BIGINT | 事业部ID | Y | - |
-| entname | VARCHAR | 组织名称 | Y | - |
-| cust_full_name | VARCHAR | 所属经销商拼接名称(变更后) | Y | - |
-| cust_full_name_h | VARCHAR | 所属经销商拼接名称(变更前) | Y | - |
-| decoration_style | VARCHAR | 店面装修风格(变更后) | Y | - |
-| property_type | BIGINT | 产权归属(变更后) | Y | - |
-| decoration_style_h | VARCHAR | 店面装修风格(变更前) | Y | - |
-| property_type_h | BIGINT | 产权归属(变更前) | Y | - |
-| terminal_stat_h | BIGINT | 门店状态(变更前) | Y | - |
-| terminal_stat | BIGINT | 门店状态(变更后) | Y | - |
-| create_part | BIGINT | 申请部门 | Y | - |
-| store_location_type_h | BIGINT | 位置类型(变更前) | Y | - |
-| store_location_type | BIGINT | 位置类型(变更后) | Y | - |
-| fixup_grade_h | BIGINT | 装修等级(变更前) | Y | - |
-| fixup_grade | BIGINT | 装修等级(变更后) | Y | - |
-| start_saleme_date_h | DATE | 经营我司产品起始时间(变更前) | Y | - |
-| start_saleme_date | DATE | 经营我司产品起始时间(变更后) | Y | - |
-| lease_expiration_date_h | DATE | 店面租赁到期日(变更前) | Y | - |
-| lease_expiration_date | DATE | 店面租赁到期日(变更后) | Y | - |
-| salezone_org_id_h | BIGINT | 所属销售区域ID(变更前) | Y | - |
-| salezone_org_name_h | VARCHAR | 所属销售区域名称(变更前) | Y | - |
-| operat_center_org_id_h | BIGINT | 所属运营中心ID(变更前) | Y | - |
-| operat_center_org_name_h | VARCHAR | 所属运营中心名称(变更前) | Y | - |
-| salezone_org_id | BIGINT | 所属销售区域ID(变更后) | Y | - |
-| salezone_org_name | VARCHAR | 所属销售区域名称(变更后) | Y | - |
-| operat_center_org_id | BIGINT | 所属运营中心ID(变更后) | Y | - |
-| operat_center_org_name | VARCHAR | 所属运营中心名称(变更后) | Y | - |
-| sore_managers_name_h | VARCHAR | 店长姓名(变更前) | Y | - |
-| sore_managers_tel_h | VARCHAR | 店长联系电话(变更前) | Y | - |
-| guide_count_h | BIGINT | 导购员数量(变更前) | Y | - |
-| designer_count_h | BIGINT | 设计师数量(变更前) | Y | - |
-| sore_managers_name | VARCHAR | 店长姓名(变更后) | Y | - |
-| sore_managers_tel | VARCHAR | 店长联系电话(变更后) | Y | - |
-| guide_count | BIGINT | 导购员数量(变更后) | Y | - |
-| designer_count | BIGINT | 设计师数量(变更后) | Y | - |
-| d_cust_id_h | BIGINT | 所属分销商ID(变更前) | Y | - |
-| d_cust_code_h | VARCHAR | 所属分销商编码(变更前) | Y | - |
-| d_cust_name_h | VARCHAR | 所属分销商名称(变更前) | Y | - |
-| d_cust_id | BIGINT | 所属分销商ID(变更后) | Y | - |
-| d_cust_code | VARCHAR | 所属分销商编码(变更后) | Y | - |
-| d_cust_name | VARCHAR | 所属分销商名称(变更后) | Y | - |
-| d_cust_full_name_h | VARCHAR | 所属分销商拼接名称(变更前) | Y | - |
-| d_cust_full_name | VARCHAR | 所属分销商拼接名称(变更后) | Y | - |
-| short_name_h | VARCHAR | 所属经销商简称(变更前) | Y | - |
-| short_name | VARCHAR | 所属经销商简称(变更后) | Y | - |
-| clientname | VARCHAR | 区分APP与PC | Y | - |
-| store_area_level_h | VARCHAR | 门店区域等级(变更前) | Y | - |
-| store_area_level | VARCHAR | 门店区域等级(变更后) | Y | - |
-| shut_date_h | DATE | 撤店日期(变更前) | Y | - |
-| shut_date | DATE | 撤店日期(变更后) | Y | - |
-| trade_years | VARCHAR | 营业年限 | Y | - |
-| other_condition_h | VARCHAR | 其他情况说明(变更前) | Y | - |
-| terminal_area_change_h | VARCHAR | 门店面积变动说明(变更前) | Y | - |
-| in_shop_date_h | DATETIME | 开店日期(变更前) | Y | - |
-| latest_decoration_date_h | DATETIME | 最新装修日期(变更前) | Y | - |
-| other_condition | VARCHAR | 其他情况说明(变更后) | Y | - |
-| terminal_area_change | VARCHAR | 门店面积变动说明(变更后) | Y | - |
-| in_shop_date | DATETIME | 开店日期(变更后) | Y | - |
-| latest_decoration_date | DATETIME | 最新装修日期(变更后) | Y | - |
-| hz_instance_id | BIGINT | 流程实例Id | Y | - |
-| hz_approve_status | VARCHAR | 流程实例状态 | Y | - |
-| sore_managers_count | BIGINT | 店长数量(变更后) | Y | - |
-| sore_managers_count_h | BIGINT | 店长数量(变更前) | Y | - |
-
----
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>当前状态</th><th>事件</th><th>目标状态</th><th>触发条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>SAVE</td><td>提交审批</td><td>RUN</td><td>用户点击提交按钮</td><td>调用wfProcSubmit发起工作流</td></tr>
+<tr><td>RUN</td><td>OA审批通过</td><td>APPROVED</td><td>OA回调onWfComplete</td><td>将变更后字段写回门店档案</td></tr>
+<tr><td>RUN</td><td>OA审批驳回</td><td>REJECTED</td><td>OA回调onWfBreak</td><td>更新hzApproveStatus为驳回状态</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>门店档案</td><td>数据来源</td><td>提供变更前门店信息</td><td>门店档案已创建</td></tr>
+<tr><td>门店装修申请单</td><td>前置校验</td><td>撤店时校验所有装修申请单状态</td><td>撤店时触发</td></tr>
+<tr><td>门店验收与报销单</td><td>前置校验</td><td>撤店时校验所有验收报销单状态</td><td>撤店时触发</td></tr>
+<tr><td>工作流引擎</td><td>流程驱动</td><td>发起SUB_STORE_UPDATE_APPLY工作流审批</td><td>工作流已配置</td></tr>
+<tr><td>OA审批系统</td><td>流程审批</td><td>OA端审批通过/驳回回调</td><td>OA流程已配置</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="下游影响">
+<ul><li>门店档案更新：审批通过后将变更后字段写回MKT_TERMINAL表</li><li>门店装修申请：变更后信息影响后续装修申请</li><li>门店验收与报销：变更后信息影响后续验收报销</li></ul>
+</KbCard>
+
+<KbCard title="MKT_TERMINAL_MODIFY（门店变更单主表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_MODIFY_ID</td><td>NUMBER</td><td>变更单ID(主键)</td><td>变更单ID</td><td>自增</td></tr>
+<tr><td>TERMINAL_MODIFY_CODE</td><td>VARCHAR2</td><td>变更单编码</td><td>变更单编码</td><td>编码规则AE.TERMINAL_MODIFY_CODE</td></tr>
+<tr><td>TERMINAL_ID</td><td>NUMBER</td><td>门店ID</td><td>门店ID</td><td>关联MKT_TERMINAL</td></tr>
+<tr><td>TERMINAL_CODE</td><td>VARCHAR2</td><td>门店编码</td><td>门店编码</td><td>关联门店档案</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称(变更后)</td><td>门店名称</td><td>用户输入</td></tr>
+<tr><td>TERMINAL_NAME_H</td><td>VARCHAR2</td><td>门店名称(变更前)</td><td>-</td><td>从门店档案带入</td></tr>
+<tr><td>CHANGE_TYPE</td><td>NUMBER</td><td>变更类型</td><td>变更类型</td><td>用户选择</td></tr>
+<tr><td>TERMINAL_STAT</td><td>NUMBER</td><td>门店状态(变更后)</td><td>门店状态</td><td>1=运营中, 2=撤店</td></tr>
+<tr><td>TERMINAL_STAT_H</td><td>NUMBER</td><td>门店状态(变更前)</td><td>-</td><td>从门店档案带入</td></tr>
+<tr><td>CUST_CODE</td><td>VARCHAR2</td><td>经销商编码(变更后)</td><td>经销商编码</td><td>用户选择</td></tr>
+<tr><td>CUST_CODE_H</td><td>VARCHAR2</td><td>经销商编码(变更前)</td><td>-</td><td>从门店档案带入</td></tr>
+<tr><td>ADDR</td><td>VARCHAR2</td><td>门店地址(变更后)</td><td>门店详细地址</td><td>用户输入</td></tr>
+<tr><td>ADDR_H</td><td>VARCHAR2</td><td>门店地址(变更前)</td><td>-</td><td>从门店档案带入</td></tr>
+<tr><td>TERMINAL_AREA</td><td>NUMBER</td><td>门店面积(变更后)</td><td>门店面积</td><td>用户输入</td></tr>
+<tr><td>TERMINAL_AREA_H</td><td>NUMBER</td><td>门店面积(变更前)</td><td>-</td><td>从门店档案带入</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR2</td><td>审批状态</td><td>H0流程审批状态</td><td>SAVE/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>NUMBER</td><td>工作流实例ID</td><td>H0流程实例ID</td><td>提交审批时赋值</td></tr>
+<tr><td>CREATOR</td><td>VARCHAR2</td><td>申请人</td><td>申请人</td><td>系统自动赋值</td></tr>
+<tr><td>CREATE_TIME</td><td>DATE</td><td>申请日期</td><td>申请日期</td><td>系统自动赋值</td></tr>
+<tr><td>CHECKOR</td><td>VARCHAR2</td><td>审核人</td><td>审核人</td><td>审批通过时赋值</td></tr>
+<tr><td>CHECK_TIME</td><td>DATE</td><td>审核时间</td><td>审核时间</td><td>审批通过时赋值</td></tr>
+<tr><td>STAT</td><td>NUMBER</td><td>单据状态</td><td>-</td><td>SAVE/RUN/APPROVED</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>NUMBER</td><td>组织ID</td><td>-</td><td>租户组织标识</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="MKT_TERMINAL（门店档案表，审批通过后更新）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_ID</td><td>NUMBER</td><td>门店ID(主键)</td><td>-</td><td>关联MKT_TERMINAL_MODIFY</td></tr>
+<tr><td>TERMINAL_CODE</td><td>VARCHAR2</td><td>门店编码</td><td>-</td><td>不变</td></tr>
+<tr><td>TERMINAL_NAME</td><td>VARCHAR2</td><td>门店名称</td><td>-</td><td>审批通过后从变更后字段更新</td></tr>
+<tr><td>TERMINAL_STAT</td><td>NUMBER</td><td>门店状态</td><td>-</td><td>审批通过后从变更后字段更新</td></tr>
+<tr><td>TERMINAL_AREA</td><td>NUMBER</td><td>门店面积</td><td>-</td><td>审批通过后从变更后字段更新</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>请先审批通过/作废未审完的门店装修申请与进度更新单</td><td>提交审批时</td><td>撤店时该门店下存在未审批通过/作废的装修申请单，需先处理完关联单据</td><td>高</td><td>[查看](#报错1请先审批通过作废未审完的门店装修申请与进度更新单)</td></tr>
+<tr><td>请先审批通过/作废未审完的门店验收与报销单</td><td>提交审批时</td><td>撤店时该门店下存在未审批通过/作废的验收报销单，需先处理完关联单据</td><td>高</td><td>[查看](#报错2请先审批通过作废未审完的门店验收与报销单)</td></tr>
+<tr><td>当前数据不存在</td><td>流程回调时</td><td>工作流回调时变更单已被删除</td><td>高</td><td>[查看](#报错3当前数据不存在)</td></tr>
+<tr><td>单据信息不匹配</td><td>提交审批时</td><td>变更单不存在或已被删除，请检查变更单ID</td><td>高</td><td>[查看](#报错4单据信息不匹配)</td></tr>
+<tr><td>流程中objid为空，流程失败!</td><td>审批通过回调时</td><td>工作流回调报文objId为空或非正数，流程无法继续</td><td>高</td><td>[查看](#报错5流程中objid为空流程失败)</td></tr>
+<tr><td>单据信息不匹配</td><td>审批通过回调时</td><td>回调时变更单已被删除，无法写回门店档案</td><td>高</td><td>[查看](#报错6单据信息不匹配)</td></tr>
+<tr><td>门店档案信息不匹配</td><td>审批通过回调时</td><td>关联门店档案不存在或已被删除，无法更新门店档案</td><td>高</td><td>[查看](#报错7门店档案信息不匹配)</td></tr>
+<tr><td>单据信息不匹配</td><td>审批驳回回调时</td><td>回调时变更单已被删除，无法更新驳回状态</td><td>高</td><td>[查看](#报错8单据信息不匹配)</td></tr>
+<tr><td>销售渠道不能为空</td><td>保存时</td><td>变更类型为1时未选择销售渠道</td><td>中</td><td>[查看](#报错9销售渠道不能为空)</td></tr>
+</tbody>
+</table>
+<h4>报错1：请先审批通过/作废未审完的门店装修申请与进度更新单</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮，变更后terminalStat=2（撤店）时，validTerminalStat校验FinFeeApplyFinishedHeader存在状态非APPROVED/INTERRUPT的记录</li><li><strong>逻辑分析</strong>：撤店意味着门店退出运营，需确保该门店下所有装修申请与进度更新单已闭环（APPROVED=已审批或INTERRUPT=作废），避免撤店后遗留未审单据造成流程悬挂。校验逻辑按terminalId查询FIN_FEE_APPLY_FINISHED_HEADER，若存在hzApproveStatus不在(APPROVED,INTERRUPT)集合的记录即抛异常阻断提交。常见根因：门店下有草稿/审批中的装修单未处理。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.terminal_id           AS 门店ID,
+         m.terminal_code         AS 门店编码,
+         f.fee_apply_id          AS 装修申请ID,
+         f.fee_apply_no          AS 装修申请号,
+         f.hz_approve_status     AS 装修单审批状态
+  FROM   mkt_terminal_modify m
+  JOIN   fin_fee_apply_finished_header f ON f.terminal_id = m.terminal_id
+  WHERE  m.terminal_stat = 2
+  AND    m.stat IN ('SAVE','RUN')
+  AND    f.hz_approve_status NOT IN ('APPROVED','INTERRUPT')
+  ORDER  BY m.create_time DESC;</code></pre>
+<h4>报错2：请先审批通过/作废未审完的门店验收与报销单</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮，变更后terminalStat=2（撤店）时，validTerminalStat校验FinFeeCheckBxHeader存在状态非APPROVED/INTERRUPT的记录</li><li><strong>逻辑分析</strong>：与装修单校验同理，撤店前需确保该门店下所有验收与报销单已闭环。校验逻辑按terminalId查询FIN_FEE_CHECK_BX_HEADER，若存在hzApproveStatus不在(APPROVED,INTERRUPT)集合的记录即抛异常。常见根因：门店下有未审完的验收报销单（草稿/审批中/被驳回待处理），需先审批通过或作废后再提交撤店。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.terminal_id           AS 门店ID,
+         m.terminal_code         AS 门店编码,
+         c.check_bx_id           AS 验收报销ID,
+         c.check_bx_no           AS 验收报销号,
+         c.hz_approve_status     AS 验收报销审批状态
+  FROM   mkt_terminal_modify m
+  JOIN   fin_fee_check_bx_header c ON c.terminal_id = m.terminal_id
+  WHERE  m.terminal_stat = 2
+  AND    m.stat IN ('SAVE','RUN')
+  AND    c.hz_approve_status NOT IN ('APPROVED','INTERRUPT')
+  ORDER  BY m.create_time DESC;</code></pre>
+<h4>报错3：当前数据不存在</h4>
+<ul><li><strong>触发条件</strong>：OA审批驳回回调onWfBreak时，按terminalModifyId调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null</li><li><strong>逻辑分析</strong>：审批驳回需更新变更单状态为REJECTED并记录驳回意见。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法更新状态，变更单滞留RUN状态，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.terminal_id           AS 门店ID,
+         m.terminal_code         AS 门店编码,
+         m.hz_approve_status     AS 审批状态,
+         m.hz_instance_id        AS 工作流实例ID,
+         m.update_time           AS 最后更新时间
+  FROM   mkt_terminal_modify m
+   WHERE  m.hz_approve_status = 'RUN'
+   AND    m.update_time &lt; SYSDATE - 1
+   ORDER  BY m.update_time DESC;</code></pre>
+<h4>报错4：单据信息不匹配</h4>
+<ul><li><strong>触发条件</strong>：点击"提交"按钮发起审批时，wfProcSubmit方法按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null</li><li><strong>逻辑分析</strong>：提交审批前需读取变更单数据用于组装工作流参数（terminalModifyId、operatCenterOrgId、salezoneOrgId、terminalStat、terminalType、tradeYears、customerId等）。若变更单在编辑期间被其他用户物理删除、前端传入的objId为空或与实际变更单ID不一致（如多标签页操作导致ID串台）、并发场景下被清理，查询返回空，无法组装流程参数，抛CommonException中断提交，工作流不会发起。需核查变更单是否存在及objId传值正确性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.terminal_id           AS 门店ID,
+         m.terminal_code         AS 门店编码,
+         m.hz_approve_status     AS 审批状态,
+         m.creator               AS 申请人,
+         m.create_time           AS 创建时间
+  FROM   mkt_terminal_modify m
+  WHERE  m.terminal_modify_id = #{传入的objId}
+  ORDER  BY m.create_time DESC;</code></pre>
+<h4>报错5：流程中objid为空，流程失败!</h4>
+<ul><li><strong>触发条件</strong>：OA审批通过回调wfComplete时，WfApproveDTO.objId为null或小于等于0</li><li><strong>逻辑分析</strong>：wfComplete方法首行校验objId合法性，objId是工作流回调定位业务单据的关键标识。若OA回调报文缺失objId字段、工作流变量配置错误未回传单据ID、或OA与DMS流程集成配置异常导致objId解析为空/0，校验不通过抛CommonException中断回调流程，变更单不会被写回门店档案。需核查OA流程节点变量配置及回调报文objId字段完整性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.terminal_id           AS 门店ID,
+         m.terminal_code         AS 门店编码,
+         m.hz_approve_status     AS 审批状态,
+         m.hz_instance_id        AS 工作流实例ID
+  FROM   mkt_terminal_modify m
+  WHERE  m.hz_approve_status = 'RUN'
+  AND    (m.hz_instance_id IS NULL OR m.terminal_modify_id IS NULL)
+  ORDER  BY m.update_time DESC;</code></pre>
+<h4>报错6：单据信息不匹配</h4>
+<ul><li><strong>触发条件</strong>：OA审批通过回调onWfComplete时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null</li><li><strong>逻辑分析</strong>：审批通过需读取变更单数据用于通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到门店档案。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法组装门店档案更新数据，抛CommonException中断写回流程，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.terminal_id           AS 门店ID,
+         m.terminal_code         AS 门店编码,
+         m.hz_approve_status     AS 审批状态,
+         m.hz_instance_id        AS 工作流实例ID,
+         m.update_time           AS 最后更新时间
+  FROM   mkt_terminal_modify m
+  WHERE  m.hz_approve_status = 'RUN'
+  AND    NOT EXISTS (SELECT 1 FROM mkt_terminal t WHERE t.terminal_id = m.terminal_id AND t.update_time &gt; m.update_time)
+  ORDER  BY m.update_time DESC;</code></pre>
+<h4>报错7：门店档案信息不匹配</h4>
+<ul><li><strong>触发条件</strong>：OA审批通过回调onWfComplete时，按mktTerminalModify.getTerminalId()调用selectByPrimaryKey查询MKT_TERMINAL返回null</li><li><strong>逻辑分析</strong>：审批通过写回门店档案前需读取原门店档案数据用于保留terminalId、objectVersionNumber等关键字段。若门店档案在变更审批期间被上游"新建门店申请"流程异常回滚删除、terminalId传值错误（如变更单关联了不存在的门店）、或并发场景下门店档案被清理，查询返回空，无法定位更新目标，抛CommonException中断写回流程。需核查门店档案是否存在及变更单terminalId关联正确性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.terminal_id           AS 变更单关联门店ID,
+         m.terminal_code         AS 门店编码,
+         m.hz_approve_status     AS 变更单审批状态,
+         t.terminal_id           AS 门店档案实际ID,
+         t.terminal_name         AS 门店档案名称,
+         t.usable                AS 门店有效状态
+  FROM   mkt_terminal_modify m
+  LEFT   JOIN mkt_terminal t ON t.terminal_id = m.terminal_id
+  WHERE  m.hz_approve_status = 'RUN'
+  AND    t.terminal_id IS NULL
+  ORDER  BY m.update_time DESC;</code></pre>
+<h4>报错8：单据信息不匹配</h4>
+<ul><li><strong>触发条件</strong>：OA审批驳回回调onWfBreak时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null</li><li><strong>逻辑分析</strong>：审批驳回需更新变更单hzApproveStatus为驳回状态。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常、objId传值错误），查询返回空，无法更新状态，变更单滞留RUN状态，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.terminal_id           AS 门店ID,
+         m.terminal_code         AS 门店编码,
+         m.hz_approve_status     AS 审批状态,
+         m.hz_instance_id        AS 工作流实例ID,
+         m.update_time           AS 最后更新时间
+  FROM   mkt_terminal_modify m
+  WHERE  m.hz_approve_status = 'RUN'
+  AND    m.update_time &lt; SYSDATE - 1
+  ORDER  BY m.update_time DESC;</code></pre>
+<h4>报错9：销售渠道不能为空</h4>
+<ul><li><strong>触发条件</strong>：点击"保存"按钮时，变更类型changeType=1且销售渠道saleChannel为空数组</li><li><strong>逻辑分析</strong>：前端handleSave方法在调用后端保存前进行前端校验，当变更类型为1（经销品类变更）时，销售渠道为必填项。若用户未选择销售渠道即点击保存，前端message.warning提示并中断保存，不会调用后端接口。此校验纯前端逻辑，不涉及数据库操作。需核查变更类型与销售渠道的必填联动配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT m.terminal_modify_id    AS 变更单ID,
+         m.terminal_modify_code  AS 变更单号,
+         m.change_type           AS 变更类型,
+         m.hz_approve_status     AS 审批状态,
+         m.update_time           AS 最后更新时间
+  FROM   mkt_terminal_modify m
+  WHERE  m.change_type = 1
+  AND    m.stat IN ('SAVE','RUN')
+  ORDER  BY m.update_time DESC;</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -467,190 +529,19 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">单据信息不匹配</td>
-            <td style="font-size:13px;">根据terminalModifyId未查到变更单</td>
-            <td style="font-size:13px;">确认变更单ID是否正确，数据是否已被删除</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">门店档案信息不匹配</td>
-            <td style="font-size:13px;">审批通过时根据terminalId未查到门店档案</td>
-            <td style="font-size:13px;">确认关联门店是否存在</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">流程中objid为空，流程失败!</td>
-            <td style="font-size:13px;">工作流回调时objId为空或&lt;=0</td>
-            <td style="font-size:13px;">检查工作流配置，确认objId正确传递</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先审批通过/作废未审完的门店装修申请与进度更新单</td>
-            <td style="font-size:13px;">撤店时存在未审完的装修单</td>
-            <td style="font-size:13px;">先完成或作废该门店的装修申请单</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">请先审批通过/作废未审完的门店验收与报销单</td>
-            <td style="font-size:13px;">撤店时存在未审完的报销单</td>
-            <td style="font-size:13px;">先完成或作废该门店的验收报销单</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">未获取到部门信息</td>
-            <td style="font-size:13px;">事业部基础设置未配置</td>
-            <td style="font-size:13px;">联系管理员配置事业部基础设置</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认变更单ID是否正确，数据是否已被删除</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM MKT_TERMINAL_MODIFY WHERE TERMINAL_MODIFY_ID = ?;
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>门店档案信息不匹配</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>确认关联门店是否存在</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM MKT_TERMINAL WHERE TERMINAL_ID = ?;
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程中objid为空，流程失败!</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>检查工作流配置，确认objId正确传递</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT HZ_INSTANCE_ID, OBJ_ID FROM WF_PROCESS WHERE HZ_INSTANCE_ID = (SELECT HZ_INSTANCE_ID FROM MKT_TERMINAL_MODIFY WHERE TERMINAL_MODIFY_ID = ?);
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请先审批通过/作废未审完的门店装修申请与进度更新单</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>先完成或作废该门店的装修申请单</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM MKT_TERMINAL_DECORATE WHERE TERMINAL_ID = ? AND HZ_APPROVE_STATUS NOT IN ('APPROVED', 'INTERRUPT');
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-5" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请先审批通过/作废未审完的门店验收与报销单</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>先完成或作废该门店的验收报销单</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-
-```sql
-SELECT * FROM FIN_FEE_CHECK_BX_HEAD WHERE TERMINAL_ID = ? AND HZ_APPROVE_STATUS NOT IN ('APPROVED', 'INTERRUPT');
-```
-  
-  </div>
-</div>
-
-<div id="err-detail-6" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未获取到部门信息</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>联系管理员配置事业部基础设置</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">变更前数据是如何记录的？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>选择门店后，系统自动从门店档案中读取当前数据填入变更前字段（后缀_H），变更后字段由用户编辑。审批通过后，变更后数据写回门店档案。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">撤店申请为什么提交失败？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>撤店(terminalStat=2)前，系统会校验该门店是否存在未审批完成的装修申请单或验收报销单。如有，需先审批通过或作废这些单据后才能提交撤店申请。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">saveDataSubmit方法为什么是空的？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>当前saveDataSubmit方法未实现具体逻辑，提交审批功能通过工作流的wfProcSubmit方法实现。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">变更单编码如何生成？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>通过编码规则引擎CodeRuleBuilder生成，规则编码为TERMINAL_MODIFY_CODE，参数包含divisionCode（事业部编码）。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q5</span>
-      <span style="font-size:15px;">变更申请审批通过后门店档案哪些字段会被更新？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>审批通过后，通过MapStruct的toMktTerminalByModify方法将变更后数据映射到门店档案，更新除主键和版本号外的所有业务字段，同时记录审核人和审核时间。
-    </div>
-  </div>
-</div>
+<p><strong>Q1：变更前和变更后数据如何保存？</strong></p>
+<p>A：采用双字段设计，变更后字段无后缀（如addr），变更前字段以H结尾（如addrH）。选择门店时自动带出变更前数据，用户修改变更后数据。</p>
+<p><strong>Q2：撤店有什么特殊校验？</strong></p>
+<p>A：当变更后terminalStat=2（撤店）时，系统校验该门店下所有装修申请单（FinFeeApplyFinishedHeader）和验收报销单（FinFeeCheckBxHeader）必须全部为APPROVED或INTERRUPT状态，否则不允许提交。</p>
+<p><strong>Q3：审批通过后会做什么？</strong></p>
+<p>A：通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到MktTerminal实体，更新门店档案表。</p>
+<p><strong>Q4：编码规则是什么？</strong></p>
+<p>A：AE.TERMINAL_MODIFY_CODE，通过codeRuleBuilder生成，参数含divisionCode。</p>
+<p><strong>Q5：工作流编码是什么？</strong></p>
+<p>A：SUB_STORE_UPDATE_APPLY（"门店变更申请"）。</p>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -659,10 +550,14 @@ SELECT * FROM FIN_FEE_CHECK_BX_HEAD WHERE TERMINAL_ID = ? AND HZ_APPROVE_STATUS 
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 更新内容 | 更新人 |
-|-----|------|---------|-------|
-| 2026-07-31 | v1.0 | 初始生成知识库文档 | AI |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-11-13</td><td>-</td><td>YD</td><td>初始创建门店变更申请功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

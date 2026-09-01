@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -100,6 +101,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -172,81 +174,511 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 验收报销金额计算"><ul><li><strong>额度内(in)</strong>：验收面积 × 验收评分率 × 申请标准 → 可报销含税金额/不含税金额</li><li><strong>额度外(out)</strong>：同额度内计算逻辑，额外计算兑现比例和剩余未兑现金额</li><li><strong>门头(fd)</strong>：门头验收面积 × 评分率 × 标准 → 可报销金额</li><li><strong>质量扣减</strong>：checkQualityDeductionPoint影响最终可报销金额</li><li><strong>发票税率扣减</strong>：invoiceTaxRateDeduction影响兑现率</li></ul></KbCard>
-<KbCard title="2.2 CRM软装灯具交互"><ul><li><strong>查询软装订单</strong>：通过CrmSdkService调用CRM接口查询软装灯具订单</li><li><strong>绑定订单</strong>：确认绑定CRM软装灯具订单到验收报销单</li><li><strong>查询已绑定</strong>：查询当前验收单已绑定的软装灯具订单</li><li><strong>解绑订单</strong>：取消已绑定的软装灯具订单</li></ul></KbCard>
-
-<KbQuote>与CRM系统交互获取软装灯具数据用于验收报销</KbQuote>
-<KbCard title="2.3 装修标准查询"><ul><li>根据门店类型(terminalType)和装修等级(fixupGrade)查询对应的装修标准行</li><li>支持两种查询方式：doSearchDecorate和searchDecorate</li></ul></KbCard>
-
-<KbQuote>查询匹配的装修标准行明细用于补贴金额计算</KbQuote>
-<KbCard title="2.4 打印数据"><ul><li>支持验收报销单打印，包含补贴明细汇总、复核结果汇总、预算明细汇总</li></ul></KbCard>
-
-<KbQuote>准备并返回验收报销单的打印数据</KbQuote>
-<KbCard title="2.5 政策性补贴"><ul><li>通过getLovSearch接口查询政策性补贴LOV列表</li></ul></KbCard>
-
-<KbQuote>处理政策性补贴相关逻辑</KbQuote>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：基于已审批装修申请">
+<ul><li><strong>业务意义</strong>：验收报销必须关联已审批通过的装修申请单</li><li><strong>具体逻辑描述</strong>：</li><li>选择APPROVED状态的FinFeeApplyFinishedHeader</li><li>联动带出门店/经销商/装修面积/装修标准等全部信息</li><li>查询装修标准(doSearchDecorate)获取政策补贴标准</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：CRM软装灯具订单绑定">
+<ul><li><strong>业务意义</strong>：验收时绑定CRM系统的软装灯具采购订单</li><li><strong>具体逻辑描述</strong>：</li><li>select-crm-soft-order查询可绑定的CRM软装灯具订单</li><li>confirm-crm-soft-order确认绑定</li><li>query-bind-crm-soft-order查询已绑定订单</li><li>unbind-soft-order取消绑定</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：审批通过生成兑现记录">
+<ul><li><strong>业务意义</strong>：验收报销审批通过后自动生成额度内/外兑现记录</li><li><strong>具体逻辑描述</strong>：</li><li>生成FIN_FEE_TERMINAL_CASHOUT(额度内兑现)记录</li><li>生成FIN_FEE_TERMINAL_RE_CASHOUT(额度外兑现)记录</li><li>回写装修申请单的验收信息</li><li>同步资金池</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 API接口列表"><table class="kl-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td>GET</td><td>/search</td><td>验收报销列表(分页)</td></tr><tr><td>POST</td><td>/save</td><td>新增验收报销</td></tr><tr><td>GET</td><td>/detail/{checkBxId}</td><td>验收报销明细</td></tr><tr><td>GET</td><td>/detail/print</td><td>打印数据</td></tr><tr><td>GET</td><td>/do-select</td><td>额度内兑现新增-详情</td></tr><tr><td>POST</td><td>/cancel</td><td>作废</td></tr><tr><td>DELETE</td><td>/do-delete</td><td>删除</td></tr><tr><td>POST</td><td>/update</td><td>更新</td></tr><tr><td>GET</td><td>/select-crm-soft-order</td><td>查询CRM软装灯具</td></tr><tr><td>POST</td><td>/confirm-crm-soft-order</td><td>绑定CRM软装灯具</td></tr><tr><td>GET</td><td>/query-bind-crm-soft-order</td><td>查询已绑定软装灯具</td></tr><tr><td>POST</td><td>/unbind-soft-order</td><td>解绑软装灯具</td></tr><tr><td>POST</td><td>/doSearchDecorate</td><td>查询装修标准(旧)</td></tr><tr><td>POST</td><td>/do-search-decorate</td><td>查询装修标准(新)</td></tr><tr><td>POST</td><td>/get-inv-order-amt</td><td>查询软装灯具采购清单及计算金额</td></tr><tr><td>POST</td><td>/get-acceptance-info</td><td>获取质量信息设置</td></tr><tr><td>GET</td><td>/get-lov-search</td><td>政策性补贴LOV查询</td></tr></tbody></table></KbCard>
-<KbCard title="3.2 工作流回调"><table class="kl-table"><thead><tr><th>方法</th><th>触发时机</th><th>逻辑说明</th></tr></thead><tbody><tr><td>wfProcSubmit</td><td>提交审批</td><td>启动工作流实例</td></tr><tr><td>wfComplete</td><td>审批完成</td><td>更新审核人/审核时间，处理兑现相关逻辑</td></tr></tbody></table></KbCard>
-<KbCard title="3.3 选择弹窗"><p class='kl-tip'>详情页通过装修申请单号关联，数据由申请单带入。列表页有新建、合同签署发起、导出按钮。</p></KbCard>
-<KbCard title="3.4 导入"><p class='kl-tip'>不支持导入功能。</p></KbCard>
-<KbCard title="3.5 其他按钮"><p><strong>列表页按钮：</strong></p>
-<table class="kl-table"><thead><tr><th>按钮</th><th>显示条件</th><th>说明</th></tr></thead><tbody><tr><td>新建</td><td>始终显示</td><td>跳转详情页创建</td></tr><tr><td>合同签署发起</td><td>选中数据且taskName="经销商合同电子签章"</td><td>handleInitiateSigning</td></tr><tr><td>导出</td><td>始终显示</td><td><code>/fin-fee-check-bx-headers/export</code></td></tr><tr><td>查看</td><td>始终显示</td><td>跳转详情页</td></tr><tr><td>编辑</td><td>状态∉[RUN, APPROVED, SUSPEND, RETURN]</td><td>跳转编辑页</td></tr><tr><td>作废</td><td>状态∈[NEW, REJECTED, REBUT, INTERRUPT]</td><td>弹窗输入申请原因</td></tr><tr><td>删除</td><td>状态≠REBUT</td><td>删除单据</td></tr></tbody></table>
-<p><strong>详情页按钮：</strong> 保存、提交、打印（reportCode=<code>MDYSYBX</code>）、添加/移除软装订单</p>
-<p class='kl-tip'>审批节点：区域经理、设计师、软装及礼品总监、销售会计复核面积、销财经理、经销商合同电子签章、运营专员。</p></KbCard>
-<KbCard title="3.6 保存校验"><p><strong>前端校验：</strong></p>
-<table class="kl-table"><thead><tr><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>复核面积≤验收面积</td><td>(C7N内置提示)</td></tr><tr><td>复核标准≤验收标准</td><td>(C7N内置提示)</td></tr><tr><td>额度外本次兑现比例必填（销售会计节点）</td><td>(C7N内置提示)</td></tr><tr><td>额度外二次兑现失效日期必填（销售会计节点）</td><td>(C7N内置提示)</td></tr><tr><td>补贴标准&gt;0且可报销金额-含税≤0时不能提交</td><td>(C7N内置提示)</td></tr></tbody></table>
-<p><strong>后端校验：</strong></p>
-<table class="kl-table"><thead><tr><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>数据存在性</td><td>单据信息不存在 / 单据信息不合法 / 事业部信息不合法</td></tr><tr><td>申请单关联</td><td>未找到对应的门店装修申请单 / 未找到对应的事业部基础设置</td></tr><tr><td>作废</td><td>作废失败，门店验收与报销单查询为空</td></tr><tr><td>支付方式</td><td>支付方式为折扣折让时，才允许提前兑现</td></tr><tr><td>预算年度</td><td>门店装修申请与进度更新单据预算年度大于当前年度，无法发起验收</td></tr><tr><td>预算额度</td><td>X的预算剩余可用额度不足</td></tr><tr><td>设计师</td><td>以下所选设计师与保证书不一致</td></tr></tbody></table></KbCard>
-<KbCard title="3.7 提交校验"><p><strong>工作流编码：</strong> <code>SUB_STORE_MDYSYBXD</code>（门店验收与报销单）</p></KbCard>
-<KbCard title="表：FIN_FEE_CHECK_BX_HEADER"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>check_bx_id</td><td>Long</td><td>主键ID(验收报销id)</td></tr><tr><td>check_bx_code</td><td>String</td><td>验收报销单号</td></tr><tr><td>terminal_apply_no</td><td>String</td><td>装修申请A申请单号</td></tr><tr><td>terminal_apply_id</td><td>Long</td><td>装修申请ID</td></tr><tr><td>terminal_id</td><td>Long</td><td>门店ID</td></tr><tr><td>terminal_code</td><td>String</td><td>门店编码</td></tr><tr><td>terminal_name</td><td>String</td><td>门店名称</td></tr><tr><td>cust_id</td><td>Long</td><td>经销商ID</td></tr><tr><td>cust_code</td><td>String</td><td>经销商编码</td></tr><tr><td>cust_name</td><td>String</td><td>经销商名称</td></tr><tr><td>short_name</td><td>String</td><td>经销商简称</td></tr><tr><td>customer_class</td><td>Long</td><td>经营属性</td></tr><tr><td>trading_company_id</td><td>Long</td><td>交易公司ID</td></tr><tr><td>trading_company_code</td><td>String</td><td>交易公司编码</td></tr><tr><td>trading_company_name</td><td>String</td><td>交易公司名称</td></tr><tr><td>billing_unit_id</td><td>Long</td><td>开票单位ID</td></tr><tr><td>billing_unit_code</td><td>String</td><td>开票单位编码</td></tr><tr><td>billing_unit_name</td><td>String</td><td>开票单位名称</td></tr><tr><td>salezone_org_name</td><td>String</td><td>销售区域</td></tr><tr><td>salezone_org_id</td><td>Long</td><td>销售区域ID</td></tr><tr><td>operat_center_org_name</td><td>String</td><td>运营中心</td></tr><tr><td>operat_center_org_id</td><td>Long</td><td>运营中心ID</td></tr><tr><td>province_areaid</td><td>Long</td><td>省ID</td></tr><tr><td>city_areaid</td><td>Long</td><td>市ID</td></tr><tr><td>county_areaid</td><td>Long</td><td>县/区ID</td></tr><tr><td>areaname</td><td>String</td><td>拼接省市区</td></tr><tr><td>addr</td><td>String</td><td>详细地址</td></tr><tr><td>terminal_type</td><td>Long</td><td>门店类型</td></tr><tr><td>store_location_type</td><td>Long</td><td>位置类型</td></tr><tr><td>decoration_style</td><td>Long</td><td>装修风格</td></tr><tr><td>this_decoration_style</td><td>Long</td><td>本次装修风格</td></tr><tr><td>terminal_area</td><td>BigDecimal</td><td>门店面积</td></tr><tr><td>this_terminal_area</td><td>BigDecimal</td><td>本次装修面积</td></tr><tr><td>decoration_days</td><td>Long</td><td>装修周期</td></tr><tr><td>decoration_type</td><td>Long</td><td>装修性质</td></tr><tr><td>last_decoration_date</td><td>LocalDate</td><td>旧店上次装修时间</td></tr><tr><td>fixup_grade</td><td>Long</td><td>装修等级</td></tr><tr><td>frontdoor_fixup_grade</td><td>Long</td><td>门头装修等级</td></tr><tr><td>frontdoor_area</td><td>BigDecimal</td><td>门头面积</td></tr><tr><td>in_check_area</td><td>BigDecimal</td><td>额度内验收面积</td></tr><tr><td>check_score_rate</td><td>BigDecimal</td><td>验收评分率</td></tr><tr><td>in_apply_standard</td><td>BigDecimal</td><td>额度内申请标准</td></tr><tr><td>in_apply_standard_amt</td><td>BigDecimal</td><td>额度内申请标准金额</td></tr><tr><td>in_check_standard</td><td>BigDecimal</td><td>额度内验收标准</td></tr><tr><td>in_check_standard_amt</td><td>BigDecimal</td><td>额度内验收标准金额</td></tr><tr><td>out_check_area</td><td>BigDecimal</td><td>额度外验收面积</td></tr><tr><td>out_apply_standard</td><td>BigDecimal</td><td>额度外申请标准</td></tr><tr><td>out_apply_standard_amt</td><td>BigDecimal</td><td>额度外申请标准金额</td></tr><tr><td>out_check_standard</td><td>BigDecimal</td><td>额度外验收标准</td></tr><tr><td>out_check_standard_amt</td><td>BigDecimal</td><td>额度外验收标准金额</td></tr><tr><td>fd_check_area</td><td>BigDecimal</td><td>门头验收面积</td></tr><tr><td>fd_check_score_rate</td><td>BigDecimal</td><td>门头验收评分率</td></tr><tr><td>fd_apply_standard</td><td>BigDecimal</td><td>门头申请标准</td></tr><tr><td>fd_apply_standard_amt</td><td>BigDecimal</td><td>门头申请标准金额</td></tr><tr><td>check_quality_ded_point</td><td>BigDecimal</td><td>质量扣减点</td></tr><tr><td>invoice_tax_rate_deduction</td><td>BigDecimal</td><td>发票税率扣减</td></tr><tr><td>cashout_rate</td><td>Long</td><td>兑现率</td></tr><tr><td>in_review_standard</td><td>BigDecimal</td><td>额度内复核标准</td></tr><tr><td>in_reduce_amt</td><td>BigDecimal</td><td>额度内核销金额</td></tr><tr><td>in_can_tax_bx_amt</td><td>BigDecimal</td><td>额度内可报销含税金额</td></tr><tr><td>in_can_not_tax_bx_amt</td><td>BigDecimal</td><td>额度内可报销不含税金额</td></tr><tr><td>out_review_standard</td><td>BigDecimal</td><td>额度外复核标准</td></tr><tr><td>out_reduce_amt</td><td>BigDecimal</td><td>额度外核销金额</td></tr><tr><td>out_can_tax_bx_amt</td><td>BigDecimal</td><td>额度外可报销含税金额</td></tr><tr><td>out_can_not_tax_bx_amt</td><td>BigDecimal</td><td>额度外可报销不含税金额</td></tr><tr><td>fd_review_standard</td><td>BigDecimal</td><td>门头复核标准</td></tr><tr><td>fd_reduce_amt</td><td>BigDecimal</td><td>门头核销金额</td></tr><tr><td>fd_can_tax_bx_amt</td><td>BigDecimal</td><td>门头可报销含税金额</td></tr><tr><td>fd_can_not_tax_bx_amt</td><td>BigDecimal</td><td>门头可报销不含税金额</td></tr><tr><td>out_this_can_bx_amt</td><td>BigDecimal</td><td>额度外本次可报销金额</td></tr><tr><td>out_this_cashout_proportion</td><td>BigDecimal</td><td>额度外本次兑现比例</td></tr><tr><td>out_this_sur_cashout_amt</td><td>BigDecimal</td><td>额度外本次剩余未兑现金额</td></tr><tr><td>out_fact_invoice_amt</td><td>BigDecimal</td><td>额度外实际兑现含税金额</td></tr><tr><td>out_fact_invoice_notax_amt</td><td>BigDecimal</td><td>额度外实际兑现不含税金额</td></tr><tr><td>invoice_tax_rate</td><td>Long</td><td>发票税点</td></tr><tr><td>invoice_type</td><td>Long</td><td>发票类型</td></tr><tr><td>pay_type</td><td>Long</td><td>支付方式</td></tr><tr><td>vendor_org_id</td><td>Long</td><td>供应商ID</td></tr><tr><td>vendor_code</td><td>String</td><td>供应商编码</td></tr><tr><td>vendor_name</td><td>String</td><td>供应商名称</td></tr><tr><td>over_date</td><td>Long</td><td>超期天数</td></tr><tr><td>offline_check_date</td><td>LocalDate</td><td>线下验收日期</td></tr><tr><td>in_validity_date</td><td>LocalDate</td><td>额度内有效期</td></tr><tr><td>out_cashout_end_time</td><td>LocalDate</td><td>额度外兑现失效日期</td></tr><tr><td>is_over_standard</td><td>Long</td><td>是否超标准</td></tr><tr><td>stat</td><td>Long</td><td>单据状态</td></tr><tr><td>wfflag</td><td>Long</td><td>流程状态</td></tr><tr><td>wfid</td><td>Long</td><td>流程ID</td></tr><tr><td>audit_stat</td><td>String</td><td>审核状态</td></tr><tr><td>apply_cause</td><td>String</td><td>作废原因</td></tr><tr><td>note</td><td>String</td><td>备注</td></tr><tr><td>creator</td><td>String</td><td>申请人</td></tr><tr><td>create_time</td><td>Date</td><td>申请时间</td></tr><tr><td>checker</td><td>String</td><td>审核人</td></tr><tr><td>check_time</td><td>Date</td><td>审核时间</td></tr><tr><td>organization_id</td><td>Long</td><td>组织ID</td></tr><tr><td>hz_instance_id</td><td>Long</td><td>流程实例ID</td></tr><tr><td>hz_approve_status</td><td>String</td><td>流程实例状态</td></tr><tr><td>decorate_standard_id</td><td>Long</td><td>装修标准ID</td></tr><tr><td>fd_decorate_standard_id</td><td>Long</td><td>门头装修标准ID</td></tr><tr><td>designer</td><td>String</td><td>委派设计师</td></tr><tr><td>bud_year</td><td>Long</td><td>预算年度</td></tr><tr><td>receipt_status</td><td>String</td><td>转货款状态</td></tr><tr><td>ticket_status</td><td>String</td><td>税务接口状态</td></tr><tr><td>ticket_message</td><td>String</td><td>税务接口信息</td></tr><tr><td>signature_state</td><td>Long</td><td>电子签章状态</td></tr><tr><td>signature_url</td><td>String</td><td>电子签章地址</td></tr><tr><td>is_resign</td><td>Long</td><td>需要重签</td></tr><tr><td>tripar_agree</td><td>Long</td><td>三方协议</td></tr><tr><td>subsidy_mode</td><td>Long</td><td>补贴方式</td></tr><tr><td>decorate_project</td><td>Long</td><td>装修项目</td></tr><tr><td>review_note</td><td>String</td><td>复核备注</td></tr><tr><td>early_encashment_ratio</td><td>BigDecimal</td><td>提前兑现比例</td></tr></tbody></table></KbCard>
+<KbCard title="界面模块">
+<p>本页面为前端React页面，位于<code>arrow-ae/src/pages/storeManage/storeAcceptanceReimbursementInfo/</code>，含列表页和详情页。</p>
+<h4>头部信息区</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>验收报销单号</td><td>CHECK_BX_CODE</td><td>TextField</td><td>验收报销单号</td><td>始终</td><td>编码规则生成</td></tr>
+<tr><td>装修申请单号</td><td>TERMINAL_APPLY_NO</td><td>Lov</td><td>选择装修申请单</td><td>hzApproveStatus=NEW时可编辑</td><td>选择已审批的装修申请单，必填</td></tr>
+<tr><td>门店编码</td><td>TERMINAL_CODE</td><td>TextField</td><td>门店编码</td><td>始终</td><td>从申请单带入，必填</td></tr>
+<tr><td>门店名称</td><td>TERMINAL_NAME</td><td>TextField</td><td>门店名称</td><td>始终</td><td>从申请单带入，必填</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>TextField</td><td>经销商名称</td><td>始终</td><td>从申请单带入，必填</td></tr>
+<tr><td>经销商简称</td><td>SHORT_NAME</td><td>TextField</td><td>经销商简称</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>交易公司</td><td>TRADING_COMPANY_NAME</td><td>TextField</td><td>交易公司</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>法人客户</td><td>BILLING_UNIT_NAME</td><td>TextField</td><td>法人客户</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>装修等级</td><td>FIXUP_GRADE</td><td>Select(AE.FIXUP_GRADE)</td><td>装修等级</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>门店面积</td><td>TERMINAL_AREA</td><td>NumberField</td><td>门店面积</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>实际装修面积</td><td>THIS_TERMINAL_AREA</td><td>NumberField</td><td>实际装修面积</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>额度内报销金额</td><td>IN_BX_AMT</td><td>NumberField</td><td>额度内报销金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>额度外报销金额</td><td>OUT_BX_AMT</td><td>NumberField</td><td>额度外报销金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>验收日期</td><td>CHECK_DATE</td><td>DatePicker</td><td>验收日期</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>备注</td><td>NOTE</td><td>TextField</td><td>备注</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>申请日期</td><td>CREATION_DATE</td><td>TextField</td><td>创建时间</td><td>始终</td><td>默认当前时间，只读</td></tr>
+<tr><td>创建人</td><td>CREATED_BY_NAME</td><td>TextField</td><td>创建人姓名</td><td>始终</td><td>默认当前用户，只读</td></tr>
+<tr><td>审核状态</td><td>HZ_APPROVE_STATUS</td><td>Select(HWKF.APPROVE_STATUS)</td><td>工作流审批状态</td><td>始终</td><td>默认NEW，只读</td></tr>
+<tr><td>审核状态</td><td>AUDIT_STAT</td><td>TextField</td><td>审核状态</td><td>始终</td><td>系统维护</td></tr>
+<tr><td>经营属性</td><td>CUSTOMER_CLASS</td><td>Select(AE.CUSTOMER_CLASS)</td><td>经营属性</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>法人客户编码</td><td>BILLING_UNIT_CODE</td><td>TextField</td><td>法人客户编码</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>销售区域</td><td>SALEZONE_ORG_NAME</td><td>TextField</td><td>销售区域名称</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>运营中心</td><td>OPERAT_CENTER_ORG_NAME</td><td>TextField</td><td>运营中心名称</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>成本中心编码</td><td>COST_CENTER_CODE</td><td>TextField</td><td>成本中心编码</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>成本中心名称</td><td>COST_CENTER_NAME</td><td>TextField</td><td>成本中心名称</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>项目编码</td><td>OBJECT_CODE</td><td>TextField</td><td>项目编码</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>项目名称</td><td>OBJECT_NAME</td><td>TextField</td><td>项目名称</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>预算年度</td><td>BUD_YEAR</td><td>TextField</td><td>预算年度</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>展示设计师</td><td>DESIGNER</td><td>TextField</td><td>展示设计师</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>设计师用户名</td><td>USERNAME</td><td>TextField</td><td>设计师用户名</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>设计师手机号</td><td>MOBIL</td><td>TextField</td><td>设计师手机号</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>软装设计师</td><td>SOFT_DESIGNER</td><td>TextField</td><td>软装设计师</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>位置类型</td><td>STORE_LOCATION_TYPE</td><td>Select(AE.STORE_LOCATION_TYPE)</td><td>位置类型</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>装修周期</td><td>DECORATION_DAYS</td><td>NumberField</td><td>装修天数</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>门店类型</td><td>TERMINAL_TYPE</td><td>Select(AE.TERMINAL_TYPE)</td><td>门店类型</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>门店详细地址</td><td>ADDR</td><td>TextField</td><td>门店详细地址</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>装修性质</td><td>DECORATION_TYPE</td><td>Select(AE.DECORATION_TYPE)</td><td>装修性质</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>旧店上次装修时间</td><td>LAST_DECORATION_DATE</td><td>DatePicker</td><td>旧店上次装修时间</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>超期天数</td><td>OVER_DATE</td><td>NumberField</td><td>装修超期天数</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>线下验收日期</td><td>OFFLINE_CHECK_DATE</td><td>DatePicker</td><td>线下验收日期</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>装修风格</td><td>DECORATION_STYLE</td><td>Select(AE.DECORATION_STYLE)</td><td>装修风格</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>本次装修风格</td><td>THIS_DECORATION_STYLE</td><td>Select(AE.DECORATION_STYLE)</td><td>本次装修风格</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>额度内有效期</td><td>IN_VALIDITY_DATE</td><td>DatePicker</td><td>额度内有效期</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>额度外兑现结束时间</td><td>OUT_CASHOUT_END_TIME</td><td>DatePicker</td><td>额度外兑现结束时间</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>门头装修等级</td><td>FRONTDOOR_FIXUP_GRADE</td><td>TextField</td><td>门头装修等级</td><td>始终</td><td>从申请单带入</td></tr>
+<tr><td>验收超期天数</td><td>CHECK_OVER_DAY</td><td>NumberField</td><td>验收超期天数</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>是否超标准</td><td>IS_OVER_STANDARD</td><td>NumberField</td><td>是否超标准</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>装修超期免责份数</td><td>DECORATION_OVERTIME_FREE_COPY</td><td>NumberField</td><td>装修超期免责份数</td><td>始终</td><td>系统参数</td></tr>
+<tr><td>验收超期免责份数</td><td>CHECK_OVERTIME_FREE_COPY</td><td>NumberField</td><td>验收超期免责份数</td><td>始终</td><td>系统参数</td></tr>
+<tr><td>审核备注</td><td>REVIEW_NOTE</td><td>TextField</td><td>审核备注</td><td>始终</td><td>审批节点可编辑</td></tr>
+<tr><td>发票税率</td><td>INVOICE_TAX_RATE</td><td>Select</td><td>发票税率</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>发票类型</td><td>INVOICE_TYPE</td><td>Select</td><td>发票类型</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>开票办公室编码</td><td>ISSUING_OFFICE_CODE</td><td>TextField</td><td>开票办公室编码</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>开票办公室</td><td>ISSUING_OFFICE</td><td>TextField</td><td>开票办公室</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>付款方式</td><td>PAY_TYPE</td><td>Select(AE.PAY_TYPE)</td><td>付款方式</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>供应商编码</td><td>VENDOR_CODE</td><td>TextField</td><td>供应商编码</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>供应商名称</td><td>VENDOR_NAME</td><td>TextField</td><td>供应商名称</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>联系人</td><td>CONTACT</td><td>TextField</td><td>联系人</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>联系电话</td><td>TELE</td><td>TextField</td><td>联系电话</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>额度外验收金额</td><td>OUT_CHECK_AMT</td><td>NumberField</td><td>额度外验收金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>我司开票</td><td>OUR_INVOICING</td><td>Select</td><td>我司开票</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>三方协议</td><td>TRIPAR_AGREE</td><td>Select</td><td>三方协议</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>是否重签</td><td>IS_RESIGN</td><td>Select</td><td>是否重签</td><td>始终</td><td>系统维护</td></tr>
+<tr><td>任务名称</td><td>TASK_NAME</td><td>TextField</td><td>当前审批任务名称</td><td>始终</td><td>工作流带入</td></tr>
+<tr><td>提前兑现标识</td><td>EARLY_ENCASHMENT_FLAG</td><td>TextField</td><td>提前兑现标识</td><td>始终</td><td>系统维护</td></tr>
+<tr><td>软装补贴金额</td><td>SOFT_PURCHASE_AMT</td><td>NumberField</td><td>软装补贴金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>软装广告费采购金额</td><td>SOFT_ADV_PURCHASE_AMT</td><td>NumberField</td><td>软装广告费采购金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>软装物品采购金额</td><td>SOFT_GOODS_PURCHASE_AMT</td><td>NumberField</td><td>软装物品采购金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>软装采购标准</td><td>SOFT_PURCHASE_STANDARD</td><td>TextField</td><td>软装采购标准</td><td>始终</td><td>从装修标准带入</td></tr>
+<tr><td>软装采购标准金额</td><td>SOFT_PURCHASE_STANDARD_AMT</td><td>NumberField</td><td>软装采购标准金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>软装达成采购金额</td><td>SOFT_REACH_PURCHASE_AMT</td><td>NumberField</td><td>软装达成采购金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>软装审批标准临时</td><td>SOFT_APPROVAL_STANDARD_TMP</td><td>NumberField</td><td>软装审批标准临时</td><td>始终</td><td>审批节点可编辑</td></tr>
+<tr><td>软装采购百分比</td><td>SOFT_PURCHASE_PERCENT</td><td>NumberField</td><td>软装采购百分比</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>软装扣减金额</td><td>SOFT_DEDUCT_AMT</td><td>NumberField</td><td>软装扣减金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>灯具补贴金额</td><td>LANTERN_AMT</td><td>NumberField</td><td>灯具补贴金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>灯具广告费金额</td><td>LANTERN_ADV_AMT</td><td>NumberField</td><td>灯具广告费金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>灯具物品金额</td><td>LANTERN_GOODS_AMT</td><td>NumberField</td><td>灯具物品金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>灯具标准</td><td>LANTERN_STANDARD</td><td>TextField</td><td>灯具标准</td><td>始终</td><td>从装修标准带入</td></tr>
+<tr><td>灯具标准金额</td><td>LANTERN_STANDARD_AMT</td><td>NumberField</td><td>灯具标准金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>灯具达成金额</td><td>LANTERN_REACH_AMT</td><td>NumberField</td><td>灯具达成金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>灯具审批标准临时</td><td>LANTERN_APPROVAL_STANDARD_TMP</td><td>NumberField</td><td>灯具审批标准临时</td><td>始终</td><td>审批节点可编辑</td></tr>
+<tr><td>灯具百分比</td><td>LANTERN_PERCENT</td><td>NumberField</td><td>灯具百分比</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>灯具扣减金额</td><td>LANTERN_DEDUCT_AMT</td><td>NumberField</td><td>灯具扣减金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>软装灯具扣罚金额</td><td>ALL_DEDUCT_AMT</td><td>NumberField</td><td>软装灯具扣罚金额(元)</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>门店所在地</td><td>AREA_OBJ</td><td>Select(省市区级联)</td><td>门店所在地</td><td>始终</td><td>从申请单带入，省市区三级级联选择</td></tr>
+<tr><td>组织ID</td><td>ENTID</td><td>TextField</td><td>事业部/组织ID</td><td>始终</td><td>系统自动赋值</td></tr>
+<tr><td>附件关联</td><td>OBJ_ATTACH_REL_DTOS</td><td>-</td><td>附件关联对象</td><td>始终</td><td>上传附件时关联</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="子表格模块">
+<p>本页面包含多个子表格Tab，在详情页中以Collapse面板或Tabs呈现。</p>
+<h4>装修金额信息表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>发票税点</td><td>INVOICE_TAX_RATE</td><td>NumberField</td><td>发票税点(%)</td><td>始终</td><td>用户输入，0~13</td></tr>
+<tr><td>发票类型</td><td>INVOICE_TYPE</td><td>Select(AE.MKT.INVOICE_TYPE)</td><td>发票类型</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>开票单位</td><td>ISSUING_OFFICE_CODE/ISSUING_OFFICE</td><td>Lov(AE.SALE_TRADING_COMPANY_CUSTOMER)</td><td>开票单位</td><td>始终</td><td>从LOV选择，带出编码和名称</td></tr>
+<tr><td>支付方式</td><td>PAY_TYPE</td><td>Select(AE.PAY_TYPE)</td><td>支付方式</td><td>始终</td><td>用户选择，默认3(折扣折让)</td></tr>
+<tr><td>供应商编码</td><td>VENDOR_CODE</td><td>Lov(AE.VENDOR_VIEW_VIEW)</td><td>供应商编码</td><td>始终</td><td>从LOV选择</td></tr>
+<tr><td>供应商名称</td><td>VENDOR_NAME</td><td>TextField</td><td>供应商名称</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>联系人</td><td>CONTACT</td><td>TextField</td><td>供应商联系人</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>联系电话</td><td>TELE</td><td>TextField</td><td>供应商电话</td><td>始终</td><td>从LOV带入</td></tr>
+<tr><td>额度外验收总额</td><td>OUT_CHECK_AMT</td><td>NumberField</td><td>额度外验收总额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>本方开票</td><td>OUR_INVOICING</td><td>Select</td><td>本方开票</td><td>始终</td><td>用户选择，trueValue=2(是)，falseValue=1(否)，默认2</td></tr>
+<tr><td>三方协议</td><td>TRIPAR_AGREE</td><td>Select</td><td>三方协议</td><td>始终</td><td>用户选择，trueValue=2(是)，falseValue=1(否)，默认1</td></tr>
+<tr><td>需重签协议</td><td>IS_RESIGN</td><td>Select</td><td>需重签协议</td><td>始终</td><td>从申请单带入</td></tr>
+</tbody>
+</table>
+<h4>装修标准表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>补贴标准CODE</td><td>-</td><td>TextField</td><td>补贴标准编码</td><td>始终</td><td>从装修标准接口带入</td></tr>
+<tr><td>补贴标准名称</td><td>-</td><td>TextField</td><td>补贴标准名称</td><td>始终</td><td>从装修标准接口带入</td></tr>
+<tr><td>标准值</td><td>-</td><td>NumberField</td><td>标准值</td><td>始终</td><td>从装修标准接口带入</td></tr>
+<tr><td>标准键</td><td>-</td><td>TextField</td><td>标准键</td><td>始终</td><td>从装修标准接口带入</td></tr>
+</tbody>
+</table>
+<h4>资源预算信息表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>资源预算编码</td><td>-</td><td>TextField</td><td>资源预算编码</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>资源预算名称</td><td>-</td><td>TextField</td><td>资源预算名称</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>资源预算金额</td><td>-</td><td>NumberField</td><td>资源预算金额</td><td>始终</td><td>系统带出</td></tr>
+</tbody>
+</table>
+<h4>店面验收质量信息表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>验收项目</td><td>-</td><td>TextField</td><td>验收项目名称</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>项目类型</td><td>-</td><td>TextField</td><td>验收项目类型</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>实际情况</td><td>-</td><td>TextField</td><td>实际情况</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>验收结果</td><td>-</td><td>Select</td><td>验收结果(合格/不合格)</td><td>始终</td><td>用户选择</td></tr>
+</tbody>
+</table>
+<h4>门头验收质量信息表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>验收项目</td><td>-</td><td>TextField</td><td>门头验收项目名称</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>项目类型</td><td>-</td><td>TextField</td><td>门头验收项目类型</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>实际情况</td><td>-</td><td>TextField</td><td>实际情况</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>验收结果</td><td>-</td><td>Select</td><td>验收结果(合格/不合格)</td><td>始终</td><td>用户选择</td></tr>
+</tbody>
+</table>
+<h4>扣分比例表（用于罚金计算）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>扣除项目</td><td>-</td><td>TextField</td><td>扣分项目名称</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>扣除比例(%)</td><td>-</td><td>NumberField</td><td>扣除比例</td><td>始终</td><td>系统计算或用户输入</td></tr>
+<tr><td>验收比例(%)</td><td>-</td><td>NumberField</td><td>验收比例</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>兑现比例(%)</td><td>-</td><td>NumberField</td><td>兑现比例</td><td>始终</td><td>系统计算，0~100%</td></tr>
+<tr><td>扣减金额</td><td>-</td><td>NumberField</td><td>扣减金额</td><td>始终</td><td>系统计算</td></tr>
+</tbody>
+</table>
+<h4>发票信息表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>发票类型</td><td>-</td><td>TextField</td><td>发票类型</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>发票号码</td><td>-</td><td>TextField</td><td>发票号码</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>发票金额</td><td>-</td><td>NumberField</td><td>发票金额</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>税额</td><td>-</td><td>NumberField</td><td>税额</td><td>始终</td><td>系统计算</td></tr>
+</tbody>
+</table>
+<h4>财务复核表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>复核项目</td><td>-</td><td>TextField</td><td>复核项目名称</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>补贴标准</td><td>-</td><td>NumberField</td><td>补贴标准</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>可报销金额(含税)</td><td>-</td><td>NumberField</td><td>可报销含税金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>复核结果</td><td>-</td><td>TextField</td><td>复核结果</td><td>始终</td><td>用户输入</td></tr>
+</tbody>
+</table>
+<h4>财务复核结果表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>复核标准</td><td>-</td><td>NumberField</td><td>复核标准</td><td>始终</td><td>系统带出</td></tr>
+<tr><td>复核面积</td><td>-</td><td>NumberField</td><td>复核面积</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>复核金额</td><td>-</td><td>NumberField</td><td>复核金额</td><td>始终</td><td>系统计算</td></tr>
+</tbody>
+</table>
+<h4>门店装修照片表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>照片类型</td><td>-</td><td>Select</td><td>照片类型(门头/店内/卫生间等)</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>照片</td><td>-</td><td>Upload</td><td>装修照片上传</td><td>始终</td><td>支持上传/预览/下载</td></tr>
+<tr><td>上传时间</td><td>-</td><td>DatePicker</td><td>上传时间</td><td>始终</td><td>系统自动记录</td></tr>
+<tr><td>备注</td><td>-</td><td>TextField</td><td>照片说明</td><td>始终</td><td>用户输入</td></tr>
+</tbody>
+</table>
+<h4>保证书信息</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>卫生间合格</td><td>RESTROOM_A</td><td>Switch</td><td>设计师保证书-卫生间合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>杂物间合格</td><td>HOVEL_A</td><td>Switch</td><td>设计师保证书-杂物间合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>办公室合格</td><td>OFFICE_A</td><td>Switch</td><td>设计师保证书-办公室合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>其他区域合格</td><td>OTHER_AREA_A</td><td>Switch</td><td>设计师保证书-其他区域合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>设计师签名</td><td>DESIGNER_NAME</td><td>TextField</td><td>设计师保证书-设计师姓名</td><td>始终</td><td>设计师确认时签名</td></tr>
+<tr><td>设计师确认时间</td><td>DESIGNER_TIME</td><td>DatePicker</td><td>设计师保证书-确认时间</td><td>始终</td><td>设计师确认时自动记录</td></tr>
+<tr><td>卫生间合格(区域经理)</td><td>RESTROOM_B</td><td>Switch</td><td>区域经理保证书-卫生间合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>杂物间合格(区域经理)</td><td>HOVEL_B</td><td>Switch</td><td>区域经理保证书-杂物间合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>办公室合格(区域经理)</td><td>OFFICE_B</td><td>Switch</td><td>区域经理保证书-办公室合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>其他区域合格(区域经理)</td><td>OTHER_AREA_B</td><td>Switch</td><td>区域经理保证书-其他区域合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>区域经理签名</td><td>REGIONAL_MANAGER</td><td>TextField</td><td>区域经理签名</td><td>始终</td><td>区域经理确认时签名</td></tr>
+<tr><td>区域经理确认时间</td><td>REGIONAL_MANAGER_TIME</td><td>DatePicker</td><td>区域经理确认时间</td><td>始终</td><td>区域经理确认时自动记录</td></tr>
+<tr><td>未设计</td><td>NOT_DESIGN</td><td>Switch</td><td>软装设计师保证书-未设计</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>不匹配</td><td>NOT_MATCHED</td><td>Switch</td><td>软装设计师保证书-不匹配</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>不合格</td><td>UNQUALIFIED</td><td>Switch</td><td>软装设计师保证书-不合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>合格</td><td>QUALIFIED</td><td>Switch</td><td>软装设计师保证书-合格</td><td>始终</td><td>trueValue=2, falseValue=1</td></tr>
+<tr><td>软装设计师签名</td><td>SOFT_DESIGNER_NAME</td><td>TextField</td><td>软装设计师签名</td><td>始终</td><td>软装设计师确认时签名</td></tr>
+<tr><td>软装设计师确认时间</td><td>SOFT_DESIGNER_TIME</td><td>DatePicker</td><td>软装设计师确认时间</td><td>始终</td><td>软装设计师确认时自动记录</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="列表页查询字段">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>单据状态</td><td>HZ_APPROVE_STATUS</td><td>Select(HWKF.APPROVE_STATUS)</td><td>审核状态查询</td><td>常显</td><td>值集查询</td></tr>
+<tr><td>验收报销单号</td><td>CHECK_BX_CODE</td><td>TextField</td><td>单号模糊查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>装修申请单号</td><td>TERMINAL_APPLY_NO</td><td>TextField</td><td>装修申请单号查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>TextField</td><td>经销商编码查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>TextField</td><td>经销商名称查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>经销商简称</td><td>SHORT_NAME</td><td>TextField</td><td>经销商简称查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>经营属性</td><td>CUSTOMER_CLASS</td><td>Select(AE.CUSTOMER_CLASS)</td><td>经营属性查询</td><td>常显</td><td>值集查询</td></tr>
+<tr><td>交易公司</td><td>TRADING_COMPANY_NAME</td><td>TextField</td><td>交易公司查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>法人客户编码</td><td>BILLING_UNIT_CODE</td><td>TextField</td><td>法人编码查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>销售区域</td><td>SALEZONE_ORG_NAME</td><td>TextField</td><td>销售区域查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>运营中心</td><td>OPERAT_CENTER_ORG_NAME</td><td>TextField</td><td>运营中心查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>成本中心编码</td><td>COST_CENTER_CODE</td><td>TextField</td><td>成本中心编码查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>成本中心名称</td><td>COST_CENTER_NAME</td><td>TextField</td><td>成本中心名称查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>费用项目编码</td><td>OBJECT_CODE</td><td>TextField</td><td>项目编码查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>费用项目名称</td><td>OBJECT_NAME</td><td>TextField</td><td>项目名称查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>门店编码</td><td>TERMINAL_CODE</td><td>TextField</td><td>门店编码查询</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>门店名称</td><td>TERMINAL_NAME</td><td>TextField</td><td>门店名称查询</td><td>常显</td><td>用户输入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="列表页展示字段">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>单据状态</td><td>HZ_APPROVE_STATUS</td><td>Select(HWKF.APPROVE_STATUS)</td><td>审批状态</td><td>常显</td><td>系统维护</td></tr>
+<tr><td>审核状态</td><td>AUDIT_STAT</td><td>TextField</td><td>OA审核状态</td><td>常显</td><td>系统维护</td></tr>
+<tr><td>流程节点</td><td>TASK_NAME</td><td>TextField</td><td>当前审批任务名称</td><td>常显</td><td>工作流带入</td></tr>
+<tr><td>电子签章状态</td><td>SIGNATURE_STATE</td><td>Select(AE.SIGNATURE_STATE)</td><td>电子签章状态</td><td>常显</td><td>系统维护</td></tr>
+<tr><td>事业部</td><td>DIVISION_NAME</td><td>TextField</td><td>事业部名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>验收报销单号</td><td>CHECK_BX_CODE</td><td>TextField</td><td>验收报销单号</td><td>常显</td><td>编码规则生成</td></tr>
+<tr><td>装修申请单号</td><td>TERMINAL_APPLY_NO</td><td>TextField</td><td>装修申请单号</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>TextField</td><td>经销商编码</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>TextField</td><td>经销商名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>经销商简称</td><td>SHORT_NAME</td><td>TextField</td><td>经销商简称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>经营属性</td><td>CUSTOMER_CLASS</td><td>Select(AE.CUSTOMER_CLASS)</td><td>经营属性</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>交易公司</td><td>TRADING_COMPANY_NAME</td><td>TextField</td><td>交易公司名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>法人客户编码</td><td>BILLING_UNIT_CODE</td><td>TextField</td><td>法人客户编码</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>法人客户名称</td><td>BILLING_UNIT_NAME</td><td>TextField</td><td>法人客户名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>销售区域</td><td>SALEZONE_ORG_NAME</td><td>TextField</td><td>销售区域名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>运营中心</td><td>OPERAT_CENTER_ORG_NAME</td><td>TextField</td><td>运营中心名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>成本中心编码</td><td>COST_CENTER_CODE</td><td>TextField</td><td>成本中心编码</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>成本中心名称</td><td>COST_CENTER_NAME</td><td>TextField</td><td>成本中心名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>费用项目编码</td><td>OBJECT_CODE</td><td>TextField</td><td>项目编码</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>费用项目名称</td><td>OBJECT_NAME</td><td>TextField</td><td>项目名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>门店编码</td><td>TERMINAL_CODE</td><td>TextField</td><td>门店编码</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>门店名称</td><td>TERMINAL_NAME</td><td>TextField</td><td>门店名称</td><td>常显</td><td>从申请单带入</td></tr>
+<tr><td>创建人</td><td>CREATED_BY_NAME</td><td>TextField</td><td>创建人</td><td>常显</td><td>当前用户</td></tr>
+<tr><td>创建时间</td><td>CREATION_DATE</td><td>TextField</td><td>创建时间</td><td>常显</td><td>当前时间</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口</th><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>列表查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/search`</td><td>查询验收报销列表</td></tr>
+<tr><td>保存</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/save`</td><td>新增验收报销</td></tr>
+<tr><td>更新</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/update`</td><td>更新验收报销</td></tr>
+<tr><td>详情查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/detail/&#123;checkBxId&#125;`</td><td>查询验收报销详情</td></tr>
+<tr><td>打印</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/detail/print`</td><td>获取打印数据</td></tr>
+<tr><td>额度内兑现详情</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/do-select`</td><td>额度内兑现新增-详情</td></tr>
+<tr><td>作废</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/cancel`</td><td>作废验收报销</td></tr>
+<tr><td>删除</td><td>DELETE</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/do-delete`</td><td>删除验收报销</td></tr>
+<tr><td>查询CRM软装灯具</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/select-crm-soft-order`</td><td>查询可绑定的CRM软装灯具订单</td></tr>
+<tr><td>绑定软装订单</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/confirm-crm-soft-order`</td><td>绑定CRM软装灯具订单</td></tr>
+<tr><td>查询已绑定订单</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/query-bind-crm-soft-order`</td><td>查询已绑定的软装订单</td></tr>
+<tr><td>取消绑定</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/unbind-soft-order`</td><td>取消绑定软装订单</td></tr>
+<tr><td>查询装修标准</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/doSearchDecorate`</td><td>查询装修标准</td></tr>
+<tr><td>查询装修标准(新)</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/do-search-decorate`</td><td>查询装修标准</td></tr>
+<tr><td>查询采购清单金额</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/get-inv-order-amt`</td><td>查询采购清单及金额</td></tr>
+<tr><td>获取质量信息</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/get-acceptance-info`</td><td>获取质量信息设置</td></tr>
+<tr><td>政策性补贴查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/get-lov-search`</td><td>政策性补贴search</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>弹窗名称</th><th>LOV编码</th><th>参数</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>装修申请单号</td><td>`AE.STORE_FINFEEAPPLYCLOSE_DATA_CHANGE_VIEW`</td><td>organizationId</td><td>选择已审批(APPROVED)的装修申请单，联动带出门店/经销商/装修信息</td></tr>
+<tr><td>CRM软装灯具订单</td><td>-</td><td>terminalApplyNo</td><td>查询可绑定的CRM软装灯具采购订单</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="导入">
+<p>本页面无导入功能。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>触发条件</th><th>执行逻辑</th><th>接口调用</th></tr>
+</thead>
+<tbody>
+<tr><td>作废</td><td>HZ_APPROVE_STATUS为NEW或REJECTED</td><td>弹窗确认→标记INTERRUPT</td><td>POST /cancel</td></tr>
+<tr><td>删除</td><td>HZ_APPROVE_STATUS为NEW</td><td>弹窗确认→删除</td><td>DELETE /do-delete</td></tr>
+<tr><td>打印</td><td>任意状态</td><td>获取打印数据→打印</td><td>GET /detail/print</td></tr>
+<tr><td>绑定软装订单</td><td>编辑模式</td><td>查询可绑定订单→选择→确认绑定</td><td>GET /select-crm-soft-order → POST /confirm-crm-soft-order</td></tr>
+<tr><td>取消绑定软装订单</td><td>已绑定订单</td><td>选择已绑定订单→取消绑定</td><td>POST /unbind-soft-order</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="保存校验">
+<ul><li>校验1：装修申请单必填 —— 确保关联有效的装修申请</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT CHECK_BX_ID FROM FIN_FEE_CHECK_BX_HEADER WHERE TERMINAL_APPLY_ID IS NULL</code></li></ul>
+<ul><li>校验2：验收数据完整性 —— 确保验收面积/金额等关键字段完整</li><li><strong>详细逻辑</strong>：后端校验关键字段非空</li><li><strong>系统体现</strong>：后端抛异常</li><li><strong>排查SQL</strong>：<code>SELECT CHECK_BX_ID FROM FIN_FEE_CHECK_BX_HEADER WHERE THIS_TERMINAL_AREA IS NULL</code></li></ul>
+</KbCard>
+
+<KbCard title="提交校验">
+<ul><li>校验1：装修申请单已审批 —— 确保关联的装修申请单状态为APPROVED</li><li><strong>详细逻辑</strong>：提交时校验原申请单hzApproveStatus=APPROVED</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_APPLY_ID=&#123;id&#125; AND HZ_APPROVE_STATUS!='APPROVED'</code></li></ul>
+</KbCard>
+
+<KbCard title="状态机">
+<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+                                       │              ├─ 生成额度内/外兑现记录
+                                       │              ├─ 回写装修申请单
+                                       │              └─ 同步资金池
+                                       │
+                                       ├──审批驳回──→ REJECTED(已驳回)
+                                       │
+                                       └──退回──→ REBUT(已退回)
+
+NEW/REJECTED ──作废──→ INTERRUPT(已作废)
+NEW ──删除──→ (删除)</code></pre>
+</KbCard>
+
+<KbCard title="工作流">
+<ul><li><strong>工作流编码</strong>：<code>SUB_STORE_MDYSYBXD</code>（门店验收与报销单）</li><li><strong>编码规则</strong>：验收报销单号由系统生成</li></ul>
+</KbCard>
+
+<KbCard title="FIN_FEE_CHECK_BX_HEADER（门店验收与报销单表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CHECK_BX_ID</td><td>Long</td><td>主键ID</td><td>-</td><td>自增</td></tr>
+<tr><td>CHECK_BX_CODE</td><td>String</td><td>验收报销单号</td><td>验收报销单号</td><td>编码规则生成</td></tr>
+<tr><td>TERMINAL_APPLY_ID</td><td>Long</td><td>装修申请ID</td><td>-</td><td>用户选择(LOV)</td></tr>
+<tr><td>TERMINAL_APPLY_NO</td><td>String</td><td>装修申请单号</td><td>装修申请单号</td><td>选择时带入</td></tr>
+<tr><td>TERMINAL_ID</td><td>Long</td><td>门店ID</td><td>-</td><td>从申请单带入</td></tr>
+<tr><td>TERMINAL_CODE</td><td>String</td><td>门店编码</td><td>门店编码</td><td>从申请单带入</td></tr>
+<tr><td>TERMINAL_NAME</td><td>String</td><td>门店名称</td><td>门店名称</td><td>从申请单带入</td></tr>
+<tr><td>CUST_ID</td><td>Long</td><td>经销商ID</td><td>-</td><td>从申请单带入</td></tr>
+<tr><td>CUST_CODE</td><td>String</td><td>经销商编码</td><td>-</td><td>从申请单带入</td></tr>
+<tr><td>CUST_NAME</td><td>String</td><td>经销商名称</td><td>经销商名称</td><td>从申请单带入</td></tr>
+<tr><td>SHORT_NAME</td><td>String</td><td>经销商简称</td><td>经销商简称</td><td>从申请单带入</td></tr>
+<tr><td>TRADING_COMPANY_ID</td><td>Long</td><td>交易公司ID</td><td>-</td><td>从申请单带入</td></tr>
+<tr><td>TRADING_COMPANY_CODE</td><td>String</td><td>交易公司编码</td><td>-</td><td>从申请单带入</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>String</td><td>交易公司名称</td><td>交易公司</td><td>从申请单带入</td></tr>
+<tr><td>BILLING_UNIT_ID</td><td>Long</td><td>法人客户ID</td><td>-</td><td>从申请单带入</td></tr>
+<tr><td>BILLING_UNIT_CODE</td><td>String</td><td>法人客户编码</td><td>-</td><td>从申请单带入</td></tr>
+<tr><td>BILLING_UNIT_NAME</td><td>String</td><td>法人客户名称</td><td>法人客户</td><td>从申请单带入</td></tr>
+<tr><td>FIXUP_GRADE</td><td>Long</td><td>装修等级</td><td>装修等级</td><td>从申请单带入</td></tr>
+<tr><td>TERMINAL_AREA</td><td>BigDecimal</td><td>门店面积</td><td>门店面积</td><td>从申请单带入</td></tr>
+<tr><td>THIS_TERMINAL_AREA</td><td>BigDecimal</td><td>实际装修面积</td><td>实际装修面积</td><td>从申请单带入</td></tr>
+<tr><td>IN_BX_AMT</td><td>BigDecimal</td><td>额度内报销金额</td><td>额度内报销金额</td><td>系统计算</td></tr>
+<tr><td>OUT_BX_AMT</td><td>BigDecimal</td><td>额度外报销金额</td><td>额度外报销金额</td><td>系统计算</td></tr>
+<tr><td>CHECK_DATE</td><td>LocalDate</td><td>验收日期</td><td>验收日期</td><td>用户输入</td></tr>
+<tr><td>NOTE</td><td>String</td><td>备注</td><td>备注</td><td>用户输入</td></tr>
+<tr><td>CREATOR</td><td>String</td><td>创建人</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CREATE_TIME</td><td>Date</td><td>创建时间</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CHECKER</td><td>String</td><td>审核人</td><td>-</td><td>审批通过时赋值</td></tr>
+<tr><td>CHECK_TIME</td><td>LocalDateTime</td><td>审核时间</td><td>-</td><td>审批通过时赋值</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>Long</td><td>组织ID</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>String</td><td>流程实例ID</td><td>-</td><td>工作流启动后赋值</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>String</td><td>流程审批状态</td><td>-</td><td>NEW/RUN/APPROVED/REJECTED/REBUT/INTERRUPT</td></tr>
+</tbody>
+</table>
+<p>注：Entity共836行，含100+字段，上表列出核心字段。完整字段包括各类报销金额/税额/发票信息/供应商信息/成本中心/销售区域/运营中心/设计师/软装采购/灯具采购等。</p>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题"><table class="kl-table"><thead><tr><th>问题</th><th>原因/解决方案</th></tr></thead><tbody><tr><td>CRM软装灯具查询无数据</td><td>检查CRM接口连通性和订单号</td></tr><tr><td>验收报销金额计算异常</td><td>检查验收面积、评分率、装修标准是否完整填写</td></tr><tr><td>作废后额度未释放</td><td>确认工作流状态已更新为INTERRUPT</td></tr></tbody></table></KbCard>
+<KbCard title="Q1：无法选择装修申请单">
+<p><strong>根因</strong>：没有APPROVED状态的装修申请单</p>
+<p><strong>解决方案</strong>：确认FIN_FEE_APPLY_FINISHED_HEADER中存在APPROVED状态的记录</p>
+</KbCard>
+
+<KbCard title="Q2：作废时报状态不允许">
+<p><strong>根因</strong>：单据状态非NEW或REJECTED</p>
+<p><strong>解决方案</strong>：仅NEW和REJECTED状态可作废</p>
+</KbCard>
+
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
+
+<div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>作者</th><th>说明</th></tr></thead><tbody><tr><td>2025-09-03</td><td>hfy</td><td>初始创建</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

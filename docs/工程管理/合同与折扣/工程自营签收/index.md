@@ -175,42 +175,11 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：合同校验 {防重复签收}">
-<KbQuote>防止同一合同重复签收，确保签收数据一致性</KbQuote>
-
-**具体逻辑**：
-
-- 1、选择合同时，校验该合同下是否存在未审核完毕的签收单
-- 2、若存在未审核完毕的签收单，阻断性报错，不允许新建
-</KbCard>
-
-<KbCard num="2" title="重点逻辑2：签收行数量校验 {数量控制}">
-<KbQuote>确保签收数量不超过出库数量，防止超签</KbQuote>
-
-**具体逻辑**：
-
-- 1、校验同一出库行的确认行是否一起签收
-- 2、计算签收数量是否已满（已签收数量+本次签收数量&lt;=出库数量）
-</KbCard>
-
-<KbCard num="3" title="重点逻辑3：审批通过联动处理 {级联生效}">
-<KbQuote>签收审批通过后，需级联更新签收状态、验收状态、推送ERP</KbQuote>
-
-**具体逻辑**：
-
-- 1、签收状态更新为"签收完成"，验收状态更新为"验收完成"
-- 2、计算本次签收合同总额和预提金额
-- 3、构造签收数据推送ERP入账
-</KbCard>
-
-<KbCard num="4" title="重点逻辑4：ERP推送与回写 {外部系统集成}">
-<KbQuote>签收数据需同步到ERP系统进行财务入账</KbQuote>
-
-**具体逻辑**：
-
-- 1、审批通过后，调用ErpSdkService推送签收数据到ERP
-- 2、推送数据包含签收头信息和签收行明细（含虚拟签收、退货签收）
-- 3、ERP返回结果后，更新签收行的入账状态(PENDING→TRANSFER→ACCOUNTED)
+<KbCard num="1" title="重点逻辑1：旧CRM网关调用 `网关模式`">
+<ul><li><strong>业务意义</strong>：通过CRM网关调用旧系统接口，兼容历史系统</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：使用gateway/requestOldCrmJsonToForm网关接口调用旧CRM服务</li></ul>
+<ul><li>第2点：通过classId='drp_diffprocbill_header'指定调用的旧CRM类</li></ul>
 </KbCard>
 
 </div>
@@ -220,553 +189,162 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：签收单列表页">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：工程自营签收列表页">
+<blockquote>前端代码位于arrow-ae/src/pages/engineering/SelfOperatedEngineeringSign/，使用旧版扁平结构</blockquote>
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>签收单号</td>
-<td>文本框</td>
-<td>签收单唯一编号</td>
-<td>常显</td>
-<td>1.系统自动生成；2.不可编辑</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.DIFFBILL_NO</td>
-</tr>
-<tr>
-<td>合同编码</td>
-<td>文本框</td>
-<td>关联合同编码</td>
-<td>常显</td>
-<td>1.来源：选择合同时带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.CONTRACT_CODE</td>
-</tr>
-<tr>
-<td>合同名称</td>
-<td>文本框</td>
-<td>关联合同名称</td>
-<td>常显</td>
-<td>1.来源：选择合同时带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.CONTRACT_NAME</td>
-</tr>
-<tr>
-<td>项目编码</td>
-<td>文本框</td>
-<td>关联项目编码</td>
-<td>常显</td>
-<td>1.来源：选择合同时带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.PROJECT_CODE</td>
-</tr>
-<tr>
-<td>项目名称</td>
-<td>文本框</td>
-<td>关联项目名称</td>
-<td>常显</td>
-<td>1.来源：选择合同时带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.PROJECT_NAME</td>
-</tr>
-<tr>
-<td>客户名称</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>1.来源：选择合同时带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.CUST_NAME</td>
-</tr>
-<tr>
-<td>法人客户</td>
-<td>文本框</td>
-<td>法人客户名称</td>
-<td>常显</td>
-<td>1.来源：选择合同时带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.BILLING_UNIT_NAME</td>
-</tr>
-<tr>
-<td>状态</td>
-<td>下拉选择框</td>
-<td>签收单状态</td>
-<td>常显</td>
-<td>1.来源：1制单/2提交/3启动/4驳回/5审核/6已签收/9已关闭/10红冲</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.STAT</td>
-</tr>
-<tr>
-<td>创建人</td>
-<td>文本框</td>
-<td>创建人</td>
-<td>常显</td>
-<td>1.系统自动记录</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.CREATOR</td>
-</tr>
-<tr>
-<td>创建时间</td>
-<td>文本框</td>
-<td>创建时间</td>
-<td>常显</td>
-<td>1.系统自动记录</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.CREATETIME</td>
-</tr>
-</tbody></table></div>
+<tr><td>签收单号</td><td>DRP_DIFFPROCBILL_HEADER.DIFFBILL_NO</td><td>文本框</td><td>签收单唯一标识</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>创建人</td><td>DRP_DIFFPROCBILL_HEADER.CREATOR_NAME</td><td>文本框</td><td>创建人</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>创建时间</td><td>DRP_DIFFPROCBILL_HEADER.CREATE_TIME</td><td>日期选择器</td><td>创建时间</td><td>常显</td><td>1. 范围查询</td></tr>
+<tr><td>单据状态</td><td>DRP_DIFFPROCBILL_HEADER.STAT</td><td>下拉选择框</td><td>单据状态</td><td>常显</td><td>1. 来源：值集</td></tr>
+<tr><td>经销商编码</td><td>DRP_DIFFPROCBILL_HEADER.CUST_CODE</td><td>文本框</td><td>经销商编码</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>经销商名称</td><td>DRP_DIFFPROCBILL_HEADER.CUST_NAME</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>合同编码</td><td>DRP_DIFFPROCBILL_HEADER.CONTRACT_CODE</td><td>文本框</td><td>合同编码</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>合同名称</td><td>DRP_DIFFPROCBILL_HEADER.CONTRACT_NAME</td><td>文本框</td><td>合同名称</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>项目编码</td><td>DRP_DIFFPROCBILL_HEADER.PROJECT_CODE</td><td>文本框</td><td>项目编码</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>项目名称</td><td>DRP_DIFFPROCBILL_HEADER.PROJECT_NAME</td><td>文本框</td><td>项目名称</td><td>常显</td><td>1. 查询支持模糊匹配</td></tr>
+<tr><td>签收状态</td><td>DRP_DIFFPROCBILL_HEADER.CHECK_STAT</td><td>下拉选择框</td><td>签收状态</td><td>常显</td><td>1. 来源：值集</td></tr>
+<tr><td>验收状态</td><td>DRP_DIFFPROCBILL_HEADER.ACCEPT_STAT</td><td>下拉选择框</td><td>验收状态</td><td>常显</td><td>1. 来源：值集</td></tr>
+<tr><td>审核状态</td><td>DRP_DIFFPROCBILL_HEADER.HZ_APPROVE_STATUS</td><td>下拉选择框</td><td>审批状态</td><td>常显</td><td>1. 来源：值集HWKF.APPROVE_STATUS</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard title="界面模块2：签收单详情页-头信息">
-<div class="kb-field-scroll">
+<KbCard title="界面模块2：详情页-签收头信息">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>签收单号</td>
-<td>文本框</td>
-<td>签收单编号</td>
-<td>常显</td>
-<td>1.新建时为空，保存后自动生成；2.不可编辑</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.DIFFBILL_NO</td>
-</tr>
-<tr>
-<td>经销商</td>
-<td>LOV</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>1.选择经销商LOV带出；2.选择后清空合同、项目等关联字段</td>
-<td>LOV:客户</td>
-<td>DRP_DIFFPROCBILL_HEADER.CUST_NAME</td>
-</tr>
-<tr>
-<td>法人客户</td>
-<td>LOV</td>
-<td>法人客户</td>
-<td>常显</td>
-<td>1.选择法人客户LOV带出</td>
-<td>LOV:法人客户</td>
-<td>DRP_DIFFPROCBILL_HEADER.BILLING_UNIT_NAME</td>
-</tr>
-<tr>
-<td>合同编码</td>
-<td>LOV</td>
-<td>合同编码</td>
-<td>常显</td>
-<td>1.选择合同LOV带出；2.选择后自动加载合同出库明细</td>
-<td>LOV:自营工程合同</td>
-<td>DRP_DIFFPROCBILL_HEADER.CONTRACT_CODE</td>
-</tr>
-<tr>
-<td>合同名称</td>
-<td>文本框</td>
-<td>合同名称</td>
-<td>常显</td>
-<td>1.选择合同时自动带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.CONTRACT_NAME</td>
-</tr>
-<tr>
-<td>项目编码</td>
-<td>文本框</td>
-<td>项目编码</td>
-<td>常显</td>
-<td>1.选择合同时自动带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.PROJECT_CODE</td>
-</tr>
-<tr>
-<td>项目名称</td>
-<td>文本框</td>
-<td>项目名称</td>
-<td>常显</td>
-<td>1.选择合同时自动带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.PROJECT_NAME</td>
-</tr>
-<tr>
-<td>本次签收数量</td>
-<td>数字框</td>
-<td>本次签收总数量</td>
-<td>常显</td>
-<td>1.自动汇总=签收行本次签收数量之和</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.RECEIVED_QTY</td>
-</tr>
-<tr>
-<td>本次签收金额</td>
-<td>数字框</td>
-<td>本次签收总金额</td>
-<td>常显</td>
-<td>1.自动汇总=签收行签收金额之和</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.RECEIVED_AMOUNT</td>
-</tr>
-<tr>
-<td>已签收数量</td>
-<td>数字框</td>
-<td>历史已签收总数量</td>
-<td>常显</td>
-<td>1.来源：合同历史签收数据</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.THEN_RECEIVED_QTY</td>
-</tr>
-<tr>
-<td>已签收金额</td>
-<td>数字框</td>
-<td>历史已签收总金额</td>
-<td>常显</td>
-<td>1.来源：合同历史签收数据</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.THEN_RECEIVED_AMOUNT</td>
-</tr>
-<tr>
-<td>签收方式</td>
-<td>下拉选择框</td>
-<td>签收方式</td>
-<td>常显</td>
-<td>1.来源：1=手动/2=自动/3=扫码</td>
-<td>1(手动)/2(自动)/3(扫码)</td>
-<td>DRP_DIFFPROCBILL_HEADER.SIGN_WAY</td>
-</tr>
-<tr>
-<td>签收状态</td>
-<td>下拉选择框</td>
-<td>签收状态</td>
-<td>常显</td>
-<td>1.来源：1=待签收/2=已签收/3=已验收</td>
-<td>1/2/3</td>
-<td>DRP_DIFFPROCBILL_HEADER.CHECK_STAT</td>
-</tr>
-<tr>
-<td>验收状态</td>
-<td>下拉选择框</td>
-<td>验收状态</td>
-<td>常显</td>
-<td>1.来源：系统更新</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.ACCEPT_STAT</td>
-</tr>
-<tr>
-<td>本次签收时间</td>
-<td>日期选择框</td>
-<td>批量设置签收时间</td>
-<td>常显</td>
-<td>1.设置后批量更新所有签收行的签收时间</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_HEADER.MODEL_SIGN_DATE</td>
-</tr>
-</tbody></table></div>
+<tr><td>签收单号</td><td>DRP_DIFFPROCBILL_HEADER.DIFFBILL_NO</td><td>文本</td><td>签收单号</td><td>常显</td><td>只读；自动生成</td></tr>
+<tr><td>创建人</td><td>DRP_DIFFPROCBILL_HEADER.CREATOR_NAME</td><td>文本</td><td>创建人</td><td>常显</td><td>只读；默认当前用户</td></tr>
+<tr><td>创建时间</td><td>DRP_DIFFPROCBILL_HEADER.CREATE_TIME</td><td>日期</td><td>创建时间</td><td>常显</td><td>只读</td></tr>
+<tr><td>单据状态</td><td>DRP_DIFFPROCBILL_HEADER.STAT</td><td>下拉选择框</td><td>单据状态</td><td>常显</td><td>只读；来源值集</td></tr>
+<tr><td>经销商编码</td><td>DRP_DIFFPROCBILL_HEADER.CUST_CODE</td><td>LOV弹窗</td><td>经销商客户</td><td>常显</td><td>必填；LOV编码BASIC_CUSTOM_ORG_LOV_2；选择后带出客户名称/简称/销售区域；单据状态=5或crmEditFlag=2或经销商登录时禁用</td></tr>
+<tr><td>经销商名称</td><td>DRP_DIFFPROCBILL_HEADER.CUST_NAME</td><td>文本</td><td>经销商名称</td><td>常显</td><td>只读；选择客户后自动带出</td></tr>
+<tr><td>经销商简称</td><td>DRP_DIFFPROCBILL_HEADER.CUSTOMER_SHORT_NAME</td><td>文本</td><td>经销商简称</td><td>常显</td><td>只读；选择客户后自动带出</td></tr>
+<tr><td>所属销售区域</td><td>DRP_DIFFPROCBILL_HEADER.SALEZONE_ORG_NAME</td><td>文本</td><td>所属销售区域名称</td><td>常显</td><td>只读；选择客户后自动带出</td></tr>
+<tr><td>法人客户编码</td><td>DRP_DIFFPROCBILL_HEADER.BILLING_UNIT_CODE</td><td>LOV弹窗</td><td>法人客户</td><td>常显</td><td>必填；选择后带出法人客户名称</td></tr>
+<tr><td>法人客户名称</td><td>DRP_DIFFPROCBILL_HEADER.BILLING_UNIT_NAME</td><td>文本</td><td>法人客户名称</td><td>常显</td><td>只读；选择法人客户后自动带出</td></tr>
+<tr><td>合同编码</td><td>DRP_DIFFPROCBILL_HEADER.CONTRACT_CODE</td><td>LOV弹窗</td><td>合同编码</td><td>常显</td><td>必填；选择后带出合同/项目信息并计算数量金额</td></tr>
+<tr><td>合同名称</td><td>DRP_DIFFPROCBILL_HEADER.CONTRACT_NAME</td><td>文本</td><td>合同名称</td><td>常显</td><td>只读；选择合同后自动带出</td></tr>
+<tr><td>项目编码</td><td>DRP_DIFFPROCBILL_HEADER.PROJECT_CODE</td><td>文本</td><td>项目编码</td><td>常显</td><td>只读；选择合同后自动带出</td></tr>
+<tr><td>项目名称</td><td>DRP_DIFFPROCBILL_HEADER.PROJECT_NAME</td><td>文本</td><td>项目名称</td><td>常显</td><td>只读；选择合同后自动带出</td></tr>
+<tr><td>发货数量</td><td>DRP_DIFFPROCBILL_HEADER.QTY_SUM</td><td>数值框</td><td>发货数量</td><td>常显</td><td>只读；来自合同</td></tr>
+<tr><td>合同金额</td><td>DRP_DIFFPROCBILL_HEADER.TOTAL_AMOUNT</td><td>数值框</td><td>合同金额</td><td>常显</td><td>只读；单位元，精度2</td></tr>
+<tr><td>已签收数量</td><td>DRP_DIFFPROCBILL_HEADER.THEN_RECEIVED_QTY</td><td>数值框</td><td>已签收数量</td><td>常显</td><td>只读；来自合同</td></tr>
+<tr><td>已签收合同金额</td><td>DRP_DIFFPROCBILL_HEADER.THEN_RECEIVED_AMOUNT</td><td>数值框</td><td>已签收合同金额</td><td>常显</td><td>只读</td></tr>
+<tr><td>已选签收数量</td><td>DRP_DIFFPROCBILL_HEADER.RECEIVED_QTY</td><td>数值框</td><td>已选签收数量</td><td>常显</td><td>只读；明细行汇总</td></tr>
+<tr><td>已选签收合同金额</td><td>DRP_DIFFPROCBILL_HEADER.RECEIVED_AMOUNT</td><td>数值框</td><td>已选签收合同金额</td><td>常显</td><td>只读；明细行汇总</td></tr>
+<tr><td>未签收数量</td><td>DRP_DIFFPROCBILL_HEADER.REMAIN_RECEIVED_QTY</td><td>数值框</td><td>未签收数量</td><td>常显</td><td>只读；发货数量-已签收数量</td></tr>
+<tr><td>未签收合同金额</td><td>DRP_DIFFPROCBILL_HEADER.REMAIN_RECEIVED_AMOUNT</td><td>数值框</td><td>未签收合同金额</td><td>常显</td><td>只读；合同金额-已签收合同金额</td></tr>
+<tr><td>本次预提金额</td><td>DRP_DIFFPROCBILL_HEADER.WITHHOLDING_AMOUNT</td><td>数值框</td><td>本次预提金额</td><td>常显</td><td>只读；service_charge≠2时=合同金额-已签收合同金额，否则=0</td></tr>
+<tr><td>签收审核日期</td><td>DRP_DIFFPROCBILL_HEADER.CHECK_TIME</td><td>日期</td><td>签收审核日期</td><td>常显</td><td>只读</td></tr>
+<tr><td>验收审核日期</td><td>DRP_DIFFPROCBILL_HEADER.ACCEPT_TIME</td><td>日期</td><td>验收审核日期</td><td>常显</td><td>只读</td></tr>
+<tr><td>批量设置签收时间</td><td>DRP_DIFFPROCBILL_HEADER.MODEL_SIGN_DATE</td><td>日期选择器</td><td>批量设置签收时间</td><td>常显</td><td>必填；变更时同步更新所有明细行签收时间</td></tr>
+<tr><td>签收状态</td><td>DRP_DIFFPROCBILL_HEADER.CHECK_STAT</td><td>文本</td><td>签收状态</td><td>常显</td><td>只读</td></tr>
+<tr><td>验收状态</td><td>DRP_DIFFPROCBILL_HEADER.ACCEPT_STAT</td><td>文本</td><td>验收状态</td><td>常显</td><td>只读</td></tr>
+<tr><td>签收方式</td><td>DRP_DIFFPROCBILL_HEADER.SIGN_WAY</td><td>文本</td><td>签收方式</td><td>常显</td><td>只读；来自合同</td></tr>
+<tr><td>币种</td><td>DRP_DIFFPROCBILL_HEADER.CURRENCY</td><td>文本</td><td>币种</td><td>常显</td><td>只读</td></tr>
+<tr><td>不计服务费</td><td>DRP_DIFFPROCBILL_HEADER.SERVICE_CHARGE</td><td>开关</td><td>是否不计服务费</td><td>常显</td><td>trueValue=2；来自合同</td></tr>
+<tr><td>备注</td><td>DRP_DIFFPROCBILL_HEADER.MO_REMARK</td><td>文本域</td><td>备注</td><td>常显</td><td>可编辑</td></tr>
+<tr><td>所属事业部</td><td>DRP_DIFFPROCBILL_HEADER.DIVISION_ID</td><td>文本</td><td>所属事业部</td><td>常显</td><td>只读；来自合同</td></tr>
+<tr><td>交易公司</td><td>DRP_DIFFPROCBILL_HEADER.TRADING_COMPANY_NAME</td><td>文本</td><td>交易公司</td><td>常显</td><td>只读；来自合同</td></tr>
+<tr><td>交易公司编码</td><td>DRP_DIFFPROCBILL_HEADER.TRADING_COMPANY_CODE</td><td>文本</td><td>交易公司编码</td><td>常显</td><td>只读；来自合同</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard title="界面模块3：签收单详情页-行明细">
-<div class="kb-field-scroll">
+<KbCard title="界面模块3：详情页-签收明细行">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>ERP状态</td>
-<td>文本框</td>
-<td>ERP推送返回信息</td>
-<td>常显</td>
-<td>1.来源：ERP返回</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.INTF_MSG</td>
-</tr>
-<tr>
-<td>签收时间</td>
-<td>日期选择框</td>
-<td>该行签收时间</td>
-<td>常显</td>
-<td>1.默认值：头表本次签收时间；2.可单独修改</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.SIGN_DATE</td>
-</tr>
-<tr>
-<td>产品编码</td>
-<td>文本框</td>
-<td>物料编码</td>
-<td>常显</td>
-<td>1.来源：出库确认行带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.ITEM_CODE</td>
-</tr>
-<tr>
-<td>产品名称</td>
-<td>文本框</td>
-<td>物料名称</td>
-<td>常显</td>
-<td>1.来源：出库确认行带出</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.ITEM_NAME</td>
-</tr>
-<tr>
-<td>本次签收数量</td>
-<td>数字框</td>
-<td>本次签收数量</td>
-<td>常显</td>
-<td>1.来源：出库确认行可签收数量；2.可编辑</td>
-<td>&gt;=0</td>
-<td>DRP_DIFFPROCBILL_LINE.THIS_RECEIPT</td>
-</tr>
-<tr>
-<td>折后单价</td>
-<td>数字框</td>
-<td>折后单价</td>
-<td>常显</td>
-<td>1.来源：折扣单折后单价</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.RECEIVED_AMOUNT/RECEIVED_QTY</td>
-</tr>
-<tr>
-<td>发货金额</td>
-<td>数字框</td>
-<td>发货金额</td>
-<td>常显</td>
-<td>1.自动计算=出库数量×折后单价</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>工程方单价</td>
-<td>数字框</td>
-<td>工程方单价</td>
-<td>常显</td>
-<td>1.来源：合同产品清单</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.CONTRACT_PRICE</td>
-</tr>
-<tr>
-<td>合同金额</td>
-<td>数字框</td>
-<td>合同金额</td>
-<td>常显</td>
-<td>1.自动计算=本次签收数量×工程方单价</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.CONTRACT_AMOUNT</td>
-</tr>
-<tr>
-<td>本次是否签收</td>
-<td>复选框</td>
-<td>是否参与本次签收</td>
-<td>常显</td>
-<td>1.勾选=参与签收；2.默认勾选</td>
-<td>是/否</td>
-<td>DRP_DIFFPROCBILL_LINE.IS_RECEIPT</td>
-</tr>
-<tr>
-<td>签收数量</td>
-<td>数字框</td>
-<td>已签收数量</td>
-<td>常显</td>
-<td>1.历史已签收数量</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.RECEIVED_QTY</td>
-</tr>
-<tr>
-<td>签收金额</td>
-<td>数字框</td>
-<td>已签收金额</td>
-<td>常显</td>
-<td>1.历史已签收金额</td>
-<td>-</td>
-<td>DRP_DIFFPROCBILL_LINE.RECEIVED_AMOUNT</td>
-</tr>
-</tbody></table></div>
+<tr><td>序号</td><td>DRP_DIFFPROCBILL_LINE.SEQ</td><td>数值</td><td>序号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>ERP状态</td><td>DRP_DIFFPROCBILL_LINE.INTF_MSG</td><td>文本</td><td>ERP推送状态</td><td>常显</td><td>只读；推送成功/失败</td></tr>
+<tr><td>ERP出库单号</td><td>DRP_DIFFPROCBILL_LINE.INVBILLNO</td><td>文本</td><td>ERP出库单号</td><td>常显</td><td>只读</td></tr>
+<tr><td>签收时间</td><td>DRP_DIFFPROCBILL_LINE.SIGN_DATE</td><td>日期</td><td>签收时间</td><td>常显</td><td>可编辑；头表批量设置签收时间时同步更新</td></tr>
+<tr><td>发货日期</td><td>DRP_DIFFPROCBILL_LINE.OUTBILL_DATE</td><td>日期</td><td>发货日期</td><td>常显</td><td>只读</td></tr>
+<tr><td>产品编码</td><td>DRP_DIFFPROCBILL_LINE.ITEM_CODE</td><td>文本</td><td>产品编码</td><td>常显</td><td>只读</td></tr>
+<tr><td>产品名称</td><td>DRP_DIFFPROCBILL_LINE.ITEM_NAME</td><td>文本</td><td>产品名称</td><td>常显</td><td>只读</td></tr>
+<tr><td>发货数量</td><td>DRP_DIFFPROCBILL_LINE.SALES_REAL_QUANTITY</td><td>数值框</td><td>发货数量</td><td>常显</td><td>只读</td></tr>
+<tr><td>退货数量</td><td>DRP_DIFFPROCBILL_LINE.RETURN_QTY</td><td>数值框</td><td>退货数量</td><td>常显</td><td>只读</td></tr>
+<tr><td>剩余签收数量</td><td>DRP_DIFFPROCBILL_LINE.REMAINING_ACCEPTED_QTY</td><td>数值框</td><td>剩余签收数量</td><td>常显</td><td>只读</td></tr>
+<tr><td>本次签收数量</td><td>DRP_DIFFPROCBILL_LINE.QTY</td><td>数值框</td><td>本次签收数量</td><td>常显</td><td>可编辑；变更时触发汇总计算</td></tr>
+<tr><td>折后单价</td><td>DRP_DIFFPROCBILL_LINE.PRICE</td><td>数值框</td><td>折后单价</td><td>常显</td><td>只读；精度7</td></tr>
+<tr><td>发货金额</td><td>DRP_DIFFPROCBILL_LINE.AMOUNT</td><td>数值框</td><td>发货金额</td><td>常显</td><td>只读</td></tr>
+<tr><td>工程方单价</td><td>DRP_DIFFPROCBILL_LINE.CONTRACT_PRICE</td><td>数值框</td><td>工程方单价</td><td>常显</td><td>只读；精度7</td></tr>
+<tr><td>合同金额</td><td>DRP_DIFFPROCBILL_LINE.CONTRACT_AMOUNT</td><td>数值框</td><td>合同金额</td><td>常显</td><td>只读；精度2；变更时触发汇总计算</td></tr>
+<tr><td>折扣金额</td><td>DRP_DIFFPROCBILL_LINE.DISCOUNT_AMOUNT</td><td>数值框</td><td>折扣金额</td><td>常显</td><td>只读</td></tr>
+<tr><td>已推送数量</td><td>DRP_DIFFPROCBILL_LINE.PUSHED_QTY</td><td>数值框</td><td>已推送ERP数量</td><td>常显</td><td>只读</td></tr>
+<tr><td>已推送金额</td><td>DRP_DIFFPROCBILL_LINE.PUSHED_AMOUNT</td><td>数值框</td><td>已推送ERP金额</td><td>常显</td><td>只读</td></tr>
+<tr><td>本次是否签收</td><td>DRP_DIFFPROCBILL_LINE.THIS_RECEIPT</td><td>开关/选择</td><td>本次是否签收</td><td>常显</td><td>2=是，1=否；批量设置签收时间时仅更新this_receipt=2的行</td></tr>
+<tr><td>ERP推送信息</td><td>DRP_DIFFPROCBILL_LINE.INTF_MSG</td><td>文本</td><td>ERP推送结果信息</td><td>常显</td><td>只读</td></tr>
+<tr><td>ERP推送时间</td><td>DRP_DIFFPROCBILL_LINE.INTF_DATE</td><td>日期</td><td>ERP推送时间</td><td>常显</td><td>只读</td></tr>
+<tr><td>ERP推送人</td><td>DRP_DIFFPROCBILL_LINE.INTF_BY</td><td>文本</td><td>ERP推送操作人</td><td>常显</td><td>只读</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
-<KbSubTitle>弹窗1：选择合同明细 <KbBadge type="purple">多选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| contractId | 合同ID | 当前签收单关联的合同ID | 1001 |
-
-**数据范围**
-
-```sql
-该合同下未签收的出库确认行(SA_OUT_BILL_LINE)，条件：出库数量>已签收数量
-```
-
+<h4>弹窗1：合同明细选择弹窗</h4>
+<p>在编辑页点击"选择合同明细"按钮时弹出，展示选中合同的全部明细行。</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>组件</th><th>业务释义</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>产品编码</td><td>文本框</td><td>产品编码</td><td>只读</td></tr>
+<tr><td>产品名称</td><td>文本框</td><td>产品名称</td><td>只读</td></tr>
+<tr><td>发货数量</td><td>数值框</td><td>发货数量</td><td>只读</td></tr>
+<tr><td>退货数量</td><td>数值框</td><td>退货数量</td><td>只读</td></tr>
+<tr><td>剩余签收数量</td><td>数值框</td><td>剩余签收数量</td><td>只读</td></tr>
+<tr><td>本次签收数量</td><td>数值框</td><td>本次签收数量</td><td>用户输入</td></tr>
+<tr><td>折后单价</td><td>数值框</td><td>折后单价</td><td>只读</td></tr>
+<tr><td>发货金额</td><td>数值框</td><td>发货金额</td><td>只读</td></tr>
+<tr><td>工程方单价</td><td>数值框</td><td>工程方单价</td><td>只读</td></tr>
+<tr><td>合同金额</td><td>数值框</td><td>合同金额</td><td>只读</td></tr>
+</tbody>
+</table>
+<blockquote>支持多选，选择后确认将数据添加到主明细表格</blockquote>
 </KbCard>
-<KbCard title="导入">
-</KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 新建签收单 | 新建签收单 | 列表页 | 常显 | 跳转签收单详情页 |
-| 保存 | 保存签收单 | 详情页 | 状态为制单/驳回时可操作 | 调用insertDrpHead/updateDrpHead保存 |
-| 提交 | 提交审批 | 详情页 | 状态为制单/驳回时可操作 | 调用submit提交，启动流程PROJECT_DRP_DIFFPROC_BILL |
-| 选择合同明细 | 弹窗选择出库行 | 详情页 | 编辑模式下 | 弹窗加载合同出库确认行，勾选后添加到签收行 |
-
-</KbCard>
-<KbCard title="保存校验">
-<KbSubTitle>校验1：合同校验 —— 确保合同不存在未审核完毕的签收单</KbSubTitle>
-
-- 第1点：保存前调用validContractInfo校验
-- 第2点：查询该合同下是否存在stat不为5(审核)和6(已签收)的签收单
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT COUNT(1) FROM DRP_DIFFPROCBILL_HEADER WHERE CONTRACT_ID = #{contractId} AND STAT NOT IN (5, 6, 9, 10)
-```
-
-</KbCard>
-<KbCard title="提交校验">
-<KbSubTitle>校验1：签收行数量校验 —— 确保签收数量不超过出库数量</KbSubTitle>
-
-- 第1点：校验同一出库确认行的签收数量是否已满
-- 第2点：已签收数量+本次签收数量&lt;=出库数量
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT BL.SA_OUT_BILL_LINE_ID, BL.QTY AS OUT_QTY, NVL(SUM(DL.RECEIVED_QTY),0) AS SIGNED_QTY FROM SA_OUT_BILL_LINE BL LEFT JOIN DRP_DIFFPROCBILL_LINE DL ON DL.SOURCE_LINE_ID = BL.SA_OUT_BILL_LINE_ID WHERE BL.CONTRACT_ID = #{contractId} GROUP BY BL.SA_OUT_BILL_LINE_ID, BL.QTY HAVING BL.QTY < NVL(SUM(DL.RECEIVED_QTY),0)
-```
-
-</KbCard>
-<KbCard title="状态机">
-### 状态机
-
-<KbSubTitle>状态机流转图</KbSubTitle>
-
-
-```text
-[制单 1] ──提交──→ [提交 2] ──启动流程──→ [启动 3] ──审批通过──→ [审核 5] ──签收完成──→ [已签收 6]
-                                        │
-                                        ├──审批驳回──→ [驳回 4]
-
-[已签收 6] ──关闭──→ [已关闭 9]
-[任意状态] ──红冲──→ [红冲 10]
-```
-
-<KbSubTitle>状态机列表</KbSubTitle>
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| 1 | 制单 | 保存、提交、编辑 |
-| 2 | 提交 | 等待流程启动 |
-| 3 | 启动(审批中) | 等待审批结果 |
-| 4 | 驳回 | 保存、提交、编辑 |
-| 5 | 审核(审批通过) | 签收处理 |
-| 6 | 已签收 | 推送ERP、关闭 |
-| 9 | 已关闭 | 无 |
-| 10 | 红冲 | 无 |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：DRP_DIFFPROCBILL_HEADER（签收头）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| DIFFBILL_ID | Long | 签收单ID(主键) | - | 自增主键 |
-| DIFFBILL_NO | String | 签收单编号 | 签收单号 | 编码规则自动生成 |
-| STAT | Long | 状态 | 状态 | 1制单/2提交/3启动/4驳回/5审核/6已签收/9已关闭/10红冲 |
-| CUST_ID | Long | 经销商ID | - | 选择经销商LOV |
-| CUST_CODE | String | 经销商编码 | - | LOV带出 |
-| CUST_NAME | String | 经销商名称 | 经销商 | LOV带出 |
-| BILLING_UNIT_ID | Long | 法人客户ID | - | 选择法人客户LOV |
-| BILLING_UNIT_CODE | String | 法人客户编码 | - | LOV带出 |
-| BILLING_UNIT_NAME | String | 法人客户名称 | 法人客户 | LOV带出 |
-| CONTRACT_ID | Long | 合同ID | - | 选择合同LOV |
-| CONTRACT_CODE | String | 合同编码 | 合同编码 | LOV带出 |
-| CONTRACT_NAME | String | 合同名称 | 合同名称 | LOV带出 |
-| PROJECT_ID | Long | 项目ID | - | 合同带出 |
-| PROJECT_CODE | String | 项目编码 | 项目编码 | 合同带出 |
-| PROJECT_NAME | String | 项目名称 | 项目名称 | 合同带出 |
-| RECEIVED_QTY | Long | 本次签收数量 | 本次签收数量 | 行汇总 |
-| RECEIVED_AMOUNT | BigDecimal | 本次签收金额 | 本次签收金额 | 行汇总 |
-| THEN_RECEIVED_QTY | Long | 已签收数量 | 已签收数量 | 合同历史签收 |
-| THEN_RECEIVED_AMOUNT | Long | 已签收金额 | 已签收金额 | 合同历史签收 |
-| SIGN_WAY | Long | 签收方式 | 签收方式 | 1手动/2自动/3扫码 |
-| CHECK_STAT | String | 签收状态 | 签收状态 | 1待签收/2已签收/3已验收 |
-| ACCEPT_STAT | String | 验收状态 | 验收状态 | 审批通过后更新 |
-| CHECK_TIME | LocalDateTime | 签收审核日期 | - | 审批时写入 |
-| ACCEPT_TIME | LocalDateTime | 验收时间 | - | 审批通过时写入 |
-| CONTRACT_AMOUNT | BigDecimal | 本次签收合同总额 | - | 审批时计算 |
-| WITHHOLDING_AMOUNT | BigDecimal | 本次预提金额 | - | 审批时计算 |
-| MODEL_SIGN_DATE | LocalDateTime | 本次签收时间 | 本次签收时间 | 用户设置 |
-| SERVICE_CHARGE | String | 不计服务费标识 | - | 2=不计 |
-| AUTO_FLAG | String | 自动签收标识 | - | Y/N |
-| HZ_APPROVE_STATUS | String | H0流程审批状态 | - | NEW/RUN/APPROVED/REJECTED |
-| HZ_INSTANCE_ID | Long | H0流程实例ID | - | 流程启动后写入 |
-| CREATOR | String | 创建人 | - | 系统自动记录 |
-| CREATETIME | LocalDateTime | 创建时间 | - | 系统自动记录 |
-| OBJECT_VERSION_NUMBER | Long | 乐观锁版本号 | - | 框架自动维护 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新建</td><td>新建签收单</td><td>列表页</td><td>常显</td><td>跳转详情页新建态</td></tr>
+<tr><td>保存</td><td>保存签收单</td><td>详情页</td><td>编辑态显示</td><td>保存签收信息</td></tr>
+<tr><td>提交</td><td>提交审批</td><td>详情页</td><td>状态为NEW或REJECTED时显示</td><td>触发工作流，调用旧CRM网关提交</td></tr>
+<tr><td>批量设置签收时间</td><td>批量设置明细行签收时间</td><td>详情页</td><td>编辑态显示</td><td>同步更新所有this_receipt=2的明细行签收时间</td></tr>
+<tr><td>取消</td><td>取消编辑返回列表</td><td>详情页</td><td>编辑态显示</td><td>返回列表页，放弃未保存的修改</td></tr>
+<tr><td>选择合同明细</td><td>打开合同明细选择弹窗</td><td>详情页</td><td>编辑态显示，且已选择合同</td><td>弹窗展示合同明细行，支持多选</td></tr>
+<tr><td>添加(明细行)</td><td>新增空明细行</td><td>详情页</td><td>编辑态显示</td><td>在表格末尾新增一行</td></tr>
+<tr><td>删除(明细行)</td><td>删除选中明细行</td><td>详情页</td><td>编辑态显示且选中行</td><td>确认后删除选中的明细行</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="表2：DRP_DIFFPROCBILL_LINE（签收行）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| DIFFBILL_LINE_ID | Long | 明细ID(主键) | - | 自增主键 |
-| DIFFBILL_ID | Long | 签收头ID(外键) | - | 关联头表 |
-| ITEM_CODE | String | 物料编码 | 产品编码 | 出库确认行带出 |
-| ITEM_NAME | String | 物料名称 | 产品名称 | 出库确认行带出 |
-| QTY | Long | 出库数量 | - | 出库确认行带出 |
-| RECEIVED_QTY | Long | 已签收数量 | 签收数量 | 历史累计 |
-| RECEIVED_AMOUNT | BigDecimal | 已签收金额 | 签收金额 | 历史累计 |
-| IS_RECEIPT | Long | 是否签收 | 本次是否签收 | 1=是 |
-| THIS_RECEIPT | Long | 本次签收数量 | 本次签收数量 | 用户输入 |
-| SIGN_DATE | LocalDateTime | 签收时间 | 签收时间 | 默认头表签收时间 |
-| CONTRACT_PRICE | BigDecimal | 工程方单价 | 工程方单价 | 合同产品清单 |
-| CONTRACT_AMOUNT | BigDecimal | 合同金额 | 合同金额 | =本次签收数量×工程方单价 |
-| INTF_MSG | String | 接口返回信息 | ERP状态 | ERP推送返回 |
-| SOURCE_TYPE | String | 来源类型 | - | return/inv_out |
-| ACCOUNT_STATUS | String | 入账标识 | - | PENDING/TRANSFER/ACCOUNTED/UNACCOUNTED |
-
----
-
+<KbCard title="表1：DRP_DIFFPROCBILL_HEADER（工程自营签收头表，旧CRM表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>BILL_NO</td><td>VARCHAR</td><td>签收单号</td><td>签收单号</td><td>自动生成</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>项目编码</td><td>项目编码</td><td>关联项目主档</td></tr>
+<tr><td>CONTRACT_CODE</td><td>VARCHAR</td><td>合同编码</td><td>合同编码</td><td>关联合同主档</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>审批状态</td><td>审核状态</td><td>值集HWKF.APPROVE_STATUS</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
-</KbCard>
 </div>
 </div>
 </div>
@@ -774,72 +352,95 @@ SELECT BL.SA_OUT_BILL_LINE_ID, BL.QTY AS OUT_QTY, NVL(SUM(DL.RECEIVED_QTY),0) AS
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">合同存在未审核完毕的签收单</td>
-            <td style="font-size:13px;">保存/选择合同</td>
-            <td style="font-size:13px;">该合同下已有未完成的签收单，需先处理已有签收单</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">签收数量超过出库数量</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">签收行本次签收数量+已签收数量&gt;出库数量</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>合同存在未审核完毕的签收单</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>该合同下已有未完成的签收单，需先处理已有签收单</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>签收数量超过出库数量</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>签收行本次签收数量+已签收数量&gt;出库数量</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>旧CRM网关调用失败</td><td>签收提交时</td><td>旧CRM服务不可用或网关配置错误。检查旧CRM服务连通性和网关配置</td><td>中</td><td>[查看]</td></tr>
+<tr><td>签收单不存在</td><td>查询详情时</td><td>按BILL_NO查询DRP_DIFFPROCBILL_HEADER为空。检查签收单号有效性</td><td>高</td><td>[查看]</td></tr>
+<tr><td>加载签收单详情失败</td><td>加载详情时</td><td>后端接口异常或网络错误。检查网络连通性和后端服务状态</td><td>中</td><td>[查看]</td></tr>
+<tr><td>保存失败</td><td>保存时</td><td>后端校验未通过或接口异常。检查数据完整性和后端服务状态</td><td>中</td><td>[查看]</td></tr>
+<tr><td>提交失败</td><td>提交时</td><td>后端校验未通过或工作流启动异常。检查数据完整性和工作流配置</td><td>中</td><td>[查看]</td></tr>
+<tr><td>获取合同明细失败</td><td>选择合同时</td><td>合同明细接口异常或合同编码无效。检查合同编码有效性和后端服务状态</td><td>中</td><td>[查看]</td></tr>
+<tr><td>经销商编码不能为空</td><td>保存校验</td><td>头表CUST_CODE字段为空。需选择经销商客户</td><td>高</td><td>[查看]</td></tr>
+<tr><td>法人客户编码不能为空</td><td>保存校验</td><td>头表BILLING_UNIT_CODE字段为空。需选择法人客户</td><td>高</td><td>[查看]</td></tr>
+<tr><td>合同编码不能为空</td><td>保存校验</td><td>头表CONTRACT_CODE字段为空。需选择合同</td><td>高</td><td>[查看]</td></tr>
+<tr><td>批量设置签收时间不能为空</td><td>保存校验</td><td>头表MODEL_SIGN_DATE字段为空。需设置批量签收时间</td><td>高</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：旧CRM网关调用失败</h4>
+<ul><li><strong>触发条件</strong>：提交工程自营签收时，调用旧CRM网关接口失败</li><li><strong>逻辑分析</strong>：提交方法中调用旧CRM网关推送签收数据，若失败则记录错误信息。可能原因：旧CRM服务不可用、网关配置错误、网络异常。需检查旧CRM服务连通性和网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS,
+         ddl.INTF_MSG AS ERP推送状态
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  LEFT JOIN DRP_DIFFPROCBILL_LINE ddl ON ddh.BILL_NO = ddl.BILL_NO
+  WHERE ddh.BILL_NO = :billNo
+  -- 检查签收单数据完整性</code></pre>
+<h4>报错2：签收单不存在</h4>
+<ul><li><strong>触发条件</strong>：查询签收单详情时，按BILL_NO查询DRP_DIFFPROCBILL_HEADER返回null</li><li><strong>逻辑分析</strong>：详情方法中按BILL_NO查询签收单，若返回null则抛出阻断性报错。需检查签收单号有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  WHERE ddh.BILL_NO = :billNo
+  -- 若返回空，说明签收单不存在</code></pre>
+<h4>报错3：加载签收单详情失败</h4>
+<ul><li><strong>触发条件</strong>：进入详情页加载签收单详情时，后端接口返回异常</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/detail.tsx详情加载方法中(line 72)，调用后端接口查询签收单详情，若接口异常则弹出message.error("加载签收单详情失败")并打印console.error。可能原因：后端服务不可用、网络异常、签收单号无效</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  WHERE ddh.BILL_NO = :billNo
+  -- 检查签收单是否存在及数据完整性</code></pre>
+<h4>报错4：保存失败</h4>
+<ul><li><strong>触发条件</strong>：保存工程自营签收单时，后端校验未通过或接口异常</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/detail.tsx保存方法中(line 103)，调用后端保存接口，若接口返回失败或异常则弹出message.error("保存失败")并打印console.error。可能原因：必填字段为空、后端校验未通过、网络异常</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.CUST_CODE, ddh.BILLING_UNIT_CODE, ddh.CONTRACT_CODE,
+         ddh.MODEL_SIGN_DATE, ddh.HZ_APPROVE_STATUS
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  WHERE ddh.BILL_NO = :billNo
+  -- 检查必填字段是否完整</code></pre>
+<h4>报错5：提交失败</h4>
+<ul><li><strong>触发条件</strong>：提交工程自营签收单审批时，后端校验未通过或工作流启动异常</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/detail.tsx提交方法中(line 126)，调用后端提交接口触发工作流，若接口返回失败或异常则弹出message.error("提交失败")并打印console.error。可能原因：工作流配置异常、旧CRM网关调用失败、数据校验未通过</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.HZ_APPROVE_STATUS, ddh.STAT
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  WHERE ddh.BILL_NO = :billNo
+  -- 检查单据状态是否允许提交(NEW/REJECTED)</code></pre>
+<h4>报错6：获取合同明细失败</h4>
+<ul><li><strong>触发条件</strong>：选择合同后获取合同明细行时，后端接口返回异常</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/detail.tsx合同选择回调中(line 174)，调用后端接口查询合同明细行，若接口异常则弹出message.error("获取合同明细失败")并打印console.error。可能原因：合同编码无效、合同无明细行、后端服务异常</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.PROJECT_CODE,
+         (SELECT COUNT(1) FROM EPM_PROJECT_CONTRACT_LINE epcl
+          WHERE epcl.CONTRACT_ID = epc.CONTRACT_ID) AS 合同明细行数
+  FROM EPM_PROJECT_CONTRACT epc
+  WHERE epc.CONTRACT_CODE = :contractCode
+  -- 检查合同明细行数是否大于0</code></pre>
+<h4>报错7：经销商编码不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存工程自营签收单时，头表CUST_CODE字段为空</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 25)，经销商编码字段cust_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入经销商编码"提醒。该报错为前端必填校验</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.CUST_CODE, ddh.CUST_NAME
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  WHERE ddh.BILL_NO = :billNo
+    AND (ddh.CUST_CODE IS NULL OR TRIM(ddh.CUST_CODE) = '')</code></pre>
+<h4>报错8：法人客户编码不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存工程自营签收单时，头表BILLING_UNIT_CODE字段为空</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 66)，法人客户编码字段billing_unit_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入法人客户编码"提醒。该报错为前端必填校验</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.BILLING_UNIT_CODE, ddh.BILLING_UNIT_NAME
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  WHERE ddh.BILL_NO = :billNo
+    AND (ddh.BILLING_UNIT_CODE IS NULL OR TRIM(ddh.BILLING_UNIT_CODE) = '')</code></pre>
+<h4>报错9：合同编码不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存工程自营签收单时，头表CONTRACT_CODE字段为空</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 71)，合同编码字段contract_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入合同编码"提醒。该报错为前端必填校验</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.CONTRACT_CODE, ddh.CONTRACT_NAME
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  WHERE ddh.BILL_NO = :billNo
+    AND (ddh.CONTRACT_CODE IS NULL OR TRIM(ddh.CONTRACT_CODE) = '')</code></pre>
+<h4>报错10：批量设置签收时间不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存工程自营签收单时，头表MODEL_SIGN_DATE字段为空</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 91)，批量设置签收时间字段model_sign_date配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入批量设置签收时间"提醒。该报错为前端必填校验</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.MODEL_SIGN_DATE
+  FROM DRP_DIFFPROCBILL_HEADER ddh
+  WHERE ddh.BILL_NO = :billNo
+    AND ddh.MODEL_SIGN_DATE IS NULL</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">签收审批通过但ERP推送失败</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或网络问题；排查SQL：`SELECT DIFFBILL_NO, INTF_MSG FROM DRP_DIFFPROCBILL_LINE WHERE DIFFBILL_ID = #{diffbillId} AND ACCOUNT_STATUS = 'PENDING'`<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查ERP接口状态，修复后通过VirtualSignPushErpJob定时任务重试推送
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">签收单状态异常（卡在启动状态）</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>工作流回调未正确触发；排查SQL：`SELECT DIFFBILL_NO, STAT, HZ_APPROVE_STATUS, HZ_INSTANCE_ID FROM DRP_DIFFPROCBILL_HEADER WHERE DIFFBILL_ID = #{diffbillId}`<br>
-      <strong style="color:#7C3AED;">处理：</strong>检查HZ_INSTANCE_ID对应的流程实例状态，手动触发回调或修正状态
-    </div>
-  </div>
-</div>
+<ul><li>问题1：旧CRM网关调用失败</li><li>原因：旧CRM服务不可用或网关配置错误</li><li>解决思路：检查旧CRM服务连通性和网关配置</li></ul>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -848,10 +449,14 @@ SELECT BL.SA_OUT_BILL_LINE_ID, BL.QTY AS OUT_QTY, NVL(SUM(DL.RECEIVED_QTY),0) AS
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| - | - | - | 暂无2026年提交记录 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-29</td><td>-</td><td>-</td><td>按skill规范完整重写，基于前后端代码梳理</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

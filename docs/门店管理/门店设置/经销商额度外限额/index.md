@@ -140,58 +140,12 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="额度外限额管理">
-
-<KbQuote>为每个经销商门店组合配置额度外限额预算，控制额度外可报销上限</KbQuote>
-
-**具体逻辑**：
-
-- 1、为每个经销商+门店组合配置额度外限额预算
-- 2、额度外总额（outlimitBudTotal）含税，不含税额度外总额（notaxOutlimitBudTotal）不含税
-- 3、税率（taxRate）用于含税/不含税金额转换
+<KbCard num="1" title="重点逻辑1：广告费余额查询">
+<ul><li><strong>业务意义</strong>：查询经销商的广告费可用余额，用于兑现/关闭扣减校验</li><li><strong>具体逻辑描述</strong>：</li><li>按事业部ID+开票单位编码+交易公司编码查询</li><li>返回可用余额(canUseAmount)</li><li>余额≤0时取0</li></ul>
 </KbCard>
 
-<KbCard num="2" title="额度使用跟踪">
-
-<KbQuote>按年度1~12月逐月跟踪额度外已用额度，同步预占下年度额度</KbQuote>
-
-**具体逻辑**：
-
-- 1、当月1~12月已用额度（thisOutlimitBudUsed1~12）按月跟踪使用情况
-- 2、下月1~12月已用额度（nextOutlimitBudUsed1~12）预占下年额度
-- 3、累计已用额度（totalOutlimitBudUsed）= 各月已用之和
-- 4、额度外剩余（outlimitBudSur）= 额度外总额 - 累计已用额度
-</KbCard>
-
-<KbCard num="3" title="上年结转">
-
-<KbQuote>记录上年额度外总额、已用与剩余数据，供年度结转时计算可结转额度</KbQuote>
-
-**具体逻辑**：
-
-- 1、上年额度外总额（lastOutlimitBudTotal）、上年已用（lastOutlimitBudUsed）、上年剩余（lastOutlimitBudSur）
-- 2、用于年度结转时计算可结转额度
-</KbCard>
-
-<KbCard num="4" title="额度调整">
-
-<KbQuote>记录额度外调整额与核销金额，跟踪额度变动与待核销余额</KbQuote>
-
-**具体逻辑**：
-
-- 1、额度外调整额（outlimitBudAdj）和调整单号（outlimitBudAdjNo）记录调整信息
-- 2、剩余核销金额（surWriteoffAmt）跟踪待核销余额
-</KbCard>
-
-<KbCard num="5" title="批量导入">
-
-<KbQuote>通过导入方式批量创建经销商额度外限额数据，提升录入效率</KbQuote>
-
-**具体逻辑**：
-
-- 1、importFlag 标识数据是否通过导入产生
-- 2、支持批量导入经销商额度外限额数据
-- 3、--
+<KbCard num="2" title="重点逻辑2：额度内可用余额查询">
+<ul><li><strong>业务意义</strong>：查询经销商额度内可用余额，用于额度内兑现校验</li><li><strong>具体逻辑描述</strong>：</li><li>按经销商ID+事业部ID查询</li><li>返回额度内可用余额</li></ul>
 </KbCard>
 
 </div>
@@ -201,139 +155,104 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard title="界面模块">
+<p>本页面为hlod低代码页面，无独立前端源码，基于后端API梳理。</p>
+<h4>头部信息区</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>TextField</td><td>经销商编码</td><td>始终</td><td>查询条件</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>TextField</td><td>经销商名称</td><td>始终</td><td>查询条件</td></tr>
+<tr><td>事业部</td><td>DIVISION_ID</td><td>Select</td><td>事业部</td><td>始终</td><td>查询条件</td></tr>
+<tr><td>交易公司</td><td>TRADING_COMPANY_CODE</td><td>TextField</td><td>交易公司</td><td>始终</td><td>查询条件</td></tr>
+<tr><td>开票单位</td><td>BILLING_UNIT_CODE</td><td>TextField</td><td>开票单位</td><td>始终</td><td>查询条件</td></tr>
+<tr><td>可用余额</td><td>CAN_USE_AMOUNT</td><td>NumberField</td><td>广告费可用余额</td><td>始终</td><td>系统计算</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口</th><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>广告费余额查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-inlimit-balance-headers/query-resource-amt`</td><td>查询广告费可用余额</td></tr>
+<tr><td>余额数量查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-inlimit-balance-headers/query-amt`</td><td>查询余额数量</td></tr>
+<tr><td>导出</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-inlimit-balance-headers/export`</td><td>导出经销商额度外限额</td></tr>
+<tr><td>额度内可用余额</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-inlimit-balance-headers/in-can-use-amt`</td><td>查询额度内可用余额</td></tr>
+<tr><td>发票兑现额度内可用余额</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-inlimit-balance-headers/invoice-in-can-use-amt`</td><td>查询发票兑现额度内可用余额</td></tr>
+<tr><td>自营工程签收查询合同金额</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/mkt-inlimit-balance-headers/query-contract-amt`</td><td>自营工程签收查询合同金额</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="选择弹窗">
-<KbSubTitle>选择弹窗</KbSubTitle>
-
-- **经销商LOV**：选择经销商，带出编码、名称、简称
-- **门店LOV**：选择门店，带出编码、名称、地址、面积、城市区域
-- **交易公司LOV**：选择交易公司，带出编码和名称
-- **开票单元LOV**：选择开票单元，带出编码和名称
-
+<p>本页面无选择弹窗。</p>
 </KbCard>
+
 <KbCard title="导入">
-支持批量导入，导入后 importFlag 标记为导入数据
-
+<p>本页面无导入功能。</p>
 </KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 操作说明 | 可用条件 |
-|---------|---------|---------|
-| 新增 | 新增一条额度外限额 | 始终可用 |
-| 保存 | 保存当前编辑数据 | 编辑状态 |
-| 导入 | 批量导入额度外限额数据 | 始终可用 |
-| 按年度查询 | 按预算年度筛选限额数据 | 始终可用 |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>触发条件</th><th>执行逻辑</th><th>接口调用</th></tr>
+</thead>
+<tbody>
+<tr><td>导出</td><td>任意</td><td>导出经销商额度外限额列表</td><td>GET /export</td></tr>
+</tbody>
+</table>
 </KbCard>
+
 <KbCard title="保存校验">
-- 经销商不能为空
-
-- 门店不能为空
-
-- 预算年度不能为空
-
-- 同一经销商+门店+年度不允许重复
-
+<p>本页面为查询页面，无保存校验。</p>
 </KbCard>
+
 <KbCard title="提交校验">
+<p>本页面为查询页面，无提交校验。</p>
 </KbCard>
+
 <KbCard title="状态机">
-
-```text
-编辑中 ──保存──→ 已保存（可继续编辑）
-```
-
----
-
-</KbCard>
-<KbCard num="1" title="4.1 MKT_OUTLIMIT_BUD_HEADER（经销商额度外限额表）">
-
-| 列名 | 类型 | 说明 | 约束 |
-|-----|------|------|------|
-| OUTLIMIT_BUD_ID | BIGINT | 主键ID | PK, AUTO_INCREMENT |
-| OUTLIMIT_BUD_ID_NO | VARCHAR | 单据编号 | |
-| BUD_YEAR | VARCHAR | 预算年度 | |
-| DIVISION_ID | BIGINT | 事业部ID | |
-| DIVISION_NAME | VARCHAR | 事业部名称 | |
-| ENTID | BIGINT | 事业部实体ID | |
-| ENTNAME | VARCHAR | 事业部名称 | |
-| CREATOR | VARCHAR | 创建人 | |
-| CREATE_TIME | DATETIME | 创建时间 | |
-| UPDATOR | VARCHAR | 修改人 | |
-| UPDATE_TIME | DATETIME | 修改时间 | |
-| CHECKER | VARCHAR | 审核人 | |
-| CHECK_TIME | DATETIME | 审核时间 | |
-| CUSTOMER_ID | BIGINT | 经销商ID | |
-| CUSTOMER_CODE | VARCHAR | 经销商编码 | |
-| CUSTOMER_NAME | VARCHAR | 经销商名称 | |
-| NOTE | VARCHAR | 备注 | |
-| SHORT_NAME | VARCHAR | 经销商简称 | |
-| TRADING_COMPANY_ID | BIGINT | 交易公司ID | |
-| TRADING_COMPANY_NAME | VARCHAR | 交易公司名称 | |
-| TRADING_COMPANY_CODE | VARCHAR | 交易公司编码 | |
-| BILLING_UNIT_ID | BIGINT | 开票单元ID | |
-| BILLING_UNIT_CODE | VARCHAR | 开票单元编码 | |
-| BILLING_UNIT_NAME | VARCHAR | 开票单元名称 | |
-| TERMINAL_ID | BIGINT | 门店ID | |
-| TERMINAL_CODE | VARCHAR | 门店编码 | |
-| TERMINAL_NAME | VARCHAR | 门店名称 | |
-| CITY_AREAID | BIGINT | 城市区域ID | |
-| ADDR | VARCHAR | 地址 | |
-| TERMINAL_AREA | DECIMAL | 门店面积 | |
-| LAST_OUTLIMIT_BUD_TOTAL | DECIMAL | 上年额度外总额 | |
-| LAST_OUTLIMIT_BUD_USED | DECIMAL | 上年已用额度 | |
-| LAST_OUTLIMIT_BUD_SUR | DECIMAL | 上年剩余额度 | |
-| OUTLIMIT_BUD_TOTAL | DECIMAL | 额度外总额(含税) | |
-| NOTAX_OUTLIMIT_BUD_TOTAL | DECIMAL | 额度外总额(不含税) | |
-| OUTLIMIT_BUD_ADJ | DECIMAL | 额度外调整额 | |
-| OUTLIMIT_BUD_ADJ_NO | VARCHAR | 额度外调整单号 | |
-| THIS_OUTLIMIT_BUD_USED_1 | DECIMAL | 当年1月已用 | |
-| THIS_OUTLIMIT_BUD_USED_2 | DECIMAL | 当年2月已用 | |
-| THIS_OUTLIMIT_BUD_USED_3 | DECIMAL | 当年3月已用 | |
-| THIS_OUTLIMIT_BUD_USED_4 | DECIMAL | 当年4月已用 | |
-| THIS_OUTLIMIT_BUD_USED_5 | DECIMAL | 当年5月已用 | |
-| THIS_OUTLIMIT_BUD_USED_6 | DECIMAL | 当年6月已用 | |
-| THIS_OUTLIMIT_BUD_USED_7 | DECIMAL | 当年7月已用 | |
-| THIS_OUTLIMIT_BUD_USED_8 | DECIMAL | 当年8月已用 | |
-| THIS_OUTLIMIT_BUD_USED_9 | DECIMAL | 当年9月已用 | |
-| THIS_OUTLIMIT_BUD_USED_10 | DECIMAL | 当年10月已用 | |
-| THIS_OUTLIMIT_BUD_USED_11 | DECIMAL | 当年11月已用 | |
-| THIS_OUTLIMIT_BUD_USED_12 | DECIMAL | 当年12月已用 | |
-| TOTAL_OUTLIMIT_BUD_USED | DECIMAL | 累计已用额度 | |
-| OUTLIMIT_BUD_SUR | DECIMAL | 额度外剩余 | |
-| IMPORT_FLAG | VARCHAR | 导入标识 | |
-| CITY_AREANAME | VARCHAR | 城市区域名称 | |
-| TAX_RATE | DECIMAL | 税率 | |
-| NEXT_OUTLIMIT_BUD_USED_1 | DECIMAL | 下年1月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_2 | DECIMAL | 下年2月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_3 | DECIMAL | 下年3月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_4 | DECIMAL | 下年4月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_5 | DECIMAL | 下年5月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_6 | DECIMAL | 下年6月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_7 | DECIMAL | 下年7月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_8 | DECIMAL | 下年8月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_9 | DECIMAL | 下年9月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_10 | DECIMAL | 下年10月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_11 | DECIMAL | 下年11月已用 | |
-| NEXT_OUTLIMIT_BUD_USED_12 | DECIMAL | 下年12月已用 | |
-| NOW_TOTAL_OUTLIMIT_BUD_USED | DECIMAL | 下年累计已用 | |
-| SUR_WRITEOFF_AMT | DECIMAL | 剩余核销金额 | |
-
----
-
+<p>本页面为查询页面，无状态机。</p>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="工作流">
+<p>本页面无工作流。</p>
 </KbCard>
+
+<KbCard title="MKT_INLIMIT_BALANCE_HEADER（经销商额度外限额头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>DIVISION_ID</td><td>Long</td><td>事业部ID</td><td>事业部</td><td>查询条件</td></tr>
+<tr><td>CUST_ID</td><td>Long</td><td>经销商ID</td><td>-</td><td>查询条件</td></tr>
+<tr><td>CUST_CODE</td><td>String</td><td>经销商编码</td><td>经销商编码</td><td>查询条件</td></tr>
+<tr><td>CUST_NAME</td><td>String</td><td>经销商名称</td><td>经销商名称</td><td>查询条件</td></tr>
+<tr><td>TRADING_COMPANY_CODE</td><td>String</td><td>交易公司编码</td><td>交易公司</td><td>查询条件</td></tr>
+<tr><td>BILLING_UNIT_CODE</td><td>String</td><td>开票单位编码</td><td>开票单位</td><td>查询条件</td></tr>
+<tr><td>CAN_USE_AMOUNT</td><td>BigDecimal</td><td>可用余额</td><td>可用余额</td><td>系统计算</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="MKT_INLIMIT_BALANCE_DETAILS（经销商额度外限额明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>HEADER_ID</td><td>Long</td><td>头表ID</td><td>-</td><td>关联头表</td></tr>
+<tr><td>AMT</td><td>BigDecimal</td><td>金额</td><td>-</td><td>系统维护</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -341,161 +260,11 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">经销商不能为空</td>
-            <td style="font-size:13px;">未选择经销商</td>
-            <td style="font-size:13px;">选择经销商后保存</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">门店不能为空</td>
-            <td style="font-size:13px;">未选择门店</td>
-            <td style="font-size:13px;">选择门店后保存</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">预算年度不能为空</td>
-            <td style="font-size:13px;">未填写预算年度</td>
-            <td style="font-size:13px;">选择预算年度后保存</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">数据重复</td>
-            <td style="font-size:13px;">同一经销商+门店+年度已存在</td>
-            <td style="font-size:13px;">检查是否已录入相同组合的数据</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>经销商不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>前端保存时校验经销商字段为null或未选择，未选择经销商即触发非空校验；选择经销商后重新提交即可通过。</div>
-    <div class="detail-tip" v-pre>toast提醒，非阻断性校验；按提示补充经销商信息后重试</div>
-    <h5>定位排查</h5>
-    <div class="detail-sql" v-pre>
-```sql
-SELECT h.outlimit_bud_id AS 额度外限额ID,
-       h.customer_id     AS 经销商ID,
-       h.customer_code   AS 经销商编码,
-       h.customer_name   AS 经销商名称
-FROM   mkt_outlimit_bud_header h
-WHERE  h.customer_id IS NULL
-ORDER  BY h.create_time DESC;
-```
-    </div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>门店不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>前端保存时校验门店字段为null或未选择，未选择门店即触发非空校验；选择门店后重新提交即可通过。</div>
-    <div class="detail-tip" v-pre>toast提醒，非阻断性校验；按提示补充门店信息后重试</div>
-    <h5>定位排查</h5>
-    <div class="detail-sql" v-pre>
-```sql
-SELECT h.outlimit_bud_id AS 额度外限额ID,
-       h.terminal_id     AS 门店ID,
-       h.terminal_code   AS 门店编码,
-       h.terminal_name   AS 门店名称
-FROM   mkt_outlimit_bud_header h
-WHERE  h.terminal_id IS NULL
-ORDER  BY h.create_time DESC;
-```
-    </div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>预算年度不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>前端保存时校验预算年度字段为null或未选择，未选择预算年度即触发非空校验；选择预算年度后重新提交即可通过。</div>
-    <div class="detail-tip" v-pre>toast提醒，非阻断性校验；按提示补充预算年度后重试</div>
-    <h5>定位排查</h5>
-    <div class="detail-sql" v-pre>
-```sql
-SELECT h.outlimit_bud_id AS 额度外限额ID,
-       h.bud_year        AS 预算年度
-FROM   mkt_outlimit_bud_header h
-WHERE  h.bud_year IS NULL
-   OR  TRIM(h.bud_year) = ''
-ORDER  BY h.create_time DESC;
-```
-    </div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>数据重复</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>前端提交或后端保存时校验同一经销商+门店+预算年度组合是否已存在记录；若存在相同组合数据（包括软删除状态），则触发重复校验异常，阻止重复录入。</div>
-    <div class="detail-tip" v-pre>toast提醒，非阻断性校验；检查是否已录入相同组合的数据后重试</div>
-    <h5>定位排查</h5>
-    <div class="detail-sql" v-pre>
-```sql
-SELECT h.customer_id   AS 经销商ID,
-       h.terminal_id   AS 门店ID,
-       h.bud_year      AS 预算年度,
-       COUNT(*)        AS 记录数
-FROM   mkt_outlimit_bud_header h
-GROUP  BY h.customer_id, h.terminal_id, h.bud_year
-HAVING COUNT(*) > 1
-ORDER  BY COUNT(*) DESC;
-```
-    </div>
-  </div>
-</div>
+<KbCard title="Q1：查询无数据">
+<p><strong>根因</strong>：经销商/事业部/交易公司组合无额度记录</p>
+<p><strong>解决方案</strong>：确认MKT_INLIMIT_BALANCE_HEADER中存在对应记录</p>
 </KbCard>
-<KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">额度外限额如何被下游使用？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>门店验收报销时查询经销商+门店+年度对应的额度外限额，判断报销金额是否超额，超额时根据报销标准中的额度外超额处理策略决定是否允许。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">当月已用额度和下月已用额度如何更新？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>验收报销单审批通过后，根据报销月份自动累加到对应月份的已用额度字段。跨年报销累加到下年对应月份。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">该页面是hold低代码页面吗？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>是，该页面基于hold低代码平台配置，无独立Controller，通过MktOutlimitBudHeaderRepository访问数据，支持selectByBudYear按年度查询。
-    </div>
-  </div>
-</div>
-</KbCard>
+
 </div>
 </div>
 </div>
@@ -504,10 +273,14 @@ ORDER  BY COUNT(*) DESC;
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 修改内容 | 修改人 |
-|-----|------|---------|-------|
-| 2026-07-31 | V1.0 | 初始生成知识库文档 | AI |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

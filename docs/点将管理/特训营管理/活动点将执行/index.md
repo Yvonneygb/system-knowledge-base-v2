@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -109,6 +110,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -174,76 +176,473 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="重点逻辑">
-<KbQuote>活动点将执行涉及派单、签到、执行记录和结果上传等环节</KbQuote>
-<p>1. <strong>只读跟踪</strong>：本菜单为执行跟踪页面，仅提供查询和查看功能，不涉及数据修改操作 2. <strong>数据来源</strong>：复用ActivityApply实体和mlt/activityApply/*接口，筛选已审批通过且进入执行阶段的申请 3. <strong>进度计算</strong>：根据活动下子任务完成情况计算执行完成率 4. <strong>状态联动</strong>：执行状态与活动完成情况联动，所有子任务完成后自动更新执行状态为已完成</p></KbCard>
-
-<KbQuote>活动点将执行涉及派单、签到、执行记录和结果上传等环节</KbQuote>
-
-<KbQuote>活动点将执行涉及派单、签到、执行记录和结果上传等环节</KbQuote>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：只读跟踪">
+<ul><li><strong>业务意义</strong>：执行跟踪页面不修改点将申请原始内容，仅记录执行结果与状态推进，保证申请数据与执行结果分离。</li><li><strong>具体逻辑描述</strong>：</li><li>本菜单仅提供查询、查看和执行结果回写功能。</li><li>如需调整人员或时间，应回到活动点将管理发起变更或取消。</li><li>列表查询固定传入 <code>pageType=activity</code>，<code>autoQuery=true</code> 自动加载。</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：数据来源">
+<ul><li><strong>业务意义</strong>：复用活动点将申请实体，筛选已审批通过且进入执行阶段的申请，避免重复建模。</li><li><strong>具体逻辑描述</strong>：</li><li>复用 TRAIN_APPLY 表和 <code>mlt/activityApply/*</code> 接口。</li><li>筛选条件 <code>APPLY_TYPE_ONE=activity</code> 且 <code>APPLY_APPROVAL_STATE=approved</code>。</li><li>执行状态通过 <code>ORDER_LECTURE_STATE</code> 跟踪。</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：状态联动">
+<ul><li><strong>业务意义</strong>：执行状态与活动完成情况联动，确保状态机自动推进，减少人工干预。</li><li><strong>具体逻辑描述</strong>：</li><li>执行状态与活动完成情况联动。</li><li>所有子任务完成后自动更新执行状态为已完成。</li><li>结束执行后点将状态推进为已执行，作为活动交付的最终留痕。</li></ul>
+</KbCard>
+
+<KbCard num="4" title="重点逻辑4：特殊取消校验">
+<ul><li><strong>业务意义</strong>：限制取消时机，避免临近开课取消造成资源浪费。</li><li><strong>具体逻辑描述</strong>：</li><li>计算时间差值 <code>timeDiff = (planStartTime - nowTime) / (24*60*60*1000)</code>。</li><li>校验条件 <code>1 &lt;= timeDiff &lt;= 7</code>（培训开始前1-7天内）。</li><li>校验审批状态 <code>approvalState === 'fdd_sign'</code>（已法大大签约）。</li><li>校验是否已发起取消：<code>cancelApprovalState</code> 不为空且不等于 <code>reject</code> 和 <code>oa_reject</code> 时提示"该单据已发起取消申请，不可重复发起！"。</li><li>校验不通过提示"只有在培训开始前七天内且已生效的单据才可以发起取消申请！"。</li><li>提交调用 <code>POST mlt/activityApply/specialCancel</code> 接口。</li></ul>
+</KbCard>
+
+<KbCard num="5" title="重点逻辑5：结束执行逻辑">
+<ul><li><strong>业务意义</strong>：记录实际交付时间与备注，作为活动交付的最终留痕。</li><li><strong>具体逻辑描述</strong>：</li><li>结束执行通过 Modal 弹窗填写。</li><li>实际开始时间 <code>realStartDate</code>：DatePicker，必填。</li><li>实际结束时间 <code>realEndDate</code>：DatePicker，必填。</li><li>结束执行人 <code>endExecuteUserName</code>：自动填充。</li><li>结束备注 <code>endExecuteRemark</code>：TextArea，必填。</li><li>调用 <code>POST mlt/activityApply/endExecute</code> 接口。</li></ul>
+</KbCard>
+
+<KbCard num="6" title="重点逻辑6：同步外部系统">
+<ul><li><strong>业务意义</strong>：将执行结果同步至外部系统，保证多方数据一致。</li><li><strong>具体逻辑描述</strong>：</li><li><strong>同步OA</strong>：调用 <code>POST mlt/activityApply/pushOa/&#123;applyCode&#125;</code> 推送OA审批流程。</li><li><strong>同步FDD</strong>：调用 <code>POST mlt/activityApply/pushFdd/&#123;applyCode&#125;</code> 推送法大大签约。</li><li><strong>同步CRM</strong>：调用 <code>POST mlt/activityApply/sendCrmOrder/&#123;applyCode&#125;</code> 推送CRM订单。</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 前端路由"><table class="kl-table"><thead><tr><th>路由</th><th>用途</th></tr></thead><tbody><tr><td><code>/general/activityGeneral/activityGeneralExecute/list</code></td><td>活动点将执行列表页</td></tr></tbody></table></KbCard>
-<KbCard title="3.2 API接口"><table class="kl-table"><thead><tr><th>接口路径</th><th>说明</th></tr></thead><tbody><tr><td><code>mlt/activityApply/query</code></td><td>查询活动点将申请列表（筛选执行中/已完成状态）</td></tr><tr><td><code>mlt/activityApply/detail</code></td><td>查询活动点将申请执行详情</td></tr></tbody></table></KbCard>
-<KbCard title="3.3 核心实体"><p><strong>ActivityApply</strong>（复用活动点将申请实体，筛选执行阶段数据）</p>
-<table class="kl-table"><thead><tr><th>字段</th><th>说明</th></tr></thead><tbody><tr><td>apply_code</td><td>申请编码（主键）</td></tr><tr><td>activity_name</td><td>活动名称</td></tr><tr><td>apply_status</td><td>申请状态（执行中/已完成）</td></tr></tbody></table></KbCard>
-<KbCard title="3.4 列表筛选条件"><table class="kl-table"><thead><tr><th>筛选项</th><th>说明</th><th>默认值</th></tr></thead><tbody><tr><td>活动名称</td><td>按活动名称模糊筛选</td><td>无</td></tr><tr><td>申请编码</td><td>按申请编码筛选</td><td>无</td></tr><tr><td>执行状态</td><td>按执行状态筛选</td><td>执行中</td></tr></tbody></table></KbCard>
-<KbCard title="3.5 选择弹窗"><table class="kl-table"><thead><tr><th>弹窗名称</th><th>说明</th></tr></thead><tbody><tr><td>发起结算弹窗</td><td>PlanSettlementInfo+ActivityApplyDetail，含签署人Select</td></tr><tr><td>结束执行弹窗</td><td>Form表单</td></tr></tbody></table></KbCard>
-<KbCard title="3.6 导入"><p class='kl-tip'>不支持导入功能。</p></KbCard>
-<KbCard title="3.7 其他按钮"><table class="kl-table"><thead><tr><th>按钮</th><th>说明</th></tr></thead><tbody><tr><td>查看申请</td><td>跳转活动申请详情</td></tr><tr><td>发起结算</td><td>保存并下发，调用startSettle</td></tr><tr><td>结束执行</td><td>调用endExecute</td></tr></tbody></table></KbCard>
-<KbCard title="3.8 保存校验"><table class="kl-table"><thead><tr><th>场景</th><th>校验项</th></tr></thead><tbody><tr><td>发起结算</td><td>targetFormData、completeFormData、signerValid非空</td></tr><tr><td>结束执行</td><td>realStartDate、realEndDate、endExecuteRemark必填</td></tr></tbody></table></KbCard>
-<KbCard title="3.9 提交校验"><p class='kl-tip'>无审批按钮，结算即下发。无工作流编码。</p></KbCard>
-<KbCard title="activity_apply（活动点将申请主表，同活动点将管理）"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th><th>约束</th></tr></thead><tbody><tr><td>apply_code</td><td>VARCHAR2(32)</td><td>申请编码</td><td>PK</td></tr><tr><td>activity_name</td><td>VARCHAR2(200)</td><td>活动名称</td><td>NOT NULL</td></tr><tr><td>activity_type</td><td>VARCHAR2(30)</td><td>活动类型</td><td></td></tr><tr><td>apply_status</td><td>VARCHAR2(30)</td><td>申请状态</td><td>NOT NULL</td></tr><tr><td>execution_progress</td><td>NUMBER(5,2)</td><td>执行完成率(%)</td><td></td></tr><tr><td>planner_id</td><td>NUMBER</td><td>策划师ID</td><td>NOT NULL</td></tr><tr><td>created_by</td><td>NUMBER</td><td>创建人</td><td></td></tr><tr><td>creation_date</td><td>DATE</td><td>创建时间</td><td></td></tr><tr><td>last_updated_by</td><td>NUMBER</td><td>最后更新人</td><td></td></tr><tr><td>last_update_date</td><td>DATE</td><td>最后更新时间</td><td></td></tr></tbody></table></KbCard>
+<KbCard title="前端路由">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>路由</th><th>用途</th></tr>
+</thead>
+<tbody>
+<tr><td>`/general/activityGeneral/activityGeneralExecute/list`</td><td>活动点将执行列表页</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="API接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口路径</th><th>方法</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>`mlt/activityApply/page`</td><td>POST</td><td>分页查询活动点将执行列表</td></tr>
+<tr><td>`mlt/activityApply/dealerPage`</td><td>POST</td><td>经销商分页查询</td></tr>
+<tr><td>`mlt/activityApply/detail`</td><td>GET</td><td>查询活动点将申请执行详情</td></tr>
+<tr><td>`mlt/activityApply/delete`</td><td>POST</td><td>删除申请</td></tr>
+<tr><td>`mlt/activityApply/dealerSave`</td><td>POST</td><td>经销商保存</td></tr>
+<tr><td>`mlt/activityApply/dealerSaveAndSubmit`</td><td>POST</td><td>经销商保存并提交</td></tr>
+<tr><td>`mlt/activityApply/applyApproval`</td><td>POST</td><td>申请审批</td></tr>
+<tr><td>`mlt/activityApply/cancelApplyApproval`</td><td>POST</td><td>取消申请审批</td></tr>
+<tr><td>`mlt/activityApply/specialCancel`</td><td>POST</td><td>特殊取消</td></tr>
+<tr><td>`mlt/activityApply/cancelApply`</td><td>POST</td><td>发起取消申请</td></tr>
+<tr><td>`mlt/activityApply/pushOa`</td><td>POST</td><td>同步OA</td></tr>
+<tr><td>`mlt/activityApply/pushFdd`</td><td>POST</td><td>同步FDD</td></tr>
+<tr><td>`mlt/activityApply/pushCrm`</td><td>POST</td><td>同步CRM</td></tr>
+<tr><td>`mlt/activityApply/settleForPlan`</td><td>POST</td><td>按计划结算</td></tr>
+<tr><td>`mlt/activityApply/startSettle`</td><td>POST</td><td>发起结算</td></tr>
+<tr><td>`mlt/activityApply/startExecute`</td><td>POST</td><td>开始执行</td></tr>
+<tr><td>`mlt/activityApply/endExecute`</td><td>POST</td><td>结束执行</td></tr>
+<tr><td>`mlt/activityApply/confirmEndExecute`</td><td>POST</td><td>确认结束执行</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块">
+<h4>查询栏字段</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>申请编号</td><td>APPLY_CODE</td><td>TextField</td><td>申请编码模糊查询</td><td>始终显示</td><td>手动输入，name=applyCode，labelWidth=100</td></tr>
+<tr><td>活动名称</td><td>ACTIVITY_NAME</td><td>TextField</td><td>活动名称模糊查询</td><td>始终显示</td><td>手动输入，name=activityName，labelWidth=100</td></tr>
+</tbody>
+</table>
+<h4>列表展示字段</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>申请编码</td><td>APPLY_CODE</td><td>TextField</td><td>申请唯一编码</td><td>始终显示</td><td>左锁定列，width=150</td></tr>
+<tr><td>申请人</td><td>DISTRIBUTOR_NAME</td><td>TextField</td><td>经销商名称</td><td>始终显示</td><td>左锁定列，width=150</td></tr>
+<tr><td>申请时间</td><td>CREATE_DATE</td><td>TextField</td><td>申请创建时间</td><td>始终显示</td><td>后端返回，width=130</td></tr>
+<tr><td>活动名称</td><td>ACTIVITY_NAME</td><td>TextField</td><td>活动名称</td><td>始终显示</td><td>后端返回，width=130</td></tr>
+<tr><td>讲师</td><td>LECTURER_NAME</td><td>TextField</td><td>讲师姓名</td><td>始终显示</td><td>后端返回，width=130</td></tr>
+<tr><td>点将状态</td><td>ORDER_LECTURE_STATE</td><td>Select</td><td>点将流程状态</td><td>始终显示</td><td>值集MBO.ORDER_LECTURE_STATE，width=130</td></tr>
+<tr><td>取消申请审核状态</td><td>CANCEL_APPROVAL_STATE</td><td>Select</td><td>取消申请审批状态</td><td>始终显示</td><td>值集MBO.CANCEL_APPROVAL_STATE，width=130</td></tr>
+<tr><td>活动开始时间</td><td>ACTIVITY_START_DATE</td><td>TextField</td><td>活动开始时间</td><td>始终显示</td><td>后端返回，width=130</td></tr>
+<tr><td>活动结束时间</td><td>ACTIVITY_END_DATE</td><td>TextField</td><td>活动结束时间</td><td>始终显示</td><td>后端返回，width=130</td></tr>
+<tr><td>拟点将天数</td><td>PRE_ORD_LECTURER_DAYS</td><td>NumberField</td><td>计划点将天数</td><td>始终显示</td><td>申请时填写，width=130</td></tr>
+<tr><td>实际点将天数</td><td>REAL_ORD_LECTURER_DAYS</td><td>NumberField</td><td>实际点将天数</td><td>始终显示</td><td>结束执行时填写，width=130</td></tr>
+<tr><td>申请审核状态</td><td>APPROVAL_STATE</td><td>Select</td><td>申请审批状态</td><td>始终显示</td><td>值集MBO.APPLY_APPROVAL_STATE，width=130</td></tr>
+<tr><td>结束确认状态</td><td>END_CONFIRM_STATE</td><td>Select</td><td>结束确认状态</td><td>始终显示</td><td>值集MBO.END_COMFIRM_STATE，width=130</td></tr>
+<tr><td>结算确认状态</td><td>SETTLEMENT_CONFIRM_STATE</td><td>Select</td><td>结算确认状态</td><td>始终显示</td><td>值集MBO.SETTLEMENT_COMFIRM_STATE，width=130</td></tr>
+<tr><td>CRM单号</td><td>CRM_ORDER_CODE</td><td>TextField</td><td>CRM订单编号</td><td>始终显示</td><td>推送CRM后返回，width=130</td></tr>
+<tr><td>CRM订单状态</td><td>CRM_ORDER_STATUS</td><td>Select</td><td>CRM订单状态</td><td>始终显示</td><td>值集MBO.CRM_ORDER_STATUS，width=130</td></tr>
+<tr><td>异常问题</td><td>ERROR_INFO</td><td>TextField</td><td>流程异常信息</td><td>始终显示</td><td>后端返回，width=130</td></tr>
+<tr><td>操作更新时间</td><td>UPDATE_DATE</td><td>TextField</td><td>最后操作时间</td><td>始终显示</td><td>后端返回，width=130</td></tr>
+<tr><td>操作</td><td>-</td><td>Button(link)</td><td>行操作：查看流程</td><td>始终显示</td><td>右锁定列，width=100，点击调用handleShowProcess弹出流程摘要</td></tr>
+</tbody>
+</table>
+<h4>选择弹窗</h4>
+<p>本页面无数据选择弹窗，但包含以下业务弹窗：</p>
+<h5>弹窗1：流程摘要</h5>
+<ul><li><strong>触发方式</strong>：点击列表"操作"列的"查看流程"按钮。</li><li><strong>弹窗标题</strong>：流程摘要。</li><li><strong>弹窗内容</strong>：<code>ProcessDetail</code> 组件，传入 <code>applyCode</code>，展示该申请的流程审批记录。</li><li><strong>弹窗配置</strong>：<code>contentStyle.width=1000</code>，无确定按钮（<code>okButton: false</code>），取消按钮文本"关闭"。</li><li><strong>提交逻辑</strong>：无提交，仅展示。</li></ul>
+<h5>弹窗2：结算信息</h5>
+<ul><li><strong>触发方式</strong>：点击工具栏"发起结算"按钮，需先选中一条数据。</li><li><strong>弹窗标题</strong>：结算信息。</li><li><strong>弹窗内容</strong>：<code>Content</code> 包含 <code>PlanSettlementInfo</code>（结算目标与完成情况表单）和 <code>ActivityApplyDetail</code>（申请详情，type=view）。</li><li><strong>弹窗配置</strong>：<code>contentStyle.width=1200</code>，确定按钮文本"保存并下发"。</li><li><strong>提交逻辑</strong>：点击"保存并下发"时，校验结算目标表单、完成情况表单、签约人表单，通过后调用 <code>POST mlt/activityApply/startSettle</code> 接口，参数包含 applyCode、目标与完成数据、realStartDate/realEndDate（格式YYYY-MM-DD）、lecturerPrice、settlementAmount、signerId/signerName/signerPhone。成功后刷新列表。</li><li><strong>关闭回调</strong>：<code>afterClose</code> 重置 PlanSettlementInfo 表单。</li></ul>
+<h5>弹窗3：活动结束执行</h5>
+<ul><li><strong>触发方式</strong>：点击工具栏"结束执行"按钮，需先选中一条数据。</li><li><strong>弹窗标题</strong>：活动结束执行。</li><li><strong>弹窗内容</strong>：<code>Form</code> 表单（dataSet=endExecuteFormDS，columns=3），字段：realStartDate（DatePicker，必填）、realEndDate（DatePicker，必填）、endExecuteUserName（TextField，结束执行人）、startTime（TextField）、endExecuteRemark（TextArea，必填，宽度400）。</li><li><strong>弹窗配置</strong>：<code>contentStyle.width=800</code>。</li><li><strong>提交逻辑</strong>：点击确定时先 <code>endExecuteFormDS.validate()</code> 校验必填，通过后调用 <code>POST mlt/activityApply/endExecute</code> 接口，参数 applyCode、realStartDate（格式YYYY-MM-DD）、realEndDate（格式YYYY-MM-DD）、endRemark。成功后刷新列表。</li><li><strong>关闭回调</strong>：<code>afterClose</code> 重置 endExecuteFormDS。</li></ul>
+<h4>导入</h4>
+<p>不支持导入功能。</p>
+<h4>其他按钮</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>序号</th><th>按钮名称</th><th>所在位置</th><th>权限编码</th><th>显隐条件</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>查看申请</td><td>工具栏(Header)</td><td>`hzero.general_manage.activity.activity_general.ps.show_apply`</td><td>始终显示</td></tr>
+<tr><td>2</td><td>发起结算</td><td>工具栏(Header)</td><td>`hzero.general_manage.activity.activity_general.ps.settlement`</td><td>始终显示</td></tr>
+<tr><td>3</td><td>结束执行</td><td>工具栏(Header)</td><td>`hzero.general_manage.activity.activity_general.ps.end_execute`</td><td>始终显示</td></tr>
+<tr><td>4</td><td>查看流程</td><td>行操作(操作列)</td><td>无（未配置permissionList）</td><td>始终显示</td></tr>
+</tbody>
+</table>
+<blockquote>权限前缀 <code>permissionPrefix = hzero.general_manage.activity.activity_general.ps.</code>，定义于 list.tsx。</blockquote>
+<h5>按钮1：查看申请（工具栏）</h5>
+<ul><li><strong>业务逻辑</strong>：校验选中一条数据（<code>getSelectedRow</code>，未选或选多条提示"请选择一条数据"），调用 <code>openTab</code> 新标签页打开经销商活动点将详情页，路由 <code>/general/distributorGeneral/distributorGeneralActivity/detail/&#123;applyCode&#125;/view</code>，传入 <code>state.isExecute=true</code>。</li><li><strong>调用接口</strong>：无，openTab 新标签页跳转。</li></ul>
+<h5>按钮2：发起结算（工具栏）</h5>
+<ul><li><strong>业务逻辑</strong>：校验选中一条数据，弹出"结算信息"弹窗（见选择弹窗-弹窗2），填写结算目标、完成情况、签约人信息后，调用 <code>startSettle</code> 接口保存并下发结算。成功后刷新当前页列表。</li><li><strong>调用接口</strong>：<code>POST mlt/activityApply/startSettle</code>。</li></ul>
+<h5>按钮3：结束执行（工具栏）</h5>
+<ul><li><strong>业务逻辑</strong>：校验选中一条数据，弹出"活动结束执行"弹窗（见选择弹窗-弹窗3），填写实际开始时间、实际结束时间、结束执行人、结束备注后，经 <code>endExecuteFormDS.validate()</code> 必填校验，调用 <code>endExecute</code> 接口。成功后刷新当前页列表。</li><li><strong>调用接口</strong>：<code>POST mlt/activityApply/endExecute</code>。</li></ul>
+<h5>按钮4：查看流程（行操作）</h5>
+<ul><li><strong>业务逻辑</strong>：点击列表"操作"列的"查看流程"按钮（FuncType.link），弹出"流程摘要"弹窗（见选择弹窗-弹窗1），展示该申请的流程审批记录。无提交操作。</li><li><strong>调用接口</strong>：无，仅展示 ProcessDetail 组件。</li></ul>
+</KbCard>
+
+<KbCard title="保存校验">
+<ul><li>校验1：结束执行实际时间必填 —— 确保执行结果可留痕</li><li><strong>详细逻辑</strong>：<code>realStartDate</code>、<code>realEndDate</code>、<code>endExecuteRemark</code> 必填，任一为空提示对应报错信息。</li><li><strong>系统体现</strong>：前端 <code>endExecuteFormDS.validate()</code> 校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_START_DATE AS 实际开始时间,
+           ta.REAL_END_DATE AS 实际结束时间, ta.END_EXECUTE_REMARK AS 结束备注
+    FROM TRAIN_APPLY ta
+    WHERE ta.ORDER_LECTURE_STATE = 'executed'
+      AND (ta.REAL_START_DATE IS NULL OR ta.REAL_END_DATE IS NULL
+           OR ta.END_EXECUTE_REMARK IS NULL);</code></pre>
+</KbCard>
+
+<KbCard title="提交校验">
+<ul><li>校验1：特殊取消时机校验 —— 防止临近开课取消造成资源浪费</li><li><strong>详细逻辑</strong>：校验 <code>1 &lt;= timeDiff &lt;= 7</code> 且 <code>approvalState === 'fdd_sign'</code> 且未重复发起取消。</li><li><strong>系统体现</strong>：前端时间差值计算与状态校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_STATE AS 审核状态,
+           ROUND(ta.ACTIVITY_START_DATE - SYSDATE) AS 距开始天数
+    FROM TRAIN_APPLY ta
+    WHERE ta.APPLY_TYPE_ONE = 'activity'
+      AND ta.APPROVAL_STATE = 'fdd_sign'
+      AND ta.ACTIVITY_START_DATE &gt; SYSDATE
+      AND ta.ACTIVITY_START_DATE &lt;= SYSDATE + 7;</code></pre>
+</KbCard>
+
+<KbCard title="状态机">
+<pre class="detail-sql" v-pre><code>待执行 ──开始执行──→ 执行中 ──结束执行──→ 已执行
+                        |
+                        └──特殊取消──→ 已取消</code></pre>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>当前状态</th><th>触发动作</th><th>目标状态</th></tr>
+</thead>
+<tbody>
+<tr><td>待执行</td><td>开始执行(startExecute)</td><td>执行中</td></tr>
+<tr><td>执行中</td><td>结束执行(endExecute)</td><td>已执行</td></tr>
+<tr><td>执行中</td><td>特殊取消(specialCancel)</td><td>已取消</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="TRAIN_APPLY（活动点将申请表）">
+<blockquote>筛选条件：<code>APPLY_TYPE_ONE = 'activity'</code> 且 <code>APPLY_APPROVAL_STATE = 'approved'</code></blockquote>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>主键ID</td><td>-</td><td>序列自增</td></tr>
+<tr><td>APPLY_CODE</td><td>VARCHAR2(64)</td><td>申请编码</td><td>申请编码/申请编号</td><td>PK，系统生成</td></tr>
+<tr><td>APPLY_TYPE_ONE</td><td>VARCHAR2(32)</td><td>申请类型一</td><td>-</td><td>固定值 activity</td></tr>
+<tr><td>DISTRIBUTOR_NAME</td><td>VARCHAR2(255)</td><td>申请人</td><td>申请人</td><td>经销商发起时写入</td></tr>
+<tr><td>CREATE_DATE</td><td>TIMESTAMP</td><td>申请时间</td><td>申请时间</td><td>系统自动</td></tr>
+<tr><td>ACTIVITY_NAME</td><td>VARCHAR2(255)</td><td>活动名称</td><td>活动名称</td><td>申请时填写</td></tr>
+<tr><td>LECTURER_NAME</td><td>VARCHAR2(255)</td><td>培训师</td><td>培训师</td><td>关联讲师档案</td></tr>
+<tr><td>ORDER_LECTURE_STATE</td><td>VARCHAR2(32)</td><td>点将状态</td><td>点将状态</td><td>值集MBO.ORDER_LECTURE_STATE</td></tr>
+<tr><td>APPROVAL_STATE</td><td>VARCHAR2(32)</td><td>审核状态</td><td>审核状态</td><td>值集MBO.APPLY_APPROVAL_STATE</td></tr>
+<tr><td>CANCEL_APPROVAL_STATE</td><td>VARCHAR2(32)</td><td>取消审核状态</td><td>取消审核状态</td><td>值集MBO.CANCEL_APPROVAL_STATE</td></tr>
+<tr><td>ACTIVITY_START_DATE</td><td>DATE</td><td>开始时间</td><td>开始时间</td><td>申请时填写</td></tr>
+<tr><td>ACTIVITY_END_DATE</td><td>DATE</td><td>结束时间</td><td>结束时间</td><td>申请时填写</td></tr>
+<tr><td>PRE_ORD_LECTURER_DAYS</td><td>NUMBER</td><td>拟点将天数</td><td>拟点将天数</td><td>申请时填写</td></tr>
+<tr><td>REAL_ORD_LECTURER_DAYS</td><td>NUMBER</td><td>实际点将天数</td><td>实际点将天数</td><td>结束执行时写入</td></tr>
+<tr><td>REAL_START_DATE</td><td>DATE</td><td>实际开始时间</td><td>-</td><td>结束执行时填写</td></tr>
+<tr><td>REAL_END_DATE</td><td>DATE</td><td>实际结束时间</td><td>-</td><td>结束执行时填写</td></tr>
+<tr><td>END_EXECUTE_REMARK</td><td>VARCHAR2(2000)</td><td>结束备注</td><td>-</td><td>结束执行时填写</td></tr>
+<tr><td>END_CONFIRM_STATE</td><td>VARCHAR2(32)</td><td>结束确认状态</td><td>结束确认状态</td><td>值集MBO.END_COMFIRM_STATE</td></tr>
+<tr><td>CRM_ORDER_CODE</td><td>VARCHAR2(64)</td><td>CRM单号</td><td>CRM单号</td><td>推送CRM后回写</td></tr>
+<tr><td>CRM_ORDER_STATUS</td><td>VARCHAR2(32)</td><td>CRM订单状态</td><td>CRM订单状态</td><td>值集MBO.CRM_ORDER_STATUS</td></tr>
+<tr><td>ERROR_INFO</td><td>VARCHAR2(2000)</td><td>异常问题</td><td>异常问题</td><td>流程异常时写入</td></tr>
+<tr><td>UPDATE_DATE</td><td>TIMESTAMP</td><td>操作更新时间</td><td>操作更新时间</td><td>系统自动</td></tr>
+<tr><td>CREATED_BY</td><td>NUMBER</td><td>创建人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>CREATION_DATE</td><td>DATE</td><td>创建时间</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATED_BY</td><td>NUMBER</td><td>最后更新人</td><td>-</td><td>系统自动</td></tr>
+<tr><td>LAST_UPDATE_DATE</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>系统自动</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="排查SQL">
+<pre class="detail-sql" v-pre><code>-- 查询活动点将执行列表
+SELECT
+  ta.APPLY_CODE    AS 申请编码,
+  ta.DISTRIBUTOR_NAME AS 申请人,
+  ta.ACTIVITY_NAME AS 活动名称,
+  ta.LECTURER_NAME AS 培训师,
+  ta.ORDER_LECTURE_STATE AS 点将状态,
+  ta.APPROVAL_STATE AS 审核状态,
+  ta.END_CONFIRM_STATE AS 结束确认状态,
+  ta.CRM_ORDER_CODE AS CRM单号,
+  ta.CRM_ORDER_STATUS AS CRM订单状态
+FROM TRAIN_APPLY ta
+WHERE ta.APPLY_TYPE_ONE = 'activity'
+  AND ta.APPROVAL_STATE = 'approved'
+ORDER BY ta.UPDATE_DATE DESC;
+
+-- 查询执行中的活动点将
+SELECT
+  ta.APPLY_CODE    AS 申请编码,
+  ta.ACTIVITY_NAME AS 活动名称,
+  ta.LECTURER_NAME AS 培训师,
+  ta.ORDER_LECTURE_STATE AS 点将状态
+FROM TRAIN_APPLY ta
+WHERE ta.APPLY_TYPE_ONE = 'activity'
+  AND ta.ORDER_LECTURE_STATE = 'executing'
+ORDER BY ta.ACTIVITY_START_DATE DESC;
+
+-- 查询可发起特殊取消的申请（7天内且已法大大签约）
+SELECT
+  ta.APPLY_CODE    AS 申请编码,
+  ta.ACTIVITY_NAME AS 活动名称,
+  TO_CHAR(ta.ACTIVITY_START_DATE, 'YYYY-MM-DD') AS 开始时间,
+  ta.APPROVAL_STATE AS 审核状态,
+  ta.CANCEL_APPROVAL_STATE AS 取消审核状态,
+  ROUND(ta.ACTIVITY_START_DATE - SYSDATE) AS 距开始天数
+FROM TRAIN_APPLY ta
+WHERE ta.APPLY_TYPE_ONE = 'activity'
+  AND ta.APPROVAL_STATE = 'fdd_sign'
+  AND ta.ACTIVITY_START_DATE &gt; SYSDATE
+  AND ta.ACTIVITY_START_DATE &lt;= SYSDATE + 7
+  AND (ta.CANCEL_APPROVAL_STATE IS NULL
+       OR ta.CANCEL_APPROVAL_STATE IN ('reject', 'oa_reject'));</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>请选择一条数据</td><td>操作按钮</td><td>未选择或选择多行；选择一条数据后操作</td><td>普通</td><td>前端选中行数校验</td></tr>
+<tr><td>只有在培训开始前七天内且已生效的单据才可以发起取消申请！</td><td>特殊取消</td><td>不满足7天内或未签约；确认时间和审批状态</td><td>普通</td><td>前端时间差值与状态校验</td></tr>
+<tr><td>该单据已发起取消申请，不可重复发起！</td><td>特殊取消</td><td>已有进行中的取消申请；等待当前取消审批完成</td><td>普通</td><td>前端 cancelApprovalState 校验</td></tr>
+<tr><td>实际开始时间不能为空</td><td>结束执行提交</td><td>未填写实际开始时间；填写后提交</td><td>普通</td><td>前端 realStartDate 必填校验</td></tr>
+<tr><td>实际结束时间不能为空</td><td>结束执行提交</td><td>未填写实际结束时间；填写后提交</td><td>普通</td><td>前端 realEndDate 必填校验</td></tr>
+<tr><td>结束备注不能为空</td><td>结束执行提交</td><td>未填写结束备注；填写后提交</td><td>普通</td><td>前端 endExecuteRemark 必填校验</td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>严重</td><td>HTTP请求异常捕获</td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
+<tr><td>数据不存在</td><td>查看/结束执行</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
+<tr><td>状态不允许操作</td><td>结束执行/特殊取消</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
+<tr><td>同步外部系统失败</td><td>同步CRM/OA/FDD</td><td>外部系统异常或数据不符合接口要求，检查 errorInfo 字段</td><td>error</td><td>pushCrm/pushOa/pushFdd 接口返回失败</td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.ORDER_LECTURE_STATE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
+</tbody>
+</table>
+<h4>报错1：请选择一条数据</h4>
+<ul><li><strong>触发条件</strong>：点击查看申请、查看确认书、特殊取消、结束执行、同步OA、同步FDD、同步CRM等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+         DISTRIBUTOR_NAME AS 申请人,
+         ACTIVITY_NAME AS 活动名称,
+         ORDER_LECTURE_STATE AS 点将状态,
+         APPROVAL_STATE AS 审核状态
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND APPROVAL_STATE = 'approved'
+  ORDER BY UPDATE_DATE DESC;</code></pre>
+<h4>报错2：只有在培训开始前七天内且已生效的单据才可以发起取消申请！</h4>
+<ul><li><strong>触发条件</strong>：点击特殊取消按钮时，不满足"培训开始前1-7天内且已法大大签约"条件</li><li><strong>逻辑分析</strong>：前端执行多重校验：①计算时间差值 timeDiff = (ACTIVITY_START_DATE - nowTime) / (24*60*60*1000)，校验 1 &lt;= timeDiff &lt;= 7（培训开始前1-7天内）；②校验 APPROVAL_STATE = 'fdd_sign'（已法大大签约生效）。任一校验不通过则提示"只有在培训开始前七天内且已生效的单据才可以发起取消申请！"。此校验限制取消时机，避免临近开课取消造成资源浪费，同时要求单据已生效具备业务合法性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+         ACTIVITY_NAME AS 活动名称,
+         TO_CHAR(ACTIVITY_START_DATE,'YYYY-MM-DD') AS 活动开始时间,
+         APPROVAL_STATE AS 审核状态,
+         ROUND(ACTIVITY_START_DATE - SYSDATE) AS 距开始天数
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND APPROVAL_STATE = 'approved'
+    AND (ACTIVITY_START_DATE &lt;= SYSDATE
+         OR ACTIVITY_START_DATE &gt; SYSDATE + 7
+         OR APPROVAL_STATE &lt;&gt; 'fdd_sign');</code></pre>
+<h4>报错3：该单据已发起取消申请，不可重复发起！</h4>
+<ul><li><strong>触发条件</strong>：点击特殊取消按钮时，该单据已存在进行中的取消申请</li><li><strong>逻辑分析</strong>：前端校验 CANCEL_APPROVAL_STATE 字段，若不为空且不等于 'reject' 和 'oa_reject'，说明已有进行中的取消申请（如待审批、审批中），提示"该单据已发起取消申请，不可重复发起！"。避免重复发起取消审批导致流程冲突</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+         ACTIVITY_NAME AS 活动名称,
+         APPROVAL_STATE AS 审核状态,
+         CANCEL_APPROVAL_STATE AS 取消审核状态
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND APPROVAL_STATE = 'fdd_sign'
+    AND CANCEL_APPROVAL_STATE IS NOT NULL
+    AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject');</code></pre>
+<h4>报错4：实际开始时间不能为空</h4>
+<ul><li><strong>触发条件</strong>：结束执行提交时，realStartDate 字段为空</li><li><strong>逻辑分析</strong>：前端 endExecuteFormDS.validate() 对 realStartDate 字段配置 required 校验，提交前校验实际开始时间是否填写，为空则阻止提交并提示"实际开始时间不能为空"。实际开始时间用于记录活动真实交付时间，作为执行留痕的核心数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+         ACTIVITY_NAME AS 活动名称,
+         ORDER_LECTURE_STATE AS 点将状态,
+         REAL_START_DATE AS 实际开始时间
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND ORDER_LECTURE_STATE = 'executed'
+    AND REAL_START_DATE IS NULL;</code></pre>
+<h4>报错5：实际结束时间不能为空</h4>
+<ul><li><strong>触发条件</strong>：结束执行提交时，realEndDate 字段为空</li><li><strong>逻辑分析</strong>：前端 endExecuteFormDS.validate() 对 realEndDate 字段配置 required 校验，提交前校验实际结束时间是否填写，为空则阻止提交并提示"实际结束时间不能为空"。实际结束时间用于记录活动真实完成时间，作为执行留痕的核心数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+         ACTIVITY_NAME AS 活动名称,
+         ORDER_LECTURE_STATE AS 点将状态,
+         REAL_END_DATE AS 实际结束时间
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND ORDER_LECTURE_STATE = 'executed'
+    AND REAL_END_DATE IS NULL;</code></pre>
+<h4>报错6：结束备注不能为空</h4>
+<ul><li><strong>触发条件</strong>：结束执行提交时，endExecuteRemark 字段为空</li><li><strong>逻辑分析</strong>：前端 endExecuteFormDS.validate() 对 endExecuteRemark 字段配置 required 校验，提交前校验结束备注是否填写，为空则阻止提交并提示"结束备注不能为空"。结束备注用于记录执行结果说明，作为活动交付的最终留痕</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+         ACTIVITY_NAME AS 活动名称,
+         ORDER_LECTURE_STATE AS 点将状态,
+         END_EXECUTE_REMARK AS 结束备注
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND ORDER_LECTURE_STATE = 'executed'
+    AND (END_EXECUTE_REMARK IS NULL OR END_EXECUTE_REMARK = '');</code></pre>
+<h4>报错7：请求失败</h4>
+<ul><li><strong>触发条件</strong>：调用 mlt/activityApply/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM）调用失败、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
+         ACTIVITY_NAME AS 活动名称,
+         ORDER_LECTURE_STATE AS 点将状态,
+         CRM_ORDER_STATUS AS CRM订单状态,
+         ERROR_INFO AS 异常问题,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错8：网络异常/接口超时</h4>
+<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、外部系统响应慢等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+         ORDER_LECTURE_STATE AS 点将状态,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错9：权限不足</h4>
+<ul><li><strong>触发条件</strong>：点击查看申请、特殊取消、结束执行、同步OA/FDD/CRM等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+  FROM SYS_USER U
+  LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
+  LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
+  LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
+  LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
+  WHERE P.PERMISSION_CODE LIKE '%activity_general_execute%' ORDER BY U.USER_NAME;</code></pre>
+<h4>报错10：数据不存在</h4>
+<ul><li><strong>触发条件</strong>：查看申请、结束执行等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 TRAIN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+         ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre>
+<h4>报错11：状态不允许操作</h4>
+<ul><li><strong>触发条件</strong>：点击结束执行、特殊取消等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如结束执行要求状态为执行中、特殊取消要求审批通过且培训开始前7天内等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+         ORDER_LECTURE_STATE AS 点将状态, APPROVAL_STATE AS 审核状态,
+         CANCEL_APPROVAL_STATE AS 取消审核状态, ERROR_INFO AS 异常问题
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND ORDER_LECTURE_STATE NOT IN ('valid','executing','finished')
+  ORDER BY CREATE_DATE DESC;</code></pre>
+<h4>报错12：同步外部系统失败</h4>
+<ul><li><strong>触发条件</strong>：点击同步CRM/同步OA/同步FDD按钮，对应推送接口返回失败</li><li><strong>逻辑分析</strong>：前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, ACTIVITY_NAME AS 活动名称,
+         CRM_ORDER_CODE AS CRM单号, CRM_ORDER_STATUS AS CRM订单状态,
+         ERROR_INFO AS 异常问题,
+         TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
+  FROM TRAIN_APPLY
+  WHERE APPLY_TYPE_ONE = 'activity'
+    AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre>
+<h4>报错13：值集数据不显示</h4>
+<ul><li><strong>触发条件</strong>：查询条件或列表中点将状态、审核状态等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.ORDER_LECTURE_STATE、MBO.APPLY_APPROVAL_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+         LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
+  FROM SYS_LOOKUP_VALUE
+  WHERE LOOKUP_CODE IN ('MBO.ORDER_LECTURE_STATE','MBO.APPLY_APPROVAL_STATE','MBO.CANCEL_APPROVAL_STATE')
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre>
+</KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
+<p><strong>Q1：执行跟踪页面能否修改数据？</strong></p>
+<p>A：不能，本页面为只读跟踪页面，仅提供查询查看和执行结果回写功能。</p>
+<p><strong>Q2：执行列表与活动点将管理列表有什么区别？</strong></p>
+<p>A：活动点将管理列表展示所有状态的申请，执行列表仅展示已审批通过进入执行阶段的申请（<code>pageType=activity</code>）。</p>
+<p><strong>Q3：特殊取消时机如何判断？</strong></p>
+<p>A：培训开始前1-7天内且已法大大签约（<code>approvalState=fdd_sign</code>）的申请可发起特殊取消。</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>问题</th><th>排查方式</th></tr>
+</thead>
+<tbody>
+<tr><td>列表无数据</td><td>检查 pageType=activity 参数，确认有执行中的活动点将</td></tr>
+<tr><td>特殊取消按钮校验不通过</td><td>检查 ACTIVITY_START_DATE 与当前时间差值是否在1-7天，APPROVAL_STATE 是否为 fdd_sign</td></tr>
+<tr><td>结束执行失败</td><td>检查 realStartDate、realEndDate、endExecuteRemark 是否填写完整</td></tr>
+<tr><td>CRM同步失败</td><td>检查 sendCrmOrder 接口，确认经销商CRM映射存在</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
+</div>
+</div>
+
+<div id="changelog" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-11-12</td><td>-</td><td>hfy</td><td>初始创建</td></tr>
+<tr><td>2026-08-03</td><td>-</td><td>AI</td><td>初始文档</td></tr>
+<tr><td>2026-08-28</td><td>-</td><td>AI</td><td>完整重写，补充业务流程、界面模块、数据库表、FAQ等</td></tr>
+<tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范格式重写，修正数据库表为TRAIN_APPLY，补充API接口与按钮逻辑</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="常见问题"><p><strong>Q1：执行跟踪页面能否修改数据？</strong></p>
-<p>A：不能，本页面为只读跟踪页面，仅提供查询查看功能。</p>
-<p><strong>Q2：执行完成率如何计算？</strong></p>
-<p>A：根据活动下的子任务完成数量占总任务数量的百分比计算。</p>
-<p><strong>Q3：执行列表与活动点将管理列表有什么区别？</strong></p>
-<p>A：活动点将管理列表展示所有状态的申请，执行列表仅展示已审批通过进入执行阶段的申请。</p></KbCard>
-</div>
-</div>
-</div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>版本</th><th>更新内容</th><th>作者</th></tr></thead><tbody><tr><td>2026-08-03</td><td>v1.0</td><td>初始文档</td><td>AI</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

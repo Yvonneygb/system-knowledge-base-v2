@@ -136,39 +136,8 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="验收信息项配置">
-
-<KbQuote>配置门头验收时需要检查的验收项目和拍摄要求，确保门头验收口径统一</KbQuote>
-
-**具体逻辑**：
-
-- 1、配置门头验收时需要检查的信息项（验收项目）
-- 2、每项包含验收项目名称、验收结果、验收比例、是否验收申请时提供等属性
-- 3、验收申请时提供标识控制该信息项在验收申请环节是否需要填写
-
-</KbCard>
-
-<KbCard num="2" title="验收比例">
-
-<KbQuote>验收比例代表每个验收项目在整体验收中的权重，用于验收评分与结果汇总</KbQuote>
-
-**具体逻辑**：
-
-- 1、验收比例（decorationRate）表示该验收项目在整体验收中的权重或比例
-- 2、用于验收评分或验收结果汇总计算
-
-</KbCard>
-
-<KbCard num="3" title="数据转换逻辑">
-
-<KbQuote>验收报销时将验收设置行自动转换为验收报销验收行实体，保证数据一致性</KbQuote>
-
-**具体逻辑**：
-
-- 1、AcceptanceInfoSetLine 实体包含 convertEntity 方法
-- 2、验收报销时将设置行转换为 FinFeeCheckBxAcceptance 实体
-- 3、转换时自动取当前用户真实姓名作为创建人和修改人
-
+<KbCard num="1" title="重点逻辑1：验收信息配置">
+<ul><li><strong>业务意义</strong>：配置门店验收时需要检查的验收项目和拍摄要求</li><li><strong>具体逻辑描述</strong>：</li><li>定义验收项目名称和说明</li><li>定义拍摄角度及要求</li><li>设置是否验收提供/装修提供及数量要求</li></ul>
 </KbCard>
 
 </div>
@@ -178,87 +147,82 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
-<KbSubTitle>选择弹窗</KbSubTitle>
-
-- **装修项目LOV**：词汇编码 `mkt.decorate_project`
-
-</KbCard>
-<KbCard title="导入">
-不支持批量导入
-
-</KbCard>
-<KbCard title="其他按钮">
-
-<div class="kb-field-scroll">
+<KbCard title="界面模块">
+<p>本页面为hlod低代码页面，前端嵌入在门店验收与报销单详情页(storeAcceptanceReimbursementInfo)的Tab页签中。后端无独立Controller，查询接口嵌入在FinFeeCheckBxHeaderController的getAcceptanceInfo方法中。</p>
+<h4>验收信息设置区</h4>
 <table class="kb-field-tbl">
-<colgroup><col style="width:20%"><col style="width:50%"><col style="width:30%"></colgroup>
-<thead><tr><th>按钮名称</th><th>操作说明</th><th>可用条件</th></tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr><td>新增行</td><td>新增一条验收信息项</td><td>始终可用</td></tr>
-<tr><td>删除行</td><td>删除选中的验收信息项</td><td>选中行后可用</td></tr>
-<tr><td>保存</td><td>保存所有验收信息项</td><td>编辑状态</td></tr>
-</tbody></table></div>
-
+<tr><td>验收项目</td><td>ACCEPTANCE_ITEM</td><td>TextField</td><td>验收项目名称</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>验收说明</td><td>ACCEPTANCE_NOTE</td><td>TextField</td><td>验收项目说明</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>拍摄要求</td><td>SHOOT_REQUIRE</td><td>TextField</td><td>拍摄角度及要求</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>是否验收提供</td><td>IS_YS_PROVIDE</td><td>Select</td><td>是否验收提供</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>验收提供数量</td><td>YS_PROVIDE_COUNT</td><td>NumberField</td><td>验收提供数量</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>是否装修提供</td><td>IS_ZX_PROVIDE</td><td>Select</td><td>是否装修提供</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>装修提供数量</td><td>ZX_PROVIDE_COUNT</td><td>NumberField</td><td>装修提供数量</td><td>始终</td><td>用户输入</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口</th><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>获取验收信息</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-check-bx-headers/get-acceptance-info`</td><td>获取质量信息设置(嵌入在FinFeeCheckBxHeaderController中)</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<p>本页面无选择弹窗。</p>
+</KbCard>
+
+<KbCard title="导入">
+<p>本页面无导入功能。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<p>本页面无其他按钮。</p>
+</KbCard>
+
 <KbCard title="保存校验">
-
-<KbSubTitle>校验1：验收项目必填 —— 确保验收项目名称完整</KbSubTitle>
-
-- 本文为hlod低代码页面，前端C7N内置必填校验
-
-<KbTip>toast提醒"验收项目不能为空"</KbTip>
-
-```sql
-SELECT * FROM ACCEPTANCE_INFO_SET_LINE WHERE ACCEPTANCE_ITEM IS NULL
-```
-
+<ul><li>校验1：验收项目必填 —— 确保验收项目名称完整</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM ACCEPTANCE_INFO_SET_LINE WHERE ACCEPTANCE_ITEM IS NULL</code></li></ul>
 </KbCard>
+
 <KbCard title="提交校验">
+<p>本页面为设置页面，无提交校验。</p>
 </KbCard>
+
 <KbCard title="状态机">
-
-```text
-编辑中 ──保存──→ 已保存（可继续编辑）
-```
-
----
-
-</KbCard>
-<KbCard num="1" title="4.1 ACCEPTANCE_INFO_SET_LINE（门店验收信息设置明细表）">
-
-| 列名 | 类型 | 说明 | 约束 |
-|-----|------|------|------|
-| SET_LINE_ID | BIGINT | 主键ID | PK, AUTO_INCREMENT |
-| SET_ID | BIGINT | 关联主表主键ID | FK |
-| SEQ | BIGINT | 序号 | |
-| DECORATION_PROJECT | VARCHAR | 验收项目 | |
-| NOTE | VARCHAR | 验收结果 | |
-| IS_YS_PROVIDE | BIGINT | 验收申请时提供 0/1 | |
-| DESCRIPTION | VARCHAR | 备注 | |
-| DECORATE_PROJECT | BIGINT | 装修项目(词汇值) | |
-| DECORATION_RATE | DECIMAL | 验收比例 | |
-| CREATOR | VARCHAR | 创建人 | |
-| CREATE_TIME | DATETIME | 创建时间 | |
-| UPDATOR | VARCHAR | 修改人 | |
-| UPDATE_TIME | DATETIME | 修改时间 | |
-
----
-
+<p>本页面为设置页面，无状态机。</p>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="工作流">
+<p>本页面无工作流。</p>
 </KbCard>
+
+<KbCard title="ACCEPTANCE_INFO_SET_LINE（门店验收信息设置明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ACCEPTANCE_ITEM</td><td>String</td><td>验收项目名称</td><td>验收项目</td><td>用户输入</td></tr>
+<tr><td>ACCEPTANCE_NOTE</td><td>String</td><td>验收项目说明</td><td>验收说明</td><td>用户输入</td></tr>
+<tr><td>SHOOT_REQUIRE</td><td>String</td><td>拍摄角度及要求</td><td>拍摄要求</td><td>用户输入</td></tr>
+<tr><td>IS_YS_PROVIDE</td><td>Long</td><td>是否验收提供</td><td>是否验收提供</td><td>用户选择</td></tr>
+<tr><td>YS_PROVIDE_COUNT</td><td>Long</td><td>验收提供数量</td><td>验收提供数量</td><td>用户输入</td></tr>
+<tr><td>IS_ZX_PROVIDE</td><td>Long</td><td>是否装修提供</td><td>是否装修提供</td><td>用户选择</td></tr>
+<tr><td>ZX_PROVIDE_COUNT</td><td>Long</td><td>装修提供数量</td><td>装修提供数量</td><td>用户输入</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>Long</td><td>组织ID</td><td>-</td><td>系统赋值</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -266,70 +230,11 @@ SELECT * FROM ACCEPTANCE_INFO_SET_LINE WHERE ACCEPTANCE_ITEM IS NULL
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">验收项目不能为空</td>
-            <td style="font-size:13px;">行信息未填写验收项目</td>
-            <td style="font-size:13px;">补充验收项目后保存</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">中</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>验收项目不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>验收行信息中验收项目字段为空时触发校验。<br>该页面为hlod低代码页面，验收项目必填校验由C7N框架前端控制。<br>排查是否数据库中存在前序导入的历史异常数据。</div>
-    <div class="detail-tip" v-pre>toast提醒，提示后用户补充验收项目保存</div>
-
-```sql
-SELECT acceptance_item AS 验收项目
-FROM   acceptance_info_set_line
-WHERE  acceptance_item IS NULL
-   OR  TRIM(acceptance_item) = '';
-```
-
-  </div>
-</div>
+<KbCard title="Q1：验收时无验收信息">
+<p><strong>根因</strong>：未配置验收信息设置</p>
+<p><strong>解决方案</strong>：在本页面配置验收项目和拍摄要求</p>
 </KbCard>
-<KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">验收信息设置如何被下游使用？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>门店验收报销时通过 `getAcceptanceInfo` 接口（FinFeeCheckBxHeaderController）获取当前用户对应的验收信息设置行，自动转换为验收报销的验收行数据。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">验收申请时提供标识的作用？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>is_ys_provide=1 时，该验收信息项在验收申请环节需要用户填写；=0 时，该信息项不强制在申请环节提供。
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">该页面是hold低代码页面吗？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>是，该页面基于hold低代码平台配置，无独立Controller，通过FinFeeCheckBxHeaderController的getAcceptanceInfo接口提供数据访问。
-    </div>
-  </div>
-</div>
-</KbCard>
+
 </div>
 </div>
 </div>
@@ -338,10 +243,14 @@ WHERE  acceptance_item IS NULL
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 修改内容 | 修改人 |
-|-----|------|---------|-------|
-| 2026-07-31 | V1.0 | 初始生成知识库文档 | AI |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

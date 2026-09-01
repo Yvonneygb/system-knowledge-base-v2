@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -100,6 +101,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -172,70 +174,276 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="2.1 新增逻辑（doInsert）"><ul><li>生成兑现编码：编码规则<code>AE.TERMINAL_CASHOUT_CODE</code>，前缀为divisionCode</li><li>计提年份：若未填写，从验收报销单号截取并查询对应年份</li><li>新增主表、发票明细(FinFeeTerminalReCashInv)、资源信息明细(FinFeeTerminalReCashLine)</li><li>发票税金汇总：自动计算invoiceTaxAmt和factInvoiceNotaxAmt</li><li>新增附件</li></ul></KbCard>
-<KbCard title="2.2 更新逻辑（doUpdate）"><ul><li>更新主表、发票明细、资源信息明细</li><li>重新计算发票税金汇总</li><li>保存附件</li></ul></KbCard>
-<KbCard title="2.3 删除逻辑（doDelete）"><ul><li>删除主表、发票明细、资源信息明细</li></ul></KbCard>
-<KbCard title="2.4 审批通过回调（onWfComplete）"><ul><li>更新兑现单：checkTime=今天，hzApproveStatus=APPROVED</li><li>更新验收报销单：<ul><li>额度外兑现比例 = 已兑现金额 / 额度外可兑现小计(sumOutCanNotaxBxAmt)</li><li>剩余未兑现金额 = 额度外可兑现小计 - 已兑现金额</li></ul></li></ul></KbCard>
-<KbCard title="2.5 推送共享（doSendToSie）"><ul><li>调用terminalReCashShareIntf.terminalCashShare构建共享接口数据</li><li>推送成功：hzApproveStatus=RUN</li><li>推送失败：记录错误信息到errorCollection</li></ul></KbCard>
-<KbCard title="2.6 推送资金池（synAdjustCashPoolToEbs）"><ul><li>获取经销商账户(extAccountId)</li><li>构建CashPoolDataDTO，sourceType="广告费（额外）"</li><li>amount取afterTaxCashoutAmt(扣税差后可兑现金额)</li></ul></KbCard>
-<KbCard title="2.7 提交审批（wfProcSubmit）"><ul><li>更新工作流变量objId</li><li>启动工作流实例，状态更新为RUN</li></ul></KbCard>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard num="1" title="重点逻辑1：额度外兑现金额计算">
+<ul><li><strong>业务意义</strong>：将验收报销单中额度外可报销金额实际支取出来</li><li><strong>具体逻辑描述</strong>：</li><li>本次申请兑现金额(thisApplyCashoutAmt) ≤ 剩余可兑金额(thisSurCashoutAmt)</li><li>税后兑现金额 = 申请兑现金额 - 发票税额</li><li>发票税额 = 发票明细中各taxAmount之和</li><li>不含税发票金额 = 含税发票金额 - 发票税额</li></ul>
 </KbCard>
+
+<KbCard num="2" title="重点逻辑2：计提年份自动带出">
+<ul><li><strong>业务意义</strong>：根据验收报销单号自动带出计提年份</li><li><strong>具体逻辑描述</strong>：</li><li>若withholdingTimeYear为空，从checkBxCode截取前缀查询withholdingTimeYear</li><li>截掉最后2位字符后查询数据库获取计提年份</li></ul>
+</KbCard>
+
+<KbCard num="3" title="重点逻辑3：发票明细与资源明细">
+<ul><li><strong>业务意义</strong>：兑现单关联发票明细和资源信息明细</li><li><strong>具体逻辑描述</strong>：</li><li>发票明细(FinFeeTerminalReCashInv)：记录各发票的税额信息</li><li>资源明细(FinFeeTerminalReCashLine)：记录资源信息，含税额汇总</li><li>保存时自动计算发票税额合计并回写到资源明细行</li></ul>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="3.1 API接口列表"><table class="kl-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td>GET</td><td>/do-select</td><td>兑现明细</td></tr><tr><td>POST</td><td>/</td><td>创建或更新兑现</td></tr><tr><td>DELETE</td><td>/</td><td>删除兑现</td></tr></tbody></table></KbCard>
-<KbCard title="3.2 工作流回调"><table class="kl-table"><thead><tr><th>方法</th><th>触发时机</th><th>逻辑说明</th></tr></thead><tbody><tr><td>wfProcSubmit</td><td>提交审批</td><td>启动工作流实例</td></tr><tr><td>wfComplete</td><td>审批完成</td><td>通过→onWfComplete；驳回→onWfBreak</td></tr><tr><td>onWfComplete</td><td>审批通过</td><td>更新兑现比例，更新报销单</td></tr><tr><td>onWfBreak</td><td>审批驳回</td><td>更新状态</td></tr></tbody></table></KbCard>
-<KbCard title="3.3 选择弹窗"><p class='kl-tip'>无LOV选择弹窗。查询栏使用值集下拉：事业部（<code>AE.EPM_DIVISION</code>）、单据状态（<code>AE.SHARE_STAT</code>）。有执行冲销弹窗（Modal）：年月（必填）、交易公司编码（必填）。</p></KbCard>
-<KbCard title="3.4 导入"><p class='kl-tip'>不支持导入功能。</p></KbCard>
-<KbCard title="3.5 其他按钮"><table class="kl-table"><thead><tr><th>按钮</th><th>说明</th><th>接口</th></tr></thead><tbody><tr><td>执行</td><td>打开冲销Modal弹窗</td><td><code>/writeoff-in-quota/exec-reversal-data</code></td></tr><tr><td>导出</td><td>导出列表数据</td><td><code>/writeoff-in-quota/export</code></td></tr></tbody></table>
-<p class='kl-tip'>纯列表操作页，无详情页。</p></KbCard>
-<KbCard title="3.6 保存校验"><p class='kl-tip'>无保存功能。执行冲销弹窗校验：年月、交易公司编码必填（modalDs.validate()）。</p></KbCard>
-<KbCard title="3.7 提交校验"><p class='kl-tip'>无提交/审批功能，无工作流。</p></KbCard>
-<KbCard title="表：FIN_FEE_TERMINAL_RE_CASHOUT"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td>terminal_cashout_id</td><td>Long</td><td>主键ID(兑现ID)</td></tr><tr><td>terminal_cashout_code</td><td>String</td><td>兑现编码</td></tr><tr><td>check_bx_code</td><td>String</td><td>验收报销单号</td></tr><tr><td>check_bx_id</td><td>Long</td><td>验收报销ID</td></tr><tr><td>cust_id</td><td>Long</td><td>经销商ID</td></tr><tr><td>cust_code</td><td>String</td><td>经销商编码</td></tr><tr><td>short_name</td><td>String</td><td>经销商简称</td></tr><tr><td>cust_name</td><td>String</td><td>经销商名称</td></tr><tr><td>trading_company_id</td><td>Long</td><td>交易公司ID</td></tr><tr><td>trading_company_code</td><td>String</td><td>交易公司编码</td></tr><tr><td>trading_company_name</td><td>String</td><td>交易公司名称</td></tr><tr><td>billing_unit_id</td><td>Long</td><td>开票单位ID</td></tr><tr><td>billing_unit_code</td><td>String</td><td>法人编码</td></tr><tr><td>billing_unit_name</td><td>String</td><td>法人名称</td></tr><tr><td>finished_time</td><td>LocalDate</td><td>验收完成时间</td></tr><tr><td>out_cashout_end_time</td><td>LocalDate</td><td>额度外二次兑现失效日期</td></tr><tr><td>terminal_id</td><td>Long</td><td>门店ID</td></tr><tr><td>terminal_code</td><td>String</td><td>门店编码</td></tr><tr><td>terminal_name</td><td>String</td><td>门店名称</td></tr><tr><td>pay_type</td><td>Long</td><td>支付方式</td></tr><tr><td>vendor_id</td><td>Long</td><td>供应商ID</td></tr><tr><td>vendor_code</td><td>String</td><td>供应商编码</td></tr><tr><td>vendor_name</td><td>String</td><td>供应商名称</td></tr><tr><td>cost_center_id</td><td>Long</td><td>成本中心ID</td></tr><tr><td>cost_center_code</td><td>String</td><td>成本中心编码</td></tr><tr><td>cost_center_name</td><td>String</td><td>成本中心名称</td></tr><tr><td>note</td><td>String</td><td>备注</td></tr><tr><td>creator_name</td><td>String</td><td>申请人</td></tr><tr><td>create_time</td><td>Date</td><td>申请时间</td></tr><tr><td>organization_id</td><td>Long</td><td>组织ID</td></tr><tr><td>stat</td><td>Long</td><td>单据状态</td></tr><tr><td>wfid</td><td>Long</td><td>流程ID</td></tr><tr><td>wfflag</td><td>Long</td><td>流程状态</td></tr><tr><td>invoice_tax_rate</td><td>Long</td><td>发票税点</td></tr><tr><td>invoice_type</td><td>Long</td><td>发票类型</td></tr><tr><td>our_invoicing</td><td>Long</td><td>本方开票</td></tr><tr><td>this_sur_cashout_amt</td><td>BigDecimal</td><td>剩余未兑现金额(未扣税)</td></tr><tr><td>this_bx_proportion</td><td>BigDecimal</td><td>申请兑现比例(%)</td></tr><tr><td>this_apply_cashout_amt</td><td>BigDecimal</td><td>本次申请兑现金额</td></tr><tr><td>after_tax_cashout_amt</td><td>BigDecimal</td><td>扣税差后可兑现金额</td></tr><tr><td>fact_invoice_amt</td><td>BigDecimal</td><td>实际兑现含税金额</td></tr><tr><td>invoice_tax_amt</td><td>BigDecimal</td><td>发票税金</td></tr><tr><td>fact_invoice_notax_amt</td><td>BigDecimal</td><td>实际兑现不含税金额</td></tr><tr><td>receipt_status</td><td>String</td><td>转货款状态</td></tr><tr><td>invoice_paid_date</td><td>LocalDateTime</td><td>入账日期</td></tr><tr><td>invoice_paid_amount</td><td>BigDecimal</td><td>入账金额</td></tr><tr><td>reduce_amt</td><td>BigDecimal</td><td>核销金额</td></tr><tr><td>cashout_rate</td><td>Long</td><td>兑现率</td></tr><tr><td>can_not_tax_bx_amt</td><td>BigDecimal</td><td>可兑现金额-不含税</td></tr><tr><td>cashout_type</td><td>Long</td><td>兑现类型</td></tr><tr><td>creator</td><td>String</td><td>申请人</td></tr><tr><td>checker</td><td>String</td><td>审核人</td></tr><tr><td>check_time</td><td>LocalDate</td><td>审核日期</td></tr><tr><td>entid</td><td>Long</td><td>事业部ID</td></tr><tr><td>audit_stat</td><td>String</td><td>审核状态</td></tr><tr><td>salezone_org_id</td><td>Long</td><td>销售区域ID</td></tr><tr><td>salezone_org_name</td><td>String</td><td>销售区域</td></tr><tr><td>operat_center_org_id</td><td>Long</td><td>运营中心ID</td></tr><tr><td>operat_center_org_name</td><td>String</td><td>运营中心</td></tr><tr><td>close_cash</td><td>Long</td><td>是否关闭剩余未兑现</td></tr><tr><td>error_collection</td><td>String</td><td>错误收集器</td></tr><tr><td>ledger_date</td><td>LocalDate</td><td>总账日期</td></tr><tr><td>cash_count</td><td>String</td><td>兑现次数</td></tr><tr><td>ticket_status</td><td>String</td><td>税务接口状态</td></tr><tr><td>ticket_message</td><td>String</td><td>税务接口信息</td></tr><tr><td>withholding_time_year</td><td>String</td><td>计提年份</td></tr><tr><td>designer</td><td>String</td><td>委派设计师</td></tr><tr><td>userid</td><td>String</td><td>设计师ID</td></tr><tr><td>hz_instance_id</td><td>Long</td><td>流程实例ID</td></tr><tr><td>hz_approve_status</td><td>String</td><td>流程实例状态</td></tr></tbody></table></KbCard>
+<KbCard title="界面模块">
+<p>本页面为hlod低代码页面，前端尚无独立React组件。后端Controller(FinFeeTerminalReCashoutController)提供3个API。</p>
+<h4>头部信息区</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>兑现单号</td><td>TERMINAL_CASHOUT_CODE</td><td>TextField</td><td>兑现单号</td><td>始终</td><td>事业部编码+编码规则AE.TERMINAL_CASHOUT_CODE</td></tr>
+<tr><td>验收报销单号</td><td>CHECK_BX_CODE</td><td>Lov</td><td>选择验收报销单</td><td>始终</td><td>选择已审批的验收报销单</td></tr>
+<tr><td>门店编码</td><td>TERMINAL_CODE</td><td>TextField</td><td>门店编码</td><td>始终</td><td>从验收报销单带入</td></tr>
+<tr><td>门店名称</td><td>TERMINAL_NAME</td><td>TextField</td><td>门店名称</td><td>始终</td><td>从验收报销单带入</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>TextField</td><td>经销商编码</td><td>始终</td><td>从验收报销单带入</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>TextField</td><td>经销商名称</td><td>始终</td><td>从验收报销单带入</td></tr>
+<tr><td>经销商简称</td><td>SHORT_NAME</td><td>TextField</td><td>经销商简称</td><td>始终</td><td>从验收报销单带入</td></tr>
+<tr><td>交易公司</td><td>TRADING_COMPANY_NAME</td><td>TextField</td><td>交易公司</td><td>始终</td><td>从验收报销单带入</td></tr>
+<tr><td>法人客户</td><td>BILLING_UNIT_NAME</td><td>TextField</td><td>法人客户</td><td>始终</td><td>从验收报销单带入</td></tr>
+<tr><td>付款方式</td><td>PAY_TYPE</td><td>Select</td><td>付款方式</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>供应商编码</td><td>VENDOR_CODE</td><td>TextField</td><td>供应商编码</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>供应商名称</td><td>VENDOR_NAME</td><td>TextField</td><td>供应商名称</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>成本中心</td><td>COST_CENTER_NAME</td><td>TextField</td><td>成本中心</td><td>始终</td><td>从验收报销单带入</td></tr>
+<tr><td>剩余可兑金额</td><td>THIS_SUR_CASHOUT_AMT</td><td>NumberField</td><td>剩余可兑金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>本次申请兑现金额</td><td>THIS_APPLY_CASHOUT_AMT</td><td>NumberField</td><td>本次申请兑现金额</td><td>始终</td><td>用户输入，≤剩余可兑</td></tr>
+<tr><td>报销比例</td><td>THIS_BX_PROPORTION</td><td>NumberField</td><td>报销比例</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>含税发票金额</td><td>FACT_INVOICE_AMT</td><td>NumberField</td><td>含税发票金额</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>发票税额</td><td>INVOICE_TAX_AMT</td><td>NumberField</td><td>发票税额</td><td>始终</td><td>发票明细税额合计</td></tr>
+<tr><td>不含税发票金额</td><td>FACT_INVOICE_NOTAX_AMT</td><td>NumberField</td><td>不含税发票金额</td><td>始终</td><td>含税金额-税额</td></tr>
+<tr><td>税后兑现金额</td><td>AFTER_TAX_CASHOUT_AMT</td><td>NumberField</td><td>税后兑现金额</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>发票税率</td><td>INVOICE_TAX_RATE</td><td>Select</td><td>发票税率</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>发票类型</td><td>INVOICE_TYPE</td><td>Select</td><td>发票类型</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>我司开票</td><td>OUR_INVOICING</td><td>Select</td><td>我司开票</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>兑现类型</td><td>CASHOUT_TYPE</td><td>Select</td><td>兑现类型</td><td>始终</td><td>用户选择</td></tr>
+<tr><td>兑现比例</td><td>CASHOUT_RATE</td><td>NumberField</td><td>兑现比例</td><td>始终</td><td>系统计算</td></tr>
+<tr><td>收款状态</td><td>RECEIPT_STATUS</td><td>Select</td><td>收款状态</td><td>始终</td><td>系统维护</td></tr>
+<tr><td>开票日期</td><td>INVOICE_PAID_DATE</td><td>DatePicker</td><td>开票日期</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>开票金额</td><td>INVOICE_PAID_AMOUNT</td><td>NumberField</td><td>开票金额</td><td>始终</td><td>用户输入</td></tr>
+<tr><td>计提年份</td><td>WITHHOLDING_TIME_YEAR</td><td>TextField</td><td>计提年份</td><td>始终</td><td>从验收报销单号自动带出</td></tr>
+<tr><td>备注</td><td>NOTE</td><td>TextField</td><td>备注</td><td>始终</td><td>用户输入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口</th><th>方法</th><th>路径</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>详情查询</td><td>GET</td><td>`/v1/&#123;organizationId&#125;/fin-fee-terminal-re-cashouts/do-select`</td><td>查询额度外兑现详情(含发票/资源明细)</td></tr>
+<tr><td>保存</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/fin-fee-terminal-re-cashouts`</td><td>新增或更新额度外兑现</td></tr>
+<tr><td>删除</td><td>DELETE</td><td>`/v1/&#123;organizationId&#125;/fin-fee-terminal-re-cashouts`</td><td>删除额度外兑现及关联明细</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="选择弹窗">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>弹窗名称</th><th>LOV编码</th><th>参数</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>验收报销单号</td><td>-</td><td>-</td><td>选择已审批(APPROVED)的门店验收与报销单，联动带出门店/经销商/报销金额等</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="导入">
+<p>本页面无导入功能。</p>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>触发条件</th><th>执行逻辑</th><th>接口调用</th></tr>
+</thead>
+<tbody>
+<tr><td>删除</td><td>任意状态</td><td>删除兑现单及关联发票明细/资源明细</td><td>DELETE</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="保存校验">
+<ul><li>校验1：验收报销单必填 —— 确保关联有效的验收报销单</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CASHOUT_ID FROM FIN_FEE_TERMINAL_RE_CASHOUT WHERE CHECK_BX_ID IS NULL</code></li></ul>
+<ul><li>校验2：兑现金额≤剩余可兑额度 —— 防止超额兑现</li><li><strong>详细逻辑</strong>：thisApplyCashoutAmt ≤ thisSurCashoutAmt</li><li><strong>系统体现</strong>：前端/后端校验</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CASHOUT_ID, THIS_APPLY_CASHOUT_AMT, THIS_SUR_CASHOUT_AMT FROM FIN_FEE_TERMINAL_RE_CASHOUT WHERE THIS_APPLY_CASHOUT_AMT &gt; THIS_SUR_CASHOUT_AMT</code></li></ul>
+</KbCard>
+
+<KbCard title="提交校验">
+<ul><li>校验1：兑现数据完整性 —— 确保发票明细和资源明细完整</li><li><strong>详细逻辑</strong>：提交时校验发票明细和资源明细非空</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_TERMINAL_RE_CASH_INV WHERE TERMINAL_CASHOUT_ID=&#123;id&#125;</code></li></ul>
+</KbCard>
+
+<KbCard title="状态机">
+<pre class="lang-text" v-pre><code>NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通过──→ APPROVED(已审批)
+                                       │              ├─ 回写验收报销单
+                                       │              ├─ 同步资金池(EBS)
+                                       │              └─ 分摊接口处理
+                                       │
+                                       └──审批驳回──→ REJECTED(已驳回)
+
+任意状态 ──删除──→ (删除)</code></pre>
+</KbCard>
+
+<KbCard title="工作流">
+<ul><li><strong>工作流编码</strong>：<code>STORE_FIN_FEE_TERMINAL_RE_CASH</code>（门店装修兑现额度外）</li><li><strong>编码规则</strong>：<code>AE.TERMINAL_CASHOUT_CODE</code>（兑现单号，前缀为事业部编码divisionCode）</li></ul>
+</KbCard>
+
+<KbCard title="FIN_FEE_TERMINAL_RE_CASHOUT（门店装修兑现额度外表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_CASHOUT_ID</td><td>Long</td><td>兑现ID</td><td>-</td><td>自增</td></tr>
+<tr><td>TERMINAL_CASHOUT_CODE</td><td>String</td><td>兑现单号</td><td>兑现单号</td><td>divisionCode+编码规则生成</td></tr>
+<tr><td>CHECK_BX_ID</td><td>Long</td><td>验收报销单ID</td><td>-</td><td>用户选择(LOV)</td></tr>
+<tr><td>CHECK_BX_CODE</td><td>String</td><td>验收报销单号</td><td>验收报销单号</td><td>选择时带入</td></tr>
+<tr><td>TERMINAL_ID</td><td>Long</td><td>门店ID</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>TERMINAL_CODE</td><td>String</td><td>门店编码</td><td>门店编码</td><td>从验收报销单带入</td></tr>
+<tr><td>TERMINAL_NAME</td><td>String</td><td>门店名称</td><td>门店名称</td><td>从验收报销单带入</td></tr>
+<tr><td>CUST_ID</td><td>Long</td><td>经销商ID</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>CUST_CODE</td><td>String</td><td>经销商编码</td><td>经销商编码</td><td>从验收报销单带入</td></tr>
+<tr><td>CUST_NAME</td><td>String</td><td>经销商名称</td><td>经销商名称</td><td>从验收报销单带入</td></tr>
+<tr><td>SHORT_NAME</td><td>String</td><td>经销商简称</td><td>经销商简称</td><td>从验收报销单带入</td></tr>
+<tr><td>TRADING_COMPANY_ID</td><td>Long</td><td>交易公司ID</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>TRADING_COMPANY_CODE</td><td>String</td><td>交易公司编码</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>String</td><td>交易公司名称</td><td>交易公司</td><td>从验收报销单带入</td></tr>
+<tr><td>BILLING_UNIT_ID</td><td>Long</td><td>法人客户ID</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>BILLING_UNIT_CODE</td><td>String</td><td>法人客户编码</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>BILLING_UNIT_NAME</td><td>String</td><td>法人客户名称</td><td>法人客户</td><td>从验收报销单带入</td></tr>
+<tr><td>PAY_TYPE</td><td>String</td><td>付款方式</td><td>付款方式</td><td>用户选择</td></tr>
+<tr><td>VENDOR_ID</td><td>Long</td><td>供应商ID</td><td>-</td><td>用户输入</td></tr>
+<tr><td>VENDOR_CODE</td><td>String</td><td>供应商编码</td><td>供应商编码</td><td>用户输入</td></tr>
+<tr><td>VENDOR_NAME</td><td>String</td><td>供应商名称</td><td>供应商名称</td><td>用户输入</td></tr>
+<tr><td>COST_CENTER_ID</td><td>Long</td><td>成本中心ID</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>COST_CENTER_CODE</td><td>String</td><td>成本中心编码</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>COST_CENTER_NAME</td><td>String</td><td>成本中心名称</td><td>成本中心</td><td>从验收报销单带入</td></tr>
+<tr><td>THIS_SUR_CASHOUT_AMT</td><td>BigDecimal</td><td>剩余可兑金额</td><td>剩余可兑金额</td><td>系统计算</td></tr>
+<tr><td>THIS_APPLY_CASHOUT_AMT</td><td>BigDecimal</td><td>本次申请兑现金额</td><td>本次申请兑现金额</td><td>用户输入</td></tr>
+<tr><td>THIS_BX_PROPORTION</td><td>BigDecimal</td><td>报销比例</td><td>报销比例</td><td>系统计算</td></tr>
+<tr><td>AFTER_TAX_CASHOUT_AMT</td><td>BigDecimal</td><td>税后兑现金额</td><td>税后兑现金额</td><td>系统计算</td></tr>
+<tr><td>FACT_INVOICE_AMT</td><td>BigDecimal</td><td>含税发票金额</td><td>含税发票金额</td><td>用户输入</td></tr>
+<tr><td>INVOICE_TAX_AMT</td><td>BigDecimal</td><td>发票税额</td><td>发票税额</td><td>发票明细税额合计</td></tr>
+<tr><td>FACT_INVOICE_NOTAX_AMT</td><td>BigDecimal</td><td>不含税发票金额</td><td>不含税发票金额</td><td>含税金额-税额</td></tr>
+<tr><td>INVOICE_TAX_RATE</td><td>BigDecimal</td><td>发票税率</td><td>发票税率</td><td>用户选择</td></tr>
+<tr><td>INVOICE_TYPE</td><td>String</td><td>发票类型</td><td>发票类型</td><td>用户选择</td></tr>
+<tr><td>OUR_INVOICING</td><td>String</td><td>我司开票</td><td>我司开票</td><td>用户选择</td></tr>
+<tr><td>CASHOUT_TYPE</td><td>String</td><td>兑现类型</td><td>兑现类型</td><td>用户选择</td></tr>
+<tr><td>CASHOUT_RATE</td><td>BigDecimal</td><td>兑现比例</td><td>兑现比例</td><td>系统计算</td></tr>
+<tr><td>RECEIPT_STATUS</td><td>String</td><td>收款状态</td><td>收款状态</td><td>系统维护</td></tr>
+<tr><td>INVOICE_PAID_DATE</td><td>LocalDate</td><td>开票日期</td><td>开票日期</td><td>用户输入</td></tr>
+<tr><td>INVOICE_PAID_AMOUNT</td><td>BigDecimal</td><td>开票金额</td><td>开票金额</td><td>用户输入</td></tr>
+<tr><td>WITHHOLDING_TIME_YEAR</td><td>String</td><td>计提年份</td><td>计提年份</td><td>从验收报销单号自动带出</td></tr>
+<tr><td>FINISHED_TIME</td><td>LocalDate</td><td>完成时间</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>OUT_CASHOUT_END_TIME</td><td>LocalDate</td><td>额度外兑现结束时间</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>CAN_NOT_TAX_BX_AMT</td><td>BigDecimal</td><td>不可税报销金额</td><td>-</td><td>系统计算</td></tr>
+<tr><td>REDUCE_AMT</td><td>BigDecimal</td><td>扣减金额</td><td>-</td><td>系统计算</td></tr>
+<tr><td>CLOSE_CASH</td><td>Long</td><td>关闭兑现</td><td>-</td><td>系统维护</td></tr>
+<tr><td>NOTE</td><td>String</td><td>备注</td><td>备注</td><td>用户输入</td></tr>
+<tr><td>CREATOR</td><td>String</td><td>创建人</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CREATOR_NAME</td><td>String</td><td>创建人名称</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CREATE_TIME</td><td>Date</td><td>创建时间</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>CHECKER</td><td>String</td><td>审核人</td><td>-</td><td>审批通过时赋值</td></tr>
+<tr><td>CHECK_TIME</td><td>LocalDateTime</td><td>审核时间</td><td>-</td><td>审批通过时赋值</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>Long</td><td>组织ID</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>ENTID</td><td>Long</td><td>事业部ID</td><td>-</td><td>系统赋值</td></tr>
+<tr><td>STAT</td><td>Long</td><td>单据状态</td><td>-</td><td>系统维护</td></tr>
+<tr><td>WFFLAG</td><td>Long</td><td>流程状态</td><td>-</td><td>系统维护</td></tr>
+<tr><td>WFID</td><td>Long</td><td>流程ID</td><td>-</td><td>系统维护</td></tr>
+<tr><td>AUDIT_STAT</td><td>String</td><td>审核状态</td><td>-</td><td>系统维护</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>String</td><td>流程实例ID</td><td>-</td><td>工作流启动后赋值</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>String</td><td>流程审批状态</td><td>-</td><td>NEW/RUN/APPROVED/REJECTED</td></tr>
+<tr><td>SALEZONE_ORG_ID</td><td>Long</td><td>销售区域ID</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>SALEZONE_ORG_NAME</td><td>String</td><td>销售区域名称</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>OPERAT_CENTER_ORG_ID</td><td>Long</td><td>运营中心ID</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>OPERAT_CENTER_ORG_NAME</td><td>String</td><td>运营中心名称</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>DESIGNER</td><td>String</td><td>设计师</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>USERID</td><td>String</td><td>设计师用户ID</td><td>-</td><td>从验收报销单带入</td></tr>
+<tr><td>ERROR_COLLECTION</td><td>String</td><td>错误信息收集</td><td>-</td><td>系统维护</td></tr>
+<tr><td>LEDGER_DATE</td><td>LocalDate</td><td>入账日期</td><td>-</td><td>系统赋值</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="FIN_FEE_TERMINAL_RE_CASH_INV（额度外兑现发票明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_CASHOUT_ID</td><td>Long</td><td>兑现ID</td><td>-</td><td>关联头表</td></tr>
+<tr><td>TAX_AMOUNT</td><td>BigDecimal</td><td>税额</td><td>-</td><td>用户输入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="FIN_FEE_TERMINAL_RE_CASH_LINE（额度外兑现资源明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>TERMINAL_CASHOUT_ID</td><td>Long</td><td>兑现ID</td><td>-</td><td>关联头表</td></tr>
+<tr><td>INVOICE_TAX_AMT</td><td>BigDecimal</td><td>发票税额</td><td>-</td><td>发票明细税额合计</td></tr>
+<tr><td>FACT_INVOICE_AMT</td><td>BigDecimal</td><td>含税发票金额</td><td>-</td><td>用户输入</td></tr>
+<tr><td>FACT_INVOICE_NOTAX_AMT</td><td>BigDecimal</td><td>不含税发票金额</td><td>-</td><td>含税金额-税额</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
+
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题"><table class="kl-table"><thead><tr><th>问题</th><th>原因/解决方案</th></tr></thead><tbody><tr><td>推送共享报"接口推送失败"</td><td>检查共享接口连通性和数据格式</td></tr><tr><td>计提年份未自动带出</td><td>检查验收报销单号格式，截取逻辑依赖单号前缀</td></tr><tr><td>兑现比例计算异常</td><td>确认验收报销单的sumOutCanNotaxBxAmt不为0</td></tr></tbody></table></KbCard>
+<KbCard title="Q1：兑现金额超过剩余可兑额度">
+<p><strong>根因</strong>：thisApplyCashoutAmt &gt; thisSurCashoutAmt</p>
+<p><strong>解决方案</strong>：调整兑现金额不超过剩余可兑额度</p>
+</KbCard>
+
+<KbCard title="Q2：计提年份未带出">
+<p><strong>根因</strong>：验收报销单号格式不正确或数据库中无对应计提年份记录</p>
+<p><strong>解决方案</strong>：检查验收报销单号格式，确认withholdingTimeYear查询有数据</p>
+</KbCard>
+
 </div>
 </div>
 </div>
-<div id="faq-qa" style="display:none;">
+
+<div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="常见问题">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-11-13</td><td>-</td><td>YD</td><td>初始创建FinFeeTerminalReCashoutServiceImpl应用服务</td></tr>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>作者</th><th>说明</th></tr></thead><tbody><tr><td>2025-11-13</td><td>YD</td><td>初始创建</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
+
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">

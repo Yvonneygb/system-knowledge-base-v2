@@ -1,4 +1,5 @@
 <BreadcrumbTabs />
+
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -91,6 +92,7 @@
 </div>
 </div>
 </div>
+
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -169,179 +171,499 @@
 </KbCard>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：与工程折扣延期共用后端代码 {共用代码}"><KbQuote>合同产品变更和折扣延期共用EPM_DISCOUNT_ECN表和Controller，通过ecnType区分</KbQuote>
-<ul><li><strong>具体逻辑描述</strong><ul><li>第1点：合同产品变更ecnType=1，折扣延期ecnType=2</li><li>第2点：共用EpmDiscountEcnController和ServiceImpl</li></ul></li></ul></KbCard>
-<KbCard num="2" title="重点逻辑2：变更前后对比 {数据对比}"><KbQuote>展示变更前后的产品行数据对比，便于审批人员判断</KbQuote>
-<ul><li><strong>具体逻辑描述</strong><ul><li>第1点：前端使用LineBeforeDS(变更前)和LineDS(变更后)两个DataSet</li><li>第2点：变更前行数据从原折扣单获取，变更后行数据可修改</li></ul></li></ul></KbCard>
-<KbCard num="3" title="重点逻辑3：实时获取产品价格 {价格计算}"><KbQuote>变更时实时获取最新产品价格，确保价格准确</KbQuote>
-<ul><li><strong>具体逻辑描述</strong><ul><li>第1点：调用generateDiscountDatas接口，实时获取产品价格</li><li>第2点：重新计算相关金额(calculationamount)</li></ul></li></ul></KbCard>
-<KbCard num="4" title="重点逻辑4：可选折扣单的筛选条件 {折扣单筛选}"><KbQuote>合同产品变更时，只能选择符合条件的折扣单进行变更，确保数据有效性和业务合规</KbQuote>
-<ul><li><strong>接口入口</strong>：<code>POST /v1/{organizationId}/contracts-update/discount-apply-list</code><ul><li>Controller: <code>ContractUpdateController.getDiscountApplyList</code></li><li>Service: <code>ContractUpdateServiceImpl.getDiscountApplyList</code></li><li>SQL: <code>EpmProjectContractMapper.getDiscountApply</code></li></ul></li><li><strong>Service层前置处理</strong>（<code>ContractUpdateServiceImpl</code> 行104-112）：<ul><li>当 <code>searchFlag=1</code>（折扣单列表页）或 <code>searchFlag=2</code>（要货单下单时），自动设置 <code>projectCategory='small'</code>，SQL中用 <code>c.project_category != 'small'</code> 排除小型项目折扣单</li><li>合同产品变更场景 <code>searchFlag=3</code> 不做此过滤</li></ul></li><li><strong>筛选条件清单</strong>（searchFlag=3 合同产品变更场景）：</li></ul>
-<table class="kl-table"><thead><tr><th>#</th><th>条件</th><th>SQL片段</th><th>说明</th></tr></thead><tbody><tr><td>1</td><td>合同ID匹配</td><td><code>a.contract_id = #{contractId}</code></td><td>折扣单必须关联当前合同</td></tr><tr><td>2</td><td>折扣单已审批</td><td><code>a.stat = 5</code></td><td>折扣单审批状态必须为5（已审批）</td></tr><tr><td>3</td><td>合同有效</td><td><code>c.valid = 2</code>（当isMakt=0时）</td><td>关联合同必须为有效状态</td></tr><tr><td>4</td><td>折扣单在有效期内</td><td><code>trunc(sysdate) &lt;= trunc(a.discount_valid_date)</code></td><td>当前日期不能超过折扣单有效期</td></tr><tr><td>5</td><td>有可下单数量</td><td><code>a.discount_apply_id in (select discount_apply_id from epm_discount_apply_line where active_qty &gt; 0)</code>（当searchType!=1时）</td><td>折扣单行必须有剩余可下单数量</td></tr><tr><td>6</td><td>事业部匹配</td><td><code>a.organization_id = #{organizationId}</code></td><td>折扣单属于当前事业部</td></tr><tr><td>7</td><td>营销中台标识</td><td><code>a.is_makt = #{isMakt}</code></td><td>按是否营销中台过滤</td></tr><tr><td>8</td><td>家装标识</td><td><code>a.is_home = #{isHome}</code></td><td>按是否家装合同过滤</td></tr><tr><td>9</td><td>合同未失效</td><td>计算字段 <code>failure_cause</code></td><td>不存在合同失效变更单(Ecn_Type=2且stat=5)</td></tr><tr><td>10</td><td>项目未结案</td><td>计算字段 <code>failure_cause</code></td><td>项目状态不为结案(stat=5且stage_name='项目结案')</td></tr></tbody></table>
-<ul><li><strong>其他可选过滤条件</strong>（前端传入时生效）：<ul><li><code>contractCode</code> — 合同编码模糊查询</li><li><code>discountApplyCode</code> — 折扣单号模糊查询</li><li><code>customerId</code> — 客户ID精确匹配</li><li><code>projectId</code> — 项目ID精确匹配</li><li><code>itemCode</code> — 产品编码模糊查询（通过折扣单行）</li><li><code>model</code> — 产品型号模糊查询（通过折扣单行）</li><li><code>customerCode/customerName</code> — 客户编码/名称模糊查询</li><li><code>createTime/createTimeEnd</code> — 申请时间范围</li><li><code>discountValidDate/discountValidDateEnd</code> — 有效期范围</li><li><code>contractType</code> — 签约方式</li><li><code>supplementType</code> — 增补类型</li><li><code>tradingCompanyName/billingUnitName/contractName</code> — 交易公司/开票单位/合同名称模糊查询</li></ul></li><li><strong>searchFlag各场景对比</strong>：</li></ul>
-<table class="kl-table"><thead><tr><th>searchFlag</th><th>场景</th><th>stat=5</th><th>排除小型项目</th><th>合同有效</th><th>有效期内</th><th>可下单数量</th><th>延期单排除</th><th>提前天数校验</th></tr></thead><tbody><tr><td>1</td><td>折扣单列表页</td><td>-</td><td>✓</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>2</td><td>要货单下单</td><td>✓</td><td>✓</td><td>✓(isMakt=0)</td><td>✓</td><td>✓(searchType!=1)</td><td>-</td><td>-</td></tr><tr><td>3</td><td>折扣变更</td><td>✓</td><td>-</td><td>✓(isMakt=0)</td><td>✓</td><td>✓(searchType!=1)</td><td>-</td><td>-</td></tr><tr><td>4</td><td>折扣延期</td><td>✓</td><td>-</td><td>✓(isMakt=0)</td><td>-</td><td>-</td><td>✓</td><td>✓</td></tr><tr><td>5</td><td>其他场景</td><td>✓</td><td>-</td><td>✓(isMakt=0)</td><td>✓</td><td>✓(searchType!=1)</td><td>-</td><td>-</td></tr></tbody></table>
-<ul><li><strong>完整SQL</strong>（searchFlag=3场景的核心查询）：</li></ul>
+<KbCard num="1" title="重点逻辑1：ECN变更单管理 `变更管理`">
+<ul><li><strong>业务意义</strong>：通过ECN工程变更单流程管理合同产品变更，保留变更记录</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：使用EpmDiscountEcnController管理折扣ECN变更单</li></ul>
+<ul><li>第2点：API路径/v1/&#123;orgId&#125;/epm-discount-ecns</li></ul>
+<ul><li>第3点：与工程折扣延期共用后端Controller，通过单据类型区分</li></ul>
+</KbCard>
 
-```sql
-SELECT a.*,
-       ct.short_name,
-       co.operat_center_org_name,
-       co.salezone_org_name,
-       nvl(c.include_freight_flag,'N') includeFreightFlag,
-       c.valid AS contractValid,
-       c.contract_amt,
-       c.strategic_related,
-       c.signed_date,
-       c.supplement_type,
-       c.business_type,
-       c.currency,
-       c.has_offer_invoice hasOfferInvo,
-       c.completed_type,
-       c.completed_date,
-       c.project_category,
-       c.include_customize_flag,
-       c.multiple_orders_flag,
-       c.is_custom isCustomType,
-       ep1.is_local,
-       ep2.project_code strategicProjectCode,
-       ep2.project_name strategicProjectName,
-       ep1.project_type,
-       ep1.project_valid,
-       r.province_name projectProvince,
-       r.city_name projectCity,
-       r.area_name projectArea,
-       r.area_full_name,
-       r.address,
-       r.project_source,
-       r.business_unit_type,
-       ecn.ecn_type ecnTypeDiscount,
-       ecn.stat ecnStat,
-       CASE WHEN (SELECT count(1) FROM Epm_Project_Contract_Ecn c
-                  WHERE c.contract_id = a.contract_id AND c.Ecn_Type = 2 AND c.stat = 5) > 0
-            THEN '合同失效'
-            WHEN (SELECT count(1) FROM epm_project p
-                  WHERE p.project_id = a.project_id AND p.stat = 5 AND p.stage_name = '项目结案') > 0
-            THEN '项目结案'
-            ELSE '' END failure_cause,
-       -- 已发货数量
-       (SELECT sum(sobl.confirm_out_qty) FROM sa_out_bill_line sobl
-        WHERE sobl.discount_apply_line_id IN
-          (SELECT al.discount_apply_line_id FROM epm_discount_apply_line al
-           WHERE al.discount_apply_id = a.discount_apply_id)) confirm_out_q,
-       -- 已发货金额 = 已发数量 × 折后单价
-       (SELECT sum(sobl.confirm_out_qty * sobl.discounted_price) FROM sa_out_bill_line sobl
-        WHERE sobl.discount_apply_line_id IN
-          (SELECT al.discount_apply_line_id FROM epm_discount_apply_line al
-           WHERE al.discount_apply_id = a.discount_apply_id)) confirm_out_a,
-       cd.discount_rules,
-       iu.REAL_NAME createdByName
-FROM epm_discount_apply a
-LEFT JOIN epm_project_contract c ON a.contract_id = c.contract_id
-LEFT JOIN epm_project_contract_ecn ecn ON c.contract_id = ecn.contract_id AND ecn.stat != 5
-LEFT JOIN epm_project ep1 ON ep1.project_id = c.project_id
-LEFT JOIN epm_project ep2 ON ep2.project_id = ep1.rel_project_id
-LEFT JOIN customer ct ON ct.customer_id = a.customer_id
-LEFT JOIN customer_org co ON a.CUSTOMER_ID = co.CUSTOMER_ID
-LEFT JOIN epm_report r ON a.project_id = r.project_id
-LEFT JOIN cm_disc_preset_rate_dtl cd ON cd.project_id = c.project_id
-LEFT JOIN HZERO.IAM_USER iu ON a.CREATED_BY = iu.ID
-WHERE a.contract_id = #{contractId}          -- 1.合同ID匹配
-  AND a.stat = 5                               -- 2.折扣单已审批
-  AND c.valid = 2                              -- 3.合同有效(isMakt=0时)
-  AND trunc(sysdate) <= trunc(a.discount_valid_date)  -- 4.在有效期内
-  AND a.discount_apply_id IN                   -- 5.有可下单数量(searchType!=1时)
-      (SELECT discount_apply_id FROM epm_discount_apply_line WHERE active_qty > 0)
-  AND a.organization_id = #{organizationId}    -- 6.事业部匹配
-ORDER BY a.createtime DESC
-```
+</div>
+</div>
+</div>
 
-<ul><li><strong>源码位置</strong>：<ul><li>Controller: <code>biz/project/api/controller/v1/ContractUpdateController.java:70</code></li><li>Service: <code>biz/project/app/service/impl/ContractUpdateServiceImpl.java:104</code></li><li>SQL Mapper: <code>resources/mapper/EpmProjectContractMapper.xml:1073</code></li></ul></li></ul></KbCard>
-</div>
-</div>
-</div>
-<div id="permission" style="display:none;">
+<div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="权限控制">
-&lt;!-- 空白:待补充 -->
+<KbCard title="界面模块1：列表页-查询条件">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>变更申请单号</td><td>EPM_DISCOUNT_ECN.DISCOUNT_ECN_CODE</td><td>文本输入框</td><td>变更申请单号模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>审核状态</td><td>EPM_DISCOUNT_ECN.HZ_APPROVE_STATUS</td><td>下拉选择框</td><td>审批状态</td><td>常显</td><td>来源值集HWKF.APPROVE_STATUS；默认无</td></tr>
+<tr><td>折扣单号</td><td>EPM_DISCOUNT_ECN.DISCOUNT_APPLY_CODE</td><td>文本输入框</td><td>折扣单号模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>变更申请人</td><td>EPM_DISCOUNT_ECN.CREATOR_NAME</td><td>文本输入框</td><td>变更申请人模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>折扣有效期至</td><td>EPM_DISCOUNT_ECN.DISCOUNT_VALID_DATE</td><td>日期选择器</td><td>折扣有效期至</td><td>常显</td><td>默认无</td></tr>
+<tr><td>经销商编码</td><td>EPM_DISCOUNT_ECN.CUSTOMER_CODE</td><td>文本输入框</td><td>经销商编码模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>经销商名称</td><td>EPM_DISCOUNT_ECN.CUSTOMER_NAME</td><td>文本输入框</td><td>经销商名称模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>交易公司</td><td>EPM_DISCOUNT_ECN.TRADING_COMPANY_NAME</td><td>文本输入框</td><td>交易公司模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>开票单位</td><td>EPM_DISCOUNT_ECN.BILLING_UNIT_NAME</td><td>文本输入框</td><td>开票单位模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>合同编码</td><td>EPM_DISCOUNT_ECN.CONTRACT_CODE</td><td>文本输入框</td><td>合同编码模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>合同名称</td><td>EPM_DISCOUNT_ECN.CONTRACT_NAME</td><td>文本输入框</td><td>合同名称模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>合作结束时间</td><td>EPM_DISCOUNT_ECN.CONTRACT_EXPIRE_DATE</td><td>日期选择器</td><td>合作结束时间</td><td>常显</td><td>默认无</td></tr>
+<tr><td>工程编码</td><td>EPM_DISCOUNT_ECN.PROJECT_CODE</td><td>文本输入框</td><td>工程编码模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+<tr><td>变更说明</td><td>EPM_DISCOUNT_ECN.ECN_REASON</td><td>文本输入框</td><td>变更说明模糊查询</td><td>常显</td><td>手动输入；默认无</td></tr>
+</tbody>
+</table>
+<blockquote>列表查询时前端固定传searchFlag=1、isMakt=0、ecnType=1（工程合同产品变更标识），API: <code>GET /v1/&#123;organizationId&#125;/epm-discount-ecns/search</code></blockquote>
+</KbCard>
+
+<KbCard title="界面模块2：列表页-结果表格">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>审核状态</td><td>EPM_DISCOUNT_ECN.HZ_APPROVE_STATUS</td><td>文本</td><td>审批状态</td><td>常显</td><td>LOV翻译HWKF.APPROVE_STATUS；值为0时显示空</td></tr>
+<tr><td>报备有效状态</td><td>EPM_DISCOUNT_ECN.PROJECT_VALID</td><td>文本</td><td>报备有效状态</td><td>常显</td><td>LOV翻译AE.VALID；值为0时显示空</td></tr>
+<tr><td>变更申请单号</td><td>EPM_DISCOUNT_ECN.DISCOUNT_ECN_CODE</td><td>文本</td><td>变更申请单号</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>折扣单号</td><td>EPM_DISCOUNT_ECN.DISCOUNT_APPLY_CODE</td><td>文本</td><td>折扣单号</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>变更申请人</td><td>EPM_DISCOUNT_ECN.CREATOR_NAME</td><td>文本</td><td>变更申请人</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>变更申请时间</td><td>EPM_DISCOUNT_ECN.CREATION_DATE</td><td>文本</td><td>变更申请时间</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>所属事业部</td><td>EPM_DISCOUNT_ECN.DIVISION_NAME</td><td>文本</td><td>所属事业部</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>订单产品线</td><td>EPM_DISCOUNT_ECN.ORDER_PDT_LINE</td><td>文本</td><td>订单产品线</td><td>常显</td><td>LOV翻译AE.EPM.ORDER_PDT_LINE；值为0时显示空</td></tr>
+<tr><td>签约方式</td><td>EPM_DISCOUNT_ECN.CONTRACT_TYPE</td><td>文本</td><td>签约方式</td><td>常显</td><td>LOV翻译AE.EPM.CONTRACT_TYPE；值为0时显示空</td></tr>
+<tr><td>折扣有效期</td><td>EPM_DISCOUNT_ECN.DISCOUNT_VALID_DATE</td><td>日期</td><td>折扣有效期</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>客户编码</td><td>EPM_DISCOUNT_ECN.CUSTOMER_CODE</td><td>文本</td><td>客户编码</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>客户名称</td><td>EPM_DISCOUNT_ECN.CUSTOMER_NAME</td><td>文本</td><td>客户名称</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>客户简称</td><td>EPM_DISCOUNT_ECN.SHORT_NAME</td><td>文本</td><td>客户简称</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>币种</td><td>EPM_DISCOUNT_ECN.CURRENCY</td><td>文本</td><td>币种</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>交易公司</td><td>EPM_DISCOUNT_ECN.TRADING_COMPANY_NAME</td><td>文本</td><td>交易公司</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>开票单位</td><td>EPM_DISCOUNT_ECN.BILLING_UNIT_NAME</td><td>文本</td><td>开票单位</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>合同编码</td><td>EPM_DISCOUNT_ECN.CONTRACT_CODE</td><td>文本</td><td>合同编码</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>合同名称</td><td>EPM_DISCOUNT_ECN.CONTRACT_NAME</td><td>文本</td><td>合同名称</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>合作结束时间</td><td>EPM_DISCOUNT_ECN.CONTRACT_EXPIRE_DATE</td><td>日期</td><td>合作结束时间</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>工程编码</td><td>EPM_DISCOUNT_ECN.PROJECT_CODE</td><td>文本</td><td>工程编码</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>工程名称</td><td>EPM_DISCOUNT_ECN.PROJECT_NAME</td><td>文本</td><td>工程名称</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>项目当前进度</td><td>EPM_DISCOUNT_ECN.STAGE_NAME</td><td>文本</td><td>项目当前进度</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>项目经理</td><td>EPM_DISCOUNT_ECN.PROJECT_MANAGER</td><td>文本</td><td>项目经理</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>折扣类型</td><td>EPM_DISCOUNT_ECN.DISCOUNT_TYPE</td><td>文本</td><td>折扣类型</td><td>常显</td><td>LOV翻译AE.EPM.DISCOUNT_TYPE；值为0时显示空</td></tr>
+<tr><td>审批折扣率</td><td>EPM_DISCOUNT_ECN.DISCOUNT_RATE</td><td>数值</td><td>审批折扣率</td><td>常显</td><td>精度5</td></tr>
+<tr><td>折前总金额</td><td>EPM_DISCOUNT_ECN.UNDISCOUNTED_AMOUNT</td><td>数值</td><td>折前总金额</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>折后总金额</td><td>EPM_DISCOUNT_ECN.DISCOUNTED_AMOUNT</td><td>数值</td><td>折后总金额</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>计广告费</td><td>EPM_DISCOUNT_ECN.IS_CAL_AD</td><td>开关</td><td>是否计广告费</td><td>常显</td><td>trueValue=2，falseValue=1</td></tr>
+<tr><td>计合同折扣</td><td>EPM_DISCOUNT_ECN.IS_CAL_SECOND_YEAR_DISCOUNT</td><td>开关</td><td>是否计合同折扣</td><td>常显</td><td>trueValue=2，falseValue=1</td></tr>
+<tr><td>总数量</td><td>EPM_DISCOUNT_ECN.TOTAL_QTY</td><td>数值</td><td>总数量</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>总体积</td><td>EPM_DISCOUNT_ECN.TOTAL_VOLUME</td><td>数值</td><td>总体积(m³)</td><td>常显</td><td>列表查询返回</td></tr>
+<tr><td>变更说明</td><td>EPM_DISCOUNT_ECN.ECN_REASON</td><td>文本</td><td>变更说明</td><td>常显</td><td>列表查询返回</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块3：详情页-头信息">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>审核状态</td><td>EPM_DISCOUNT_ECN.HZ_APPROVE_STATUS</td><td>下拉选择框</td><td>审批状态</td><td>常显</td><td>来源值集HWKF.APPROVE_STATUS；默认NEW</td></tr>
+<tr><td>变更申请单号</td><td>EPM_DISCOUNT_ECN.DISCOUNT_ECN_CODE</td><td>文本</td><td>变更申请单号</td><td>常显</td><td>只读；自动生成</td></tr>
+<tr><td>申请时间</td><td>EPM_DISCOUNT_ECN.CREATION_DATE</td><td>日期</td><td>申请时间</td><td>常显</td><td>默认当前日期</td></tr>
+<tr><td>变更类型</td><td>EPM_DISCOUNT_ECN.ECN_TYPE</td><td>下拉选择框</td><td>变更类型</td><td>常显</td><td>来源值集AE.EPM.DISCOUNT.ECN_TYPE；默认1(产品变更)</td></tr>
+<tr><td>折扣单号</td><td>EPM_DISCOUNT_ECN.DISCOUNT_APPLY_OBJ</td><td>LOV弹窗</td><td>折扣单号</td><td>常显</td><td>必填；LOV编码AE.EPM_DISCOUNT_APPLYS；选择后带出折扣/项目/合同信息</td></tr>
+<tr><td>原折扣单号</td><td>EPM_DISCOUNT_ECN.SOURCE_DISCOUNT_APPLY_CODE</td><td>文本</td><td>原折扣单号</td><td>常显</td><td>只读；选择折扣单后自动带出</td></tr>
+<tr><td>新折扣单号</td><td>EPM_DISCOUNT_ECN.DISCOUNT_APPLY_CODE</td><td>文本</td><td>新折扣单号</td><td>常显</td><td>只读</td></tr>
+<tr><td>原折扣有效期</td><td>EPM_DISCOUNT_ECN.SOURCE_DISCOUNT_VALID_DATE</td><td>日期</td><td>原折扣有效期</td><td>常显</td><td>只读；来自折扣单</td></tr>
+<tr><td>新折扣有效期</td><td>EPM_DISCOUNT_ECN.DISCOUNT_VALID_DATE</td><td>日期选择器</td><td>新折扣有效期</td><td>常显</td><td>审批节点时必填</td></tr>
+<tr><td>申请人</td><td>EPM_DISCOUNT_ECN.CREATOR_NAME</td><td>文本</td><td>申请人</td><td>常显</td><td>默认当前用户realName</td></tr>
+<tr><td>所属事业部</td><td>EPM_DISCOUNT_ECN.DIVISION_NAME</td><td>文本</td><td>所属事业部</td><td>常显</td><td>只读</td></tr>
+<tr><td>产品线</td><td>EPM_DISCOUNT_ECN.ORDER_PDT_LINE</td><td>下拉选择框</td><td>产品线</td><td>常显</td><td>来源值集AE.EPM.ORDER_PDT_LINE</td></tr>
+<tr><td>经销商编码</td><td>EPM_DISCOUNT_ECN.CUSTOMER_CODE</td><td>文本</td><td>经销商编码</td><td>常显</td><td>只读；来自折扣单</td></tr>
+<tr><td>经销商名称</td><td>EPM_DISCOUNT_ECN.CUSTOMER_NAME</td><td>文本</td><td>经销商名称</td><td>常显</td><td>只读；来自折扣单</td></tr>
+<tr><td>客户简称</td><td>EPM_DISCOUNT_ECN.SHORT_NAME</td><td>文本</td><td>客户简称</td><td>常显</td><td>只读</td></tr>
+<tr><td>合作结束时间</td><td>EPM_DISCOUNT_ECN.CONTRACT_EXPIRE_DATE</td><td>日期</td><td>合作结束时间</td><td>常显</td><td>只读</td></tr>
+<tr><td>项目当前进度</td><td>EPM_DISCOUNT_ECN.STAGE_NAME</td><td>文本</td><td>项目当前进度</td><td>常显</td><td>只读</td></tr>
+<tr><td>项目有效状态</td><td>EPM_DISCOUNT_ECN.PROJECT_VALID</td><td>下拉选择框</td><td>项目有效状态</td><td>常显</td><td>来源值集AE.VALID</td></tr>
+<tr><td>总体积</td><td>EPM_DISCOUNT_ECN.TOTAL_VOLUME</td><td>数值框</td><td>总体积(m³)</td><td>常显</td><td>只读</td></tr>
+<tr><td>总数量</td><td>EPM_DISCOUNT_ECN.TOTAL_QTY</td><td>数值框</td><td>总数量</td><td>常显</td><td>只读</td></tr>
+<tr><td>总金额</td><td>EPM_DISCOUNT_ECN.DISCOUNTED_AMOUNT</td><td>数值框</td><td>总金额(元)</td><td>常显</td><td>只读</td></tr>
+<tr><td>审批折扣率</td><td>EPM_DISCOUNT_ECN.DISCOUNT_RATE</td><td>数值框</td><td>审批折扣率</td><td>常显</td><td>只读</td></tr>
+<tr><td>产品合同金额</td><td>EPM_DISCOUNT_ECN.ITEM_CONTRACT_AMOUNT</td><td>数值框</td><td>产品合同金额(元)</td><td>常显</td><td>只读</td></tr>
+<tr><td>额度内广告余额</td><td>EPM_DISCOUNT_ECN.ADVERTISING_QUOTA</td><td>数值框</td><td>额度内广告余额(元)</td><td>常显</td><td>只读</td></tr>
+<tr><td>经销商毛利率</td><td>EPM_DISCOUNT_ECN.DEALER_GM</td><td>文本</td><td>经销商毛利率</td><td>常显</td><td>只读</td></tr>
+<tr><td>事业部内结毛利率</td><td>EPM_DISCOUNT_ECN.DIVISION_GM</td><td>文本</td><td>事业部内结毛利率</td><td>常显</td><td>只读</td></tr>
+<tr><td>集团价值链毛利率</td><td>EPM_DISCOUNT_ECN.VALUE_CHAIN_GM</td><td>文本</td><td>集团价值链毛利率</td><td>常显</td><td>只读</td></tr>
+<tr><td>币种</td><td>EPM_DISCOUNT_ECN.CURRENCY</td><td>文本</td><td>币种</td><td>常显</td><td>只读</td></tr>
+<tr><td>项目所在地</td><td>EPM_DISCOUNT_ECN.PROJECT_FULL_NAME</td><td>文本</td><td>项目所在地</td><td>常显</td><td>只读</td></tr>
+<tr><td>报备项目编码</td><td>EPM_DISCOUNT_ECN.PROJECT_CODE</td><td>文本</td><td>报备项目编码</td><td>常显</td><td>只读</td></tr>
+<tr><td>项目经理</td><td>EPM_DISCOUNT_ECN.PROJECT_MANAGER</td><td>文本</td><td>项目经理</td><td>常显</td><td>只读</td></tr>
+<tr><td>合同编码</td><td>EPM_DISCOUNT_ECN.CONTRACT_CODE</td><td>文本</td><td>合同编码</td><td>常显</td><td>只读</td></tr>
+<tr><td>合同名称</td><td>EPM_DISCOUNT_ECN.CONTRACT_NAME</td><td>文本</td><td>合同名称</td><td>常显</td><td>只读</td></tr>
+<tr><td>合同预估金额</td><td>EPM_DISCOUNT_ECN.CONTRACT_AMT</td><td>文本</td><td>合同预估金额</td><td>常显</td><td>只读</td></tr>
+<tr><td>交易公司</td><td>EPM_DISCOUNT_ECN.TRADING_COMPANY_NAME</td><td>文本</td><td>交易公司</td><td>常显</td><td>只读</td></tr>
+<tr><td>开票单位</td><td>EPM_DISCOUNT_ECN.BILLING_UNIT_NAME</td><td>文本</td><td>开票单位</td><td>常显</td><td>只读</td></tr>
+<tr><td>变更说明</td><td>EPM_DISCOUNT_ECN.ECN_REASON</td><td>文本域</td><td>变更说明</td><td>常显</td><td>必填；可编辑</td></tr>
+<tr><td>签约方式</td><td>EPM_DISCOUNT_ECN.CONTRACT_TYPE</td><td>下拉选择框</td><td>签约方式</td><td>常显</td><td>来源值集AE.EPM.CONTRACT_TYPE</td></tr>
+<tr><td>折扣类型</td><td>EPM_DISCOUNT_ECN.DISCOUNT_TYPE</td><td>下拉选择框</td><td>折扣类型</td><td>常显</td><td>必填；来源值集AE.EPM.DISCOUNT_TYPE</td></tr>
+<tr><td>批量设置审批折扣率</td><td>EPM_DISCOUNT_ECN.SET_DISCOUNT_RATE</td><td>数值框</td><td>批量设置审批折扣率</td><td>常显</td><td>可编辑；批量设置明细行审批折扣率</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块4：详情页-变更产品明细行">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>产品编码</td><td>EPM_DISCOUNT_ECN_LINE.ITEM_CODE</td><td>文本</td><td>产品编码</td><td>常显</td><td>来自折扣单</td></tr>
+<tr><td>产品名称</td><td>EPM_DISCOUNT_ECN_LINE.ITEM_NAME</td><td>文本</td><td>产品名称</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>生命周期</td><td>EPM_DISCOUNT_ECN_LINE.SM_STATE</td><td>文本</td><td>产品SM生命状态</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>库龄区间</td><td>EPM_DISCOUNT_ECN_LINE.STOCK_AGE_NUM_STR</td><td>文本</td><td>库龄区间</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>月平均动销数量</td><td>EPM_DISCOUNT_ECN_LINE.AVG_MONTH_DYNAMIC_SALE_NUM</td><td>文本</td><td>月平均动销数量</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>库存消化周期</td><td>EPM_DISCOUNT_ECN_LINE.INVENTORY_DIGESTION_MONTHS</td><td>文本</td><td>库存消化周期</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>产品线</td><td>EPM_DISCOUNT_ECN_LINE.ENTORGID</td><td>下拉选择框</td><td>产品线</td><td>常显</td><td>LOV翻译AE.ENTORGID</td></tr>
+<tr><td>型号</td><td>EPM_DISCOUNT_ECN_LINE.MODEL</td><td>文本</td><td>型号</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>产品归属渠道</td><td>EPM_DISCOUNT_ECN_LINE.PROD_ATTRIBUTION_CHANNEL</td><td>文本</td><td>产品归属渠道</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>产品定位</td><td>EPM_DISCOUNT_ECN_LINE.PROD_POSITIONING</td><td>文本</td><td>产品定位</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>零售折扣底限</td><td>EPM_DISCOUNT_ECN_LINE.PROD_DISCOUNT</td><td>数值框</td><td>零售折扣底限</td><td>常显</td><td>值为0时显示空</td></tr>
+<tr><td>底限渠道</td><td>EPM_DISCOUNT_ECN_LINE.PROD_DISC_CHANNEL</td><td>文本</td><td>底限渠道</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>警戒线提醒</td><td>EPM_DISCOUNT_ECN_LINE.WARNING_LINE_MSG</td><td>文本</td><td>警戒线提醒</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>申请数量</td><td>EPM_DISCOUNT_ECN_LINE.CONTRACT_QTY</td><td>数值框</td><td>申请数量</td><td>常显</td><td>必填；必须为非负整数</td></tr>
+<tr><td>工程方单价</td><td>EPM_DISCOUNT_ECN_LINE.CONTRACT_PRICE</td><td>数值框</td><td>工程方单价(元)</td><td>常显</td><td>精度7；contractPriceOld&gt;0时禁用</td></tr>
+<tr><td>合同总额</td><td>EPM_DISCOUNT_ECN_LINE.CONTRACT_AMOUNT</td><td>数值框</td><td>合同总额(元)</td><td>常显</td><td>自动计算</td></tr>
+<tr><td>标准单价</td><td>EPM_DISCOUNT_ECN_LINE.STANDARD_PRICE</td><td>数值框</td><td>标准单价</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>运费</td><td>EPM_DISCOUNT_ECN_LINE.FREIGHT</td><td>文本</td><td>运费</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>产品PAC成本</td><td>EPM_DISCOUNT_ECN_LINE.ITEM_COST_PAC</td><td>文本</td><td>产品PAC成本</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>产品成本</td><td>EPM_DISCOUNT_ECN_LINE.ITEM_COST</td><td>数值框</td><td>产品成本</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>价值链毛利率</td><td>EPM_DISCOUNT_ECN_LINE.VALUE_CHAIN</td><td>文本</td><td>价值链毛利率</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>计合同折扣</td><td>EPM_DISCOUNT_ECN_LINE.CAL_CONTRACT_DISCOUNT</td><td>开关</td><td>是否计合同折扣</td><td>常显</td><td>trueValue=2，falseValue=1</td></tr>
+<tr><td>计广告费</td><td>EPM_DISCOUNT_ECN_LINE.CAL_ADVERTISE_EXPENSES</td><td>开关</td><td>是否计广告费</td><td>常显</td><td>trueValue=2，falseValue=1</td></tr>
+<tr><td>统一政策</td><td>EPM_DISCOUNT_ECN_LINE.POLICY_FLAG</td><td>开关</td><td>是否统一政策</td><td>常显</td><td>trueValue=Y，falseValue=N</td></tr>
+<tr><td>应用折扣率</td><td>EPM_DISCOUNT_ECN_LINE.DISCOUNT_RATE</td><td>数值框</td><td>应用折扣率</td><td>常显</td><td>精度5</td></tr>
+<tr><td>审批折扣率</td><td>EPM_DISCOUNT_ECN_LINE.EXTRA_DISCOUNT_RATE</td><td>数值框</td><td>审批折扣率</td><td>常显</td><td>精度5；审批节点时必填</td></tr>
+<tr><td>原折后单价</td><td>EPM_DISCOUNT_ECN_LINE.SOURCE_DISCOUNTED_PRICE</td><td>文本</td><td>原折后单价(元)</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>折后单价</td><td>EPM_DISCOUNT_ECN_LINE.DISCOUNTED_PRICE</td><td>数值框</td><td>折后单价(元)</td><td>常显</td><td>精度7；审批节点时必填</td></tr>
+<tr><td>折前金额</td><td>EPM_DISCOUNT_ECN_LINE.UNDISCOUNTED_AMOUNT</td><td>数值框</td><td>折前金额</td><td>常显</td><td>自动计算</td></tr>
+<tr><td>折后金额</td><td>EPM_DISCOUNT_ECN_LINE.DISCOUNTED_AMOUNT</td><td>数值框</td><td>折后金额</td><td>常显</td><td>精度2；自动计算</td></tr>
+<tr><td>规格</td><td>EPM_DISCOUNT_ECN_LINE.SPEC</td><td>文本</td><td>规格</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>颜色</td><td>EPM_DISCOUNT_ECN_LINE.COLOR</td><td>文本</td><td>颜色</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>体积</td><td>EPM_DISCOUNT_ECN_LINE.CUBAGE</td><td>文本</td><td>体积(m³)</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>重量</td><td>EPM_DISCOUNT_ECN_LINE.WEIGHT</td><td>文本</td><td>重量(kg)</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>总体积</td><td>EPM_DISCOUNT_ECN_LINE.TOTAL_VOLUME</td><td>文本</td><td>总体积(m³)</td><td>常显</td><td>自动计算</td></tr>
+<tr><td>总重量</td><td>EPM_DISCOUNT_ECN_LINE.TOTAL_WEIGHT</td><td>文本</td><td>总重量(kg)</td><td>常显</td><td>自动计算</td></tr>
+<tr><td>单位</td><td>EPM_DISCOUNT_ECN_LINE.UOM_NAME</td><td>文本</td><td>单位</td><td>常显</td><td>自动带出</td></tr>
+<tr><td>备注</td><td>EPM_DISCOUNT_ECN_LINE.REMARK</td><td>文本域</td><td>备注</td><td>常显</td><td>可编辑</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="其他按钮">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新建</td><td>新建变更单</td><td>列表页</td><td>常显</td><td>跳转详情页新建态</td></tr>
+<tr><td>保存</td><td>保存变更单</td><td>详情页</td><td>编辑态显示</td><td>保存变更信息</td></tr>
+<tr><td>提交</td><td>提交审批</td><td>详情页</td><td>状态为NEW或REJECTED时显示</td><td>触发工作流</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="状态机">
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>新建</td><td>编辑、保存、提交、删除</td></tr>
+<tr><td>RUN</td><td>审批中</td><td>查看</td></tr>
+<tr><td>APPROVED</td><td>已审核</td><td>查看</td></tr>
+<tr><td>REJECTED</td><td>审核拒绝</td><td>编辑、保存、提交</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="表1：EPM_DISCOUNT_ECN（折扣ECN变更单表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>DISCOUNT_ECN_ID</td><td>NUMBER</td><td>主键</td><td>无（隐藏）</td><td>自增生成</td></tr>
+<tr><td>ECN_NO</td><td>VARCHAR</td><td>变更单号</td><td>变更单号</td><td>自动生成</td></tr>
+<tr><td>PROJECT_CODE</td><td>VARCHAR</td><td>项目编码</td><td>项目编码</td><td>关联项目主档</td></tr>
+<tr><td>CONTRACT_CODE</td><td>VARCHAR</td><td>合同编码</td><td>合同编码</td><td>关联合同主档</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR</td><td>审批状态</td><td>审核状态</td><td>默认NEW</td></tr>
+<tr><td>ECN_TYPE</td><td>VARCHAR</td><td>变更类型</td><td>! 无</td><td>区分产品变更/折扣延期</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+</div>
+</div>
+</div>
+
+<div id="faq" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>折扣单号不能为空</td><td>保存时</td><td>未选择折扣单。选择折扣单后保存</td><td>高</td><td>[查看]</td></tr>
+<tr><td>变更说明不能为空</td><td>保存时</td><td>变更说明(ECN_REASON)为空。填写变更说明后保存</td><td>高</td><td>[查看]</td></tr>
+<tr><td>变更单不存在</td><td>查询详情时</td><td>按ID查询EPM_DISCOUNT_ECN为空。检查变更单ID有效性</td><td>高</td><td>[查看]</td></tr>
+<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td>[查看]</td></tr>
+<tr><td>折扣单已存在变更中申请</td><td>提交时</td><td>该折扣单已存在审批中的变更单(HZ_APPROVE_STATUS='RUN')。等原变更审批完成</td><td>高</td><td>[查看]</td></tr>
+<tr><td>数据不存在或无该数据权限</td><td>查询详情时</td><td>变更单不存在或当前用户无该数据权限。检查单据ID和用户权限</td><td>高</td><td>[查看]</td></tr>
+<tr><td>折扣类型不能为空</td><td>保存/提交时</td><td>折扣类型(DISCOUNT_TYPE)为空。选择折扣类型后保存</td><td>高</td><td>[查看]</td></tr>
+<tr><td>折扣变更单明细数据为空</td><td>保存/提交时</td><td>变更单明细行(epmDiscountEcnLines)为空。添加变更产品明细行</td><td>高</td><td>[查看]</td></tr>
+<tr><td>产品不存在或已被删除</td><td>保存/取价时</td><td>明细行产品在产品主档中不存在或已删除。检查产品编码有效性</td><td>高</td><td>[查看]</td></tr>
+<tr><td>折后单价不可少于0，不允许发起变更</td><td>保存/提交时</td><td>明细行折后单价(DISCOUNTED_PRICE)&lt;0。调整折后单价</td><td>高</td><td>[查看]</td></tr>
+<tr><td>一口价折扣率不能小于1</td><td>保存/提交时</td><td>一口价定位产品的折扣率&lt;1。调整折扣率≥1</td><td>高</td><td>[查看]</td></tr>
+<tr><td>存在合同数量为0的产品明细，提交流程失败</td><td>提交时</td><td>明细行CONTRACT_QTY=0。修改合同数量&gt;0后提交</td><td>高</td><td>[查看]</td></tr>
+<tr><td>当前报备下已有合同(或合同变更)在审批，请先将审核流程通过后再提交！</td><td>提交时</td><td>同一报备下已有合同/变更单在审批中。等原审批完成</td><td>高</td><td>[查看]</td></tr>
+<tr><td>工程方单价不能为空或0，产品编码：&#123;itemCode&#125;</td><td>保存/提交时</td><td>明细行工程方单价(CONTRACT_PRICE)为空或0。填写工程方单价</td><td>高</td><td>[查看]</td></tr>
+<tr><td>对应的合同已失效</td><td>保存/提交时</td><td>关联合同状态已失效。重新选择有效合同</td><td>高</td><td>[查看]</td></tr>
+<tr><td>该单据未存在有效的标准折扣设置，请联系管理员。</td><td>提交时</td><td>事业部未配置标准折扣设置。联系管理员配置</td><td>高</td><td>[查看]</td></tr>
+<tr><td>合同关联的单体报备未生效</td><td>保存/提交时</td><td>合同关联的报备单未生效。先生效报备单</td><td>高</td><td>[查看]</td></tr>
+<tr><td>当前事业部未设置主要销售主体，暂无法正常下单，请联系业务员处理。</td><td>提交时</td><td>事业部未配置主要销售主体。联系业务员配置</td><td>高</td><td>[查看]</td></tr>
+<tr><td>必输信息未填写完成！</td><td>保存/提交时</td><td>头表或明细行必填字段未填写。完善必填字段</td><td>中</td><td>[查看]</td></tr>
+<tr><td>申请数量必须大于0，以下行不合法：第X行</td><td>保存/提交时</td><td>明细行CONTRACT_QTY≤0。修改申请数量&gt;0</td><td>中</td><td>[查看]</td></tr>
+<tr><td>产品的预提货数量不能大于合同数量，以下行不合法：第X行</td><td>保存/提交时</td><td>提货计划数量&gt;合同数量。调整提货计划数量</td><td>中</td><td>[查看]</td></tr>
+<tr><td>请先选择折扣类型！</td><td>审批节点提交时</td><td>头表折扣类型(DISCOUNT_TYPE)为空。选择折扣类型</td><td>中</td><td>[查看]</td></tr>
+<tr><td>请先获取零售折扣底限！</td><td>审批节点提交时</td><td>未获取零售折扣底限(prodAttributionChannel为空)。先获取零售折扣底限</td><td>中</td><td>[查看]</td></tr>
+<tr><td>一口价定位的产品，通过折后单价反算的审批折扣率不能小于1</td><td>编辑折后单价时</td><td>一口价产品折后单价反算的审批折扣率&lt;1。调整折后单价</td><td>中</td><td>[查看]</td></tr>
+<tr><td>保存失败，请检查数据</td><td>保存时</td><td>后端校验失败或数据异常。检查数据后重试</td><td>中</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：折扣单号不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存工程合同产品变更单时，未选择折扣单(DISCOUNT_APPLY_OBJ为空)</li><li><strong>逻辑分析</strong>：保存校验中检查DISCOUNT_APPLY_OBJ非空，因变更必须关联原折扣单。需选择折扣单后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
+         edec.DISCOUNT_APPLY_CODE, edec.HZ_APPROVE_STATUS
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+    AND (edec.DISCOUNT_APPLY_OBJ IS NULL OR edec.DISCOUNT_APPLY_OBJ = 0)
+  -- 查出折扣单号为空的变更单</code></pre>
+<h4>报错2：变更说明不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存工程合同产品变更单时，变更说明(ECN_REASON)为空</li><li><strong>逻辑分析</strong>：保存校验中检查ECN_REASON非空，因变更说明记录变更原因。需填写变更说明后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.ECN_REASON, edec.HZ_APPROVE_STATUS
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+    AND (edec.ECN_REASON IS NULL OR TRIM(edec.ECN_REASON) = '')
+  -- 查出变更说明为空的变更单</code></pre>
+<h4>报错3：变更单不存在</h4>
+<ul><li><strong>触发条件</strong>：查询工程合同产品变更单详情时，按ID查询EPM_DISCOUNT_ECN返回null</li><li><strong>逻辑分析</strong>：详情方法中按DISCOUNT_ECN_ID查询变更单，若返回null则抛出阻断性报错。需检查变更单ID有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS, edec.VALID
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+  -- 若返回空，说明变更单不存在</code></pre>
+<h4>报错4：仅新建状态单据允许删除</h4>
+<ul><li><strong>触发条件</strong>：删除工程合同产品变更单时，单据HZ_APPROVE_STATUS非NEW</li><li><strong>逻辑分析</strong>：删除方法中校验单据状态为NEW，其他状态不允许删除。该报错为阻断性报错</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS, edec.VALID
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre>
+<h4>报错5：折扣单已存在变更中申请</h4>
+<ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，该折扣单已存在审批中(HZ_APPROVE_STATUS='RUN')的变更单</li><li><strong>逻辑分析</strong>：提交校验中按DISCOUNT_APPLY_OBJ查询EPM_DISCOUNT_ECN筛选HZ_APPROVE_STATUS='RUN'，若存在则抛出阻断性报错。需等原变更审批完成</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
+         edec.DISCOUNT_APPLY_CODE, edec.HZ_APPROVE_STATUS
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_APPLY_OBJ = :discountApplyObj
+    AND edec.HZ_APPROVE_STATUS = 'RUN'
+    AND edec.DISCOUNT_ECN_ID &lt;&gt; :currentEcnId
+  -- 查出审批中的变更单</code></pre>
+<h4>报错6：数据不存在或无该数据权限</h4>
+<ul><li><strong>触发条件</strong>：查询工程合同产品变更单详情时，按ID查询EPM_DISCOUNT_ECN返回null或当前用户无该数据权限</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl.selectedHeader方法中按DISCOUNT_ECN_ID查询变更单，若返回null则抛出"数据不存在或无该数据权限"。可能原因：单据已被删除、ID传递错误、用户无该事业部数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS,
+         edec.ORGANIZATION_ID, edec.VALID
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+  -- 若返回空，说明单据不存在或无权限</code></pre>
+<h4>报错7：折扣类型不能为空</h4>
+<ul><li><strong>触发条件</strong>：保存或提交工程合同产品变更单时，头表折扣类型(DISCOUNT_TYPE)为空</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验DISCOUNT_TYPE非空，因折扣类型决定折扣计算逻辑。需选择折扣类型后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_TYPE,
+         edec.HZ_APPROVE_STATUS
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+    AND (edec.DISCOUNT_TYPE IS NULL OR edec.DISCOUNT_TYPE = 0)
+  -- 查出折扣类型为空的变更单</code></pre>
+<h4>报错8：折扣变更单明细数据为空</h4>
+<ul><li><strong>触发条件</strong>：保存或提交工程合同产品变更单时，变更单明细行(epmDiscountEcnLines)为空</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验明细行列表非空，因变更单必须包含变更产品明细。需添加变更产品明细行</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE,
+         (SELECT COUNT(*) FROM EPM_DISCOUNT_ECN_LINE edl
+          WHERE edl.DISCOUNT_ECN_ID = edec.DISCOUNT_ECN_ID) AS 明细行数
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+  -- 若明细行数为0，则触发该报错</code></pre>
+<h4>报错9：产品不存在或已被删除</h4>
+<ul><li><strong>触发条件</strong>：保存或取价时，明细行产品在产品主档中不存在或已删除</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中按ITEM_ID/ITEM_CODE查询产品主档，若返回null则抛出阻断性报错。需检查产品编码有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.ITEM_NAME, edl.ITEM_ID
+  FROM EPM_DISCOUNT_ECN_LINE edl
+  WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
+    AND NOT EXISTS (SELECT 1 FROM IAM_PRODUCT ip WHERE ip.ITEM_ID = edl.ITEM_ID)
+  -- 查出产品不存在或已删除的明细行</code></pre>
+<h4>报错10：折后单价不可少于0，不允许发起变更</h4>
+<ul><li><strong>触发条件</strong>：保存或提交时，明细行折后单价(DISCOUNTED_PRICE)&lt;0</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验折后单价非负，因折后单价为实际成交价格不能为负。需调整折后单价</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.DISCOUNTED_PRICE,
+         edl.EXTRA_DISCOUNT_RATE, edl.STANDARD_PRICE
+  FROM EPM_DISCOUNT_ECN_LINE edl
+  WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
+    AND edl.DISCOUNTED_PRICE &lt; 0
+  -- 查出折后单价&lt;0的明细行</code></pre>
+<h4>报错11：一口价折扣率不能小于1</h4>
+<ul><li><strong>触发条件</strong>：保存或提交时，一口价定位产品的折扣率&lt;1</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验一口价产品的折扣率≥1，因一口价产品折扣率不能低于1。需调整折扣率≥1</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.PROD_POSITIONING,
+         edl.EXTRA_DISCOUNT_RATE, edl.DISCOUNT_RATE
+  FROM EPM_DISCOUNT_ECN_LINE edl
+  WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
+    AND edl.PROD_POSITIONING = '一口价'
+    AND edl.EXTRA_DISCOUNT_RATE &lt; 1
+  -- 查出一口价折扣率&lt;1的明细行</code></pre>
+<h4>报错12：存在合同数量为0的产品明细，提交流程失败</h4>
+<ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，明细行CONTRACT_QTY=0</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl提交校验中检查明细行合同数量非0，因合同数量为0无法生成订单。需修改合同数量&gt;0后提交</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY
+  FROM EPM_DISCOUNT_ECN_LINE edl
+  WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
+    AND edl.CONTRACT_QTY = 0
+  -- 查出合同数量为0的明细行</code></pre>
+<h4>报错13：当前报备下已有合同(或合同变更)在审批，请先将审核流程通过后再提交！</h4>
+<ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，同一报备下已有合同或合同变更单在审批中</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl提交校验中按PROJECT_CODE查询关联合同/变更单的审批状态，若存在审批中的单据则抛出阻断性报错。需等原审批完成</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.PROJECT_CODE,
+         edec.HZ_APPROVE_STATUS
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.PROJECT_CODE = :projectCode
+    AND edec.HZ_APPROVE_STATUS = 'RUN'
+    AND edec.DISCOUNT_ECN_ID &lt;&gt; :currentEcnId
+  -- 查出同报备下审批中的变更单</code></pre>
+<h4>报错14：工程方单价不能为空或0，产品编码：&#123;itemCode&#125;</h4>
+<ul><li><strong>触发条件</strong>：保存或提交时，明细行工程方单价(CONTRACT_PRICE)为空或0</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验工程方单价非空且非0，因工程方单价为合同价格基础。需填写工程方单价</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_PRICE
+  FROM EPM_DISCOUNT_ECN_LINE edl
+  WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
+    AND (edl.CONTRACT_PRICE IS NULL OR edl.CONTRACT_PRICE = 0)
+  -- 查出工程方单价为空或0的明细行</code></pre>
+<h4>报错15：对应的合同已失效</h4>
+<ul><li><strong>触发条件</strong>：保存或提交工程合同产品变更单时，关联合同状态已失效</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中按CONTRACT_CODE查询合同状态，若已失效则抛出阻断性报错。需重新选择有效合同</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.CONTRACT_CODE, edec.CONTRACT_NAME,
+         ec.VALID AS 合同状态
+  FROM EPM_DISCOUNT_ECN edec
+  LEFT JOIN EPM_CONTRACT ec ON edec.CONTRACT_CODE = ec.CONTRACT_CODE
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+    AND ec.VALID = 3
+  -- 查出合同已失效的变更单</code></pre>
+<h4>报错16：该单据未存在有效的标准折扣设置，请联系管理员。</h4>
+<ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，事业部未配置标准折扣设置</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl提交校验中查询事业部标准折扣配置，若不存在则抛出阻断性报错。需联系管理员配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DIVISION_NAME, edec.ORGANIZATION_ID
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+  -- 检查事业部标准折扣配置</code></pre>
+<h4>报错17：合同关联的单体报备未生效</h4>
+<ul><li><strong>触发条件</strong>：保存或提交工程合同产品变更单时，合同关联的报备单未生效</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中校验合同关联的报备单状态为已生效，若未生效则抛出阻断性报错。需先生效报备单</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.CONTRACT_CODE, edec.PROJECT_CODE,
+         ep.PROJECT_VALID AS 报备状态
+  FROM EPM_DISCOUNT_ECN edec
+  LEFT JOIN EPM_PROJECT ep ON edec.PROJECT_CODE = ep.PROJECT_CODE
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+    AND ep.PROJECT_VALID &lt;&gt; 2
+  -- 查出报备未生效的变更单</code></pre>
+<h4>报错18：当前事业部未设置主要销售主体，暂无法正常下单，请联系业务员处理。</h4>
+<ul><li><strong>触发条件</strong>：提交工程合同产品变更单时，事业部未配置主要销售主体</li><li><strong>逻辑分析</strong>：EpmDiscountEcnServiceImpl中查询事业部主要销售主体配置，若不存在则抛出阻断性报错。需联系业务员配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DIVISION_NAME, edec.ORGANIZATION_ID
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+  -- 检查事业部主要销售主体配置</code></pre>
+<h4>报错19：必输信息未填写完成！</h4>
+<ul><li><strong>触发条件</strong>：保存或提交时，头表或明细行必填字段未填写</li><li><strong>逻辑分析</strong>：前端validCheck方法中调用headDs.validate()和lineDs.validate()校验必填字段，若有未填写的必填字段则弹出提示。需完善必填字段</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.DISCOUNT_APPLY_OBJ,
+         edec.ECN_REASON, edec.DISCOUNT_TYPE, edec.DISCOUNT_VALID_DATE
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+  -- 检查头表必填字段是否完整</code></pre>
+<h4>报错20：申请数量必须大于0，以下行不合法：第X行</h4>
+<ul><li><strong>触发条件</strong>：保存或提交时，明细行CONTRACT_QTY≤0</li><li><strong>逻辑分析</strong>：前端validCheck方法中遍历明细行校验CONTRACT_QTY&gt;0，若≤0则收集行号拼接报错信息。需修改申请数量&gt;0</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY
+  FROM EPM_DISCOUNT_ECN_LINE edl
+  WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
+    AND edl.CONTRACT_QTY &lt;= 0
+  -- 查出申请数量≤0的明细行</code></pre>
+<h4>报错21：产品的预提货数量不能大于合同数量，以下行不合法：第X行</h4>
+<ul><li><strong>触发条件</strong>：保存或提交时，提货计划数量&gt;合同数量</li><li><strong>逻辑分析</strong>：前端validCheck方法中校验提货计划数量不超过合同数量，若超过则收集行号拼接报错信息。需调整提货计划数量</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.CONTRACT_QTY,
+         (SELECT SUM(eep.PLAN_QTY) FROM EPM_DISCOUNT_ECN_PLAN eep
+          WHERE eep.DISCOUNT_ECN_LINE_ID = edl.DISCOUNT_ECN_LINE_ID) AS 预提货合计
+  FROM EPM_DISCOUNT_ECN_LINE edl
+  WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
+    AND (SELECT SUM(eep.PLAN_QTY) FROM EPM_DISCOUNT_ECN_PLAN eep
+         WHERE eep.DISCOUNT_ECN_LINE_ID = edl.DISCOUNT_ECN_LINE_ID) &gt; edl.CONTRACT_QTY
+  -- 查出预提货数量&gt;合同数量的明细行</code></pre>
+<h4>报错22：请先选择折扣类型！</h4>
+<ul><li><strong>触发条件</strong>：审批节点提交时，头表折扣类型(DISCOUNT_TYPE)为空</li><li><strong>逻辑分析</strong>：前端handleApprovalNodeCheck方法中校验discountType非空，若为空则弹出提示。需选择折扣类型</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_TYPE, edec.HZ_APPROVE_STATUS
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+    AND (edec.DISCOUNT_TYPE IS NULL OR edec.DISCOUNT_TYPE = 0)
+  -- 查出折扣类型为空的变更单</code></pre>
+<h4>报错23：请先获取零售折扣底限！</h4>
+<ul><li><strong>触发条件</strong>：审批节点提交时，未获取零售折扣底限(prodAttributionChannel为空)</li><li><strong>逻辑分析</strong>：前端handleApprovalNodeCheck方法中校验prodAttributionChannel非空，若为空则弹出提示。需先点击"获取零售折扣底限"按钮</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.PROD_ATTRIBUTION_CHANNEL,
+         edec.POLICY_ANALYSIS_DESCRIPTION
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+    AND (edec.PROD_ATTRIBUTION_CHANNEL IS NULL OR edec.PROD_ATTRIBUTION_CHANNEL = '')
+  -- 查出未获取零售折扣底限的变更单</code></pre>
+<h4>报错24：一口价定位的产品，通过折后单价反算的审批折扣率不能小于1</h4>
+<ul><li><strong>触发条件</strong>：编辑明细行折后单价时，一口价产品折后单价反算的审批折扣率&lt;1</li><li><strong>逻辑分析</strong>：前端LineInfo.tsx中编辑折后单价时计算审批折扣率=折后单价/标准单价/出厂折扣率，若一口价产品且审批折扣率&lt;1则弹出提示。需调整折后单价</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edl.DISCOUNT_ECN_LINE_ID, edl.ITEM_CODE, edl.PROD_POSITIONING,
+         edl.DISCOUNTED_PRICE, edl.STANDARD_PRICE, edl.EXTRA_DISCOUNT_RATE
+  FROM EPM_DISCOUNT_ECN_LINE edl
+  WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
+    AND edl.PROD_POSITIONING = '一口价'
+    AND edl.EXTRA_DISCOUNT_RATE &lt; 1
+  -- 查出一口价反算折扣率&lt;1的明细行</code></pre>
+<h4>报错25：保存失败，请检查数据</h4>
+<ul><li><strong>触发条件</strong>：保存时后端校验失败或数据异常</li><li><strong>逻辑分析</strong>：前端saveAndRefresh方法中调用headDs.submit()，若返回false则弹出"保存失败，请检查数据"。需检查数据后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS,
+         edec.OBJECT_VERSION_NUMBER
+  FROM EPM_DISCOUNT_ECN edec
+  WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
+  -- 检查变更单状态和版本号</code></pre>
+</KbCard>
+
+<KbCard title="常见问题">
+<ul><li>问题1：与工程折扣延期的区别</li><li>原因：共用后端Controller，通过ECN_TYPE区分</li><li>解决思路：产品变更和折扣延期是不同的变更类型</li></ul>
+</KbCard>
+
+</div>
+</div>
+</div>
+
+<div id="changelog" style="display:none;">
+<div class="tab-pad">
+<div class="kl-wrap">
+<KbCard title="更新记录">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-29</td><td>-</td><td>-</td><td>按skill规范完整重写，基于前后端代码梳理</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
 </div>
-<div id="detail-logic" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="界面模块1：合同产品变更列表页"><p class='kl-tip'>前端页面位于 packages/arrow-ae/src/pages/projectManage/DiscountContractChange/views/ListPage/</p>
-<table class="kl-table"><thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead><tbody><tr><td>变更单号</td><td>文本框</td><td>变更单编码</td><td>常显</td><td>1.系统自动生成</td><td>-</td><td>EPM_DISCOUNT_ECN.DISCOUNT_ECN_CODE</td></tr><tr><td>审核状态</td><td>下拉选择框</td><td>审批状态</td><td>常显</td><td>1.来源：值集HWKF.APPROVE_STATUS</td><td>值集HWKF.APPROVE_STATUS</td><td>EPM_DISCOUNT_ECN.HZ_APPROVE_STATUS</td></tr><tr><td>折扣单号</td><td>文本框</td><td>源折扣单号</td><td>常显</td><td>1.选择折扣单带出</td><td>-</td><td>EPM_DISCOUNT_ECN.SOURCE_DISCOUNT_APPLY_CODE</td></tr><tr><td>合同编码</td><td>文本框</td><td>关联合同编码</td><td>常显</td><td>1.折扣单带出</td><td>-</td><td>EPM_DISCOUNT_ECN.CONTRACT_CODE</td></tr><tr><td>客户名称</td><td>文本框</td><td>经销商名称</td><td>常显</td><td>1.折扣单带出</td><td>-</td><td>EPM_DISCOUNT_ECN.CUSTOMER_NAME</td></tr></tbody></table></KbCard>
-<KbCard title="界面模块2：合同产品变更详情页"><p class='kl-tip'>前端页面位于 packages/arrow-ae/src/pages/projectManage/DiscountContractChange/views/DetailPage/</p>
-<table class="kl-table"><thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead><tbody><tr><td>变更单号</td><td>文本框</td><td>变更单编码</td><td>常显</td><td>1.保存后自动生成</td><td>-</td><td>EPM_DISCOUNT_ECN.DISCOUNT_ECN_CODE</td></tr><tr><td>变更类型</td><td>下拉选择框</td><td>固定为1(合同产品变更)</td><td>常显</td><td>1.默认值1</td><td>1</td><td>EPM_DISCOUNT_ECN.ECN_TYPE</td></tr><tr><td>源折扣单号</td><td>LOV</td><td>源折扣单</td><td>常显</td><td>1.选择折扣单LOV带出</td><td>LOV:折扣单</td><td>EPM_DISCOUNT_ECN.SOURCE_DISCOUNT_APPLY_CODE</td></tr><tr><td>申请说明</td><td>文本框</td><td>变更原因</td><td>常显</td><td>1.用户输入</td><td>-</td><td>EPM_DISCOUNT_ECN.ECN_REASON</td></tr><tr><td>审核状态</td><td>下拉选择框</td><td>审批状态</td><td>常显</td><td>1.来源：值集HWKF.APPROVE_STATUS</td><td>值集HWKF.APPROVE_STATUS</td><td>EPM_DISCOUNT_ECN.HZ_APPROVE_STATUS</td></tr></tbody></table></KbCard>
-<KbCard title="界面模块3：变更前后产品行对比"><table class="kl-table"><thead><tr><th>字段名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th><th>合法值</th><th>数据库列名</th></tr></thead><tbody><tr><td>产品编码</td><td>文本框</td><td>产品编码</td><td>常显</td><td>1.来源：折扣单行</td><td>-</td><td>EPM_DISCOUNT_ECN_LINE.ITEM_CODE</td></tr><tr><td>产品名称</td><td>文本框</td><td>产品名称</td><td>常显</td><td>1.来源：折扣单行</td><td>-</td><td>EPM_DISCOUNT_ECN_LINE.ITEM_NAME</td></tr><tr><td>标准单价</td><td>数字框</td><td>标准单价</td><td>常显</td><td>1.变更后可修改</td><td>-</td><td>EPM_DISCOUNT_ECN_LINE.STANDARD_PRICE</td></tr><tr><td>出厂折扣率</td><td>数字框</td><td>出厂折扣率</td><td>常显</td><td>1.变更后可修改</td><td>-</td><td>EPM_DISCOUNT_ECN_LINE.BASE_DISCOUNT_RATE</td></tr><tr><td>审批折扣率</td><td>数字框</td><td>审批折扣率</td><td>常显</td><td>1.变更后可修改</td><td>-</td><td>EPM_DISCOUNT_ECN_LINE.EXTRA_DISCOUNT_RATE</td></tr><tr><td>应用折扣率</td><td>数字框</td><td>应用折扣率</td><td>常显</td><td>1.自动计算=出厂×审批</td><td>-</td><td>EPM_DISCOUNT_ECN_LINE.DISCOUNT_RATE</td></tr><tr><td>折后单价</td><td>数字框</td><td>折后单价</td><td>常显</td><td>1.自动计算=标准单价×应用折扣率</td><td>-</td><td>EPM_DISCOUNT_ECN_LINE.DISCOUNTED_PRICE</td></tr></tbody></table></KbCard>
-<KbCard title="选择弹窗"><p>本菜单有多个LOV选择弹窗：</p>
-<table class="kl-table"><thead><tr><th>弹窗名称</th><th>触发方式</th><th>LOV编码/接口</th><th>选择参数</th><th>说明</th></tr></thead><tbody><tr><td>选择折扣申请单</td><td>头表"源折扣单号"字段LOV</td><td><code>lovCode: AE.EPM_DISCOUNT_APPLYS</code></td><td><code>searchFlag: 3</code></td><td>必填，选择后联动填充头表字段（合同编码、客户名称、项目等）</td></tr><tr><td>选择变更产品</td><td>明细行"新建"按钮</td><td>接口 <code>epm-discount-apply-lines/search</code></td><td><code>searchFlag: 2, discountApplyId</code></td><td>Modal弹窗，多选，选择折扣单中需变更的产品行</td></tr><tr><td>产品替换弹窗</td><td>双击明细行</td><td>Modal弹窗</td><td>-</td><td>展示替换前/替换后产品对比，支持新增/删除替换产品</td></tr><tr><td>选择替换产品</td><td>产品替换弹窗内"新增"按钮</td><td>接口 <code>epm-discount-policy/get-crm-item</code></td><td><code>customerCode, divisionId, currency, channel, type: 1</code></td><td>Modal弹窗，多选，选择替换后的产品</td></tr><tr><td>批量设置审批折扣率</td><td>详情页"批量设置审批折扣率"按钮</td><td>内DataSet</td><td>-</td><td>Modal弹窗，输入折扣率后批量更新非一口价明细行</td></tr></tbody></table></KbCard>
-<KbCard title="导入"><p class='kl-tip'>不支持导入功能。仅有导出功能（列表页<code>ExcelExportPro</code>组件）和附件上传功能（详情页<code>UploadTable</code>组件，attachConfId=8022）。</p></KbCard>
-<KbCard title="其他按钮"><p><strong>列表页按钮：</strong></p>
-<table class="kl-table"><thead><tr><th>按钮</th><th>权限码</th><th>显示条件</th></tr></thead><tbody><tr><td>新建</td><td><code>discount.contract.change.button.create</code></td><td>始终显示</td></tr><tr><td>导出</td><td><code>discount.contract.change.button.export</code></td><td>始终显示，URL: <code>/epm-discount-ecns/exportEpmDiscountEcn</code>，固定传参 <code>ecnType: 1</code></td></tr><tr><td>查看</td><td><code>discount.contract.change.list.button.line.view</code></td><td>始终显示</td></tr><tr><td>编辑</td><td><code>discount.contract.change.list.button.line.edit</code></td><td>状态 ∉ [RUN, APPROVED, SUSPEND, RETURN]</td></tr><tr><td>删除</td><td><code>discount.contract.change.list.button.line.delete</code></td><td>状态 ∉ [RUN, APPROVED, SUSPEND, RETURN, REJECTED]</td></tr></tbody></table>
-<p><strong>详情页按钮（CommonAuditButtons，objTypeId=8022）：</strong></p>
-<table class="kl-table"><thead><tr><th>按钮</th><th>btnCode</th><th>前置校验</th><th>接口</th><th>显示条件</th></tr></thead><tbody><tr><td>保存</td><td><code>save</code></td><td><code>validCheck</code></td><td><code>POST /epm-discount-ecns</code></td><td>编辑模式</td></tr><tr><td>保存并提交</td><td><code>save-and-submit</code></td><td><code>validCheck</code></td><td><code>POST /epm-discount-ecns/save-and-submit</code></td><td>编辑模式 且 状态 ∈ [NEW, REJECTED, WITHDRAW, INTERRUPT, REBUT, null]</td></tr><tr><td>节点保存</td><td><code>save</code> (otherSaveUrl: <code>node-edit-save</code>)</td><td><code>handleApprovalNodeCheck</code></td><td><code>POST /epm-discount-ecns/node-edit-save</code></td><td>审批节点（isApprovalNodeFlag=true）</td></tr><tr><td>获取零售折扣底限</td><td><code>discount-threshold</code></td><td>-</td><td><code>GET /epm-discount-ecns/ask-crm-item</code></td><td>审批节点</td></tr><tr><td>新建/编辑/删除/关闭/刷新/取消编辑</td><td>-</td><td>-</td><td>-</td><td>CommonAuditButtons内置</td></tr></tbody></table>
-<p><strong>明细行按钮：</strong></p>
-<table class="kl-table"><thead><tr><th>按钮</th><th>权限码</th><th>说明</th></tr></thead><tbody><tr><td>新建（添加明细）</td><td><code>discount.contract.change.detail.button.line.create</code></td><td>打开"选择变更产品"弹窗</td></tr><tr><td>删除</td><td><code>discount.contract.change.detail.button.line.delete</code></td><td>批量删除选中行</td></tr><tr><td>双击行</td><td>-</td><td>打开"产品替换"弹窗</td></tr></tbody></table></KbCard>
-<KbCard title="保存校验"><p><strong>前端校验（validCheck方法）：</strong></p>
-<table class="kl-table"><thead><tr><th>序号</th><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>1</td><td>头表/行表必填字段校验</td><td>必输信息未填写完成！</td></tr><tr><td>2</td><td>附件上传校验</td><td>(UploadTable内置提示)</td></tr><tr><td>3</td><td>申请数量必须大于0</td><td>申请数量必须大于0，以下行不合法：第X行</td></tr><tr><td>4</td><td>工程方单价必须大于0（自营工程contractType==1）</td><td>工程方单价必须大于零，以下行不合法，第X行</td></tr><tr><td>5</td><td>提货计划需全部计划完毕</td><td>产品的提货计划需要全部计划完毕，以下行不合法，第X行</td></tr><tr><td>6</td><td>预提货数量不能大于合同数量</td><td>产品的预提货数量不能大于合同数量，以下行不合法：第X行</td></tr><tr><td>7</td><td>一口价产品审批折扣率≥1（反算校验）</td><td>一口价定位的产品，通过折后单价反算的审批折扣率不能小于1</td></tr></tbody></table>
-<p><strong>字段级校验（DataSet validator）：</strong></p>
-<table class="kl-table"><thead><tr><th>字段</th><th>校验规则</th><th>错误提示</th></tr></thead><tbody><tr><td>折扣单号</td><td>必填</td><td>(C7N内置提示)</td></tr><tr><td>变更说明</td><td>必填</td><td>(C7N内置提示)</td></tr><tr><td>申请合同数量</td><td>必填</td><td>(C7N内置提示)</td></tr><tr><td>工程方单价</td><td>必填，精度7位</td><td>(C7N内置提示)</td></tr><tr><td>审批折扣率</td><td>&gt;0，精度5位</td><td>请输入大于0的数字</td></tr><tr><td>折后单价</td><td>&gt;0，精度7位</td><td>请输入大于0的数字</td></tr></tbody></table>
-<p><strong>后端校验（save方法）：</strong></p>
-<table class="kl-table"><thead><tr><th>序号</th><th>校验方法</th><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>1</td><td><code>doBeforeSave</code></td><td>合同有效性（valid=YES）</td><td>对应的合同已失效</td></tr><tr><td>2</td><td><code>doInsertHead</code></td><td>变更类型非空</td><td>缺失变更类型</td></tr><tr><td>3</td><td><code>doInsertHead</code></td><td>折扣单ID非空</td><td>缺失折扣单ID</td></tr><tr><td>4</td><td><code>doInsertLine</code></td><td>经销商档案有效</td><td>经销档案数据异常！请联系it处理</td></tr><tr><td>5</td><td><code>doInsertLine</code></td><td>工程方单价非空/非0（非家装）</td><td>工程方单价不能为空或0，产品编码：X</td></tr><tr><td>6</td><td><code>checkFixedPriceDiscount</code></td><td>一口价折扣率≥1</td><td>一口价折扣率不能小于1</td></tr><tr><td>7</td><td><code>fixedPricing</code></td><td>一口价默认审批折扣率=1</td><td>(自动设置，非报错)</td></tr></tbody></table></KbCard>
-<KbCard title="提交校验"><p><strong>前端校验：</strong> 同保存校验（validCheck方法），保存并提交按钮共用validCheck前置校验。</p>
-<p><strong>后端校验（saveAndSubmit方法）：</strong></p>
-<table class="kl-table"><thead><tr><th>序号</th><th>校验方法</th><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>1</td><td><code>saveAndSubmit</code></td><td>模版编码（flowCode）非空</td><td>模版编码不能为空！</td></tr><tr><td>2</td><td><code>saveAndSubmit</code> → <code>save</code></td><td>同save方法全部校验</td><td>(同上)</td></tr><tr><td>3</td><td><code>submitValid</code> SQL</td><td>合同关联的单体报备已生效（project_valid=2）</td><td>合同关联的单体报备未生效</td></tr><tr><td>4</td><td><code>updateReplacedQty</code></td><td>可替换数量充足</td><td>产品变更的可替换数量不足，请检查下述产品：...</td></tr><tr><td>5</td><td><code>updateReplacedQty</code></td><td>剩余数量全部替换完毕</td><td>产品变更需把剩余数量全部替换完毕，请检查下述产品：...</td></tr></tbody></table>
-<p><strong>审批节点保存校验（nodeEditSave方法）：</strong></p>
-<table class="kl-table"><thead><tr><th>序号</th><th>校验方法</th><th>校验项</th><th>错误提示</th></tr></thead><tbody><tr><td>1</td><td><code>handleApprovalNodeCheck</code>(前端)</td><td>折扣类型必填</td><td>请先选择折扣类型！</td></tr><tr><td>2</td><td><code>handleApprovalNodeCheck</code>(前端)</td><td>折扣有效期必填</td><td>请先选择折扣有效期！</td></tr><tr><td>3</td><td><code>handleApprovalNodeCheck</code>(前端)</td><td>折扣有效期&gt;当天</td><td>折扣有效期需大于当天！</td></tr><tr><td>4</td><td><code>handleApprovalNodeCheck</code>(前端)</td><td>零售折扣底限已获取</td><td>请先获取零售折扣底限！</td></tr><tr><td>5</td><td><code>handleApprovalNodeCheck</code>(前端)</td><td>产品定位非空（开启折扣管控事业部）</td><td>X产品编码"缺失定价时的产品定位，请联系产品专员进行价目表申请维护！</td></tr><tr><td>6</td><td><code>nodeEditSave</code>(后端)</td><td>原合同数据有效（自营工程）</td><td>原合同数据异常</td></tr><tr><td>7</td><td><code>checkFixedPriceDiscount</code>(后端)</td><td>一口价折扣率≥1</td><td>一口价折扣率不能小于1</td></tr><tr><td>8</td><td><code>checkRate</code>(后端)</td><td>零售政策与工程家装政策联动（调用CRM校验）</td><td>(CRM返回信息)</td></tr></tbody></table></KbCard>
-<KbCard title="状态机"><p><strong>状态机流转图：</strong></p>
 
-```text
-[新建 NEW] ──保存并提交──→ [审批中 RUN] ──审批通过──→ [已审批 APPROVED]
-                                │
-                                └──审批驳回──→ [已驳回 REJECTED]
-```
-
-<p><strong>状态机列表：</strong></p>
-<table class="kl-table"><thead><tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr></thead><tbody><tr><td>NEW</td><td>新建</td><td>保存、保存并提交、编辑、删除</td></tr><tr><td>RUN</td><td>审批中</td><td>等待审批结果、审批节点保存(node-edit-save)</td></tr><tr><td>APPROVED</td><td>已审批</td><td>查看(折扣单已同步更新)</td></tr><tr><td>REJECTED</td><td>已驳回</td><td>保存、保存并提交、编辑</td></tr></tbody></table>
-<p><strong>审批回调（wfComplete）：</strong></p>
-<ul><li>审批通过：设置HZ_APPROVE_STATUS=APPROVED，调用doAudit同步更新折扣单主数据</li><li>审批驳回/终止/撤回：设置HZ_APPROVE_STATUS=对应状态，更新processFlag=N</li></ul></KbCard>
-<KbCard title="表1：EPM_DISCOUNT_ECN（折扣变更/延期头）"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr></thead><tbody><tr><td>DISCOUNT_ECN_ID</td><td>Long</td><td>变更ID(主键)</td><td>-</td><td>自增主键</td></tr><tr><td>DISCOUNT_ECN_CODE</td><td>String</td><td>变更单号</td><td>变更单号</td><td>编码规则自动生成</td></tr><tr><td>ECN_TYPE</td><td>Long</td><td>变更类型</td><td>变更类型</td><td>1=合同产品变更，2=折扣延期</td></tr><tr><td>SOURCE_DISCOUNT_APPLY_ID</td><td>Long</td><td>源折扣单ID</td><td>-</td><td>关联原折扣单</td></tr><tr><td>SOURCE_DISCOUNT_APPLY_CODE</td><td>String</td><td>源折扣单号</td><td>源折扣单号</td><td>关联原折扣单</td></tr><tr><td>CONTRACT_ID</td><td>Long</td><td>合同ID</td><td>-</td><td>折扣单带出</td></tr><tr><td>CUSTOMER_ID</td><td>Long</td><td>客户ID</td><td>-</td><td>折扣单带出</td></tr><tr><td>PROJECT_ID</td><td>Long</td><td>项目ID</td><td>-</td><td>折扣单带出</td></tr><tr><td>ECN_REASON</td><td>String</td><td>申请说明</td><td>申请说明</td><td>用户输入</td></tr><tr><td>HZ_APPROVE_STATUS</td><td>String</td><td>审批状态</td><td>审核状态</td><td>NEW/RUN/APPROVED/REJECTED</td></tr><tr><td>HZ_INSTANCE_ID</td><td>Long</td><td>流程实例ID</td><td>-</td><td>流程启动后写入</td></tr></tbody></table></KbCard>
-<KbCard title="表2：EPM_DISCOUNT_ECN_LINE（折扣变更/延期行）"><table class="kl-table"><thead><tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr></thead><tbody><tr><td>DISCOUNT_ECN_LINE_ID</td><td>Long</td><td>变更行ID(主键)</td><td>-</td><td>自增主键</td></tr><tr><td>DISCOUNT_ECN_ID</td><td>Long</td><td>变更头ID(外键)</td><td>-</td><td>关联头表</td></tr><tr><td>ITEM_CODE</td><td>String</td><td>产品编码</td><td>产品编码</td><td>折扣单行带出</td></tr><tr><td>ITEM_NAME</td><td>String</td><td>产品名称</td><td>产品名称</td><td>折扣单行带出</td></tr><tr><td>STANDARD_PRICE</td><td>BigDecimal</td><td>标准单价</td><td>标准单价</td><td>变更后可修改</td></tr><tr><td>BASE_DISCOUNT_RATE</td><td>BigDecimal</td><td>出厂折扣率</td><td>出厂折扣率</td><td>变更后可修改</td></tr><tr><td>EXTRA_DISCOUNT_RATE</td><td>BigDecimal</td><td>审批折扣率</td><td>审批折扣率</td><td>变更后可修改</td></tr><tr><td>DISCOUNT_RATE</td><td>BigDecimal</td><td>应用折扣率</td><td>应用折扣率</td><td>自动计算=出厂×审批</td></tr><tr><td>DISCOUNTED_PRICE</td><td>BigDecimal</td><td>折后单价</td><td>折后单价</td><td>自动计算=标准单价×应用折扣率</td></tr><tr><td>DISCOUNTED_AMOUNT</td><td>BigDecimal</td><td>折后金额</td><td>折后金额</td><td>自动计算=折后单价×数量</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
-<div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="报错一览表"><table class="kl-table"><thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead><tbody><tr><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
-<div id="faq-qa" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="常见问题"><ul><li>问题1：变更审批通过后折扣单数据未更新<ul><li>原因：审批回调wfComplete未正确触发；排查SQL：<code>SELECT DE.DISCOUNT_ECN_CODE, DE.HZ_APPROVE_STATUS, DA.DISCOUNT_APPLY_CODE FROM EPM_DISCOUNT_ECN DE JOIN EPM_DISCOUNT_APPLY DA ON DE.SOURCE_DISCOUNT_APPLY_ID = DA.DISCOUNT_APPLY_ID WHERE DE.DISCOUNT_ECN_ID = #{discountEcnId}</code></li><li>解决思路：检查流程实例状态，手动触发回调</li></ul></li><li>问题2：选择折扣单弹窗看不到某个折扣单<ul><li>原因1：折扣单未审批（stat != 5）</li><li>原因2：折扣单已过有效期（discount_valid_date &lt; sysdate）</li><li>原因3：折扣单行没有可下单数量（active_qty &lt;= 0）</li><li>原因4：关联合同已失效（valid != 2）</li><li>原因5：项目已结案（stat=5 且 stage_name='项目结案'）</li><li>排查SQL：<code>SELECT a.discount_apply_code, a.stat, a.discount_valid_date, c.valid, p.stat, p.stage_name FROM epm_discount_apply a LEFT JOIN epm_project_contract c ON a.contract_id=c.contract_id LEFT JOIN epm_project p ON a.project_id=p.project_id WHERE a.discount_apply_code = '折扣单号'</code></li></ul></li><li>问题3：折扣单列表页和小型项目折扣单的区别<ul><li>原因：searchFlag=1或2时，Service层自动设置projectCategory='small'，SQL用 <code>c.project_category != 'small'</code> 排除小型项目折扣单；searchFlag=3（变更场景）不做此过滤，所有类型项目折扣单都可选</li></ul></li></ul></KbCard>
-</div>
-</div>
-</div>
-<div id="changelog" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="更新记录"><table class="kl-table"><thead><tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr></thead><tbody><tr><td>-</td><td>-</td><td>-</td><td>暂无2026年提交记录</td></tr></tbody></table></KbCard>
-</div>
-</div>
-</div>
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="历史排查记录">
-&lt;!-- 空白:待补充 -->
+
+<!-- 空白:待补充 -->
+
 </KbCard>
 </div>
 </div>

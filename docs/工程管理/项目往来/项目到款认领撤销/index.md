@@ -188,62 +188,47 @@
 </div>
 </div>
 </div>
+
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="重点逻辑1：撤销保存逻辑 保存">
-<KbQuote>新建撤销单并关联已认领明细行，支持新增和修改两种模式</KbQuote>
-
-**具体逻辑**：
-
-- 1、新增时自动生成撤销单号，格式为：部门编码+编码规则生成的序号
-- 2、新增时初始状态为1(新建)，流程ID和流程标志均为0
-- 3、修改时采用先删后插策略，先删除原有撤销明细(EPM_PAD_CANCEL)，再重新插入
-- 4、撤销明细行支持标记删除状态(_status=delete)，删除状态的行不插入
+<KbCard num="1" title="重点逻辑1：撤销后可结算工程服务费校验 {核心校验}">
+<ul><li><strong>业务意义</strong>：防止撤销后已认领工程服务费不足以覆盖已申请兑现金额</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：按报销单分组，计算每组撤销的工程服务费金额合计</li></ul>
+<ul><li>第2点：可结算兑现金额=已认领工程服务费-本次撤销工程服务费-已退货工程服务费-已申请兑现金额</li></ul>
+<ul><li>第3点：可结算兑现金额小于0时不允许撤销，报错提示报销单号</li></ul>
 </KbCard>
 
-<KbCard num="2" title="重点逻辑2：撤销前服务费校验 服务费校验">
-<KbQuote>防止撤销后可结算工程服务费小于零，确保已兑现的服务费不被超额撤销</KbQuote>
-
-**具体逻辑**：
-
-- 1、按报销单(SVC_EXP_ACC_ID)分组校验，仅校验关联了报销单的明细行
-- 2、可结算兑现金额=(已认领工程服务费-本次撤销的工程服务费-已退货工程服务费)-已申请兑现金额
-- 3、若可结算兑现金额小于0，则报错提示具体报销单号，不允许撤销
-- 4、已认领工程服务费和已退货工程服务费从queryBxAllotInfo查询；已申请兑现金额从getAppliedAmt查询
+<KbCard num="2" title="重点逻辑2：撤销明细重复校验 {防重复撤销}">
+<ul><li><strong>业务意义</strong>：防止同一认领明细被重复撤销</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：提交时查询所有撤销明细对应的认领明细，检查cancelFlag是否已为Y</li></ul>
+<ul><li>第2点：已撤销的明细列出认领单号、出库单号、产品编码，提示用户剔除后再提交</li></ul>
 </KbCard>
 
-<KbCard num="3" title="重点逻辑3：撤销提交前校验 提交校验">
-<KbQuote>防止已撤销的明细被重复提交撤销</KbQuote>
-
-**具体逻辑**：
-
-- 1、查询撤销单下所有明细对应的认领明细行
-- 2、检查认领明细行的撤销标识(CANCEL_FLAG)是否为Y
-- 3、若存在已撤销明细，报错列出具体认领单号、出库单号、产品编码，要求剔除后再提交
+<KbCard num="3" title="重点逻辑3：ERP负数冲销推送 {ERP集成}">
+<ul><li><strong>业务意义</strong>：通过推送负数数据实现ERP侧的冲销核销</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：按认领单分组，每组组装AR_APPLY、OM_CLAIM、OM_APPLY三组数据</li></ul>
+<ul><li>第2点：所有金额取负数（negate），实现冲销效果</li></ul>
+<ul><li>第3点：actionStatus设为APPROVE，sourceType设为REVOKE_CLAIM，revokeSourceId指向原认领单</li></ul>
+<ul><li>第4点：虚拟到款单额外传creditMemoId</li></ul>
 </KbCard>
 
-<KbCard num="4" title="重点逻辑4：撤销审批通过逻辑 审批通过">
-<KbQuote>审批通过后执行撤销操作，推送ERP并回加到款单金额</KbQuote>
-
-**具体逻辑**：
-
-- 1、推送ERP撤销数据，金额取负数(取反)，actionStatus=APPROVE，sourceType=REVOKE_CLAIM
-- 2、更新认领明细的撤销标识为Y
-- 3、更新撤销单头的撤销时间为当前时间
-- 4、按认领单维度汇总撤销的认领金额，回加到对应到款单的可认领金额
+<KbCard num="4" title="重点逻辑4：审批通过回加可认领金额 {金额回写}">
+<ul><li><strong>业务意义</strong>：撤销审批通过后，将撤销的金额退回到款单的可认领金额池</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：查询撤销单关联的所有认领明细及其认领金额</li></ul>
+<ul><li>第2点：按到款引入单分组，将认领金额累加回unallotAmt</li></ul>
+<ul><li>第3点：同时更新认领明细的cancelFlag=Y和撤销单的撤销时间</li></ul>
 </KbCard>
 
-<KbCard num="5" title="重点逻辑5：ERP撤销数据推送 ERP推送">
-<KbQuote>将撤销数据推送至ERP进行核销冲销，实现DMS与ERP的账务同步</KbQuote>
-
-**具体逻辑**：
-
-- 1、推送数据按认领单(PAYMENT_ALLOT_ID)分组，每组包含AR_APPLY、OM_CLAIM、OM_APPLY三类数据
-- 2、AR_APPLY按应收事务ID(CUSTOMER_TRX_ID)汇总，金额取负数
-- 3、OM_CLAIM按出库明细行(DELIVERY_LINE_ID)维度，金额取负数
-- 4、OM_APPLY按出库单号(DELIVERY_NUMBER)汇总，金额取负数
-- 5、虚拟到款单(VIRTUAL_RECEIPT)需额外传递creditMemoId
+<KbCard num="5" title="重点逻辑5：撤销单号生成规则 {编码规则}">
+<ul><li><strong>业务意义</strong>：撤销单号由事业部编码+规则编号组成，确保唯一性</li></ul>
+<ul><li><strong>具体逻辑描述</strong></li></ul>
+<ul><li>第1点：调用编码规则AE.EPM_PAYMENT_ALLOT_CANCEL_NO生成规则编号</li></ul>
+<ul><li>第2点：撤销单号=事业部编码（deptCode）+规则编号</li></ul>
 </KbCard>
 
 </div>
@@ -253,313 +238,228 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="界面模块1：撤销认领列表页">
-<div class="kb-field-scroll">
+<KbCard title="界面模块1：撤销单列表页">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>撤销单号</td>
-<td>文本框</td>
-<td>系统自动生成的撤销单号</td>
-<td>常显</td>
-<td>保存时按编码规则自动生成(部门编码+序号)，不可编辑</td>
-<td>-</td>
-<td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_NO</td>
-</tr>
-<tr>
-<td>撤销日期</td>
-<td>文本框</td>
-<td>撤销审批通过时间</td>
-<td>常显</td>
-<td>审批通过时自动写入当前时间，不可编辑</td>
-<td>-</td>
-<td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_DATE</td>
-</tr>
-<tr>
-<td>审批状态</td>
-<td>下拉选择框</td>
-<td>工作流审批状态</td>
-<td>常显</td>
-<td>值集HWKF.APPROVE_STATUS翻译</td>
-<td>NEW/RUN/APPROVED/INTERRUPT</td>
-<td>EPM_PAYMENT_ALLOT_CANCEL.HZ_APPROVE_STATUS</td>
-</tr>
-<tr>
-<td>项目编号</td>
-<td>文本框</td>
-<td>撤销关联的项目编号</td>
-<td>常显</td>
-<td>来源于项目信息，不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT.PROJECT_CODE</td>
-</tr>
-<tr>
-<td>项目名称</td>
-<td>文本框</td>
-<td>撤销关联的项目名称</td>
-<td>常显</td>
-<td>来源于项目信息，不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT.PROJECT_NAME</td>
-</tr>
-<tr>
-<td>交易公司</td>
-<td>文本框</td>
-<td>交易公司名称</td>
-<td>常显</td>
-<td>来源于项目关联的交易公司，不可编辑</td>
-<td>-</td>
-<td>EPM_TRADING_COMPANY.TRADING_COMPANY_NAME</td>
-</tr>
-<tr>
-<td>客户编号</td>
-<td>文本框</td>
-<td>经销商编码</td>
-<td>常显</td>
-<td>来源于项目信息，不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT.CUSTOMER_CODE</td>
-</tr>
-<tr>
-<td>客户名称</td>
-<td>文本框</td>
-<td>经销商名称</td>
-<td>常显</td>
-<td>来源于项目信息，不可编辑</td>
-<td>-</td>
-<td>EPM_PROJECT.CUSTOMER_NAME</td>
-</tr>
-<tr>
-<td>撤销原因</td>
-<td>文本框</td>
-<td>撤销原因说明</td>
-<td>常显</td>
-<td>新建时手工填写，可编辑</td>
-<td>-</td>
-<td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_REASON</td>
-</tr>
-<tr>
-<td>错误信息</td>
-<td>文本框</td>
-<td>ERP推送错误信息</td>
-<td>推送失败时显示</td>
-<td>来源于异常消息表，不可编辑</td>
-<td>-</td>
-<td>SYS_EXCEPTION_MSG.MSG</td>
-</tr>
-</tbody></table></div>
+<tr><td>撤销单号</td><td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_NO</td><td>文本框</td><td>撤销单编号</td><td>常显</td><td>保存时=事业部编码+规则编号自动生成</td></tr>
+<tr><td>撤销时间</td><td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_DATE</td><td>文本框</td><td>撤销时间</td><td>常显</td><td>保存时用户输入，审批通过后更新为当前时间</td></tr>
+<tr><td>项目ID</td><td>EPM_PAYMENT_ALLOT_CANCEL.PROJECT_ID</td><td>文本框</td><td>关联项目</td><td>常显</td><td>用户选择</td></tr>
+<tr><td>撤销原因</td><td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_REASON</td><td>文本框</td><td>撤销原因说明</td><td>常显</td><td>用户输入</td></tr>
+<tr><td>审批状态</td><td>EPM_PAYMENT_ALLOT_CANCEL.HZ_APPROVE_STATUS</td><td>文本框</td><td>工作流审批状态</td><td>常显</td><td>NEW/RUN/APPROVED</td></tr>
+<tr><td>创建人</td><td>EPM_PAYMENT_ALLOT_CANCEL.CREATED_BY_BAK</td><td>文本框</td><td>创建人</td><td>常显</td><td>系统自动记录</td></tr>
+<tr><td>创建时间</td><td>EPM_PAYMENT_ALLOT_CANCEL.CREATED_BAK</td><td>文本框</td><td>创建时间</td><td>常显</td><td>系统自动记录</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard title="界面模块2：撤销认领详情页-撤销明细行">
-<div class="kb-field-scroll">
+<KbCard title="界面模块2：撤销单详情页（头表单）">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
-<thead><tr>
-<th>字段名</th>
-<th>组件</th>
-<th>业务释义</th>
-<th>显隐条件</th>
-<th>取值/赋值逻辑</th>
-<th>合法值</th>
-<th>数据库列名</th>
-</tr></thead>
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
 <tbody>
-<tr>
-<td>认领单号</td>
-<td>文本框</td>
-<td>被撤销的认领单号</td>
-<td>常显</td>
-<td>来源于认领明细，不可编辑</td>
-<td>-</td>
-<td>EPM_PAYMENT_ALLOT.PAYMENT_ALLOT_CODE</td>
-</tr>
-<tr>
-<td>出库单号</td>
-<td>文本框</td>
-<td>认领关联的出库单号</td>
-<td>常显</td>
-<td>来源于认领明细，不可编辑</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>产品编码</td>
-<td>文本框</td>
-<td>产品编码</td>
-<td>常显</td>
-<td>来源于认领明细，不可编辑</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>认领金额</td>
-<td>数值框</td>
-<td>原认领金额</td>
-<td>常显</td>
-<td>来源于认领明细，不可编辑</td>
-<td>&gt;0</td>
-<td>EPM_PAYMENT_ALLOT_DETAIL.CLAIM_AMT</td>
-</tr>
-<tr>
-<td>退货金额</td>
-<td>数值框</td>
-<td>原退货金额</td>
-<td>常显</td>
-<td>来源于认领明细，不可编辑</td>
-<td>≥0</td>
-<td>EPM_PAYMENT_ALLOT_DETAIL.RETURN_AMT</td>
-</tr>
-<tr>
-<td>工程服务费</td>
-<td>数值框</td>
-<td>工程服务费金额</td>
-<td>常显</td>
-<td>来源于认领明细，不可编辑</td>
-<td>-</td>
-<td>-</td>
-</tr>
-<tr>
-<td>撤销标识</td>
-<td>单选框</td>
-<td>是否已撤销</td>
-<td>常显</td>
-<td>审批通过后自动更新为Y</td>
-<td>Y/N</td>
-<td>EPM_PAYMENT_ALLOT_DETAIL.CANCEL_FLAG</td>
-</tr>
-</tbody></table></div>
+<tr><td>撤销单号</td><td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_NO</td><td>文本框</td><td>撤销单编号</td><td>常显</td><td>新建时自动生成，不可编辑</td></tr>
+<tr><td>撤销时间</td><td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_DATE</td><td>日期选择框</td><td>撤销时间</td><td>常显</td><td>可编辑，审批通过后系统更新为当前时间</td></tr>
+<tr><td>项目</td><td>EPM_PAYMENT_ALLOT_CANCEL.PROJECT_ID</td><td>下拉选择框</td><td>关联项目</td><td>常显</td><td>可编辑，从项目选择</td></tr>
+<tr><td>撤销原因</td><td>EPM_PAYMENT_ALLOT_CANCEL.CANCEL_REASON</td><td>文本域</td><td>撤销原因</td><td>常显</td><td>可编辑</td></tr>
+<tr><td>事业部ID</td><td>EPM_PAYMENT_ALLOT_CANCEL.ORGANIZATION_ID</td><td>隐藏</td><td>事业部</td><td>隐藏</td><td>从用户上下文获取</td></tr>
+<tr><td>审批状态</td><td>EPM_PAYMENT_ALLOT_CANCEL.HZ_APPROVE_STATUS</td><td>文本框</td><td>审批状态</td><td>常显</td><td>NEW/RUN/APPROVED</td></tr>
+<tr><td>审批实例ID</td><td>EPM_PAYMENT_ALLOT_CANCEL.HZ_INSTANCE_ID</td><td>隐藏</td><td>工作流实例ID</td><td>隐藏</td><td>发起工作流时自动写入</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="界面模块3：撤销单详情页（撤销明细行表格）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>撤销明细ID</td><td>EPM_PAD_CANCEL.ID</td><td>文本框</td><td>撤销明细行ID</td><td>常显</td><td>主键，自增</td></tr>
+<tr><td>认领明细ID</td><td>EPM_PAD_CANCEL.PAYMENT_ALLOT_DETAIL_ID</td><td>文本框</td><td>关联认领出库明细ID</td><td>常显</td><td>从可撤销明细选择带入</td></tr>
+<tr><td>认领单号</td><td>-</td><td>文本框</td><td>关联的认领单号</td><td>常显</td><td>从认领明细带出</td></tr>
+<tr><td>出库单号</td><td>-</td><td>文本框</td><td>关联的出库单号</td><td>常显</td><td>从认领明细带出</td></tr>
+<tr><td>产品编码</td><td>-</td><td>文本框</td><td>关联的产品编码</td><td>常显</td><td>从认领明细带出</td></tr>
+<tr><td>本次认款金额</td><td>-</td><td>文本框</td><td>原认领金额</td><td>常显</td><td>从认领明细带出</td></tr>
+<tr><td>工程服务费金额</td><td>-</td><td>文本框</td><td>原认领工程服务费</td><td>常显</td><td>从认领明细带出</td></tr>
+<tr><td>报销单号</td><td>-</td><td>文本框</td><td>关联的报销单号</td><td>常显</td><td>从认领明细带出，用于校验</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<h4>弹窗1：可撤销认领明细选择弹窗（多选）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
+</thead>
+<tbody>
+<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
+<tr><td>projectId</td><td>项目ID</td><td>项目ID</td><td>67890</td><td>该项目下已审批通过的认领单中cancelFlag=N的出库明细</td></tr>
+<tr><td>cancelId</td><td>撤销单ID</td><td>当前撤销单ID（编辑时排除已选）</td><td>0</td><td></td></tr>
+</tbody>
+</table>
+<blockquote>查询SQL（后端接口Mapper：EpmPaymentAllotDetailRepository.queryAllotDetails）：</blockquote>
+<pre class="detail-sql" v-pre><code>SELECT d.payment_allot_detail_id, d.payment_allot_line_id, d.claim_amt,
+       d.claim_service_amt, d.cancel_flag, l.payment_allot_id,
+       pa.payment_allot_code, d.inv_bill_no, d.item_code
+FROM epm_payment_allot_detail d
+JOIN epm_payment_allot_line l ON d.payment_allot_line_id = l.payment_allot_line_id
+JOIN epm_payment_allot pa ON l.payment_allot_id = pa.payment_allot_id
+WHERE pa.project_id = #{projectId}
+  AND pa.payment_allot_stat = 'APPROVED'
+  AND d.cancel_flag = 'N'</code></pre>
 </KbCard>
-<KbCard title="导入">
-</KbCard>
+
 <KbCard title="其他按钮">
-
-| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
-|---------|---------|---------|-------------------|------|
-| 保存 | 保存撤销单及明细 | 详情页 | 新建/编辑状态 | 调用/v1/{orgId}/epm-payment-allot-cancels/save，生成撤销单号 |
-| 提交 | 提交撤销审批 | 详情页 | 撤销单已保存，明细未全部已撤销 | 启动工作流EPM_PAYMENT_ALLOT_CANCEL |
-| 导出 | 导出撤销认领列表 | 列表页 | 常显 | 调用/v1/{orgId}/epm-payment-allot-cancels/list/export |
-
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>新建</td><td>新建撤销单</td><td>列表页</td><td>常显</td><td>跳转新建页面</td></tr>
+<tr><td>保存</td><td>保存撤销单</td><td>详情页</td><td>常显</td><td>调用save接口，含校验可结算工程服务费</td></tr>
+<tr><td>提交</td><td>提交审批</td><td>详情页</td><td>审批状态为NEW</td><td>校验明细未重复撤销，发起工作流</td></tr>
+<tr><td>导出</td><td>导出列表</td><td>列表页</td><td>常显</td><td>调用导出接口</td></tr>
+</tbody>
+</table>
+<h4>按钮1：保存（详情页）</h4>
+<ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：新建时生成撤销单号（事业部编码+规则编号），设置状态为1</li><li>第2点：调用verifyBeforeInsert校验撤销后可结算工程服务费是否&gt;=0</li><li>第3点：插入撤销头和撤销明细行（EPM_PAD_CANCEL）</li><li>第4点：编辑时先删除旧明细再插入新明细</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epm-payment-allot-cancels/save</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM epm_payment_allot_cancel WHERE id = {cancelId};
+SELECT * FROM epm_pad_cancel WHERE cancel_id = {cancelId};</code></pre>
+<h4>按钮2：提交（详情页）</h4>
+<ul><li><strong>触发条件</strong>：审批状态为NEW</li><li><strong>执行逻辑</strong>：</li><li>第1点：查询撤销明细对应的认领明细，检查是否有cancelFlag=Y的</li><li>第2点：已撤销的明细报错，列出认领单号、出库单号、产品编码</li><li>第3点：校验通过后发起工作流EPM_PAYMENT_ALLOT_CANCEL</li><li>第4点：更新审批状态为RUN，记录工作流实例ID</li><li><strong>接口调用</strong>：POST /v1/&#123;organizationId&#125;/epm-payment-allot-cancels/wfProcSubmit</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT d.cancel_flag, pa.payment_allot_code, d.inv_bill_no, d.item_code
+FROM epm_payment_allot_detail d
+JOIN epm_pad_cancel pc ON d.payment_allot_detail_id = pc.payment_allot_detail_id
+JOIN epm_payment_allot_line l ON d.payment_allot_line_id = l.payment_allot_line_id
+JOIN epm_payment_allot pa ON l.payment_allot_id = pa.payment_allot_id
+WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
+<h4>按钮3：导出（列表页）</h4>
+<ul><li><strong>触发条件</strong>：常显</li><li><strong>执行逻辑</strong>：</li><li>第1点：按当前查询条件导出撤销单列表数据</li><li><strong>接口调用</strong>：GET /v1/&#123;organizationId&#125;/epm-payment-allot-cancels/list/export</li><li><strong>排查SQL</strong>：无</li></ul>
 </KbCard>
+
 <KbCard title="保存校验">
-<KbSubTitle>校验1：撤销后可结算工程服务费不可小于零 —— 防止超额撤销影响已兑现服务费</KbSubTitle>
-
-- 第1点：按报销单分组，计算：可结算兑现金额=(已认领工程服务费-本次撤销工程服务费-已退货工程服务费)-已申请兑现金额
-- 第2点：若结果小于0，报错提示具体报销单号
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT NVL(SUM(aot.claim_amt), 0) total_claim_amt,
-           NVL(SUM(aot.claim_service_amt), 0) total_claim_service_amt,
-           NVL(SUM(ROUND(so.return_qty * so.engineering_price, 2) - ROUND(so.return_qty * so.dealer_price, 2)), 0) return_service_amt
-    FROM fin_svc_exp_acc_line l
-    LEFT JOIN (SELECT ad.source_id, SUM(ad.claim_amt) claim_amt, SUM(ad.claim_service_amt) claim_service_amt
-               FROM epm_payment_allot_detail ad
-               JOIN epm_payment_allot_line al ON ad.payment_allot_line_id = al.payment_allot_line_id
-               JOIN epm_payment_allot a ON al.payment_allot_id = a.payment_allot_id
-               WHERE a.stat = 5 AND a.payment_allot_stat = 'APPROVED' AND ad.allow_cash_flag = 'Y' AND ad.cancel_flag = 'N'
-               GROUP BY ad.source_id) aot ON l.DIFFBILL_LINE_ID = aot.source_id
-    LEFT JOIN sales_return_order so ON l.line_number = so.order_line_id
-    WHERE l.svc_exp_acc_id = {svcExpAccId}
-```
-
+<ul><li>校验1：撤销后可结算工程服务费校验 —— 确保撤销后已认领工程服务费足以覆盖已申请兑现金额</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：按报销单（svcExpAccId）分组，计算每组撤销的工程服务费金额合计</p>
+<p>- 第2点：可结算兑现金额=已认领工程服务费-本次撤销工程服务费-已退货工程服务费-已申请兑现金额</p>
+<p>- 第3点：可结算兑现金额&lt;0时报错，提示报销单号</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>-- 查询报销关联的认领信息
+    SELECT total_claim_amt, total_claim_service_amt, return_service_amt
+    FROM epm_pad_cancel_query WHERE svc_exp_acc_id = {svcExpAccId};
+    -- 查询已申请兑现金额
+    SELECT applied_amt FROM epm_applied_amt WHERE svc_exp_acc_id = {svcExpAccId};</code></pre>
 </KbCard>
+
 <KbCard title="提交校验">
-<KbSubTitle>校验1：明细中不可包含已撤销的认领明细 —— 防止重复撤销</KbSubTitle>
-
-- 第1点：查询撤销单下所有明细对应的认领明细行
-- 第2点：检查CANCEL_FLAG是否为Y，若存在则列出认领单号、出库单号、产品编码
-
-<KbTip>阻断性报错</KbTip>
-
-```sql
-SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
-    FROM epm_pad_cancel pc
-    JOIN epm_payment_allot_detail pad ON pc.payment_allot_detail_id = pad.payment_allot_detail_id
-    WHERE pc.cancel_id = {cancelId} AND pad.cancel_flag = 'Y'
-```
-
+<ul><li>校验1：撤销明细重复校验 —— 确保选中的认领明细未被其他撤销单撤销</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：查询撤销明细对应的认领明细，过滤cancelFlag=Y的</p>
+<p>- 第2点：存在已撤销明细时报错，列出认领单号、出库单号、产品编码</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT pa.payment_allot_code, d.inv_bill_no, d.item_code
+    FROM epm_payment_allot_detail d
+    JOIN epm_pad_cancel pc ON d.payment_allot_detail_id = pc.payment_allot_detail_id
+    JOIN epm_payment_allot_line l ON d.payment_allot_line_id = l.payment_allot_line_id
+    JOIN epm_payment_allot pa ON l.payment_allot_id = pa.payment_allot_id
+    WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
+<ul><li>校验2：撤销明细非空校验 —— 确保撤销单有明细行</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：查询EPM_PAD_CANCEL表中cancelId对应的明细</p>
+<p>- 第2点：明细为空时报错"流程启动异常，撤销明细不存在"</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*) FROM epm_pad_cancel WHERE cancel_id = {cancelId};</code></pre>
+<ul><li>校验3：ERP冲销推送校验 —— 推送ERP负数冲销并校验返回</li></ul>
+<ul><li>详细逻辑</li></ul>
+<p>- 第1点：按认领单分组组装冲销数据，所有金额取负</p>
+<p>- 第2点：推送ERP，actionStatus=APPROVE，sourceType=REVOKE_CLAIM</p>
+<p>- 第3点：ERP返回状态非S时报错</p>
+<ul><li>系统体现：阻断性报错</li></ul>
+<ul><li>排查SQL：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = {cancelId} AND objtypename = '到款认领撤销';</code></pre>
 </KbCard>
+
 <KbCard title="状态机">
-### 状态机
-
-<KbSubTitle>状态机流转图</KbSubTitle>
-
-
-```text
-[新建stat=1] ──提交──> [审批中RUN] ──审批通过──> [已审批APPROVED]
-                            │
-                            └──审批驳回──> [已中断INTERRUPT]
-```
-
-<KbSubTitle>状态机列表</KbSubTitle>
-
-
-| 状态机名称 | 状态释义 | 可执行的操作 |
-|-----------|---------|------------|
-| NEW | 新建 | 保存、提交 |
-| RUN | 审批中 | - |
-| APPROVED | 审批通过 | - |
-| INTERRUPT | 审批驳回 | - |
-
----
-
-</KbCard>
-<KbCard num="1" title="表1：EPM_PAYMENT_ALLOT_CANCEL（撤销认领主表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 撤销单ID | - | 自增主键 |
-| CANCEL_NO | VARCHAR | 撤销单号 | 撤销单号 | 部门编码+编码规则序号 |
-| CANCEL_DATE | DATE | 撤销时间 | 撤销日期 | 审批通过时写入当前时间 |
-| PROJECT_ID | NUMBER | 项目ID | - | 关联EPM_PROJECT |
-| STAT | NUMBER | 撤销状态 | - | 1-新建 |
-| WFID | NUMBER | 流程ID | - | 默认0 |
-| WFFLAG | NUMBER | 流程标志 | - | 默认0 |
-| CANCEL_REASON | VARCHAR | 撤销原因 | 撤销原因 | 手工填写 |
-| ORGANIZATION_ID | NUMBER | 事业部ID | - | 来源于项目 |
-| HZ_APPROVE_STATUS | VARCHAR | 审批状态 | 审批状态 | NEW/RUN/APPROVED/INTERRUPT |
-| HZ_INSTANCE_ID | NUMBER | 审批实例ID | - | 工作流返回 |
-
+<h4>状态机流转图</h4>
+<pre class="lang-text" v-pre><code>NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APPROVED(已审核)
+                        │
+                        │审批驳回
+                        ↓
+                     回到NEW</code></pre>
+<h4>状态机列表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
+</thead>
+<tbody>
+<tr><td>NEW</td><td>新建，未提交</td><td>编辑、保存、提交</td></tr>
+<tr><td>RUN</td><td>审批中，工作流运行中</td><td>无（等待审批结果）</td></tr>
+<tr><td>APPROVED</td><td>已审核，审批通过</td><td>无（已完成撤销，金额已回加）</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-<KbCard num="2" title="表2：EPM_PAD_CANCEL（撤销认领明细表）">
-
-| 字段名 | 类型 | 释义 | 对应界面字段 | 逻辑 |
-|-------|------|------|------------|------|
-| ID | NUMBER | 撤销明细ID | - | 自增主键 |
-| CANCEL_ID | NUMBER | 撤销单ID | - | 关联EPM_PAYMENT_ALLOT_CANCEL.ID |
-| PAYMENT_ALLOT_DETAIL_ID | NUMBER | 认领明细ID | - | 关联EPM_PAYMENT_ALLOT_DETAIL |
-
----
-
+<KbCard title="表1：EPM_PAYMENT_ALLOT_CANCEL（撤销认领头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>撤销单ID</td><td>-</td><td>主键，自增</td></tr>
+<tr><td>CANCEL_NO</td><td>VARCHAR2</td><td>撤销单号</td><td>撤销单号</td><td>=事业部编码+规则编号(AE.EPM_PAYMENT_ALLOT_CANCEL_NO)</td></tr>
+<tr><td>CANCEL_DATE</td><td>DATE</td><td>撤销时间</td><td>撤销时间</td><td>保存时用户输入，审批通过后更新为当前时间</td></tr>
+<tr><td>PROJECT_ID</td><td>NUMBER</td><td>项目ID</td><td>项目</td><td>用户选择</td></tr>
+<tr><td>STAT</td><td>NUMBER</td><td>撤销状态</td><td>-</td><td>新建时=1</td></tr>
+<tr><td>WFID</td><td>NUMBER</td><td>流程ID</td><td>-</td><td>新建时=0</td></tr>
+<tr><td>WFFLAG</td><td>NUMBER</td><td>流程标志</td><td>-</td><td>新建时=0</td></tr>
+<tr><td>CANCEL_REASON</td><td>VARCHAR2</td><td>撤销原因</td><td>撤销原因</td><td>用户输入</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>NUMBER</td><td>事业部ID</td><td>-</td><td>从用户上下文获取</td></tr>
+<tr><td>HZ_APPROVE_STATUS</td><td>VARCHAR2</td><td>审批状态</td><td>审批状态</td><td>NEW/RUN/APPROVED</td></tr>
+<tr><td>HZ_INSTANCE_ID</td><td>NUMBER</td><td>审批实例ID</td><td>-</td><td>发起工作流时写入</td></tr>
+<tr><td>CREATED_BY_BAK</td><td>VARCHAR2</td><td>创建人</td><td>创建人</td><td>系统自动记录</td></tr>
+<tr><td>CREATED_BAK</td><td>DATE</td><td>创建时间</td><td>创建时间</td><td>系统自动记录</td></tr>
+<tr><td>LAST_UPD_BY_BAK</td><td>VARCHAR2</td><td>最后更新人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>LAST_UPD_BAK</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>系统自动记录</td></tr>
+</tbody>
+</table>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="表2：EPM_PAD_CANCEL（撤销认领明细表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>ID</td><td>NUMBER</td><td>撤销明细ID</td><td>撤销明细ID</td><td>主键，自增</td></tr>
+<tr><td>CANCEL_ID</td><td>NUMBER</td><td>撤销单ID</td><td>-</td><td>关联撤销头表</td></tr>
+<tr><td>PAYMENT_ALLOT_DETAIL_ID</td><td>NUMBER</td><td>认领明细ID</td><td>认领明细ID</td><td>关联EPM_PAYMENT_ALLOT_DETAIL</td></tr>
+<tr><td>CREATED_BY_BAK</td><td>VARCHAR2</td><td>创建人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>CREATED_BAK</td><td>DATE</td><td>创建时间</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>LAST_UPD_BY_BAK</td><td>VARCHAR2</td><td>最后更新人</td><td>-</td><td>系统自动记录</td></tr>
+<tr><td>CLAST_UPD_BAK</td><td>DATE</td><td>最后更新时间</td><td>-</td><td>系统自动记录</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="相关表：EPM_PAYMENT_ALLOT_DETAIL（认领出库单明细表-相关字段）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CANCEL_FLAG</td><td>VARCHAR2</td><td>是否撤销</td><td>-</td><td>撤销审批通过后置为Y，默认N</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -567,123 +467,88 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
+<KbCard title="报错一览表">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
 <tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销：报销单号-xxx</td>
-            <td style="font-size:13px;">保存</td>
-            <td style="font-size:13px;">撤销后可结算兑现金额&lt;0，需减少撤销明细或撤销金额</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">流程启动异常，单据id不能为空</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">传入的单据ID为null或0</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">流程启动异常，单据不存在</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">按ID查询不到撤销单</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">流程启动异常，撤销明细不存在</td>
-            <td style="font-size:13px;">提交/审批完成</td>
-            <td style="font-size:13px;">撤销单下无明细数据</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">明细中以下认领明细已被撤销，请剔除后再重新提交撤销：...</td>
-            <td style="font-size:13px;">提交</td>
-            <td style="font-size:13px;">明细中包含CANCEL_FLAG=Y的认领明细</td>
-            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销：报销单号-xxx</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>撤销后可结算兑现金额&lt;0，需减少撤销明细或撤销金额</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，单据id不能为空</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>传入的单据ID为null或0</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，单据不存在</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>按ID查询不到撤销单</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，撤销明细不存在</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>撤销单下无明细数据</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
-
-<div id="err-detail-5" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>明细中以下认领明细已被撤销，请剔除后再重新提交撤销：...</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>明细中包含CANCEL_FLAG=Y的认领明细</div>
-    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-  </div>
-</div>
+<tr><td>撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销</td><td>保存</td><td>撤销后已认领工程服务费不足以覆盖已申请兑现金额，减少撤销明细中工程服务费金额</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>明细中以下认领明细已被撤销，请剔除后再重新提交撤销</td><td>提交</td><td>选中的认领明细已被其他撤销单撤销，剔除已撤销明细</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>流程启动异常，单据id不能为空</td><td>提交/完结</td><td>工作流回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>流程启动异常，单据不存在</td><td>提交/完结</td><td>撤销单已被删除，刷新列表</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>流程启动异常，撤销明细不存在</td><td>提交/完结</td><td>撤销单缺少明细行，检查明细数据</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>erp返回认领结果为空</td><td>ERP推送</td><td>ERP接口异常，检查ERP服务状态</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>认领推送erp异常</td><td>ERP推送</td><td>ERP返回错误信息，查看具体错误内容</td><td>阻断性报错</td><td>[查看]</td></tr>
+</tbody>
+</table>
+<h4>报错1：撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销</h4>
+<ul><li><strong>触发条件</strong>：保存撤销单时，撤销明细中含已报销的认领明细，且撤销后可结算工程服务费(total_claim_service_amt - cancelServiceChargeAmt - return_service_amt - applied_amt) &lt; 0</li><li><strong>逻辑分析</strong>：保存校验中查询epm_pad_cancel_query按svcExpAccId获取已认领工程服务费总额，减去本次撤销金额、已退回金额、已申请兑现金额后若&lt;0则抛出阻断性报错。需减少撤销明细中工程服务费金额</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epcq.SVC_EXP_ACC_ID, epcq.TOTAL_CLAIM_SERVICE_AMT, epcq.RETURN_SERVICE_AMT, epcq.APPLIED_AMT,
+         epcq.TOTAL_CLAIM_SERVICE_AMT - :cancelServiceChargeAmt - epcq.RETURN_SERVICE_AMT - epcq.APPLIED_AMT AS 撤销后可结算金额
+  FROM EPM_PAD_CANCEL_QUERY epcq
+  WHERE epcq.SVC_EXP_ACC_ID = :svcExpAccId
+  -- 若撤销后可结算金额 &lt; 0，则触发该报错</code></pre>
+<h4>报错2：明细中以下认领明细已被撤销，请剔除后再重新提交撤销</h4>
+<ul><li><strong>触发条件</strong>：提交撤销单时，选中的认领明细已被其他撤销单撤销(CANCEL_FLAG=Y)</li><li><strong>逻辑分析</strong>：提交校验中按CANCEL_ID关联EPM_PAD_CANCEL和EPM_PAYMENT_ALLOT_DETAIL，若CANCEL_FLAG=Y则收集到已撤销明细列表并抛出阻断性报错。需剔除已撤销明细后重新提交</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epad.PAYMENT_ALLOT_DETAIL_ID, epad.PAYMENT_ALLOT_CODE, epad.INV_BILL_NO, epad.ITEM_CODE,
+         epad.CANCEL_FLAG, epc.CANCEL_ID, epc.CANCEL_CODE
+  FROM EPM_PAYMENT_ALLOT_DETAIL epad
+  JOIN EPM_PAD_CANCEL epc ON epad.PAYMENT_ALLOT_DETAIL_ID = epc.PAYMENT_ALLOT_DETAIL_ID
+  WHERE epc.CANCEL_ID = :cancelId
+    AND epad.CANCEL_FLAG = 'Y'
+  -- 查出已被撤销的认领明细</code></pre>
+<h4>报错3：流程启动异常，单据id不能为空</h4>
+<ul><li><strong>触发条件</strong>：提交或完结撤销单时，工作流回调缺少单据ID(objId为空)</li><li><strong>逻辑分析</strong>：工作流回调方法中校验objId非空，因需按单据ID定位撤销单记录。该报错为阻断性报错，需检查工作流配置</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_INSTANCE_ID, epc.HZ_APPROVE_STATUS
+  FROM EPM_PAD_CANCEL epc
+  WHERE epc.CANCEL_ID = :cancelId
+  -- 校验撤销单ID是否存在</code></pre>
+<h4>报错4：流程启动异常，单据不存在</h4>
+<ul><li><strong>触发条件</strong>：提交或完结撤销单时，按单据ID查询EPM_PAD_CANCEL返回null</li><li><strong>逻辑分析</strong>：工作流回调方法中按CANCEL_ID查询撤销单，若返回null则抛出阻断性报错。可能原因：撤销单已被删除、ID传递错误。需刷新列表</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_APPROVE_STATUS, epc.VALID
+  FROM EPM_PAD_CANCEL epc
+  WHERE epc.CANCEL_ID = :cancelId
+  -- 若返回空，说明撤销单不存在</code></pre>
+<h4>报错5：流程启动异常，撤销明细不存在</h4>
+<ul><li><strong>触发条件</strong>：提交或完结撤销单时，撤销单缺少明细行(EPM_PAD_CANCEL_DETAIL为空)</li><li><strong>逻辑分析</strong>：工作流回调方法中按CANCEL_ID查询撤销明细，若为空则抛出阻断性报错。需检查明细数据</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_APPROVE_STATUS,
+         (SELECT COUNT(*) FROM EPM_PAD_CANCEL_DETAIL epcd
+          WHERE epcd.CANCEL_ID = epc.CANCEL_ID) AS 撤销明细数
+  FROM EPM_PAD_CANCEL epc
+  WHERE epc.CANCEL_ID = :cancelId
+  -- 若撤销明细数为0，则触发该报错</code></pre>
+<h4>报错6：erp返回认领结果为空</h4>
+<ul><li><strong>触发条件</strong>：ERP推送时，ERP接口返回认领结果为空</li><li><strong>逻辑分析</strong>：ERP推送方法中调用ERP接口获取认领结果，若返回null则抛出阻断性报错。可能原因：ERP服务不可用、网络异常、ERP接口异常。需检查ERP服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE
+  FROM SYS_EXCEPTION_MSG sem
+  WHERE sem.OBJID = :cancelId
+    AND sem.OBJTYPENAME = '到款认领撤销'
+  ORDER BY sem.CREATION_DATE DESC
+  -- 查询ERP推送异常记录</code></pre>
+<h4>报错7：认领推送erp异常</h4>
+<ul><li><strong>触发条件</strong>：ERP推送时，ERP接口返回错误信息</li><li><strong>逻辑分析</strong>：ERP推送方法中调用ERP接口，若返回错误信息则抛出阻断性报错。需查看具体错误内容并修复后重新提交</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE, sem.CREATED_BY
+  FROM SYS_EXCEPTION_MSG sem
+  WHERE sem.OBJID = :cancelId
+    AND sem.OBJTYPENAME = '到款认领撤销'
+  ORDER BY sem.CREATION_DATE DESC
+  -- 查询ERP推送异常详情</code></pre>
 </KbCard>
+
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">撤销审批通过后到款单可认领金额未回加</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>selectClaimAmtByCancelId查询结果为空，或EPM_PAYMENT_IMPORT记录不存在<br>
-      <strong style="color:#7C3AED;">处理：</strong>`SELECT pa.payment_import_id, pad.claim_amt FROM epm_payment_allot pa JOIN epm_payment_allot_line pal ON pa.payment_allot_id = pal.payment_allot_id JOIN epm_payment_allot_detail pad ON pal.payment_allot_line_id = pad.payment_allot_line_id JOIN epm_pad_cancel ce ON pad.payment_allot_detail_id = ce.payment_allot_detail_id WHERE ce.cancel_id = {cancelId}`
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">ERP撤销推送失败</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或推送数据异常，错误信息记录在SYS_EXCEPTION_MSG表<br>
-      <strong style="color:#7C3AED;">处理：</strong>`SELECT * FROM sys_exception_msg WHERE objid = {cancelId} AND objtypename = '到款认领撤销'`
-    </div>
-  </div>
-</div>
+<ul><li>问题1：撤销后可结算工程服务费小于0</li><li>原因：撤销的工程服务费过大，导致已认领工程服务费无法覆盖已申请兑现金额</li><li>解决思路：减少撤销明细中工程服务费金额，确保撤销后可结算金额&gt;=0</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT total_claim_service_amt - #{cancelServiceChargeAmt} - return_service_amt - applied_amt AS settleable_amt
+FROM epm_pad_cancel_query WHERE svc_exp_acc_id = {svcExpAccId};</code></pre>
+<ul><li>问题2：ERP撤销推送失败</li><li>原因：ERP接口不可用或推送数据异常</li><li>解决思路：检查ERP接口状态和推送数据，修复后重新提交</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT * FROM sys_exception_msg WHERE objid = {cancelId} AND objtypename = '到款认领撤销';</code></pre>
+<ul><li>问题3：提交时提示明细已被撤销</li><li>原因：选中的认领明细已被其他撤销单撤销（cancelFlag=Y）</li><li>解决思路：剔除已撤销的明细后重新提交</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT d.cancel_flag, pa.payment_allot_code, d.inv_bill_no, d.item_code
+FROM epm_payment_allot_detail d
+JOIN epm_pad_cancel pc ON d.payment_allot_detail_id = pc.payment_allot_detail_id
+WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';</code></pre>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -692,10 +557,16 @@ SELECT pad.payment_allot_code, pad.inv_bill_no, pad.item_code
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 提交ID | 提交人 | 提交内容 |
-|------|-------|-------|---------|
-| 2026-07-31 | - | - | 初始生成知识库文档 |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写知识库文档</td></tr>
+<tr><td>2026-07-31</td><td>-</td><td>-</td><td>初始生成知识库文档</td></tr>
+<tr><td>2025-10-31</td><td>-</td><td>jianwei.ma</td><td>初始创建到款认领撤销功能</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>

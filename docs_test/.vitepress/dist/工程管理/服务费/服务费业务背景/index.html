@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>系统知识库 | 系统知识库</title>
+    <meta name="description" content="家装管理系统业务逻辑梳理与排查知识库">
+    <link rel="stylesheet" href="/system-knowledge-base/assets/style.1d3b33f3.css">
+    <link rel="modulepreload" href="/system-knowledge-base/assets/app.d8e882e1.js">
+    <link rel="modulepreload" href="/system-knowledge-base/assets/工程管理_服务费_服务费业务背景_index.md.63a74f33.lean.js">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;📋&lt;/text&gt;&lt;/svg&gt;">
+  <script id="check-dark-light">(()=>{const e=localStorage.getItem("vitepress-theme-appearance")||"",a=window.matchMedia("(prefers-color-scheme: dark)").matches;(!e||e==="auto"?a:e==="dark")&&document.documentElement.classList.add("dark")})();</script>
+  </head>
+  <body>
+    <div id="app"><div class="kb-layout" data-v-3534d791><header class="kb-topbar" data-v-3534d791><div class="kb-logo-area" data-v-3534d791><div class="kb-logo-mark" data-v-3534d791><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M2 20h20M3 10l9-7 9 7M5 10v10h4v-6h6v6h4V10" data-v-3534d791></path></svg></div><span class="kb-logo-title" data-v-3534d791>新门户系统知识库</span></div><div class="kb-topbar-right" data-v-3534d791><a href="/system-knowledge-base/源MD管理/" class="kb-md-entry" title="上传 AI 生成的最新 MD，自动更新知识库" data-v-3534d791><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" data-v-3534d791></path><polyline points="17 8 12 3 7 8" data-v-3534d791></polyline><line x1="12" y1="3" x2="12" y2="15" data-v-3534d791></line></svg> 源MD管理 </a></div></header><nav class="kb-primary-nav" data-v-3534d791><!--[--><div class="kb-primary-item" title="家装管理" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" data-v-3534d791></path></svg><!----><!----><!----><!----><!----><!----><!----><!----><!----></div><span data-v-3534d791>家装管理</span></div><div class="kb-primary-item" title="工程管理" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M2 20h20M3 10l9-7 9 7M5 10v10" data-v-3534d791></path><rect x="7" y="14" width="4" height="6" data-v-3534d791></rect><rect x="13" y="11" width="4" height="9" data-v-3534d791></rect></svg><!----><!----><!----><!----><!----><!----><!----><!----></div><span data-v-3534d791>工程管理</span></div><div class="kb-primary-item" title="门店管理" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M3 21h18M3 7v1a3 3 0 006 0V7m0 1a3 3 0 006 0V7m0 1a3 3 0 006 0V7H3l2-4h14l2 4" data-v-3534d791></path><path d="M5 21V10.85M19 21V10.85" data-v-3534d791></path></svg><!----><!----><!----><!----><!----><!----><!----></div><span data-v-3534d791>门店管理</span></div><div class="kb-primary-item" title="财务管理" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><!----><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><circle cx="12" cy="12" r="10" data-v-3534d791></circle><path d="M12 6v2M12 16v2M16 12h-8" data-v-3534d791></path><path d="M9 9l6 6M15 9l-6 6" data-v-3534d791></path></svg><!----><!----><!----><!----><!----><!----></div><span data-v-3534d791>财务管理</span></div><div class="kb-primary-item" title="经销合同管理" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><!----><!----><!----><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" data-v-3534d791></path><path d="M14 2v6h6" data-v-3534d791></path><line x1="16" y1="13" x2="8" y2="13" data-v-3534d791></line><line x1="16" y1="17" x2="8" y2="17" data-v-3534d791></line><line x1="10" y1="9" x2="9" y2="9" data-v-3534d791></line></svg><!----><!----><!----><!----></div><span data-v-3534d791>经销合同管理</span></div><div class="kb-primary-item" title="点将管理" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><!----><!----><!----><!----><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><circle cx="12" cy="12" r="10" data-v-3534d791></circle><circle cx="12" cy="12" r="3" data-v-3534d791></circle><line x1="12" y1="2" x2="12" y2="6" data-v-3534d791></line><line x1="12" y1="18" x2="12" y2="22" data-v-3534d791></line><line x1="2" y1="12" x2="6" y2="12" data-v-3534d791></line><line x1="18" y1="12" x2="22" y2="12" data-v-3534d791></line></svg><!----><!----><!----></div><span data-v-3534d791>点将管理</span></div><div class="kb-primary-item" title="产品中心" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><!----><!----><!----><!----><!----><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" data-v-3534d791></path><polyline points="3.27 6.96 12 12.01 20.73 6.96" data-v-3534d791></polyline><line x1="12" y1="22.08" x2="12" y2="12" data-v-3534d791></line></svg><!----><!----></div><span data-v-3534d791>产品中心</span></div><div class="kb-primary-item" title="电子合同管理" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><!----><!----><!----><!----><!----><!----><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" data-v-3534d791></path><path d="M14 2v6h6" data-v-3534d791></path><path d="M10 13l2-2 4 4" data-v-3534d791></path></svg><!----></div><span data-v-3534d791>电子合同管理</span></div><div class="kb-primary-item" title="问题反馈" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><!----><!----><!----><!----><!----><!----><!----><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" data-v-3534d791></path></svg></div><span data-v-3534d791>问题反馈</span></div><div class="kb-primary-item" title="开发管理" data-v-3534d791><div class="kb-primary-icon" data-v-3534d791><!----><!----><!----><!----><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-v-3534d791><polyline points="16 18 22 12 16 6" data-v-3534d791></polyline><polyline points="8 6 2 12 8 18" data-v-3534d791></polyline></svg><!----><!----><!----><!----><!----></div><span data-v-3534d791>开发管理</span></div><!--]--></nav><!----><main class="kb-main-content" data-v-3534d791><div class="kb-content-wrapper" data-v-3534d791><div style="position:relative;" class="kb-page-content" data-v-3534d791><div><div class="service-fee-content"><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></head><body class="min-h-screen pb-16" style="background:#FFFFFF;"><header class="gradient-bg text-white py-12 px-6" style="margin:-24px -24px 24px -24px;"><div style="max-width:1200px;margin:0 auto;"><div class="flex items-center gap-4 mb-4"><div style="width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-file-contract" style="font-size:1.5rem;"></i></div><span style="color:rgba(255,255,255,0.8);font-size:0.875rem;letter-spacing:0.05em;">业务背景</span></div><h1 style="font-size:2.5rem;font-weight:900;margin-bottom:12px;">直签工程与工程服务费</h1><p style="color:rgba(255,255,255,0.8);font-size:1.125rem;max-width:48rem;">深入解析箭牌工程渠道的业务模式与费用结算体系</p></div></header><main style="max-width:1200px;margin:0 auto;padding:0 24px;"><pre><code>&lt;!-- 业务模式概述 --&gt;
+&lt;section style=&quot;margin-bottom: 48px;&quot;&gt;
+  &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;&quot;&gt;
+    
+    &lt;!-- 直营工程 --&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;div class=&quot;flex items-start gap-4 mb-6&quot;&gt;
+        &lt;div class=&quot;icon-circle&quot;&gt;
+          &lt;i class=&quot;fas fa-building&quot;&gt;&lt;/i&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;h3 style=&quot;font-size: 1.5rem; font-weight: 700; color: rgb(17,24,39); margin-bottom: 8px;&quot;&gt;直营工程&lt;/h3&gt;
+          &lt;span class=&quot;tag&quot;&gt;&lt;i class=&quot;fas fa-handshake&quot;&gt;&lt;/i&gt; 品牌直签&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;p style=&quot;color: #6B7280; line-height: 1.75; margin-bottom: 24px;&quot;&gt;
+        箭牌与工程方直接接洽并签订合同，没有中间第三方的介入，由箭牌完全对合同的履行负责的工程项目。
+      &lt;/p&gt;
+      &lt;div style=&quot;background: #F5F7FA; border-radius: 16px; padding: 20px;&quot;&gt;
+        &lt;h4 style=&quot;font-weight: 600; color: rgb(17,24,39); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;&quot;&gt;
+          &lt;i class=&quot;fas fa-star&quot; style=&quot;color: #F59E0B;&quot;&gt;&lt;/i&gt; 核心特点
+        &lt;/h4&gt;
+        &lt;ul style=&quot;list-style: none; padding: 0; margin: 0; color: #6B7280;&quot;&gt;
+          &lt;li style=&quot;display: flex; align-items: center; gap: 12px; padding: 8px 0;&quot;&gt;
+            &lt;i class=&quot;fas fa-check-circle&quot; style=&quot;color: #10B981;&quot;&gt;&lt;/i&gt;
+            &lt;span&gt;零中间环节，流程更简洁&lt;/span&gt;
+          &lt;/li&gt;
+          &lt;li style=&quot;display: flex; align-items: center; gap: 12px; padding: 8px 0;&quot;&gt;
+            &lt;i class=&quot;fas fa-check-circle&quot; style=&quot;color: #10B981;&quot;&gt;&lt;/i&gt;
+            &lt;span&gt;箭牌全权负责合同履行&lt;/span&gt;
+          &lt;/li&gt;
+          &lt;li style=&quot;display: flex; align-items: center; gap: 12px; padding: 8px 0;&quot;&gt;
+            &lt;i class=&quot;fas fa-check-circle&quot; style=&quot;color: #10B981;&quot;&gt;&lt;/i&gt;
+            &lt;span&gt;无额外服务费用&lt;/span&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- 引荐工程 --&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;div class=&quot;flex items-start gap-4 mb-6&quot;&gt;
+        &lt;div style=&quot;width: 56px; height: 56px; background: rgba(16,185,129,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #10B981; font-size: 1.5rem;&quot;&gt;
+          &lt;i class=&quot;fas fa-users&quot;&gt;&lt;/i&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;h3 style=&quot;font-size: 1.5rem; font-weight: 700; color: rgb(17,24,39); margin-bottom: 8px;&quot;&gt;引荐工程&lt;/h3&gt;
+          &lt;span style=&quot;display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(16,185,129,0.1); color: #10B981; border-radius: 20px; font-size: 0.875rem; font-weight: 500;&quot;&gt;
+            &lt;i class=&quot;fas fa-percent&quot;&gt;&lt;/i&gt; 需支付服务费
+          &lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;p style=&quot;color: #6B7280; line-height: 1.75; margin-bottom: 24px;&quot;&gt;
+        由第三方作为中间方撮合达成购买意愿并签订合同的，且由第三方履行部分服务义务并对工程方的货款进行担保，因此箭牌需要支付一笔居间服务费给第三方。
+      &lt;/p&gt;
+      &lt;div style=&quot;background: #F5F7FA; border-radius: 16px; padding: 20px;&quot;&gt;
+        &lt;h4 style=&quot;font-weight: 600; color: rgb(17,24,39); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;&quot;&gt;
+          &lt;i class=&quot;fas fa-info-circle&quot; style=&quot;color: #0499FD;&quot;&gt;&lt;/i&gt; 关键说明
+        &lt;/h4&gt;
+        &lt;ul style=&quot;list-style: none; padding: 0; margin: 0; color: #6B7280;&quot;&gt;
+          &lt;li style=&quot;display: flex; align-items: center; gap: 12px; padding: 8px 0;&quot;&gt;
+            &lt;i class=&quot;fas fa-check-circle&quot; style=&quot;color: #10B981;&quot;&gt;&lt;/i&gt;
+            &lt;span&gt;第三方须与箭牌签订服务商合同&lt;/span&gt;
+          &lt;/li&gt;
+          &lt;li style=&quot;display: flex; align-items: center; gap: 12px; padding: 8px 0;&quot;&gt;
+            &lt;i class=&quot;fas fa-check-circle&quot; style=&quot;color: #10B981;&quot;&gt;&lt;/i&gt;
+            &lt;span&gt;享受按经销价购买产品权益&lt;/span&gt;
+          &lt;/li&gt;
+          &lt;li style=&quot;display: flex; align-items: center; gap: 12px; padding: 8px 0;&quot;&gt;
+            &lt;i class=&quot;fas fa-check-circle&quot; style=&quot;color: #10B981;&quot;&gt;&lt;/i&gt;
+            &lt;span&gt;服务费 = 工程合同 - 经销商金额&lt;/span&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 两种模式对比 --&gt;
+&lt;section style=&quot;margin-bottom: 48px; background: #F5F7FA; border-radius: 24px; padding: 32px;&quot;&gt;
+  &lt;h2 style=&quot;font-size: 1.75rem; font-weight: 700; color: rgb(17,24,39); margin-bottom: 8px; display: flex; align-items: center; gap: 12px;&quot;&gt;
+    &lt;i class=&quot;fas fa-balance-scale&quot; style=&quot;color: #0499FD;&quot;&gt;&lt;/i&gt;
+    两种业务模式对比
+  &lt;/h2&gt;
+  &lt;p style=&quot;color: #6B7280; margin-bottom: 24px;&quot;&gt;传统经销商模式 vs 直签/引荐工程模式&lt;/p&gt;
+  
+  &lt;div style=&quot;overflow-x: auto;&quot;&gt;
+    &lt;table class=&quot;table-custom&quot; style=&quot;width: 100%; border-collapse: collapse; background: white; border-radius: 16px; overflow: hidden;&quot;&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th style=&quot;border-radius: 16px 0 0 0;&quot;&gt;对比维度&lt;/th&gt;
+          &lt;th&gt;传统经销商模式&lt;/th&gt;
+          &lt;th style=&quot;border-radius: 0 16px 0 0;&quot;&gt;直营/引荐工程&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td style=&quot;font-weight: 600;&quot;&gt;签约主体&lt;/td&gt;
+          &lt;td&gt;经销商与工程方签约&lt;/td&gt;
+          &lt;td class=&quot;highlight&quot;&gt;箭牌与工程方直接签约&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td style=&quot;font-weight: 600;&quot;&gt;中间环节&lt;/td&gt;
+          &lt;td&gt;品牌 → 经销商 → 工程方&lt;/td&gt;
+          &lt;td class=&quot;highlight&quot;&gt;品牌 → 工程方（或经服务商）&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td style=&quot;font-weight: 600;&quot;&gt;价格体系&lt;/td&gt;
+          &lt;td&gt;经销价分销&lt;/td&gt;
+          &lt;td class=&quot;highlight&quot;&gt;工程方单价 / 经销商单价&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td style=&quot;font-weight: 600;&quot;&gt;服务费&lt;/td&gt;
+          &lt;td&gt;无&lt;/td&gt;
+          &lt;td class=&quot;highlight&quot;&gt;仅引荐工程：差额部分&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td style=&quot;font-weight: 600;&quot;&gt;合同责任&lt;/td&gt;
+          &lt;td&gt;经销商承担&lt;/td&gt;
+          &lt;td class=&quot;highlight&quot;&gt;箭牌（或含服务商担保）&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 服务费计算规则 --&gt;
+&lt;section style=&quot;margin-bottom: 48px;&quot;&gt;
+  &lt;h2 style=&quot;font-size: 1.75rem; font-weight: 700; color: rgb(17,24,39); margin-bottom: 24px; display: flex; align-items: center; gap: 12px;&quot;&gt;
+    &lt;i class=&quot;fas fa-calculator&quot; style=&quot;color: #0499FD;&quot;&gt;&lt;/i&gt;
+    工程服务费计算规则
+  &lt;/h2&gt;
+  
+  &lt;!-- 核心公式 --&gt;
+  &lt;div class=&quot;formula-box&quot; style=&quot;text-align: center; margin-bottom: 32px;&quot;&gt;
+    &lt;p style=&quot;color: #6B7280; margin-bottom: 12px; font-size: 1.125rem;&quot;&gt;工程服务费&lt;/p&gt;
+    &lt;p style=&quot;font-size: 2.5rem; font-weight: 900; color: #2563EB; line-height: 1.2;&quot;&gt;
+      工程方金额 − 经销商金额
+    &lt;/p&gt;
+    &lt;p style=&quot;color: #6B7280; margin-top: 12px; font-size: 0.875rem;&quot;&gt;
+      &lt;i class=&quot;fas fa-info-circle&quot;&gt;&lt;/i&gt;
+      即：工程合同金额与经销商金额的差额部分
+    &lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 计算示例 --&gt;
+  &lt;div style=&quot;background: white; border-radius: 24px; padding: 32px; border: 1px solid #E5E7EB;&quot;&gt;
+    &lt;h3 style=&quot;font-size: 1.25rem; font-weight: 700; color: rgb(17,24,39); margin-bottom: 24px; display: flex; align-items: center; gap: 8px;&quot;&gt;
+      &lt;i class=&quot;fas fa-table&quot; style=&quot;color: #0499FD;&quot;&gt;&lt;/i&gt;
+      计算示例
+    &lt;/h3&gt;
+    
+    &lt;div style=&quot;overflow-x: auto;&quot;&gt;
+      &lt;table class=&quot;table-custom&quot; style=&quot;width: 100%; border-collapse: collapse; border-radius: 16px; overflow: hidden;&quot;&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th&gt;产品&lt;/th&gt;
+            &lt;th&gt;数量&lt;/th&gt;
+            &lt;th&gt;工程方单价&lt;/th&gt;
+            &lt;th&gt;经销商单价&lt;/th&gt;
+            &lt;th&gt;工程方金额&lt;/th&gt;
+            &lt;th&gt;经销商金额&lt;/th&gt;
+            &lt;th style=&quot;background: rgba(4,153,253,0.1); color: #0499FD;&quot;&gt;工程服务费&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+          &lt;tr&gt;
+            &lt;td style=&quot;font-weight: 600;&quot;&gt;产品 A&lt;/td&gt;
+            &lt;td&gt;1,000&lt;/td&gt;
+            &lt;td&gt;¥2,400&lt;/td&gt;
+            &lt;td&gt;¥1,800&lt;/td&gt;
+            &lt;td&gt;¥2,400,000&lt;/td&gt;
+            &lt;td&gt;¥1,800,000&lt;/td&gt;
+            &lt;td class=&quot;highlight&quot;&gt;¥600,000&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td style=&quot;font-weight: 600;&quot;&gt;产品 B&lt;/td&gt;
+            &lt;td&gt;800&lt;/td&gt;
+            &lt;td&gt;¥1,900&lt;/td&gt;
+            &lt;td&gt;¥1,499&lt;/td&gt;
+            &lt;td&gt;¥1,520,000&lt;/td&gt;
+            &lt;td&gt;¥1,199,200&lt;/td&gt;
+            &lt;td class=&quot;highlight&quot;&gt;¥320,800&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr style=&quot;background: #F9FAFB;&quot;&gt;
+            &lt;td style=&quot;font-weight: 700;&quot;&gt;合计&lt;/td&gt;
+            &lt;td&gt;-&lt;/td&gt;
+            &lt;td&gt;-&lt;/td&gt;
+            &lt;td&gt;-&lt;/td&gt;
+            &lt;td style=&quot;font-weight: 700;&quot;&gt;¥3,920,000&lt;/td&gt;
+            &lt;td style=&quot;font-weight: 700;&quot;&gt;¥2,999,200&lt;/td&gt;
+            &lt;td style=&quot;font-weight: 700; background: rgba(4,153,253,0.1);&quot; class=&quot;highlight&quot;&gt;¥920,800&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+
+    &lt;!-- 数据卡片 --&gt;
+    &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px;&quot;&gt;
+      &lt;div style=&quot;background: #F5F7FA; border-radius: 16px; padding: 24px; text-align: center;&quot;&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem; margin-bottom: 8px;&quot;&gt;工程合同总额&lt;/p&gt;
+        &lt;p class=&quot;number-big&quot; style=&quot;font-size: 2.5rem;&quot;&gt;392&lt;span style=&quot;font-size: 1.25rem;&quot;&gt;万&lt;/span&gt;&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style=&quot;background: #F5F7FA; border-radius: 16px; padding: 24px; text-align: center;&quot;&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem; margin-bottom: 8px;&quot;&gt;经销商成本&lt;/p&gt;
+        &lt;p class=&quot;number-big&quot; style=&quot;font-size: 2.5rem;&quot;&gt;300&lt;span style=&quot;font-size: 1.25rem;&quot;&gt;万&lt;/span&gt;&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style=&quot;background: #F5F7FA; border-radius: 16px; padding: 24px; text-align: center;&quot;&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem; margin-bottom: 8px;&quot;&gt;服务费收入&lt;/p&gt;
+        &lt;p class=&quot;number-big&quot; style=&quot;font-size: 2.5rem;&quot;&gt;92&lt;span style=&quot;font-size: 1.25rem;&quot;&gt;万&lt;/span&gt;&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style=&quot;background: linear-gradient(135deg, #0499FD 0%, #0284E8 100%); border-radius: 16px; padding: 24px; text-align: center; color: white;&quot;&gt;
+        &lt;p style=&quot;color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-bottom: 8px;&quot;&gt;服务费占比&lt;/p&gt;
+        &lt;p style=&quot;font-size: 2.5rem; font-weight: 900;&quot;&gt;23.5&lt;span style=&quot;font-size: 1.25rem;&quot;&gt;%&lt;/span&gt;&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 业务流程图 --&gt;
+&lt;section style=&quot;margin-bottom: 48px;&quot;&gt;
+  &lt;h2 style=&quot;font-size: 1.75rem; font-weight: 700; color: rgb(17,24,39); margin-bottom: 8px; display: flex; align-items: center; gap: 12px;&quot;&gt;
+    &lt;i class=&quot;fas fa-project-diagram&quot; style=&quot;color: #0499FD;&quot;&gt;&lt;/i&gt;
+    服务费报销兑现流程
+  &lt;/h2&gt;
+  &lt;p style=&quot;color: #6B7280; margin-bottom: 24px;&quot;&gt;
+    &lt;i class=&quot;fas fa-exclamation-circle&quot; style=&quot;color: #F59E0B; margin-right: 4px;&quot;&gt;&lt;/i&gt;
+    服务费在商品发出签收后开始计算，但必须在收到工程方货款后才能兑现给服务商
+  &lt;/p&gt;
+
+  &lt;!-- 阶段一：合同签订 --&gt;
+  &lt;div style=&quot;margin-bottom: 32px;&quot;&gt;
+    &lt;span class=&quot;phase-badge&quot; style=&quot;margin-bottom: 16px; display: inline-block;&quot;&gt;📝 第一阶段：合同签订&lt;/span&gt;
+    &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;&quot;&gt;
+      &lt;div class=&quot;flow-card&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+          &lt;span style=&quot;width: 32px; height: 32px; background: #2563EB; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;&quot;&gt;1&lt;/span&gt;
+          &lt;h4 style=&quot;font-weight: 600;&quot;&gt;签订合同&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;确定销售产品清单，包含产品、工程方单价、工程方金额&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;flow-card&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+          &lt;span style=&quot;width: 32px; height: 32px; background: #2563EB; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;&quot;&gt;2&lt;/span&gt;
+          &lt;h4 style=&quot;font-weight: 600;&quot;&gt;申请经销商折扣&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;确定产品的经销商价格&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;flow-card&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+          &lt;span style=&quot;width: 32px; height: 32px; background: #2563EB; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;&quot;&gt;3&lt;/span&gt;
+          &lt;h4 style=&quot;font-weight: 600;&quot;&gt;创建要货订单&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;准备出货给工程方&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 阶段二：订单执行 --&gt;
+  &lt;div style=&quot;margin-bottom: 32px;&quot;&gt;
+    &lt;span class=&quot;phase-badge&quot; style=&quot;background: linear-gradient(135deg, #10B981 0%, #059669 100%); margin-bottom: 16px; display: inline-block;&quot;&gt;⚙️ 第二阶段：订单执行（系统流转）&lt;/span&gt;
+    &lt;div style=&quot;background: white; border-radius: 24px; padding: 32px; border: 1px solid #E5E7EB; margin-top: 16px;&quot;&gt;
+      &lt;div style=&quot;display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px;&quot;&gt;
+        &lt;div style=&quot;display: flex; flex-direction: column; align-items: center;&quot;&gt;
+          &lt;div style=&quot;width: 64px; height: 64px; background: rgba(37,99,235,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;&quot;&gt;
+            &lt;i class=&quot;fas fa-cog&quot; style=&quot;color: #2563EB; font-size: 1.5rem;&quot;&gt;&lt;/i&gt;
+          &lt;/div&gt;
+          &lt;span style=&quot;font-size: 0.875rem; font-weight: 500;&quot;&gt;CRM&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;i class=&quot;fas fa-arrow-right&quot; style=&quot;color: #D1D5DB; font-size: 1.25rem;&quot;&gt;&lt;/i&gt;
+        &lt;div style=&quot;display: flex; flex-direction: column; align-items: center;&quot;&gt;
+          &lt;div style=&quot;width: 64px; height: 64px; background: rgba(139,92,246,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;&quot;&gt;
+            &lt;i class=&quot;fas fa-database&quot; style=&quot;color: #8B5CF6; font-size: 1.5rem;&quot;&gt;&lt;/i&gt;
+          &lt;/div&gt;
+          &lt;span style=&quot;font-size: 0.875rem; font-weight: 500;&quot;&gt;ERP&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;i class=&quot;fas fa-arrow-right&quot; style=&quot;color: #D1D5DB; font-size: 1.25rem;&quot;&gt;&lt;/i&gt;
+        &lt;div style=&quot;display: flex; flex-direction: column; align-items: center;&quot;&gt;
+          &lt;div style=&quot;width: 64px; height: 64px; background: rgba(16,185,129,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;&quot;&gt;
+            &lt;i class=&quot;fas fa-warehouse&quot; style=&quot;color: #10B981; font-size: 1.5rem;&quot;&gt;&lt;/i&gt;
+          &lt;/div&gt;
+          &lt;span style=&quot;font-size: 0.875rem; font-weight: 500;&quot;&gt;WMS&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;i class=&quot;fas fa-arrow-right&quot; style=&quot;color: #D1D5DB; font-size: 1.25rem;&quot;&gt;&lt;/i&gt;
+        &lt;div style=&quot;display: flex; flex-direction: column; align-items: center;&quot;&gt;
+          &lt;div style=&quot;width: 64px; height: 64px; background: rgba(249,115,22,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;&quot;&gt;
+            &lt;i class=&quot;fas fa-box&quot; style=&quot;color: #F97316; font-size: 1.5rem;&quot;&gt;&lt;/i&gt;
+          &lt;/div&gt;
+          &lt;span style=&quot;font-size: 0.875rem; font-weight: 500;&quot;&gt;出库确认&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;i class=&quot;fas fa-arrow-right&quot; style=&quot;color: #D1D5DB; font-size: 1.25rem;&quot;&gt;&lt;/i&gt;
+        &lt;div style=&quot;display: flex; flex-direction: column; align-items: center;&quot;&gt;
+          &lt;div style=&quot;width: 64px; height: 64px; background: rgba(239,68,68,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;&quot;&gt;
+            &lt;i class=&quot;fas fa-chart-line&quot; style=&quot;color: #EF4444; font-size: 1.5rem;&quot;&gt;&lt;/i&gt;
+          &lt;/div&gt;
+          &lt;span style=&quot;font-size: 0.875rem; font-weight: 500;&quot;&gt;EPMS&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div style=&quot;margin-top: 24px; padding: 16px; background: #F9FAFB; border-radius: 12px;&quot;&gt;
+        &lt;p style=&quot;font-size: 0.875rem; color: #6B7280;&quot;&gt;
+          &lt;i class=&quot;fas fa-info-circle&quot; style=&quot;color: #0499FD; margin-right: 4px;&quot;&gt;&lt;/i&gt;
+          流程说明：CRM → ERP创建出库单 → 抛转WMS发货 → 回传ERP出库确认 → 回传EPMS
+        &lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 阶段三：签收与报销 --&gt;
+  &lt;div style=&quot;margin-bottom: 32px;&quot;&gt;
+    &lt;span class=&quot;phase-badge&quot; style=&quot;background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); margin-bottom: 16px; display: inline-block;&quot;&gt;📦 第三阶段：签收与报销&lt;/span&gt;
+    &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 16px;&quot;&gt;
+      &lt;div class=&quot;flow-card&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+          &lt;span style=&quot;width: 32px; height: 32px; background: #D97706; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;&quot;&gt;4&lt;/span&gt;
+          &lt;h4 style=&quot;font-weight: 600;&quot;&gt;工程方签收&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;工程方签收发货商品&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;flow-card&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+          &lt;span style=&quot;width: 32px; height: 32px; background: #D97706; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;&quot;&gt;5&lt;/span&gt;
+          &lt;h4 style=&quot;font-weight: 600;&quot;&gt;服务商签收&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;服务商在系统进行签收操作&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;flow-card&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+          &lt;span style=&quot;width: 32px; height: 32px; background: #D97706; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;&quot;&gt;6&lt;/span&gt;
+          &lt;h4 style=&quot;font-weight: 600;&quot;&gt;申请报销&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;对已签收商品做工程服务费报销申请&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;flow-card&quot;&gt;
+        &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+          &lt;span style=&quot;width: 32px; height: 32px; background: #D97706; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;&quot;&gt;7&lt;/span&gt;
+          &lt;h4 style=&quot;font-weight: 600;&quot;&gt;工程方付款&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;工程方付款至箭牌账户&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- 阶段四：服务费兑现 --&gt;
+  &lt;div style=&quot;margin-bottom: 32px;&quot;&gt;
+    &lt;span class=&quot;phase-badge&quot; style=&quot;background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); margin-bottom: 16px; display: inline-block;&quot;&gt;💰 第四阶段：服务费兑现&lt;/span&gt;
+    &lt;div style=&quot;background: white; border-radius: 24px; padding: 32px; border: 1px solid #E5E7EB; margin-top: 16px;&quot;&gt;
+      &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px;&quot;&gt;
+        &lt;!-- 左侧：认领货款 --&gt;
+        &lt;div&gt;
+          &lt;h4 style=&quot;font-weight: 700; color: rgb(17,24,39); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;&quot;&gt;
+            &lt;i class=&quot;fas fa-hand-holding-usd&quot; style=&quot;color: #10B981;&quot;&gt;&lt;/i&gt;
+            货款认领
+          &lt;/h4&gt;
+          &lt;div class=&quot;flow-card&quot;&gt;
+            &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;服务商对货款进行认领，即将收款和发货商品进行勾稽关联&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;!-- 右侧：兑现条件 --&gt;
+        &lt;div&gt;
+          &lt;h4 style=&quot;font-weight: 700; color: rgb(17,24,39); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;&quot;&gt;
+            &lt;i class=&quot;fas fa-exclamation-triangle&quot; style=&quot;color: #EF4444;&quot;&gt;&lt;/i&gt;
+            兑现必要条件
+          &lt;/h4&gt;
+          &lt;div style=&quot;display: flex; flex-direction: column; gap: 12px;&quot;&gt;
+            &lt;div style=&quot;display: flex; align-items: start; gap: 12px; padding: 16px; background: rgba(239,68,68,0.05); border-radius: 12px; border: 1px solid rgba(239,68,68,0.1);&quot;&gt;
+              &lt;span style=&quot;width: 24px; height: 24px; background: #EF4444; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0;&quot;&gt;1&lt;/span&gt;
+              &lt;p style=&quot;color: rgb(17,24,39); font-size: 0.875rem;&quot;&gt;经销商已提交报销，即提供发票给箭牌&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div style=&quot;display: flex; align-items: start; gap: 12px; padding: 16px; background: rgba(239,68,68,0.05); border-radius: 12px; border: 1px solid rgba(239,68,68,0.1);&quot;&gt;
+              &lt;span style=&quot;width: 24px; height: 24px; background: #EF4444; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0;&quot;&gt;2&lt;/span&gt;
+              &lt;p style=&quot;color: rgb(17,24,39); font-size: 0.875rem;&quot;&gt;工程方已付款给箭牌（分期/分批付款需相应计算可兑现金额）&lt;/p&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;!-- 最终步骤 --&gt;
+      &lt;div style=&quot;margin-top: 32px; padding-top: 32px; border-top: 1px solid #E5E7EB;&quot;&gt;
+        &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;&quot;&gt;
+          &lt;div class=&quot;flow-card&quot; style=&quot;border: 2px solid rgba(37,99,235,0.2); background: rgba(37,99,235,0.02);&quot;&gt;
+            &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+              &lt;span style=&quot;width: 32px; height: 32px; background: #2563EB; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700;&quot;&gt;8&lt;/span&gt;
+              &lt;h4 style=&quot;font-weight: 600;&quot;&gt;提交兑现申请&lt;/h4&gt;
+            &lt;/div&gt;
+            &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;服务商提交工程服务费兑现申请&lt;/p&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;flow-card&quot; style=&quot;border: 2px solid rgba(16,185,129,0.2); background: rgba(16,185,129,0.02);&quot;&gt;
+            &lt;div class=&quot;flex items-center gap-3 mb-3&quot;&gt;
+              &lt;i class=&quot;fas fa-check-double&quot; style=&quot;color: #10B981; font-size: 1.25rem;&quot;&gt;&lt;/i&gt;
+              &lt;h4 style=&quot;font-weight: 600; color: #059669;&quot;&gt;兑现完成&lt;/h4&gt;
+            &lt;/div&gt;
+            &lt;p style=&quot;color: #6B7280; font-size: 0.875rem;&quot;&gt;兑现单审批后，打款给服务商&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 关键要点总结 --&gt;
+&lt;section style=&quot;margin-bottom: 32px;&quot;&gt;
+  &lt;div style=&quot;background: linear-gradient(135deg, #0499FD 0%, #0284E8 100%); border-radius: 24px; padding: 32px; color: white;&quot;&gt;
+    &lt;h2 style=&quot;font-size: 1.75rem; font-weight: 700; margin-bottom: 32px; display: flex; align-items: center; gap: 12px;&quot;&gt;
+      &lt;i class=&quot;fas fa-lightbulb&quot;&gt;&lt;/i&gt;
+      核心要点
+    &lt;/h2&gt;
+    &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;&quot;&gt;
+      &lt;div style=&quot;background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 24px;&quot;&gt;
+        &lt;div style=&quot;font-size: 2rem; font-weight: 900; color: white; margin-bottom: 12px;&quot;&gt;01&lt;/div&gt;
+        &lt;h3 style=&quot;font-weight: 700; font-size: 1.25rem; margin-bottom: 8px;&quot;&gt;风险隔离&lt;/h3&gt;
+        &lt;p style=&quot;color: rgba(255,255,255,0.8); font-size: 0.875rem;&quot;&gt;必须在收到工程方货款后才兑现服务费，避免箭牌损失&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style=&quot;background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 24px;&quot;&gt;
+        &lt;div style=&quot;font-size: 2rem; font-weight: 900; color: white; margin-bottom: 12px;&quot;&gt;02&lt;/div&gt;
+        &lt;h3 style=&quot;font-weight: 700; font-size: 1.25rem; margin-bottom: 8px;&quot;&gt;服务商资质&lt;/h3&gt;
+        &lt;p style=&quot;color: rgba(255,255,255,0.8); font-size: 0.875rem;&quot;&gt;第三方须与箭牌签订服务商合同方能参与引荐工程&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style=&quot;background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 16px; padding: 24px;&quot;&gt;
+        &lt;div style=&quot;font-size: 2rem; font-weight: 900; color: white; margin-bottom: 12px;&quot;&gt;03&lt;/div&gt;
+        &lt;h3 style=&quot;font-weight: 700; font-size: 1.25rem; margin-bottom: 8px;&quot;&gt;发票先行&lt;/h3&gt;
+        &lt;p style=&quot;color: rgba(255,255,255,0.8); font-size: 0.875rem;&quot;&gt;经销商提供发票是服务费兑现的必要前提条件&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+</code></pre></main><footer style="background:#F9FAFB;padding:32px 24px;margin-top:48px;"><div style="max-width:1200px;margin:0 auto;text-align:center;color:#9CA3AF;font-size:0.875rem;"><p>箭牌工程服务费业务体系 · 服务费业务背景</p></div></footer></body></html></div><div id="biz-flow" style="display:none;"><div class="tab-pad"><div class="bf-truth-flow"><h4 class="bf-main-title">服务费报销兑现 — 全链路流程图</h4><p class="bf-main-sub">签订合同 → 申请折扣 → 创建要货 → 系统流转 → 签收 → 报销 → 付款 → 认领 → 兑现 → 结束</p><div class="bf-fc-svg-wrap"><svg class="bf-fc-svg" style="max-height:none;" viewBox="0 0 1200 1055" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#16A34A"></path></marker><marker id="arr-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9CA3AF"></path></marker><marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3B82F6"></path></marker><marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#EF4444"></path></marker><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.15"></feDropShadow></filter></defs><rect x="50" y="20" width="1100" height="95" rx="8" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="6,4"></rect><text x="600" y="42" text-anchor="middle" fill="#1D4ED8" font-size="13" font-weight="600">上游支撑</text><rect x="496.5" y="56" width="98" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"></rect><text x="545.5" y="79" text-anchor="middle" fill="#1D4ED8" font-size="10" font-weight="600">工程合同(直签/引荐)</text><rect x="605.5" y="56" width="98" height="34" rx="5" fill="#FFFFFF" stroke="#3B82F6" stroke-width="1.2"></rect><text x="654.5" y="79" text-anchor="middle" fill="#1D4ED8" font-size="11" font-weight="600">经销商折扣单</text><line x1="235" y1="115" x2="235" y2="150" stroke="#3B82F6" stroke-width="2" marker-end="url(#arr-blue)"></line><rect x="195" y="150" width="80" height="44" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"></rect><text x="235" y="177" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">开始</text><line x1="235" y1="194" x2="235" y2="212" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="212" width="170" height="54" rx="6" fill="#16A34A" stroke="#15803D" stroke-width="2" filter="url(#shadow)"></rect><text x="235" y="236" text-anchor="middle" fill="#FFFFFF" font-size="13" font-weight="700">★签订合同★</text><text x="235" y="254" text-anchor="middle" fill="#DCFCE7" font-size="10" font-weight="400">直签/引荐·确定清单与单价</text><line x1="235" y1="266" x2="235" y2="284" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="284" width="170" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"></rect><text x="235" y="309" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">申请经销商折扣</text><line x1="235" y1="324" x2="235" y2="342" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="342" width="170" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"></rect><text x="235" y="367" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">创建要货订单</text><line x1="235" y1="382" x2="235" y2="400" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="160" y="400" width="150" height="36" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"></rect><text x="235" y="423" text-anchor="middle" fill="#7C3AED" font-size="12" font-weight="600">系统流转 CRM→ERP→WMS→出库→EPMS</text><line x1="235" y1="436" x2="235" y2="454" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="454" width="170" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"></rect><text x="235" y="479" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">工程方签收</text><line x1="235" y1="494" x2="235" y2="512" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="512" width="170" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"></rect><text x="235" y="537" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">服务商签收</text><line x1="235" y1="552" x2="235" y2="570" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="570" width="170" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"></rect><text x="235" y="595" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">申请报销</text><line x1="235" y1="610" x2="235" y2="628" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="628" width="170" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"></rect><text x="235" y="653" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">工程方付款</text><line x1="235" y1="668" x2="235" y2="686" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="686" width="170" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"></rect><text x="235" y="711" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">货款认领</text><line x1="235" y1="726" x2="235" y2="744" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="744" width="170" height="40" rx="6" fill="#F0FDF4" stroke="#16A34A" stroke-width="2"></rect><text x="235" y="769" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">提交兑现申请</text><line x1="235" y1="784" x2="235" y2="802" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="150" y="802" width="170" height="54" rx="6" fill="#16A34A" stroke="#15803D" stroke-width="2" filter="url(#shadow)"></rect><text x="235" y="826" text-anchor="middle" fill="#FFFFFF" font-size="13" font-weight="700">★兑现完成★</text><line x1="235" y1="856" x2="235" y2="874" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)"></line><rect x="180" y="874" width="110" height="40" rx="6" fill="#FAF5FF" stroke="#9333EA" stroke-width="1.5" stroke-dasharray="5,3"></rect><text x="235" y="899" text-anchor="middle" fill="#7C3AED" font-size="13" font-weight="600">结束</text><line x1="235" y1="914" x2="235" y2="934" stroke="#16A34A" stroke-width="2" marker-end="url(#arr-green)" stroke-dasharray="4,3"></line><rect x="50" y="934" width="1100" height="95" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="6,4"></rect><text x="600" y="956" text-anchor="middle" fill="#166534" font-size="13" font-weight="600">下游影响</text><rect x="440.0" y="970" width="150" height="34" rx="5" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.2"></rect><text x="515.0" y="993" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">服务商服务费结算</text><rect x="610.0" y="970" width="150" height="34" rx="5" fill="#FFFFFF" stroke="#16A34A" stroke-width="1.2"></rect><text x="685.0" y="993" text-anchor="middle" fill="#166534" font-size="11" font-weight="600">财务付款打款</text></svg></div><div class="bf-fc-legend"><span class="bf-fc-legend-item"><span class="bf-fc-dot bf-fc-dot-green"></span> 主流程步骤</span><span class="bf-fc-legend-item"><span class="bf-fc-dot bf-fc-dot-purple"></span> 开始/结束/判断</span><span class="bf-fc-legend-item"><span class="bf-fc-dot bf-fc-dot-blue"></span> 上游支撑</span><span class="bf-fc-legend-item"><span style="display:inline-block;width:22px;height:2px;background:#EF4444;"></span> 审批拒绝/驳回</span></div></div></div></div></div></div></div></main><div class="floating-qa" data-v-3534d791 data-v-f58d37ac><button class="qa-fab" data-v-f58d37ac><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-v-f58d37ac><circle cx="12" cy="12" r="10" data-v-f58d37ac></circle><path d="M8 14s1.5 2 4 2 4-2 4-2" data-v-f58d37ac></path><line x1="9" y1="9" x2="9.01" y2="9" data-v-f58d37ac></line><line x1="15" y1="9" x2="15.01" y2="9" data-v-f58d37ac></line></svg><!----></button><!----></div></div></div>
+    <script>__VP_HASH_MAP__ = JSON.parse("{\"dms-biz-intro-style.md\":\"0fe26cd4\",\"dms-style.md\":\"f731f082\",\"index.md\":\"e77ef383\",\"test-page_index.md\":\"3d9ee486\",\"test-vue_index.md\":\"fde2d9e5\",\"产品中心_产品资料_产品sm状态变更申请_index.md\":\"9ae5cbed\",\"产品中心_产品资料_产品分类_index.md\":\"2b70d702\",\"产品中心_产品资料_产品列表_index.md\":\"aed5a55b\",\"产品中心_产品资料_产品变更列表_index.md\":\"2afce172\",\"产品中心_产品资料_产品图册_index.md\":\"89a4bc60\",\"产品中心_产品资料_产品图片上传_index.md\":\"d72bb0e7\",\"产品中心_产品资料_产品推广等级维护_index.md\":\"cac93f3a\",\"产品中心_产品资料_产品推广等级要求配置_index.md\":\"7c81ad52\",\"产品中心_价目表_价目表查询_index.md\":\"14dfad69\",\"产品中心_价目表_责任制内结价定价基础参数配置_index.md\":\"53052d3a\",\"产品中心_价目表_责任制内结价定价瓷砖参数配置_index.md\":\"2e56401e\",\"产品中心_价目表_跨事业部产品产品销售申请_index.md\":\"0c9dc2d8\",\"产品中心_价目表_跨事业部产品销售清单_index.md\":\"f165eaa1\",\"产品中心_库存_事业部库存查询_index.md\":\"0acaee5f\",\"产品中心_库存_库存查询_index.md\":\"0a323c93\",\"产品中心_说明书_产品说明书_index.md\":\"be3fee91\",\"产品中心_说明书_说明书查阅数据_index.md\":\"7486d4bc\",\"家装管理_家装往来_家装核销发票上传_index.md\":\"69f9ac35\",\"家装管理_家装往来_家装要货订单_index.md\":\"5f2e00b0\",\"家装管理_项目交付_家装折扣政策申请_index.md\":\"54ea04e9\",\"家装管理_项目往来_家装真实性核销_data-model.md\":\"cf42621d\",\"家装管理_项目往来_家装真实性核销_detail-fields.md\":\"606dc6e8\",\"家装管理_项目往来_家装真实性核销_faq.md\":\"f775c560\",\"家装管理_项目往来_家装真实性核销_history.md\":\"576ce4c6\",\"家装管理_项目往来_家装真实性核销_index.md\":\"8421a757\",\"家装管理_项目往来_家装真实性核销_invoice.md\":\"939aada0\",\"家装管理_项目往来_家装真实性核销_out-bill.md\":\"f8279a05\",\"家装管理_项目往来_家装真实性核销_related.md\":\"885c9737\",\"家装管理_项目往来_家装真实性核销_save-submit.md\":\"244e7c16\",\"家装管理_项目往来_家装真实性核销_state-flow.md\":\"f28473c0\",\"家装管理_项目往来_家装真实性核销_troubleshoot.md\":\"22db82f9\",\"工程管理_合同与折扣_工程折扣单_index.md\":\"203d0f0e\",\"工程管理_合同与折扣_工程自营签收_index.md\":\"18a38fe7\",\"工程管理_合同与折扣_项目合同失效_index.md\":\"16466a9c\",\"工程管理_服务费_工程服务费兑现_index.md\":\"fcb24104\",\"工程管理_服务费_工程服务费报销_index.md\":\"8ec7b3fa\",\"工程管理_服务费_服务费业务背景_index.md\":\"63a74f33\",\"工程管理_项目交付_工程取消核销与发票作废_index.md\":\"9c0cf19b\",\"工程管理_项目交付_工程合同产品变更_index.md\":\"23eb8169\",\"工程管理_项目交付_工程折扣延期_index.md\":\"12a064c0\",\"工程管理_项目交付_工程折扣政策失效_index.md\":\"676b3e23\",\"工程管理_项目交付_工程折扣政策申请_index.md\":\"083ae71a\",\"工程管理_项目交付_工程要货订单_index.md\":\"670720cc\",\"工程管理_项目交付_工程要货订单报表_index.md\":\"3cb6959e\",\"工程管理_项目交付_折扣单报表_index.md\":\"5d28a136\",\"工程管理_项目交付_折扣政策明细查询（内部）_index.md\":\"7cfa7b92\",\"工程管理_项目交付_提货时间变更_index.md\":\"67173e3d\",\"工程管理_项目交付_有效延期申请_index.md\":\"5cde7dde\",\"工程管理_项目交付_紧急要货报表_index.md\":\"8a32b2bc\",\"工程管理_项目交付_紧急要货插单_index.md\":\"64aea8d9\",\"工程管理_项目交付_订单紧急要货_index.md\":\"28f5699d\",\"工程管理_项目合同_经销商工程合同_index.md\":\"05e987ec\",\"工程管理_项目合同_自营工程合同_index.md\":\"702453e2\",\"工程管理_项目商机_价格保护函_index.md\":\"47e23440\",\"工程管理_项目商机_单体项目报备_index.md\":\"438fbd9d\",\"工程管理_项目商机_工程项目档案_index.md\":\"07be0fd6\",\"工程管理_项目商机_工程项目结案_index.md\":\"6e2ab61e\",\"工程管理_项目商机_战略报备变更_index.md\":\"f5f5e75b\",\"工程管理_项目商机_战略经理变更_index.md\":\"bf3d0165\",\"工程管理_项目商机_战略项目报备_index.md\":\"ed7a45dc\",\"工程管理_项目商机_报备生失效申请_index.md\":\"7ced82ea\",\"工程管理_项目商机_报备解冻申请_index.md\":\"bb33bd32\",\"工程管理_项目商机_项目进度更新_index.md\":\"9862c4bb\",\"工程管理_项目往来_工程折扣政策_index.md\":\"41a40ea7\",\"工程管理_项目往来_工程服务费预提_index.md\":\"bbb598bb\",\"工程管理_项目往来_工程核销发票上传_index.md\":\"36a37116\",\"工程管理_项目往来_工程真实性核销_index.md\":\"b048c2e8\",\"工程管理_项目往来_项目到款引入_index.md\":\"159181cb\",\"工程管理_项目往来_项目到款认领_index.md\":\"7d4e5836\",\"工程管理_项目往来_项目到款认领撤销_index.md\":\"057365d3\",\"开发管理_值集配置_装修等级_index.md\":\"d04ef97a\",\"源md管理_index.md\":\"c8f64cb2\",\"点将管理_单店培训点将管理_单店点将执行_index.md\":\"cf1ab8b7\",\"点将管理_单店培训点将管理_单店点将管理_index.md\":\"dbb42fe7\",\"点将管理_基础管理_档案审批_index.md\":\"6c9632e2\",\"点将管理_基础管理_讲师排期_index.md\":\"853a6391\",\"点将管理_基础管理_讲师档案_index.md\":\"e0248c87\",\"点将管理_特训营管理_活动点将执行_index.md\":\"bd083a4c\",\"点将管理_特训营管理_特训营点将执行_index.md\":\"a183173f\",\"点将管理_特训营管理_特训营点将管理_index.md\":\"52639192\",\"点将管理_特训营管理_特训营管理_index.md\":\"0a3230b3\",\"点将管理_策划师点将_活动点将管理_index.md\":\"0b9f09a4\",\"点将管理_经销商点将_单店点将_index.md\":\"2d540f5c\",\"点将管理_经销商点将_活动点将_index.md\":\"7a03772c\",\"点将管理_经销商点将_特训营_index.md\":\"1732e5be\",\"点将管理_经销商点将_设计点将_index.md\":\"2366faac\",\"点将管理_设计师点将_设计师点将执行_index.md\":\"6e5fc19f\",\"点将管理_设计师点将_设计师点将管理_index.md\":\"d28b7ae9\",\"点将管理_设计师点将_设计师饱和度_index.md\":\"3def9f11\",\"电子合同管理_品牌方_合同签署异常处理_index.md\":\"ffee8fb6\",\"电子合同管理_基础管理_合同模板管理_index.md\":\"61f05667\",\"电子合同管理_经销商_合同管理_index.md\":\"efff6138\",\"组件库演示_index.md\":\"9131853c\",\"经销合同管理_合同管理_合同任务完成率_index.md\":\"9cdcb6d4\",\"经销合同管理_合同管理_合同任务完成率明细报表_index.md\":\"6db5d3a3\",\"经销合同管理_合同管理_年度营销政策_index.md\":\"82a48b0f\",\"经销合同管理_合同管理_经销合同归档_index.md\":\"0c01c50c\",\"经销合同管理_报表中心_经销合同销售区域报表_index.md\":\"65d34e46\",\"经销合同管理_销售合同_保证金减免申请_index.md\":\"d9cd423a\",\"经销合同管理_销售合同_合同保证金_index.md\":\"1dbc49a4\",\"经销合同管理_销售合同_年度经销合同_index.md\":\"f9eaddc1\",\"经销合同管理_销售合同_经销合同变更_index.md\":\"bc462fc7\",\"经销合同管理_销售合同_认缴概况_index.md\":\"d82d6bda\",\"经销合同管理_销售合同_认缴申请_index.md\":\"be02d3f5\",\"财务管理_对账单_客户金税发票号码查询_index.md\":\"1737a0fb\",\"财务管理_对账单_广告费余额查询_index.md\":\"d9360fb8\",\"财务管理_对账单_待兑现折扣折让对账单_index.md\":\"cccfd93f\",\"财务管理_对账单_政策性补贴申请_index.md\":\"3526d822\",\"财务管理_对账单_法人对账单_index.md\":\"b3827e6a\",\"财务管理_对账单_经销商余额明细查询_index.md\":\"edcbb2ef\",\"财务管理_对账单_额度内市场推广服务费对账单_index.md\":\"edd23228\",\"财务管理_对账单_额度外预算总额_index.md\":\"4d0ac5ea\",\"财务管理_调整单_广告费调整申请单_index.md\":\"165273f3\",\"财务管理_调整单_政策性补贴申请_index.md\":\"f7482c3f\",\"财务管理_调整单_销售提价兑现_index.md\":\"252355b3\",\"财务管理_预提与冲销_工程服务费冲销_index.md\":\"c7134254\",\"财务管理_预提与冲销_额度内冲销报表_index.md\":\"e219fee6\",\"财务管理_预提与冲销_额度内预提报表_index.md\":\"ea41fd7b\",\"门店管理_广告投放_广告投放申请_index.md\":\"9c9a954d\",\"门店管理_广告投放_广告报销发票兑现_index.md\":\"b8c7dd8c\",\"门店管理_广告投放_广告费报销_index.md\":\"1d1201b7\",\"门店管理_样品及长库龄管理_样品及长库龄折扣政策_index.md\":\"55a1796b\",\"门店管理_样品及长库龄管理_样品及长库龄折扣政策失效_index.md\":\"0913403e\",\"门店管理_样品及长库龄管理_样品及长库龄要货订单_index.md\":\"aa300baa\",\"门店管理_装修报表_兑现汇总_index.md\":\"d7381aa5\",\"门店管理_装修报表_门店装修申请与进度更新报表_index.md\":\"5572e2aa\",\"门店管理_装修报表_门店装修额度外报表_index.md\":\"d591e7a6\",\"门店管理_装修报表_门店验收与报销单报表_index.md\":\"f12519b0\",\"门店管理_装修报表_门额度内兑现统计报表_index.md\":\"2a35650d\",\"门店管理_门店报表_出库单计算广告费明细报表_index.md\":\"f318c243\",\"门店管理_门店报表_店面额度内兑现余额表_index.md\":\"56b70018\",\"门店管理_门店报表_户外广告分布_index.md\":\"9e9b0df9\",\"门店管理_门店报表_门店区域分布_index.md\":\"d69c18ed\",\"门店管理_门店报表_门店统计分析_index.md\":\"edde9be4\",\"门店管理_门店报表_额度外占用预算明细_index.md\":\"40830866\",\"门店管理_门店档案_新建门店申请_index.md\":\"a43cb18c\",\"门店管理_门店档案_门店变更申请_index.md\":\"7d09faae\",\"门店管理_门店档案_门店档案_index.md\":\"00bba459\",\"门店管理_门店装修_门头展板兑现_index.md\":\"ecb0e94c\",\"门店管理_门店装修_门头展板报销申请单_index.md\":\"6a16b1ba\",\"门店管理_门店装修_门店装修申请与进度更新_index.md\":\"82e9713b\",\"门店管理_门店装修_门店装修申请关闭_index.md\":\"d12900b9\",\"门店管理_门店装修_门店装修申请变更_index.md\":\"bde5ef01\",\"门店管理_门店装修_门店装修额度内兑现_index.md\":\"c9c4eff5\",\"门店管理_门店装修_门店装修额度外兑现_index.md\":\"18240edb\",\"门店管理_门店装修_门店验收与报销单_index.md\":\"638f7a81\",\"门店管理_门店装修_额度内兑现批量复核_index.md\":\"5bf7300c\",\"门店管理_门店设置_经销商额度外限额_index.md\":\"baf25a9c\",\"门店管理_门店设置_门头展板报销标准_index.md\":\"96d7a62f\",\"门店管理_门店设置_门头验收信息设置_index.md\":\"ca52bb37\",\"门店管理_门店设置_门店照片设置_index.md\":\"fd21f283\",\"门店管理_门店设置_门店装修标准_index.md\":\"a2a5bab4\",\"问题反馈_问题反馈_index.md\":\"e0ce7077\",\"问题反馈_问题回复_index.md\":\"7ed66d07\"}")</script>
+    <script type="module" async src="/system-knowledge-base/assets/app.d8e882e1.js"></script>
+    
+  </body>
+</html>

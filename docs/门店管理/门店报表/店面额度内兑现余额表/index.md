@@ -129,32 +129,20 @@
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard num="1" title="2.1 店面额度内兑现余额查询">
-<KbQuote>查询门店额度内兑现的余额情况，跟踪每笔额度内装修申请的申请、验收、兑现余额，以及3年（前年/当年/次年）按月的兑现金额分布。</KbQuote>
-
-**具体逻辑**：
-
-- 1、支持按经销商编码、法人编码、验收报销单号、门店编码四个维度筛选
-- 2、查询结果包含验收报销单号、支付方式、各类金额（申请/验收/报销/兑现/剩余）、面积、标准等核心字段
-- 3、月度金额字段动态生成3年×12月=36列，按年月展示兑现金额
-- 4、验收报销单号通过LOV选择，支付方式和装修性质通过值集翻译
+<KbCard num="1" title="重点逻辑1：纯报表查询页面【只读查询】">
+<ul><li><strong>业务意义</strong>：供内部人员查询门店额度内兑现的余额情况，了解额度内兑现的资金使用分布</li><li><strong>具体逻辑描述</strong>：</li><li>本页面为hlod低代码报表页面，无独立前端源码</li><li>仅提供查询和导出功能，不支持新增、修改、删除操作</li><li>数据来源于兑现表和验收报销单头表的关联查询</li></ul>
 </KbCard>
 
-<KbCard num="2" title="2.2 LOV选择弹窗">
-**具体逻辑**：
-
-- 1、经销商编码：LOV `AE.DISTRIBUTOR_SEARCH_VIEW`，取customerCode
-- 2、法人编码：LOV `AE.CUSTOMER_ID_QUERY`，取customerCode
-- 3、验收报销单号：LOV `AE.SA_NEW_FIN_FEE_CHECK_BX_HEADER_VIEW`，取checkBxCode
-- 4、门店编码：LOV `AE.STORE_FINFEEAPPLYCLOSE_DATA_VIEW`，取terminalCode
+<KbCard num="2" title="重点逻辑2：期初/期末金额计算逻辑">
+<ul><li><strong>业务意义</strong>：通过期初可兑现金额、本期兑现金额计算期末未兑现金额，反映额度内兑现余额变化</li><li><strong>具体逻辑描述</strong>：</li><li>期初可兑现金额（begin_Cashout_Amt）= 可报销金额(不含税) - 期初已兑现金额 = IN_CAN_NOT_TAX_BX_AMT - COALESCE(ttt.cashout_amt, 0)</li><li>期初已兑现金额（ttt.cashout_amt）：统计ledger_date &lt; startTime的已兑现金额</li><li>本期兑现金额（in_This_Cashout_Amt）：统计startTime &lt;= ledger_date &lt;= endTime的已兑现金额</li><li>期末未兑现金额（end_Cashout_Amt）= 期初可兑现金额 - 本期兑现金额 = begin_Cashout_Amt - in_This_Cashout_Amt</li></ul>
 </KbCard>
 
-<KbCard num="3" title="2.3 值集翻译">
-**具体逻辑**：
+<KbCard num="3" title="重点逻辑3：三段子查询统计">
+<ul><li><strong>业务意义</strong>：通过三段子查询分别统计期初、本期和历史兑现金额</li><li><strong>具体逻辑描述</strong>：</li><li>子查询t：统计ledger_date &lt;= endTime的验收报销单汇总数据（申请补贴总额、验收补贴总额、可报销金额）</li><li>子查询tt：统计startTime &lt;= ledger_date &lt;= endTime的本期兑现金额</li><li>子查询ttt：统计ledger_date &lt; startTime的期初已兑现金额</li><li>通过organization_id、trading_company_name、billing_unit_code、pay_type、cust_id、check_bx_code关联</li></ul>
+</KbCard>
 
-- 1、支付方式：lookupCode `AE.PAY_TYPE`
-- 2、店面装修性质：lookupCode `AE.DECORATION_TYPE`
-- 3、--
+<KbCard num="4" title="重点逻辑4：时间格式校验">
+<ul><li><strong>业务意义</strong>：确保查询时间格式正确</li><li><strong>具体逻辑描述</strong>：</li><li>开始/结束时间使用正则校验 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code>，必须为YYYY-MM-DD格式</li><li>SQL中使用TO_DATE转换：<code>TO_DATE(#&#123;params.startTime&#125;, 'yyyy-MM-dd')</code>、<code>TO_DATE(#&#123;params.endTime&#125;, 'yyyy-MM-dd')</code></li></ul>
 </KbCard>
 
 </div>
@@ -164,90 +152,204 @@
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="选择弹窗">
-<KbSubTitle>选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
-
-**入参**
-
-| 字段名 | 中文名 | 释义 | 示例 |
-|-------|-------|------|------|
-| 法人查询 | AE.CUSTOMER_ID_QUERY | - | customerCode |
-| 验收报销单搜索 | AE.SA_NEW_FIN_FEE_CHECK_BX_HEADER_VIEW | - | checkBxCode |
-| 门店搜索 | AE.STORE_FINFEEAPPLYCLOSE_DATA_VIEW | - | terminalCode |
-
+<KbCard title="界面模块">
+<h4>查询条件区域</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>组织ID</td><td>ORGANIZATION_ID</td><td>隐藏</td><td>当前用户组织ID</td><td>常显</td><td>自动获取，精确匹配</td></tr>
+<tr><td>事业部ID</td><td>DIVISION_ID</td><td>下拉选择框</td><td>按事业部筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>交易公司名称</td><td>TRADING_COMPANY_NAME</td><td>文本框</td><td>按交易公司名称筛选</td><td>常显</td><td>用户输入，模糊匹配（LIKE '%xxx%'）</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>文本框</td><td>按经销商编码筛选</td><td>常显</td><td>用户输入，精确匹配</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>文本框</td><td>按经销商名称筛选</td><td>常显</td><td>用户输入，模糊匹配（LIKE '%xxx%'）</td></tr>
+<tr><td>开票单位编码</td><td>BILLING_UNIT_CODE</td><td>文本框</td><td>按法人编码筛选</td><td>常显</td><td>用户输入，精确匹配</td></tr>
+<tr><td>开票单位名称</td><td>BILLING_UNIT_NAME</td><td>文本框</td><td>按法人名称筛选</td><td>常显</td><td>用户输入，精确匹配</td></tr>
+<tr><td>支付方式</td><td>PAY_TYPE</td><td>下拉选择框</td><td>按支付方式筛选</td><td>常显</td><td>用户选择，精确匹配</td></tr>
+<tr><td>开始时间</td><td>LEDGER_DATE</td><td>日期选择器</td><td>台账日期范围起</td><td>常显</td><td>用户选择，格式YYYY-MM-DD，正则校验</td></tr>
+<tr><td>结束时间</td><td>LEDGER_DATE</td><td>日期选择器</td><td>台账日期范围止</td><td>常显</td><td>用户选择，格式YYYY-MM-DD，正则校验</td></tr>
+</tbody>
+</table>
+<h4>报表数据区域</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>数据库列名</th><th>组件</th><th>业务释义</th><th>显隐条件</th><th>取值/赋值逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>行号</td><td>RN</td><td>文本</td><td>行号/序号</td><td>常显</td><td>自动生成</td></tr>
+<tr><td>事业部名称</td><td>DIVISION_NAME</td><td>文本</td><td>事业部名称</td><td>常显</td><td>关联DIVISION_BASE_SET获取</td></tr>
+<tr><td>交易公司</td><td>TRADING_COMPANY_NAME</td><td>文本</td><td>交易公司名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>经销商编码</td><td>CUST_CODE</td><td>文本</td><td>经销商编码</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>经销商名称</td><td>CUST_NAME</td><td>文本</td><td>经销商名称</td><td>常显</td><td>关联CUSTOMER获取</td></tr>
+<tr><td>法人编码</td><td>BILLING_UNIT_CODE</td><td>文本</td><td>法人编码</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>法人名称</td><td>BILLING_UNIT_NAME</td><td>文本</td><td>法人名称</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>支付方式</td><td>PAY_TYPE</td><td>文本</td><td>支付方式</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>额度内申请补贴总额(含税)</td><td>IN_APPLY_STANDARD_AMT</td><td>数值</td><td>额度内申请补贴总额(含税)</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>额度内验收补贴总额(含税)</td><td>IN_CHECK_STANDARD_AMT</td><td>数值</td><td>额度内验收补贴总额(含税)</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>可报销金额(含税)</td><td>IN_CAN_TAX_BX_AMT</td><td>数值</td><td>(财务复核)可报销金额(含税)</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>可报销金额(不含税)</td><td>IN_CAN_NOT_TAX_BX_AMT</td><td>数值</td><td>(财务复核)可报销金额(不含税)</td><td>常显</td><td>表字段直接输出</td></tr>
+<tr><td>期初可兑现金额(不含税)</td><td>BEGIN_CASHOUT_AMT</td><td>数值</td><td>期初可兑现金额</td><td>常显</td><td>可报销金额(不含税) - 期初已兑现金额</td></tr>
+<tr><td>本期兑现金额(不含税)</td><td>IN_THIS_CASHOUT_AMT</td><td>数值</td><td>本期兑现金额</td><td>常显</td><td>统计startTime~endTime的兑现金额</td></tr>
+<tr><td>期末未兑现金额(不含税)</td><td>END_CASHOUT_AMT</td><td>数值</td><td>期末未兑现金额</td><td>常显</td><td>期初可兑现金额 - 本期兑现金额</td></tr>
+</tbody>
+</table>
+<h4>其他按钮</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>按钮名称</th><th>按钮作用</th><th>所在位置</th><th>显隐条件/可点击条件</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td>查询</td><td>查询店面额度内兑现余额数据</td><td>列表页查询区域</td><td>常显</td><td>调用POST /mkt-terminal-face-cashIn-list/search接口，分页返回余额数据</td></tr>
+<tr><td>导出</td><td>导出报表数据为Excel</td><td>列表页查询区域</td><td>常显</td><td>导出当前查询结果为Excel文件</td></tr>
+</tbody>
+</table>
+<h4>按钮1：查询（列表页查询区域）</h4>
+<ul><li><strong>业务意义</strong>：根据查询条件搜索店面额度内兑现余额数据</li><li><strong>具体逻辑描述</strong>：</li><li>点击查询按钮，触发POST <code>/v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-face-cashIn-list/search</code> 接口</li><li>请求参数为MktTerminalFaceCashInListSearchDTO</li><li>后端通过PageHelper.doPageAndSort实现分页查询</li><li>查询FIN_FEE_TERMINAL_CASHOUT + FIN_FEE_CHECK_BX_HEADER关联，计算期初/本期/期末金额</li><li>返回MktTerminalFaceCashInListSearchVO分页结果</li></ul>
+<h4>按钮2：导出（列表页查询区域）</h4>
+<ul><li><strong>业务意义</strong>：将查询结果导出为Excel文件</li><li><strong>具体逻辑描述</strong>：</li><li>点击导出按钮，将当前查询条件下的报表数据导出为Excel</li></ul>
 </KbCard>
-<KbCard title="导入">
 
+<KbCard title="后端接口">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>接口名称</th><th>请求方式</th><th>接口路径</th><th>权限</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>店面额度内兑现余额表查询</td><td>POST</td><td>`/v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-face-cashIn-list/search`</td><td>组织级权限</td><td>分页查询额度内兑现余额数据</td></tr>
+</tbody>
+</table>
+<p><strong>接口入参（MktTerminalFaceCashInListSearchDTO）：</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>参数名</th><th>类型</th><th>校验</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>orgId</td><td>Long</td><td>-</td><td>组织ID（精确匹配）</td></tr>
+<tr><td>divisionId</td><td>Long</td><td>-</td><td>事业部ID（精确匹配）</td></tr>
+<tr><td>billingUnitCode</td><td>String</td><td>-</td><td>法人编码（精确匹配）</td></tr>
+<tr><td>billingUnitName</td><td>String</td><td>-</td><td>法人名称（精确匹配）</td></tr>
+<tr><td>custCode</td><td>String</td><td>-</td><td>经销商编码（精确匹配）</td></tr>
+<tr><td>custName</td><td>String</td><td>-</td><td>经销商名称（模糊匹配）</td></tr>
+<tr><td>tradingCompanyName</td><td>String</td><td>-</td><td>交易公司名称（模糊匹配）</td></tr>
+<tr><td>payType</td><td>String</td><td>-</td><td>支付方式编码（精确匹配）</td></tr>
+<tr><td>startTime</td><td>String</td><td>`^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$`</td><td>开始时间（YYYY-MM-DD）</td></tr>
+<tr><td>endTime</td><td>String</td><td>`^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$`</td><td>结束时间（YYYY-MM-DD）</td></tr>
+</tbody>
+</table>
 </KbCard>
-<KbCard title="其他按钮">
 
-无。纯查询报表，无新增/编辑/删除/导出按钮。
-
-</KbCard>
-<KbCard title="保存校验">
-</KbCard>
-<KbCard title="提交校验">
-</KbCard>
 <KbCard title="状态机">
-
-无。纯查询报表，无状态流转。
-
----
-
-</KbCard>
-<KbCard num="1" title="MKT_INLIMIT_BALANCE_HEADER（额度内兑现余额主表）">
-
-| 列名 | 类型 | 业务释义 | 备注 |
-|------|------|---------|------|
-| inlimit_balance_id | BIGINT | 主键 | - |
-| entid | BIGINT | 事业部ID | - |
-| entname | VARCHAR | 事业部名称 | - |
-| division_id | BIGINT | 事业部词汇值 | - |
-| trading_company_id | BIGINT | 交易公司ID | - |
-| trading_company_code | VARCHAR | 交易公司编码 | - |
-| trading_company_name | VARCHAR | 交易公司名称 | - |
-| billing_unit_id | BIGINT | 法人ID | - |
-| billing_unit_code | VARCHAR | 法人编码 | - |
-| billing_unit_name | VARCHAR | 法人名称 | - |
-| start_time | DATE | 时间范围开始 | - |
-| end_time | DATE | 时间范围结束 | - |
-| money_type | VARCHAR | 款项类型 | - |
-| beginning_balance | DECIMAL | 期初余额 | - |
-| deduction_amount | DECIMAL | 账户别名发放扣减 | - |
-| expire_adjust_quota | DECIMAL | 到期额度调整 | - |
-| other_adjust_quota | DECIMAL | 其他调整 | - |
-| inlimit_cashout_quota | DECIMAL | 额度内兑现已审核金额 | - |
-| checkout_order_provision | DECIMAL | 出库单计提 | - |
-| other | DECIMAL | 其他 | - |
-| actual_ending_balance | DECIMAL | 期末余额 | - |
-| tya_ending_balance | DECIMAL | 2年前期末余额 | - |
-| oya_ending_balance | DECIMAL | 1年前期末余额 | - |
-| this_ending_balance | DECIMAL | 本年期末余额 | - |
-| occupied_amount | DECIMAL | 已占用额度 | - |
-| can_use_amount | DECIMAL | 剩余可用额度 | - |
-| cashout | DECIMAL | 兑现占用 | - |
-| delivery | DECIMAL | 出库单占用 | - |
-| frozen | DECIMAL | 冻结占用 | - |
-| adjustment | DECIMAL | 调整占用 | - |
-| inlimit_cashout_quota_discount | DECIMAL | 费用转款 | - |
-| inlimit_cashout_quota_remit | DECIMAL | 折扣折让 | - |
-
----
-
+<blockquote>本页面为纯查询报表页面，无状态流转。</blockquote>
 </KbCard>
 
-</div>
-</div>
-</div>
-
-<div id="permission" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
-<KbCard title="权限控制">
-
-<!-- 空白:待补充 -->
-
+<KbCard title="上游依赖">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>上游模块</th><th>依赖类型</th><th>依赖说明</th><th>依赖成立条件</th></tr>
+</thead>
+<tbody>
+<tr><td>额度内兑现单</td><td>数据来源</td><td>提供兑现金额、台账日期等</td><td>额度内兑现单已创建</td></tr>
+<tr><td>门店验收与报销单</td><td>数据来源</td><td>提供申请补贴总额、验收补贴总额、可报销金额等</td><td>验收报销单已创建</td></tr>
+<tr><td>客户</td><td>数据关联</td><td>关联CUSTOMER获取经销商名称</td><td>客户主数据已维护</td></tr>
+<tr><td>事业部基础设置</td><td>数据关联</td><td>关联DIVISION_BASE_SET获取事业部名称</td><td>事业部已配置</td></tr>
+</tbody>
+</table>
 </KbCard>
+
+<KbCard title="下游影响">
+<ul><li>额度内兑现余额分析：管理层通过报表了解额度内兑现的余额变化情况</li><li>期初/期末金额核对：财务人员核对期初可兑现金额和期末未兑现金额</li><li>Excel导出归档：导出报表数据供内部管理决策与归档使用</li></ul>
+</KbCard>
+
+<KbCard title="FIN_FEE_TERMINAL_CASHOUT（额度内兑现表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CHECK_BX_CODE</td><td>VARCHAR2</td><td>验收报销单号</td><td>-</td><td>关联FIN_FEE_CHECK_BX_HEADER</td></tr>
+<tr><td>IN_THIS_CASHOUT_AMT</td><td>DECIMAL</td><td>额度内本次兑现金额</td><td>本期兑现金额</td><td>统计startTime~endTime的金额</td></tr>
+<tr><td>LEDGER_DATE</td><td>DATE</td><td>台账日期</td><td>-</td><td>用于期初/本期划分</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="FIN_FEE_CHECK_BX_HEADER（验收报销单头表）">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>类型</th><th>释义</th><th>对应界面字段</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>CHECK_BX_CODE</td><td>VARCHAR2</td><td>验收报销单号</td><td>-</td><td>关联FIN_FEE_TERMINAL_CASHOUT</td></tr>
+<tr><td>ORGANIZATION_ID</td><td>NUMBER</td><td>组织ID</td><td>-</td><td>租户组织标识</td></tr>
+<tr><td>CUST_ID</td><td>NUMBER</td><td>经销商ID</td><td>-</td><td>关联CUSTOMER</td></tr>
+<tr><td>CUST_CODE</td><td>VARCHAR2</td><td>经销商编码</td><td>经销商编码</td><td>保存时带入</td></tr>
+<tr><td>TRADING_COMPANY_NAME</td><td>VARCHAR2</td><td>交易公司名称</td><td>交易公司</td><td>保存时带入</td></tr>
+<tr><td>BILLING_UNIT_CODE</td><td>VARCHAR2</td><td>法人编码</td><td>法人编码</td><td>保存时带入</td></tr>
+<tr><td>BILLING_UNIT_NAME</td><td>VARCHAR2</td><td>法人名称</td><td>法人名称</td><td>保存时带入</td></tr>
+<tr><td>PAY_TYPE</td><td>VARCHAR2</td><td>支付方式</td><td>支付方式</td><td>用户选择</td></tr>
+<tr><td>IN_APPLY_STANDARD_AMT</td><td>DECIMAL</td><td>额度内申请补贴总额(含税)</td><td>额度内申请补贴总额(含税)</td><td>计算得出</td></tr>
+<tr><td>IN_CHECK_STANDARD_AMT</td><td>DECIMAL</td><td>额度内验收补贴总额(含税)</td><td>额度内验收补贴总额(含税)</td><td>计算得出</td></tr>
+<tr><td>IN_CAN_TAX_BX_AMT</td><td>DECIMAL</td><td>可报销金额(含税)</td><td>可报销金额(含税)</td><td>财务复核时计算</td></tr>
+<tr><td>IN_CAN_NOT_TAX_BX_AMT</td><td>DECIMAL</td><td>可报销金额(不含税)</td><td>可报销金额(不含税)</td><td>财务复核时计算</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>开始时间格式必须为YYYY-MM-DD</td><td>查询按钮点击时</td><td>开始时间格式不符合正则校验</td><td>中</td><td>[查看](#报错1开始时间格式必须为yyyy-mm-dd)</td></tr>
+<tr><td>结束时间格式必须为YYYY-MM-DD</td><td>查询按钮点击时</td><td>结束时间格式不符合正则校验</td><td>中</td><td>[查看](#报错2结束时间格式必须为yyyy-mm-dd)</td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错3网络请求失败接口调用异常)</td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错4权限不足未登录)</td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错5导出失败网络异常)</td></tr>
+</tbody>
+</table>
+<h4>报错1：开始时间格式必须为YYYY-MM-DD</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用余额表查询接口时，DTO中startTime字段值不符合正则 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code></li><li><strong>逻辑分析</strong>：报表通过三段子查询统计期初已兑现金额（ledger_date &lt; startTime）、本期兑现金额（startTime &lt;= ledger_date &lt;= endTime），需用TO_DATE转换字符串为日期。若前端日期选择器异常返回非标准格式（如YYYY/MM/DD或带时分秒）、或手工拼接参数格式错误，@Pattern注解校验失败抛出异常，查询无法执行。startTime用于界定期初统计的上界，格式错误会导致期初/本期金额计算错误或Oracle抛出ORA-01861。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT check_bx_code        AS 验收报销单号,
+         cust_code             AS 经销商编码,
+         pay_type              AS 支付方式,
+         ledger_date           AS 台账日期,
+         in_this_cashout_amt   AS 额度内本次兑现金额
+  FROM   fin_fee_terminal_cashout
+  WHERE  ledger_date IS NOT NULL
+  ORDER  BY ledger_date DESC;</code></pre>
+<h4>报错2：结束时间格式必须为YYYY-MM-DD</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用余额表查询接口时，DTO中endTime字段值不符合正则 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code></li><li><strong>逻辑分析</strong>：endTime用于限定本期兑现统计的下界（startTime &lt;= ledger_date &lt;= endTime）及期初统计的下界（ledger_date &lt; startTime的补集）。SQL中通过 <code>TO_DATE(#&#123;params.endTime&#125;, 'yyyy-MM-dd')</code> 转换。若endTime格式错误，@Pattern注解校验失败抛出异常。若绕过校验传入非法字符串，TO_DATE转换会抛出Oracle格式错误，故前置正则校验提前拦截。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT check_bx_code        AS 验收报销单号,
+         cust_code             AS 经销商编码,
+         pay_type              AS 支付方式,
+         ledger_date           AS 台账日期,
+         in_this_cashout_amt   AS 额度内本次兑现金额
+  FROM   fin_fee_terminal_cashout
+  WHERE  ledger_date &gt;= SYSDATE - 30
+  ORDER  BY ledger_date DESC;</code></pre>
+<h4>报错3：网络请求失败/接口调用异常</h4>
+<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-face-cashIn-list/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalFaceCashInListSearch接口分页查询FIN_FEE_TERMINAL_CASHOUT关联FIN_FEE_CHECK_BX_HEADER，通过三段子查询统计期初/本期/期末金额。若后端ae-report服务未启动、Oracle数据库连接异常、三段子查询关联条件不匹配导致慢SQL、TO_DATE转换失败抛出ORA-01861、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT COUNT(*)            AS 兑现单总数,
+         MIN(ledger_date)    AS 最早台账日期,
+         MAX(ledger_date)    AS 最晚台账日期
+  FROM   fin_fee_terminal_cashout
+  WHERE  ledger_date IS NOT NULL;</code></pre>
+<h4>报错4：权限不足/未登录</h4>
+<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre>
+<h4>报错5：导出失败：网络异常</h4>
+<ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口将当前查询条件下的额度内兑现余额数据全量查询后生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定台账日期范围、事业部）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<pre class="detail-sql" v-pre><code>SELECT TO_CHAR(ledger_date, 'YYYY') AS 年度,
+         COUNT(*)                     AS 兑现单数量
+  FROM   fin_fee_terminal_cashout
+  WHERE  ledger_date IS NOT NULL
+  GROUP  BY TO_CHAR(ledger_date, 'YYYY')
+  ORDER  BY 年度 DESC;</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -255,88 +357,17 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="报错一览表" :hover="false">
-<div class="kb-field-scroll">
-<table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
-<thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
-<tbody>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">查询无数据</td>
-            <td style="font-size:13px;">查询条件过滤过严或该门店无额度内兑现记录</td>
-            <td style="font-size:13px;">放宽查询条件重试</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td>
-          </tr>
-          <tr>
-            <td style="color:#DC2626;font-weight:600;">LOV弹窗无数据</td>
-            <td style="font-size:13px;">经销商/法人/门店/报销单数据未维护</td>
-            <td style="font-size:13px;">先维护基础数据</td>
-            <td style="font-size:13px;"><span style="background:#F5F3FF;color:#7C3AED;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">toast提醒</span></td>
-            <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
-          </tr>
-</tbody></table></div>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>放宽查询条件重试</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>LOV弹窗无数据</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>先维护基础数据</div>
-    <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-  </div>
-</div>
-</KbCard>
 <KbCard title="常见问题">
-<div class="faq-qa-wrap">
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q1</span>
-      <span style="font-size:15px;">月度金额列为什么是36列？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>覆盖前年、当年、次年共3年，每年12个月
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q2</span>
-      <span style="font-size:15px;">月度金额列的年份如何确定？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>基于当前系统时间动态生成，如2026年则展示2025/2026/2027三年
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q3</span>
-      <span style="font-size:15px;">与额度外占用预算明细报表的区别？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>额度内报表关注兑现余额，含支付方式字段；额度外报表关注占用预算，含两次兑现单号
-    </div>
-  </div>
-  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
-    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
-      <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">验收报销单号为什么用LOV？</span>
-    </div>
-    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">处理：</strong>额度内报表的验收报销单号通过LOV选择确保数据准确性，额度外报表为手工输入
-    </div>
-  </div>
-</div>
+<p><strong>Q1：期初可兑现金额如何计算？</strong></p>
+<p>A：期初可兑现金额 = 可报销金额(不含税) - 期初已兑现金额。期初已兑现金额统计ledger_date &lt; startTime的兑现金额合计。</p>
+<p><strong>Q2：期末未兑现金额如何计算？</strong></p>
+<p>A：期末未兑现金额 = 期初可兑现金额 - 本期兑现金额。本期兑现金额统计startTime &lt;= ledger_date &lt;= endTime的兑现金额合计。</p>
+<p><strong>Q3：报表是否支持导出？</strong></p>
+<p>A：是，支持导出Excel。</p>
+<p><strong>Q4：报表是否支持新增/修改/删除？</strong></p>
+<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
 </KbCard>
+
 </div>
 </div>
 </div>
@@ -345,10 +376,15 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="更新记录">
-
-| 日期 | 版本 | 更新内容 | 更新人 |
-|------|------|---------|--------|
-| 2026-01-28 | v1.0.0 | 初始创建店面额度内兑现余额表报表 | - |
+<table class="kb-field-tbl">
+<thead>
+<tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
+</thead>
+<tbody>
+<tr><td>2025-12-11</td><td>-</td><td>lingma</td><td>初始创建店面额度内兑现余额表查询接口</td></tr>
+<tr><td>2025-12-10</td><td>-</td><td>HZERO</td><td>初始创建TerminalReportController</td></tr>
+</tbody>
+</table>
 </KbCard>
 </div>
 </div>
