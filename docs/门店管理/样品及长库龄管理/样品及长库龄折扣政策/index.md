@@ -775,14 +775,11 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>导入产品明细需关联到具体折扣政策。若用户在政策头未保存（主键DISCOUNT_POLICY_ID未生成）时直接导入产品，或前端未传discountPolicyId字段，后端校验为空即抛异常。常见根因：用户未先保存政策头、保存失败后误点导入、或前端传参丢失。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, discount_policy_name, valid, hz_approve_status
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, discount_policy_name, valid, hz_approve_status
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND (discount_policy_id IS NULL OR discount_policy_id = 0)
 ORDER BY createtime DESC;
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -796,13 +793,10 @@ ORDER BY createtime DESC;
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>OA推送前需查询政策单组装数据。若单据在推送前被其他用户删除，或discountPolicyId传值错误，查询返回空，无法组装OA数据导致推送失败。常见根因：并发操作删除政策、传参错误、或事务未提交即调用OA推送。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, valid, hz_approve_status
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, valid, hz_approve_status
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND discount_policy_id = #{传入的discountPolicyId};
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -816,13 +810,10 @@ WHERE source_type = 'YXCRM' AND discount_policy_id = #{传入的discountPolicyId
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>OA回调处理需更新政策有效状态。若回调期间政策被删除，或OA回调报文的单据ID与DMS不一致，查询返回空，回调处理失败。常见根因：政策被并发删除、OA配置错误、或回调报文ID丢失。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, valid, hz_approve_status, hz_instance_id, callback_source
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, valid, hz_approve_status, hz_instance_id, callback_source
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND discount_policy_id = #{OA回调报文中的discountPolicyId};
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -836,17 +827,14 @@ WHERE source_type = 'YXCRM' AND discount_policy_id = #{OA回调报文中的disco
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>折扣政策必须包含至少一行产品明细才能提交审批。校验逻辑查询EPM_DISCOUNT_POLICY_ITEM中对应且未删除的行，若为空则抛异常。常见根因：用户未导入产品或未添加产品行、产品行被全部删除、或导入产品失败后误点提交。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dp.discount_policy_id, dp.discount_policy_code, dp.hz_approve_status,
+    <pre class="detail-sql" v-pre><code>SELECT dp.discount_policy_id, dp.discount_policy_code, dp.hz_approve_status,
        COUNT(dpi.discount_policy_item_id) AS 产品行数
 FROM epm_discount_policy dp
 LEFT JOIN epm_discount_policy_item dpi ON dpi.discount_policy_id = dp.discount_policy_id AND dpi._status &lt;&gt; 'delete'
 WHERE dp.source_type = 'YXCRM'
 GROUP BY dp.discount_policy_id, dp.discount_policy_code, dp.hz_approve_status
 HAVING COUNT(dpi.discount_policy_item_id) = 0;
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -860,13 +848,10 @@ HAVING COUNT(dpi.discount_policy_item_id) = 0;
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>长库龄业务类型(BUSINESS_TYPE=16)仅适用于常规订单，计划订单(BILL_TYPE=2或99)不允许设置为长库龄业务类型。常见根因：用户误将计划订单与长库龄业务类型组合、或前端未做组合校验。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, bill_type, business_type, is_makt
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, bill_type, business_type, is_makt
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND is_makt = 2 AND bill_type IN (2, 99) AND business_type = 16;
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -880,13 +865,10 @@ WHERE source_type = 'YXCRM' AND is_makt = 2 AND bill_type IN (2, 99) AND busines
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>折扣政策名称有长度限制，超过30字符无法保存。常见根因：用户输入名称过长、或前端未做长度限制。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, discount_policy_name, LENGTH(discount_policy_name) AS 名称长度
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, discount_policy_name, LENGTH(discount_policy_name) AS 名称长度
 FROM epm_discount_policy
-WHERE source_type = 'YXCRM' AND LENGTH(discount_policy_name) > 30;
-```
-    </div>
+WHERE source_type = 'YXCRM' AND LENGTH(discount_policy_name) &gt; 30;
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -900,17 +882,14 @@ WHERE source_type = 'YXCRM' AND LENGTH(discount_policy_name) > 30;
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>适用类型为"通用"的折扣政策必须维护物料明细。常见根因：用户选择通用适用类型后未添加产品明细、或产品明细被全部删除。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type,
+    <pre class="detail-sql" v-pre><code>SELECT dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type,
        COUNT(dpi.discount_policy_item_id) AS 物料明细数
 FROM epm_discount_policy dp
 LEFT JOIN epm_discount_policy_item dpi ON dpi.discount_policy_id = dp.discount_policy_id
 WHERE dp.source_type = 'YXCRM' AND dp.suitable_type = 'normal'
 GROUP BY dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type
 HAVING COUNT(dpi.discount_policy_item_id) = 0;
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -924,15 +903,12 @@ HAVING COUNT(dpi.discount_policy_item_id) = 0;
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>适用类型为"通用"的折扣政策，产品优惠方式只能为折扣(PREFERENTIAL_TYPE=1)。常见根因：用户选择通用适用类型后误设其他优惠方式、或前端未做联动限制。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type,
+    <pre class="detail-sql" v-pre><code>SELECT dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type,
        dpi.discount_policy_item_id, dpi.item_code, dpi.preferential_type
 FROM epm_discount_policy dp
 JOIN epm_discount_policy_item dpi ON dpi.discount_policy_id = dp.discount_policy_id
 WHERE dp.source_type = 'YXCRM' AND dp.suitable_type = 'normal' AND dpi.preferential_type &lt;&gt; 1;
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -946,19 +922,16 @@ WHERE dp.source_type = 'YXCRM' AND dp.suitable_type = 'normal' AND dpi.preferent
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>同一产品或型号在同一时间区间内不允许存在多个有效折扣政策，避免折扣冲突。常见根因：用户新建政策有效区间与已有政策重叠、或未检查已有政策有效期。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT a.discount_policy_id, a.discount_policy_code, a.effective_date_start, a.effective_date_end,
+    <pre class="detail-sql" v-pre><code>SELECT a.discount_policy_id, a.discount_policy_code, a.effective_date_start, a.effective_date_end,
        b.discount_policy_id, b.discount_policy_code, b.effective_date_start, b.effective_date_end
 FROM epm_discount_policy a
-JOIN epm_discount_policy b ON b.discount_policy_id > a.discount_policy_id
+JOIN epm_discount_policy b ON b.discount_policy_id &gt; a.discount_policy_id
 JOIN epm_discount_policy_item ai ON ai.discount_policy_id = a.discount_policy_id
 JOIN epm_discount_policy_item bi ON bi.discount_policy_id = b.discount_policy_id AND bi.item_code = ai.item_code
 WHERE a.source_type = 'YXCRM' AND b.source_type = 'YXCRM'
   AND a.effective_date_start &lt;= b.effective_date_end
-  AND a.effective_date_end >= b.effective_date_start;
-```
-    </div>
+  AND a.effective_date_end &gt;= b.effective_date_start;
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -972,13 +945,10 @@ WHERE a.source_type = 'YXCRM' AND b.source_type = 'YXCRM'
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>删除操作需先查询政策确认存在。若政策在删除前被其他用户物理删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在，查询返回空。常见根因：并发操作删除政策、传参错误、或数据不一致。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, hz_approve_status
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, hz_approve_status
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND discount_policy_id = #{传入的discountPolicyId};
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -992,13 +962,10 @@ WHERE source_type = 'YXCRM' AND discount_policy_id = #{传入的discountPolicyId
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>仅新建状态(HZ_APPROVE_STATUS=NEW)的政策允许删除，已提交审批、审批通过、审批驳回的政策不允许删除。常见根因：用户尝试删除已提交或已审批的政策、或前端未做状态判断。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, hz_approve_status, valid
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, hz_approve_status, valid
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND hz_approve_status &lt;&gt; 'NEW';
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1012,15 +979,12 @@ WHERE source_type = 'YXCRM' AND hz_approve_status &lt;&gt; 'NEW';
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>导入产品明细有数量限制，超过pageSize无法导入，避免性能问题和事务超时。常见根因：用户上传过大Excel文件、或未分批导入。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, COUNT(discount_policy_item_id) AS 导入行数
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, COUNT(discount_policy_item_id) AS 导入行数
 FROM epm_discount_policy_item
 WHERE discount_policy_id = #{discountPolicyId}
 GROUP BY discount_policy_id
-HAVING COUNT(discount_policy_item_id) > #{pageSize};
-```
-    </div>
+HAVING COUNT(discount_policy_item_id) &gt; #{pageSize};
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1034,14 +998,11 @@ HAVING COUNT(discount_policy_item_id) > #{pageSize};
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>导入产品明细需关联CRM产品主数据，产品编码在CRM不存在则无法获取产品信息。常见根因：用户输入错误产品编码、产品在CRM未建档、或产品已失效。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.discount_policy_id
+    <pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.discount_policy_id
 FROM epm_discount_policy_item dpi
 LEFT JOIN crm_product_info cp ON cp.product_code = dpi.item_code AND cp.status = 'ACTIVE'
 WHERE dpi.discount_policy_id = #{discountPolicyId} AND cp.product_code IS NULL;
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1055,13 +1016,10 @@ WHERE dpi.discount_policy_id = #{discountPolicyId} AND cp.product_code IS NULL;
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>导入过程涉及Excel解析、CRM接口调用、数据组装等环节，任一环节异常都会导致导入失败。系统捕获Exception后统一抛出。常见根因：Excel文件格式损坏、CRM接口超时、数据库异常、或代码bug。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, hz_approve_status
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, hz_approve_status
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND discount_policy_id = #{discountPolicyId};
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1075,13 +1033,10 @@ WHERE source_type = 'YXCRM' AND discount_policy_id = #{discountPolicyId};
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>推送OA审批需依赖OA系统配置，配置缺失则无法推送。常见根因：OA系统配置未维护、配置被误删、或环境切换后配置未同步。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT oa_bill_name, oa_url, oa_user, oa_password
+    <pre class="detail-sql" v-pre><code>SELECT oa_bill_name, oa_url, oa_user, oa_password
 FROM oa_bill_ref
 WHERE oa_bill_name = 'YXZT样品折扣政策申请';
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1095,13 +1050,10 @@ WHERE oa_bill_name = 'YXZT样品折扣政策申请';
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>推送OA审批需指定流程编码，流程编码为空则OA无法匹配审批流程。常见根因：前端未传FlowCode、流程编码配置缺失、或政策类型与流程编码映射未配置。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code, hz_approve_status, hz_instance_id
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code, hz_approve_status, hz_instance_id
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND discount_policy_id = #{discountPolicyId};
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1115,15 +1067,12 @@ WHERE source_type = 'YXCRM' AND discount_policy_id = #{discountPolicyId};
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>涉及新品的型号不允许通过型号定义折扣政策，必须通过具体产品编码制定。常见根因：用户误用型号定义新品政策、或新品标识未同步。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dpi.discount_policy_item_id, dpi.discount_policy_id, dpi.item_model, dpi.item_code
+    <pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id, dpi.discount_policy_id, dpi.item_model, dpi.item_code
 FROM epm_discount_policy_item dpi
 JOIN epm_discount_policy dp ON dp.discount_policy_id = dpi.discount_policy_id
 WHERE dp.source_type = 'YXCRM' AND dpi.item_code IS NULL AND dpi.item_model IS NOT NULL
   AND dpi.item_model IN (SELECT item_model FROM epm_item_model WHERE new_prod_flag = 1);
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1137,15 +1086,12 @@ WHERE dp.source_type = 'YXCRM' AND dpi.item_code IS NULL AND dpi.item_model IS N
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>同一产品编码与型号不允许在多个折扣政策行中重复定义，避免折扣冲突。常见根因：用户重复添加同一产品、或导入文件包含重复产品。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT item_code, item_model, COUNT(discount_policy_item_id) AS 重复行数
+    <pre class="detail-sql" v-pre><code>SELECT item_code, item_model, COUNT(discount_policy_item_id) AS 重复行数
 FROM epm_discount_policy_item
 WHERE discount_policy_id = #{discountPolicyId} AND item_code IS NOT NULL AND item_model IS NOT NULL
 GROUP BY item_code, item_model
-HAVING COUNT(discount_policy_item_id) > 1;
-```
-    </div>
+HAVING COUNT(discount_policy_item_id) &gt; 1;
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1159,16 +1105,13 @@ HAVING COUNT(discount_policy_item_id) > 1;
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>折扣政策对每个产品按经销商设定可下单数量上限，多个订单共享同一政策时需扣减。常见根因：并发下单导致可下单数量被其他订单扣减、或用户下单数量超过剩余可下单数量。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty,
+    <pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty,
        dpc.customer_code, dpc.remain_qty
 FROM epm_discount_policy_item dpi
 JOIN epm_discount_policy dp ON dp.discount_policy_id = dpi.discount_policy_id
 LEFT JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
 WHERE dp.source_type = 'YXCRM' AND dpi.active_qty &lt; dpc.remain_qty;
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1182,17 +1125,14 @@ WHERE dp.source_type = 'YXCRM' AND dpi.active_qty &lt; dpc.remain_qty;
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>折扣政策对每个产品设定全部经销商合计可下单数量上限。常见根因：并发下单导致可下单数量被其他经销商订单扣减、或用户下单数量超过政策总剩余可下单数量。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty, SUM(dpc.remain_qty) AS 全部经销商剩余
+    <pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty, SUM(dpc.remain_qty) AS 全部经销商剩余
 FROM epm_discount_policy_item dpi
 JOIN epm_discount_policy dp ON dp.discount_policy_id = dpi.discount_policy_id
 LEFT JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
 WHERE dp.source_type = 'YXCRM'
 GROUP BY dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty
 HAVING dpi.active_qty &lt; SUM(dpc.remain_qty);
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1206,13 +1146,10 @@ HAVING dpi.active_qty &lt; SUM(dpc.remain_qty);
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>获取产品价格需调用CRM接口，返回数据为JSON格式，解析失败则无法获取价格。常见根因：CRM接口返回非JSON格式数据、CRM接口异常、或网络传输中断。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT discount_policy_id, discount_policy_code
+    <pre class="detail-sql" v-pre><code>SELECT discount_policy_id, discount_policy_code
 FROM epm_discount_policy
 WHERE source_type = 'YXCRM' AND discount_policy_id = #{discountPolicyId};
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1226,14 +1163,11 @@ WHERE source_type = 'YXCRM' AND discount_policy_id = #{discountPolicyId};
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>获取产品价格需调用CRM接口，CRM返回失败信息则无法获取价格。常见根因：产品编码在CRM不存在、产品已失效、或CRM接口业务异常。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.discount_policy_id
+    <pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.discount_policy_id
 FROM epm_discount_policy_item dpi
 LEFT JOIN crm_product_info cp ON cp.product_code = dpi.item_code AND cp.status = 'ACTIVE'
 WHERE dpi.discount_policy_id = #{discountPolicyId} AND cp.product_code IS NULL;
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1247,14 +1181,11 @@ WHERE dpi.discount_policy_id = #{discountPolicyId} AND cp.product_code IS NULL;
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>获取产品政策信息需调用CRM接口，返回空则无法组装政策数据。常见根因：产品在CRM未配置政策、CRM接口异常、或产品编码错误。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.discount_policy_id
+    <pre class="detail-sql" v-pre><code>SELECT dpi.discount_policy_item_id, dpi.item_code, dpi.discount_policy_id
 FROM epm_discount_policy_item dpi
 WHERE dpi.discount_policy_id = #{discountPolicyId}
   AND NOT EXISTS (SELECT 1 FROM crm_policy_info cpi WHERE cpi.item_code = dpi.item_code);
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
@@ -1268,16 +1199,13 @@ WHERE dpi.discount_policy_id = #{discountPolicyId}
     <h5>逻辑分析</h5>
     <div class="detail-text" v-pre>折扣政策关联客户时需校验客户签约方式，签约方式异常则政策无法正确执行。常见根因：客户档案签约方式未维护、签约方式数据被误改、或客户档案数据不一致。</div>
     <h5>排查SQL</h5>
-    <div class="detail-text" v-pre>
-```sql
-SELECT dp.discount_policy_id, dp.discount_policy_code,
+    <pre class="detail-sql" v-pre><code>SELECT dp.discount_policy_id, dp.discount_policy_code,
        dpc.customer_id, dpc.customer_code, c.contract_type AS 签约方式
 FROM epm_discount_policy dp
 JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
 LEFT JOIN customer c ON c.customer_id = dpc.customer_id
 WHERE dp.source_type = 'YXCRM' AND (c.contract_type IS NULL OR c.contract_type NOT IN (1, 2));
-```
-    </div>
+</code></pre>
     <div class="detail-tip" v-pre>等级：高</div>
   </div>
 </div>
