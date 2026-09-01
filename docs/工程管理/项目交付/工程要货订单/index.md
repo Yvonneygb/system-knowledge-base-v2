@@ -871,7 +871,7 @@
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">选择弹窗</span>
-    <h2>5 个单选 LOV 弹窗的入参与查询 SQL</h2>
+    <h2>选择弹窗</h2>
   </div>
 
 <KbSubTitle>弹窗1：客户选择弹窗（LOV编码BASIC_CUSTOM_ORG_LOV_2） <KbBadge type="purple">单选</KbBadge></KbSubTitle>
@@ -1055,13 +1055,13 @@ SELECT * FROM EPM_PROJECT_CONTRACT
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">导入</span>
-    <h2>本页面无导入功能。产品明细通过选择折扣单号自动加载。</h2>
+    <h2>导入</h2>
   </div>
 </div>
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">其他按钮</span>
-    <h2>列表页与详情页共 15 个操作按钮的显隐与执行逻辑</h2>
+    <h2>其他按钮</h2>
   </div>
 
 <h4 class="kl-sub-title">按钮清单</h4>
@@ -1113,7 +1113,7 @@ SELECT * FROM EPM_PROJECT_CONTRACT
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">保存校验</span>
-    <h2>保存时 preCheckData 的 7 项校验规则</h2>
+    <h2>保存校验</h2>
   </div>
 
 <KbSubTitle>校验1：期望到达日期不能为空 —— 确保填写了期望到达日期</KbSubTitle>
@@ -1200,7 +1200,7 @@ SELECT ITEM_CODE, SM_STATE FROM SA_OUT_BILL_LINE
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">提交校验</span>
-    <h2>提交时 beforeSubmitCheck 的 2 项校验规则</h2>
+    <h2>提交校验</h2>
   </div>
 
 <KbSubTitle>校验1：流程编码不能为空 —— 确保工作流编码已配置</KbSubTitle>
@@ -1228,7 +1228,7 @@ SELECT PROVINCE, CITY, COUNTY FROM CUSTOMER_ADDRESS
 <div class="kl-card">
   <div class="biz-kl-hdr" style="text-align:left;">
     <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);">状态机</span>
-    <h2>单据状态与审批流程的流转关系</h2>
+    <h2>状态机</h2>
   </div>
 
 <p class="kl-tip" style="font-size:.74rem;font-weight:700;color:#7C3AED;margin:14px 0 6px;">状态机流转图</p>
