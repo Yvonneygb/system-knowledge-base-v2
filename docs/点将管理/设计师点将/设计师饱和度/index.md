@@ -310,31 +310,27 @@ ORDER BY MLS.SATURATION_RATE DESC;
     <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用 mlt/designApply/* 查询接口时，后端返回 HTTP 状态码非 2xx<br><strong>逻辑分析：</strong>前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_NAME AS 设计师姓名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_NAME AS 设计师姓名,
          LECTURER_LEVEL AS 讲师类型,
          ORG_NAME AS 负责事业部,
          SATURATION_RATE AS 饱和度百分比,
          SATURATION_STATUS AS 状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGNER_SATURATION
-  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载完成查询饱和度数据时，返回空列表<br><strong>逻辑分析：</strong>前端查询饱和度数据返回空列表，提示"数据为空"。常见根因包括：当前用户未关联讲师档案（LECTURER_CODE 为空）、设计师无设计点将执行记录、查询条件过滤过严、统计周期内无数据等。需检查用户与讲师档案关联关系、查询条件、设计点将执行记录</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_CODE AS 设计师编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_CODE AS 设计师编码,
          LECTURER_NAME AS 设计师姓名,
          LECTURER_LEVEL AS 讲师类型,
          ORG_NAME AS 负责事业部,
@@ -344,36 +340,34 @@ SELECT LECTURER_CODE AS 设计师编码,
   FROM DESIGNER_SATURATION
    WHERE LECTURER_CODE IS NULL
       OR TOTAL_DAYS IS NULL
-      OR USED_DAYS IS NULL;
-```
+      OR USED_DAYS IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询饱和度数据时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、统计SQL执行时间长等。需检查网络连通性、后端服务负载、数据库性能</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_NAME AS 设计师姓名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_NAME AS 设计师姓名,
          SATURATION_STATUS AS 状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGNER_SATURATION
-  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>访问设计师饱和度页面或点击导出按钮时，当前用户无对应权限码<br><strong>逻辑分析：</strong>HZERO 框架校验当前用户角色是否包含饱和度查询/导出权限码，未包含则页面或按钮不可见。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名,
          R.ROLE_NAME AS 角色名,
          P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
@@ -382,60 +376,59 @@ SELECT U.USER_NAME AS 用户名,
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE '%design_saturation%'
-  ORDER BY U.USER_NAME;
-```
+  ORDER BY U.USER_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>导出失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击导出按钮，导出接口返回失败或导出数据量超过限制<br><strong>逻辑分析：</strong>前端调用导出接口，后端生成Excel文件流返回。常见根因：导出数据量过大超过内存限制、OSS存储异常、文件生成异常、查询条件过宽导致全表扫描等。需缩小查询范围、检查后端导出服务配置</div>
-  </div>
-</div>
-
-```sql
-SELECT COUNT(*) AS 总记录数,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 总记录数,
          SUM(CASE WHEN SATURATION_STATUS = 'overload' THEN 1 ELSE 0 END) AS 超负荷数,
          SUM(CASE WHEN SATURATION_STATUS = 'near_full' THEN 1 ELSE 0 END) AS 接近满档数
   FROM DESIGNER_SATURATION
-  WHERE STAT_PERIOD BETWEEN :startDate AND :endDate;
-```
+  WHERE STAT_PERIOD BETWEEN :startDate AND :endDate;</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中讲师类型、状态等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.DESIGN_LECTURER_LEVEL、MBO.DESIGN_APPLY_TYPE、MBO.DESIGN_STATE、MBO.APPLY_APPROVAL_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
-  </div>
-</div>
-
-```sql
-SELECT LOOKUP_CODE AS 值集编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码,
          LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称,
          ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.DESIGN_LECTURER_LEVEL','MBO.DESIGN_APPLY_TYPE','MBO.DESIGN_STATE','MBO.APPLY_APPROVAL_STATE')
     AND ENABLE_FLAG = 'N'
-  ORDER BY LOOKUP_CODE;
-```
+  ORDER BY LOOKUP_CODE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>时间范围校验失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件时间范围中，开始时间大于结束时间<br><strong>逻辑分析：</strong>前端 DatePicker(range) 组件校验时间范围合法性，若 startDate &gt; endDate 则阻止查询并提示。需检查时间范围选择是否正确</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_NAME AS 设计师姓名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_NAME AS 设计师姓名,
          STAT_PERIOD AS 统计周期,
          TO_CHAR(CREATION_DATE,'YYYY-MM-DD') AS 创建日期
   FROM DESIGNER_SATURATION
   WHERE STAT_PERIOD IS NOT NULL
-  ORDER BY STAT_PERIOD DESC;
-```
+  ORDER BY STAT_PERIOD DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

@@ -509,200 +509,188 @@ ORDER BY tc.PLAN_START_TIME DESC;
     <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击编辑按钮时，未选择数据或选择了多行<br><strong>逻辑分析：</strong>前端在执行编辑操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。编辑操作需要明确的目标特训营，未选择时无法确定操作对象，多选时操作对象不唯一</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码,
          CAMP_NAME AS 特训营名称,
          STATUS AS 状态
   FROM TRAIN_CAMP
-  ORDER BY CREATION_DATE DESC;
-```
+  ORDER BY CREATION_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请选择至少一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击删除或生效/失效按钮时，未选择任何数据<br><strong>逻辑分析：</strong>前端在执行批量操作前校验选中行数量，若 selectedRows.length &lt; 1 则阻止操作并提示"请选择至少一条数据"。删除和生效/失效支持批量操作，但至少需要一条目标数据</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码,
          CAMP_NAME AS 特训营名称,
          STATUS AS 状态
   FROM TRAIN_CAMP
-  WHERE STATUS IN ('draft', 'valid', 'invalid');
-```
+  WHERE STATUS IN ('draft', 'valid', 'invalid');</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前状态数据无法编辑！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击编辑按钮时，特训营状态不为 draft（草稿）<br><strong>逻辑分析：</strong>前端校验 STATUS = 'draft'，仅草稿状态的特训营允许编辑。生效（valid）或失效（invalid）状态的特训营已被经销商报名点将引用，编辑可能影响已发起的点将申请数据一致性，故限制编辑。校验不通过提示"当前状态数据无法编辑！"</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码,
          CAMP_NAME AS 特训营名称,
          STATUS AS 状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_CAMP
-  WHERE STATUS <> 'draft';
-```
+  WHERE STATUS &lt;&gt; 'draft';</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请选择报名结束时间</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>报名截止提交时，campsignEndTimeCode 字段为空<br><strong>逻辑分析：</strong>前端报名截止弹窗对 campsignEndTimeCode 字段配置 required 校验，提交前校验报名结束时间是否选择，为空则阻止提交并提示"请选择报名结束时间"。报名结束时间用于控制经销商报名截止时机，必须明确指定</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码,
          CAMP_NAME AS 特训营名称,
          TO_CHAR(PLAN_START_TIME,'YYYY-MM-DD') AS 计划开始时间,
          TO_CHAR(CAMPSIGN_END_TIME,'YYYY-MM-DD') AS 报名结束时间
   FROM TRAIN_CAMP
   WHERE STATUS = 'valid'
-    AND PLAN_START_TIME > SYSDATE
-    AND CAMPSIGN_END_TIME IS NULL;
-```
+    AND PLAN_START_TIME &gt; SYSDATE
+    AND CAMPSIGN_END_TIME IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用 mlt/trainCamp/* 系列接口时，后端返回 HTTP 状态码非 2xx<br><strong>逻辑分析：</strong>前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获（如生效时存在关联点将申请不允许失效）、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码,
          CAMP_NAME AS 特训营名称,
          STATUS AS 状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间,
          LAST_UPDATED_BY AS 最后更新人
   FROM TRAIN_CAMP
-  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称, STATUS AS 状态,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称, STATUS AS 状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_CAMP
-  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击新建、编辑、删除、生效/失效、报名截止等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%train_camp%' ORDER BY U.USER_NAME;
-```
+  WHERE P.PERMISSION_CODE LIKE '%train_camp%' ORDER BY U.USER_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>编辑、删除、生效/失效等操作时，接口返回数据为空或特训营编码不存在<br><strong>逻辑分析：</strong>前端通过 campCode 调用详情接口，后端查询 TRAIN_CAMP 表无对应记录或记录已逻辑删除，返回空数据。常见根因：特训营编码错误、特训营已被删除、跨租户查询、数据权限隔离等。需检查 CAMP_CODE 有效性及数据权限</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称,
          STATUS AS 状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_CAMP
-  WHERE DELETE_FLAG = 'Y' OR CAMP_CODE IS NULL;
-```
+  WHERE DELETE_FLAG = 'Y' OR CAMP_CODE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击生效/失效按钮时，特训营状态不允许该操作<br><strong>逻辑分析：</strong>后端校验状态机，如已生效不可再生效、已失效不可再失效、草稿不可直接失效等。状态不匹配时后端返回业务异常。需检查特训营当前状态及操作流程</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称,
          STATUS AS 状态, ERROR_INFO AS 异常问题
   FROM TRAIN_CAMP
   WHERE STATUS NOT IN ('draft','valid','invalid')
-  ORDER BY CREATE_DATE DESC;
-```
+  ORDER BY CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中特训营状态下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.TRAIN_CAMP_STATUS 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
-  </div>
-</div>
-
-```sql
-SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.TRAIN_CAMP_STATUS','MBO.CAMP_TYPE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
-```
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>特训营编码已存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新建特训营保存时，CAMP_CODE 已存在于 TRAIN_CAMP 表<br><strong>逻辑分析：</strong>后端校验 CAMP_CODE 唯一性，若已存在则返回业务异常。需更换特训营编码后保存</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码, COUNT(*) AS 重复数
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码, COUNT(*) AS 重复数
   FROM TRAIN_CAMP
   WHERE DELETE_FLAG = 'N'
   GROUP BY CAMP_CODE
-  HAVING COUNT(*) > 1;
-```
+  HAVING COUNT(*) &gt; 1;</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>报名结束时间必须晚于当前时间</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>报名截止提交时，CAMPSIGN_END_TIME &lt;= SYSDATE<br><strong>逻辑分析：</strong>后端校验报名结束时间必须晚于当前时间，否则经销商无法报名。需重新选择报名结束时间</div>
-  </div>
-</div>
-
-```sql
-SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称,
          TO_CHAR(CAMPSIGN_END_TIME,'YYYY-MM-DD') AS 报名结束时间,
          TO_CHAR(SYSDATE,'YYYY-MM-DD') AS 当前时间
   FROM TRAIN_CAMP
-  WHERE CAMPSIGN_END_TIME IS NOT NULL AND CAMPSIGN_END_TIME <= SYSDATE;
-```
+  WHERE CAMPSIGN_END_TIME IS NOT NULL AND CAMPSIGN_END_TIME &lt;= SYSDATE;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

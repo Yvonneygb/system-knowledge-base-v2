@@ -458,194 +458,183 @@ ORDER BY EC.CREATE_TIME DESC;
     <h4><span style="color:#7C3AED;">报错：</span>请先阅读并同意合同条款</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击签署按钮时，未勾选同意合同条款复选框<br><strong>逻辑分析：</strong>前端校验同意条款复选框是否勾选，未勾选则阻止签署并提示"请先阅读并同意合同条款"。确保经销商已阅读并确认合作条款，具备签署意愿的法律依据</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          AGENT_NAME AS 经销商
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS = 'waiting_sign'
-  ORDER BY CREATION_DATE DESC;
-```
+  ORDER BY CREATION_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请填写拒签原因</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>拒签提交时，REFUSE_REASON 字段为空<br><strong>逻辑分析：</strong>前端拒签弹窗对 refuseReason 字段配置 required 校验，提交前校验拒签原因是否填写，为空则阻止提交并提示"请填写拒签原因"。拒签原因用于记录经销商拒签依据，便于品牌方后续处理</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          REFUSE_REASON AS 拒签原因,
          TO_CHAR(SIGN_TIME,'YYYY-MM-DD HH24:MI:SS') AS 签署时间
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS = 'refuse_seal'
-    AND (REFUSE_REASON IS NULL OR REFUSE_REASON = '');
-```
+    AND (REFUSE_REASON IS NULL OR REFUSE_REASON = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同PDF生成中，请稍后</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>下载合同PDF时，合同已完成但PDF未生成<br><strong>逻辑分析：</strong>前端校验 PDF_URL 字段非空，若为空说明PDF异步生成未完成，提示"合同PDF生成中，请稍后"。合同PDF由签署完成后异步生成，通常几秒内完成，刷新页面后重试即可</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          PDF_URL AS 合同PDF地址,
          TO_CHAR(SIGN_TIME,'YYYY-MM-DD HH24:MI:SS') AS 签署时间
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS IN ('signed', 'completed')
-    AND (PDF_URL IS NULL OR PDF_URL = '');
-```
+    AND (PDF_URL IS NULL OR PDF_URL = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>签署服务不可用</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用电子签章接口时，签章系统异常<br><strong>逻辑分析：</strong>后端调用电子签章系统接口，若签章服务不可用、网络异常、签章参数错误等则接口返回失败，提示"签署服务不可用"。需联系运维检查签章系统运行状态、网络连通性、签章服务配置</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          AGENT_NAME AS 经销商,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS = 'waiting_sign'
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>签署异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用签章接口时，返回非成功状态<br><strong>逻辑分析：</strong>后端调用签章接口，若签章流程异常、签署人信息错误、合同内容异常、签章服务超时等则接口返回非成功状态，提示"签署异常: &#123;具体错误信息&#125;"。需检查签章服务日志、签署人信息、合同内容完整性</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
          CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          AGENT_NAME AS 经销商,
          SIGN_URL AS 签署链接
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS = 'waiting_sign'
-    AND (SIGN_URL IS NULL OR SIGN_URL = '');
-```
+    AND (SIGN_URL IS NULL OR SIGN_URL = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、签章系统响应慢等。需检查网络连通性、后端服务负载、签章系统状态</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
-  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击签署、拒签等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%electronic_contract%' ORDER BY U.USER_NAME;
-```
+  WHERE P.PERMISSION_CODE LIKE '%electronic_contract%' ORDER BY U.USER_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查看、签署等操作时，接口返回数据为空或合同编码不存在<br><strong>逻辑分析：</strong>前端通过 contractCode 调用详情接口，后端查询 ELECTRONIC_CONTRACT 表无对应记录或记录已逻辑删除，返回空数据。常见根因：合同编码错误、合同已被删除、跨租户查询、数据权限隔离等。需检查 ELECTRONIC_CONTRACT_CODE 有效性及数据权限</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态, DELETE_FLAG AS 删除标记
   FROM ELECTRONIC_CONTRACT
-  WHERE DELETE_FLAG = 'Y' OR ELECTRONIC_CONTRACT_CODE IS NULL;
-```
+  WHERE DELETE_FLAG = 'Y' OR ELECTRONIC_CONTRACT_CODE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击签署、拒签等按钮时，合同状态不允许该操作<br><strong>逻辑分析：</strong>后端校验状态机，如已签署（signed）不可重复签署、已完成（completed）不可拒签等。状态不匹配时后端返回业务异常。需检查合同当前状态及操作流程</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态, ERROR_INFO AS 异常问题
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS NOT IN ('waiting_sign','signed','completed','refuse_seal')
-  ORDER BY CREATE_DATE DESC;
-```
+  ORDER BY CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中合同状态等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.CONTRACT_STATUS 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
-  </div>
-</div>
-
-```sql
-SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.CONTRACT_STATUS','MBO.CONTRACT_TYPE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
-```
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>短信验证码错误</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>签署验证时，短信验证码输入错误或已过期<br><strong>逻辑分析：</strong>后端校验短信验证码与发送记录是否一致且在有效期内，校验失败则返回业务异常。需重新获取验证码后输入</div>
-  </div>
-</div>
-
-```sql
-SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, AGENT_NAME AS 经销商,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, AGENT_NAME AS 经销商,
          SMS_SEND_TIME AS 短信发送时间, SMS_EXPIRE_TIME AS 短信过期时间,
          VERIFY_STATUS AS 验证状态
   FROM ELECTRONIC_CONTRACT_SMS
   WHERE VERIFY_STATUS = 'fail'
-    AND SMS_SEND_TIME >= SYSDATE - 1
-  ORDER BY SMS_SEND_TIME DESC;
-```
+    AND SMS_SEND_TIME &gt;= SYSDATE - 1
+  ORDER BY SMS_SEND_TIME DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

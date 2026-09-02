@@ -220,72 +220,67 @@
     <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户按合同/产品查询合同出货完成率明细，searchContractInvRate接口返回空结果集<br><strong>逻辑分析：</strong>明细报表为完成率报表（菜单108）的下钻视图，通过searchContractDetailWithSubtotal接口按合同维度展示出货完成率明细，完成率=已出货数量/合同任务数量×100%，含小计行。无数据根因有三类：(1)选中的合同无出货数据（DELIVERY_AMT为0或出库单未生成）；(2)合同任务数量为0（合同未配置任务明细行）；(3)产品/合同筛选条件与记录不匹配。需先确认合同是否有出库单及任务明细</div>
-  </div>
-</div>
-
-```sql
-SELECT CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME,
          TASK_AMT, DELIVERY_AMT,
-         CASE WHEN TASK_AMT > 0 THEN ROUND(DELIVERY_AMT / TASK_AMT * 100, 2) ELSE 0 END AS 完成率
+         CASE WHEN TASK_AMT &gt; 0 THEN ROUND(DELIVERY_AMT / TASK_AMT * 100, 2) ELSE 0 END AS 完成率
   FROM EPM_PROJECT_CONTRACT
   WHERE (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
-  ORDER BY CONTRACT_CODE;
-```
+  ORDER BY CONTRACT_CODE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>导出失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"导出"按钮，exportContractInvRate接口返回空数据集或抛出异常<br><strong>逻辑分析：</strong>导出接口exportContractInvRate基于searchContractDetailWithSubtotal同一查询逻辑（ContractInvRateConvert.INSTANCE.toExportVO），若查询结果集为空则导出文件无内容；若导出过程中后端服务异常（如内存溢出、LOV翻译失败@ProcessLovValue）也会失败。前端通过ExcelExportCom组件触发导出，需先执行查询确认有数据再导出</div>
-  </div>
-</div>
-
-```sql
-SELECT COUNT(*) AS 可导出记录数
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 可导出记录数
   FROM EPM_PROJECT_CONTRACT
   WHERE (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
-    AND TASK_AMT IS NOT NULL;
-```
+    AND TASK_AMT IS NOT NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用contractReport/epm-project-contract/searchContractInvRate或exportContractInvRate接口时，axios请求超时或返回非2xx状态码<br><strong>逻辑分析：</strong>报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。前端index.tsx通过DataSet.query()发起请求，失败时控制台输出"获取图表数据失败"日志。需确认ae-report服务状态及网关配置</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 确认报表服务数据源连通性（间接验证服务可用性）
+  SELECT COUNT(*) AS 合同总记录数 FROM EPM_PROJECT_CONTRACT;</code></pre></div>
 </div>
 
-```sql
--- 确认报表服务数据源连通性（间接验证服务可用性）
-  SELECT COUNT(*) AS 合同总记录数 FROM EPM_PROJECT_CONTRACT;
-```
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户角色未配置报表查询权限（PERMISSION_PREFIX.arrow-ae:contractInvRate），访问页面时被拦截<br><strong>逻辑分析：</strong>报表页面通过permissionList控制访问权限，用户无对应权限码时无法进入页面或调用接口。需在角色管理中为用户分配"合同任务完成率明细报表"查询权限</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 查询用户角色权限（示意，实际表名依权限框架）
+  SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
+  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractInvRate%';</code></pre></div>
 </div>
 
-```sql
--- 查询用户角色权限（示意，实际表名依权限框架）
-  SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
-  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractInvRate%';
-```
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>必填查询条件为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户未填写年度（POLICY_YEAR）或合同编码（CONTRACT_CODE）等必填查询条件直接点击查询<br><strong>逻辑分析：</strong>YearMonthContractRateDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端QueryDS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT DISTINCT POLICY_YEAR FROM EPM_PROJECT_CONTRACT
+  WHERE POLICY_YEAR IS NOT NULL ORDER BY POLICY_YEAR DESC;</code></pre></div>
 </div>
 
-```sql
-SELECT DISTINCT POLICY_YEAR FROM EPM_PROJECT_CONTRACT
-  WHERE POLICY_YEAR IS NOT NULL ORDER BY POLICY_YEAR DESC;
-```
+
 </KbCard>
 
 <KbCard title="常见问题">

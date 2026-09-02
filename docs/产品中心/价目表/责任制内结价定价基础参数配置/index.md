@@ -464,57 +464,53 @@ WHERE T1.TOP_CATEGORY = #{topCategory}
     <h4><span style="color:#7C3AED;">报错：</span>一级分类不能为空！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，未选择一级分类（TOP_CATEGORY字段）<br><strong>逻辑分析：</strong>后端validateRequiredFields方法校验TOP_CATEGORY非空。一级分类是定价配置的基础维度，必填。</div>
-  </div>
-</div>
-
-```sql
-SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
          C.THR_CATEGORY AS 三级分类, C.PRICE_TYPE AS 定价类型
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.TOP_CATEGORY IS NULL;
-```
+  WHERE C.ID = :configId AND C.TOP_CATEGORY IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>二级分类不能为空！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，未选择二级分类（SEC_CATEGORY字段）<br><strong>逻辑分析：</strong>后端校验SEC_CATEGORY非空。二级分类级联一级分类，必填。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类
+  FROM LNK_PM_RSP_STM_CFG C
+  WHERE C.ID = :configId AND C.SEC_CATEGORY IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类
-  FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.SEC_CATEGORY IS NULL;
-```
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>三级分类不能为空！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，未选择三级分类（THR_CATEGORY字段）<br><strong>逻辑分析：</strong>后端校验THR_CATEGORY非空。三级分类级联二级分类，必填。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.SEC_CATEGORY AS 二级分类, C.THR_CATEGORY AS 三级分类
+  FROM LNK_PM_RSP_STM_CFG C
+  WHERE C.ID = :configId AND C.THR_CATEGORY IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT C.ID, C.SEC_CATEGORY AS 二级分类, C.THR_CATEGORY AS 三级分类
-  FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.THR_CATEGORY IS NULL;
-```
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>定价类型不能为空！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，未选择定价类型（PRICE_TYPE字段）<br><strong>逻辑分析：</strong>后端校验PRICE_TYPE非空。定价类型决定定价计算方式，必填。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.PRICE_TYPE AS 定价类型
+  FROM LNK_PM_RSP_STM_CFG C
+  WHERE C.ID = :configId AND C.PRICE_TYPE IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.PRICE_TYPE AS 定价类型
-  FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.PRICE_TYPE IS NULL;
-```
+
 <blockquote><strong>"当前定价类型下，定价比例不能为空！"详细逻辑</strong>：
 后端validateProportion方法，当priceType为base_gross_margin或standard_price_ratio且proportion为null时抛出异常。
 排查SQL：</blockquote>
@@ -541,95 +537,88 @@ HAVING COUNT(*) > 1;
     <h4><span style="color:#7C3AED;">报错：</span>保存失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，后端接口返回res.failed=true或抛出CommonException<br><strong>逻辑分析：</strong>前端detail.tsx中handleSave调用rspStmCfgApi.save后，若res.failed为true则通过commonFn_showErrMsg展示后端错误信息。常见于后端校验异常（分类唯一性、必填校验）被前端捕获并展示。</div>
-  </div>
-</div>
-
-```sql
-SELECT C.ROW_ID AS 配置ID, C.RSP_STM_CODE AS 配置编码, C.STATUS AS 状态,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ROW_ID AS 配置ID, C.RSP_STM_CODE AS 配置编码, C.STATUS AS 状态,
          C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
          C.THR_CATEGORY AS 三级分类, C.FOUR_CATEGORY AS 四级分类
   FROM LNK_PM_RSP_STM_CFG C
   WHERE C.STATUS = 'valid'
-  ORDER BY C.LAST_UPDATE_DATE DESC;
-```
+  ORDER BY C.LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>保存异常，请稍后重试</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，请求抛出异常进入catch块<br><strong>逻辑分析：</strong>前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;
-```
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询或详情页加载时，接口请求异常<br><strong>逻辑分析：</strong>前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmCfg接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。常见于数据库连接异常、SQL执行错误。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 总记录数 FROM LNK_PM_RSP_STM_CFG;</code></pre></div>
 </div>
 
-```sql
-SELECT COUNT(1) AS 总记录数 FROM LNK_PM_RSP_STM_CFG;
-```
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问页面或点击按钮时，未拥有对应权限编码<br><strong>逻辑分析：</strong>前端Button组件通过permissionList配置权限编码（如hzero.product_data.rsp_stm.cfg.ps.add、hzero.product_data.rsp_stm.cfg.ps.import、hzero.product_data.rsp_stm.cfg.ps.export），HZERO平台校验当前用户角色是否包含该权限编码，未包含则按钮不可见或不可点击。</div>
-  </div>
-</div>
-
-```sql
-SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
   FROM HZERO.IAM_USER U
     JOIN HZERO.IAM_MEMBER M ON U.ID = M.MEMBER_ID
     JOIN HZERO.IAM_ROLE R ON M.ROLE_ID = R.ID
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
-  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.cfg.ps.%';
-```
+  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.cfg.ps.%';</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询结果为空集<br><strong>逻辑分析：</strong>前端Table组件查询后端返回content为空数组或totalElements=0时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 记录数 FROM LNK_PM_RSP_STM_CFG WHERE STATUS = 'valid';</code></pre></div>
 </div>
 
-```sql
-SELECT COUNT(1) AS 记录数 FROM LNK_PM_RSP_STM_CFG WHERE STATUS = 'valid';
-```
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态失效或Token过期<br><strong>逻辑分析：</strong>HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。常见于长时间未操作或单点登录会话超时。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
-```
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前有未保存的更改，确定要离开吗？</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>编辑模式下点击返回按钮<br><strong>逻辑分析：</strong>前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
-```
+
 </KbCard>
 
 <KbCard title="常见问题">

@@ -253,276 +253,258 @@
     <h4><span style="color:#7C3AED;">报错：</span>兑现单不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询工程服务费兑现单详情时，按CASH_NO查询EPM_SERVICE_FEE_CASH返回null<br><strong>逻辑分析：</strong>详情方法中按CASH_NO查询兑现单，若返回null则抛出阻断性报错。需检查兑现单号有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.PROJECT_CODE, esfc.CONTRACT_CODE, esfc.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.PROJECT_CODE, esfc.CONTRACT_CODE, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_NO = :cashNo
-  -- 若返回空，说明兑现单不存在
-```
+  -- 若返回空，说明兑现单不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>兑现金额超过可兑现金额</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程服务费兑现申请时，兑现金额超过剩余可兑现金额<br><strong>逻辑分析：</strong>提交校验中按PROJECT_CODE和CONTRACT_CODE查询剩余可兑现金额(已认领服务费-已兑现金额)，若本次兑现金额&gt;剩余则抛出阻断性报错。需调整兑现金额</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT, esfc.PROJECT_CODE, esfc.CONTRACT_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT, esfc.PROJECT_CODE, esfc.CONTRACT_CODE,
          esfc.TOTAL_SERVICE_FEE, esfc.CASHED_AMOUNT,
          esfc.TOTAL_SERVICE_FEE - esfc.CASHED_AMOUNT AS 剩余可兑现金额
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_NO = :cashNo
-  -- 对比兑现金额与剩余可兑现金额
-```
+  -- 对比兑现金额与剩余可兑现金额</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>删除工程服务费兑现单时，单据HZ_APPROVE_STATUS非NEW<br><strong>逻辑分析：</strong>删除方法中校验单据状态为NEW，其他状态不允许删除。该报错为阻断性报错</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS, esfc.VALID
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS, esfc.VALID
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'
-```
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>兑现类型无效，请重新选择报销单</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程服务费兑现单时，兑现类型字段值无效<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl保存校验方法中(line 401)，校验兑现类型字段，若值无效则抛出CommonException("兑现类型无效，请重新选择报销单")。需重新选择报销单以确定兑现类型</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_TYPE, esfc.PROJECT_CODE
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_TYPE, esfc.PROJECT_CODE
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查CASH_TYPE字段值是否在有效范围内
-```
+  -- 检查CASH_TYPE字段值是否在有效范围内</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次兑现金额不能小于等于0，请确认出库明细是否认领</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程服务费兑现单时，兑现金额≤0且出库明细未认领<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl保存校验方法中(line 415)，校验本次兑现金额，若≤0则抛出CommonException("本次兑现金额不能小于等于0，请确认出库明细是否认领")。需确认出库明细已完成认领</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT, esfc.PROJECT_CODE
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT, esfc.PROJECT_CODE
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT <= 0)
-```
+    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>以下正数报销单明细兑现金额不足：xxx</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程服务费兑现单时，正数报销单明细剩余兑现金额不足<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl保存校验方法中(line 457)，遍历正数报销单明细检查剩余兑现金额，若不足则拼接错误信息抛出CommonException("以下正数报销单明细兑现金额不足：" + errorMsg)。需调整兑现金额或增加报销单明细</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT, esfc.PROJECT_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT, esfc.PROJECT_CODE,
          esfc.TOTAL_SERVICE_FEE, esfc.CASHED_AMOUNT,
          esfc.TOTAL_SERVICE_FEE - esfc.CASHED_AMOUNT AS 剩余可兑现金额
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_NO = :cashNo
-    AND esfc.CASH_AMOUNT > (esfc.TOTAL_SERVICE_FEE - esfc.CASHED_AMOUNT)
-```
+    AND esfc.CASH_AMOUNT &gt; (esfc.TOTAL_SERVICE_FEE - esfc.CASHED_AMOUNT)</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请联系管理员检查该事业部是否设置了主要的销售主体</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程服务费兑现单时，事业部未配置主要销售主体<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl保存方法中(line 507)，查询事业部主要销售主体配置，若未配置则抛出CommonException("请联系管理员检查该事业部是否设置了主要的销售主体")。需联系管理员配置事业部销售主体</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.PROJECT_CODE, esfc.DIVISION_ID
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.PROJECT_CODE, esfc.DIVISION_ID
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查事业部销售主体配置表是否存在该事业部配置
-```
+  -- 检查事业部销售主体配置表是否存在该事业部配置</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程启动异常：请传入单据id</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程服务费兑现审批时，未传入单据ID<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl流程启动方法中(line 711)，校验单据ID参数，若为空则抛出CommonException("流程启动异常：请传入单据id")。需检查前端传参完整性</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查单据ID是否有效
-```
+  -- 检查单据ID是否有效</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程启动异常：单据查询异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程服务费兑现审批时，按单据ID查询兑现单返回null<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl流程启动方法中(line 640/673/682/715)，按单据ID查询兑现单，若返回null则抛出CommonException("流程启动异常：单据查询异常")。需检查单据ID有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 若返回空，说明单据不存在
-```
+  -- 若返回空，说明单据不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程启动异常：本次申请金额必须大于0</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程服务费兑现审批时，本次申请金额≤0<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl流程启动方法中(line 719)，校验本次申请金额，若≤0则抛出CommonException("流程启动异常：本次申请金额必须大于0")。需调整申请金额</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT <= 0)
-```
+    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>已结算工程服务费：xxx元加复核申请金额：xxx元，已超报销的核算金额：xxx元，请检查！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程服务费兑现审批时，已结算服务费+复核申请金额&gt;报销核算金额<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl流程启动方法中(line 733)，校验已结算工程服务费+复核申请金额是否超过报销核算金额，若超过则抛出CommonException格式化报错。需调整复核申请金额</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT AS 复核申请金额,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT AS 复核申请金额,
          esfc.SETTLED_AMOUNT AS 已结算服务费, esfc.ACC_AMOUNT AS 报销核算金额,
          esfc.SETTLED_AMOUNT + esfc.CASH_AMOUNT AS 合计金额
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND esfc.SETTLED_AMOUNT + esfc.CASH_AMOUNT > esfc.ACC_AMOUNT
-```
+    AND esfc.SETTLED_AMOUNT + esfc.CASH_AMOUNT &gt; esfc.ACC_AMOUNT</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前项目盈余：xxx元，小于复核申请金额：xxx元，无法兑现！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程服务费兑现审批时，项目盈余&lt;复核申请金额<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl流程启动方法中(line 740)，校验项目盈余是否大于等于复核申请金额，若小于则抛出CommonException格式化报错。需调整复核申请金额</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT AS 复核申请金额,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT AS 复核申请金额,
          esfc.PROJECT_BALANCE AS 项目盈余
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND esfc.PROJECT_BALANCE < esfc.CASH_AMOUNT
-```
+    AND esfc.PROJECT_BALANCE &lt; esfc.CASH_AMOUNT</code></pre></div>
+</div>
+
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据推送共享异常：请传入单据id</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>兑现单推送共享中心时，未传入单据ID<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl推送共享方法中(line 755)，校验单据ID参数，若为空则抛出CommonException("单据推送共享异常：请传入单据id")。需检查前端传参完整性</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
+  FROM EPM_SERVICE_FEE_CASH esfc
+  WHERE esfc.CASH_ID = :cashId</code></pre></div>
 </div>
 
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
-  FROM EPM_SERVICE_FEE_CASH esfc
-  WHERE esfc.CASH_ID = :cashId
-```
+
 <div id="err-detail-14" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据推送共享异常：单据查询异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>兑现单推送共享中心时，按单据ID查询兑现单返回null<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl推送共享方法中(line 759)，按单据ID查询兑现单，若返回null则抛出CommonException("单据推送共享异常：单据查询异常")。需检查单据ID有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 若返回空，说明单据不存在
-```
+  -- 若返回空，说明单据不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-15" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据推送共享异常：本次申请金额必须大于0</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>兑现单推送共享中心时，本次申请金额≤0<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl推送共享方法中(line 763)，校验本次申请金额，若≤0则抛出CommonException("单据推送共享异常：本次申请金额必须大于0")。需调整申请金额</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT <= 0)
-```
+    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)</code></pre></div>
+</div>
+
+
 <div id="err-detail-16" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据推送共享异常：请传入节点审批人信息</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>兑现单推送共享中心时，未传入节点审批人信息<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl推送共享方法中(line 767)，校验节点审批人信息参数，若为空则抛出CommonException("单据推送共享异常：请传入节点审批人信息")。需检查审批人配置</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查审批人配置是否完整
-```
+  -- 检查审批人配置是否完整</code></pre></div>
+</div>
+
+
 <div id="err-detail-17" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据推送共享异常：共享接口返回数据为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>兑现单推送共享中心时，共享中心接口返回空数据<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl推送共享方法中(line 775)，调用共享中心接口后校验返回数据，若为空则抛出CommonException("单据推送共享异常：共享接口返回数据为空")。需检查共享中心服务状态</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查共享中心服务连通性
-```
+  -- 检查共享中心服务连通性</code></pre></div>
+</div>
+
+
 <div id="err-detail-18" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送数据到共享异常：查找申请人OA信息未空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>兑现单推送共享中心时，申请人OA信息未配置<br><strong>逻辑分析：</strong>在EpmExpenseToCashServiceImpl推送共享方法中(line 808)，查找申请人OA账号信息，若为空则抛出CommonException("推送数据到共享异常：查找申请人OA信息未空")。需联系管理员维护申请人OA账号</div>
-  </div>
-</div>
-
-```sql
-SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CREATED_BY
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CREATED_BY
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查申请人OA账号是否已配置
-```
+  -- 检查申请人OA账号是否已配置</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

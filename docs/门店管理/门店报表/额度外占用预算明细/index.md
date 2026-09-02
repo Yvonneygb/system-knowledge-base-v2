@@ -429,30 +429,26 @@ WHERE bod.occupy_amt > 0                                       -- 只展示占�
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，按当前查询条件（事业部、预算年度、门店编码、经销商编码、开票单位编码、交易公司编码等）查询4段UNION ALL返回空结果集<br><strong>逻辑分析：</strong>报表通过4段UNION ALL分别统计终端费用申请占用（VIEW_OCCUPY_AMT，afh_stat=APPROVED/RUN且cbh_stat=NEW）、兑付占用（cbh_stat=RUN）、兑付超额占用（trc_stat=APPROVED）、大客户DH报销占用（CUST_DH_REIMBURSE_HEAD+CUST_DH_CASHOUT_HEAD，HZ_APPROVE_STATUS IN RUN/APPROVED/REBUT），外层过滤occupy_amt&gt;0。若查询条件过严、或所有占用金额&lt;=0被过滤、或预算年度下无占用记录、或事业部ID通过子查询转换失败（DIVISION_BASE_SET无匹配），均会返回空结果。该报错为提示性。</div>
-  </div>
-</div>
-
-```sql
-SELECT bud_year            AS 预算年度,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT bud_year            AS 预算年度,
          division_id         AS 事业部ID,
          occupy_amt          AS 占用金额,
          apply_code          AS 申请单号,
          cust_code           AS 经销商编码
   FROM   view_occupy_amt
-  WHERE  occupy_amt > 0
-  ORDER  BY bud_year DESC;
-```
+  WHERE  occupy_amt &gt; 0
+  ORDER  BY bud_year DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>大客户DH报销占用计算异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询结果展示时，CUST_DH_CASHOUT_HEAD中存在REIMBURSE_HEAD_ID关联不到CUST_DH_REIMBURSE_HEAD的记录，LEFT JOIN导致t2.YEAR为NULL<br><strong>逻辑分析：</strong>第4段UNION ALL计算大客户DH报销占用时，通过LEFT JOIN CUST_DH_CASHOUT_HEAD关联CUST_DH_REIMBURSE_HEAD，并计算跨年度兑付占用（<code>t.YEAR &lt;&gt; t2.YEAR</code>）。若CUST_DH_CASHOUT_HEAD.REIMBURSE_HEAD_ID指向已删除的报销单（孤儿数据）、或REIMBURSE_HEAD_ID字段值错误、或数据迁移产生脏数据，LEFT JOIN后t2（报销单）字段为NULL，<code>t.YEAR &lt;&gt; t2.YEAR</code>条件中NULL参与比较结果为UNKNOWN，导致跨年度兑付占用金额计算错误（漏统计或错统计），报表数据异常。</div>
-  </div>
-</div>
-
-```sql
-SELECT c.cashout_no            AS 兑付单号,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.cashout_no            AS 兑付单号,
          c.reimburse_head_id     AS 关联报销单ID,
          c.year                  AS 兑付年度,
          c.out_cashout_apply_amt AS 额度外兑付申请金额,
@@ -461,54 +457,53 @@ SELECT c.cashout_no            AS 兑付单号,
   LEFT   JOIN cust_dh_reimburse_head t ON c.reimburse_head_id = t.id
   WHERE  c.reimburse_head_id IS NOT NULL
   AND    t.id IS NULL
-  ORDER  BY c.created DESC;
-```
+  ORDER  BY c.created DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败/接口调用异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/bud-over-budget-report/search或GET /bud-over-budget-report/export接口时，前端未收到响应或收到非2xx状态码（如500、502、504）<br><strong>逻辑分析：</strong>本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.budOverBudgetSearch接口分页查询4段UNION ALL（VIEW_OCCUPY_AMT视图+CUST_DH_REIMBURSE_HEAD+CUST_DH_CASHOUT_HEAD）。若后端ae-report服务未启动、Oracle数据库连接异常、VIEW_OCCUPY_AMT视图编译错误、4段UNION ALL导致慢SQL、子查询division_base_set转换失败、网络中断、或网关转发失败，均会导致接口调用异常。因UNION ALL结构复杂，该接口对数据库性能敏感。需检查后端服务健康状态、数据库连接、视图状态、网络连通性。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 占用记录总数
+  FROM   view_occupy_amt
+  WHERE  out_apply_amt &gt; 0
+  OR     out_can_bx_amt &gt; 0
+  OR     out_sur_bx_amt &gt; 0;</code></pre></div>
 </div>
 
-```sql
-SELECT COUNT(*)            AS 占用记录总数
-  FROM   view_occupy_amt
-  WHERE  out_apply_amt > 0
-  OR     out_can_bx_amt > 0
-  OR     out_sur_bx_amt > 0;
-```
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足/未登录</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre></div>
 </div>
 
-```sql
-SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;
-```
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>导出失败：网络异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/terminalReport/bud-over-budget-report/export接口过程中，网络中断、后端响应超时或Excel文件流传输中断<br><strong>逻辑分析：</strong>导出接口通过@ExcelExport(value = BudOverBudgetExportVO.class, asyncThreshold = 10000)注解实现Excel导出，超过1万条数据异步导出。后端先全量查询4段UNION ALL数据再生成Excel文件流返回。若查询数据量较大导致响应超时、或异步导出任务排队失败、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定预算年度、事业部）减少数据量。</div>
-  </div>
-</div>
-
-```sql
-SELECT bud_year            AS 预算年度,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT bud_year            AS 预算年度,
          COUNT(*)            AS 占用记录数
   FROM   view_occupy_amt
-  WHERE  out_apply_amt > 0
+  WHERE  out_apply_amt &gt; 0
   GROUP  BY bud_year
-  ORDER  BY bud_year DESC;
-```
+  ORDER  BY bud_year DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 </div>

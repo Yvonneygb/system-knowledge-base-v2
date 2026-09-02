@@ -363,260 +363,243 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
     <h4><span style="color:#7C3AED;">报错：</span>经销商不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户在新建/编辑页未选择经销商直接点击保存<br><strong>逻辑分析：</strong>保存接口sa-sale-contract-heads/save在写入SA_SALE_CONTRACT_HEAD前校验CUSTOMER_ID非空。经销商是年度经销合同的核心主体，未选择经销商将导致后续交易公司、事业部、销售区域无法带出，合同任务拆分和保证金关联也无从执行。校验在Controller层前置拦截，toast提示后阻断保存</div>
-  </div>
-</div>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_ID, CUSTOMER_NAME,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_ID, CUSTOMER_NAME,
          CONTRACT_YEAR, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE CUSTOMER_ID IS NULL OR CUSTOMER_NAME IS NULL;
-```
+  WHERE CUSTOMER_ID IS NULL OR CUSTOMER_NAME IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>区域校验失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，workFlowStartValid方法调用doCheckAreaNew/doCheckArea校验区域不通过<br><strong>逻辑分析：</strong>提交前通过doCheckAreaNew/doCheckArea方法校验经销商在选定销售区域（SALE_AREA）内的合法性，确保合同授权区域与经销商实际授权区域一致。校验失败根因有三类：(1)经销商在选定区域无销售授权（经销商主数据中未配置该区域）；(2)合同销售区域与经销商授权区域不匹配；(3)区域数据未维护或已失效。此为阻断性报错，阻止OA流程（DISTRIBUTION_CONTRACT_DKHB）发起，需重新选择区域或联系主数据维护经销商授权区域</div>
-  </div>
-</div>
-
-```sql
-SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.SALE_AREA, S.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.SALE_AREA, S.HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD S
   WHERE S.SALE_CONTRACT_HEAD_ID = #{id}
     AND S.HZ_APPROVE_STATUS IN ('NEW', 'RUN');
   -- 核查经销商授权区域（经销商主数据，具体表名以主数据为准）
   SELECT CUSTOMER_CODE, CUSTOMER_NAME, SALE_AREA, ENABLED
   FROM CUSTOMER_SALE_AREA
-  WHERE CUSTOMER_CODE = #{customerCode};
-```
+  WHERE CUSTOMER_CODE = #{customerCode};</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，workFlowStartValid方法校验OA流程编码为空<br><strong>逻辑分析：</strong>年度经销合同提交需发起OA审批流程（DISTRIBUTION_CONTRACT_DKHB）。SaSaleContractHeadServiceImpl在saveAndSubmit中校验流程编码非空，流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置DISTRIBUTION_CONTRACT_DKHB流程编码；(2)合同类型未关联对应流程编码。需在流程配置中维护对应关系</div>
-  </div>
-</div>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CONTRACT_TYPE, HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CONTRACT_TYPE, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
   WHERE SALE_CONTRACT_HEAD_ID = #{id}
-    AND HZ_APPROVE_STATUS = 'NEW';
-```
+    AND HZ_APPROVE_STATUS = 'NEW';</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同ID为空，请检查</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户编辑或提交合同时，SALE_CONTRACT_HEAD_ID参数为空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl在更新、提交、归档等操作前校验合同ID非空。合同ID是主键，缺失将导致无法定位合同记录，后续所有操作均无法执行。通常由前端未正确传入选中记录ID导致</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE SALE_CONTRACT_HEAD_ID IS NULL OR SALE_CONTRACT_HEAD_ID = 0;</code></pre></div>
 </div>
 
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, HZ_APPROVE_STATUS
-  FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID IS NULL OR SALE_CONTRACT_HEAD_ID = 0;
-```
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前合同有效结束时间小于当前时间，不允许新建</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户新建合同时，填写的合同结束日期小于当前系统日期<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl校验合同结束日期（END_DATE）必须大于等于当前日期。结束日期已过期意味着合同生效即失效，无业务意义。校验在保存前拦截，toast提示后阻断保存。需修改合同结束日期为未来日期</div>
-  </div>
-</div>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE,
          HZ_APPROVE_STATUS, SYSDATE AS 当前日期
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE END_DATE < SYSDATE
-    AND HZ_APPROVE_STATUS = 'NEW';
-```
+  WHERE END_DATE &lt; SYSDATE
+    AND HZ_APPROVE_STATUS = 'NEW';</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同有效开始时间必须小于等于结束时间</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户填写的合同开始日期大于结束日期<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl校验START_DATE &lt;= END_DATE。开始日期大于结束日期违反时间逻辑，合同有效期区间为空。校验在保存前拦截，需重新确认合同起止日期</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE, HZ_APPROVE_STATUS
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE START_DATE &gt; END_DATE;</code></pre></div>
 </div>
 
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE, HZ_APPROVE_STATUS
-  FROM SA_SALE_CONTRACT_HEAD
-  WHERE START_DATE > END_DATE;
-```
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同开始日期须为月度第一天</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户填写的合同开始日期非月初（如2026-08-15）<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl校验合同开始日期必须为月度第一天（如yyyy-MM-01）。经销合同按月度维度拆分任务和结算，非月初将导致月度任务拆分异常。校验在保存前拦截，需将开始日期调整为月初</div>
-  </div>
-</div>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE,
          EXTRACT(DAY FROM START_DATE) AS 开始日
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE EXTRACT(DAY FROM START_DATE) != 1;
-```
+  WHERE EXTRACT(DAY FROM START_DATE) != 1;</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>法人编码不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户选择经销商后保存合同，根据经销商查询法人编码返回空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl根据经销商CUSTOMER_ID查询法人主数据，若经销商未配置法人关联或法人编码（CORPORATE_CODE）在主数据中不存在，将抛出此异常。法人编码是合同归档、CRM推送的关键标识。需在经销商主数据中维护法人关联</div>
-  </div>
-</div>
-
-```sql
-SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.CUSTOMER_ID, S.CUSTOMER_NAME,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.CUSTOMER_ID, S.CUSTOMER_NAME,
          C.CORPORATE_CODE, C.CORPORATE_NAME
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN CUSTOMER C ON S.CUSTOMER_ID = C.CUSTOMER_ID
-  WHERE C.CORPORATE_CODE IS NULL;
-```
+  WHERE C.CORPORATE_CODE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>关联合同不存在，请稍后再试</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户保存合同时，关联的母合同或关联合同在SA_SALE_CONTRACT_HEAD中查询不到<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl校验关联合同存在性。关联合同不存在根因有三类：(1)母合同已被删除；(2)母合同ID传入错误；(3)数据同步延迟（母合同在CRM侧创建但未同步到AE）。需确认母合同存在且已同步</div>
-  </div>
-</div>
-
-```sql
-SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.PARENT_CONTRACT_ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.PARENT_CONTRACT_ID,
          P.CONTRACT_NO AS 母合同编号, P.HZ_APPROVE_STATUS AS 母合同状态
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN SA_SALE_CONTRACT_HEAD P ON S.PARENT_CONTRACT_ID = P.SALE_CONTRACT_HEAD_ID
-  WHERE S.PARENT_CONTRACT_ID IS NOT NULL AND P.SALE_CONTRACT_HEAD_ID IS NULL;
-```
+  WHERE S.PARENT_CONTRACT_ID IS NOT NULL AND P.SALE_CONTRACT_HEAD_ID IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>提前结束合同，必须为合同结束日期前至少一整月</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户对已生效合同执行提前结束操作，提前结束日期不满足整月要求<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl校验提前结束合同的操作，要求提前结束日期必须在原合同结束日期前至少一整月。此校验确保月度任务拆分和结算完整。需调整提前结束日期至整月前</div>
-  </div>
-</div>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE,
          ACTUAL_END_DATE, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
   WHERE ACTUAL_END_DATE IS NOT NULL
-    AND ADD_MONTHS(ACTUAL_END_DATE, 1) > END_DATE;
-```
+    AND ADD_MONTHS(ACTUAL_END_DATE, 1) &gt; END_DATE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前已存在同类型经销合同，无法再签订</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户新建合同时，校验发现当前经销商在经销期限内已存在同合同类型的有效合同<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl校验同一经销商在同一经销期限内不允许签订同类型的多个经销合同。重复签订将导致保证金重复计算、任务重复拆分。需调整合同期限或变更合同类型，或先终止已有合同</div>
-  </div>
-</div>
-
-```sql
-SELECT CUSTOMER_ID, CUSTOMER_NAME, CONTRACT_TYPE, CONTRACT_NO,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT CUSTOMER_ID, CUSTOMER_NAME, CONTRACT_TYPE, CONTRACT_NO,
          START_DATE, END_DATE, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
   WHERE CUSTOMER_ID = #{customerId}
     AND CONTRACT_TYPE = #{contractType}
     AND HZ_APPROVE_STATUS = 'APPROVED'
-    AND START_DATE <= #{newEndDate}
-    AND END_DATE >= #{newStartDate};
-```
+    AND START_DATE &lt;= #{newEndDate}
+    AND END_DATE &gt;= #{newStartDate};</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未能获取合同保证金标准，不能创建合同</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户新建合同时，根据事业部、合同类型查询保证金标准（CM_DEPOSITS_PAY_STANDARD）返回空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl在创建合同前查询保证金标准，保证金标准是计算合同应缴保证金的依据。标准未配置将导致合同保证金金额无法计算。需先在保证金标准配置中维护对应事业部和合同类型的标准</div>
-  </div>
-</div>
-
-```sql
-SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.ENTID, S.CONTRACT_TYPE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.ENTID, S.CONTRACT_TYPE,
          P.PAY_STANDARD_ID, P.STANDARD_AMT
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN CM_DEPOSITS_PAY_STANDARD P ON S.ENTID = P.ENTID AND S.CONTRACT_TYPE = P.CONTRACT_TYPE
   WHERE P.PAY_STANDARD_ID IS NULL
-    AND S.HZ_APPROVE_STATUS = 'NEW';
-```
+    AND S.HZ_APPROVE_STATUS = 'NEW';</code></pre></div>
+</div>
+
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未配置经销合同延期归档天数，请联系管理员</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>合同归档时，系统参数中未配置延期归档天数<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl在归档时读取系统参数（经销合同延期归档天数），参数缺失将导致无法计算应归档日期。需联系管理员在系统参数中配置</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT PARAM_CODE, PARAM_NAME, PARAM_VALUE
+  FROM SYS_PARAM
+  WHERE PARAM_CODE = 'SALE_CONTRACT_DELAY_PIGEONHOLE_DAYS';</code></pre></div>
 </div>
 
-```sql
-SELECT PARAM_CODE, PARAM_NAME, PARAM_VALUE
-  FROM SYS_PARAM
-  WHERE PARAM_CODE = 'SALE_CONTRACT_DELAY_PIGEONHOLE_DAYS';
-```
+
 <div id="err-detail-14" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该合同应归档日期为空，请联系管理员</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>合同归档时，PIGEONHOLE_DATE（应归档时间）字段为空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl校验合同应归档日期非空。应归档日期由合同审批通过时间加延期归档天数计算得出，为空将导致归档流程无法判断归档时机。需联系管理员补充应归档日期</div>
-  </div>
-</div>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, HZ_APPROVE_STATUS,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, HZ_APPROVE_STATUS,
          PIGEONHOLE_DATE, ACTUAL_PIGEONHOLE_DATE, PIGEONHOLE_BY
   FROM SA_SALE_CONTRACT_HEAD
   WHERE HZ_APPROVE_STATUS = 'APPROVED'
-    AND PIGEONHOLE_DATE IS NULL;
-```
+    AND PIGEONHOLE_DATE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-15" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>经销商编码不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>校验合同或出库单时，经销商编码（CUSTOMER_CODE）参数为空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl在多处校验经销商编码非空。经销商编码是关联经销商主数据的关键字段，为空将导致经销商信息无法带出，合同与出库单关联无法建立。需前端正确传入经销商编码</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_ID, CUSTOMER_NAME, CUST_CODE
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE CUST_CODE IS NULL OR CUST_CODE = '';</code></pre></div>
 </div>
 
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_ID, CUSTOMER_NAME, CUST_CODE
-  FROM SA_SALE_CONTRACT_HEAD
-  WHERE CUST_CODE IS NULL OR CUST_CODE = '';
-```
+
 <div id="err-detail-16" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用sa-sale-contract-heads相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
-```
+
 <div id="err-detail-17" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对合同保存、提交、归档等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
-```
+
 </KbCard>
 
 <KbCard title="常见问题">

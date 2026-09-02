@@ -520,28 +520,27 @@ ORDER BY la.APPROVAL_TIME DESC;
     <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击审批按钮前未选择列表行或选择多行<br><strong>逻辑分析：</strong>前端校验选中行数量=1，不满足时提示</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>2  FROM MA_LECTURER_APPROVAL la
+  WHERE la.APPROVAL_RESULT = 'approving'
+  ORDER BY la.CREATE_DATE DESC;</code></pre></div>
 </div>
 
-```sql
-2  FROM MA_LECTURER_APPROVAL la
-  WHERE la.APPROVAL_RESULT = 'approving'
-  ORDER BY la.CREATE_DATE DESC;
-```
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请选择讲师类型</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询时未选择讲师类型<br><strong>逻辑分析：</strong>查询参数 pageType 取自讲师类型值，未选择时阻止查询并提示</div>
-  </div>
-</div>
-
-```sql
--- 查询存在审批数据但无讲师类型的异常记录
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 查询存在审批数据但无讲师类型的异常记录
   SELECT la.LECTURER_APPROVAL_CODE AS 审批单号, la.LECTURER_TYPE AS 讲师类型
   FROM MA_LECTURER_APPROVAL la
-  WHERE la.LECTURER_TYPE IS NULL OR la7) ```
+  WHERE la.LECTURER_TYPE IS NULL OR la7)</code></pre></div>
+</div>
+
+
 
 #### 报错3：请求失败
 - **触发条件**：调用 list/page/archivesAudit/priceAudit/priceChangeApproval 等接口时

@@ -559,11 +559,8 @@ ORDER BY LA.CREATION_DATE DESC;
     <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击查看申请、审批、设计改派等行操作按钮时，未选择数据或选择了多行<br><strong>逻辑分析：</strong>前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
          APPLY_USER_NAME AS 申请人,
          DESIGN_NAME AS 设计名称,
          LECTURER_NAME AS 设计师,
@@ -571,19 +568,18 @@ SELECT APPLY_CODE AS 申请编码,
          APPROVAL_STATE AS 审核状态
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-  ORDER BY CREATE_DATE DESC;
-```
+  ORDER BY CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用 mlt/designApply/* 系列接口时，后端返回 HTTP 状态码非 2xx<br><strong>逻辑分析：</strong>前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM）调用失败、工作流引擎异常、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、工作流配置、后端日志定位具体异常堆栈</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态,
@@ -592,20 +588,19 @@ SELECT APPLY_CODE AS 申请编码,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>审批意见不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批时，APPROVAL_COMMENTS 字段为空<br><strong>逻辑分析：</strong>前端审批弹窗对 approvalComments 字段配置 required 校验，提交前校验审批意见是否填写，为空则阻止提交并提示"审批意见不能为空"。审批意见用于记录审批人决策依据，保证审批留痕完整可追溯</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          APPROVAL_STATE AS 审核状态,
          APPROVAL_RESULT AS 审批结果,
@@ -613,19 +608,18 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND APPROVAL_STATE IN ('approved', 'reject')
-    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');
-```
+    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>新设计师不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交设计改派时，LECTURER_NAME 字段为空<br><strong>逻辑分析：</strong>前端设计改派弹窗对 lecturerName 字段配置 required 校验，提交前校验新设计师是否选择，为空则阻止提交并提示"新设计师不能为空"。设计改派需明确新的设计师作为改派目标，否则无法完成改派</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          LECTURER_NAME AS 当前设计师,
          LECTURER_ARCHIVES_CODE AS 设计师档案编码,
@@ -633,38 +627,36 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE = 'valid'
-    AND (LECTURER_NAME IS NULL OR LECTURER_ARCHIVES_CODE IS NULL);
-```
+    AND (LECTURER_NAME IS NULL OR LECTURER_ARCHIVES_CODE IS NULL);</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢、接口处理时间超过 timeout 阈值等。需检查网络连通性、后端服务负载、数据库性能、工作流引擎状态</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击查看申请、设计改派、审批等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码（如 hzero.general_manage.design.design_general_manage.ps.show_apply、reassign、approval 等），HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名,
          R.ROLE_NAME AS 角色名,
          P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
@@ -673,37 +665,35 @@ SELECT U.USER_NAME AS 用户名,
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE 'hzero.general_manage.design.design_general_manage.ps.%'
-  ORDER BY U.USER_NAME;
-```
+  ORDER BY U.USER_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查看申请、审批、设计改派等操作时，接口返回数据为空或申请编码不存在<br><strong>逻辑分析：</strong>前端通过 applyCode 调用详情接口，后端查询 DESIGN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
          APPLY_USER_NAME AS 申请人,
          ORDER_LECTURE_STATE AS 点将状态,
          DELETE_FLAG AS 删除标记
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
-```
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击审批、设计改派等按钮时，申请状态不在允许操作的状态范围内<br><strong>逻辑分析：</strong>后端校验申请状态机，如审批要求 APPROVAL_STATE 为 to_be_approval、设计改派要求 ORDER_LECTURE_STATE 为 valid 且审批通过、取消审批要求已发起取消申请等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码,
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态,
@@ -712,46 +702,46 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject')
-  ORDER BY CREATE_DATE DESC;
-```
+  ORDER BY CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>审批人不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批时，前端从 getCurrentUser().realName 取审批人姓名为空<br><strong>逻辑分析：</strong>前端审批弹窗 beforeOpen 阶段设置 approvalUserName 为 userInfo.realName，若用户未登录或登录态失效导致 realName 为空，则审批人字段为空。需检查用户登录态、token 是否过期、用户信息接口是否正常</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名,
          U.REAL_NAME AS 真实姓名,
          U.LOGIN_FLAG AS 登录标记,
          U.STATUS_CODE AS 状态
   FROM SYS_USER U
   WHERE U.REAL_NAME IS NULL
-     OR U.STATUS_CODE <> 'ACTIVE';
-```
+     OR U.STATUS_CODE &lt;&gt; 'ACTIVE';</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>设计师列表为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>设计改派点击设计师搜索图标，弹窗 applyTableDS 查询返回空列表<br><strong>逻辑分析：</strong>前端通过 applyTableDS 查询讲师档案列表，返回空则无法选择新设计师。常见根因：讲师档案未配置、讲师档案已失效、查询条件过严、数据权限隔离等。需检查讲师档案配置及查询条件</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 档案编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 档案编码,
          LECTURER_NAME AS 讲师姓名,
          LECTURER_LEVEL AS 讲师级别,
          STATUS_CODE AS 状态,
          DELETE_FLAG AS 删除标记
   FROM LECTURER_ARCHIVES
-  WHERE STATUS_CODE <> 'ACTIVE'
+  WHERE STATUS_CODE &lt;&gt; 'ACTIVE'
      OR DELETE_FLAG = 'Y'
-  ORDER BY CREATION_DATE DESC;
-```
+  ORDER BY CREATION_DATE DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

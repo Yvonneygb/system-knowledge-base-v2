@@ -227,159 +227,149 @@
     <h4><span style="color:#7C3AED;">报错：</span>核销明细不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，按VERIFER_INVOICE_DETAILS_ID查询EPM_VERIFER_INVOICE_DETAILS返回null<br><strong>逻辑分析：</strong>取消方法中按ID查询核销明细，若返回null则抛出阻断性报错。需检查核销明细ID有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_VERIFER_ID, vid.PROD_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_VERIFER_ID, vid.PROD_CODE,
          vid.VERIFER_QTY, vid.VERIFER_STATUS, vid.EFFECT_STATUS
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 若返回空，说明核销明细不存在
-```
+  -- 若返回空，说明核销明细不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>作废发票时，按ID查询发票信息返回null<br><strong>逻辑分析：</strong>作废方法中按发票ID查询发票信息，若返回null则抛出阻断性报错。需检查发票ID有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT euii.UPLOAD_INVOICE_INFO_ID, euii.INVOICE_NO, euii.INVOICE_CODE, euii.EFFECT_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT euii.UPLOAD_INVOICE_INFO_ID, euii.INVOICE_NO, euii.INVOICE_CODE, euii.EFFECT_STATUS
   FROM EPM_UPLOAD_INVOICE_INFO euii
   WHERE euii.UPLOAD_INVOICE_INFO_ID = :uploadInvoiceInfoId
-  -- 若返回空，说明发票不存在
-```
+  -- 若返回空，说明发票不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>核销明细状态异常,请刷新数据后重试</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，核销明细已被其他操作变更(并发修改)<br><strong>逻辑分析：</strong>取消方法中更新核销明细状态时，若影响行数与预期不一致则抛出阻断性报错。需刷新数据后重试</div>
-  </div>
-</div>
-
-```sql
-SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.LAST_UPDATE_DATE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.LAST_UPDATE_DATE,
          vid.OBJECT_VERSION_NUMBER
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 检查核销明细当前状态和版本号，判断是否被并发修改
-```
+  -- 检查核销明细当前状态和版本号，判断是否被并发修改</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>取消后出库单行已核销数量小于0</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，取消数量大于出库单行已核销数量<br><strong>逻辑分析：</strong>取消方法中更新INV_OUT_BILL_LINE的已核销数量(原已核销数量-取消数量)，若结果&lt;0则抛出阻断性报错。需检查数据一致性</div>
-  </div>
-</div>
-
-```sql
-SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.VERIFERED_NUMBER, iobl.CAN_VERIFER_NUMBER,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.VERIFERED_NUMBER, iobl.CAN_VERIFER_NUMBER,
          vid.VERIFER_QTY, vid.VERIFER_INVOICE_DETAILS_ID,
          iobl.VERIFERED_NUMBER - vid.VERIFER_QTY AS 取消后已核销数量
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   JOIN INV_OUT_BILL_LINE iobl ON vid.INV_OUT_BILL_LINE_ID = iobl.INV_OUT_BILL_LINE_ID
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-    AND iobl.VERIFERED_NUMBER - vid.VERIFER_QTY < 0
-  -- 查出取消后已核销数量<0的异常数据
-```
+    AND iobl.VERIFERED_NUMBER - vid.VERIFER_QTY &lt; 0
+  -- 查出取消后已核销数量&lt;0的异常数据</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>操作类型不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用clVerifyObsInvo接口时，传入的dto.actionType为空<br><strong>逻辑分析：</strong>EpmVeriferInvoiceDetailsServiceImpl.clVerifyObsInvo方法中校验actionType非空，因不同操作类型(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)走不同分支。需检查前端参数传递</div>
-  </div>
-</div>
-
-```sql
--- 接口入参校验，无对应SQL
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 接口入参校验，无对应SQL
   SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_STATUS
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 校验核销明细状态
-```
+  -- 校验核销明细状态</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>对应列表id数组不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用clVerifyObsInvo接口时，传入的dto.idList为空数组<br><strong>逻辑分析：</strong>clVerifyObsInvo方法中校验idList非空，因取消操作需指定具体要取消的明细ID列表。需检查前端是否选中数据后传递</div>
-  </div>
-</div>
-
-```sql
--- 接口入参校验，无对应SQL
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 接口入参校验，无对应SQL
   SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_VERIFER_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.INVOICE_VERIFER_ID = :invoiceVeriferId
-  -- 查出该核销单下所有明细，确认是否有可选数据
-```
+  -- 查出该核销单下所有明细，确认是否有可选数据</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>不支持&#123;actionType&#125;操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用clVerifyObsInvo接口时，传入的actionType不在支持的枚举范围内(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)<br><strong>逻辑分析：</strong>clVerifyObsInvo方法中按actionType走switch分支，未匹配的actionType抛出不支持操作报错。需检查前端参数是否正确</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 接口入参校验，无对应SQL
+  -- 检查前端传入的actionType值是否在[invoice, invoiceDetail, invLine, veriferDetail, obsInvoice]范围内</code></pre></div>
 </div>
 
-```sql
--- 接口入参校验，无对应SQL
-  -- 检查前端传入的actionType值是否在[invoice, invoiceDetail, invLine, veriferDetail, obsInvoice]范围内
-```
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>本次核销数量的小数位不能超过3位</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，核销数量(VERIFER_QTY)的小数位超过3位<br><strong>逻辑分析：</strong>取消核销方法中校验核销数量精度，因业务要求数量精度最多3位小数。需调整核销数量精度</div>
-  </div>
-</div>
-
-```sql
-SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_QTY, vid.PROD_CODE
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_QTY, vid.PROD_CODE
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 检查VERIFER_QTY的小数位是否超过3位
-```
+  -- 检查VERIFER_QTY的小数位是否超过3位</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>核销取消数据为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，传入的取消核销数据为空<br><strong>逻辑分析：</strong>取消核销方法中校验取消数据列表非空，因需指定要取消的具体数据。需检查前端数据构造</div>
-  </div>
-</div>
-
-```sql
--- 接口入参校验，无对应SQL
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 接口入参校验，无对应SQL
   SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_STATUS, vid.EFFECT_STATUS
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.INVOICE_VERIFER_ID = :invoiceVeriferId
     AND vid.VERIFER_STATUS = '已核销'
-  -- 查出可取消的核销明细
-```
+  -- 查出可取消的核销明细</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>更新核销数据失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，更新核销数据抛出异常<br><strong>逻辑分析：</strong>取消核销方法中更新核销明细状态时捕获异常，拼接异常信息抛出。可能原因：数据库锁、数据不存在、并发修改。查看异常信息联系IT</div>
-  </div>
-</div>
-
-```sql
-SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_STATUS, vid.EFFECT_STATUS,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_STATUS, vid.EFFECT_STATUS,
          vid.OBJECT_VERSION_NUMBER, vid.LAST_UPDATE_DATE
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 检查核销明细状态和版本号，判断是否被锁或并发修改
-```
+  -- 检查核销明细状态和版本号，判断是否被锁或并发修改</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

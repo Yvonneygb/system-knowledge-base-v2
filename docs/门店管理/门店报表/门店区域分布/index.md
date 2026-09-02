@@ -320,11 +320,8 @@ WHERE 1 = 1
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，按当前查询条件（组织ID、省份、城市、区县、门店数量下限等）查询SCPAREA关联MKT_TERMINAL返回空结果集<br><strong>逻辑分析：</strong>报表通过SCPAREA表的areatype=4(省)/5(市)/6(区县)三级关联展示区域，通过子查询 <code>SELECT county_areaid, COUNT(county_areaid) AS terminal_num FROM epms.mkt_terminal WHERE entid = #&#123;orgId&#125; GROUP BY county_areaid</code> 统计每个区县的门店数量，无门店的区域显示0。若查询条件过严（如选择的省份/城市/区县下无SCPAREA记录）、或组织ID（entid）下无任何门店、或门店数量下限设置过高筛掉所有区域，均会返回空结果。注意：无门店的区域会显示0但仍返回行，只有当SCPAREA本身无匹配区域时才完全为空。</div>
-  </div>
-</div>
-
-```sql
-SELECT sa3.areaid          AS 区县ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT sa3.areaid          AS 区县ID,
          sa3.areaname        AS 区县名称,
          NVL(mt.terminal_num, 0) AS 门店数量
   FROM   scparea sa3
@@ -335,54 +332,53 @@ SELECT sa3.areaid          AS 区县ID,
            GROUP  BY county_areaid
          ) mt ON sa3.areaid = mt.county_areaid
   WHERE  sa3.areatype = 6
-  ORDER  BY sa3.areaid;
-```
+  ORDER  BY sa3.areaid;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败/接口调用异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-store-areal-distribution/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）<br><strong>逻辑分析：</strong>本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalArealDistributionSearch接口分页查询SCPAREA省市区三级关联并统计MKT_TERMINAL门店数量。若后端ae-report服务未启动、Oracle数据库连接异常、SCPAREA三级关联LEFT JOIN导致慢SQL、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 区县总数
+  FROM   scparea
+  WHERE  areatype = 6;</code></pre></div>
 </div>
 
-```sql
-SELECT COUNT(*)            AS 区县总数
-  FROM   scparea
-  WHERE  areatype = 6;
-```
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足/未登录</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre></div>
 </div>
 
-```sql
-SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;
-```
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>导出失败：网络异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断<br><strong>逻辑分析：</strong>导出接口将当前查询条件下的门店区域分布数据全量查询后生成Excel文件流返回。若查询数据量较大（如未限定省市区导致全国区县数据）导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定省份、城市）减少数据量。</div>
-  </div>
-</div>
-
-```sql
-SELECT sa1.areaname        AS 省份名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT sa1.areaname        AS 省份名称,
          COUNT(sa3.areaid)   AS 区县数量
   FROM   scparea sa1
   LEFT   JOIN scparea sa2 ON sa1.areaid = sa2.superid AND sa2.areatype = 5
   LEFT   JOIN scparea sa3 ON sa2.areaid = sa3.superid AND sa3.areatype = 6
   WHERE  sa1.areatype = 4
   GROUP  BY sa1.areaname
-  ORDER  BY 区县数量 DESC;
-```
+  ORDER  BY 区县数量 DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 </div>

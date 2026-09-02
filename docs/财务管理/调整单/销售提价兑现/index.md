@@ -587,53 +587,47 @@ SELECT ID, GL_DATE
     <h4><span style="color:#7C3AED;">报错：</span>兑现单参数不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"推送ERP"按钮，传入的cashId为0<br><strong>逻辑分析：</strong>pushErp方法在EpmSalesPriceRebateServiceImpl.java:66处校验cashId==0时抛出CommonException("兑现单参数不能为空")。该校验为前置参数校验，防止空指针和无效查询。需在列表页选中有效的兑现汇总单记录后再点击推送</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
+FROM CASH_SUMMARY
+WHERE ID = #{cashId};</code></pre></div>
 </div>
 
-```sql
-SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
-FROM CASH_SUMMARY
-WHERE ID = #{cashId};
-```
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>兑现单异常，请稍后重试</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中兑现单点击"推送ERP"，但cashSummaryRepository.selectById(cashId)返回null<br><strong>逻辑分析：</strong>pushErp方法在EpmSalesPriceRebateServiceImpl.java:70处校验兑现单头不存在时抛出CommonException("兑现单异常，请稍后重试")。根因有三类：(1)兑现单已被其他用户删除；(2)兑现单ID被篡改；(3)并发操作导致数据不一致。需刷新列表确认兑现单是否存在</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
+FROM CASH_SUMMARY
+WHERE ID = #{cashId};</code></pre></div>
 </div>
 
-```sql
-SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
-FROM CASH_SUMMARY
-WHERE ID = #{cashId};
-```
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前兑现不允许推送,请重新核实</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中已推送成功的兑现单再次点击"推送ERP"<br><strong>逻辑分析：</strong>pushErp方法在EpmSalesPriceRebateServiceImpl.java:73处校验cashH.getPushStatus()等于SUCCESS时抛出CommonException("当前兑现不允许推送,请重新核实")。该校验防止重复推送导致ERP资金池数据重复。需核实兑现单推送状态，仅PENDING或FAIL状态的兑现单可推送</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
+FROM CASH_SUMMARY
+WHERE ID = #{cashId} AND PUSH_STATUS = 'SUCCESS';</code></pre></div>
 </div>
 
-```sql
-SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
-FROM CASH_SUMMARY
-WHERE ID = #{cashId} AND PUSH_STATUS = 'SUCCESS';
-```
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前兑现单没有符合推送的明细</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中兑现单点击"推送ERP"，兑现明细均已推送或无有效明细<br><strong>逻辑分析：</strong>pushErp方法在EpmSalesPriceRebateServiceImpl.java:80处校验cashDetailsV为空时抛出CommonException("当前兑现单没有符合推送的明细")。根因有二：(1)兑现明细均已推送成功或推送失败，无PENDING状态明细；(2)兑现明细对应的交易公司、经销商在EPM_LEGAL_ENTITY_ACCOUNT中未配置账户ID，导致所有明细被过滤。需核查明细推送状态及法人账户配置</div>
-  </div>
-</div>
-
-```sql
--- 查询兑现明细的推送状态
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 查询兑现明细的推送状态
 SELECT
   cd.ID              AS 兑现明细ID,
   cd.CASH_SUMMARY_ID AS 兑现单ID,
@@ -653,33 +647,31 @@ SELECT
   lea.ACCOUNT_ID              AS 账户ID
 FROM EPM_LEGAL_ENTITY_ACCOUNT lea
 WHERE lea.TRADING_COMPANY_ID = #{tradingCompanyId}
-  AND lea.CUSTOMER_ID = #{customerId};
-```
+  AND lea.CUSTOMER_ID = #{customerId};</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>ERP返回数据异常，没有结果明细</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP后，ERP接口返回的X_DATA_TBL_ITEM为空或null<br><strong>逻辑分析：</strong>pushErp方法在EpmSalesPriceRebateServiceImpl.java:168处校验tblItemArr为空时抛出CommonException("ERP返回数据异常，没有结果明细")。该异常表示ERP接口synAdjustCashPoolToEbs调用成功但返回结果格式异常，缺少X_DATA_TBL_ITEM节点。根因有二：(1)ERP接口版本不匹配，返回格式变更；(2)ERP侧处理异常但未按约定格式返回错误。需联系ERP运维核查接口日志</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
+FROM CASH_SUMMARY
+WHERE ID = #{cashId};</code></pre></div>
 </div>
 
-```sql
-SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
-FROM CASH_SUMMARY
-WHERE ID = #{cashId};
-```
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>没有可处理的明细</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"生成兑现汇总单"按钮，operationCashBiz方法查询无符合生成条件的返利明细<br><strong>逻辑分析：</strong>operationCashBiz方法在EpmSalesPriceRebateServiceImpl.java:227处校验cashDetailsV为空时抛出CommonException("没有可处理的明细")。该方法先调用signRebateDetails更新已签收返点明细，再通过generateCashDetails按事业部+法人客户+经销商+交易主体获取兑现明细。无明细根因有三类：(1)上游发票真实性核销未审批通过，返利明细未生成；(2)返利明细已全部生成过兑现(REDEMPTION_FLAG=Y)；(3)查询条件(事业部/经销商/时间范围)不匹配。需核查返利明细的签收和兑现标志</div>
-  </div>
-</div>
-
-```sql
--- 查询未兑现且已签收的返利明细
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 查询未兑现且已签收的返利明细
 SELECT
   rd.ID              AS 返利明细ID,
   rd.ENT_ID          AS 事业部ID,
@@ -691,60 +683,56 @@ FROM REBATE_DETAILS rd
 WHERE rd.SIGN_FLAG = 'Y'
   AND rd.REDEMPTION_FLAG = 'N'
   AND rd.ENT_ID = #{entId}
-  AND (rd.CUSTOMER_ID = #{customerId} OR #{customerId} IS NULL);
-```
+  AND (rd.CUSTOMER_ID = #{customerId} OR #{customerId} IS NULL);</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>开始时间或结束时间不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"生成兑现汇总单"按钮，但未填写限定日期开始或结束<br><strong>逻辑分析：</strong>generateCashDetails方法在EpmSalesPriceRebateServiceImpl.java:465处校验dto.getStartTime().isEmpty() || dto.getEndTime().isEmpty()时抛出CommonException("开始时间或结束时间不能为空")。需填写完整的限定日期范围</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ID, START_TIME, END_TIME
+FROM CASH_SUMMARY
+WHERE START_TIME IS NULL OR END_TIME IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT ID, START_TIME, END_TIME
-FROM CASH_SUMMARY
-WHERE START_TIME IS NULL OR END_TIME IS NULL;
-```
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>入账日期不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"生成兑现汇总单"按钮，但未填写入账日期<br><strong>逻辑分析：</strong>generateCashDetails方法在EpmSalesPriceRebateServiceImpl.java:470处校验dto.getGlDate().isEmpty()时抛出CommonException("入账日期不能为空")。需填写入账日期</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ID, GL_DATE
+FROM CASH_SUMMARY
+WHERE GL_DATE IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT ID, GL_DATE
-FROM CASH_SUMMARY
-WHERE GL_DATE IS NULL;
-```
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络繁忙,请稍后再试</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>生成兑现汇总单时，后端处理异常<br><strong>逻辑分析：</strong>可能原因：(1)查询已生成兑现单但没有签收的数据异常(getUnsignedDeliveryLineIds方法)；(2)更新签收标识异常(updateSignFlag方法)；(3)汇总兑现明细数据异常(generateCashDetails方法)。需检查后端日志确认具体异常</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查返利明细数据是否异常
+SELECT COUNT(*) FROM REBATE_DETAILS WHERE SIGN_FLAG IS NULL OR REDEMPTION_FLAG IS NULL;</code></pre></div>
 </div>
 
-```sql
--- 检查返利明细数据是否异常
-SELECT COUNT(*) FROM REBATE_DETAILS WHERE SIGN_FLAG IS NULL OR REDEMPTION_FLAG IS NULL;
-```
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>返利签收处理失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>生成兑现汇总单时，signRebateDetails方法处理异常<br><strong>逻辑分析：</strong>signRebateDetails方法在EpmSalesPriceRebateServiceImpl.java:392-396处catch异常后抛出CommonException("RB001", "返利签收处理失败", e)。可能原因：(1)getUnsignedDeliveryLineId方法查询异常；(2)signedStatus方法查询签收状态异常；(3)updateSignFlag方法更新签收标识异常。需检查后端日志确认具体异常</div>
-  </div>
-</div>
-
-```sql
--- 检查返利明细的签收状态
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查返利明细的签收状态
 SELECT
   rd.ID              AS 返利明细ID,
   rd.SIGN_FLAG       AS 是否已签收,
@@ -752,8 +740,10 @@ SELECT
   rd.DELIVERY_LINE_ID AS 发货行ID
 FROM REBATE_DETAILS rd
 WHERE rd.SIGN_FLAG = 'N'
-  AND rd.REDEMPTION_FLAG = 'N';
-```
+  AND rd.REDEMPTION_FLAG = 'N';</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

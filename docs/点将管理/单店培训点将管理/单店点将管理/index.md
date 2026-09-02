@@ -501,179 +501,168 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
     <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击查看申请/审批按钮前未选择列表行或选择多行<br><strong>逻辑分析：</strong>前端校验选中行数量=1，不满足时toast提示</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.TRAIN_NAME AS 培训名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.TRAIN_NAME AS 培训名称,
          ta.APPROVAL_STATE AS 审核状态, ta.ORDER_LECTURE_STATE AS 点将状态
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_TYPE_ONE = 'train' AND ta.APPLY_TYPE_TWO = 'apply'
-  ORDER BY ta.CREATE_DATE DESC;
-```
+  ORDER BY ta.CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询/审批接口调用时<br><strong>逻辑分析：</strong>后端 mbo-business 微服务异常或网络错误，HTTP 状态码非 2xx</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY7S 申请编码, ta.ERROR_INFO AS 异常信息
+  FROM TRAIN_APPLY ta
+  WHERE ta.ERROR_INFO IS NOT NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT ta.APPLY7S 申请编码, ta.ERROR_INFO AS 异常信息
-  FROM TRAIN_APPLY ta
-  WHERE ta.ERROR_INFO IS NOT NULL;
-```
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>审批意见不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批时未填写审批意见<br><strong>逻辑分析：</strong>前端 applyApprovalFormDS.validate() 校验 APPROVAL_COMMENTS 必填，TextArea 组件</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
-    AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = '');
-```
+    AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>签订人不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>审批通过时未选择签订人<br><strong>逻辑分析：</strong>approvalResult=approved 时 signerId 必填，签订人通过 signerDS 根据法人主体动态查询</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.SIGNER_ID AS 签订人ID, ta.SIGNER_NAME AS 签订人姓名
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.SIGNER_ID AS 签订人ID, ta.SIGNER_NAME AS 签订人姓名
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
     AND ta.APPROVAL_STATE = 'approved'
-    AND ta.SIGNER_ID IS NULL;
-```
+    AND ta.SIGNER_ID IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据校验失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>审批提交时表单校验未通过<br><strong>逻辑分析：</strong>前端表单校验（审批意见、签订人等必填项）未通过时阻止提交</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见,
          ta.SIGNER_NAME AS 签订人, ta.APPROVAL_STATE AS 审核状态
   FROM TRAIN_APPLY ta
   WHERE ta.APPROVAL_STATE = 'approving'
     AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = ''
-         OR (ta.SIGNER_ID IS NULL));
-```
+         OR (ta.SIGNER_ID IS NULL));</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢等。需检查网络连通性、后端服务负载、数据库性能</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击查看申请、审批等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%single_store_general_manage%' ORDER BY U.USER_NAME;
-```
+  WHERE P.PERMISSION_CODE LIKE '%single_store_general_manage%' ORDER BY U.USER_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查看申请、审批等操作时，接口返回数据为空或申请编码不存在<br><strong>逻辑分析：</strong>前端通过 applyCode 调用详情接口，后端查询 TRAIN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
-```
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击审批按钮时，申请状态不在允许操作的状态范围内<br><strong>逻辑分析：</strong>后端校验申请状态机，如审批要求 APPROVAL_STATE 为 to_be_approval。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态, APPROVAL_STATE AS 审核状态,
          ERROR_INFO AS 异常问题
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject')
-  ORDER BY CREATE_DATE DESC;
-```
+  ORDER BY CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中点将状态、审核状态等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.APPLY_APPROVAL_STATE、MBO.ORDER_LECTURE_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
-  </div>
-</div>
-
-```sql
-SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.APPLY_APPROVAL_STATE','MBO.ORDER_LECTURE_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
-```
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>审批人不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批时，前端从 getCurrentUser().realName 取审批人姓名为空<br><strong>逻辑分析：</strong>前端审批弹窗 beforeOpen 阶段设置 approvalUserName 为 userInfo.realName，若用户未登录或登录态失效导致 realName 为空，则审批人字段为空。需检查用户登录态、token 是否过期、用户信息接口是否正常</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名, U.REAL_NAME AS 真实姓名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, U.REAL_NAME AS 真实姓名,
          U.LOGIN_FLAG AS 登录标记, U.STATUS_CODE AS 状态
   FROM SYS_USER U
-  WHERE U.REAL_NAME IS NULL OR U.STATUS_CODE <> 'ACTIVE';
-```
+  WHERE U.REAL_NAME IS NULL OR U.STATUS_CODE &lt;&gt; 'ACTIVE';</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

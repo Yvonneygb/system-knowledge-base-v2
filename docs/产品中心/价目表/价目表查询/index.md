@@ -426,30 +426,26 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
     <h4><span style="color:#7C3AED;">报错：</span>导出权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户无导出权限时，导出按钮不显示；若通过API直接调用导出接口则返回403<br><strong>逻辑分析：</strong>前端PriceTable组件中通过checkPermissions(['hzero.crm.price.list.export'])异步校验导出权限（listConfig.tsx第228行），无权限时hasExportPermission为false，导出按钮不渲染。后端export接口标注@Permission(level=ResourceLevel.ORGANIZATION)，无权限时抛出403异常。</div>
-  </div>
-</div>
-
-```sql
--- 检查用户是否拥有价目表导出权限
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查用户是否拥有价目表导出权限
   SELECT R.CODE AS 角色编码, R.NAME AS 角色名称,
          P.CODE AS 权限编码, P.NAME AS 权限名称
   FROM HZERO.IAM_ROLE R
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.CODE = 'hzero.crm.price.list.export'
-  ORDER BY R.CODE;
-```
+  ORDER BY R.CODE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页加载或点击查询按钮时，后端列表查询接口返回失败<br><strong>逻辑分析：</strong>前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/lnk-price-list-item/list接口，后端selectPriceListItemListPage方法通过LnkPriceListItemMapper.selectPriceListItemListPage查询LNK_PRICE_LIST_ITEM关联LNK_PROD、LNK_PRICE_LIST表，并调用cux_inv_convert_ex_pub.inv_um_convert函数计算转换率。若数据库连接异常、SQL执行超时、转换率函数异常或事业部价目表不存在则返回失败，前端DataSet自动提示查询失败。</div>
-  </div>
-</div>
-
-```sql
--- 检查当前事业部是否存在有效价目表
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查当前事业部是否存在有效价目表
   SELECT L.ROW_ID AS 价目表ID, L.PRICE_LIST_NAME AS 价目表名称,
          L.CURRENCY AS 币种, O.AE_ORG_CODE AS 事业部编码
   FROM LNK_PRICE_LIST L
@@ -462,37 +458,35 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
          T2.PROD_CODE AS 产品编码, T2.PROD_NAME AS 产品名称
   FROM LNK_PRICE_LIST_ITEM T1
     LEFT JOIN LNK_PROD T2 ON T1.PROD_ID = T2.ROW_ID
-  WHERE T2.ROW_ID IS NULL;
-```
+  WHERE T2.ROW_ID IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户登录会话已失效时执行任意操作（查询/导出）<br><strong>逻辑分析：</strong>前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。价目表查询为纯查询页面，会话过期主要影响查询和导出操作。</div>
-  </div>
-</div>
-
-```sql
--- 检查用户登录会话状态
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查用户登录会话状态
   SELECT U.LOGIN_NAME AS 登录名, T.TOKEN, T.EXPIRE_TIME AS 过期时间,
          T.LAST_CLIENT_TIME AS 最后活跃时间
   FROM HZERO.OAUTH_ACCESS_TOKEN T
     JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
   WHERE U.LOGIN_NAME = :loginName
-  ORDER BY T.EXPIRE_TIME DESC;
-```
+  ORDER BY T.EXPIRE_TIME DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件匹配不到任何有效价格记录，列表展示为空<br><strong>逻辑分析：</strong>后端SQL条件PRICE_STATUS='Y'且trunc(SYSDATE) BETWEEN trunc(EFF_START_DATE) AND trunc(EFF_END_DATE)过滤有效价格，若当前日期不在任何价格有效期内、价格状态非Y、或事业部/币种/渠道过滤后无匹配数据，则返回空列表。前端DataSet接收空数据，列表区域显示"暂无数据"。</div>
-  </div>
-</div>
-
-```sql
--- 检查当前事业部有效价格数据
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查当前事业部有效价格数据
   SELECT T2.PROD_CODE AS 产品编码, T2.PROD_NAME AS 产品名称,
          T1.PRICE AS 标准单价, T1.PRICE_STATUS AS 价格状态,
          T1.EFF_START_DATE AS 有效开始, T1.EFF_END_DATE AS 有效结束,
@@ -504,8 +498,10 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
     JOIN REL_CRM_AE_ORG O ON T3.DEPT_ID = O.CRM_ORG_ID
   WHERE O.AE_ORG_CODE = :deptCode
     AND T3.CURRENCY = :currency
-  ORDER BY T2.PROD_CODE;
-```
+  ORDER BY T2.PROD_CODE;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

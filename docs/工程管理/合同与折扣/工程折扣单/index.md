@@ -414,236 +414,221 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <h4><span style="color:#7C3AED;">报错：</span>政策名称不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣单时，DISCOUNT_POLICY_NAME字段为空<br><strong>逻辑分析：</strong>在保存校验中检查折扣政策头EPM_DISCOUNT_POLICY的DISCOUNT_POLICY_NAME字段，该字段为必填项(数据库定义为VARCHAR(30))。若用户未填写政策名称则弹出toast提醒。该报错为前端toast提醒级别，不阻断保存流程</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME,
          edp.HZ_APPROVE_STATUS, edp.VALID
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.CHANNEL = 4
-    AND (edp.DISCOUNT_POLICY_NAME IS NULL OR TRIM(edp.DISCOUNT_POLICY_NAME) = '')
-```
+    AND (edp.DISCOUNT_POLICY_NAME IS NULL OR TRIM(edp.DISCOUNT_POLICY_NAME) = '')</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先维护OA系统信息</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交折扣单审批时，OA系统信息未配置<br><strong>逻辑分析：</strong>在EpmDiscountPolicyServiceImpl提交方法中(line 315)，提交审批前校验OA系统配置信息，若未配置则抛出CommonException("请先维护OA系统信息")。该报错为阻断性报错，需联系管理员维护OA系统配置后重新提交</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS,
          edp.CHANNEL
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
     AND edp.CHANNEL = 4
-  -- 检查OA配置表是否存在该事业部配置
-```
+  -- 检查OA配置表是否存在该事业部配置</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品行不能为空，请检查！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存或提交折扣单时，产品明细行EPM_DISCOUNT_POLICY_ITEM为空<br><strong>逻辑分析：</strong>在EpmDiscountPolicyServiceImpl保存校验中(line 884/888/894/1028)，检查产品明细行列表是否为空，若为空则抛出CommonException("产品行不能为空，请检查！")。需先维护产品明细行后再保存提交</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE,
          (SELECT COUNT(1) FROM EPM_DISCOUNT_POLICY_ITEM edpi
           WHERE edpi.DISCOUNT_POLICY_ID = edp.DISCOUNT_POLICY_ID) AS 产品明细行数
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
     AND edp.CHANNEL = 4
-  -- 期望 产品明细行数 > 0
-```
+  -- 期望 产品明细行数 &gt; 0</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请类型："全产品类型" 与 ("型号"或"产品")类型 不能同时存在，请检查！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣单时，产品明细中同时存在全产品类型(APPLICATION_TYPE=3)和型号类型(=2)或产品类型(=1)<br><strong>逻辑分析：</strong>在EpmDiscountPolicyServiceImpl校验方法中(line 922/3436)，遍历产品明细行检查申请类型，若同时存在全产品类型和其他类型则抛出CommonException。需统一申请类型，全产品类型不能与型号/产品类型混用</div>
-  </div>
-</div>
-
-```sql
-SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.APPLICATION_TYPE
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.APPLICATION_TYPE
   FROM EPM_DISCOUNT_POLICY_ITEM edpi
   WHERE edpi.DISCOUNT_POLICY_ID = :policyId
     AND edpi.APPLICATION_TYPE IN (1, 2, 3)
-  -- 检查是否存在APPLICATION_TYPE=3与其他类型同时存在
-```
+  -- 检查是否存在APPLICATION_TYPE=3与其他类型同时存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>折扣政策名称最大输入30个字符</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣单时，DISCOUNT_POLICY_NAME字段长度超过30个字符<br><strong>逻辑分析：</strong>在EpmDiscountPolicyServiceImpl保存校验中(line 3409)，检查政策名称长度，若超过30字符则抛出CommonException("折扣政策名称最大输入30个字符")。需缩短政策名称至30字符以内</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME,
          LENGTH(edp.DISCOUNT_POLICY_NAME) AS 名称长度
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-    AND LENGTH(edp.DISCOUNT_POLICY_NAME) > 30
-```
+    AND LENGTH(edp.DISCOUNT_POLICY_NAME) &gt; 30</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除.</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>删除折扣单时，单据HZ_APPROVE_STATUS非NEW<br><strong>逻辑分析：</strong>在EpmDiscountPolicyServiceImpl删除方法中(line 3776)，校验单据状态为NEW，其他状态(审批中/已通过/已拒绝)不允许删除，抛出CommonException("仅新建状态单据允许删除.")。该报错为阻断性报错</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'
-```
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该单据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询折扣单详情时，按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY返回null<br><strong>逻辑分析：</strong>在EpmDiscountPolicyServiceImpl详情方法中(line 3772)，按DISCOUNT_POLICY_ID查询折扣单，若返回null则抛出CommonException("未找到该单据")。需检查单据ID有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-  -- 若返回空，说明单据不存在
-```
+  -- 若返回空，说明单据不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>物料明细不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣单时，产品明细行物料信息为空<br><strong>逻辑分析：</strong>在EpmDiscountPolicyServiceImpl保存校验中(line 3259/3426)，检查物料明细是否为空，若为空则抛出CommonException("物料明细不能为空")。需先维护物料明细行</div>
-  </div>
-</div>
-
-```sql
-SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME
   FROM EPM_DISCOUNT_POLICY_ITEM edpi
   WHERE edpi.DISCOUNT_POLICY_ID = :policyId
-    AND (edpi.ITEM_CODE IS NULL OR TRIM(edpi.ITEM_CODE) = '')
-```
+    AND (edpi.ITEM_CODE IS NULL OR TRIM(edpi.ITEM_CODE) = '')</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择销售渠道</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新建产品明细行时，头表CHANNEL字段为空<br><strong>逻辑分析：</strong>在前端SampleDiscountPolicy/views/DetailPage/index.tsx的handleLineCreate方法中(line 1138)，新建产品明细前校验头表CHANNEL字段，若为空则弹出notification.error("请先选择销售渠道")。需先选择销售渠道再新增产品明细</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.CHANNEL
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.CHANNEL
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-    AND (edp.CHANNEL IS NULL OR edp.CHANNEL = '')
-```
+    AND (edp.CHANNEL IS NULL OR edp.CHANNEL = '')</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择政策类型</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新建产品明细行时，头表POLICY_TYPE字段为空<br><strong>逻辑分析：</strong>在前端SampleDiscountPolicy/views/DetailPage/index.tsx的handleLineCreate方法中(line 1144)，新建产品明细前校验头表POLICY_TYPE字段，若为空则弹出notification.error("请先选择政策类型")。需先选择政策类型再新增产品明细</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.POLICY_TYPE
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.POLICY_TYPE
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-    AND (edp.POLICY_TYPE IS NULL OR edp.POLICY_TYPE = '' OR edp.POLICY_TYPE = '0')
-```
+    AND (edp.POLICY_TYPE IS NULL OR edp.POLICY_TYPE = '' OR edp.POLICY_TYPE = '0')</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先选择币种</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新建产品明细行或导入产品时，头表CURRENCY字段为空<br><strong>逻辑分析：</strong>在前端SampleDiscountPolicy/views/DetailPage/index.tsx的handleLineCreate方法中(line 1150)及导入按钮点击事件中(line 1467)，校验头表CURRENCY字段，若为空则弹出notification.error("请先选择币种")。需先选择币种再新增产品明细或导入</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.CURRENCY
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.CURRENCY
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-    AND (edp.CURRENCY IS NULL OR edp.CURRENCY = '')
-```
+    AND (edp.CURRENCY IS NULL OR edp.CURRENCY = '')</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>至少选择一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>在产品LOV弹窗中选择产品时，未选择任何记录即点击确定<br><strong>逻辑分析：</strong>在前端SampleDiscountPolicy/views/DetailPage/index.tsx的产品LOV弹窗onOk回调中(line 587)，校验productLovDs.selected是否为空，若为空则弹出notification.error("至少选择一条数据")。需至少选择一条产品记录</div>
-  </div>
-</div>
-
-```sql
--- 前端校验，无对应SQL
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 前端校验，无对应SQL
   SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE
   FROM EPM_DISCOUNT_POLICY edp
-  WHERE edp.DISCOUNT_POLICY_ID = :policyId
-```
+  WHERE edp.DISCOUNT_POLICY_ID = :policyId</code></pre></div>
+</div>
+
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>阶梯政策的封顶数量不能大于政策封顶总数量行</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>编辑阶梯政策封顶数量时，阶梯CAPPING_QTY大于政策封顶总数量行TOTAL_CAP_NUMBER<br><strong>逻辑分析：</strong>在前端SampleDiscountPolicy/views/DetailPage/index.tsx的totalCapNumberChange方法中(line 235)，变更封顶数量时校验阶梯封顶数量是否大于政策封顶总数量行，若大于则弹出notification.error并恢复旧值。需调整阶梯封顶数量使其不超过政策封顶总数量行</div>
-  </div>
-</div>
-
-```sql
-SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.TOTAL_CAP_NUMBER,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.TOTAL_CAP_NUMBER,
          edpil.CAPPING_QTY
   FROM EPM_DISCOUNT_POLICY_ITEM edpi
   LEFT JOIN EPM_DISCOUNT_POLICY_ITEM_LINE edpil
     ON edpi.DISCOUNT_POLICY_ITEM_ID = edpil.DISCOUNT_POLICY_ITEM_ID
   WHERE edpi.DISCOUNT_POLICY_ID = :policyId
-    AND edpil.CAPPING_QTY > edpi.TOTAL_CAP_NUMBER
-```
+    AND edpil.CAPPING_QTY &gt; edpi.TOTAL_CAP_NUMBER</code></pre></div>
+</div>
+
+
 <div id="err-detail-14" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>仅支持 .xlsx、.xls 格式文件</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>导入产品明细时，上传文件格式非xlsx/xls<br><strong>逻辑分析：</strong>在前端SampleDiscountPolicy/views/DetailPage/index.tsx的导入文件校验中(line 1186)，检查文件后缀名，若非xlsx/xls格式则弹出notification.error("仅支持 .xlsx、.xls 格式文件")。需使用正确格式的文件</div>
-  </div>
-</div>
-
-```sql
--- 前端文件格式校验，无对应SQL
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 前端文件格式校验，无对应SQL
   SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE
   FROM EPM_DISCOUNT_POLICY edp
-  WHERE edp.DISCOUNT_POLICY_ID = :policyId
-```
+  WHERE edp.DISCOUNT_POLICY_ID = :policyId</code></pre></div>
+</div>
+
+
 <div id="err-detail-15" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先保存单据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>导入产品明细时，单据未保存(无DISCOUNT_POLICY_ID)<br><strong>逻辑分析：</strong>在前端SampleDiscountPolicy/views/DetailPage/index.tsx的导入方法中(line 1089/1202)，校验单据是否已保存，若未保存则弹出notification.error("请先保存单据")。需先保存单据再导入产品明细</div>
-  </div>
-</div>
-
-```sql
-SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-  -- 若返回空，说明单据未保存
-```
+  -- 若返回空，说明单据未保存</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

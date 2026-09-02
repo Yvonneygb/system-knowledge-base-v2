@@ -400,67 +400,61 @@
     <h4><span style="color:#7C3AED;">报错：</span>等级编码已存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增或编辑保存装修等级值项时，同一 LOV（AE.FIXUP_GRADE）下 VALUE 字段与已有值项重复<br><strong>逻辑分析：</strong>后端保存前查询 HPFM_LOV_VALUE 表，校验同一 LOV_CODE='AE.FIXUP_GRADE' 下 VALUE 唯一性，若存在重复则提示"等级编码已存在"。确保值编码唯一，避免业务引用歧义</div>
-  </div>
-</div>
-
-```sql
-SELECT VALUE AS 值编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT VALUE AS 值编码,
          COUNT(*) AS 重复数量,
          LISTAGG(MEANING, ',') WITHIN GROUP (ORDER BY LOV_VALUE_ID) AS 值名称列表
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
   GROUP BY VALUE
-  HAVING COUNT(*) > 1;
-```
+  HAVING COUNT(*) &gt; 1;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值编码不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增或编辑保存时，VALUE 字段未填写<br><strong>逻辑分析：</strong>前端表单对 VALUE 字段配置 required 校验，提交前校验值编码是否填写，为空则阻止提交并提示"值编码不能为空"。值编码是值项的唯一标识，业务表存储此值，必须明确</div>
-  </div>
-</div>
-
-```sql
-SELECT LOV_VALUE_ID AS 值项ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID,
          LOV_CODE AS LOV编码,
          VALUE AS 值编码,
          MEANING AS 值名称,
          ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (VALUE IS NULL OR VALUE = '');
-```
+    AND (VALUE IS NULL OR VALUE = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值名称不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增或编辑保存时，MEANING 字段未填写<br><strong>逻辑分析：</strong>前端表单对 MEANING 字段配置 required 校验，提交前校验值名称是否填写，为空则阻止提交并提示"值名称不能为空"。值名称用于界面展示，必须明确</div>
-  </div>
-</div>
-
-```sql
-SELECT LOV_VALUE_ID AS 值项ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID,
          LOV_CODE AS LOV编码,
          VALUE AS 值编码,
          MEANING AS 值名称,
          ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (MEANING IS NULL OR MEANING = '');
-```
+    AND (MEANING IS NULL OR MEANING = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>店面装修等级没有对应的政策标准</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>门店装修申请提交时，所选装修等级在 TERMINAL_DECORATE_LINE 表中无对应的标准行<br><strong>逻辑分析：</strong>后端提交校验查询 TERMINAL_DECORATE_LINE 表，根据 FIXUP_GRADE 匹配装修标准行，若无对应标准行则提示"店面装修等级没有对应的政策标准"。确保装修等级有对应的报销标准，避免提交后无法计算补贴金额</div>
-  </div>
-</div>
-
-```sql
-SELECT lv.VALUE AS 装修等级编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT lv.VALUE AS 装修等级编码,
          lv.MEANING AS 装修等级名称,
          lv.ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE lv
@@ -469,37 +463,35 @@ SELECT lv.VALUE AS 装修等级编码,
     AND NOT EXISTS (
       SELECT 1 FROM TERMINAL_DECORATE_LINE tdl
       WHERE tdl.FIXUP_GRADE = lv.VALUE
-    );
-```
+    );</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>无政策标准不能提交！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>门店装修申请提交时，FIXUP_GRADE 字段为空或为 0<br><strong>逻辑分析：</strong>后端提交校验 FIXUP_GRADE 字段非空非 0，若为空或为 0 则提示"无政策标准不能提交！"。装修等级是匹配报销标准的必要字段，必须选择有效值</div>
-  </div>
-</div>
-
-```sql
-SELECT ACCEPTANCE_ID AS 验收ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ACCEPTANCE_ID AS 验收ID,
          STORE_NAME AS 门店名称,
          FIXUP_GRADE AS 店面装修等级,
          FRONTDOOR_FIXUP_GRADE AS 门头装修等级
   FROM FIN_FEE_CHECK_BX_HEADER
   WHERE FIXUP_GRADE IS NULL
-     OR FIXUP_GRADE = 0;
-```
+     OR FIXUP_GRADE = 0;</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>店面装修等级没有有效期内的政策标准！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>门店装修申请提交时，装修等级在有效期内无对应标准行<br><strong>逻辑分析：</strong>后端提交校验精确匹配有效期内标准行，查询 TERMINAL_DECORATE_LINE 表中 FIXUP_GRADE 匹配且 START_DATE &lt;= 当前日期 &lt;= END_DATE 的标准行，若无结果则提示"店面装修等级没有有效期内的政策标准！"。确保装修等级在当前时间有有效的报销标准</div>
-  </div>
-</div>
-
-```sql
-SELECT lv.VALUE AS 装修等级编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT lv.VALUE AS 装修等级编码,
          lv.MEANING AS 装修等级名称,
          lv.START_DATE AS 值项开始日期,
          lv.END_DATE AS 值项结束日期
@@ -511,122 +503,117 @@ SELECT lv.VALUE AS 装修等级编码,
       SELECT 1 FROM TERMINAL_DECORATE_LINE tdl
       WHERE tdl.FIXUP_GRADE = lv.VALUE
         AND SYSDATE BETWEEN tdl.START_DATE AND tdl.END_DATE
-    );
-```
+    );</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值集编码不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询装修等级值集时，HPFM_LOV 表中无 LOV_CODE='AE.FIXUP_GRADE' 的记录<br><strong>逻辑分析：</strong>后端查询 HPFM_LOV 表，若不存在 LOV_CODE='AE.FIXUP_GRADE' 的值集定义则提示"值集编码不存在"。需先在 HZERO 值集管理中创建值集 AE.FIXUP_GRADE，再配置值项</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_ID, LOV_CODE, LOV_TYPE_CODE, DESCRIPTION
+  FROM HPFM_LOV
+  WHERE LOV_CODE = 'AE.FIXUP_GRADE';</code></pre></div>
 </div>
 
-```sql
-SELECT LOV_ID, LOV_CODE, LOV_TYPE_CODE, DESCRIPTION
-  FROM HPFM_LOV
-  WHERE LOV_CODE = 'AE.FIXUP_GRADE';
-```
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、hzero-platform 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</div>
-  </div>
-</div>
-
-```sql
-SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击新增、编辑、删除、启用/禁用等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%fixup_grade%' ORDER BY U.USER_NAME;
-```
+  WHERE P.PERMISSION_CODE LIKE '%fixup_grade%' ORDER BY U.USER_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>编辑、删除等操作时，接口返回数据为空或值项ID不存在<br><strong>逻辑分析：</strong>前端通过 lovValueId 调用接口，后端查询 HPFM_LOV_VALUE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：值项ID错误、值项已被删除、跨租户查询、数据权限隔离等。需检查 LOV_VALUE_ID 有效性及数据权限</div>
-  </div>
-</div>
-
-```sql
-SELECT LOV_VALUE_ID AS 值项ID, LOV_CODE AS LOV编码, VALUE AS 值编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, LOV_CODE AS LOV编码, VALUE AS 值编码,
          MEANING AS 值名称, ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (LOV_VALUE_ID IS NULL OR ENABLE_FLAG IS NULL);
-```
+    AND (LOV_VALUE_ID IS NULL OR ENABLE_FLAG IS NULL);</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击启用/禁用按钮时，值项状态不允许该操作<br><strong>逻辑分析：</strong>后端校验状态机，如已启用（ENABLE_FLAG=1）不可重复启用、已禁用（ENABLE_FLAG=0）不可重复禁用等。状态不匹配时后端返回业务异常。需检查值项当前状态及操作流程</div>
-  </div>
-</div>
-
-```sql
-SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
          ENABLE_FLAG AS 状态, ERROR_INFO AS 异常问题
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
     AND ENABLE_FLAG NOT IN (0, 1)
-  ORDER BY CREATE_DATE DESC;
-```
+  ORDER BY CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>描述不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存时，DESCRIPTION 字段为空<br><strong>逻辑分析：</strong>前端表单对 DESCRIPTION 字段'段配置 required 校验，提交前校验描述是否填写，为空则阻止提交并提示"描述不能为空"。描述用于记录值项的业务含义，必须明确</div>
-  </div>
-</div>
-
-```sql
-SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
          DESCRIPTION AS 描述
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (DESCRIPTION IS NULL OR DESCRIPTION = '');
-```
+    AND (DESCRIPTION IS NULL OR DESCRIPTION = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>排序号不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存时，ORDER_SEQ 字段为空<br><strong>逻辑分析：</strong>前端表单对 ORDER_SEQ 字段配置 required 校验，提交前校验排序号是否填写，为空则阻止提交并提示"排序号不能为空"。排序号用于值项在下拉列表中的展示顺序，必须明确</div>
-  </div>
-</div>
-
-```sql
-SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_VALUE_ID AS 值项ID, VALUE AS 值编码, MEANING AS 值名称,
          ORDER_SEQ AS 排序号
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND ORDER_SEQ IS NULL;
-```
+    AND ORDER_SEQ IS NULL;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 </div>

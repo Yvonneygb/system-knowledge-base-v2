@@ -574,220 +574,207 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
     <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击编辑、提交、牌价变更申请、查看审批、生效、失效、查看日程、查看饱和度等单选操作按钮时，未选择数据或选择了多行<br><strong>逻辑分析：</strong>前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标档案，未选择时无法确定操作对象，多选时操作对象不唯一</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态,
          APPROVAL_STATUS AS 审批状态
   FROM MA_LECTURER_ARCHIVE
   WHERE ARCHIVES_STATUS IN ('draft', 'reject', 'valid', 'invalid', 'approved')
-  ORDER BY UPDATE_DATE DESC;
-```
+  ORDER BY UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请选择至少一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击删除按钮时，未选择任何数据<br><strong>逻辑分析：</strong>前端在执行删除操作前校验选中行数量，若 selectedRows.length &lt; 1 则阻止操作并提示"请选择至少一条数据"。删除支持批量操作，但至少需要一条目标数据</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
-  WHERE ARCHIVES_STATUS = 'draft';
-```
+  WHERE ARCHIVES_STATUS = 'draft';</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请选择讲师类型</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>在讲师档案 Tab（activeTab=other）下查询时，未选择讲师类型<br><strong>逻辑分析：</strong>讲师档案 Tab 的查询依赖讲师类型（lecturerType）作为 pageType 参数，未选择讲师类型时 pageType 为空，无法确定查询的讲师业务方向，前端校验阻止查询并提示"请选择讲师类型"。讲师类型决定讲师级别值集（TRAIN/ACTIVITY/DESIGN_LECTURER_LEVEL）的切换</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
          LECTURER_TYPE AS 讲师类型
   FROM MA_LECTURER_ARCHIVE
-  WHERE LECTURER_TYPE IS NULL OR LECTURER_TYPE = '';
-```
+  WHERE LECTURER_TYPE IS NULL OR LECTURER_TYPE = '';</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击牌价变更申请按钮时，档案状态不为 valid 或培训类型为 camp<br><strong>逻辑分析：</strong>前端执行双重校验：①校验 ARCHIVES_STATUS = 'valid'（仅生效档案可发起牌价变更，草稿/审批中/失效档案不允许）；②校验 TRAIN_TYPE ≠ 'camp'（特训营讲师不适用牌价变更流程）。任一校验不通过则提示"只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！"。牌价变更涉及讲师报价调整，需在档案生效后进行，特训营讲师价格由特训营统一管理</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态,
          TRAIN_TYPE AS 培训类型,
          PRICE AS 当前报价
   FROM MA_LECTURER_ARCHIVE
-  WHERE ARCHIVES_STATUS <> 'valid' OR TRAIN_TYPE = 'camp';
-```
+  WHERE ARCHIVES_STATUS &lt;&gt; 'valid' OR TRAIN_TYPE = 'camp';</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>只能对【审批通过】的档案进行操作！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击生效或失效按钮时，档案审批状态不为 approved<br><strong>逻辑分析：</strong>前端校验 APPROVAL_STATUS = 'approved'，仅审批通过的档案才允许执行生效/失效状态切换。审批未通过（草稿/审批中/审批拒绝）的档案不具备业务合法性，不应进入生效/失效流转。校验不通过提示"只能对【审批通过】的档案进行操作！"</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码,
          LECTURER_NAME AS 讲师姓名,
          APPROVAL_STATUS AS 审批状态,
          ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
-  WHERE APPROVAL_STATUS <> 'approved'
-    AND ARCHIVES_STATUS IN ('valid', 'invalid');
-```
+  WHERE APPROVAL_STATUS &lt;&gt; 'approved'
+    AND ARCHIVES_STATUS IN ('valid', 'invalid');</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用 mlt/maLecturerArchive/* 系列接口时，后端返回 HTTP 状态码非 2xx<br><strong>逻辑分析：</strong>前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码,
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态,
          APPROVAL_STATUS AS 审批状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间,
          LAST_UPDATED_BY AS 最后更新人
   FROM MA_LECTURER_ARCHIVE
-  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM MA_LECTURER_ARCHIVE
-  WHERE LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+  WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击新建、编辑、删除、提交、生效/失效、牌价变更等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%lecturer_archive%' ORDER BY U.USER_NAME;
-```
+  WHERE P.PERMISSION_CODE LIKE '%lecturer_archive%' ORDER BY U.USER_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>编辑、生效/失效等操作时，接口返回数据为空或档案编码不存在<br><strong>逻辑分析：</strong>前端通过 lecturerArchivesCode 调用详情接口，后端查询 MA_LECTURER_ARCHIVE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：档案编码错误、档案已被删除、跨租户查询、数据权限隔离等。需检查 LECTURER_ARCHIVES_CODE 有效性及数据权限</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态, DELETE_FLAG AS 删除标记
   FROM MA_LECTURER_ARCHIVE
-  WHERE DELETE_FLAG = 'Y' OR LECTURER_ARCHIVES_CODE IS NULL;
-```
+  WHERE DELETE_FLAG = 'Y' OR LECTURER_ARCHIVES_CODE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击提交、编辑等按钮时，档案状态不允许该操作<br><strong>逻辑分析：</strong>后端校验状态机，如审批中（approving）不可编辑、已生效不可重复生效等。状态不匹配时后端返回业务异常。需检查档案当前状态及操作流程</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态, APPROVAL_STATUS AS 审批状态,
          ERROR_INFO AS 异常问题
   FROM MA_LECTURER_ARCHIVE
   WHERE ARCHIVES_STATUS NOT IN ('draft','valid','invalid','approved','reject')
-  ORDER BY CREATE_DATE DESC;
-```
+  ORDER BY CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中讲师类型、讲师级别等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.TRAIN_LECTURER_LEVEL、MBO.ACTIVITY_LECTURER_LEVEL、MBO.DESIGN_LECTURER_LEVEL 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
-  </div>
-</div>
-
-```sql
-SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.TRAIN_LECTURER_LEVEL','MBO.ACTIVITY_LECTURER_LEVEL','MBO.DESIGN_LECTURER_LEVEL','MBO.LECTURER_TYPE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
-```
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>讲师姓名不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存或提交时，LECTURER_NAME 字段为空<br><strong>逻辑分析：</strong>前端表单对 lecturerName 字段配置 required 校验，提交前校验讲师姓名是否填写，为空则阻止提交并提示"讲师姓名不能为空"。讲师姓名是档案核心信息，必须明确</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, LECTURER_NAME AS 讲师姓名,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, LECTURER_NAME AS 讲师姓名,
          LECTURER_TYPE AS 讲师类型, ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
-  WHERE LECTURER_NAME IS NULL OR LECTURER_NAME = '';
-```
+  WHERE LECTURER_NAME IS NULL OR LECTURER_NAME = '';</code></pre></div>
+</div>
+
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>档案编码已存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新建讲师档案保存时，LECTURER_ARCHIVES_CODE 已存在于 MA_LECTURER_ARCHIVE 表<br><strong>逻辑分析：</strong>后端校验 LECTURER_ARCHIVES_CODE 唯一性，若已存在则返回业务异常。需更换档案编码后保存</div>
-  </div>
-</div>
-
-```sql
-SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, COUNT(*) AS 重复数
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, COUNT(*) AS 重复数
   FROM MA_LECTURER_ARCHIVE
   WHERE DELETE_FLAG = 'N'
   GROUP BY LECTURER_ARCHIVES_CODE
-  HAVING COUNT(*) > 1;
-```
+  HAVING COUNT(*) &gt; 1;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

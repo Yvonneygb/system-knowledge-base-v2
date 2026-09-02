@@ -252,289 +252,270 @@
     <h4><span style="color:#7C3AED;">报错：</span>报销单不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询工程服务费报销单详情时，按ACC_NO查询FIN_SVC_EXP_ACC_HEAD返回null<br><strong>逻辑分析：</strong>详情方法中按ACC_NO查询报销单，若返回null则抛出阻断性报错。需检查报销单号有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_NO = :accNo
-  -- 若返回空，说明报销单不存在
-```
+  -- 若返回空，说明报销单不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>报销金额超过可报销金额</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程服务费报销申请时，报销金额超过剩余可报销金额<br><strong>逻辑分析：</strong>提交校验中按PROJECT_CODE查询剩余可报销金额(已兑现服务费-已报销金额)，若本次报销金额&gt;剩余则抛出阻断性报错。需调整报销金额</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.ACC_AMOUNT, fseah.PROJECT_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.ACC_AMOUNT, fseah.PROJECT_CODE,
          fseah.TOTAL_CASH_AMOUNT, fseah.EXPENSED_AMOUNT,
          fseah.TOTAL_CASH_AMOUNT - fseah.EXPENSED_AMOUNT AS 剩余可报销金额
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_NO = :accNo
-  -- 对比报销金额与剩余可报销金额
-```
+  -- 对比报销金额与剩余可报销金额</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>删除工程服务费报销单时，单据HZ_APPROVE_STATUS非NEW<br><strong>逻辑分析：</strong>删除方法中校验单据状态为NEW，其他状态不允许删除。该报错为阻断性报错</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS, fseah.VALID
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS, fseah.VALID
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'
-```
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未查询到相关工程费报销单</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询工程服务费报销单时，按条件查询FIN_SVC_EXP_ACC_HEAD返回空<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl查询方法中(line 179)，按条件查询报销单，若返回空则抛出CommonException("未查询到相关工程费报销单")。需检查查询条件</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_NO = :accNo
-  -- 若返回空，说明未查询到报销单
-```
+  -- 若返回空，说明未查询到报销单</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该报销单税率为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程服务费报销单时，TAX_RATE字段为空<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl保存校验方法中(line 214)，校验报销单税率字段，若为空则抛出CommonException("该报销单税率为空")。需维护税率</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-    AND (fseah.TAX_RATE IS NULL OR fseah.TAX_RATE = '')
-```
+    AND (fseah.TAX_RATE IS NULL OR fseah.TAX_RATE = '')</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到对应的费用报销单</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询关联费用报销单时，关联单据查询返回空<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl方法中(line 548)，查询关联费用报销单，若返回空则抛出CommonException("未找到对应的费用报销单")。需检查关联单据有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 若返回空，说明关联报销单不存在
-```
+  -- 若返回空，说明关联报销单不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票附件名称异常，请检查文件后缀名后再上传！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>上传发票附件时，文件名格式异常(无后缀名或后缀名格式错误)<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl发票附件校验方法getDeductParam中(line 634)，检查发票附件文件名后缀，若格式异常则抛出CommonException("发票附件名称异常，请检查文件后缀名后再上传！")。需检查文件后缀名</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查发票附件文件名格式
-```
+  -- 检查发票附件文件名格式</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票附件类型异常，请上传【jpg、jpeg、png、pdf】类型的附件！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>上传发票附件时，文件类型不在允许范围内(jpg/jpeg/png/pdf)<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl发票附件校验方法getDeductParam中(line 642)，检查发票附件类型，若不在jpg/jpeg/png/pdf范围内则抛出CommonException。需使用正确格式的附件</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查发票附件类型是否为jpg/jpeg/png/pdf
-```
+  -- 检查发票附件类型是否为jpg/jpeg/png/pdf</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>上传的发票类型与报销类型不一致。正数报销时，需上传蓝字发票。负数报销时，需上传红字发票。</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>上传发票时，发票类型与报销类型不匹配<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl发票校验方法中(line 734)，校验发票类型与报销类型是否一致，正数报销需蓝字发票、负数报销需红字发票，若不匹配则抛出CommonException。需按报销类型上传对应发票</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.ACC_AMOUNT AS 报销金额,
-         CASE WHEN fseah.ACC_AMOUNT > 0 THEN '正数报销(蓝字)' ELSE '负数报销(红字)' END AS 报销类型
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.ACC_AMOUNT AS 报销金额,
+         CASE WHEN fseah.ACC_AMOUNT &gt; 0 THEN '正数报销(蓝字)' ELSE '负数报销(红字)' END AS 报销类型
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查发票类型与报销类型是否匹配
-```
+  -- 检查发票类型与报销类型是否匹配</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>税率不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程服务费报销单时，税率字段为空<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl保存校验方法中(line 878)，校验税率字段，若为空则抛出CommonException("税率不能为空")。需维护税率</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-    AND (fseah.TAX_RATE IS NULL OR fseah.TAX_RATE = '')
-```
+    AND (fseah.TAX_RATE IS NULL OR fseah.TAX_RATE = '')</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>发票税率不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程服务费报销单时，发票税率在税率表不存在<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl保存校验方法中(line 913)，查询税率表校验发票税率，若不存在则抛出CommonException("发票税率不存在")。需检查税率配置</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查TAX_RATE是否在税率主档表中存在
-```
+  -- 检查TAX_RATE是否在税率主档表中存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程完结异常：缺失单据id</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>流程完结时，未传入单据ID<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl流程完结方法中(line 949)，校验单据ID参数，若为空则抛出CommonException("流程完结异常：缺失单据id")。需检查前端传参完整性</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
+  FROM FIN_SVC_EXP_ACC_HEAD fseah
+  WHERE fseah.ACC_ID = :accId</code></pre></div>
 </div>
 
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
-  FROM FIN_SVC_EXP_ACC_HEAD fseah
-  WHERE fseah.ACC_ID = :accId
-```
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程启动异常：缺失单据id</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>流程启动时，未传入单据ID<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl流程启动方法中(line 1001)，校验单据ID参数，若为空则抛出CommonException("流程启动异常：缺失单据id")。需检查前端传参完整性</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
+  FROM FIN_SVC_EXP_ACC_HEAD fseah
+  WHERE fseah.ACC_ID = :accId</code></pre></div>
 </div>
 
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
-  FROM FIN_SVC_EXP_ACC_HEAD fseah
-  WHERE fseah.ACC_ID = :accId
-```
+
 <div id="err-detail-14" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程操作异常：实际报销金额必须大于0</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>流程操作时，实际报销金额≤0<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl流程操作方法中(line 1064)，校验实际报销金额，若≤0则抛出CommonException("流程操作异常：实际报销金额必须大于0")。需调整报销金额</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.ACC_AMOUNT AS 实际报销金额
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.ACC_AMOUNT AS 实际报销金额
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-    AND (fseah.ACC_AMOUNT IS NULL OR fseah.ACC_AMOUNT <= 0)
-```
+    AND (fseah.ACC_AMOUNT IS NULL OR fseah.ACC_AMOUNT &lt;= 0)</code></pre></div>
+</div>
+
+
 <div id="err-detail-15" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程操作异常：发票必须上传</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>流程操作时，未上传发票附件<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl流程操作方法中(line 1077)，校验发票是否已上传，若未上传则抛出CommonException("流程操作异常：发票必须上传")。需上传发票附件</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO,
          (SELECT COUNT(1) FROM FIN_SVC_EXP_ACC_INVOICE fsai
           WHERE fsai.ACC_HEAD_ID = fseah.ACC_ID) AS 发票数量
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 期望 发票数量 > 0
-```
+  -- 期望 发票数量 &gt; 0</code></pre></div>
+</div>
+
+
 <div id="err-detail-16" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程操作异常，以下发票明细异常：xxx</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>流程操作时，发票明细数据校验未通过<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl流程操作方法中(line 1094)，遍历发票明细校验数据，若存在异常则拼接错误信息抛出CommonException("流程操作异常，以下发票明细异常：\n" + errMsg)。需检查发票明细数据</div>
-  </div>
-</div>
-
-```sql
-SELECT fsai.INVOICE_ID, fsai.ACC_HEAD_ID, fsai.INVOICE_NO, fsai.INVOICE_AMOUNT,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fsai.INVOICE_ID, fsai.ACC_HEAD_ID, fsai.INVOICE_NO, fsai.INVOICE_AMOUNT,
          fsai.TAX_RATE, fsai.INVOICE_TYPE
   FROM FIN_SVC_EXP_ACC_INVOICE fsai
   WHERE fsai.ACC_HEAD_ID = :accId
-  -- 检查发票明细数据完整性
-```
+  -- 检查发票明细数据完整性</code></pre></div>
+</div>
+
+
 <div id="err-detail-17" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送数据到共享异常：查找申请人OA信息未空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>报销单推送共享中心时，申请人OA信息未配置<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl推送共享方法中(line 1167)，查找申请人OA账号信息，若为空则抛出CommonException("推送数据到共享异常：查找申请人OA信息未空")。需联系管理员维护申请人OA账号</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.CREATED_BY
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.CREATED_BY
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查申请人OA账号是否已配置
-```
+  -- 检查申请人OA账号是否已配置</code></pre></div>
+</div>
+
+
 <div id="err-detail-18" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送数据到共享异常：单据查询数据为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>报销单推送共享中心时，按单据ID查询报销单返回空<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl推送共享方法中(line 1173)，按单据ID查询报销单，若返回空则抛出CommonException("推送数据到共享异常：单据查询数据为空")。需检查单据ID有效性</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 若返回空，说明单据不存在
-```
+  -- 若返回空，说明单据不存在</code></pre></div>
+</div>
+
+
 <div id="err-detail-19" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>附件ocr接口识别失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>发票附件OCR识别时，OCR接口调用失败<br><strong>逻辑分析：</strong>在FinSvcExpAccHeadServiceImpl附件OCR识别方法中(line 1314/1320)，调用OCR接口识别发票附件，若接口返回失败则抛出CommonException("附件ocr接口识别失败")或带失败原因。需检查OCR服务状态</div>
-  </div>
-</div>
-
-```sql
-SELECT fseah.ACC_ID, fseah.ACC_NO
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查OCR服务连通性
-```
+  -- 检查OCR服务连通性</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

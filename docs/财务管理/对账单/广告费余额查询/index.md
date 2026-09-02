@@ -313,96 +313,90 @@ ORDER BY ENTNAME, TRADING_COMPANY_NAME
     <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户按事业部/交易公司/开票单位/年月组合条件查询广告费余额，返回结果集为空<br><strong>逻辑分析：</strong>查询接口inlimit-balance-header/query基于MKT_INLIMIT_BALANCE_HEADER表过滤，该表数据由营销中台和资金池同步生成。无数据根因有三类：(1)查询条件（事业部+交易公司+年月区间）组合过窄，START_TIME/END_TIME区间内无记录；(2)营销中台或资金池数据未同步到MKT_INLIMIT_BALANCE_HEADER表，余额头表为空；(3)事业部或交易公司ID与余额表ENTID/TRADING_COMPANY_ID不匹配。需先确认表中有数据，再逐步放宽条件定位</div>
-  </div>
-</div>
-
-```sql
-SELECT INLIMIT_BALANCE_ID, ENTID, ENTNAME, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT INLIMIT_BALANCE_ID, ENTID, ENTNAME, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
          START_TIME, END_TIME, BEGINNING_BALANCE, THIS_ENDING_BALANCE, CAN_USE_AMOUNT
   FROM MKT_INLIMIT_BALANCE_HEADER
   WHERE (ENTID = #{entid} OR #{entid} IS NULL)
     AND (TRADING_COMPANY_ID = #{tradingCompanyId} OR #{tradingCompanyId} IS NULL)
-    AND START_TIME >= #{startTime} AND END_TIME <= #{endTime}
-  ORDER BY ENTNAME, TRADING_COMPANY_NAME, START_TIME;
-```
+    AND START_TIME &gt;= #{startTime} AND END_TIME &lt;= #{endTime}
+  ORDER BY ENTNAME, TRADING_COMPANY_NAME, START_TIME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>必填查询条件为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选择事业部、交易公司或年月等必填条件直接点击查询<br><strong>逻辑分析：</strong>查询接口inlimit-balance-header/query基于MKT_INLIMIT_BALANCE_HEADER表过滤，事业部ENTID和年月区间（START_TIME/END_TIME）是余额定位的核心维度。若事业部为空，查询将跨事业部聚合导致余额数据混乱；若年月为空，无法定位余额期间。前端hlod低代码页面通常对必填字段做非空校验，未通过则toast提示并阻断查询。需补全必填条件后重新查询</div>
-  </div>
-</div>
-
-```sql
--- 核查当前用户有权限的事业部列表
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 核查当前用户有权限的事业部列表
   SELECT ENT_ID, ENT_NAME, ENABLED
   FROM HPFM_DIVISION
   WHERE ENABLED = 1
-  ORDER BY ENT_NAME;
-```
+  ORDER BY ENT_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>时间区间无效</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户选择的查询起始时间大于结束时间，或时间格式不符合要求<br><strong>逻辑分析：</strong>查询接口要求START_TIME &lt;= END_TIME，前端日期选择框虽限制但可能因手动输入或时区问题导致区间反转。当START_TIME &gt; END_TIME时，SQL条件 START_TIME &gt;= #&#123;startTime&#125; AND END_TIME &lt;= #&#123;endTime&#125; 将产生矛盾条件返回空集或抛出参数校验异常。需重新选择时间区间确保起始时间不晚于结束时间</div>
-  </div>
-</div>
-
-```sql
--- 核查指定事业部+交易公司下的余额时间区间分布
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 核查指定事业部+交易公司下的余额时间区间分布
   SELECT MIN(START_TIME) AS 最早期间, MAX(END_TIME) AS 最晚期间, COUNT(1) AS 记录数
   FROM MKT_INLIMIT_BALANCE_HEADER
-  WHERE ENTID = #{entid} AND TRADING_COMPANY_ID = #{tradingCompanyId};
-```
+  WHERE ENTID = #{entid} AND TRADING_COMPANY_ID = #{tradingCompanyId};</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击查询或导出，前端axios请求抛出网络异常或超时<br><strong>逻辑分析：</strong>前端调用/v1/&#123;organizationId&#125;/inlimit-balance-header/query或exportBalance接口时，因后端ae-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)ae-business微服务未注册到Nacos或已宕机；(2)网关路由配置错误找不到服务；(3)网络中断或防火墙拦截；(4)余额计算SQL执行超时（MKT_INLIMIT_BALANCE_HEADER数据量大或聚合计算复杂）。需联系运维确认服务状态</div>
-  </div>
-</div>
-
-```sql
--- 核查余额头表数据量及同步时间
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 核查余额头表数据量及同步时间
   SELECT COUNT(1) AS 余额记录数, MIN(START_TIME) AS 最早期间, MAX(END_TIME) AS 最晚期间
   FROM MKT_INLIMIT_BALANCE_HEADER
-  WHERE ENTID = #{entid};
-```
+  WHERE ENTID = #{entid};</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问广告费余额查询页面或调用接口时，返回403或"无权限访问"提示<br><strong>逻辑分析：</strong>后端Controller使用@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)控制访问权限，要求用户登录且拥有当前组织（organizationId）的访问权限。根因有三：(1)用户未分配该菜单（hlod页面）的访问角色；(2)用户当前切换的组织不在其授权组织范围内；(3)用户数据权限未覆盖查询的事业部（HPFM_DIVISION）。需联系管理员分配菜单角色和事业部数据权限</div>
-  </div>
-</div>
-
-```sql
--- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};
-```
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>余额数据不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件匹配但MKT_INLIMIT_BALANCE_HEADER表中无该事业部+交易公司+年月的余额记录<br><strong>逻辑分析：</strong>MKT_INLIMIT_BALANCE_HEADER表数据由营销中台和资金池同步生成，非DMS本地维护。根因有三：(1)营销中台未配置该事业部+交易公司的广告费额度，余额头表无记录；(2)资金池未建立或未同步余额数据到MKT_INLIMIT_BALANCE_HEADER；(3)同步任务未执行或执行失败，数据存在延迟。需先确认营销中台和资金池数据已配置并同步</div>
-  </div>
-</div>
-
-```sql
-SELECT ENTID, ENTNAME, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ENTID, ENTNAME, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
          START_TIME, END_TIME, BEGINNING_BALANCE, THIS_ENDING_BALANCE, CAN_USE_AMOUNT
   FROM MKT_INLIMIT_BALANCE_HEADER
   WHERE ENTID = #{entid}
     AND TRADING_COMPANY_ID = #{tradingCompanyId}
-  ORDER BY START_TIME DESC;
-```
+  ORDER BY START_TIME DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

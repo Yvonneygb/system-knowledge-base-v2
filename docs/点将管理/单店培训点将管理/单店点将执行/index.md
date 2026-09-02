@@ -534,214 +534,201 @@ SELECT APPLY_CODE
     <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>单选行操作（查看申请/查看确认书/特殊取消/结束执行/同步OA/同步FDD/同步CRM）前未选择列表行，或选择了多行<br><strong>逻辑分析：</strong>前端校验选中行数量=1，不满足时toast提示</div>
-  </div>
-</div>
-
-```sql
--- 本校验为前端选中行校验，无对应SQL；如需确认列表数据可执行：
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 本校验为前端选中行校验，无对应SQL；如需确认列表数据可执行：
   SELECT ta.APPLY_CODE AS 申请编码, ta.TRAIN_NAME AS 培训名称, ta.ORDER_LECTURE_STATE AS 点将状态
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_TYPE_ONE = 'train' AND ta.APPROVAL_STATE = 'approved'
-  ORDER BY ta.UPDATE_DATE DESC;
-```
+  ORDER BY ta.UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用 page/queryPDF/specialCancel/endExecute/pushOa/pushFdd/sendCrmOrder 等接口时<br><strong>逻辑分析：</strong>后端 mbo-business 微服务异常、网络中断或接口返回非2xx状态码</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.ERROR_INFO AS 异常信息,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.ERROR_INFO AS 异常信息,
          ta.CRM_ORDER_STATUS AS CRM状态, ta.UPDATE_DATE AS 更新时间
   FROM TRAIN_APPLY ta
   WHERE ta.ERROR_INFO IS NOT NULL
-  ORDER BY ta.UPDATE_DATE DESC;
-```
+  ORDER BY ta.UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>实际开始时间不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"结束执行"提交时，实际开始时间 realStartDate 为空<br><strong>逻辑分析：</strong>结束执行弹窗 realStartDate 字段必填，前端 endExecuteFormDS.validate() 校验不通过时提示</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_START_DATE AS 实际开始时间
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_START_DATE AS 实际开始时间
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND ta.REAL_START_DATE IS NULL;
-```
+    AND ta.REAL_START_DATE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>实际结束时间不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"结束执行"提交时，实际结束时间 realEndDate 为空<br><strong>逻辑分析：</strong>结束执行弹窗 realEndDate 字段必填，前端校验不通过时提示</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_END_DATE AS 实际结束时间
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_END_DATE AS 实际结束时间
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND ta.REAL_END_DATE IS NULL;
-```
+    AND ta.REAL_END_DATE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>结束备注不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"结束执行"提交时，结束备注 endExecuteRemark 为空<br><strong>逻辑分析：</strong>结束执行弹窗 endExecuteRemark 字段必填（TextArea），前端校验不通过时提示</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.END_REMARK AS 结束备注
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.END_REMARK AS 结束备注
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND (ta.END_REMARK IS NULL OR ta.END_REMARK = '');
-```
+    AND (ta.END_REMARK IS NULL OR ta.END_REMARK = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>取消原因不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"特殊取消"提交时，取消原因 cancelReason 为空<br><strong>逻辑分析：</strong>特殊取消弹窗 cancelReason 字段必填（TextArea），前端校验不通过时提示</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.CANCEL_REASON AS 取消原因
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.CANCEL_REASON AS 取消原因
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'cancelled'
-    AND (ta.CANCEL_REASON IS NULL OR ta.CANCEL_REASON = '');
-```
+    AND (ta.CANCEL_REASON IS NULL OR ta.CANCEL_REASON = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未查询到对应的确认书</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查看确认书"时，queryPDF 接口返回的 PDF URL 为空<br><strong>逻辑分析：</strong>调用 GET queryPDF 接口（参数 applyCode、applyTypeOne=train、applyTypeTwo=apply）未返回 PDF URL，可能因 FDD 推送未完成或失败</div>
-  </div>
-</div>
-
-```sql
-SELECT ta.APPLY_CODE AS 申请编码, ta.FDD_PDF_URL AS 确认书URL,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.FDD_PDF_URL AS 确认书URL,
          ta.FDD_PUSH_STATUS AS FDD推送状态, ta.ERROR_INFO AS 异常信息
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
-    AND (ta.FDD_PDF_URL IS NULL OR ta.FDD_PDF_URL = '');
-```
+    AND (ta.FDD_PDF_URL IS NULL OR ta.FDD_PDF_URL = '');</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、外部系统响应慢等。需检查网络连通性、后端服务负载、数据库性能</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND LAST_UPDATE_DATE >= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击查看申请、特殊取消、结束执行、同步OA/FDD/CRM等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
-  </div>
-</div>
-
-```sql
-SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
   FROM SYS_USER U
   LEFT JOIN SYS_USER_ROLE UR ON U.USER_ID = UR.USER_ID
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%single_store_general_execute%' ORDER BY U.USER_NAME;
-```
+  WHERE P.PERMISSION_CODE LIKE '%single_store_general_execute%' ORDER BY U.USER_NAME;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查看申请、结束执行等操作时，接口返回数据为空或申请编码不存在<br><strong>逻辑分析：</strong>前端通过 applyCode 调用详情接口，后端查询 TRAIN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
-```
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击结束执行、特殊取消等按钮时，申请状态不在允许操作的状态范围内<br><strong>逻辑分析：</strong>后端校验申请状态机，如结束执行要求状态为执行中、特殊取消要求审批通过且培训开始前7天内等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          ORDER_LECTURE_STATE AS 点将状态, APPROVAL_STATE AS 审核状态,
          CANCEL_APPROVAL_STATE AS 取消审核状态, ERROR_INFO AS 异常问题
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND ORDER_LECTURE_STATE NOT IN ('valid','executing','finished')
-  ORDER BY CREATE_DATE DESC;
-```
+  ORDER BY CREATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>同步外部系统失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击同步CRM/同步OA/同步FDD按钮，对应推送接口返回失败<br><strong>逻辑分析：</strong>前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</div>
-  </div>
-</div>
-
-```sql
-SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, TRAIN_NAME AS 培训名称,
          CRM_ORDER_CODE AS CRM单号, CRM_ORDER_STATUS AS CRM订单状态,
          ERROR_INFO AS 异常问题,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
-    AND LAST_UPDATE_DATE >= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;
-```
+    AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
+  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中点将状态、审核状态等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.ORDER_LECTURE_STATE、MBO.APPLY_APPROVAL_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
-  </div>
-</div>
-
-```sql
-SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.ORDER_LECTURE_STATE','MBO.APPLY_APPROVAL_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
-```
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

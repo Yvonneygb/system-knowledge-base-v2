@@ -342,107 +342,100 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
     <h4><span style="color:#7C3AED;">报错：</span>冲销数据为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户按年月/事业部/交易公司查询冲销数据，FIN_FEE_WRITEOFF_IN_QUOTA表返回空结果集<br><strong>逻辑分析：</strong>冲销数据需通过"更新冲销数据"按钮（updateReversalData接口）主动生成，Repository层通过queryWriteoffInQuotaView等方法查询冲销视图数据并写入FIN_FEE_WRITEOFF_IN_QUOTA表。无数据根因有三类：(1)从未执行过更新冲销数据操作，表为空；(2)上游额度内兑现记录未审批通过或出库单预提数据未生成，冲销视图无数据；(3)查询的年月/事业部区间内无冲销记录。需先执行更新冲销数据，再查询确认</div>
-  </div>
-</div>
-
-```sql
-SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, ENTNAME, TRADING_COMPANY_NAME,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, ENTNAME, TRADING_COMPANY_NAME,
          BILLING_UNIT_NAME, WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, WRITEOFF_SUMAMT,
          SYNC_ITEM, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
   WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
     AND (ENTID = #{entid} OR #{entid} IS NULL)
-  ORDER BY YEARMONTH DESC, IN_WRITEOFF_NO;
-```
+  ORDER BY YEARMONTH DESC, IN_WRITEOFF_NO;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>推送共享财务失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中记录点击"执行冲销"，execReversalData接口推送至ENCX共享财务系统时返回失败<br><strong>逻辑分析：</strong>执行冲销接口执行冲销计算并推送至共享财务系统（ENCX-额度内冲销），单据类型fin_fee_writeoff_in_quota。失败根因有三类：(1)ENCX共享财务系统不可用或网络中断；(2)推送数据异常，如冲销含税/不含税金额为0、法人编码（BILLING_UNIT_CODE）在ENCX中不存在、成本中心编码（COST_CENTER_CODE）不匹配、科目名称（SUBJECT_NAME）未配置；(3)ENCX侧重复推送校验。推送失败需检查SYNC_ITEM和BILL_STATUS字段</div>
-  </div>
-</div>
-
-```sql
-SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, BILLING_UNIT_CODE, COST_CENTER_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, BILLING_UNIT_CODE, COST_CENTER_CODE,
          SUBJECT_NAME, WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, SYNC_ITEM, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_ID IN (#{ids}) AND (BILL_STATUS != 1 OR SYNC_ITEM IS NULL);
-```
+  WHERE IN_WRITEOFF_ID IN (#{ids}) AND (BILL_STATUS != 1 OR SYNC_ITEM IS NULL);</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>要执行的数据为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户在执行冲销弹窗中填写年月和交易公司编码后点击确定，queryQuotaLimitHead查询返回null<br><strong>逻辑分析：</strong>execReversalData接口在FinFeeWriteoffInQuotaServiceImpl.java:97处校验data为null时抛出CommonException("要执行的数据为空！")。queryQuotaLimitHead按交易公司编码（TRADING_COMPANY_CODE）和年月（YEARMONTH）查询冲销头数据，返回null表示该交易公司在指定年月无冲销数据。根因有二：(1)未先执行"更新冲销数据"生成冲销记录；(2)交易公司编码与冲销数据不匹配。需先执行更新冲销数据，再执行冲销</div>
-  </div>
-</div>
-
-```sql
-SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          TRADING_COMPANY_NAME, BILL_STATUS, WRITEOFF_TAX_AMT
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE YEARMONTH = #{yearMonth} AND TRADING_COMPANY_CODE = #{tradingCompanyCode};
-```
+  WHERE YEARMONTH = #{yearMonth} AND TRADING_COMPANY_CODE = #{tradingCompanyCode};</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>共享接口返回null,执行共享接口失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>执行冲销时调用arrowFsscSdk.inLimitBudPush推送共享财务系统，返回FsscRsVO为null<br><strong>逻辑分析：</strong>execReversalData接口在FinFeeWriteoffInQuotaServiceImpl.java:196处校验fsccRsVO为null时抛出CommonException("共享接口返回null,执行共享接口失败！")。该异常表示共享财务系统接口（inLimitBudPush）无响应或网络中断，未返回任何结果对象。根因有三类：(1)ENCX共享财务系统服务不可用；(2)网络连接中断或超时；(3)共享接口URL配置错误。需检查网络连通性和ENCX系统状态</div>
-  </div>
-</div>
-
-```sql
-SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, TRADING_COMPANY_CODE, YEARMONTH,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, TRADING_COMPANY_CODE, YEARMONTH,
          BILL_STATUS, SYNC_ITEM
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};
-```
+  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>执行冲销数据接口异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>执行冲销过程中发生未知异常，被try-catch捕获后抛出<br><strong>逻辑分析：</strong>execReversalData接口在FinFeeWriteoffInQuotaServiceImpl.java:208处catch块中记录ERROR日志并抛出CommonException("执行冲销数据接口异常！")。该异常为兜底异常处理，覆盖所有未明确处理的异常情况。根因可能包括：(1)冲销数据计算异常，如金额为null、除以0等；(2)数据库操作异常；(3)共享接口调用异常（非返回null情况）。需查看后端日志FinFeeWriteoffInQuotaServiceImpl.execReversalData的ERROR输出定位具体原因</div>
-  </div>
-</div>
-
-```sql
-SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, BILL_STATUS, SUBJECT_NAME, CASH_OUT_MODE
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};
-```
+  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>年月必填</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户在执行冲销弹窗中未填写年月即点击确定<br><strong>逻辑分析：</strong>前端执行冲销弹窗在ListPage/index.tsx:30处定义yearMonth字段required: true，modalDs.validate()校验失败时阻止提交。年月用于queryQuotaLimitHead查询冲销头数据，为执行冲销的必填参数。需在弹窗中填写有效的年月（格式yyyy-MM）</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE, BILL_STATUS
+  FROM FIN_FEE_WRITEOFF_IN_QUOTA
+  WHERE YEARMONTH = #{yearMonth};</code></pre></div>
 </div>
 
-```sql
-SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE, BILL_STATUS
-  FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE YEARMONTH = #{yearMonth};
-```
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>交易公司编码必填</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户在执行冲销弹窗中未填写交易公司编码即点击确定<br><strong>逻辑分析：</strong>前端执行冲销弹窗在ListPage/index.tsx:31处定义tradingCompanyCode字段required: true，modalDs.validate()校验失败时阻止提交。交易公司编码用于queryQuotaLimitHead查询指定交易公司的冲销头数据，为执行冲销的必填参数。需在弹窗中填写有效的交易公司编码</div>
-  </div>
-</div>
-
-```sql
-SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          TRADING_COMPANY_NAME, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE TRADING_COMPANY_CODE = #{tradingCompanyCode};
-```
+  WHERE TRADING_COMPANY_CODE = #{tradingCompanyCode};</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

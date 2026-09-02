@@ -274,83 +274,78 @@ ORDER BY create_time DESC;
     <h4><span style="color:#7C3AED;">报错：</span>查询年度不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，调用search接口时，传入的查询年度budYear参数为null或空字符串<br><strong>逻辑分析：</strong>兑现汇总报表按年度维度统计数据，年度是核心查询条件。校验逻辑检查入参budYear，为空则抛异常阻止查询。常见根因：用户未选择年度、年度下拉框未默认赋值当前年度、或前端传参丢失。</div>
-  </div>
-</div>
-
-```sql
-SELECT COUNT(*)            AS 兑现单数量
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 兑现单数量
   FROM   fin_fee_cashout_header
   WHERE  bud_year IS NULL
-  AND    hz_approve_status = 'APPROVED';
-```
+  AND    hz_approve_status = 'APPROVED';</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询时间范围异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，调用search接口时，传入的起始日期startDate&gt;结束日期endDate<br><strong>逻辑分析：</strong>时间范围查询要求起始日期不晚于结束日期。校验逻辑检查入参startDate与endDate，当startDate&gt;endDate则抛异常阻止查询。常见根因：用户手动选择日期范围错误、日期选择组件未做范围限制、或前端传参顺序颠倒。</div>
-  </div>
-</div>
-
-```sql
-SELECT fee_cashout_id      AS 兑现单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fee_cashout_id      AS 兑现单ID,
          fee_cashout_no      AS 兑现单号,
          create_time         AS 创建时间,
          hz_approve_status   AS 审批状态
   FROM   fin_fee_cashout_header
   WHERE  hz_approve_status = 'APPROVED'
   AND    create_time BETWEEN #{startDate} AND #{endDate}
-  AND    #{startDate} > #{endDate}
-  ORDER  BY create_time DESC;
-```
+  AND    #{startDate} &gt; #{endDate}
+  ORDER  BY create_time DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>兑现类型异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，调用search接口时，传入的兑现类型cashoutType既非1（额度内）也非2（额度外）且非空<br><strong>逻辑分析：</strong>兑现类型仅支持额度内(1)和额度外(2)两种，传入其他值会导致查询条件异常。校验逻辑检查入参cashoutType，非空且不在(1,2)范围内则抛异常。常见根因：前端下拉框值集配置错误、传参被篡改、或数据迁移导致脏数据。</div>
-  </div>
-</div>
-
-```sql
-SELECT fee_cashout_id      AS 兑现单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT fee_cashout_id      AS 兑现单ID,
          fee_cashout_no      AS 兑现单号,
          cashout_type        AS 兑现类型,
          hz_approve_status   AS 审批状态
   FROM   fin_fee_cashout_header
   WHERE  cashout_type IS NOT NULL
   AND    cashout_type NOT IN (1, 2)
-  ORDER  BY create_time DESC;
-```
+  ORDER  BY create_time DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败/接口调用异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/fin-fee-cashout-summary/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）<br><strong>逻辑分析：</strong>本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.finFeeCashoutSummarySearch接口分页查询FIN_FEE_CASHOUT_HEADER。若后端服务未启动、数据库连接异常、SQL执行超时（如全表扫描无索引）、网络中断、或反向代理（网关）转发失败，均会导致接口调用异常。常见根因：后端ae-report服务宕机、Oracle数据库连接池耗尽、查询条件过宽导致慢SQL、或网络抖动。需检查后端服务健康状态、数据库连接、网络连通性。</div>
-  </div>
-</div>
-
-```sql
-SELECT COUNT(*)            AS 兑现单总数,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 兑现单总数,
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
   FROM   fin_fee_cashout_header
-  WHERE  hz_approve_status = 'APPROVED';
-```
+  WHERE  hz_approve_status = 'APPROVED';</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足/未登录</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre></div>
 </div>
 
-```sql
-SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;
-```
+
 </KbCard>
 
 <KbCard title="常见问题">

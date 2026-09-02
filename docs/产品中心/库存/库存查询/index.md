@@ -300,53 +300,49 @@
     <h4><span style="color:#7C3AED;">报错：</span>查询失败，请稍后重试</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击查询按钮时，前端调用后端接口失败（HTTP非200或网络超时）<br><strong>逻辑分析：</strong>本菜单与"事业部库存查询"共用同一前端页面和后端接口。后端走selectList/selectListDMS接口查询LNK_INVENTORY表，若后端服务不可用、数据库连接超时、Oracle函数cux_inv_convert_ex_pub.inv_um_convert执行异常等，均会导致请求失败。前端捕获异常后toast提示。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 库存记录数 FROM LNK_INVENTORY WHERE ORG_ID = :organizationId;
+  SELECT COUNT(1) AS 产品数 FROM LNK_PROD WHERE ORG_ID = :organizationId;</code></pre></div>
 </div>
 
-```sql
-SELECT COUNT(1) AS 库存记录数 FROM LNK_INVENTORY WHERE ORG_ID = :organizationId;
-  SELECT COUNT(1) AS 产品数 FROM LNK_PROD WHERE ORG_ID = :organizationId;
-```
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法查询库存数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载时，当前用户无组织ID或事业部权限<br><strong>逻辑分析：</strong>后端自动注入当前用户的事业部ID（deptId）作为查询条件。DMS用户额外通过DEPT_STOCK_S和DEPT_STOCK_P值集过滤可见事业部。若用户未配置事业部权限或值集为空，则查询不到任何库存数据。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_S' AND ORGANIZATION_ID = :organizationId;
+  SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_P' AND ORGANIZATION_ID = :organizationId;</code></pre></div>
 </div>
 
-```sql
-SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_S' AND ORGANIZATION_ID = :organizationId;
-  SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_P' AND ORGANIZATION_ID = :organizationId;
-```
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询成功但结果集为空<br><strong>逻辑分析：</strong>查询条件无匹配结果，或LNK_INVENTORY表中无当前事业部/产品的库存数据。属正常提示，非异常。</div>
-  </div>
-</div>
-
-```sql
-SELECT COUNT(1) AS 匹配数
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 匹配数
   FROM LNK_INVENTORY I
   WHERE I.DEPT_ID = :deptId
-    AND I.LH_PROD_ID LIKE :prodCode;
-```
+    AND I.LH_PROD_ID LIKE :prodCode;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>用户未登录或会话已过期</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或查询时，前端请求携带的token已失效<br><strong>逻辑分析：</strong>前端请求头中携带的Authorization token过期或无效，后端拦截器返回401状态码。前端跳转登录页。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT USER_ID, USER_NAME, STATUS FROM HPFM_USER WHERE USER_ID = :userId;</code></pre></div>
 </div>
 
-```sql
-SELECT USER_ID, USER_NAME, STATUS FROM HPFM_USER WHERE USER_ID = :userId;
-```
+
 </KbCard>
 
 <KbCard title="常见问题">

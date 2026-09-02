@@ -330,11 +330,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
     <h4><span style="color:#7C3AED;">报错：</span>政策已失效</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验关联的原折扣政策DISCOUNT_POLICY_ID对应记录的VALID=3（失效）<br><strong>逻辑分析：</strong>失效单只能针对有效状态（valid=2）的政策发起。校验逻辑按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY.VALID，若该值=3则抛异常，阻止保存。常见根因：用户选择的政策已被其他失效单失效、政策在保存前被并发失效、或前端政策选择列表未实时刷新。</div>
-  </div>
-</div>
-
-```sql
-SELECT d.discount_policy_disabled_id AS 失效单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT d.discount_policy_disabled_id AS 失效单ID,
          d.discount_policy_disabled_code AS 失效单号,
          d.discount_policy_id    AS 关联政策ID,
          p.discount_policy_code  AS 政策单号,
@@ -344,19 +341,18 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   LEFT   JOIN epm_discount_policy p
          ON p.discount_policy_id = d.discount_policy_id
   WHERE  p.valid = 3
-  ORDER  BY d.createtime DESC;
-```
+  ORDER  BY d.createtime DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY返回null<br><strong>逻辑分析：</strong>失效单需关联到原折扣政策。若原政策在保存前被其他用户物理删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在，查询返回空，无法关联，抛异常阻止保存。常见根因：政策被并发删除、前端传参错误、或数据不一致。</div>
-  </div>
-</div>
-
-```sql
-SELECT d.discount_policy_disabled_id AS 失效单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT d.discount_policy_disabled_id AS 失效单ID,
          d.discount_policy_disabled_code AS 失效单号,
          d.discount_policy_id    AS 关联政策ID,
          p.discount_policy_code  AS 政策单号
@@ -364,19 +360,18 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   LEFT   JOIN epm_discount_policy p
          ON p.discount_policy_id = d.discount_policy_id
   WHERE  p.discount_policy_id IS NULL
-  ORDER  BY d.createtime DESC;
-```
+  ORDER  BY d.createtime DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>失效政策行不允许为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，saveData校验时，DISCOUNT_POLICY_ITEM_DTO_LIST为空或全部被标记删除<br><strong>逻辑分析：</strong>失效单必须关联至少一行要失效的政策产品行，否则失效无意义。校验逻辑读取discountPolicyItemDTOList，为空则抛异常。常见根因：用户未选择要失效的政策行、政策行被全部删除、或前端未传政策行数据。</div>
-  </div>
-</div>
-
-```sql
-SELECT d.discount_policy_disabled_id AS 失效单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT d.discount_policy_disabled_id AS 失效单ID,
          d.discount_policy_disabled_code AS 失效单号,
          d.hz_approve_status     AS 审批状态,
          COUNT(dpi.discount_policy_item_id) AS 失效政策行数
@@ -384,19 +379,18 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   LEFT   JOIN epm_discount_policy_item dpi
          ON dpi.discount_policy_disabled_id = d.discount_policy_disabled_id
   GROUP  BY d.discount_policy_disabled_id, d.discount_policy_disabled_code, d.hz_approve_status
-  HAVING COUNT(dpi.discount_policy_item_id) = 0;
-```
+  HAVING COUNT(dpi.discount_policy_item_id) = 0;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前折扣政策不允许失效 请检查</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，generateCode校验时，按DISCOUNT_POLICY_CODE查询EPM_DISCOUNT_POLICY返回空<br><strong>逻辑分析：</strong>失效单生成编码时需查询原折扣政策确认存在，若政策编码不存在则无法确定失效类型(工程/家装/样品)和编码规则，抛异常。常见根因：用户输入错误政策编码、政策已被删除、或政策编码从未存在。</div>
-  </div>
-</div>
-
-```sql
-SELECT d.discount_policy_disabled_id AS 失效单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT d.discount_policy_disabled_id AS 失效单ID,
          d.discount_policy_disabled_code AS 失效单号,
          d.discount_policy_id    AS 关联政策ID,
          p.discount_policy_code  AS 政策单号,
@@ -406,69 +400,65 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   LEFT   JOIN epm_discount_policy p
          ON p.discount_policy_id = d.discount_policy_id
   WHERE  p.discount_policy_id IS NULL
-  ORDER  BY d.createtime DESC;
-```
+  ORDER  BY d.createtime DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该单据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"按钮，doDelete校验时，按DISCOUNT_POLICY_DISABLED_ID查询EPM_DISCOUNT_POLICY_DISABLED返回null<br><strong>逻辑分析：</strong>删除操作需先查询失效单确认存在。若失效单在删除前被其他用户物理删除、DISCOUNT_POLICY_DISABLED_ID传值错误、或失效单从未存在，查询返回空，无法删除，抛异常。常见根因：并发操作删除失效单、传参错误、或数据不一致。</div>
-  </div>
-</div>
-
-```sql
-SELECT discount_policy_disabled_id AS 失效单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT discount_policy_disabled_id AS 失效单ID,
          discount_policy_disabled_code AS 失效单号,
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy_disabled
-  WHERE  discount_policy_disabled_id = #{传入的discountPolicyDisabledId};
-```
+  WHERE  discount_policy_disabled_id = #{传入的discountPolicyDisabledId};</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除.</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"按钮，doDelete校验时，失效单HZ_APPROVE_STATUS≠NEW(新建)<br><strong>逻辑分析：</strong>仅新建状态(HZ_APPROVE_STATUS=NEW)的失效单允许删除，已提交审批或审批通过的失效单不允许删除，避免破坏审批流程和原政策状态。校验逻辑读取HZ_APPROVE_STATUS，非NEW则抛异常。常见根因：用户尝试删除已提交或已审批的失效单、或前端未做状态判断。</div>
-  </div>
-</div>
-
-```sql
-SELECT discount_policy_disabled_id AS 失效单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT discount_policy_disabled_id AS 失效单ID,
          discount_policy_disabled_code AS 失效单号,
          hz_approve_status     AS 审批状态,
          discount_policy_id    AS 关联政策ID
   FROM   epm_discount_policy_disabled
-  WHERE  hz_approve_status <> 'NEW';
-```
+  WHERE  hz_approve_status &lt;&gt; 'NEW';</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策失效id不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>工作流审批回调(wfComplete)时，回调报文中的objId(政策失效单ID)为null<br><strong>逻辑分析：</strong>工作流回调处理需根据objId查询失效单并更新状态，objId为空则无法定位失效单，回调处理失败。校验逻辑读取objId，为空则抛异常。常见根因：工作流配置错误、回调报文丢失objId、或工作流实例与业务单据映射异常。</div>
-  </div>
-</div>
-
-```sql
-SELECT discount_policy_disabled_id AS 失效单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT discount_policy_disabled_id AS 失效单ID,
          discount_policy_disabled_code AS 失效单号,
          hz_approve_status     AS 审批状态,
          hz_instance_id        AS 工作流实例ID
   FROM   epm_discount_policy_disabled
-  WHERE  hz_instance_id = #{工作流实例ID};
-```
+  WHERE  hz_instance_id = #{工作流实例ID};</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策明细推送crm出错,请稍后再试</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>工作流审批通过回调(wfComplete)时，调用CRM政策失效接口(policyDisabled)，CRM返回resultLine为null<br><strong>逻辑分析：</strong>失效审批通过后需推送CRM同步政策失效状态，CRM返回空则无法确认同步结果，抛异常。常见根因：CRM接口超时、CRM服务不可用、或网络异常。</div>
-  </div>
-</div>
-
-```sql
-SELECT d.discount_policy_disabled_id AS 失效单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT d.discount_policy_disabled_id AS 失效单ID,
          d.discount_policy_disabled_code AS 失效单号,
          d.hz_approve_status     AS 审批状态,
          p.discount_policy_code  AS 政策单号,
@@ -476,20 +466,19 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   FROM   epm_discount_policy_disabled d
   JOIN   epm_discount_policy p ON p.discount_policy_id = d.discount_policy_id
   WHERE  d.hz_approve_status = 'APPROVED'
-  AND    p.suitable_type <> 'normal'
-  ORDER  BY d.createtime DESC;
-```
+  AND    p.suitable_type &lt;&gt; 'normal'
+  ORDER  BY d.createtime DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>政策明细推送crm出错：&#123;lineId&#125;:&#123;message&#125;</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>工作流审批通过回调(wfComplete)时，调用CRM政策失效接口(policyDisabled)，CRM返回success=false且message非空<br><strong>逻辑分析：</strong>失效审批通过后需推送CRM同步政策失效状态，CRM返回失败信息则同步失败，抛异常并提示具体CRM行ID和错误信息。常见根因：CRM政策行不存在、CRM政策行状态异常、或CRM业务校验失败。</div>
-  </div>
-</div>
-
-```sql
-SELECT dpi.discount_policy_item_id AS 政策行ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT dpi.discount_policy_item_id AS 政策行ID,
          dpi.crm_line_id        AS CRM行ID,
          dpi.discount_policy_id AS 政策ID,
          dpi.valid_stat         AS 行有效状态
@@ -500,8 +489,10 @@ SELECT dpi.discount_policy_item_id AS 政策行ID,
   AND    dpi.discount_policy_disabled_id IS NOT NULL
   AND    NOT EXISTS (
     SELECT 1 FROM crm_policy_line cpl WHERE cpl.line_id = dpi.crm_line_id AND cpl.status = 'ACTIVE'
-  );
-```
+  );</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

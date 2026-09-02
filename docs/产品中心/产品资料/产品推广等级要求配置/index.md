@@ -421,135 +421,124 @@ HAVING COUNT(*) > 1;
     <h4><span style="color:#7C3AED;">报错：</span>保存失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增弹窗点击确认按钮，后端保存接口返回失败<br><strong>逻辑分析：</strong>前端onOkFn方法调用POST保存接口，后端saveData方法逐条校验唯一性（deptCode+grade+prodSign+reqColumn+reqColumnType）后插入LNK_PROD_PROMOTE_GRADE_CONTROL表。若校验失败或数据库异常则返回failed=true，前端提示"保存失败"并显示后端错误信息。</div>
-  </div>
-</div>
-
-```sql
-SELECT C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型,
          C.REQ_COLUMN_TYPE AS 字段类型, C.REQ_COLUMN AS 必填字段,
          C.STATUS AS 状态, C.CREATION_DATE AS 创建时间
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
   WHERE C.DEPT_CODE = :deptCode
     AND C.GRADE = :grade
     AND C.PROD_SIGN = :prodSign
-  ORDER BY C.CREATION_DATE DESC;
-```
+  ORDER BY C.CREATION_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>操作失败！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>失效确认框确认后，后端保存接口返回失败<br><strong>逻辑分析：</strong>前端调用失效接口将LNK_PROD_PROMOTE_GRADE_CONTROL记录状态置为invalid。若记录已被他人操作或数据库异常则返回失败，前端提示"操作失败！"。</div>
-  </div>
-</div>
-
-```sql
-SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.PROD_SIGN AS 物料类型, C.STATUS AS 状态,
          C.LAST_UPDATED_BY, C.LAST_UPDATE_DATE
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.ID = :recordId;
-```
+  WHERE C.ID = :recordId;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>品牌事业部不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增弹窗中未选择品牌事业部就点击确认按钮<br><strong>逻辑分析：</strong>前端onOkFn方法中commonFn_formValid校验deptCode字段required=true（listConfig.tsx第86行），校验不通过时弹窗提示"品牌事业部不能为空"并阻止提交。后端Controller的validObject校验LnkProdPromoteGradeControl实体deptCode字段的@NotBlank注解，抛出阻断性异常。</div>
-  </div>
-</div>
-
-```sql
--- 检查存在品牌事业部为空的配置记录（异常数据）
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查存在品牌事业部为空的配置记录（异常数据）
   SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.DEPT_CODE IS NULL OR TRIM(C.DEPT_CODE) IS NULL;
-```
+  WHERE C.DEPT_CODE IS NULL OR TRIM(C.DEPT_CODE) IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>等级不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增弹窗中未选择等级就点击确认按钮<br><strong>逻辑分析：</strong>前端commonFn_formValid校验grade字段required=true（listConfig.tsx第87行），校验不通过时弹窗提示。后端Entity的grade字段标注@NotBlank，validObject校验失败抛出异常。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
+  FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
+  WHERE C.GRADE IS NULL OR TRIM(C.GRADE) IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
-  FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.GRADE IS NULL OR TRIM(C.GRADE) IS NULL;
-```
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>物料类型不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增弹窗中未选择物料类型就点击确认按钮<br><strong>逻辑分析：</strong>前端commonFn_formValid校验prodSign字段required=true（listConfig.tsx第91行），校验不通过时弹窗提示。后端Entity的prodSign字段标注@NotBlank，validObject校验失败抛出异常。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
+  FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
+  WHERE C.PROD_SIGN IS NULL OR TRIM(C.PROD_SIGN) IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
-  FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.PROD_SIGN IS NULL OR TRIM(C.PROD_SIGN) IS NULL;
-```
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>必填字段类型不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增弹窗中未选择必填字段类型就点击确认按钮<br><strong>逻辑分析：</strong>前端commonFn_formValid校验reqColumnType字段required=true（listConfig.tsx第98行），校验不通过时弹窗提示。后端Entity的reqColumnType字段标注@NotBlank，validObject校验失败抛出异常。此外reqColumnType变更时会自动清空reqColumn（listConfig.tsx第133-135行）。</div>
-  </div>
-</div>
-
-```sql
-SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.REQ_COLUMN_TYPE AS 字段类型, C.REQ_COLUMN AS 必填字段
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.REQ_COLUMN_TYPE IS NULL OR TRIM(C.REQ_COLUMN_TYPE) IS NULL;
-```
+  WHERE C.REQ_COLUMN_TYPE IS NULL OR TRIM(C.REQ_COLUMN_TYPE) IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>必填字段不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增弹窗中未选择必填字段就点击确认按钮<br><strong>逻辑分析：</strong>前端commonFn_formValid校验reqColumn字段required=true（listConfig.tsx第106行），且reqColumn通过cascadeMap级联reqColumnType（listConfig.tsx第108行），若未先选择必填字段类型则必填字段选项为空。校验不通过时弹窗提示。后端Entity的reqColumn字段标注@NotBlank，validObject校验失败抛出异常。</div>
-  </div>
-</div>
-
-```sql
-SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.REQ_COLUMN_TYPE AS 字段类型, C.REQ_COLUMN AS 必填字段
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.REQ_COLUMN IS NULL OR TRIM(C.REQ_COLUMN) IS NULL;
-```
+  WHERE C.REQ_COLUMN IS NULL OR TRIM(C.REQ_COLUMN) IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页加载或点击查询按钮时，后端列表查询接口返回失败<br><strong>逻辑分析：</strong>前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/prodPromoteGradesControls接口，后端selectList方法通过LnkProdPromoteGradeControlMapper.selectList查询LNK_PROD_PROMOTE_GRADE_CONTROL关联HZERO.IAM_USER表。若数据库连接异常或SQL执行超时则返回失败，前端DataSet自动提示查询失败。</div>
-  </div>
-</div>
-
-```sql
--- 检查配置表数据完整性
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查配置表数据完整性
   SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.PROD_SIGN AS 物料类型, C.STATUS AS 状态
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.STATUS IS NULL;
-```
+  WHERE C.STATUS IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户无对应操作权限时点击新增/批量失效/行内失效按钮<br><strong>逻辑分析：</strong>前端按钮配置permissionList权限编码（新增/批量失效：hzero.product_data.product_info.promote_grade-list.ps.edit；行内失效：hzero.product_data.product_info.product_change_detail.ps.delete），无权限时按钮不显示。若通过API直接调用，后端@Permission注解校验组织级权限，无权限时抛出403异常。</div>
-  </div>
-</div>
-
-```sql
--- 检查用户角色权限配置
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查用户角色权限配置
   SELECT R.CODE AS 角色编码, R.NAME AS 角色名称,
          P.CODE AS 权限编码, P.NAME AS 权限名称
   FROM HZERO.IAM_ROLE R
@@ -559,26 +548,27 @@ SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
     'hzero.product_data.product_info.promote_grade-list.ps.edit',
     'hzero.product_data.product_info.product_change_detail.ps.delete'
   )
-  ORDER BY P.CODE;
-```
+  ORDER BY P.CODE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户登录会话已失效时执行任意操作（查询/新增/失效）<br><strong>逻辑分析：</strong>前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。</div>
-  </div>
-</div>
-
-```sql
--- 检查用户登录会话状态
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查用户登录会话状态
   SELECT U.LOGIN_NAME AS 登录名, T.TOKEN, T.EXPIRE_TIME AS 过期时间,
          T.LAST_CLIENT_TIME AS 最后活跃时间
   FROM HZERO.OAUTH_ACCESS_TOKEN T
     JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
   WHERE U.LOGIN_NAME = :loginName
-  ORDER BY T.EXPIRE_TIME DESC;
-```
+  ORDER BY T.EXPIRE_TIME DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

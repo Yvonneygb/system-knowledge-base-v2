@@ -571,551 +571,513 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <h4><span style="color:#7C3AED;">报错：</span>申请单不存在！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交时，申请单ID在LNK_CROSS_BU_APP_FORM表中不存在<br><strong>逻辑分析：</strong>后端submit接口按ID查询申请单头表，若记录已被删除则抛出异常。常见于并发场景：提交时申请单已被他人删除。</div>
-  </div>
-</div>
-
-```sql
-SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          F.LAST_UPDATED_BY, F.LAST_UPDATE_DATE
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;
-```
+  WHERE F.ID = :formId;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请单状态不为新建或审核拒绝，不可提交！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交时，申请单当前状态非NEW且非REJECTED<br><strong>逻辑分析：</strong>后端校验申请单状态，仅NEW（新建）和REJECTED（审核拒绝）可提交。RUN（审批中）、APPROVED（已审核）状态提交会抛出CommonException。常见于并发提交或前端状态未刷新。</div>
-  </div>
-</div>
-
-```sql
-SELECT F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          F.LAST_UPDATE_DATE AS 最后更新时间
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;
-```
+  WHERE F.ID = :formId;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请单明细为空，不允许提交！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交时，申请单未维护任何明细行<br><strong>逻辑分析：</strong>后端按HEAD_ID查询LNK_CROSS_BU_APP_FORM_ITEM表，若COUNT为0则抛出异常。常见于用户新建申请单后未添加产品明细就点击提交。</div>
-  </div>
-</div>
-
-```sql
-SELECT F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          (SELECT COUNT(1) FROM LNK_CROSS_BU_APP_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 明细行数
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;
-```
+  WHERE F.ID = :formId;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;类型为新增时，有效开始时间必填！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交时，明细行ITEM_TYPE='add'但EFF_START_DATE为空<br><strong>逻辑分析：</strong>后端遍历所有明细行，类型为新增（add）时校验有效开始时间非空。新增类型产品需明确跨事业部销售的生效起始日期。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
          I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.ITEM_TYPE = 'add'
-    AND I.EFF_START_DATE IS NULL;
-```
+    AND I.EFF_START_DATE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;类型为新增时，有效结束时间必填！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交时，明细行ITEM_TYPE='add'但EFF_END_DATE为空<br><strong>逻辑分析：</strong>后端遍历所有明细行，类型为新增（add）时校验有效结束时间非空。新增类型产品需明确跨事业部销售的生效截止日期。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
          I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.ITEM_TYPE = 'add'
-    AND I.EFF_END_DATE IS NULL;
-```
+    AND I.EFF_END_DATE IS NULL;</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;的有效结束时间必须大于等于有效开始时间！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交时，明细行EFF_END_DATE早于EFF_START_DATE<br><strong>逻辑分析：</strong>后端校验有效时间范围合法性，有效结束时间须大于等于有效开始时间。常见于用户手动输入日期顺序错误。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
          I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
-    AND I.EFF_END_DATE < I.EFF_START_DATE;
-```
+    AND I.EFF_END_DATE &lt; I.EFF_START_DATE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;类型为新增时，有效开始时间必须大于等于今天！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交时，明细行ITEM_TYPE='add'但EFF_START_DATE早于当前日期<br><strong>逻辑分析：</strong>后端校验新增类型产品的有效开始时间须大于等于TRUNC(SYSDATE)，不允许配置过去日期生效。常见于用户误选历史日期。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.PROD_CODE AS 产品编码, I.EFF_START_DATE AS 有效开始时间,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.EFF_START_DATE AS 有效开始时间,
          TRUNC(SYSDATE) AS 当前日期
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.ITEM_TYPE = 'add'
-    AND TRUNC(I.EFF_START_DATE) < TRUNC(SYSDATE);
-```
+    AND TRUNC(I.EFF_START_DATE) &lt; TRUNC(SYSDATE);</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>跨事业部产品销售申请单&#123;formCode&#125;不存在！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批回调时，根据formCode查询申请单不存在<br><strong>逻辑分析：</strong>OA审批完成后回调DMS，按FORM_CODE查询LNK_CROSS_BU_APP_FORM更新状态。若记录已被删除则回调失败，抛出异常。常见于OA审批过程中申请单被删除。</div>
-  </div>
-</div>
-
-```sql
-SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          F.HZ_APPROVE_STATUS AS 审批状态
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.FORM_CODE = :formCode;
-```
+  WHERE F.FORM_CODE = :formCode;</code></pre></div>
+</div>
+
+
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请单事业部为空，无法查询产品！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>新增明细行打开产品选择弹窗时，申请单头事业部DEPT_CODE为空<br><strong>逻辑分析：</strong>产品选择弹窗需排除当前申请单事业部（excludeDeptCode），若头表DEPT_CODE为空则无法过滤，抛出异常。常见于新建保存时未正确填充当前用户事业部。</div>
-  </div>
-</div>
-
-```sql
-SELECT F.ID, F.FORM_CODE AS 申请单号, F.DEPT_CODE AS 事业部编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.DEPT_CODE AS 事业部编码,
          U.REAL_NAME AS 创建人
   FROM LNK_CROSS_BU_APP_FORM F
     LEFT JOIN HZERO.IAM_USER U ON U.ID = F.CREATED_BY
-  WHERE F.ID = :formId;
-```
+  WHERE F.ID = :formId;</code></pre></div>
+</div>
+
+
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请至少输入"产品编码、产品名称、型号"中的一个条件再进行查询！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>产品选择弹窗未输入任何查询条件就点击查询<br><strong>逻辑分析：</strong>产品选择接口/v1/&#123;orgId&#125;/prod/cross-bu-prod要求至少传入prodCode、prodName、lhProdModel中的一个，防止全表扫描。前端校验未通过则提示。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '产品选择弹窗需至少输入产品编码/产品名称/型号其中一个' AS 提示 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '产品选择弹窗需至少输入产品编码/产品名称/型号其中一个' AS 提示 FROM DUAL;
-```
+
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请填写申请说明！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，申请说明（remark）为空或纯空格<br><strong>逻辑分析：</strong>前端DetailPage/index.tsx中validHead方法，校验remark.trim()为空时notification.error提示"请填写申请说明！"。申请说明是申请单的必填字段，用于描述申请事由。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.REMARK AS 申请说明
+  FROM LNK_CROSS_BU_APP_FORM F
+  WHERE F.ID = :formId AND (F.REMARK IS NULL OR TRIM(F.REMARK) = '');</code></pre></div>
 </div>
 
-```sql
-SELECT F.ID, F.FORM_CODE AS 申请单号, F.REMARK AS 申请说明
-  FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId AND (F.REMARK IS NULL OR TRIM(F.REMARK) = '');
-```
+
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请说明已超过500字</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，申请说明长度超过500字<br><strong>逻辑分析：</strong>前端validHead方法校验remark.length &gt; 500时notification.warning提示"申请说明已超过500字（当前$&#123;length&#125;字），请精简后再保存。"。后端实体注解@Size(max=500)同步校验。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE AS 申请单号, F.REMARK AS 申请说明, LENGTH(F.REMARK) AS 备注
+  FROM LNK_CROSS_BU_APP_FORM F
+  WHERE LENGTH(F.REMARK) &gt; 500;</code></pre></div>
 </div>
 
-```sql
-SELECT F.FORM_CODE AS 申请单号, F.REMARK AS 申请说明, LENGTH(F.REMARK) AS 备注
-  FROM LNK_CROSS_BU_APP_FORM F
-  WHERE LENGTH(F.REMARK) > 500;
-```
+
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请检查表单必填项！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，headDs.validate()返回false<br><strong>逻辑分析：</strong>前端validHead方法在remark校验通过后调用headDs.validate()校验表单其他必填字段，未通过则notification.error提示"请检查表单必填项！"。常见于事业部、状态等字段缺失。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.DEPT_CODE AS 事业部, F.STATUS AS 状态
+  FROM LNK_CROSS_BU_APP_FORM F
+  WHERE F.ID = :formId;</code></pre></div>
 </div>
 
-```sql
-SELECT F.ID, F.FORM_CODE AS 申请单号, F.DEPT_CODE AS 事业部, F.STATUS AS 状态
-  FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;
-```
+
 <div id="err-detail-14" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请先保存申请单头信息！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交按钮点击时，当前页面无id（新建态未保存）<br><strong>逻辑分析：</strong>前端handleSubmit方法，当id为空时notification.error提示"请先保存申请单头信息！"。新建申请单必须先保存生成申请单号后才能提交。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端校验：新建态下id为空，需先调用保存接口' AS 提示 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '前端校验：新建态下id为空，需先调用保存接口' AS 提示 FROM DUAL;
-```
+
 <div id="err-detail-15" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请至少添加一条明细行！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交按钮点击时，lineDs.totalCount为0<br><strong>逻辑分析：</strong>前端handleSubmit方法，通过lineDs.totalCount判断全量明细行数（避免分页后前端仅持有当前页），为0时notification.warning提示"请至少添加一条明细行！"。后端submit接口也会做二次校验。</div>
-  </div>
-</div>
-
-```sql
-SELECT F.FORM_CODE AS 申请单号,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE AS 申请单号,
          (SELECT COUNT(1) FROM LNK_CROSS_BU_APP_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 明细行数
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;
-```
+  WHERE F.ID = :formId;</code></pre></div>
+</div>
+
+
 <div id="err-detail-16" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;的类型不合法，仅支持新增/失效！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，itemType既非add也非invalid<br><strong>逻辑分析：</strong>后端LnkCrossBuAppFormItemServiceImpl.saveData方法校验itemType是否为CrossBuItemTypeEnum.ADD或EXPIRE，不合法则抛出CommonException。常见于前端传入错误枚举值或数据被篡改。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :headId
-    AND I.ITEM_TYPE NOT IN ('add', 'invalid');
-```
+    AND I.ITEM_TYPE NOT IN ('add', 'invalid');</code></pre></div>
+</div>
+
+
 <div id="err-detail-17" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码不能为空！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，prodCode为空<br><strong>逻辑分析：</strong>后端LnkCrossBuAppFormItemServiceImpl.saveData方法校验prodCode非空，为空则抛出CommonException。产品编码是明细行的核心标识，必填。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
+  FROM LNK_CROSS_BU_APP_FORM_ITEM I
+  WHERE I.HEAD_ID = :headId AND I.PROD_CODE IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
-  FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.HEAD_ID = :headId AND I.PROD_CODE IS NULL;
-```
+
 <div id="err-detail-18" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;的申请单头ID不能为空！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，headId为空<br><strong>逻辑分析：</strong>后端LnkCrossBuAppFormItemServiceImpl.saveData方法校验headId非空，为空则抛出CommonException。常见于前端未正确关联头表ID。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
+  FROM LNK_CROSS_BU_APP_FORM_ITEM I
+  WHERE I.PROD_CODE = :prodCode AND I.HEAD_ID IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
-  FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.PROD_CODE = :prodCode AND I.HEAD_ID IS NULL;
-```
+
 <div id="err-detail-19" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码【&#123;prodCode&#125;】在申请单明细中重复！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行批量保存时，同一批次内存在相同headId+prodCode的记录<br><strong>逻辑分析：</strong>后端LnkCrossBuAppFormItemServiceImpl.saveData方法中，使用HashSet校验同一批次新增行的headId+prodCode唯一性，重复则抛出CommonException。防止前端重复提交。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.HEAD_ID, I.PROD_CODE AS 产品编码, COUNT(*) AS 重复数
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.HEAD_ID, I.PROD_CODE AS 产品编码, COUNT(*) AS 重复数
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :headId
   GROUP BY I.HEAD_ID, I.PROD_CODE
-  HAVING COUNT(*) > 1;
-```
+  HAVING COUNT(*) &gt; 1;</code></pre></div>
+</div>
+
+
 <div id="err-detail-20" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码【&#123;prodCode&#125;】在当前申请单明细中已存在，不允许重复导入！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，数据库中同一headId+prodCode已存在记录<br><strong>逻辑分析：</strong>后端validateProdNotExists方法查询LNK_CROSS_BU_APP_FORM_ITEM表，若同一headId+prodCode已存在则抛出CommonException。与报错19的区别在于此校验针对数据库已存在记录，报错19针对同一批次内重复。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.HEAD_ID, I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型, I.STATUS AS 状态
+  FROM LNK_CROSS_BU_APP_FORM_ITEM I
+  WHERE I.HEAD_ID = :headId AND I.PROD_CODE = :prodCode;</code></pre></div>
 </div>
 
-```sql
-SELECT I.HEAD_ID, I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型, I.STATUS AS 状态
-  FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.HEAD_ID = :headId AND I.PROD_CODE = :prodCode;
-```
+
 <div id="err-detail-21" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码"&#123;prodCode&#125;"不存在！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，产品主档LNK_PROD中无此产品编码<br><strong>逻辑分析：</strong>后端fillBrandDeptId方法按prodCode查询LNK_PROD表，若记录不存在则抛出CommonException。常见于产品编码输入错误或产品尚未在系统中维护。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称, P.DEPT_ID AS 品牌事业部ID
+  FROM LNK_PROD P
+  WHERE P.PROD_CODE = :prodCode;</code></pre></div>
 </div>
 
-```sql
-SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称, P.DEPT_ID AS 品牌事业部ID
-  FROM LNK_PROD P
-  WHERE P.PROD_CODE = :prodCode;
-```
+
 <div id="err-detail-22" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;品牌事业部为空，不允许导入！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，产品的DEPT_ID为空<br><strong>逻辑分析：</strong>后端fillBrandDeptId方法校验prod.getDeptId()非空，为空则抛出CommonException。跨事业部销售要求产品必须已维护品牌事业部。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称, P.DEPT_ID AS 品牌事业部ID
+  FROM LNK_PROD P
+  WHERE P.PROD_CODE = :prodCode AND P.DEPT_ID IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称, P.DEPT_ID AS 品牌事业部ID
-  FROM LNK_PROD P
-  WHERE P.PROD_CODE = :prodCode AND P.DEPT_ID IS NULL;
-```
+
 <div id="err-detail-23" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请单头信息不存在！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，按headId查不到申请单头记录<br><strong>逻辑分析：</strong>后端validateBrandDept方法按item.getHeadId()查询LNK_CROSS_BU_APP_FORM，若记录不存在则抛出CommonException。常见于申请单头被删除后仍操作明细行。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.DEPT_CODE AS 事业部, F.STATUS AS 状态
+  FROM LNK_CROSS_BU_APP_FORM F
+  WHERE F.ID = :headId;</code></pre></div>
 </div>
 
-```sql
-SELECT F.ID, F.FORM_CODE AS 申请单号, F.DEPT_CODE AS 事业部, F.STATUS AS 状态
-  FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :headId;
-```
+
 <div id="err-detail-24" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到事业部编码[&#123;deptCode&#125;]对应的CRM事业部！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，REL_CRM_AE_ORG中无对应事业部映射<br><strong>逻辑分析：</strong>后端validateBrandDept方法按form.getDeptCode()查询REL_CRM_AE_ORG，若记录不存在或crmOrgId为空则抛出CommonException。确保事业部编码在CRM中有对应映射。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT R.AE_ORG_CODE AS AE事业部编码, R.CRM_ORG_ID AS CRM事业部ID
+  FROM REL_CRM_AE_ORG R
+  WHERE R.AE_ORG_CODE = :deptCode;</code></pre></div>
 </div>
 
-```sql
-SELECT R.AE_ORG_CODE AS AE事业部编码, R.CRM_ORG_ID AS CRM事业部ID
-  FROM REL_CRM_AE_ORG R
-  WHERE R.AE_ORG_CODE = :deptCode;
-```
+
 <div id="err-detail-25" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;所属品牌事业部与申请单事业部相同，不允许导入！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，产品的品牌事业部等于申请单事业部<br><strong>逻辑分析：</strong>后端validateBrandDept方法校验prodDeptId不等于rel.getCrmOrgId()（申请单事业部对应的CRM事业部），相同则抛出CommonException。跨事业部销售申请要求产品事业部与申请单事业部不同。</div>
-  </div>
-</div>
-
-```sql
-SELECT P.PROD_CODE AS 产品编码, P.DEPT_ID AS 产品事业部,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.DEPT_ID AS 产品事业部,
          R.CRM_ORG_ID AS 申请单CRM事业部
   FROM LNK_PROD P, REL_CRM_AE_ORG R
   WHERE P.PROD_CODE = :prodCode
     AND R.AE_ORG_CODE = :deptCode
-    AND P.DEPT_ID = R.CRM_ORG_ID;
-```
+    AND P.DEPT_ID = R.CRM_ORG_ID;</code></pre></div>
+</div>
+
+
 <div id="err-detail-26" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品&#123;prodCode&#125;品牌事业部不匹配！</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行保存时，传入的brandDeptId与产品实际DEPT_ID不一致<br><strong>逻辑分析：</strong>后端validateBrandDept方法校验item.getBrandDeptId()与prod.getDeptId()一致，不一致则抛出CommonException。防止前端传入错误的品牌事业部ID。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.DEPT_ID AS 产品实际事业部
+  FROM LNK_PROD P
+  WHERE P.PROD_CODE = :prodCode;</code></pre></div>
 </div>
 
-```sql
-SELECT P.PROD_CODE AS 产品编码, P.DEPT_ID AS 产品实际事业部
-  FROM LNK_PROD P
-  WHERE P.PROD_CODE = :prodCode;
-```
+
 <div id="err-detail-27" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>有效开始时间必须大于等于今天</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行编辑弹窗中，类型=新增时有效开始时间早于今天<br><strong>逻辑分析：</strong>前端DetailPage/index.tsx中effStartDate字段的validator校验，当itemType为ADD且moment(value).isBefore(moment().startOf('day'), 'day')时返回错误信息。后端submit接口和saveData方法同步校验。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.PROD_CODE AS 产品编码, I.EFF_START_DATE AS 有效开始时间, TRUNC(SYSDATE) AS 当前日期
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.EFF_START_DATE AS 有效开始时间, TRUNC(SYSDATE) AS 当前日期
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :headId
     AND I.ITEM_TYPE = 'add'
-    AND TRUNC(I.EFF_START_DATE) < TRUNC(SYSDATE);
-```
+    AND TRUNC(I.EFF_START_DATE) &lt; TRUNC(SYSDATE);</code></pre></div>
+</div>
+
+
 <div id="err-detail-28" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>有效结束时间必须大于等于有效开始时间</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行编辑弹窗中，有效结束时间早于有效开始时间<br><strong>逻辑分析：</strong>前端DetailPage/index.tsx中effEndDate字段的validator校验，当itemType为ADD且moment(value).isBefore(moment(start), 'day')时返回错误信息。后端submit接口和saveData方法同步校验。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.PROD_CODE AS 产品编码, I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :headId
-    AND I.EFF_END_DATE < I.EFF_START_DATE;
-```
+    AND I.EFF_END_DATE &lt; I.EFF_START_DATE;</code></pre></div>
+</div>
+
+
 <div id="err-detail-29" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>保存失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，后端接口返回res.failed=true<br><strong>逻辑分析：</strong>前端handleSave方法调用crossBuAppFormApi.save后，若res.failed为true则通过commonFn_showErrMsg展示后端错误信息。常见于后端校验异常被前端捕获。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态, F.REMARK AS 申请说明
+  FROM LNK_CROSS_BU_APP_FORM F
+  WHERE F.ID = :formId;</code></pre></div>
 </div>
 
-```sql
-SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态, F.REMARK AS 申请说明
-  FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;
-```
+
 <div id="err-detail-30" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>详情页加载时，detail接口请求异常<br><strong>逻辑分析：</strong>前端fetchDetail方法调用crossBuAppFormApi.detail，若res.failed为true则通过commonFn_showErrMsg展示"查询失败"。常见于申请单ID不存在或数据库异常。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 申请单数 FROM LNK_CROSS_BU_APP_FORM WHERE ID = :formId;</code></pre></div>
 </div>
 
-```sql
-SELECT COUNT(1) AS 申请单数 FROM LNK_CROSS_BU_APP_FORM WHERE ID = :formId;
-```
+
 <div id="err-detail-31" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>提交失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交按钮点击时，后端submit接口返回res.failed=true<br><strong>逻辑分析：</strong>前端handleSubmit方法调用crossBuAppFormApi.submit后，若res.failed为true则通过commonFn_showErrMsg展示"提交失败"。常见于后端校验异常（状态不合法、明细为空、时间校验失败）或OA推送失败。</div>
-  </div>
-</div>
-
-```sql
-SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          (SELECT COUNT(1) FROM LNK_CROSS_BU_APP_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 明细行数
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;
-```
+  WHERE F.ID = :formId;</code></pre></div>
+</div>
+
+
 <div id="err-detail-32" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>新增/编辑失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>明细行弹窗点击确认时，明细行保存接口返回res.failed=true<br><strong>逻辑分析：</strong>前端handleAddLine中弹窗确认按钮调用crossBuAppFormItemApi.save后，若res.failed为true则通过commonFn_showErrMsg展示"新增失败"或"编辑失败"。常见于产品校验失败、重复校验失败。</div>
-  </div>
-</div>
-
-```sql
-SELECT I.HEAD_ID, I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.HEAD_ID, I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
          I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.HEAD_ID = :headId;
-```
+  WHERE I.HEAD_ID = :headId;</code></pre></div>
+</div>
+
+
 <div id="err-detail-33" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请选择要删除的明细</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>删除按钮点击时，未选中任何明细行<br><strong>逻辑分析：</strong>前端handleLineDelete方法，当lineDs.selected.length为0时notification.warning提示"请选择要删除的明细"。属于前端预校验，无需请求后端。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端校验：未选中明细行' AS 提示 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '前端校验：未选中明细行' AS 提示 FROM DUAL;
-```
+
 <div id="err-detail-34" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>删除失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>删除明细行时，后端删除接口返回res.failed=true<br><strong>逻辑分析：</strong>前端handleLineDelete方法调用crossBuAppFormItemApi.remove后，若res.failed为true则通过commonFn_showErrMsg展示"删除失败"。常见于明细行已被删除或数据库异常。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
+  FROM LNK_CROSS_BU_APP_FORM_ITEM I
+  WHERE I.HEAD_ID = :headId;</code></pre></div>
 </div>
 
-```sql
-SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
-  FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.HEAD_ID = :headId;
-```
+
 <div id="err-detail-35" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>是否移除当前明细？/是否删除选中明细？</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击行移除按钮或批量删除按钮时<br><strong>逻辑分析：</strong>前端handleLineDelete方法中Modal.confirm弹出确认框，单行删除提示"是否移除当前明细？"，批量删除提示"是否删除选中明细？"。用户确认后调用删除接口。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
-```
+
 <div id="err-detail-36" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问页面或点击按钮时，未拥有对应权限编码<br><strong>逻辑分析：</strong>前端Button组件通过permissionList配置权限编码（如hzero.c.crm.cross-bu-app.button.create/save/edit/submit/export/import等），HZERO平台校验当前用户角色是否包含该权限编码。</div>
-  </div>
-</div>
-
-```sql
-SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
   FROM HZERO.IAM_USER U
     JOIN HZERO.IAM_MEMBER M ON U.ID = M.MEMBER_ID
     JOIN HZERO.IAM_ROLE R ON M.ROLE_ID = R.ID
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
-  WHERE P.CODE LIKE 'hzero.c.crm.cross-bu-app%';
-```
+  WHERE P.CODE LIKE 'hzero.c.crm.cross-bu-app%';</code></pre></div>
+</div>
+
+
 <div id="err-detail-37" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询结果为空集<br><strong>逻辑分析：</strong>前端Table组件查询后端返回content为空数组时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 申请单数 FROM LNK_CROSS_BU_APP_FORM WHERE STATUS = 'NEW';</code></pre></div>
 </div>
 
-```sql
-SELECT COUNT(1) AS 申请单数 FROM LNK_CROSS_BU_APP_FORM WHERE STATUS = 'NEW';
-```
+
 <div id="err-detail-38" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态失效或Token过期<br><strong>逻辑分析：</strong>HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。常见于长时间未操作或单点登录会话超时。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;</code></pre></div>
 </div>
 
-```sql
-SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
-```
+
 </KbCard>
 
 <KbCard title="常见问题">

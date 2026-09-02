@@ -497,30 +497,26 @@ ORDER BY TDL.DECORATE_PROJECT
     <h4><span style="color:#7C3AED;">报错：</span>事业部不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验头信息中TERMINAL_DECORATE_STANDARD.ENTID(事业部ID)为null<br><strong>逻辑分析：</strong>装修标准按事业部隔离维护，不同事业部装修政策和补贴标准不同，事业部ID是数据隔离和下游匹配的关键字段。若用户新建装修标准时未选择事业部即点击保存，或事业部LOV选择后未正确回传ENTID，后端校验ENTID为空即抛出toast提醒"事业部不能为空"，保存被拦截。该异常为非阻断性提示，用户选择事业部后可重新保存。</div>
-  </div>
-</div>
-
-```sql
-SELECT s.decorate_standard_id   AS 装修标准ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT s.decorate_standard_id   AS 装修标准ID,
          s.decorate_standard_no   AS 装修标准单号,
          s.entid                   AS 事业部ID,
          s.entname                 AS 事业部名称,
          s.hz_approve_status       AS 审批状态
   FROM   terminal_decorate_standard s
   WHERE  s.entid IS NULL
-  ORDER  BY s.create_time DESC;
-```
+  ORDER  BY s.create_time DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>行信息不能为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验明细行列表为空或行数为0<br><strong>逻辑分析：</strong>装修标准以头行结构维护，头表记录归属事业部，明细行记录具体装修项目+装修等级+面积范围+补贴单价。若无任何明细行，头表记录无实际补贴配置，下游装修申请/验收报销查询时匹配不到任何标准行，无法计算补贴金额。后端校验明细行列表非空且至少一行，若为空即抛出toast提醒"行信息不能为空"，保存被拦截。</div>
-  </div>
-</div>
-
-```sql
-SELECT s.decorate_standard_id   AS 装修标准ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT s.decorate_standard_id   AS 装修标准ID,
          s.decorate_standard_no   AS 装修标准单号,
          s.entname                 AS 事业部名称,
          s.hz_approve_status       AS 审批状态
@@ -530,69 +526,68 @@ SELECT s.decorate_standard_id   AS 装修标准ID,
     FROM   terminal_decorate_line l
     WHERE  l.decorate_standard_id = s.decorate_standard_id
   )
-  ORDER  BY s.create_time DESC;
-```
+  ORDER  BY s.create_time DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>面积范围不合法</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验某行明细的LOWER_AREA(面积范围小于等于)不大于UPER_AREA(面积范围大于)<br><strong>逻辑分析：</strong>面积范围通过UPER_AREA(下限，不含)和LOWER_AREA(上限，含)定义左开右闭区间，门店面积A匹配条件为UPER_AREA &lt; A &lt;= LOWER_AREA，要求LOWER_AREA &gt; UPER_AREA。若用户配置时误将下限填大于上限（如UPER_AREA=100、LOWER_AREA=50），区间为空集，任何门店面积都无法匹配该行，导致下游装修申请/验收报销匹配不到对应面积区间的补贴单价。后端校验LOWER_AREA &lt;= UPER_AREA即抛出toast提醒"面积范围不合法"。</div>
-  </div>
-</div>
-
-```sql
-SELECT l.decorate_line_id      AS 明细行ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT l.decorate_line_id      AS 明细行ID,
          l.decorate_standard_id  AS 装修标准ID,
          l.decorate_project      AS 装修项目,
          l.fixup_grade           AS 装修等级,
          l.uper_area             AS 面积范围大于,
          l.lower_area            AS 面积范围小于等于
   FROM   terminal_decorate_line l
-  WHERE  l.lower_area <= l.uper_area
-  ORDER  BY l.decorate_standard_id, l.decorate_project;
-```
+  WHERE  l.lower_area &lt;= l.uper_area
+  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>有效日期不合法</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验某行明细的END_DATE(有效结束日期)早于START_DATE(有效开始日期)<br><strong>逻辑分析：</strong>每行明细有独立的有效期，下游单据引用时仅匹配当前日期在START_DATE至END_DATE之间的行。要求END_DATE &gt;= START_DATE，确保有效期内有可被引用的时间段。若用户选择日期时误将结束日期早于开始日期（如跨年配置时年份选错），该行有效期为空区间，任何日期都无法匹配，下游装修申请/验收报销查询时该行永不生效。后端校验END_DATE &lt; START_DATE即抛出toast提醒"有效日期不合法"。</div>
-  </div>
-</div>
-
-```sql
-SELECT l.decorate_line_id      AS 明细行ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT l.decorate_line_id      AS 明细行ID,
          l.decorate_standard_id  AS 装修标准ID,
          l.decorate_project      AS 装修项目,
          l.fixup_grade           AS 装修等级,
          l.start_date            AS 有效开始日期,
          l.end_date              AS 有效结束日期
   FROM   terminal_decorate_line l
-  WHERE  l.end_date < l.start_date
-  ORDER  BY l.decorate_standard_id, l.decorate_project;
-```
+  WHERE  l.end_date &lt; l.start_date
+  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>金额标准必须大于0</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验某行明细的IN_STANDARD(额度内标准)或OUT_STANDARD(额度外标准)小于等于0<br><strong>逻辑分析：</strong>IN_STANDARD和OUT_STANDARD分别为额度内和额度外的补贴单价(元/m²)，下游装修申请预估补贴和验收报销计算实际报销金额时按"面积×单价"计算，要求单价大于0才有业务意义。若用户误填0或负数（如未输入默认0、或误填负值），会导致补贴金额计算为0或负数，造成经销商利益受损或财务数据异常。后端校验IN_STANDARD &lt;= 0或OUT_STANDARD &lt;= 0即抛出toast提醒"金额标准必须大于0"。</div>
-  </div>
-</div>
-
-```sql
-SELECT l.decorate_line_id      AS 明细行ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT l.decorate_line_id      AS 明细行ID,
          l.decorate_standard_id  AS 装修标准ID,
          l.decorate_project      AS 装修项目,
          l.fixup_grade           AS 装修等级,
          l.in_standard           AS 额度内标准,
          l.out_standard          AS 额度外标准
   FROM   terminal_decorate_line l
-  WHERE  l.in_standard <= 0
-  OR     l.out_standard <= 0
-  ORDER  BY l.decorate_standard_id, l.decorate_project;
-```
+  WHERE  l.in_standard &lt;= 0
+  OR     l.out_standard &lt;= 0
+  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

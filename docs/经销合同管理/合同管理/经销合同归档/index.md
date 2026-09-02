@@ -307,85 +307,79 @@ SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD
     <h4><span style="color:#7C3AED;">报错：</span>合同不满足归档条件</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中合同点击"归档提交"，judgeContractArchive方法校验不通过<br><strong>逻辑分析：</strong>归档条件校验通过judgeContractArchive方法判断，本菜单与菜单115共用SA_SALE_CONTRACT_HEAD表，归档通过工作流SA_SALE_CONTRACT_HEAD_GD区分。不满足条件根因有三类：(1)合同未审批通过（HZ_APPROVE_STATUS != 'APPROVED'），归档要求合同先完成年度经销合同审批（DISTRIBUTION_CONTRACT_DKHB流程）；(2)合同任务未完成，如合同任务完成率未达标或存在未结清的保证金/认缴；(3)合同已归档（STATE_PIGEONHOLE已为已归档），重复归档被拦截。此为阻断性报错，需先完成前置条件再提交归档</div>
-  </div>
-</div>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR,
          HZ_APPROVE_STATUS, STATE_PIGEONHOLE, PIGEONHOLE_DATE, ACTUAL_PIGEONHOLE_DATE
   FROM SA_SALE_CONTRACT_HEAD
   WHERE SALE_CONTRACT_HEAD_ID = #{id}
-    AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NOT NULL);
-```
+    AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NOT NULL);</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未配置经销合同延期归档天数</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>归档推送CRM时，scpSysConf查询CONTRACT_PIGEONHOLE_DATE系统参数返回空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl.insertPigeonholeDate方法通过scpSysConf(SysConfConstants.CONTRACT_PIGEONHOLE_DATE)获取归档天数，用于计算应归档日期（PIGEONHOLE_DATE=START_DATE+归档天数）。系统参数未配置时无法计算归档日期，导致后续归档推送和延期判断失败。需联系管理员在系统参数配置中补全CONTRACT_PIGEONHOLE_DATE</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT PARAM_CODE, PARAM_VALUE FROM SYS_CONFIG
+  WHERE PARAM_CODE = 'Contract_Pigeonhole_date';</code></pre></div>
 </div>
 
-```sql
-SELECT PARAM_CODE, PARAM_VALUE FROM SYS_CONFIG
-  WHERE PARAM_CODE = 'Contract_Pigeonhole_date';
-```
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该合同应归档日期为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>归档模块调用CRM接口时，saSaleContractHead.getPigeonholeDate()返回null<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl归档CRM接口调用时校验PIGEONHOLE_DATE非空，为空时抛IllegalArgumentException。根因是该合同为历史数据（功能上线前签订），未通过insertPigeonholeDate自动生成归档日期。需手动补全PIGEONHOLE_DATE或重新触发归档日期计算</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, PIGEONHOLE_DATE, STATE_PIGEONHOLE
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND PIGEONHOLE_DATE IS NULL;</code></pre></div>
 </div>
 
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, PIGEONHOLE_DATE, STATE_PIGEONHOLE
-  FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND PIGEONHOLE_DATE IS NULL;
-```
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>添加合同归档推送任务异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>归档推送任务创建时，saleContractDto合同数据为空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl添加归档推送任务方法校验saleContractDto非空，为空时抛CommonException。根因是归档推送任务队列消息体缺失合同数据，可能由消息序列化异常或上游传参错误导致。需重新发起归档流程生成完整推送任务</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, STATE_PIGEONHOLE, PIGEONHOLE_DATE_REALLY
+  FROM SA_SALE_CONTRACT_HEAD
+  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CONTRACT_NO IS NULL OR CONTRACT_NO = '');</code></pre></div>
 </div>
 
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, STATE_PIGEONHOLE, PIGEONHOLE_DATE_REALLY
-  FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CONTRACT_NO IS NULL OR CONTRACT_NO = '');
-```
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"发起归档审批，dto.getFlowCode()为空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl.saveAndSubmit方法首行校验flowCode非空，归档需通过工作流SA_SALE_CONTRACT_HEAD_GD审批，flowCode为空无法启动工作流。根因是前端未选择归档审批流程或流程配置缺失。需在提交前选择归档审批流程</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT WORKFLOW_CODE, WORKFLOW_NAME FROM WORKFLOW_CONFIG
+  WHERE WORKFLOW_CODE = 'SA_SALE_CONTRACT_HEAD_GD';</code></pre></div>
 </div>
 
-```sql
-SELECT WORKFLOW_CODE, WORKFLOW_NAME FROM WORKFLOW_CONFIG
-  WHERE WORKFLOW_CODE = 'SA_SALE_CONTRACT_HEAD_GD';
-```
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询原合同归档时间失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>合同变更时查询原合同的应归档时间、实际归档时间、延迟发货日期，查询结果异常<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl变更方法查询原合同PIGEONHOLE_DATE、PIGEONHOLE_DATE_REALLY、延期发货日期，查询失败时抛CommonException。根因是原合同数据不完整或已被删除，导致变更时无法继承归档信息。需核对原合同数据完整性</div>
-  </div>
-</div>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, PIGEONHOLE_DATE,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, PIGEONHOLE_DATE,
          PIGEONHOLE_DATE_REALLY, DELIVER_DELAY_DATE
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SA_CONTR_HEAD_CODE = #{saContrHeadCode};
-```
+  WHERE SA_CONTR_HEAD_CODE = #{saContrHeadCode};</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

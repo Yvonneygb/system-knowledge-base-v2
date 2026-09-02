@@ -2530,13 +2530,12 @@ SELECT P.PROJECT_ID, P.STAT FROM EPM_PROJECT P
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
-```sql
-SELECT L.LINE_SEQ, L.QTY_BILL, L.PACKAGE_NUMBER
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT L.LINE_SEQ, L.QTY_BILL, L.PACKAGE_NUMBER
 FROM SA_OUT_BILL_LINE L
 JOIN SA_OUT_BILL_HEAD H ON H.SA_OUT_BILL_HEAD_ID = L.SA_OUT_BILL_HEAD_ID
 WHERE H.SA_OUT_BILL_HEAD_ID = ?
-AND L.PACKAGE_NUMBER > 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0
-```
+AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0</code></pre>
 
   </div>
 </div>
@@ -2550,13 +2549,12 @@ AND L.PACKAGE_NUMBER > 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
-```sql
-SELECT L.LINE_SEQ, L.QTY_BILL, L.PACKAGE_NUMBER
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT L.LINE_SEQ, L.QTY_BILL, L.PACKAGE_NUMBER
 FROM SA_OUT_BILL_LINE L
 JOIN SA_OUT_BILL_HEAD H ON H.SA_OUT_BILL_HEAD_ID = L.SA_OUT_BILL_HEAD_ID
 WHERE H.SA_OUT_BILL_HEAD_ID = ?
-AND L.PACKAGE_NUMBER > 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0
-```
+AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0</code></pre>
 
   </div>
 </div>
@@ -2570,9 +2568,8 @@ AND L.PACKAGE_NUMBER > 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
     
 
-```sql
-SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OUT_BILL_HEAD_ID = ? AND L.SM_STATE = 'Z8'
-```
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OUT_BILL_HEAD_ID = ? AND L.SM_STATE = 'Z8'</code></pre>
 
   </div>
 </div>
@@ -2616,9 +2613,8 @@ SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OU
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
-```sql
-SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = ?
-```
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = ?</code></pre>
 
   </div>
 </div>
@@ -2662,9 +2658,8 @@ SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
-```sql
-SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = ?
-```
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = ?</code></pre>
 
   </div>
 </div>

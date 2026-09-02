@@ -336,113 +336,106 @@ WHERE F.FILE_NAME = :fileName</blockquote>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存图片关联关系时，校验输入的产品编码在LNK_PROD表中不存在<br><strong>逻辑分析：</strong>后端保存OBJ_FILE_BUS_REL记录前，先查询LNK_PROD表确认产品编码存在。若产品编码拼写错误、产品已被删除或产品尚未同步入库，则校验失败抛出异常。</div>
-  </div>
-</div>
-
-```sql
-SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
          P.PROD_STATUS AS 上下架状态, P.SM_STATE AS 生命状态
   FROM LNK_PROD P
   WHERE P.PROD_CODE = :prodCode;
-  -- 若查询结果为空，确认产品编码不存在或已删除
-```
+  -- 若查询结果为空，确认产品编码不存在或已删除</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>文件类型不存在:prodPhoto:xxx</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>通过Excel导入产品图片时，导入的图片类型在OBJ_FILE_TYPE表中不存在<br><strong>逻辑分析：</strong>后端ObjFileBusRelServiceImpl.getFileBusRel方法根据fileBusType=prodPhoto和fileType查询OBJ_FILE_TYPE表（status=1），若objFileTypeDb为null则抛出RuntimeException。导入处理类ProdPhotoImport继承ObjFileBusRelImportServiceImpl，固定busType=prodPhoto、relBusType=prod。常见于导入模板的图片类型值与系统配置不一致。</div>
-  </div>
-</div>
-
-```sql
-SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
   FROM OBJ_FILE_TYPE T
   WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1'
   ORDER BY T.FILE_BUS_TYPE;
-  -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置
-```
+  -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>产品编码必填</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存或导入时，未填写产品编码（busId）字段<br><strong>逻辑分析：</strong>产品编码为OBJ_FILE_BUS_REL.BUS_ID字段，对应界面"产品编码"必填项。前端表单校验或导入框架按模板CRM.PROD_PHOTO配置校验，若为空则阻断保存。产品编码需关联LNK_PROD.PROD_CODE，确保图片关联到有效产品。</div>
-  </div>
-</div>
-
-```sql
-SELECT COUNT(1) AS 产品存在数
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 产品存在数
   FROM LNK_PROD P
   WHERE P.PROD_CODE = :busId;
-  -- 若:busId为空或查询结果为0，则校验失败
-```
+  -- 若:busId为空或查询结果为0，则校验失败</code></pre></div>
+</div>
+
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>图片类型必填</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存或导入时，未选择图片类型（fileType）字段<br><strong>逻辑分析：</strong>图片类型对应OBJ_FILE_TYPE.FILE_BUS_TYPE，界面为下拉选择框，来源值集CRM.OBJ_FILE_TYPE（busType=prodPhoto）。前端表单校验或导入框架按模板配置校验，若为空则阻断保存。图片类型需在OBJ_FILE_TYPE表中存在且busType=prodPhoto、status=1。</div>
-  </div>
-</div>
-
-```sql
-SELECT T.FILE_BUS_TYPE AS 类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT T.FILE_BUS_TYPE AS 类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
   FROM OBJ_FILE_TYPE T
   WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1';
-  -- 若未选择图片类型或选择的值不在上述结果中，则校验失败
-```
+  -- 若未选择图片类型或选择的值不在上述结果中，则校验失败</code></pre></div>
+</div>
+
+
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>导入失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>通过Excel模板CRM.PROD_PHOTO导入产品图片时，导入框架校验失败或批量写入OBJ_FILE_BUS_REL异常<br><strong>逻辑分析：</strong>导入由HZERO导入框架处理，ProdPhotoImport.doImport方法解析每行数据为busId、fileUrl、fileType，调用getFileBusRel构建ObjFileBusRel实体，再批量调用saveData写入数据库。任一行校验失败（如文件类型不存在、产品编码为空）或数据库写入异常均导致导入失败，支持失败明细导出。</div>
-  </div>
-</div>
-
-```sql
--- 检查导入的图片关联数据
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 检查导入的图片关联数据
   SELECT F.BUS_ID AS 产品编码, F.FILE_URL AS 文件URL, F.FILE_TYPE_ID AS 文件类型ID,
          F.SOURCE AS 来源, F.CREATION_DATE AS 创建时间
   FROM OBJ_FILE_BUS_REL F
   WHERE F.REL_BUS_TYPE = 'prod'
     AND F.SOURCE = 'IMPORT'
-    AND F.CREATION_DATE >= SYSDATE - 1
-  ORDER BY F.CREATION_DATE DESC;
-```
+    AND F.CREATION_DATE &gt;= SYSDATE - 1
+  ORDER BY F.CREATION_DATE DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户执行产品图片导入操作时，当前用户无对应权限<br><strong>逻辑分析：</strong>产品图片上传页为低代码页面，导入操作需权限hzero.product_data.product_info.product_list.ps.import。若用户无权限则接口返回403或导入按钮不显示。常见于用户角色未分配产品图片导入权限。</div>
-  </div>
-</div>
-
-```sql
-SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
   FROM HZERO.IAM_ROLE R
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.PERMISSION_CODE LIKE '%product_list.ps.import%'
-    AND R.ROLE_CODE = :currentRoleCode;
-```
+    AND R.ROLE_CODE = :currentRoleCode;</code></pre></div>
+</div>
+
+
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户在产品图片上传页面操作时，登录会话（access_token）已过期<br><strong>逻辑分析：</strong>前端请求携带的access_token过期，后端返回401未授权。前端HZERO框架拦截401状态码跳转登录页。常见于长时间未操作页面或token有效期过短。</div>
-  </div>
-</div>
-
-```sql
--- 无直接SQL，检查用户会话状态
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>-- 无直接SQL，检查用户会话状态
   SELECT U.LOGIN_NAME, U.LAST_LOGIN_DATE AS 最后登录时间
   FROM HZERO.IAM_USER U
-  WHERE U.LOGIN_NAME = :currentLoginName;
-```
+  WHERE U.LOGIN_NAME = :currentLoginName;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 <KbCard title="常见问题">

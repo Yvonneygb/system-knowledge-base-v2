@@ -541,11 +541,8 @@ WHERE 1 = 1
     <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，按当前查询条件（验收报销单号、事业部、交易公司、经销商、门店、开票单位等）查询EPMS.FIN_FEE_TERMINAL_CASHOUT_VIEW视图返回空结果集<br><strong>逻辑分析：</strong>主查询从FIN_FEE_TERMINAL_CASHOUT_VIEW视图汇总额度内兑现数据，明细查询从FIN_FEE_TERMINAL_CASHOUT表查询并排除"超额作废"记录。若查询条件过严（如经销商编码拼写错误、事业部ID不匹配）、或验收报销单尚未生成兑现单、或兑现单全部为"超额作废"被排除、或用户组织ID与数据不匹配，均会返回空结果。该报错为提示性，不影响系统。</div>
-  </div>
-</div>
-
-```sql
-SELECT check_bx_id          AS 验收报销单ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT check_bx_id          AS 验收报销单ID,
          check_bx_code        AS 验收报销单号,
          cust_name            AS 经销商名称,
          terminal_name        AS 门店名称,
@@ -554,19 +551,18 @@ SELECT check_bx_id          AS 验收报销单ID,
   FROM   fin_fee_terminal_cashout
   WHERE  organization_id = #{当前用户组织ID}
   AND    audit_stat != '超额作废'
-  ORDER  BY create_time DESC;
-```
+  ORDER  BY create_time DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>支付方式翻译为空</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>查询结果展示时，子查询 <code>(SELECT meaning FROM HZERO.HPFM_LOV_VALUE WHERE LOV_CODE = 'AE.PAY_TYPE' AND value = v.PAY_TYPE)</code> 返回空<br><strong>逻辑分析：</strong>报表通过子查询关联HZERO.HPFM_LOV_VALUE值集表翻译支付方式编码为可读含义（如"现金"、"银行转账"）。若值集配置缺失（LOV_CODE='AE.PAY_TYPE'未配置）、或兑现单的PAY_TYPE值未在值集中维护（如新增支付方式未同步值集）、或值表数据被误删，子查询返回空，支付方式列显示空白，影响报表可读性但不阻断查询。</div>
-  </div>
-</div>
-
-```sql
-SELECT v.pay_type                AS 支付方式编码,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT v.pay_type                AS 支付方式编码,
          COUNT(*)                  AS 兑现单数量
   FROM   fin_fee_terminal_cashout v
   WHERE  v.pay_type IS NOT NULL
@@ -577,54 +573,53 @@ SELECT v.pay_type                AS 支付方式编码,
            AND    lv.value = v.pay_type
          )
   GROUP  BY v.pay_type
-  ORDER  BY 兑现单数量 DESC;
-```
+  ORDER  BY 兑现单数量 DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败/接口调用异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/fin_fee_terminal_cashout_list/search或/getCashoutLine接口时，前端未收到响应或收到非2xx状态码（如500、502、504）<br><strong>逻辑分析：</strong>本页面为hlod低代码报表页面，主查询依赖TerminalReportController.finFeeTerminalCashoutListSearch接口查询EPMS.FIN_FEE_TERMINAL_CASHOUT_VIEW视图，明细查询依赖finFeeTerminalCashoutListGetCashoutLine接口查询FIN_FEE_TERMINAL_CASHOUT关联FIN_FEE_CHECK_BX_HEADER、DIVISION_BASE_SET。若后端ae-report服务未启动、Oracle数据库连接异常、视图编译错误、子查询HPFM_LOV_VALUE返回多行触发ORA-01427、SQL执行超时、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、视图状态、网络连通性。</div>
-  </div>
-</div>
-
-```sql
-SELECT COUNT(*)            AS 额度内兑现单总数,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 额度内兑现单总数,
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
   FROM   fin_fee_terminal_cashout
-  WHERE  audit_stat != '超额作废';
-```
+  WHERE  audit_stat != '超额作废';</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足/未登录</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
-  </div>
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
+  FROM   dual;</code></pre></div>
 </div>
 
-```sql
-SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;
-```
+
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>导出失败：网络异常</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断<br><strong>逻辑分析：</strong>导出接口将当前查询条件下的额度内兑现数据全量查询后生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定验收报销单号、事业部）减少数据量。</div>
-  </div>
-</div>
-
-```sql
-SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT TO_CHAR(create_time, 'YYYY') AS 年度,
          COUNT(*)                     AS 兑现单数量
   FROM   fin_fee_terminal_cashout
   WHERE  audit_stat != '超额作废'
   GROUP  BY TO_CHAR(create_time, 'YYYY')
-  ORDER  BY 年度 DESC;
-```
+  ORDER  BY 年度 DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 </div>

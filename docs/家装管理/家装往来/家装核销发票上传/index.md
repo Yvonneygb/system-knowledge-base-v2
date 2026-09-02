@@ -1086,8 +1086,8 @@ SELECT COUNT(*) FROM EPM_UPLOAD_INVOICE_INFO WHERE INVOICE_VERIFER_ID = ?;
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
-```sql
-SELECT D.NOUCHER_NUMBER, D.INVOICE_CODE, D.INVOICE_NUMBER
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT D.NOUCHER_NUMBER, D.INVOICE_CODE, D.INVOICE_NUMBER
 FROM EPM_UPLOAD_INVOICE_DETAILS D
 WHERE D.INVOICE_VERIFER_ID = ?
   AND NOT EXISTS (SELECT 1
@@ -1095,8 +1095,7 @@ FROM EPM_UPLOAD_INVOICE_INFO I
 WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
   AND I.NOUCHER_NUMBER = D.NOUCHER_NUMBER
   AND I.INVOICE_CODE = D.INVOICE_CODE
-  AND I.INVOICE_NUMBER = D.INVOICE_NUMBER)
-```
+  AND I.INVOICE_NUMBER = D.INVOICE_NUMBER)</code></pre>
 
   </div>
 </div>
@@ -1145,12 +1144,11 @@ WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
     
 
-```sql
-SELECT COUNT(*)
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)
 FROM EPM_UPLOAD_INVOICE_INFO
 WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
-  AND INVOICE_VERIFER_ID != ?
-```
+  AND INVOICE_VERIFER_ID != ?</code></pre>
 
   </div>
 </div>
@@ -1235,11 +1233,10 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
     
 
-```sql
-SELECT INVOICE_NUMBER, UNIT_PRICE, MDF_ITEM_NUMBER, AMOUNT
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT INVOICE_NUMBER, UNIT_PRICE, MDF_ITEM_NUMBER, AMOUNT
 FROM EPM_UPLOAD_INVOICE_DETAILS
-WHERE INVOICE_VERIFER_ID = ?
-```
+WHERE INVOICE_VERIFER_ID = ?</code></pre>
 
   </div>
 </div>
@@ -1252,15 +1249,14 @@ WHERE INVOICE_VERIFER_ID = ?
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
     
 
-```sql
-SELECT I.INVOICE_NUMBER, I.ALL_AMOUNT, SUM(D.UNIT_PRICE * D.MDF_ITEM_NUMBER) AS DETAIL_SUM
+    <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT I.INVOICE_NUMBER, I.ALL_AMOUNT, SUM(D.UNIT_PRICE * D.MDF_ITEM_NUMBER) AS DETAIL_SUM
 FROM EPM_UPLOAD_INVOICE_INFO I
 LEFT
 JOIN EPM_UPLOAD_INVOICE_DETAILS D ON D.INVOICE_VERIFER_ID = I.INVOICE_VERIFER_ID
   AND D.INVOICE_NUMBER = I.INVOICE_NUMBER
 WHERE I.INVOICE_VERIFER_ID = ?
-GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
-```
+GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT</code></pre>
 
   </div>
 </div>

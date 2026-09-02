@@ -311,11 +311,8 @@
     <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮补充其他情况说明/面积变动说明时，按terminalId调用selectByPrimaryKey查询MKT_TERMINAL返回null<br><strong>逻辑分析：</strong>保存接口仅支持局部更新otherCondition和terminalAreaChange两个字段，前置需先校验门店档案存在。若门店档案在编辑期间被上游"门店变更申请"流程撤店删除（实际为状态置为撤店而非物理删除）、terminalId传值错误（如前端缓存了已失效ID）、或并发场景下被清理，查询返回空，抛CommonException中断保存。需核查门店档案是否仍处于有效运营状态。</div>
-  </div>
-</div>
-
-```sql
-SELECT t.terminal_id         AS 门店ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT t.terminal_id         AS 门店ID,
          t.terminal_code       AS 门店编码,
          t.terminal_name       AS 门店名称,
          t.terminal_stat       AS 门店状态,
@@ -324,35 +321,33 @@ SELECT t.terminal_id         AS 门店ID,
   FROM   mkt_terminal t
    WHERE  t.terminal_id = #{传入的terminalId}
    AND    (t.usable IS NULL OR t.terminal_stat = 2)
-   ORDER  BY t.update_time DESC;
-```
+   ORDER  BY t.update_time DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用门店档案接口（查询列表、保存补充信息、LOV选择）时，请求超时或后端服务不可达<br><strong>逻辑分析：</strong>低代码页面通过axios请求后端API（/v1/&#123;organizationId&#125;/mkt-terminals、fin-fee-apply-lov、cust-dh-reimburse等）。若后端ae-business服务未启动、网络中断、网关超时、或数据库连接池耗尽导致请求堆积，axios捕获网络异常，前端展示通用错误提示，列表数据无法加载或保存操作失败。需核查后端服务健康状态、网络连通性、网关配置及数据库连接池。</div>
-  </div>
-</div>
-
-```sql
-SELECT '服务连通性检查' AS 检查项,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '服务连通性检查' AS 检查项,
          COUNT(*)          AS 门店档案总记录数,
          MAX(t.update_time) AS 最后更新时间
   FROM   mkt_terminal t
-  WHERE  t.usable = 2;
-```
+  WHERE  t.usable = 2;</code></pre></div>
+</div>
+
+
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户无门店档案相关操作权限（查询/保存/LOV选择）<br><strong>逻辑分析：</strong>低代码页面通过permissionLogin=true进行登录校验，selectList方法自动按当前用户组织ID（entid）和经销商编码（custCode）过滤数据实现数据权限隔离。若用户角色未分配门店档案菜单权限、权限码配置缺失、或组织ID/经销商编码不匹配导致数据权限隔离后无可见数据，接口返回403/401或空列表。需核查用户角色权限配置及组织数据权限、经销商主数据关联。</div>
-  </div>
-</div>
-
-```sql
-SELECT t.terminal_id         AS 门店ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT t.terminal_id         AS 门店ID,
          t.terminal_code       AS 门店编码,
          t.terminal_name       AS 门店名称,
          t.cust_code           AS 经销商编码,
@@ -361,19 +356,18 @@ SELECT t.terminal_id         AS 门店ID,
   FROM   mkt_terminal t
   WHERE  t.organization_id = #{当前用户组织ID}
   AND    t.cust_code = #{当前经销商编码}
-  ORDER  BY t.terminal_id DESC;
-```
+  ORDER  BY t.terminal_id DESC;</code></pre></div>
+</div>
+
+
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>进入门店档案列表页或调用LOV接口查询时，按当前组织ID和经销商编码过滤后返回空列表<br><strong>逻辑分析：</strong>selectList方法在entid为空时自动填充当前组织ID、custCode为空时自动填充当前经销商编码，按terminalId降序排列。若当前用户所属组织/经销商下确实无门店档案（如新建门店申请未审批通过、门店档案均被撤店terminal_stat=2、或经销商主数据未关联门店），查询返回空列表，前端展示空表格。此为正常业务情况而非错误，但用户可能误判为故障。需核查该组织/经销商下门店档案是否已建立及有效状态。</div>
-  </div>
-</div>
-
-```sql
-SELECT t.terminal_id         AS 门店ID,
+      <h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT t.terminal_id         AS 门店ID,
          t.terminal_code       AS 门店编码,
          t.terminal_name       AS 门店名称,
          t.cust_code           AS 经销商编码,
@@ -384,8 +378,10 @@ SELECT t.terminal_id         AS 门店ID,
   FROM   mkt_terminal t
   WHERE  t.organization_id = #{当前用户组织ID}
   AND    t.cust_code = #{当前经销商编码}
-  ORDER  BY t.terminal_id DESC;
-```
+  ORDER  BY t.terminal_id DESC;</code></pre></div>
+</div>
+
+
 </KbCard>
 
 </div>
