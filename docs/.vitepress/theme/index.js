@@ -97,7 +97,7 @@ export default {
             var targetId = this.getAttribute('href').replace('#', '')
             var overlay = document.getElementById(targetId)
             if (overlay) {
-              overlay.style.display = 'flex'
+              overlay.classList.add('active-overlay')
               document.body.style.overflow = 'hidden'
               // 高亮弹层内的SQL代码
               window.loadPrism().then(function(Prism) {
@@ -117,7 +117,7 @@ export default {
             e.preventDefault()
             var overlay = this.closest('.error-detail-overlay')
             if (overlay) {
-              overlay.style.display = 'none'
+              overlay.classList.remove('active-overlay')
               document.body.style.overflow = ''
             }
           })
@@ -127,7 +127,7 @@ export default {
         document.querySelectorAll('.error-detail-overlay').forEach(function(overlay) {
           overlay.addEventListener('click', function(e) {
             if (e.target === overlay) {
-              overlay.style.display = 'none'
+              overlay.classList.remove('active-overlay')
               document.body.style.overflow = ''
             }
           })
