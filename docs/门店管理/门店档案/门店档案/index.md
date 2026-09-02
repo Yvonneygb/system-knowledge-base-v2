@@ -321,7 +321,8 @@
   FROM   mkt_terminal t
    WHERE  t.terminal_id = #{传入的terminalId}
    AND    (t.usable IS NULL OR t.terminal_stat = 2)
-   ORDER  BY t.update_time DESC;</code></pre></div>
+   ORDER  BY t.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -336,7 +337,8 @@
          COUNT(*)          AS 门店档案总记录数,
          MAX(t.update_time) AS 最后更新时间
   FROM   mkt_terminal t
-  WHERE  t.usable = 2;</code></pre></div>
+  WHERE  t.usable = 2;
+--</code></pre></div>
 </div>
 
 
@@ -356,7 +358,8 @@
   FROM   mkt_terminal t
   WHERE  t.organization_id = #{当前用户组织ID}
   AND    t.cust_code = #{当前经销商编码}
-  ORDER  BY t.terminal_id DESC;</code></pre></div>
+  ORDER  BY t.terminal_id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -378,7 +381,8 @@
   FROM   mkt_terminal t
   WHERE  t.organization_id = #{当前用户组织ID}
   AND    t.cust_code = #{当前经销商编码}
-  ORDER  BY t.terminal_id DESC;</code></pre></div>
+  ORDER  BY t.terminal_id DESC;
+--</code></pre></div>
 </div>
 
 

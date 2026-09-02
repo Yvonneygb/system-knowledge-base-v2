@@ -312,7 +312,8 @@ SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD
          HZ_APPROVE_STATUS, STATE_PIGEONHOLE, PIGEONHOLE_DATE, ACTUAL_PIGEONHOLE_DATE
   FROM SA_SALE_CONTRACT_HEAD
   WHERE SALE_CONTRACT_HEAD_ID = #{id}
-    AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NOT NULL);</code></pre></div>
+    AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NOT NULL);
+--</code></pre></div>
 </div>
 
 
@@ -324,7 +325,8 @@ SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD
     <div class="detail-text" v-pre><strong>触发条件：</strong>归档推送CRM时，scpSysConf查询CONTRACT_PIGEONHOLE_DATE系统参数返回空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl.insertPigeonholeDate方法通过scpSysConf(SysConfConstants.CONTRACT_PIGEONHOLE_DATE)获取归档天数，用于计算应归档日期（PIGEONHOLE_DATE=START_DATE+归档天数）。系统参数未配置时无法计算归档日期，导致后续归档推送和延期判断失败。需联系管理员在系统参数配置中补全CONTRACT_PIGEONHOLE_DATE</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT PARAM_CODE, PARAM_VALUE FROM SYS_CONFIG
-  WHERE PARAM_CODE = 'Contract_Pigeonhole_date';</code></pre></div>
+  WHERE PARAM_CODE = 'Contract_Pigeonhole_date';
+--</code></pre></div>
 </div>
 
 
@@ -337,7 +339,8 @@ SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, PIGEONHOLE_DATE, STATE_PIGEONHOLE
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND PIGEONHOLE_DATE IS NULL;</code></pre></div>
+  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND PIGEONHOLE_DATE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -350,7 +353,8 @@ SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, STATE_PIGEONHOLE, PIGEONHOLE_DATE_REALLY
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CONTRACT_NO IS NULL OR CONTRACT_NO = '');</code></pre></div>
+  WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CONTRACT_NO IS NULL OR CONTRACT_NO = '');
+--</code></pre></div>
 </div>
 
 
@@ -362,7 +366,8 @@ SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"发起归档审批，dto.getFlowCode()为空<br><strong>逻辑分析：</strong>SaSaleContractHeadServiceImpl.saveAndSubmit方法首行校验flowCode非空，归档需通过工作流SA_SALE_CONTRACT_HEAD_GD审批，flowCode为空无法启动工作流。根因是前端未选择归档审批流程或流程配置缺失。需在提交前选择归档审批流程</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT WORKFLOW_CODE, WORKFLOW_NAME FROM WORKFLOW_CONFIG
-  WHERE WORKFLOW_CODE = 'SA_SALE_CONTRACT_HEAD_GD';</code></pre></div>
+  WHERE WORKFLOW_CODE = 'SA_SALE_CONTRACT_HEAD_GD';
+--</code></pre></div>
 </div>
 
 
@@ -376,7 +381,8 @@ SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, PIGEONHOLE_DATE,
          PIGEONHOLE_DATE_REALLY, DELIVER_DELAY_DATE
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SA_CONTR_HEAD_CODE = #{saContrHeadCode};</code></pre></div>
+  WHERE SA_CONTR_HEAD_CODE = #{saContrHeadCode};
+--</code></pre></div>
 </div>
 
 

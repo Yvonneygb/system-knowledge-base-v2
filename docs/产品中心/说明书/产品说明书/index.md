@@ -422,7 +422,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
     <pre class="detail-sql language-sql" v-pre><code>SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
          S.STATUS AS 状态, S.HISTORY AS 是否历史版本
   FROM LNK_PROD_MANUAL S
-  WHERE S.ID = :manualId AND S.NAME IS NULL;</code></pre></div>
+  WHERE S.ID = :manualId AND S.NAME IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -437,7 +438,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
   SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
          (SELECT COUNT(1) FROM ES_SPEC_MODEL M WHERE M.ITEM_CODE = P.PROD_CODE) AS 关联说明书数
   FROM LNK_PROD P
-  WHERE P.PROD_CODE = :产品编码;</code></pre></div>
+  WHERE P.PROD_CODE = :产品编码;
+--</code></pre></div>
 </div>
 
 
@@ -456,7 +458,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
   JOIN ES_SPEC_MODEL M ON M.SPEC_ID = S.SPEC_ID
   WHERE M.ITEM_CODE = :产品编码
     AND S.HZ_APPROVE_STATUS = 'APPROVED'
-    AND NVL(S.HISTORY, 0) &lt;&gt; 2;</code></pre></div>
+    AND NVL(S.HISTORY, 0) &lt;&gt; 2;
+--</code></pre></div>
 </div>
 
 
@@ -472,7 +475,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
          D.DOC_ID AS 文档ID, D.DOCNAME AS 文档名称, D.ATTACHMENT_UUID AS 附件UUID
   FROM ES_SPEC S
   JOIN ES_DOCS D ON D.SPEC_ID = S.SPEC_ID
-  WHERE S.SPEC_ID = :说明书ID;</code></pre></div>
+  WHERE S.SPEC_ID = :说明书ID;
+--</code></pre></div>
 </div>
 
 
@@ -486,7 +490,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
     <pre class="detail-sql language-sql" v-pre><code>-- 检查说明书关联型号表是否有数据（确认查询目标存在）
   SELECT COUNT(1) AS 关联型号记录数
   FROM ES_SPECMODEL_REF R
-  WHERE R.ITEMCODE = :产品编码;</code></pre></div>
+  WHERE R.ITEMCODE = :产品编码;
+--</code></pre></div>
 </div>
 
 
@@ -501,7 +506,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
   SELECT R.ITEMCODE AS 产品编码, R.MODEL AS 产品型号, R.SPECID AS 说明书ID,
          R.MANUAL_ITEM_CODE AS 说明书物料编码
   FROM ES_SPECMODEL_REF R
-  WHERE R.ITEMCODE = :产品编码 OR R.MODEL = :产品型号;</code></pre></div>
+  WHERE R.ITEMCODE = :产品编码 OR R.MODEL = :产品型号;
+--</code></pre></div>
 </div>
 
 
@@ -520,7 +526,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
   JOIN HZERO.IAM_ROLE_PERMISSION RP ON RP.ROLE_ID = R.ID
   JOIN HZERO.IAM_PERMISSION P ON P.ID = RP.PERMISSION_ID
   WHERE U.REAL_NAME = :用户名
-    AND P.CODE LIKE 'arrow-ae:productInfo:esSpecProp%';</code></pre></div>
+    AND P.CODE LIKE 'arrow-ae:productInfo:esSpecProp%';
+--</code></pre></div>
 </div>
 
 
@@ -537,7 +544,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
   FROM HZERO.OAUTH_ACCESS_TOKEN T
   JOIN HZERO.IAM_USER U ON U.ID = T.USER_ID
   WHERE U.REAL_NAME = :用户名
-  ORDER BY T.CREATE_TIME DESC;</code></pre></div>
+  ORDER BY T.CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -552,7 +560,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
   SELECT COUNT(1) AS 说明书总数,
          SUM(CASE WHEN NVL(HISTORY, 0) &lt;&gt; 2 THEN 1 ELSE 0 END) AS 当前版本数,
          SUM(CASE WHEN HZ_APPROVE_STATUS = 'APPROVED' THEN 1 ELSE 0 END) AS 已审核数
-  FROM ES_SPEC;</code></pre></div>
+  FROM ES_SPEC;
+--</code></pre></div>
 </div>
 
 
@@ -570,7 +579,8 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
   FROM ES_SPEC
   WHERE SPEC_ID = :说明书ID
     AND HZ_APPROVE_STATUS = 'APPROVED'
-    AND NVL(HISTORY, 0) &lt;&gt; 2;</code></pre></div>
+    AND NVL(HISTORY, 0) &lt;&gt; 2;
+--</code></pre></div>
 </div>
 
 

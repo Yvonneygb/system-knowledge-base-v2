@@ -637,7 +637,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
   AND    (discount_policy_id IS NULL OR discount_policy_id = 0)
-  ORDER  BY createtime DESC;</code></pre></div>
+  ORDER  BY createtime DESC;
+--</code></pre></div>
 </div>
 
 
@@ -654,7 +655,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #{传入的discountPolicyId};</code></pre></div>
+  AND    discount_policy_id = #{传入的discountPolicyId};
+--</code></pre></div>
 </div>
 
 
@@ -673,7 +675,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          callback_source       AS 回调来源
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #{OA回调报文中的discountPolicyId};</code></pre></div>
+  AND    discount_policy_id = #{OA回调报文中的discountPolicyId};
+--</code></pre></div>
 </div>
 
 
@@ -694,7 +697,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
         AND dpi._status &lt;&gt; 'delete'
   WHERE  dp.source_type = 'YXCRM'
   GROUP  BY dp.discount_policy_id, dp.discount_policy_code, dp.hz_approve_status
-  HAVING COUNT(dpi.discount_policy_item_id) = 0;</code></pre></div>
+  HAVING COUNT(dpi.discount_policy_item_id) = 0;
+--</code></pre></div>
 </div>
 
 
@@ -714,7 +718,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   WHERE  source_type = 'YXCRM'
   AND    is_makt = 2
   AND    bill_type IN (2, 99)
-  AND    business_type = 16;</code></pre></div>
+  AND    business_type = 16;
+--</code></pre></div>
 </div>
 
 
@@ -731,7 +736,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          LENGTH(discount_policy_name) AS 名称长度
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    LENGTH(discount_policy_name) &gt; 30;</code></pre></div>
+  AND    LENGTH(discount_policy_name) &gt; 30;
+--</code></pre></div>
 </div>
 
 
@@ -752,7 +758,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   WHERE  dp.source_type = 'YXCRM'
   AND    dp.suitable_type = 'normal'
   GROUP  BY dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type
-  HAVING COUNT(dpi.discount_policy_item_id) = 0;</code></pre></div>
+  HAVING COUNT(dpi.discount_policy_item_id) = 0;
+--</code></pre></div>
 </div>
 
 
@@ -774,7 +781,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          ON dpi.discount_policy_id = dp.discount_policy_id
   WHERE  dp.source_type = 'YXCRM'
   AND    dp.suitable_type = 'normal'
-  AND    dpi.preferential_type &lt;&gt; 1;</code></pre></div>
+  AND    dpi.preferential_type &lt;&gt; 1;
+--</code></pre></div>
 </div>
 
 
@@ -804,7 +812,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   WHERE  a.source_type = 'YXCRM'
   AND    b.source_type = 'YXCRM'
   AND    a.effective_date_start &lt;= b.effective_date_end
-  AND    a.effective_date_end   &gt;= b.effective_date_start;</code></pre></div>
+  AND    a.effective_date_end   &gt;= b.effective_date_start;
+--</code></pre></div>
 </div>
 
 
@@ -820,7 +829,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #{传入的discountPolicyId};</code></pre></div>
+  AND    discount_policy_id = #{传入的discountPolicyId};
+--</code></pre></div>
 </div>
 
 
@@ -837,7 +847,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          valid                 AS 有效状态
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    hz_approve_status &lt;&gt; 'NEW';</code></pre></div>
+  AND    hz_approve_status &lt;&gt; 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -853,7 +864,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   FROM   epm_discount_policy_item
   WHERE  discount_policy_id = #{discountPolicyId}
   GROUP  BY discount_policy_id
-  HAVING COUNT(discount_policy_item_id) &gt; #{pageSize};</code></pre></div>
+  HAVING COUNT(discount_policy_item_id) &gt; #{pageSize};
+--</code></pre></div>
 </div>
 
 
@@ -872,7 +884,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          ON cp.product_code = dpi.item_code
         AND cp.status = 'ACTIVE'
   WHERE  dpi.discount_policy_id = #{discountPolicyId}
-  AND    cp.product_code IS NULL;</code></pre></div>
+  AND    cp.product_code IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -888,7 +901,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #{discountPolicyId};</code></pre></div>
+  AND    discount_policy_id = #{discountPolicyId};
+--</code></pre></div>
 </div>
 
 
@@ -904,7 +918,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          oa_user             AS OA用户名,
          oa_password         AS OA密码
   FROM   oa_bill_ref
-  WHERE  oa_bill_name = 'YXZT样品折扣政策申请';</code></pre></div>
+  WHERE  oa_bill_name = 'YXZT样品折扣政策申请';
+--</code></pre></div>
 </div>
 
 
@@ -921,7 +936,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          hz_instance_id        AS 流程实例ID
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #{discountPolicyId};</code></pre></div>
+  AND    discount_policy_id = #{discountPolicyId};
+--</code></pre></div>
 </div>
 
 
@@ -942,7 +958,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   WHERE  dp.source_type = 'YXCRM'
   AND    dpi.item_code IS NULL
   AND    dpi.item_model IS NOT NULL
-  AND    dpi.item_model IN (SELECT item_model FROM epm_item_model WHERE new_prod_flag = 1);</code></pre></div>
+  AND    dpi.item_model IN (SELECT item_model FROM epm_item_model WHERE new_prod_flag = 1);
+--</code></pre></div>
 </div>
 
 
@@ -961,7 +978,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   AND    item_code IS NOT NULL
   AND    item_model IS NOT NULL
   GROUP  BY item_code, item_model
-  HAVING COUNT(discount_policy_item_id) &gt; 1;</code></pre></div>
+  HAVING COUNT(discount_policy_item_id) &gt; 1;
+--</code></pre></div>
 </div>
 
 
@@ -981,7 +999,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   JOIN   epm_discount_policy dp ON dp.discount_policy_id = dpi.discount_policy_id
   LEFT   JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
   WHERE  dp.source_type = 'YXCRM'
-  AND    dpi.active_qty &lt; dpc.remain_qty;</code></pre></div>
+  AND    dpi.active_qty &lt; dpc.remain_qty;
+--</code></pre></div>
 </div>
 
 
@@ -1001,7 +1020,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   LEFT   JOIN epm_discount_policy_customer dpc ON dpc.discount_policy_id = dp.discount_policy_id
   WHERE  dp.source_type = 'YXCRM'
   GROUP  BY dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty
-  HAVING dpi.active_qty &lt; SUM(dpc.remain_qty);</code></pre></div>
+  HAVING dpi.active_qty &lt; SUM(dpc.remain_qty);
+--</code></pre></div>
 </div>
 
 
@@ -1016,7 +1036,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          discount_policy_code  AS 政策单号
   FROM   epm_discount_policy
   WHERE  source_type = 'YXCRM'
-  AND    discount_policy_id = #{discountPolicyId};</code></pre></div>
+  AND    discount_policy_id = #{discountPolicyId};
+--</code></pre></div>
 </div>
 
 
@@ -1035,7 +1056,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
          ON cp.product_code = dpi.item_code
         AND cp.status = 'ACTIVE'
   WHERE  dpi.discount_policy_id = #{discountPolicyId}
-  AND    cp.product_code IS NULL;</code></pre></div>
+  AND    cp.product_code IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -1053,7 +1075,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   WHERE  dpi.discount_policy_id = #{discountPolicyId}
   AND    NOT EXISTS (
     SELECT 1 FROM crm_policy_info cpi WHERE cpi.item_code = dpi.item_code
-  );</code></pre></div>
+  );
+--</code></pre></div>
 </div>
 
 
@@ -1075,7 +1098,8 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
   LEFT   JOIN customer c
          ON c.customer_id = dpc.customer_id
   WHERE  dp.source_type = 'YXCRM'
-  AND    (c.contract_type IS NULL OR c.contract_type NOT IN (1, 2));</code></pre></div>
+  AND    (c.contract_type IS NULL OR c.contract_type NOT IN (1, 2));
+--</code></pre></div>
 </div>
 
 

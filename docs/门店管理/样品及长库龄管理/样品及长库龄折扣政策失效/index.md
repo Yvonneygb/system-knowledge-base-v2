@@ -341,7 +341,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   LEFT   JOIN epm_discount_policy p
          ON p.discount_policy_id = d.discount_policy_id
   WHERE  p.valid = 3
-  ORDER  BY d.createtime DESC;</code></pre></div>
+  ORDER  BY d.createtime DESC;
+--</code></pre></div>
 </div>
 
 
@@ -360,7 +361,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   LEFT   JOIN epm_discount_policy p
          ON p.discount_policy_id = d.discount_policy_id
   WHERE  p.discount_policy_id IS NULL
-  ORDER  BY d.createtime DESC;</code></pre></div>
+  ORDER  BY d.createtime DESC;
+--</code></pre></div>
 </div>
 
 
@@ -379,7 +381,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   LEFT   JOIN epm_discount_policy_item dpi
          ON dpi.discount_policy_disabled_id = d.discount_policy_disabled_id
   GROUP  BY d.discount_policy_disabled_id, d.discount_policy_disabled_code, d.hz_approve_status
-  HAVING COUNT(dpi.discount_policy_item_id) = 0;</code></pre></div>
+  HAVING COUNT(dpi.discount_policy_item_id) = 0;
+--</code></pre></div>
 </div>
 
 
@@ -400,7 +403,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   LEFT   JOIN epm_discount_policy p
          ON p.discount_policy_id = d.discount_policy_id
   WHERE  p.discount_policy_id IS NULL
-  ORDER  BY d.createtime DESC;</code></pre></div>
+  ORDER  BY d.createtime DESC;
+--</code></pre></div>
 </div>
 
 
@@ -415,7 +419,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
          discount_policy_disabled_code AS 失效单号,
          hz_approve_status     AS 审批状态
   FROM   epm_discount_policy_disabled
-  WHERE  discount_policy_disabled_id = #{传入的discountPolicyDisabledId};</code></pre></div>
+  WHERE  discount_policy_disabled_id = #{传入的discountPolicyDisabledId};
+--</code></pre></div>
 </div>
 
 
@@ -431,7 +436,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
          hz_approve_status     AS 审批状态,
          discount_policy_id    AS 关联政策ID
   FROM   epm_discount_policy_disabled
-  WHERE  hz_approve_status &lt;&gt; 'NEW';</code></pre></div>
+  WHERE  hz_approve_status &lt;&gt; 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -447,7 +453,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
          hz_approve_status     AS 审批状态,
          hz_instance_id        AS 工作流实例ID
   FROM   epm_discount_policy_disabled
-  WHERE  hz_instance_id = #{工作流实例ID};</code></pre></div>
+  WHERE  hz_instance_id = #{工作流实例ID};
+--</code></pre></div>
 </div>
 
 
@@ -467,7 +474,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   JOIN   epm_discount_policy p ON p.discount_policy_id = d.discount_policy_id
   WHERE  d.hz_approve_status = 'APPROVED'
   AND    p.suitable_type &lt;&gt; 'normal'
-  ORDER  BY d.createtime DESC;</code></pre></div>
+  ORDER  BY d.createtime DESC;
+--</code></pre></div>
 </div>
 
 
@@ -489,7 +497,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   AND    dpi.discount_policy_disabled_id IS NOT NULL
   AND    NOT EXISTS (
     SELECT 1 FROM crm_policy_line cpl WHERE cpl.line_id = dpi.crm_line_id AND cpl.status = 'ACTIVE'
-  );</code></pre></div>
+  );
+--</code></pre></div>
 </div>
 
 

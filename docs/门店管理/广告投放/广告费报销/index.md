@@ -519,7 +519,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  save_type = 2
   AND    bx_type = 1
   AND    (this_standard_amt IS NULL OR this_standard_amt &lt;= 0)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -539,7 +540,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
   AND    this_standard_amt &gt; total_apply_amt_bx
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -561,7 +563,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  save_type = 2
   AND    bx_type = 1
   AND    this_standard_amt &gt; in_can_use_amt
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -580,7 +583,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
   AND    this_authorize_standard_amt &gt; this_standard_amt
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -598,7 +602,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  save_type = 2
   AND    hz_approve_status = 'RUN'
   GROUP  BY fee_apply_no
-  HAVING COUNT(*) &gt;= 1;</code></pre></div>
+  HAVING COUNT(*) &gt;= 1;
+--</code></pre></div>
 </div>
 
 
@@ -615,7 +620,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
          hz_approve_status    AS 审批状态
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
-  AND    bx_id = #{传入的bxId};</code></pre></div>
+  AND    bx_id = #{传入的bxId};
+--</code></pre></div>
 </div>
 
 
@@ -634,7 +640,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
   AND    (object_name IS NULL OR object_name NOT IN (SELECT project_code FROM fin_fee_project WHERE stat = 1))
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -652,7 +659,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
          callback_source      AS 回调来源
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
-  AND    bx_id = #{OA回调报文中的bxId};</code></pre></div>
+  AND    bx_id = #{OA回调报文中的bxId};
+--</code></pre></div>
 </div>
 
 
@@ -671,7 +679,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  save_type = 2
   AND    hz_approve_status = 'RUN'
   AND    bx_id IS NULL
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -688,7 +697,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
          hz_approve_status    AS 审批状态
   FROM   fin_fee_bx_header
   WHERE  save_type = 2
-  AND    bx_id = #{传入的bxId};</code></pre></div>
+  AND    bx_id = #{传入的bxId};
+--</code></pre></div>
 </div>
 
 
@@ -707,7 +717,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  save_type = 2
   AND    hz_approve_status = 'RUN'
   AND    (bx_id IS NULL OR bx_id = 0)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 

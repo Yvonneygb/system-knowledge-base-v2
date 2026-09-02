@@ -2528,15 +2528,13 @@ SELECT P.PROJECT_ID, P.STAT FROM EPM_PROJECT P
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 统计紧急行数(urgency=2的行数)<br>(2) 计算允许的紧急行数=向上取整(明细行数/5)<br>(3) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-    
-
     <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT L.LINE_SEQ, L.QTY_BILL, L.PACKAGE_NUMBER
 FROM SA_OUT_BILL_LINE L
 JOIN SA_OUT_BILL_HEAD H ON H.SA_OUT_BILL_HEAD_ID = L.SA_OUT_BILL_HEAD_ID
 WHERE H.SA_OUT_BILL_HEAD_ID = ?
-AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0</code></pre>
-
+AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0
+--</code></pre>
   </div>
 </div>
 
@@ -2547,15 +2545,13 @@ AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0</code></pre>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 仅经销商用户(userType=D)时校验<br>(2) 条件：价格类型为折扣政策(2)或价目表(3)，且产品线为卫浴(1)，且销售渠道为家装(1)或零售(3)<br>(3) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-    
-
     <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT L.LINE_SEQ, L.QTY_BILL, L.PACKAGE_NUMBER
 FROM SA_OUT_BILL_LINE L
 JOIN SA_OUT_BILL_HEAD H ON H.SA_OUT_BILL_HEAD_ID = L.SA_OUT_BILL_HEAD_ID
 WHERE H.SA_OUT_BILL_HEAD_ID = ?
-AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0</code></pre>
-
+AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0
+--</code></pre>
   </div>
 </div>
 
@@ -2566,11 +2562,9 @@ AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0</code></pre>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 调用updateSmState接口获取产品生命状态<br>(2) Z8状态不允许下达订单，阻断性报错<br>(3) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
-    
-
     <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OUT_BILL_HEAD_ID = ? AND L.SM_STATE = 'Z8'</code></pre>
-
+    <pre class="detail-sql language-sql" v-pre><code>SELECT L.LINE_SEQ, L.ITEM_CODE, L.SM_STATE FROM SA_OUT_BILL_LINE L WHERE L.SA_OUT_BILL_HEAD_ID = ? AND L.SM_STATE = 'Z8'
+--</code></pre>
   </div>
 </div>
 
@@ -2611,11 +2605,9 @@ AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0</code></pre>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 期望到达日期不能超过一年<br>(2) 常规订单：25号前下单期望到达日期需为当月；25号后仅瓷砖可下常规订单<br>(3) 计划订单：电商渠道6个月内，其他渠道3个月内<br>(4) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-    
-
     <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = ?</code></pre>
-
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = ?
+--</code></pre>
   </div>
 </div>
 
@@ -2656,11 +2648,9 @@ AND L.PACKAGE_NUMBER &gt; 0 AND L.QTY_BILL % L.PACKAGE_NUMBER != 0</code></pre>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 期望到达日期不能超过一年<br>(2) 常规订单：25号前下单期望到达日期需为当月；25号后仅瓷砖可下常规订单<br>(3) 计划订单：电商渠道6个月内，其他渠道3个月内<br>(4) 排查SQL见弹窗下方</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-    
-
     <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = ?</code></pre>
-
+    <pre class="detail-sql language-sql" v-pre><code>SELECT SA_OUT_BILL_HEAD_ID, IN_DATE, BILL_TYPE, CHANNEL, ORDER_PDT_LINE FROM SA_OUT_BILL_HEAD WHERE SA_OUT_BILL_HEAD_ID = ?
+--</code></pre>
   </div>
 </div>
 

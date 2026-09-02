@@ -635,7 +635,8 @@
          r.hz_approve_status  AS 审批状态,
          r.last_update_date   AS 最后更新时间
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #{传入的reimburseHeadId};</code></pre></div>
+  WHERE  r.id = #{传入的reimburseHeadId};
+--</code></pre></div>
 </div>
 
 
@@ -654,7 +655,8 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.reimburse_head_id = #{传入的reimburseHeadId}
   AND    c.hz_approve_status &lt;&gt; 'APPROVED'
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -672,7 +674,8 @@
   FROM   cust_dh_cashout_head c
   WHERE  (c.out_cashout_ratio &lt; 0 OR c.out_cashout_ratio &gt; 1)
   AND    c.hz_approve_status = 'NEW'
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -691,7 +694,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'APPROVED'
   AND    NOT EXISTS (SELECT 1 FROM cust_dh_reimburse_line l WHERE l.head_id = r.id)
-  ORDER  BY r.last_update_date DESC;</code></pre></div>
+  ORDER  BY r.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -713,7 +717,8 @@
   WHERE  c.hz_approve_status = 'NEW'
   AND    NVL(c.in_cashout_apply_amt, 0) = 0
   AND    NVL(c.out_cashout_apply_amt, 0) = 0
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -735,7 +740,8 @@
   FROM   fin_fee_check_bx_header b
   WHERE  b.fee_type_id = 66014602
   AND    b.bud_year = #{当前年份}
-  ORDER  BY b.division_id;</code></pre></div>
+  ORDER  BY b.division_id;
+--</code></pre></div>
 </div>
 
 
@@ -755,7 +761,8 @@
   AND    c.year = #{当前年份}
   GROUP  BY c.customer_id, c.customer_code, c.year
   HAVING SUM(c.out_cashout_apply_amt) &gt; 0
-  ORDER  BY SUM(c.out_cashout_apply_amt) DESC;</code></pre></div>
+  ORDER  BY SUM(c.out_cashout_apply_amt) DESC;
+--</code></pre></div>
 </div>
 
 
@@ -779,7 +786,8 @@
               AND    c.hz_approve_status IN ('RUN','APPROVED','RETURN','INTERRUPT')), 0) AS 剩余未申请金额
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'APPROVED'
-  ORDER  BY r.last_update_date DESC;</code></pre></div>
+  ORDER  BY r.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -798,7 +806,8 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    (c.bzs_biz_method IS NULL OR c.bzs_des_method IS NULL)
-  ORDER  BY c.last_update_date DESC;</code></pre></div>
+  ORDER  BY c.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -817,7 +826,8 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    (c.bzs_biz_name IS NULL OR c.bzs_des_name IS NULL)
-  ORDER  BY c.last_update_date DESC;</code></pre></div>
+  ORDER  BY c.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -835,7 +845,8 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    c.out_valid_date IS NULL
-  ORDER  BY c.last_update_date DESC;</code></pre></div>
+  ORDER  BY c.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -858,7 +869,8 @@
          WHERE  hz_approve_status = 'APPROVED'
          GROUP  BY reimburse_head_id
          HAVING COUNT(1) &gt; 1)
-  ORDER  BY c.reimburse_head_id, c.creation_date;</code></pre></div>
+  ORDER  BY c.reimburse_head_id, c.creation_date;
+--</code></pre></div>
 </div>
 
 
@@ -876,7 +888,8 @@
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
-  ORDER  BY c.last_update_date DESC;</code></pre></div>
+  ORDER  BY c.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -892,7 +905,8 @@
          c.hz_approve_status AS 审批状态
   FROM   cust_dh_cashout_head c
   WHERE  c.id IS NULL
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -908,7 +922,8 @@
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #{传入的id};</code></pre></div>
+  WHERE  c.id = #{传入的id};
+--</code></pre></div>
 </div>
 
 
@@ -926,7 +941,8 @@
           FROM   cust_dh_cashout_line l
           WHERE  l.head_id = c.id) AS 行表记录数
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #{传入的id};</code></pre></div>
+  WHERE  c.id = #{传入的id};
+--</code></pre></div>
 </div>
 
 
@@ -942,7 +958,8 @@
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #{传入的objId};</code></pre></div>
+  WHERE  c.id = #{传入的objId};
+--</code></pre></div>
 </div>
 
 
@@ -969,7 +986,8 @@
               AND    t.id &lt;&gt; c.id), 0) AS 剩余可申请比例
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'NEW'
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -986,7 +1004,8 @@
          c.hz_approve_status AS 审批状态
   FROM   cust_dh_cashout_head c
   WHERE  c.reimburse_head_id IS NULL
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1002,7 +1021,8 @@
          c.hz_approve_status AS 审批状态,
          c.last_update_date AS 最后更新时间
   FROM   cust_dh_cashout_head c
-  WHERE  c.id = #{传入的id};</code></pre></div>
+  WHERE  c.id = #{传入的id};
+--</code></pre></div>
 </div>
 
 
@@ -1022,7 +1042,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'APPROVED'
   AND    NOT EXISTS (SELECT 1 FROM policy_standard_head h WHERE h.id = r.policy_standard_id)
-  ORDER  BY r.last_update_date DESC;</code></pre></div>
+  ORDER  BY r.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1042,7 +1063,8 @@
   WHERE  c.hz_approve_status = 'RUN'
   AND    NVL(c.out_fin_amt, 0) = 0
   AND    c.out_valid_date IS NOT NULL
-  ORDER  BY c.last_update_date DESC;</code></pre></div>
+  ORDER  BY c.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1059,7 +1081,8 @@
          c.hz_approve_status AS 审批状态
   FROM   cust_dh_cashout_head c
   WHERE  c.year IS NULL
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1078,7 +1101,8 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    (c.bzs_biz_method IS NULL OR c.bzs_biz_name IS NULL)
-  ORDER  BY c.last_update_date DESC;</code></pre></div>
+  ORDER  BY c.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1097,7 +1121,8 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'RUN'
   AND    (c.bzs_des_method IS NULL OR c.bzs_des_name IS NULL)
-  ORDER  BY c.last_update_date DESC;</code></pre></div>
+  ORDER  BY c.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1116,7 +1141,8 @@
   FROM   cust_dh_cashout_head c
   WHERE  c.hz_approve_status = 'NEW'
   AND    NOT EXISTS (SELECT 1 FROM cust_dh_cashout_line l WHERE l.head_id = c.id)
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1138,7 +1164,8 @@
   AND    NVL(c.out_fin_amt, 0) &gt; 0
   AND    c.out_valid_date IS NULL
   AND    c.first_out_valid_date IS NULL
-  ORDER  BY c.creation_date DESC;</code></pre></div>
+  ORDER  BY c.creation_date DESC;
+--</code></pre></div>
 </div>
 
 

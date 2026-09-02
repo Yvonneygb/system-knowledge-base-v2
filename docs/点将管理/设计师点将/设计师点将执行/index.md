@@ -565,7 +565,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
          APPROVAL_STATE AS 审核状态
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -586,7 +587,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -604,7 +606,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
          TERMINATION_REASON AS 终止原因
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE = 'termination'
-    AND (CURRENT_PROGRESS IS NULL OR CURRENT_PROGRESS = '');</code></pre></div>
+    AND (CURRENT_PROGRESS IS NULL OR CURRENT_PROGRESS = '');
+--</code></pre></div>
 </div>
 
 
@@ -622,7 +625,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
          TERMINATION_REASON AS 终止原因
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE = 'termination'
-    AND (TERMINATION_REASON IS NULL OR TERMINATION_REASON = '');</code></pre></div>
+    AND (TERMINATION_REASON IS NULL OR TERMINATION_REASON = '');
+--</code></pre></div>
 </div>
 
 
@@ -641,7 +645,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE = 'drawing_uploaded'
-    AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);</code></pre></div>
+    AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -660,7 +665,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE = 'ordered'
-    AND (SCALE_AREA IS NULL OR SIGNER_NAME IS NULL);</code></pre></div>
+    AND (SCALE_AREA IS NULL OR SIGNER_NAME IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -677,7 +683,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
          FILE_URL AS 文件地址
   FROM DESIGN_DRAWING_FILE
   WHERE FILE_SIZE &gt; 30 * 1024 * 1024
-  ORDER BY CREATION_DATE DESC;</code></pre></div>
+  ORDER BY CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -695,7 +702,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
   FROM DESIGN_DRAWING_FILE
   WHERE FILE_URL IS NULL
      OR ERROR_INFO IS NOT NULL
-  ORDER BY CREATION_DATE DESC;</code></pre></div>
+  ORDER BY CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -716,7 +724,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
   WHERE APPLY_TYPE_ONE = 'design'
     AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -733,7 +742,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -753,7 +763,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE 'hzero.general_manage.design.design_general_execute.ps.%'
-  ORDER BY U.USER_NAME;</code></pre></div>
+  ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -770,7 +781,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
          DELETE_FLAG AS 删除标记
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -790,7 +802,8 @@ ORDER BY MDF.OPERATION_TIME DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE NOT IN ('pending_order','ordered','designing','drawing_uploaded','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 

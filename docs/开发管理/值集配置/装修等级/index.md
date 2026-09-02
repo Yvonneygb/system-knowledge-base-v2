@@ -407,7 +407,8 @@
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
   GROUP BY VALUE
-  HAVING COUNT(*) &gt; 1;</code></pre></div>
+  HAVING COUNT(*) &gt; 1;
+--</code></pre></div>
 </div>
 
 
@@ -425,7 +426,8 @@
          ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (VALUE IS NULL OR VALUE = '');</code></pre></div>
+    AND (VALUE IS NULL OR VALUE = '');
+--</code></pre></div>
 </div>
 
 
@@ -443,7 +445,8 @@
          ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (MEANING IS NULL OR MEANING = '');</code></pre></div>
+    AND (MEANING IS NULL OR MEANING = '');
+--</code></pre></div>
 </div>
 
 
@@ -463,7 +466,8 @@
     AND NOT EXISTS (
       SELECT 1 FROM TERMINAL_DECORATE_LINE tdl
       WHERE tdl.FIXUP_GRADE = lv.VALUE
-    );</code></pre></div>
+    );
+--</code></pre></div>
 </div>
 
 
@@ -480,7 +484,8 @@
          FRONTDOOR_FIXUP_GRADE AS 门头装修等级
   FROM FIN_FEE_CHECK_BX_HEADER
   WHERE FIXUP_GRADE IS NULL
-     OR FIXUP_GRADE = 0;</code></pre></div>
+     OR FIXUP_GRADE = 0;
+--</code></pre></div>
 </div>
 
 
@@ -503,7 +508,8 @@
       SELECT 1 FROM TERMINAL_DECORATE_LINE tdl
       WHERE tdl.FIXUP_GRADE = lv.VALUE
         AND SYSDATE BETWEEN tdl.START_DATE AND tdl.END_DATE
-    );</code></pre></div>
+    );
+--</code></pre></div>
 </div>
 
 
@@ -516,7 +522,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT LOV_ID, LOV_CODE, LOV_TYPE_CODE, DESCRIPTION
   FROM HPFM_LOV
-  WHERE LOV_CODE = 'AE.FIXUP_GRADE';</code></pre></div>
+  WHERE LOV_CODE = 'AE.FIXUP_GRADE';
+--</code></pre></div>
 </div>
 
 
@@ -532,7 +539,8 @@
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -549,7 +557,8 @@
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%fixup_grade%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%fixup_grade%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -564,7 +573,8 @@
          MEANING AS 值名称, ENABLE_FLAG AS 状态
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (LOV_VALUE_ID IS NULL OR ENABLE_FLAG IS NULL);</code></pre></div>
+    AND (LOV_VALUE_ID IS NULL OR ENABLE_FLAG IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -580,7 +590,8 @@
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
     AND ENABLE_FLAG NOT IN (0, 1)
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -595,7 +606,8 @@
          DESCRIPTION AS 描述
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND (DESCRIPTION IS NULL OR DESCRIPTION = '');</code></pre></div>
+    AND (DESCRIPTION IS NULL OR DESCRIPTION = '');
+--</code></pre></div>
 </div>
 
 
@@ -610,7 +622,8 @@
          ORDER_SEQ AS 排序号
   FROM HPFM_LOV_VALUE
   WHERE LOV_CODE = 'AE.FIXUP_GRADE'
-    AND ORDER_SEQ IS NULL;</code></pre></div>
+    AND ORDER_SEQ IS NULL;
+--</code></pre></div>
 </div>
 
 

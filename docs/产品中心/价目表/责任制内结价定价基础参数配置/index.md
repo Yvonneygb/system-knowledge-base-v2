@@ -468,7 +468,8 @@ WHERE T1.TOP_CATEGORY = #{topCategory}
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
          C.THR_CATEGORY AS 三级分类, C.PRICE_TYPE AS 定价类型
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.TOP_CATEGORY IS NULL;</code></pre></div>
+  WHERE C.ID = :configId AND C.TOP_CATEGORY IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -481,7 +482,8 @@ WHERE T1.TOP_CATEGORY = #{topCategory}
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.SEC_CATEGORY IS NULL;</code></pre></div>
+  WHERE C.ID = :configId AND C.SEC_CATEGORY IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -494,7 +496,8 @@ WHERE T1.TOP_CATEGORY = #{topCategory}
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.SEC_CATEGORY AS 二级分类, C.THR_CATEGORY AS 三级分类
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.THR_CATEGORY IS NULL;</code></pre></div>
+  WHERE C.ID = :configId AND C.THR_CATEGORY IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -507,7 +510,8 @@ WHERE T1.TOP_CATEGORY = #{topCategory}
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.PRICE_TYPE AS 定价类型
   FROM LNK_PM_RSP_STM_CFG C
-  WHERE C.ID = :configId AND C.PRICE_TYPE IS NULL;</code></pre></div>
+  WHERE C.ID = :configId AND C.PRICE_TYPE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -543,7 +547,8 @@ HAVING COUNT(*) > 1;
          C.THR_CATEGORY AS 三级分类, C.FOUR_CATEGORY AS 四级分类
   FROM LNK_PM_RSP_STM_CFG C
   WHERE C.STATUS = 'valid'
-  ORDER BY C.LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY C.LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -554,7 +559,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，请求抛出异常进入catch块<br><strong>逻辑分析：</strong>前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -565,7 +571,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询或详情页加载时，接口请求异常<br><strong>逻辑分析：</strong>前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmCfg接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。常见于数据库连接异常、SQL执行错误。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 总记录数 FROM LNK_PM_RSP_STM_CFG;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 总记录数 FROM LNK_PM_RSP_STM_CFG;
+--</code></pre></div>
 </div>
 
 
@@ -582,7 +589,8 @@ HAVING COUNT(*) > 1;
     JOIN HZERO.IAM_ROLE R ON M.ROLE_ID = R.ID
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
-  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.cfg.ps.%';</code></pre></div>
+  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.cfg.ps.%';
+--</code></pre></div>
 </div>
 
 
@@ -593,7 +601,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询结果为空集<br><strong>逻辑分析：</strong>前端Table组件查询后端返回content为空数组或totalElements=0时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 记录数 FROM LNK_PM_RSP_STM_CFG WHERE STATUS = 'valid';</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 记录数 FROM LNK_PM_RSP_STM_CFG WHERE STATUS = 'valid';
+--</code></pre></div>
 </div>
 
 
@@ -604,7 +613,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态失效或Token过期<br><strong>逻辑分析：</strong>HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。常见于长时间未操作或单点登录会话超时。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -615,7 +625,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>编辑模式下点击返回按钮<br><strong>逻辑分析：</strong>前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

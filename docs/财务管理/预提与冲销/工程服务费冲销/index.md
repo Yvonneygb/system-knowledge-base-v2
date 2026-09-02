@@ -365,7 +365,8 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_S
     <pre class="detail-sql language-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILLING_UNIT_CODE, BILLING_UNIT_NAME,
          WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, WRITEOFF_SUMAMT, SYNC_ITEM, BILL_STATUS
   FROM EXPENSE_WRITEOFF_IN_QUOTA
-  WHERE BILL_STATUS != 1 OR SYNC_ITEM IS NULL;</code></pre></div>
+  WHERE BILL_STATUS != 1 OR SYNC_ITEM IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -381,7 +382,8 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_S
   FROM EXPENSE_WRITEOFF_IN_QUOTA
   WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
     AND (ENTID = #{entid} OR #{entid} IS NULL)
-  ORDER BY YEARMONTH DESC, WRITEOFF_NO;</code></pre></div>
+  ORDER BY YEARMONTH DESC, WRITEOFF_NO;
+--</code></pre></div>
 </div>
 
 
@@ -394,7 +396,8 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_S
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, WRITEOFF_HEADNO, YEARMONTH, BILL_STATUS
   FROM EXPENSE_WRITEOFF_IN_QUOTA
-  WHERE WRITEOFF_HEADNO = #{headNo};</code></pre></div>
+  WHERE WRITEOFF_HEADNO = #{headNo};
+--</code></pre></div>
 </div>
 
 
@@ -408,7 +411,8 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_S
     <pre class="detail-sql language-sql" v-pre><code>SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILL_STATUS
   FROM EXPENSE_WRITEOFF_IN_QUOTA
   WHERE WRITEOFF_HEADNO = #{headNo}
-    AND (YEARMONTH IS NULL OR LENGTH(YEARMONTH) != 7 OR INSTR(YEARMONTH, '-') != 5);</code></pre></div>
+    AND (YEARMONTH IS NULL OR LENGTH(YEARMONTH) != 7 OR INSTR(YEARMONTH, '-') != 5);
+--</code></pre></div>
 </div>
 
 
@@ -422,7 +426,8 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_S
     <pre class="detail-sql language-sql" v-pre><code>-- 核查定时任务参数配置（伪SQL，具体表名依定时任务框架而定）
   SELECT JOB_NAME, PARAM_START_DATE, PARAM_END_DATE
   FROM JOB_CONFIG
-  WHERE JOB_NAME = 'com.arrow.dms.ae.biz.job.api.ExpenseWriteoffInQuotaJob';</code></pre></div>
+  WHERE JOB_NAME = 'com.arrow.dms.ae.biz.job.api.ExpenseWriteoffInQuotaJob';
+--</code></pre></div>
 </div>
 
 

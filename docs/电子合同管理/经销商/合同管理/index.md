@@ -465,7 +465,8 @@ ORDER BY EC.CREATE_TIME DESC;
          AGENT_NAME AS 经销商
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS = 'waiting_sign'
-  ORDER BY CREATION_DATE DESC;</code></pre></div>
+  ORDER BY CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -483,7 +484,8 @@ ORDER BY EC.CREATE_TIME DESC;
          TO_CHAR(SIGN_TIME,'YYYY-MM-DD HH24:MI:SS') AS 签署时间
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS = 'refuse_seal'
-    AND (REFUSE_REASON IS NULL OR REFUSE_REASON = '');</code></pre></div>
+    AND (REFUSE_REASON IS NULL OR REFUSE_REASON = '');
+--</code></pre></div>
 </div>
 
 
@@ -501,7 +503,8 @@ ORDER BY EC.CREATE_TIME DESC;
          TO_CHAR(SIGN_TIME,'YYYY-MM-DD HH24:MI:SS') AS 签署时间
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS IN ('signed', 'completed')
-    AND (PDF_URL IS NULL OR PDF_URL = '');</code></pre></div>
+    AND (PDF_URL IS NULL OR PDF_URL = '');
+--</code></pre></div>
 </div>
 
 
@@ -519,7 +522,8 @@ ORDER BY EC.CREATE_TIME DESC;
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS = 'waiting_sign'
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -537,7 +541,8 @@ ORDER BY EC.CREATE_TIME DESC;
          SIGN_URL AS 签署链接
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS = 'waiting_sign'
-    AND (SIGN_URL IS NULL OR SIGN_URL = '');</code></pre></div>
+    AND (SIGN_URL IS NULL OR SIGN_URL = '');
+--</code></pre></div>
 </div>
 
 
@@ -553,7 +558,8 @@ ORDER BY EC.CREATE_TIME DESC;
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -570,7 +576,8 @@ ORDER BY EC.CREATE_TIME DESC;
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%electronic_contract%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%electronic_contract%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -584,7 +591,8 @@ ORDER BY EC.CREATE_TIME DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
          CONTRACT_STATUS AS 签署状态, DELETE_FLAG AS 删除标记
   FROM ELECTRONIC_CONTRACT
-  WHERE DELETE_FLAG = 'Y' OR ELECTRONIC_CONTRACT_CODE IS NULL;</code></pre></div>
+  WHERE DELETE_FLAG = 'Y' OR ELECTRONIC_CONTRACT_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -599,7 +607,8 @@ ORDER BY EC.CREATE_TIME DESC;
          CONTRACT_STATUS AS 签署状态, ERROR_INFO AS 异常问题
   FROM ELECTRONIC_CONTRACT
   WHERE CONTRACT_STATUS NOT IN ('waiting_sign','signed','completed','refuse_seal')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -614,7 +623,8 @@ ORDER BY EC.CREATE_TIME DESC;
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.CONTRACT_STATUS','MBO.CONTRACT_TYPE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -631,7 +641,8 @@ ORDER BY EC.CREATE_TIME DESC;
   FROM ELECTRONIC_CONTRACT_SMS
   WHERE VERIFY_STATUS = 'fail'
     AND SMS_SEND_TIME &gt;= SYSDATE - 1
-  ORDER BY SMS_SEND_TIME DESC;</code></pre></div>
+  ORDER BY SMS_SEND_TIME DESC;
+--</code></pre></div>
 </div>
 
 

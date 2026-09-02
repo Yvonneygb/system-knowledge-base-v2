@@ -382,7 +382,8 @@
   FROM DRP_DIFFPROCBILL_HEADER ddh
   LEFT JOIN DRP_DIFFPROCBILL_LINE ddl ON ddh.BILL_NO = ddl.BILL_NO
   WHERE ddh.BILL_NO = :billNo
-  -- 检查签收单数据完整性</code></pre></div>
+  -- 检查签收单数据完整性
+--</code></pre></div>
 </div>
 
 
@@ -396,7 +397,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS
   FROM DRP_DIFFPROCBILL_HEADER ddh
   WHERE ddh.BILL_NO = :billNo
-  -- 若返回空，说明签收单不存在</code></pre></div>
+  -- 若返回空，说明签收单不存在
+--</code></pre></div>
 </div>
 
 
@@ -410,7 +412,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS
   FROM DRP_DIFFPROCBILL_HEADER ddh
   WHERE ddh.BILL_NO = :billNo
-  -- 检查签收单是否存在及数据完整性</code></pre></div>
+  -- 检查签收单是否存在及数据完整性
+--</code></pre></div>
 </div>
 
 
@@ -425,7 +428,8 @@
          ddh.MODEL_SIGN_DATE, ddh.HZ_APPROVE_STATUS
   FROM DRP_DIFFPROCBILL_HEADER ddh
   WHERE ddh.BILL_NO = :billNo
-  -- 检查必填字段是否完整</code></pre></div>
+  -- 检查必填字段是否完整
+--</code></pre></div>
 </div>
 
 
@@ -439,7 +443,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.HZ_APPROVE_STATUS, ddh.STAT
   FROM DRP_DIFFPROCBILL_HEADER ddh
   WHERE ddh.BILL_NO = :billNo
-  -- 检查单据状态是否允许提交(NEW/REJECTED)</code></pre></div>
+  -- 检查单据状态是否允许提交(NEW/REJECTED)
+--</code></pre></div>
 </div>
 
 
@@ -455,7 +460,8 @@
           WHERE epcl.CONTRACT_ID = epc.CONTRACT_ID) AS 合同明细行数
   FROM EPM_PROJECT_CONTRACT epc
   WHERE epc.CONTRACT_CODE = :contractCode
-  -- 检查合同明细行数是否大于0</code></pre></div>
+  -- 检查合同明细行数是否大于0
+--</code></pre></div>
 </div>
 
 
@@ -469,7 +475,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.CUST_CODE, ddh.CUST_NAME
   FROM DRP_DIFFPROCBILL_HEADER ddh
   WHERE ddh.BILL_NO = :billNo
-    AND (ddh.CUST_CODE IS NULL OR TRIM(ddh.CUST_CODE) = '')</code></pre></div>
+    AND (ddh.CUST_CODE IS NULL OR TRIM(ddh.CUST_CODE) = '')
+--</code></pre></div>
 </div>
 
 
@@ -483,7 +490,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.BILLING_UNIT_CODE, ddh.BILLING_UNIT_NAME
   FROM DRP_DIFFPROCBILL_HEADER ddh
   WHERE ddh.BILL_NO = :billNo
-    AND (ddh.BILLING_UNIT_CODE IS NULL OR TRIM(ddh.BILLING_UNIT_CODE) = '')</code></pre></div>
+    AND (ddh.BILLING_UNIT_CODE IS NULL OR TRIM(ddh.BILLING_UNIT_CODE) = '')
+--</code></pre></div>
 </div>
 
 
@@ -497,7 +505,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.CONTRACT_CODE, ddh.CONTRACT_NAME
   FROM DRP_DIFFPROCBILL_HEADER ddh
   WHERE ddh.BILL_NO = :billNo
-    AND (ddh.CONTRACT_CODE IS NULL OR TRIM(ddh.CONTRACT_CODE) = '')</code></pre></div>
+    AND (ddh.CONTRACT_CODE IS NULL OR TRIM(ddh.CONTRACT_CODE) = '')
+--</code></pre></div>
 </div>
 
 
@@ -511,7 +520,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT ddh.BILL_NO, ddh.MODEL_SIGN_DATE
   FROM DRP_DIFFPROCBILL_HEADER ddh
   WHERE ddh.BILL_NO = :billNo
-    AND ddh.MODEL_SIGN_DATE IS NULL</code></pre></div>
+    AND ddh.MODEL_SIGN_DATE IS NULL
+--</code></pre></div>
 </div>
 
 

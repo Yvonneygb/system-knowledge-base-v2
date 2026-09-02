@@ -279,7 +279,8 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   AND    cyear IS NULL
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -298,7 +299,8 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   AND    (cust_name IS NULL OR cust_name = '')
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -317,7 +319,8 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   AND    (terminal_name IS NULL OR terminal_name = '')
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -337,7 +340,8 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
   FROM   fin_fee_apply_header
   WHERE  apply_type &lt;&gt; 1
   AND    fee_apply_no LIKE 'ZXSQ%'
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -355,7 +359,8 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
   WHERE  apply_type = 1
   GROUP  BY cyear, cust_name
   HAVING COUNT(*) &gt; 10000
-  ORDER  BY 申请单数量 DESC;</code></pre></div>
+  ORDER  BY 申请单数量 DESC;
+--</code></pre></div>
 </div>
 
 
@@ -370,7 +375,8 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
   FROM   fin_fee_apply_header
-  WHERE  apply_type = 1;</code></pre></div>
+  WHERE  apply_type = 1;
+--</code></pre></div>
 </div>
 
 
@@ -382,7 +388,8 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre></div>
+  FROM   dual;
+--</code></pre></div>
 </div>
 
 
@@ -398,7 +405,8 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1
   GROUP  BY cyear
-  ORDER  BY 申请单数量 DESC;</code></pre></div>
+  ORDER  BY 申请单数量 DESC;
+--</code></pre></div>
 </div>
 
 

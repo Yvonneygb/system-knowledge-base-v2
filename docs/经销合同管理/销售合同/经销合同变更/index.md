@@ -398,7 +398,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          CUSTOMER_NAME, CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ORIGINAL_CONTRACT_ID IS NULL OR ORIGINAL_CONTRACT_NO IS NULL;</code></pre></div>
+  WHERE ORIGINAL_CONTRACT_ID IS NULL OR ORIGINAL_CONTRACT_NO IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -413,7 +414,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
          HZ_APPROVE_STATUS, STATE_PIGEONHOLE, ACTUAL_PIGEONHOLE_DATE
   FROM SA_SALE_CONTRACT_HEAD
   WHERE CONTRACT_NO = #{contractNo}
-    AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NULL);</code></pre></div>
+    AND (HZ_APPROVE_STATUS != 'APPROVED' OR STATE_PIGEONHOLE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -427,7 +429,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_NO, CUSTOMER_NAME,
          CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ADD_HEAD_ID = #{addHeadId};</code></pre></div>
+  WHERE ADD_HEAD_ID = #{addHeadId};
+--</code></pre></div>
 </div>
 
 
@@ -443,7 +446,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
   FROM SALE_CONTRACT_ADD_HEAD A
   LEFT JOIN SA_SALE_CONTRACT_HEAD S ON A.ORIGINAL_CONTRACT_ID = S.SALE_CONTRACT_HEAD_ID
   WHERE A.ORIGINAL_CONTRACT_ID IS NOT NULL
-    AND (S.SALE_CONTRACT_HEAD_ID IS NULL OR A.ORIGINAL_CONTRACT_NO != S.CONTRACT_NO);</code></pre></div>
+    AND (S.SALE_CONTRACT_HEAD_ID IS NULL OR A.ORIGINAL_CONTRACT_NO != S.CONTRACT_NO);
+--</code></pre></div>
 </div>
 
 
@@ -457,7 +461,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_NO, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
   WHERE ADD_HEAD_ID = #{addHeadId}
-    AND HZ_APPROVE_STATUS != 'NEW';</code></pre></div>
+    AND HZ_APPROVE_STATUS != 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -471,7 +476,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
   WHERE ADD_HEAD_ID = #{addHeadId}
-    AND HZ_APPROVE_STATUS = 'NEW';</code></pre></div>
+    AND HZ_APPROVE_STATUS = 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -486,7 +492,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
          S.ELECTRONIC_SIGN_STATUS, S.STATE_PIGEONHOLE
   FROM SA_SALE_CONTRACT_HEAD S
   WHERE S.SALE_CONTRACT_HEAD_ID = #{originalContractId}
-    AND S.ELECTRONIC_SIGN_STATUS = 'SIGNING';</code></pre></div>
+    AND S.ELECTRONIC_SIGN_STATUS = 'SIGNING';
+--</code></pre></div>
 </div>
 
 
@@ -500,7 +507,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ORIGINAL_CONTRACT_NO IS NULL OR ORIGINAL_CONTRACT_NO = '';</code></pre></div>
+  WHERE ORIGINAL_CONTRACT_NO IS NULL OR ORIGINAL_CONTRACT_NO = '';
+--</code></pre></div>
 </div>
 
 
@@ -516,7 +524,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
   FROM SA_SALE_CONTRACT_HEAD S
   WHERE S.SALE_CONTRACT_HEAD_ID = #{originalContractId}
     AND S.IS_PIGEONHOLE = 1
-    AND S.STATE_PIGEONHOLE IS NULL;</code></pre></div>
+    AND S.STATE_PIGEONHOLE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -531,7 +540,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
          ADD_HEAD_ID, ADD_HEAD_NO, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
   WHERE ORIGINAL_CONTRACT_ID = #{originalContractId}
-    AND HZ_APPROVE_STATUS IN ('NEW', 'RUN');</code></pre></div>
+    AND HZ_APPROVE_STATUS IN ('NEW', 'RUN');
+--</code></pre></div>
 </div>
 
 
@@ -546,7 +556,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
          C.CORPORATE_NAME
   FROM SALE_CONTRACT_ADD_HEAD A
   LEFT JOIN CUSTOMER C ON A.CUSTOMER_ID = C.CUSTOMER_ID
-  WHERE C.CUSTOMER_ID IS NULL OR C.CORPORATE_CODE IS NULL;</code></pre></div>
+  WHERE C.CUSTOMER_ID IS NULL OR C.CORPORATE_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -561,7 +572,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
          S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO
   FROM SALE_CONTRACT_ADD_HEAD A
   LEFT JOIN SA_SALE_CONTRACT_HEAD S ON A.ORIGINAL_CONTRACT_ID = S.SALE_CONTRACT_HEAD_ID
-  WHERE A.ORIGINAL_CONTRACT_ID IS NOT NULL AND S.SALE_CONTRACT_HEAD_ID IS NULL;</code></pre></div>
+  WHERE A.ORIGINAL_CONTRACT_ID IS NOT NULL AND S.SALE_CONTRACT_HEAD_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -575,7 +587,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          CUSTOMER_NAME, CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
-  WHERE ADD_HEAD_ID = #{addHeadId};</code></pre></div>
+  WHERE ADD_HEAD_ID = #{addHeadId};
+--</code></pre></div>
 </div>
 
 
@@ -590,7 +603,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
          S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS AS 原合同状态
   FROM SALE_CONTRACT_ADD_HEAD A
   JOIN SA_SALE_CONTRACT_HEAD S ON A.ORIGINAL_CONTRACT_ID = S.SALE_CONTRACT_HEAD_ID
-  WHERE A.HZ_APPROVE_STATUS = 'APPROVED';</code></pre></div>
+  WHERE A.HZ_APPROVE_STATUS = 'APPROVED';
+--</code></pre></div>
 </div>
 
 
@@ -601,7 +615,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用sale-contract-add-heads相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -612,7 +627,8 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对变更保存、提交、删除等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

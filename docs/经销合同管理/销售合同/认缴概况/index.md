@@ -239,7 +239,8 @@
   -- 核查上游认缴申请审批状态
   SELECT APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, APPLY_AMT, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE CONTRACT_NO = #{contractNo} AND HZ_APPROVE_STATUS = 'APPROVED';</code></pre></div>
+  WHERE CONTRACT_NO = #{contractNo} AND HZ_APPROVE_STATUS = 'APPROVED';
+--</code></pre></div>
 </div>
 
 
@@ -253,7 +254,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, ENTID,
          SUBSCRIPTION_AMT, PAID_AMT, UNPAID_AMT
   FROM CM_CONTRACT_PAYMENT_SUMMARY
-  WHERE CONTRACT_TYPE IS NULL OR ENTID IS NULL OR CUSTOMER_ID IS NULL;</code></pre></div>
+  WHERE CONTRACT_TYPE IS NULL OR ENTID IS NULL OR CUSTOMER_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -269,7 +271,8 @@
   FROM CM_CONTRACT_PAYMENT_SUMMARY S
   LEFT JOIN CM_DEPOSITS_PAY_STANDARD P
     ON S.ENTID = P.ENTID AND S.CONTRACT_TYPE = P.CONTRACT_TYPE
-  WHERE P.PAY_STANDARD_ID IS NULL;</code></pre></div>
+  WHERE P.PAY_STANDARD_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -280,7 +283,8 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用cm-contract-payment-summarys相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -291,7 +295,8 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对认缴概况查询、导出等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

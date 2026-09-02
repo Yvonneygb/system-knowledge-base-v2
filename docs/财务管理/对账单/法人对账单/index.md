@@ -326,7 +326,8 @@
   -- 核查EBS接口配置是否存在及启用状态
   SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
   FROM EBS_INTERFACE_CONFIG
-  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_HEADER', 'CUX_CUSTOMER_STATE_DETAIL');</code></pre></div>
+  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_HEADER', 'CUX_CUSTOMER_STATE_DETAIL');
+--</code></pre></div>
 </div>
 
 
@@ -344,7 +345,8 @@
   WHERE PERIOD_NAME = #{periodName}
     AND (ORG_NAME = #{orgName} OR #{orgName} IS NULL)
     AND (STATE_TYPE = #{stateType} OR #{stateType} IS NULL)
-  ORDER BY PARTY_NUMBER;</code></pre></div>
+  ORDER BY PARTY_NUMBER;
+--</code></pre></div>
 </div>
 
 
@@ -360,7 +362,8 @@
   FROM CUX_CUSTOMER_STATE_HEADER_V
   WHERE PERIOD_NAME = #{periodName}
   GROUP BY STATE_TYPE
-  ORDER BY STATE_TYPE;</code></pre></div>
+  ORDER BY STATE_TYPE;
+--</code></pre></div>
 </div>
 
 
@@ -374,7 +377,8 @@
     <pre class="detail-sql language-sql" v-pre><code>-- 核查DMS侧EBS状态更新接口配置
   SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
   FROM EBS_INTERFACE_CONFIG
-  WHERE INTERFACE_CODE = 'CUX_CUSTOMER_UPDATE_STATE';</code></pre></div>
+  WHERE INTERFACE_CODE = 'CUX_CUSTOMER_UPDATE_STATE';
+--</code></pre></div>
 </div>
 
 
@@ -388,7 +392,8 @@
     <pre class="detail-sql language-sql" v-pre><code>-- 核查DMS侧EBS接口配置及启用状态
   SELECT INTERFACE_CODE, INTERFACE_NAME, TARGET_URL, ENABLED, LAST_SYNC_TIME
   FROM EBS_INTERFACE_CONFIG
-  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_LIST_PAGE', 'CUX_CUSTOMER_STATE_DETAIL', 'CUX_CUSTOMER_UPDATE_STATE');</code></pre></div>
+  WHERE INTERFACE_CODE IN ('CUX_CUSTOMER_STATE_LIST_PAGE', 'CUX_CUSTOMER_STATE_DETAIL', 'CUX_CUSTOMER_UPDATE_STATE');
+--</code></pre></div>
 </div>
 
 
@@ -402,7 +407,8 @@
     <pre class="detail-sql language-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre></div>
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};
+--</code></pre></div>
 </div>
 
 

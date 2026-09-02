@@ -257,7 +257,8 @@
   SELECT COUNT(1) AS 查阅日志总记录数,
          MIN(L.CREATION_DATE) AS 最早查阅时间,
          MAX(L.CREATION_DATE) AS 最近查阅时间
-  FROM ES_SEARCH_LOG L;</code></pre></div>
+  FROM ES_SEARCH_LOG L;
+--</code></pre></div>
 </div>
 
 
@@ -276,7 +277,8 @@
   JOIN HZERO.IAM_ROLE_PERMISSION RP ON RP.ROLE_ID = R.ID
   JOIN HZERO.IAM_PERMISSION P ON P.ID = RP.PERMISSION_ID
   WHERE U.REAL_NAME = :用户名
-    AND P.CODE LIKE '%manual-classification%';</code></pre></div>
+    AND P.CODE LIKE '%manual-classification%';
+--</code></pre></div>
 </div>
 
 
@@ -293,7 +295,8 @@
   FROM HZERO.OAUTH_ACCESS_TOKEN T
   JOIN HZERO.IAM_USER U ON U.ID = T.USER_ID
   WHERE U.REAL_NAME = :用户名
-  ORDER BY T.CREATE_TIME DESC;</code></pre></div>
+  ORDER BY T.CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -310,7 +313,8 @@
   FROM ES_SPEC S
   WHERE S.HZ_APPROVE_STATUS = 'APPROVED'
     AND NVL(S.HISTORY, 0) &lt;&gt; 2
-  ORDER BY 查阅次数 DESC;</code></pre></div>
+  ORDER BY 查阅次数 DESC;
+--</code></pre></div>
 </div>
 
 
@@ -328,7 +332,8 @@
   FROM 产品分类表
   WHERE ITEM_CLASS_CODE = :分类编码
     AND ORGANIZATION_ID = :组织ID
-    AND ITEM_CLASS_PID = :父级ID;</code></pre></div>
+    AND ITEM_CLASS_PID = :父级ID;
+--</code></pre></div>
 </div>
 
 
@@ -343,7 +348,8 @@
   SELECT R.SPECCLAS_REF_ID AS 关联ID, R.SPEC_ID AS 说明书ID, R.SPECCLAS_ID AS 分类ID,
          R.SEQ AS 序号, R.UPDATETIME AS 更新时间
   FROM ES_SPECCLAS_REF R
-  WHERE R.SPEC_ID = :说明书ID;</code></pre></div>
+  WHERE R.SPEC_ID = :说明书ID;
+--</code></pre></div>
 </div>
 
 
@@ -359,7 +365,8 @@
          (SELECT COUNT(1) FROM 产品分类表 C2 WHERE C2.ITEM_CLASS_PID = C.ITEM_CLASS_ID) AS 子级分类数,
          (SELECT COUNT(1) FROM ES_SPECCLAS_REF R WHERE R.SPECCLAS_ID = C.ITEM_CLASS_ID) AS 关联说明书数
   FROM 产品分类表 C
-  WHERE C.ITEM_CLASS_ID = :分类ID;</code></pre></div>
+  WHERE C.ITEM_CLASS_ID = :分类ID;
+--</code></pre></div>
 </div>
 
 

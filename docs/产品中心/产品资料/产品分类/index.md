@@ -417,7 +417,8 @@ SELECT COUNT(*) FROM ITEM_CLASS
   WHERE IC.ITEM_CLASS_CODE = :itemClassCode
     AND IC.ORGANIZATION_ID = :organizationId
     AND IC.ITEM_CLASS_PID = :itemClassPid
-  ORDER BY IC.CREATION_DATE DESC;</code></pre></div>
+  ORDER BY IC.CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -434,7 +435,8 @@ SELECT COUNT(*) FROM ITEM_CLASS
   FROM ITEM_CLASS IC
   WHERE IC.ITEM_CLASS_PID = :itemClassId;
   -- 删除后确认记录已不存在
-  SELECT COUNT(1) AS 剩余记录数 FROM ITEM_CLASS WHERE ITEM_CLASS_ID = :itemClassId;</code></pre></div>
+  SELECT COUNT(1) AS 剩余记录数 FROM ITEM_CLASS WHERE ITEM_CLASS_ID = :itemClassId;
+--</code></pre></div>
 </div>
 
 
@@ -453,7 +455,8 @@ SELECT COUNT(*) FROM ITEM_CLASS
   WHERE IC.ITEM_CLASS_CODE = :itemClassCode
     AND IC.ORGANIZATION_ID = :organizationId
     AND IC.ITEM_CLASS_PID = :itemClassPid
-  ORDER BY IC.CREATION_DATE DESC;</code></pre></div>
+  ORDER BY IC.CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -478,7 +481,8 @@ SELECT COUNT(*) FROM ITEM_CLASS
     AND IC.ITEM_CLASS_PID IS NOT NULL
     AND NOT EXISTS (
       SELECT 1 FROM ITEM_CLASS P WHERE P.ITEM_CLASS_ID = IC.ITEM_CLASS_PID
-    );</code></pre></div>
+    );
+--</code></pre></div>
 </div>
 
 
@@ -491,7 +495,8 @@ SELECT COUNT(*) FROM ITEM_CLASS
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 分类总数
   FROM ITEM_CLASS IC
-  WHERE IC.ORGANIZATION_ID = :organizationId;</code></pre></div>
+  WHERE IC.ORGANIZATION_ID = :organizationId;
+--</code></pre></div>
 </div>
 
 
@@ -507,7 +512,8 @@ SELECT COUNT(*) FROM ITEM_CLASS
   FROM HZERO.IAM_USER U
     LEFT JOIN HZERO.IAM_MEMBER_ROLE MR ON MR.USER_ID = U.ID
     LEFT JOIN HZERO.IAM_ROLE R ON R.ID = MR.ROLE_ID
-  WHERE U.ID = :currentUserId;</code></pre></div>
+  WHERE U.ID = :currentUserId;
+--</code></pre></div>
 </div>
 
 
@@ -518,7 +524,8 @@ SELECT COUNT(*) FROM ITEM_CLASS
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态丢失或token过期<br><strong>逻辑分析：</strong>HZERO平台基于JWT token进行会话管理，token过期后所有接口请求返回401状态码。前端axios拦截器捕获401错误后提示"会话过期，请重新登录"并跳转登录页。常见于长时间未操作、token过期时间到达、服务端重启导致token失效。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查用户登录态和token有效期，重新登录获取新token' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查用户登录态和token有效期，重新登录获取新token' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -533,7 +540,8 @@ SELECT COUNT(*) FROM ITEM_CLASS
   FROM ITEM_CLASS IC
   WHERE IC.ORGANIZATION_ID = :organizationId
   GROUP BY IC.ITEM_CLASS_LEVEL
-  ORDER BY IC.ITEM_CLASS_LEVEL;</code></pre></div>
+  ORDER BY IC.ITEM_CLASS_LEVEL;
+--</code></pre></div>
 </div>
 
 

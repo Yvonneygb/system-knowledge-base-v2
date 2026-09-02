@@ -824,7 +824,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
     <pre class="detail-sql language-sql" v-pre><code>SELECT POH.PRODUCT_OVER_ID AS 申请单ID, POH.PRODUCT_OVER_NO AS 申请单号,
          POH.IS_ELIMINATE AS 逆向启用
   FROM PRODUCT_OVER_HEADER POH
-  WHERE POH.PRODUCT_OVER_ID = :productOverId;</code></pre></div>
+  WHERE POH.PRODUCT_OVER_ID = :productOverId;
+--</code></pre></div>
 </div>
 
 
@@ -837,7 +838,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT POH.PRODUCT_OVER_ID, POH.PRODUCT_OVER_NO, POH.HZ_APPROVE_STATUS
   FROM PRODUCT_OVER_HEADER POH
-  WHERE POH.PRODUCT_OVER_ID = :productOverId;</code></pre></div>
+  WHERE POH.PRODUCT_OVER_ID = :productOverId;
+--</code></pre></div>
 </div>
 
 
@@ -851,7 +853,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
     <pre class="detail-sql language-sql" v-pre><code>SELECT POH.PRODUCT_OVER_ID AS 申请单ID, POH.PRODUCT_OVER_NO AS 申请单号,
          POH.HZ_APPROVE_STATUS AS 审批状态, POH.CALLBACK_SOURCE AS 回调来源
   FROM PRODUCT_OVER_HEADER POH
-  WHERE POH.PRODUCT_OVER_ID = :productOverId;</code></pre></div>
+  WHERE POH.PRODUCT_OVER_ID = :productOverId;
+--</code></pre></div>
 </div>
 
 
@@ -862,7 +865,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>OA回调时，入参productOverId为空或&lt;=0<br><strong>逻辑分析：</strong>OA回调接口要求productOverId必填且大于0。若OA系统配置错误导致回调未携带申请单ID，或ID值非法，则抛出异常。需检查OA流程配置的回调参数映射。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查OA回调请求体是否包含productOverId且大于0' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查OA回调请求体是否包含productOverId且大于0' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -876,7 +880,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
     <pre class="detail-sql language-sql" v-pre><code>SELECT POH.PRODUCT_OVER_NO AS 申请单号,
          (SELECT COUNT(1) FROM PRODUCT_OVER_LINE POL WHERE POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID) AS 明细行数
   FROM PRODUCT_OVER_HEADER POH
-  WHERE POH.PRODUCT_OVER_ID = :productOverId;</code></pre></div>
+  WHERE POH.PRODUCT_OVER_ID = :productOverId;
+--</code></pre></div>
 </div>
 
 
@@ -897,7 +902,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
     AND POL.ITEM_CODE IN (
       SELECT ITEM_CODE FROM PRODUCT_OVER_LINE WHERE PRODUCT_OVER_ID = :currentId
     )
-  GROUP BY POH.PRODUCT_OVER_NO, IU.REAL_NAME;</code></pre></div>
+  GROUP BY POH.PRODUCT_OVER_NO, IU.REAL_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -912,7 +918,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
   FROM PRODUCT_OVER_LINE POL
   WHERE POL.PRODUCT_OVER_ID = :productOverId
   GROUP BY POL.ITEM_CODE
-  HAVING COUNT(*) &gt; 1;</code></pre></div>
+  HAVING COUNT(*) &gt; 1;
+--</code></pre></div>
 </div>
 
 
@@ -926,7 +933,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
     <pre class="detail-sql language-sql" v-pre><code>SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
          U.USER_TYPE AS 用户类型
   FROM HZERO.IAM_USER U
-  WHERE U.ID = :currentUserId;</code></pre></div>
+  WHERE U.ID = :currentUserId;
+--</code></pre></div>
 </div>
 
 
@@ -942,7 +950,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
   FROM HZERO.IAM_USER U
     LEFT JOIN HZERO.IAM_MEMBER_ROLE MR ON MR.USER_ID = U.ID
     LEFT JOIN HZERO.IAM_ROLE R ON R.ID = MR.ROLE_ID
-  WHERE U.ID = :currentUserId;</code></pre></div>
+  WHERE U.ID = :currentUserId;
+--</code></pre></div>
 </div>
 
 
@@ -958,7 +967,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
   FROM ITEM I
     LEFT JOIN ITEM_ORG IO ON IO.ITEM_ID = I.ITEM_ID
   WHERE I.ITEM_CODE IN (:importItemCodes)
-    AND I.ITEM_TYPE &lt;&gt; 5;</code></pre></div>
+    AND I.ITEM_TYPE &lt;&gt; 5;
+--</code></pre></div>
 </div>
 
 
@@ -974,7 +984,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
   FROM HZERO.HPFM_LOV_VALUE LV
   WHERE LV.LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'
     AND LV.TENANT_ID = 0
-  ORDER BY LV.ORDER_ID;</code></pre></div>
+  ORDER BY LV.ORDER_ID;
+--</code></pre></div>
 </div>
 
 
@@ -990,7 +1001,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
          CASE WHEN IO.DIVISION_ID = :userDeptId THEN '一致' ELSE '不一致' END AS 事业部一致性
   FROM ITEM I
     LEFT JOIN ITEM_ORG IO ON IO.ITEM_ID = I.ITEM_ID
-  WHERE I.ITEM_CODE IN (:importItemCodes);</code></pre></div>
+  WHERE I.ITEM_CODE IN (:importItemCodes);
+--</code></pre></div>
 </div>
 
 
@@ -1006,7 +1018,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
   WHERE LV.LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'
     AND LV.TENANT_ID = 0
     AND LV.MEANING LIKE '%' || :roleCode || '_' || :isEliminate || '%'
-    AND LV.TAG LIKE '%' || :smState || '%';</code></pre></div>
+    AND LV.TAG LIKE '%' || :smState || '%';
+--</code></pre></div>
 </div>
 
 
@@ -1024,7 +1037,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
       AND LV.TENANT_ID = 0
       AND LV.MEANING LIKE '%' || :roleCode || '_' || :isEliminate || '%'
       AND LV.TAG LIKE '%' || IO.SM_STATE || '%'
-  WHERE IO.ITEM_CODE = :itemCode;</code></pre></div>
+  WHERE IO.ITEM_CODE = :itemCode;
+--</code></pre></div>
 </div>
 
 
@@ -1040,7 +1054,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
   FROM ITEM_ORG IO
     LEFT JOIN ITEM I ON IO.ITEM_ID = I.ITEM_ID
   WHERE IO.SM_STATE IS NULL
-    AND I.ITEM_CODE IN (:importItemCodes);</code></pre></div>
+    AND I.ITEM_CODE IN (:importItemCodes);
+--</code></pre></div>
 </div>
 
 
@@ -1056,7 +1071,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
   FROM PRODUCT_OVER_LINE POL
   WHERE POL.PRODUCT_OVER_ID = :productOverId
   GROUP BY POL.ITEM_CODE
-  HAVING COUNT(*) &gt; 1;</code></pre></div>
+  HAVING COUNT(*) &gt; 1;
+--</code></pre></div>
 </div>
 
 
@@ -1073,7 +1089,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
   FROM PRODUCT_OVER_HEADER POH
     LEFT JOIN PRODUCT_OVER_LINE POL ON POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID
   WHERE POH.PRODUCT_OVER_ID = :productOverId
-    AND POL.ERP_STAT = '推送失败';</code></pre></div>
+    AND POL.ERP_STAT = '推送失败';
+--</code></pre></div>
 </div>
 
 
@@ -1091,7 +1108,8 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
     LEFT JOIN PRODUCT_OVER_LINE POL ON POL.PRODUCT_OVER_ID = POH.PRODUCT_OVER_ID
   WHERE POH.PRODUCT_OVER_ID = :productOverId
     AND POL.ERP_STAT = '推送失败'
-  ORDER BY POL.ITEM_CODE;</code></pre></div>
+  ORDER BY POL.ITEM_CODE;
+--</code></pre></div>
 </div>
 
 

@@ -434,7 +434,8 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.CODE = 'hzero.crm.price.list.export'
-  ORDER BY R.CODE;</code></pre></div>
+  ORDER BY R.CODE;
+--</code></pre></div>
 </div>
 
 
@@ -452,13 +453,14 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
     JOIN REL_CRM_AE_ORG O ON L.DEPT_ID = O.CRM_ORG_ID
   WHERE O.AE_ORG_CODE = :deptCode
     AND L.CURRENCY = :currency;
-
+--
   -- 检查价目表明细关联的产品资料是否存在
   SELECT T1.ROW_ID AS 明细ID, T1.PROD_ID AS 产品ID,
          T2.PROD_CODE AS 产品编码, T2.PROD_NAME AS 产品名称
   FROM LNK_PRICE_LIST_ITEM T1
     LEFT JOIN LNK_PROD T2 ON T1.PROD_ID = T2.ROW_ID
-  WHERE T2.ROW_ID IS NULL;</code></pre></div>
+  WHERE T2.ROW_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -475,7 +477,8 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
   FROM HZERO.OAUTH_ACCESS_TOKEN T
     JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
   WHERE U.LOGIN_NAME = :loginName
-  ORDER BY T.EXPIRE_TIME DESC;</code></pre></div>
+  ORDER BY T.EXPIRE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -498,7 +501,8 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
     JOIN REL_CRM_AE_ORG O ON T3.DEPT_ID = O.CRM_ORG_ID
   WHERE O.AE_ORG_CODE = :deptCode
     AND T3.CURRENCY = :currency
-  ORDER BY T2.PROD_CODE;</code></pre></div>
+  ORDER BY T2.PROD_CODE;
+--</code></pre></div>
 </div>
 
 

@@ -673,7 +673,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT iu.USER_ID, iu.LOGIN_NAME, iu.REAL_NAME, iu.ORGANIZATION_ID, iu.DEPT_ID
   FROM IAM_USER iu
   WHERE iu.USER_ID = :currentUserId
-  -- 若ORGANIZATION_ID为空，则需补充用户事业部配置</code></pre></div>
+  -- 若ORGANIZATION_ID为空，则需补充用户事业部配置
+--</code></pre></div>
 </div>
 
 
@@ -687,7 +688,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.IS_CASHOUT, epi.VALID
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
-  -- 若返回空，说明到款单不存在</code></pre></div>
+  -- 若返回空，说明到款单不存在
+--</code></pre></div>
 </div>
 
 
@@ -702,7 +704,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
          epi.UNALLOT_AMT, epi.RECEIVE_AMT - epi.ALLOTED_AMT AS 剩余可认领金额
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
-  -- 对比本次认领金额合计与剩余可认领金额</code></pre></div>
+  -- 对比本次认领金额合计与剩余可认领金额
+--</code></pre></div>
 </div>
 
 
@@ -719,7 +722,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PAYMENT_ALLOT_DETAIL epad
   WHERE epad.PAYMENT_ALLOT_ID = :paymentAllotId
     AND epad.ALLOTTED_AMT + epad.THIS_ALLOT_AMT &gt; epad.CONTRACT_AMT
-  -- 查出认领金额超工程金额的明细</code></pre></div>
+  -- 查出认领金额超工程金额的明细
+--</code></pre></div>
 </div>
 
 
@@ -733,7 +737,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 期望 HZ_APPROVE_STATUS IN ('NEW', 'INTERRUPT')，否则不允许删除</code></pre></div>
+  -- 期望 HZ_APPROVE_STATUS IN ('NEW', 'INTERRUPT')，否则不允许删除
+--</code></pre></div>
 </div>
 
 
@@ -747,7 +752,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_INSTANCE_ID, epa.HZ_APPROVE_STATUS
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 校验认领单ID是否存在</code></pre></div>
+  -- 校验认领单ID是否存在
+--</code></pre></div>
 </div>
 
 
@@ -761,7 +767,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 若返回空，说明认领单不存在</code></pre></div>
+  -- 若返回空，说明认领单不存在
+--</code></pre></div>
 </div>
 
 
@@ -776,7 +783,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PAYMENT_ALLOT epa
   LEFT JOIN EPM_PAYMENT_IMPORT epi ON epa.PAYMENT_IMPORT_ID = epi.PAYMENT_IMPORT_ID
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 若PAYMENT_IMPORT_CODE为空，说明到款单不存在</code></pre></div>
+  -- 若PAYMENT_IMPORT_CODE为空，说明到款单不存在
+--</code></pre></div>
 </div>
 
 
@@ -792,7 +800,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
           WHERE epad.PAYMENT_ALLOT_ID = epa.PAYMENT_ALLOT_ID) AS 明细行数
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 若明细行数为0，则触发该报错</code></pre></div>
+  -- 若明细行数为0，则触发该报错
+--</code></pre></div>
 </div>
 
 
@@ -808,7 +817,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   WHERE sem.OBJID = :paymentAllotId
     AND sem.OBJTYPENAME = '到款认领'
   ORDER BY sem.CREATION_DATE DESC
-  -- 查询ERP推送异常记录</code></pre></div>
+  -- 查询ERP推送异常记录
+--</code></pre></div>
 </div>
 
 
@@ -824,7 +834,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   WHERE sem.OBJID = :paymentAllotId
     AND sem.OBJTYPENAME = '到款认领'
   ORDER BY sem.CREATION_DATE DESC
-  -- 查询ERP推送异常详情</code></pre></div>
+  -- 查询ERP推送异常详情
+--</code></pre></div>
 </div>
 
 
@@ -839,7 +850,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
     AND epi.CUSTOMER_ID IS NULL
-  -- 查出客户ID为空的到款单</code></pre></div>
+  -- 查出客户ID为空的到款单
+--</code></pre></div>
 </div>
 
 
@@ -853,7 +865,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.VALID
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
-  -- 若返回空，说明到款引入单不存在</code></pre></div>
+  -- 若返回空，说明到款引入单不存在
+--</code></pre></div>
 </div>
 
 
@@ -869,7 +882,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PROJECT_CONTRACT epc
   WHERE epc.PROJECT_ID = :projectId
     AND epc.HZ_APPROVE_STATUS = 'APPROVED'
-  -- 若返回空，说明该项目下无已审批通过的合同</code></pre></div>
+  -- 若返回空，说明该项目下无已审批通过的合同
+--</code></pre></div>
 </div>
 
 
@@ -885,7 +899,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   WHERE sem.OBJID = :paymentAllotId
     AND sem.OBJTYPENAME = '到款认领'
   ORDER BY sem.CREATION_DATE DESC
-  -- 查询ERP核销接口异常记录</code></pre></div>
+  -- 查询ERP核销接口异常记录
+--</code></pre></div>
 </div>
 
 
@@ -899,7 +914,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_INSTANCE_ID, epa.HZ_APPROVE_STATUS
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 校验认领单ID是否存在</code></pre></div>
+  -- 校验认领单ID是否存在
+--</code></pre></div>
 </div>
 
 
@@ -913,7 +929,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 若返回空，说明认领单不存在</code></pre></div>
+  -- 若返回空，说明认领单不存在
+--</code></pre></div>
 </div>
 
 
@@ -927,7 +944,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.HZ_INSTANCE_ID
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 校验认领单ID是否存在</code></pre></div>
+  -- 校验认领单ID是否存在
+--</code></pre></div>
 </div>
 
 
@@ -941,7 +959,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.UNALLOT_AMT
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
-  -- 校验到款单ID是否有效</code></pre></div>
+  -- 校验到款单ID是否有效
+--</code></pre></div>
 </div>
 
 
@@ -955,7 +974,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PAYMENT_IMPORT_ID, epa.HZ_APPROVE_STATUS
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_IMPORT_ID = :paymentImportId
-  -- 若返回空，说明该到款单下无认领单</code></pre></div>
+  -- 若返回空，说明该到款单下无认领单
+--</code></pre></div>
 </div>
 
 
@@ -970,7 +990,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
     AND epi.RECEIVE_UNIT_ID IS NULL
-  -- 查出交易公司ID为空的到款单</code></pre></div>
+  -- 查出交易公司ID为空的到款单
+--</code></pre></div>
 </div>
 
 
@@ -985,7 +1006,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
     AND epi.REMIT_UNIT_ID IS NULL
-  -- 查出收款公司ID为空的到款单</code></pre></div>
+  -- 查出收款公司ID为空的到款单
+--</code></pre></div>
 </div>
 
 
@@ -1000,7 +1022,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
     AND epa.PROJECT_ID IS NULL
-  -- 查出项目ID为空的认领单</code></pre></div>
+  -- 查出项目ID为空的认领单
+--</code></pre></div>
 </div>
 
 
@@ -1015,7 +1038,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
     AND epa.PROJECT_ID IS NULL
-  -- 查出项目ID为空的认领单</code></pre></div>
+  -- 查出项目ID为空的认领单
+--</code></pre></div>
 </div>
 
 
@@ -1029,7 +1053,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PAYMENT_IMPORT_ID
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 校验认领单ID是否有效</code></pre></div>
+  -- 校验认领单ID是否有效
+--</code></pre></div>
 </div>
 
 
@@ -1043,7 +1068,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 若返回空，说明认领单不存在</code></pre></div>
+  -- 若返回空，说明认领单不存在
+--</code></pre></div>
 </div>
 
 
@@ -1057,7 +1083,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 校验认领单ID是否有效</code></pre></div>
+  -- 校验认领单ID是否有效
+--</code></pre></div>
 </div>
 
 
@@ -1071,7 +1098,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
     <pre class="detail-sql language-sql" v-pre><code>SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
   FROM EPM_PAYMENT_ALLOT epa
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 若返回空，说明认领单不存在</code></pre></div>
+  -- 若返回空，说明认领单不存在
+--</code></pre></div>
 </div>
 
 
@@ -1086,7 +1114,8 @@ APPROVED ──撤销──→ CANCEL(已撤销)
   FROM EPM_PAYMENT_ALLOT epa
   LEFT JOIN EPM_PAYMENT_IMPORT epi ON epa.PAYMENT_IMPORT_ID = epi.PAYMENT_IMPORT_ID
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
-  -- 若PAYMENT_IMPORT_CODE为空，说明到款单不存在</code></pre></div>
+  -- 若PAYMENT_IMPORT_CODE为空，说明到款单不存在
+--</code></pre></div>
 </div>
 
 

@@ -256,7 +256,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_NO = :accNo
-  -- 若返回空，说明报销单不存在</code></pre></div>
+  -- 若返回空，说明报销单不存在
+--</code></pre></div>
 </div>
 
 
@@ -272,7 +273,8 @@
          fseah.TOTAL_CASH_AMOUNT - fseah.EXPENSED_AMOUNT AS 剩余可报销金额
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_NO = :accNo
-  -- 对比报销金额与剩余可报销金额</code></pre></div>
+  -- 对比报销金额与剩余可报销金额
+--</code></pre></div>
 </div>
 
 
@@ -286,7 +288,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS, fseah.VALID
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre></div>
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'
+--</code></pre></div>
 </div>
 
 
@@ -300,7 +303,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_NO = :accNo
-  -- 若返回空，说明未查询到报销单</code></pre></div>
+  -- 若返回空，说明未查询到报销单
+--</code></pre></div>
 </div>
 
 
@@ -314,7 +318,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-    AND (fseah.TAX_RATE IS NULL OR fseah.TAX_RATE = '')</code></pre></div>
+    AND (fseah.TAX_RATE IS NULL OR fseah.TAX_RATE = '')
+--</code></pre></div>
 </div>
 
 
@@ -328,7 +333,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.PROJECT_CODE, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 若返回空，说明关联报销单不存在</code></pre></div>
+  -- 若返回空，说明关联报销单不存在
+--</code></pre></div>
 </div>
 
 
@@ -342,7 +348,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查发票附件文件名格式</code></pre></div>
+  -- 检查发票附件文件名格式
+--</code></pre></div>
 </div>
 
 
@@ -356,7 +363,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查发票附件类型是否为jpg/jpeg/png/pdf</code></pre></div>
+  -- 检查发票附件类型是否为jpg/jpeg/png/pdf
+--</code></pre></div>
 </div>
 
 
@@ -371,7 +379,8 @@
          CASE WHEN fseah.ACC_AMOUNT &gt; 0 THEN '正数报销(蓝字)' ELSE '负数报销(红字)' END AS 报销类型
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查发票类型与报销类型是否匹配</code></pre></div>
+  -- 检查发票类型与报销类型是否匹配
+--</code></pre></div>
 </div>
 
 
@@ -385,7 +394,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-    AND (fseah.TAX_RATE IS NULL OR fseah.TAX_RATE = '')</code></pre></div>
+    AND (fseah.TAX_RATE IS NULL OR fseah.TAX_RATE = '')
+--</code></pre></div>
 </div>
 
 
@@ -399,7 +409,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.TAX_RATE
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查TAX_RATE是否在税率主档表中存在</code></pre></div>
+  -- 检查TAX_RATE是否在税率主档表中存在
+--</code></pre></div>
 </div>
 
 
@@ -412,7 +423,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
-  WHERE fseah.ACC_ID = :accId</code></pre></div>
+  WHERE fseah.ACC_ID = :accId
+--</code></pre></div>
 </div>
 
 
@@ -425,7 +437,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
-  WHERE fseah.ACC_ID = :accId</code></pre></div>
+  WHERE fseah.ACC_ID = :accId
+--</code></pre></div>
 </div>
 
 
@@ -439,7 +452,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.ACC_AMOUNT AS 实际报销金额
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-    AND (fseah.ACC_AMOUNT IS NULL OR fseah.ACC_AMOUNT &lt;= 0)</code></pre></div>
+    AND (fseah.ACC_AMOUNT IS NULL OR fseah.ACC_AMOUNT &lt;= 0)
+--</code></pre></div>
 </div>
 
 
@@ -455,7 +469,8 @@
           WHERE fsai.ACC_HEAD_ID = fseah.ACC_ID) AS 发票数量
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 期望 发票数量 &gt; 0</code></pre></div>
+  -- 期望 发票数量 &gt; 0
+--</code></pre></div>
 </div>
 
 
@@ -470,7 +485,8 @@
          fsai.TAX_RATE, fsai.INVOICE_TYPE
   FROM FIN_SVC_EXP_ACC_INVOICE fsai
   WHERE fsai.ACC_HEAD_ID = :accId
-  -- 检查发票明细数据完整性</code></pre></div>
+  -- 检查发票明细数据完整性
+--</code></pre></div>
 </div>
 
 
@@ -484,7 +500,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.CREATED_BY
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查申请人OA账号是否已配置</code></pre></div>
+  -- 检查申请人OA账号是否已配置
+--</code></pre></div>
 </div>
 
 
@@ -498,7 +515,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO, fseah.HZ_APPROVE_STATUS
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 若返回空，说明单据不存在</code></pre></div>
+  -- 若返回空，说明单据不存在
+--</code></pre></div>
 </div>
 
 
@@ -512,7 +530,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT fseah.ACC_ID, fseah.ACC_NO
   FROM FIN_SVC_EXP_ACC_HEAD fseah
   WHERE fseah.ACC_ID = :accId
-  -- 检查OCR服务连通性</code></pre></div>
+  -- 检查OCR服务连通性
+--</code></pre></div>
 </div>
 
 

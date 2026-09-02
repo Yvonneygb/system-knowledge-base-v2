@@ -575,7 +575,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          F.LAST_UPDATED_BY, F.LAST_UPDATE_DATE
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -589,7 +590,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          F.LAST_UPDATE_DATE AS 最后更新时间
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -603,7 +605,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          (SELECT COUNT(1) FROM LNK_CROSS_BU_APP_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 明细行数
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -619,7 +622,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.ITEM_TYPE = 'add'
-    AND I.EFF_START_DATE IS NULL;</code></pre></div>
+    AND I.EFF_START_DATE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -635,7 +639,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.ITEM_TYPE = 'add'
-    AND I.EFF_END_DATE IS NULL;</code></pre></div>
+    AND I.EFF_END_DATE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -650,7 +655,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
          I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
-    AND I.EFF_END_DATE &lt; I.EFF_START_DATE;</code></pre></div>
+    AND I.EFF_END_DATE &lt; I.EFF_START_DATE;
+--</code></pre></div>
 </div>
 
 
@@ -666,7 +672,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.ITEM_TYPE = 'add'
-    AND TRUNC(I.EFF_START_DATE) &lt; TRUNC(SYSDATE);</code></pre></div>
+    AND TRUNC(I.EFF_START_DATE) &lt; TRUNC(SYSDATE);
+--</code></pre></div>
 </div>
 
 
@@ -680,7 +687,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          F.HZ_APPROVE_STATUS AS 审批状态
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.FORM_CODE = :formCode;</code></pre></div>
+  WHERE F.FORM_CODE = :formCode;
+--</code></pre></div>
 </div>
 
 
@@ -695,7 +703,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
          U.REAL_NAME AS 创建人
   FROM LNK_CROSS_BU_APP_FORM F
     LEFT JOIN HZERO.IAM_USER U ON U.ID = F.CREATED_BY
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -706,7 +715,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>产品选择弹窗未输入任何查询条件就点击查询<br><strong>逻辑分析：</strong>产品选择接口/v1/&#123;orgId&#125;/prod/cross-bu-prod要求至少传入prodCode、prodName、lhProdModel中的一个，防止全表扫描。前端校验未通过则提示。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '产品选择弹窗需至少输入产品编码/产品名称/型号其中一个' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '产品选择弹窗需至少输入产品编码/产品名称/型号其中一个' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -719,7 +729,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.REMARK AS 申请说明
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId AND (F.REMARK IS NULL OR TRIM(F.REMARK) = '');</code></pre></div>
+  WHERE F.ID = :formId AND (F.REMARK IS NULL OR TRIM(F.REMARK) = '');
+--</code></pre></div>
 </div>
 
 
@@ -732,7 +743,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE AS 申请单号, F.REMARK AS 申请说明, LENGTH(F.REMARK) AS 备注
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE LENGTH(F.REMARK) &gt; 500;</code></pre></div>
+  WHERE LENGTH(F.REMARK) &gt; 500;
+--</code></pre></div>
 </div>
 
 
@@ -745,7 +757,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.DEPT_CODE AS 事业部, F.STATUS AS 状态
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -756,7 +769,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>提交按钮点击时，当前页面无id（新建态未保存）<br><strong>逻辑分析：</strong>前端handleSubmit方法，当id为空时notification.error提示"请先保存申请单头信息！"。新建申请单必须先保存生成申请单号后才能提交。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端校验：新建态下id为空，需先调用保存接口' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端校验：新建态下id为空，需先调用保存接口' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -770,7 +784,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE AS 申请单号,
          (SELECT COUNT(1) FROM LNK_CROSS_BU_APP_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 明细行数
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -784,7 +799,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :headId
-    AND I.ITEM_TYPE NOT IN ('add', 'invalid');</code></pre></div>
+    AND I.ITEM_TYPE NOT IN ('add', 'invalid');
+--</code></pre></div>
 </div>
 
 
@@ -797,7 +813,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.HEAD_ID = :headId AND I.PROD_CODE IS NULL;</code></pre></div>
+  WHERE I.HEAD_ID = :headId AND I.PROD_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -810,7 +827,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.PROD_CODE = :prodCode AND I.HEAD_ID IS NULL;</code></pre></div>
+  WHERE I.PROD_CODE = :prodCode AND I.HEAD_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -825,7 +843,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :headId
   GROUP BY I.HEAD_ID, I.PROD_CODE
-  HAVING COUNT(*) &gt; 1;</code></pre></div>
+  HAVING COUNT(*) &gt; 1;
+--</code></pre></div>
 </div>
 
 
@@ -838,7 +857,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT I.HEAD_ID, I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型, I.STATUS AS 状态
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.HEAD_ID = :headId AND I.PROD_CODE = :prodCode;</code></pre></div>
+  WHERE I.HEAD_ID = :headId AND I.PROD_CODE = :prodCode;
+--</code></pre></div>
 </div>
 
 
@@ -851,7 +871,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称, P.DEPT_ID AS 品牌事业部ID
   FROM LNK_PROD P
-  WHERE P.PROD_CODE = :prodCode;</code></pre></div>
+  WHERE P.PROD_CODE = :prodCode;
+--</code></pre></div>
 </div>
 
 
@@ -864,7 +885,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称, P.DEPT_ID AS 品牌事业部ID
   FROM LNK_PROD P
-  WHERE P.PROD_CODE = :prodCode AND P.DEPT_ID IS NULL;</code></pre></div>
+  WHERE P.PROD_CODE = :prodCode AND P.DEPT_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -877,7 +899,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.DEPT_CODE AS 事业部, F.STATUS AS 状态
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :headId;</code></pre></div>
+  WHERE F.ID = :headId;
+--</code></pre></div>
 </div>
 
 
@@ -890,7 +913,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT R.AE_ORG_CODE AS AE事业部编码, R.CRM_ORG_ID AS CRM事业部ID
   FROM REL_CRM_AE_ORG R
-  WHERE R.AE_ORG_CODE = :deptCode;</code></pre></div>
+  WHERE R.AE_ORG_CODE = :deptCode;
+--</code></pre></div>
 </div>
 
 
@@ -906,7 +930,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
   FROM LNK_PROD P, REL_CRM_AE_ORG R
   WHERE P.PROD_CODE = :prodCode
     AND R.AE_ORG_CODE = :deptCode
-    AND P.DEPT_ID = R.CRM_ORG_ID;</code></pre></div>
+    AND P.DEPT_ID = R.CRM_ORG_ID;
+--</code></pre></div>
 </div>
 
 
@@ -919,7 +944,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT P.PROD_CODE AS 产品编码, P.DEPT_ID AS 产品实际事业部
   FROM LNK_PROD P
-  WHERE P.PROD_CODE = :prodCode;</code></pre></div>
+  WHERE P.PROD_CODE = :prodCode;
+--</code></pre></div>
 </div>
 
 
@@ -934,7 +960,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :headId
     AND I.ITEM_TYPE = 'add'
-    AND TRUNC(I.EFF_START_DATE) &lt; TRUNC(SYSDATE);</code></pre></div>
+    AND TRUNC(I.EFF_START_DATE) &lt; TRUNC(SYSDATE);
+--</code></pre></div>
 </div>
 
 
@@ -948,7 +975,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT I.PROD_CODE AS 产品编码, I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
   WHERE I.HEAD_ID = :headId
-    AND I.EFF_END_DATE &lt; I.EFF_START_DATE;</code></pre></div>
+    AND I.EFF_END_DATE &lt; I.EFF_START_DATE;
+--</code></pre></div>
 </div>
 
 
@@ -961,7 +989,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态, F.REMARK AS 申请说明
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -972,7 +1001,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>详情页加载时，detail接口请求异常<br><strong>逻辑分析：</strong>前端fetchDetail方法调用crossBuAppFormApi.detail，若res.failed为true则通过commonFn_showErrMsg展示"查询失败"。常见于申请单ID不存在或数据库异常。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 申请单数 FROM LNK_CROSS_BU_APP_FORM WHERE ID = :formId;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 申请单数 FROM LNK_CROSS_BU_APP_FORM WHERE ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -986,7 +1016,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE AS 申请单号, F.STATUS AS 状态,
          (SELECT COUNT(1) FROM LNK_CROSS_BU_APP_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 明细行数
   FROM LNK_CROSS_BU_APP_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -1000,7 +1031,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <pre class="detail-sql language-sql" v-pre><code>SELECT I.HEAD_ID, I.PROD_CODE AS 产品编码, I.ITEM_TYPE AS 类型,
          I.EFF_START_DATE AS 有效开始时间, I.EFF_END_DATE AS 有效结束时间
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.HEAD_ID = :headId;</code></pre></div>
+  WHERE I.HEAD_ID = :headId;
+--</code></pre></div>
 </div>
 
 
@@ -1011,7 +1043,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>删除按钮点击时，未选中任何明细行<br><strong>逻辑分析：</strong>前端handleLineDelete方法，当lineDs.selected.length为0时notification.warning提示"请选择要删除的明细"。属于前端预校验，无需请求后端。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端校验：未选中明细行' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端校验：未选中明细行' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -1024,7 +1057,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT I.ID, I.HEAD_ID, I.PROD_CODE AS 产品编码
   FROM LNK_CROSS_BU_APP_FORM_ITEM I
-  WHERE I.HEAD_ID = :headId;</code></pre></div>
+  WHERE I.HEAD_ID = :headId;
+--</code></pre></div>
 </div>
 
 
@@ -1035,7 +1069,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>点击行移除按钮或批量删除按钮时<br><strong>逻辑分析：</strong>前端handleLineDelete方法中Modal.confirm弹出确认框，单行删除提示"是否移除当前明细？"，批量删除提示"是否删除选中明细？"。用户确认后调用删除接口。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -1052,7 +1087,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     JOIN HZERO.IAM_ROLE R ON M.ROLE_ID = R.ID
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
-  WHERE P.CODE LIKE 'hzero.c.crm.cross-bu-app%';</code></pre></div>
+  WHERE P.CODE LIKE 'hzero.c.crm.cross-bu-app%';
+--</code></pre></div>
 </div>
 
 
@@ -1063,7 +1099,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询结果为空集<br><strong>逻辑分析：</strong>前端Table组件查询后端返回content为空数组时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 申请单数 FROM LNK_CROSS_BU_APP_FORM WHERE STATUS = 'NEW';</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 申请单数 FROM LNK_CROSS_BU_APP_FORM WHERE STATUS = 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -1074,7 +1111,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态失效或Token过期<br><strong>逻辑分析：</strong>HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。常见于长时间未操作或单点登录会话超时。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

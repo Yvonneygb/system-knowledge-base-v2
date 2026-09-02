@@ -349,7 +349,8 @@ WHERE CUSTOMER_CODE = #{customerCode}
   WHERE BUD_YEAR = #{budYear}
     AND (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
     AND (ENTID = #{entid} OR #{entid} IS NULL)
-  ORDER BY CUSTOMER_CODE, BUD_YEAR;</code></pre></div>
+  ORDER BY CUSTOMER_CODE, BUD_YEAR;
+--</code></pre></div>
 </div>
 
 
@@ -366,7 +367,8 @@ WHERE CUSTOMER_CODE = #{customerCode}
   WHERE CUSTOMER_CODE = #{customerCode}
     AND BUD_YEAR = #{budYear}
     AND HZ_APPROVE_STATUS = 'APPROVED'
-    AND CASHOUT_AMT &lt; APPLY_AMT;</code></pre></div>
+    AND CASHOUT_AMT &lt; APPLY_AMT;
+--</code></pre></div>
 </div>
 
 
@@ -388,7 +390,8 @@ WHERE CUSTOMER_CODE = #{customerCode}
          THIS_OUTLIMIT_BUD_USED_11 AS 十一月, THIS_OUTLIMIT_BUD_USED_12 AS 十二月
   FROM MKT_OUTLIMIT_BUD_HEADER
   WHERE OUTLIMIT_BUD_SUR &lt; 0
-    AND BUD_YEAR = #{budYear};</code></pre></div>
+    AND BUD_YEAR = #{budYear};
+--</code></pre></div>
 </div>
 
 
@@ -403,7 +406,8 @@ WHERE CUSTOMER_CODE = #{customerCode}
   SELECT BUD_YEAR, COUNT(*) AS 记录数
   FROM MKT_OUTLIMIT_BUD_HEADER
   GROUP BY BUD_YEAR
-  ORDER BY BUD_YEAR;</code></pre></div>
+  ORDER BY BUD_YEAR;
+--</code></pre></div>
 </div>
 
 
@@ -417,7 +421,8 @@ WHERE CUSTOMER_CODE = #{customerCode}
     <pre class="detail-sql language-sql" v-pre><code>-- 核查预算表数据量
   SELECT BUD_YEAR, COUNT(*) AS 记录数
   FROM MKT_OUTLIMIT_BUD_HEADER
-  GROUP BY BUD_YEAR;</code></pre></div>
+  GROUP BY BUD_YEAR;
+--</code></pre></div>
 </div>
 
 
@@ -431,7 +436,8 @@ WHERE CUSTOMER_CODE = #{customerCode}
     <pre class="detail-sql language-sql" v-pre><code>-- 核查用户是否有该经销商的数据权限
   SELECT USER_ID, USER_NAME, CUSTOMER_CODE, ENABLED
   FROM USER_CUSTOMER_AUTH
-  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};</code></pre></div>
+  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};
+--</code></pre></div>
 </div>
 
 

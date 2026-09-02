@@ -520,7 +520,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE  save_type = 2
   AND    pay_type &lt;&gt; 3
   AND    (fact_invoice_amt IS NULL OR fact_invoice_amt &lt;= 0)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -541,7 +542,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   FROM   fin_fee_cashout_header c
   WHERE  c.save_type = 2
   AND    c.this_cashout_amt &gt; (c.total_can_cashout_amt - c.used_cashout_amt)
-  ORDER  BY c.create_time DESC;</code></pre></div>
+  ORDER  BY c.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -562,7 +564,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE  save_type = 2
   AND    cashout_type = 1
   AND    this_writeoff_amt &gt; in_can_use_amt
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -583,7 +586,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE  save_type = 2
   AND    cashout_type = 2
   AND    this_cashout_amt &gt; out_can_use_amt
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -607,7 +611,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE  c.save_type = 2
   AND    c.cashout_type = 2
   AND    c.this_cashout_amt &gt; (c.out_can_use_amt - NVL(b.this_outlimit_bud_used_amt, 0))
-  ORDER  BY c.create_time DESC;</code></pre></div>
+  ORDER  BY c.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -629,7 +634,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE  c.save_type = 2
   AND    c.hz_approve_status = 'NEW'
   AND    (c.total_can_cashout_amt - c.used_cashout_amt - c.this_cashout_amt) &lt; 0
-  ORDER  BY c.create_time DESC;</code></pre></div>
+  ORDER  BY c.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -647,7 +653,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   FROM   fin_fee_cashout_header
   WHERE  save_type = 2
   AND    (fee_cashout_id = 0 OR fee_cashout_id IS NULL)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -665,7 +672,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   FROM   fin_fee_cashout_header
   WHERE  save_type = 2
   AND    cashout_type NOT IN (1, 2)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -684,7 +692,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   FROM   fin_fee_cashout_header
   WHERE  save_type = 2
   AND    (hz_instance_id IS NULL OR hz_approve_status = 'NEW')
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -704,7 +713,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE  save_type = 2
   AND    cashout_type = 2
   AND    (terminal_code IS NULL OR bud_year IS NULL)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -724,7 +734,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE  save_type = 2
   AND    cashout_type = 2
   AND    (total_can_cashout_amt IS NULL OR total_can_cashout_amt &lt;= 0)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -738,7 +749,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
     <pre class="detail-sql language-sql" v-pre><code>SELECT confname            AS 配置名称,
          confvalue           AS 配置值
   FROM   scpsysconf
-  WHERE  confname = 'Outlimit_Tax_Rate';</code></pre></div>
+  WHERE  confname = 'Outlimit_Tax_Rate';
+--</code></pre></div>
 </div>
 
 
@@ -761,7 +773,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE  c.save_type = 2
   AND    c.cashout_type = 2
   AND    b.terminal_code IS NULL
-  ORDER  BY c.create_time DESC;</code></pre></div>
+  ORDER  BY c.create_time DESC;
+--</code></pre></div>
 </div>
 
 

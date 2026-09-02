@@ -581,7 +581,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          APPROVAL_STATUS AS 审批状态
   FROM MA_LECTURER_ARCHIVE
   WHERE ARCHIVES_STATUS IN ('draft', 'reject', 'valid', 'invalid', 'approved')
-  ORDER BY UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -596,7 +597,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
-  WHERE ARCHIVES_STATUS = 'draft';</code></pre></div>
+  WHERE ARCHIVES_STATUS = 'draft';
+--</code></pre></div>
 </div>
 
 
@@ -611,7 +613,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          LECTURER_NAME AS 讲师姓名,
          LECTURER_TYPE AS 讲师类型
   FROM MA_LECTURER_ARCHIVE
-  WHERE LECTURER_TYPE IS NULL OR LECTURER_TYPE = '';</code></pre></div>
+  WHERE LECTURER_TYPE IS NULL OR LECTURER_TYPE = '';
+--</code></pre></div>
 </div>
 
 
@@ -628,7 +631,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          TRAIN_TYPE AS 培训类型,
          PRICE AS 当前报价
   FROM MA_LECTURER_ARCHIVE
-  WHERE ARCHIVES_STATUS &lt;&gt; 'valid' OR TRAIN_TYPE = 'camp';</code></pre></div>
+  WHERE ARCHIVES_STATUS &lt;&gt; 'valid' OR TRAIN_TYPE = 'camp';
+--</code></pre></div>
 </div>
 
 
@@ -645,7 +649,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
   WHERE APPROVAL_STATUS &lt;&gt; 'approved'
-    AND ARCHIVES_STATUS IN ('valid', 'invalid');</code></pre></div>
+    AND ARCHIVES_STATUS IN ('valid', 'invalid');
+--</code></pre></div>
 </div>
 
 
@@ -664,7 +669,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          LAST_UPDATED_BY AS 最后更新人
   FROM MA_LECTURER_ARCHIVE
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -680,7 +686,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM MA_LECTURER_ARCHIVE
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -697,7 +704,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%lecturer_archive%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%lecturer_archive%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -711,7 +719,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
     <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 讲师档案编码, LECTURER_NAME AS 讲师姓名,
          ARCHIVES_STATUS AS 档案状态, DELETE_FLAG AS 删除标记
   FROM MA_LECTURER_ARCHIVE
-  WHERE DELETE_FLAG = 'Y' OR LECTURER_ARCHIVES_CODE IS NULL;</code></pre></div>
+  WHERE DELETE_FLAG = 'Y' OR LECTURER_ARCHIVES_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -727,7 +736,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          ERROR_INFO AS 异常问题
   FROM MA_LECTURER_ARCHIVE
   WHERE ARCHIVES_STATUS NOT IN ('draft','valid','invalid','approved','reject')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -742,7 +752,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.TRAIN_LECTURER_LEVEL','MBO.ACTIVITY_LECTURER_LEVEL','MBO.DESIGN_LECTURER_LEVEL','MBO.LECTURER_TYPE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -756,7 +767,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
     <pre class="detail-sql language-sql" v-pre><code>SELECT LECTURER_ARCHIVES_CODE AS 计师档案编码, LECTURER_NAME AS 讲师姓名,
          LECTURER_TYPE AS 讲师类型, ARCHIVES_STATUS AS 档案状态
   FROM MA_LECTURER_ARCHIVE
-  WHERE LECTURER_NAME IS NULL OR LECTURER_NAME = '';</code></pre></div>
+  WHERE LECTURER_NAME IS NULL OR LECTURER_NAME = '';
+--</code></pre></div>
 </div>
 
 
@@ -771,7 +783,8 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
   FROM MA_LECTURER_ARCHIVE
   WHERE DELETE_FLAG = 'N'
   GROUP BY LECTURER_ARCHIVES_CODE
-  HAVING COUNT(*) &gt; 1;</code></pre></div>
+  HAVING COUNT(*) &gt; 1;
+--</code></pre></div>
 </div>
 
 

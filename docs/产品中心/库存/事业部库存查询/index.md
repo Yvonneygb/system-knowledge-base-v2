@@ -304,7 +304,8 @@
     <pre class="detail-sql language-sql" v-pre><code>-- 检查库存表是否有数据
   SELECT COUNT(1) AS 库存记录数 FROM LNK_INVENTORY WHERE ORG_ID = :organizationId;
   -- 检查产品主档是否存在
-  SELECT COUNT(1) AS 产品数 FROM LNK_PROD WHERE ORG_ID = :organizationId;</code></pre></div>
+  SELECT COUNT(1) AS 产品数 FROM LNK_PROD WHERE ORG_ID = :organizationId;
+--</code></pre></div>
 </div>
 
 
@@ -317,7 +318,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 检查用户事业部权限值集
   SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_S' AND ORGANIZATION_ID = :organizationId;
-  SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_P' AND ORGANIZATION_ID = :organizationId;</code></pre></div>
+  SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_P' AND ORGANIZATION_ID = :organizationId;
+--</code></pre></div>
 </div>
 
 
@@ -331,7 +333,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 匹配数
   FROM LNK_INVENTORY I
   WHERE I.DEPT_ID = :deptId
-    AND I.LH_PROD_ID LIKE :prodCode;</code></pre></div>
+    AND I.LH_PROD_ID LIKE :prodCode;
+--</code></pre></div>
 </div>
 
 
@@ -343,7 +346,8 @@
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或查询时，前端请求携带的token已失效<br><strong>逻辑分析：</strong>前端请求头中携带的Authorization token过期或无效，后端拦截器返回401状态码。前端跳转登录页。</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 检查用户是否存在且有效
-  SELECT USER_ID, USER_NAME, STATUS FROM HPFM_USER WHERE USER_ID = :userId;</code></pre></div>
+  SELECT USER_ID, USER_NAME, STATUS FROM HPFM_USER WHERE USER_ID = :userId;
+--</code></pre></div>
 </div>
 
 

@@ -523,7 +523,8 @@ ORDER BY la.APPROVAL_TIME DESC;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>2  FROM MA_LECTURER_APPROVAL la
   WHERE la.APPROVAL_RESULT = 'approving'
-  ORDER BY la.CREATE_DATE DESC;</code></pre></div>
+  ORDER BY la.CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 

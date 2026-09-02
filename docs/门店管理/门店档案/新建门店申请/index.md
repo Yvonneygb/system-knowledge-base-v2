@@ -492,7 +492,8 @@
   FROM   mkt_terminal_apply t
   WHERE  t.hz_approve_status = 'RUN'
   AND    NOT EXISTS (SELECT 1 FROM mkt_terminal m WHERE m.terminal_code = t.terminal_code)
-  ORDER  BY t.create_time DESC;</code></pre></div>
+  ORDER  BY t.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -511,7 +512,8 @@
   FROM   mkt_terminal_apply t
   WHERE  t.hz_approve_status = 'RUN'
   AND    t.update_time &lt; SYSDATE - 1
-  ORDER  BY t.update_time DESC;</code></pre></div>
+  ORDER  BY t.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -532,7 +534,8 @@
   LEFT   JOIN scparea s ON s.areaname = t.city_areaname
    WHERE  t.hz_approve_status = 'APPROVED'
    AND    (s.areaid IS NULL OR t.bar_code IS NULL OR t.division_code IS NULL)
-   ORDER  BY t.create_time DESC;</code></pre></div>
+   ORDER  BY t.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -551,7 +554,8 @@
          t.create_time         AS 创建时间
   FROM   mkt_terminal_apply t
   WHERE  t.terminal_apply_id = #{传入的objId}
-  ORDER  BY t.create_time DESC;</code></pre></div>
+  ORDER  BY t.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -570,7 +574,8 @@
   FROM   mkt_terminal_apply t
   WHERE  t.hz_approve_status = 'RUN'
   AND    (t.hz_instance_id IS NULL OR t.terminal_apply_id IS NULL)
-  ORDER  BY t.update_time DESC;</code></pre></div>
+  ORDER  BY t.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -590,7 +595,8 @@
   FROM   mkt_terminal_apply t
   WHERE  t.hz_approve_status = 'RUN'
   AND    t.update_time &lt; SYSDATE - 1
-  ORDER  BY t.update_time DESC;</code></pre></div>
+  ORDER  BY t.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -605,7 +611,8 @@
          COUNT(*)          AS 近1小时RUN状态申请单数
   FROM   mkt_terminal_apply t
   WHERE  t.hz_approve_status = 'RUN'
-  AND    t.update_time &gt;= SYSDATE - 1/24;</code></pre></div>
+  AND    t.update_time &gt;= SYSDATE - 1/24;
+--</code></pre></div>
 </div>
 
 
@@ -622,7 +629,8 @@
          t.organization_id     AS 组织ID
   FROM   mkt_terminal_apply t
   WHERE  t.organization_id = #{当前用户组织ID}
-  ORDER  BY t.create_time DESC;</code></pre></div>
+  ORDER  BY t.create_time DESC;
+--</code></pre></div>
 </div>
 
 

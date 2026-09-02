@@ -464,7 +464,8 @@ ORDER BY EC.CREATE_TIME DESC;
   WHERE EXCEPTION_TYPE IS NOT NULL
     AND CONTRACT_STATUS NOT IN ('signing_timeout', 'signing_failed',
                                 'filing_failed', 'callback_failed',
-                                'pending_sign', 'completed', 'filed');</code></pre></div>
+                                'pending_sign', 'completed', 'filed');
+--</code></pre></div>
 </div>
 
 
@@ -483,7 +484,8 @@ ORDER BY EC.CREATE_TIME DESC;
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE = 'filing_failed'
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -502,7 +504,8 @@ ORDER BY EC.CREATE_TIME DESC;
          EXCEPTION_INFO AS 异常信息
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE IN ('signing_timeout', 'signing_failed')
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -521,7 +524,8 @@ ORDER BY EC.CREATE_TIME DESC;
          EXCEPTION_INFO AS 异常信息
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE = 'callback_failed'
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -539,7 +543,8 @@ ORDER BY EC.CREATE_TIME DESC;
          CONTRACT_STATUS AS 签署状态
   FROM ELECTRONIC_CONTRACT
   WHERE ELECTRONIC_CONTRACT_ID IS NULL
-     OR UNIFY_CONTRACT_CODE IS NULL;</code></pre></div>
+     OR UNIFY_CONTRACT_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -555,7 +560,8 @@ ORDER BY EC.CREATE_TIME DESC;
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM ELECTRONIC_CONTRACT
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -572,7 +578,8 @@ ORDER BY EC.CREATE_TIME DESC;
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%contract_exception%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%contract_exception%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -590,7 +597,8 @@ ORDER BY EC.CREATE_TIME DESC;
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE IN ('filing_failed','callback_failed')
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -607,7 +615,8 @@ ORDER BY EC.CREATE_TIME DESC;
   FROM ELECTRONIC_CONTRACT
   WHERE EXCEPTION_TYPE IN ('signing_timeout','signing_failed')
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -622,7 +631,8 @@ ORDER BY EC.CREATE_TIME DESC;
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.CONTRACT_EXCEPTION_TYPE','MBO.CONTRACT_STATUS')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -639,7 +649,8 @@ ORDER BY EC.CREATE_TIME DESC;
   LEFT JOIN DISTRIBUTOR D ON C.AGENT_CODE = D.DISTRIBUTOR_CODE
   WHERE C.CONTRACT_STATUS IN ('signing_timeout','signing_failed')
     AND (D.MOBILE IS NULL OR D.MOBILE = ''
-         OR REGEXP_LIKE(D.MOBILE, '^[^1][^3-9]') = FALSE);</code></pre></div>
+         OR REGEXP_LIKE(D.MOBILE, '^[^1][^3-9]') = FALSE);
+--</code></pre></div>
 </div>
 
 

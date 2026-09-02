@@ -414,7 +414,8 @@
   WHERE  m.terminal_stat = 2
   AND    m.stat IN ('SAVE','RUN')
   AND    f.hz_approve_status NOT IN ('APPROVED','INTERRUPT')
-  ORDER  BY m.create_time DESC;</code></pre></div>
+  ORDER  BY m.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -437,7 +438,8 @@
   WHERE  m.terminal_stat = 2
   AND    m.stat IN ('SAVE','RUN')
   AND    c.hz_approve_status NOT IN ('APPROVED','INTERRUPT')
-  ORDER  BY m.create_time DESC;</code></pre></div>
+  ORDER  BY m.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -458,7 +460,8 @@
   FROM   mkt_terminal_modify m
    WHERE  m.hz_approve_status = 'RUN'
    AND    m.update_time &lt; SYSDATE - 1
-   ORDER  BY m.update_time DESC;</code></pre></div>
+   ORDER  BY m.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -478,7 +481,8 @@
          m.create_time           AS 创建时间
   FROM   mkt_terminal_modify m
   WHERE  m.terminal_modify_id = #{传入的objId}
-  ORDER  BY m.create_time DESC;</code></pre></div>
+  ORDER  BY m.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -498,7 +502,8 @@
   FROM   mkt_terminal_modify m
   WHERE  m.hz_approve_status = 'RUN'
   AND    (m.hz_instance_id IS NULL OR m.terminal_modify_id IS NULL)
-  ORDER  BY m.update_time DESC;</code></pre></div>
+  ORDER  BY m.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -519,7 +524,8 @@
   FROM   mkt_terminal_modify m
   WHERE  m.hz_approve_status = 'RUN'
   AND    NOT EXISTS (SELECT 1 FROM mkt_terminal t WHERE t.terminal_id = m.terminal_id AND t.update_time &gt; m.update_time)
-  ORDER  BY m.update_time DESC;</code></pre></div>
+  ORDER  BY m.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -542,7 +548,8 @@
   LEFT   JOIN mkt_terminal t ON t.terminal_id = m.terminal_id
   WHERE  m.hz_approve_status = 'RUN'
   AND    t.terminal_id IS NULL
-  ORDER  BY m.update_time DESC;</code></pre></div>
+  ORDER  BY m.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -563,7 +570,8 @@
   FROM   mkt_terminal_modify m
   WHERE  m.hz_approve_status = 'RUN'
   AND    m.update_time &lt; SYSDATE - 1
-  ORDER  BY m.update_time DESC;</code></pre></div>
+  ORDER  BY m.update_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -582,7 +590,8 @@
   FROM   mkt_terminal_modify m
   WHERE  m.change_type = 1
   AND    m.stat IN ('SAVE','RUN')
-  ORDER  BY m.update_time DESC;</code></pre></div>
+  ORDER  BY m.update_time DESC;
+--</code></pre></div>
 </div>
 
 

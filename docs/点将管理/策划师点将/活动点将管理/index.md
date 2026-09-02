@@ -683,7 +683,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
          APPROVAL_STATE AS 审核状态
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -704,7 +705,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'approved'
     AND (ACTIVITY_START_DATE &lt;= SYSDATE
          OR ACTIVITY_START_DATE &gt; SYSDATE + 7
-         OR APPROVAL_STATE &lt;&gt; 'fdd_sign');</code></pre></div>
+         OR APPROVAL_STATE &lt;&gt; 'fdd_sign');
+--</code></pre></div>
 </div>
 
 
@@ -723,7 +725,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'fdd_sign'
     AND CANCEL_APPROVAL_STATE IS NOT NULL
-    AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject');</code></pre></div>
+    AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject');
+--</code></pre></div>
 </div>
 
 
@@ -741,7 +744,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE IN ('approved', 'reject')
-    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');</code></pre></div>
+    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');
+--</code></pre></div>
 </div>
 
 
@@ -760,7 +764,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE = 'approved'
-    AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);</code></pre></div>
+    AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -781,7 +786,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -798,7 +804,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -815,7 +822,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%activity_general_manage%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%activity_general_manage%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -830,7 +838,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -847,7 +856,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'activity'
     AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject','fdd_sign')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -866,7 +876,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
   WHERE APPLY_TYPE_ONE = 'activity'
     AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -881,7 +892,8 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.APPLY_APPROVAL_STATE','MBO.ORDER_LECTURE_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 

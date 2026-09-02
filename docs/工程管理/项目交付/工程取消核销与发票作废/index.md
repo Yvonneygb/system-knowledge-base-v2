@@ -232,7 +232,8 @@
          vid.VERIFER_QTY, vid.VERIFER_STATUS, vid.EFFECT_STATUS
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 若返回空，说明核销明细不存在</code></pre></div>
+  -- 若返回空，说明核销明细不存在
+--</code></pre></div>
 </div>
 
 
@@ -246,7 +247,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT euii.UPLOAD_INVOICE_INFO_ID, euii.INVOICE_NO, euii.INVOICE_CODE, euii.EFFECT_STATUS
   FROM EPM_UPLOAD_INVOICE_INFO euii
   WHERE euii.UPLOAD_INVOICE_INFO_ID = :uploadInvoiceInfoId
-  -- 若返回空，说明发票不存在</code></pre></div>
+  -- 若返回空，说明发票不存在
+--</code></pre></div>
 </div>
 
 
@@ -261,7 +263,8 @@
          vid.OBJECT_VERSION_NUMBER
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 检查核销明细当前状态和版本号，判断是否被并发修改</code></pre></div>
+  -- 检查核销明细当前状态和版本号，判断是否被并发修改
+--</code></pre></div>
 </div>
 
 
@@ -279,7 +282,8 @@
   JOIN INV_OUT_BILL_LINE iobl ON vid.INV_OUT_BILL_LINE_ID = iobl.INV_OUT_BILL_LINE_ID
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
     AND iobl.VERIFERED_NUMBER - vid.VERIFER_QTY &lt; 0
-  -- 查出取消后已核销数量&lt;0的异常数据</code></pre></div>
+  -- 查出取消后已核销数量&lt;0的异常数据
+--</code></pre></div>
 </div>
 
 
@@ -294,7 +298,8 @@
   SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_STATUS
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 校验核销明细状态</code></pre></div>
+  -- 校验核销明细状态
+--</code></pre></div>
 </div>
 
 
@@ -309,7 +314,8 @@
   SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_VERIFER_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.INVOICE_VERIFER_ID = :invoiceVeriferId
-  -- 查出该核销单下所有明细，确认是否有可选数据</code></pre></div>
+  -- 查出该核销单下所有明细，确认是否有可选数据
+--</code></pre></div>
 </div>
 
 
@@ -321,7 +327,8 @@
     <div class="detail-text" v-pre><strong>触发条件：</strong>调用clVerifyObsInvo接口时，传入的actionType不在支持的枚举范围内(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)<br><strong>逻辑分析：</strong>clVerifyObsInvo方法中按actionType走switch分支，未匹配的actionType抛出不支持操作报错。需检查前端参数是否正确</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 接口入参校验，无对应SQL
-  -- 检查前端传入的actionType值是否在[invoice, invoiceDetail, invLine, veriferDetail, obsInvoice]范围内</code></pre></div>
+  -- 检查前端传入的actionType值是否在[invoice, invoiceDetail, invLine, veriferDetail, obsInvoice]范围内
+--</code></pre></div>
 </div>
 
 
@@ -335,7 +342,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_QTY, vid.PROD_CODE
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 检查VERIFER_QTY的小数位是否超过3位</code></pre></div>
+  -- 检查VERIFER_QTY的小数位是否超过3位
+--</code></pre></div>
 </div>
 
 
@@ -351,7 +359,8 @@
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.INVOICE_VERIFER_ID = :invoiceVeriferId
     AND vid.VERIFER_STATUS = '已核销'
-  -- 查出可取消的核销明细</code></pre></div>
+  -- 查出可取消的核销明细
+--</code></pre></div>
 </div>
 
 
@@ -366,7 +375,8 @@
          vid.OBJECT_VERSION_NUMBER, vid.LAST_UPDATE_DATE
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID = :veriferInvoiceDetailsId
-  -- 检查核销明细状态和版本号，判断是否被锁或并发修改</code></pre></div>
+  -- 检查核销明细状态和版本号，判断是否被锁或并发修改
+--</code></pre></div>
 </div>
 
 

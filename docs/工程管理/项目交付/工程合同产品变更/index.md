@@ -451,7 +451,8 @@
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.DISCOUNT_APPLY_OBJ IS NULL OR edec.DISCOUNT_APPLY_OBJ = 0)
-  -- 查出折扣单号为空的变更单</code></pre></div>
+  -- 查出折扣单号为空的变更单
+--</code></pre></div>
 </div>
 
 
@@ -466,7 +467,8 @@
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.ECN_REASON IS NULL OR TRIM(edec.ECN_REASON) = '')
-  -- 查出变更说明为空的变更单</code></pre></div>
+  -- 查出变更说明为空的变更单
+--</code></pre></div>
 </div>
 
 
@@ -480,7 +482,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS, edec.VALID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 若返回空，说明变更单不存在</code></pre></div>
+  -- 若返回空，说明变更单不存在
+--</code></pre></div>
 </div>
 
 
@@ -494,7 +497,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DISCOUNT_ECN_CODE, edec.HZ_APPROVE_STATUS, edec.VALID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre></div>
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'
+--</code></pre></div>
 </div>
 
 
@@ -511,7 +515,8 @@
   WHERE edec.DISCOUNT_APPLY_OBJ = :discountApplyObj
     AND edec.HZ_APPROVE_STATUS = 'RUN'
     AND edec.DISCOUNT_ECN_ID &lt;&gt; :currentEcnId
-  -- 查出审批中的变更单</code></pre></div>
+  -- 查出审批中的变更单
+--</code></pre></div>
 </div>
 
 
@@ -526,7 +531,8 @@
          edec.ORGANIZATION_ID, edec.VALID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 若返回空，说明单据不存在或无权限</code></pre></div>
+  -- 若返回空，说明单据不存在或无权限
+--</code></pre></div>
 </div>
 
 
@@ -542,7 +548,8 @@
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.DISCOUNT_TYPE IS NULL OR edec.DISCOUNT_TYPE = 0)
-  -- 查出折扣类型为空的变更单</code></pre></div>
+  -- 查出折扣类型为空的变更单
+--</code></pre></div>
 </div>
 
 
@@ -558,7 +565,8 @@
           WHERE edl.DISCOUNT_ECN_ID = edec.DISCOUNT_ECN_ID) AS 明细行数
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 若明细行数为0，则触发该报错</code></pre></div>
+  -- 若明细行数为0，则触发该报错
+--</code></pre></div>
 </div>
 
 
@@ -573,7 +581,8 @@
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND NOT EXISTS (SELECT 1 FROM IAM_PRODUCT ip WHERE ip.ITEM_ID = edl.ITEM_ID)
-  -- 查出产品不存在或已删除的明细行</code></pre></div>
+  -- 查出产品不存在或已删除的明细行
+--</code></pre></div>
 </div>
 
 
@@ -589,7 +598,8 @@
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND edl.DISCOUNTED_PRICE &lt; 0
-  -- 查出折后单价&lt;0的明细行</code></pre></div>
+  -- 查出折后单价&lt;0的明细行
+--</code></pre></div>
 </div>
 
 
@@ -606,7 +616,8 @@
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND edl.PROD_POSITIONING = '一口价'
     AND edl.EXTRA_DISCOUNT_RATE &lt; 1
-  -- 查出一口价折扣率&lt;1的明细行</code></pre></div>
+  -- 查出一口价折扣率&lt;1的明细行
+--</code></pre></div>
 </div>
 
 
@@ -621,7 +632,8 @@
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND edl.CONTRACT_QTY = 0
-  -- 查出合同数量为0的明细行</code></pre></div>
+  -- 查出合同数量为0的明细行
+--</code></pre></div>
 </div>
 
 
@@ -638,7 +650,8 @@
   WHERE edec.PROJECT_CODE = :projectCode
     AND edec.HZ_APPROVE_STATUS = 'RUN'
     AND edec.DISCOUNT_ECN_ID &lt;&gt; :currentEcnId
-  -- 查出同报备下审批中的变更单</code></pre></div>
+  -- 查出同报备下审批中的变更单
+--</code></pre></div>
 </div>
 
 
@@ -653,7 +666,8 @@
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND (edl.CONTRACT_PRICE IS NULL OR edl.CONTRACT_PRICE = 0)
-  -- 查出工程方单价为空或0的明细行</code></pre></div>
+  -- 查出工程方单价为空或0的明细行
+--</code></pre></div>
 </div>
 
 
@@ -670,7 +684,8 @@
   LEFT JOIN EPM_CONTRACT ec ON edec.CONTRACT_CODE = ec.CONTRACT_CODE
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND ec.VALID = 3
-  -- 查出合同已失效的变更单</code></pre></div>
+  -- 查出合同已失效的变更单
+--</code></pre></div>
 </div>
 
 
@@ -684,7 +699,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DIVISION_NAME, edec.ORGANIZATION_ID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 检查事业部标准折扣配置</code></pre></div>
+  -- 检查事业部标准折扣配置
+--</code></pre></div>
 </div>
 
 
@@ -701,7 +717,8 @@
   LEFT JOIN EPM_PROJECT ep ON edec.PROJECT_CODE = ep.PROJECT_CODE
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND ep.PROJECT_VALID &lt;&gt; 2
-  -- 查出报备未生效的变更单</code></pre></div>
+  -- 查出报备未生效的变更单
+--</code></pre></div>
 </div>
 
 
@@ -715,7 +732,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT edec.DISCOUNT_ECN_ID, edec.DIVISION_NAME, edec.ORGANIZATION_ID
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 检查事业部主要销售主体配置</code></pre></div>
+  -- 检查事业部主要销售主体配置
+--</code></pre></div>
 </div>
 
 
@@ -730,7 +748,8 @@
          edec.ECN_REASON, edec.DISCOUNT_TYPE, edec.DISCOUNT_VALID_DATE
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 检查头表必填字段是否完整</code></pre></div>
+  -- 检查头表必填字段是否完整
+--</code></pre></div>
 </div>
 
 
@@ -745,7 +764,8 @@
   FROM EPM_DISCOUNT_ECN_LINE edl
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND edl.CONTRACT_QTY &lt;= 0
-  -- 查出申请数量≤0的明细行</code></pre></div>
+  -- 查出申请数量≤0的明细行
+--</code></pre></div>
 </div>
 
 
@@ -763,7 +783,8 @@
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND (SELECT SUM(eep.PLAN_QTY) FROM EPM_DISCOUNT_ECN_PLAN eep
          WHERE eep.DISCOUNT_ECN_LINE_ID = edl.DISCOUNT_ECN_LINE_ID) &gt; edl.CONTRACT_QTY
-  -- 查出预提货数量&gt;合同数量的明细行</code></pre></div>
+  -- 查出预提货数量&gt;合同数量的明细行
+--</code></pre></div>
 </div>
 
 
@@ -778,7 +799,8 @@
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.DISCOUNT_TYPE IS NULL OR edec.DISCOUNT_TYPE = 0)
-  -- 查出折扣类型为空的变更单</code></pre></div>
+  -- 查出折扣类型为空的变更单
+--</code></pre></div>
 </div>
 
 
@@ -794,7 +816,8 @@
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
     AND (edec.PROD_ATTRIBUTION_CHANNEL IS NULL OR edec.PROD_ATTRIBUTION_CHANNEL = '')
-  -- 查出未获取零售折扣底限的变更单</code></pre></div>
+  -- 查出未获取零售折扣底限的变更单
+--</code></pre></div>
 </div>
 
 
@@ -811,7 +834,8 @@
   WHERE edl.DISCOUNT_ECN_ID = :discountEcnId
     AND edl.PROD_POSITIONING = '一口价'
     AND edl.EXTRA_DISCOUNT_RATE &lt; 1
-  -- 查出一口价反算折扣率&lt;1的明细行</code></pre></div>
+  -- 查出一口价反算折扣率&lt;1的明细行
+--</code></pre></div>
 </div>
 
 
@@ -826,7 +850,8 @@
          edec.OBJECT_VERSION_NUMBER
   FROM EPM_DISCOUNT_ECN edec
   WHERE edec.DISCOUNT_ECN_ID = :discountEcnId
-  -- 检查变更单状态和版本号</code></pre></div>
+  -- 检查变更单状态和版本号
+--</code></pre></div>
 </div>
 
 

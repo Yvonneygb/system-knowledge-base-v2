@@ -323,7 +323,8 @@
          in_this_cashout_amt   AS 额度内本次兑现金额
   FROM   fin_fee_terminal_cashout
   WHERE  ledger_date IS NOT NULL
-  ORDER  BY ledger_date DESC;</code></pre></div>
+  ORDER  BY ledger_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -341,7 +342,8 @@
          in_this_cashout_amt   AS 额度内本次兑现金额
   FROM   fin_fee_terminal_cashout
   WHERE  ledger_date &gt;= SYSDATE - 30
-  ORDER  BY ledger_date DESC;</code></pre></div>
+  ORDER  BY ledger_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -356,7 +358,8 @@
          MIN(ledger_date)    AS 最早台账日期,
          MAX(ledger_date)    AS 最晚台账日期
   FROM   fin_fee_terminal_cashout
-  WHERE  ledger_date IS NOT NULL;</code></pre></div>
+  WHERE  ledger_date IS NOT NULL;
+--</code></pre></div>
 </div>
 
 
@@ -368,7 +371,8 @@
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre></div>
+  FROM   dual;
+--</code></pre></div>
 </div>
 
 
@@ -384,7 +388,8 @@
   FROM   fin_fee_terminal_cashout
   WHERE  ledger_date IS NOT NULL
   GROUP  BY TO_CHAR(ledger_date, 'YYYY')
-  ORDER  BY 年度 DESC;</code></pre></div>
+  ORDER  BY 年度 DESC;
+--</code></pre></div>
 </div>
 
 

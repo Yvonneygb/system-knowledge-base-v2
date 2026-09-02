@@ -397,7 +397,8 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
          ADJUST_TYPE, HZ_APPROVE_STATUS
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE TRADING_COMPANY_ID IS NULL OR TRADING_COMPANY_NAME IS NULL;</code></pre></div>
+  WHERE TRADING_COMPANY_ID IS NULL OR TRADING_COMPANY_NAME IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -411,7 +412,8 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, TRADING_COMPANY_NAME, ADJUST_TYPE,
          ADJUST_YEAR, DEDUCTION_RATIO, HZ_APPROVE_STATUS
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE ADJUST_TYPE IS NULL;</code></pre></div>
+  WHERE ADJUST_TYPE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -425,7 +427,8 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_NAME,
          ADJUST_TYPE, HZ_APPROVE_STATUS, WFID, HZ_INSTANCE_ID
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE ADJUST_HEADER_ID = #{adjustHeaderId};</code></pre></div>
+  WHERE ADJUST_HEADER_ID = #{adjustHeaderId};
+--</code></pre></div>
 </div>
 
 
@@ -439,7 +442,8 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
     <pre class="detail-sql language-sql" v-pre><code>-- 核查OA单据映射配置
   SELECT OABILL_ID, BILL_NAME, ENABLED
   FROM OA_BILL_REF
-  WHERE BILL_NAME = '广告费调整申请';</code></pre></div>
+  WHERE BILL_NAME = '广告费调整申请';
+--</code></pre></div>
 </div>
 
 
@@ -453,7 +457,8 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
          CALLBACK_SOURCE, HZ_INSTANCE_ID
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  WHERE ADJUST_HEADER_NO = #{adjustHeaderNo};</code></pre></div>
+  WHERE ADJUST_HEADER_NO = #{adjustHeaderNo};
+--</code></pre></div>
 </div>
 
 
@@ -468,7 +473,8 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
   SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, HZ_APPROVE_STATUS
   FROM ADS_FEE_ADJUST_IN_QUOTA
   WHERE HZ_APPROVE_STATUS NOT IN ('RUN', 'APPROVED')
-  ORDER BY APPLICANT_TIME DESC;</code></pre></div>
+  ORDER BY APPLICANT_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -482,7 +488,8 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
     <pre class="detail-sql language-sql" v-pre><code>-- 核查调整单数据量
   SELECT HZ_APPROVE_STATUS, COUNT(*) AS 记录数
   FROM ADS_FEE_ADJUST_IN_QUOTA
-  GROUP BY HZ_APPROVE_STATUS;</code></pre></div>
+  GROUP BY HZ_APPROVE_STATUS;
+--</code></pre></div>
 </div>
 
 
@@ -496,7 +503,8 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
     <pre class="detail-sql language-sql" v-pre><code>-- 核查用户可访问的交易公司
   SELECT USER_ID, TRADING_COMPANY_ID, TRADING_COMPANY_NAME, ENABLED
   FROM USER_TRADING_COMPANY_AUTH
-  WHERE USER_ID = #{userId};</code></pre></div>
+  WHERE USER_ID = #{userId};
+--</code></pre></div>
 </div>
 
 

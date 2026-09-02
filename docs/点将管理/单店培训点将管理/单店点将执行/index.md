@@ -539,7 +539,8 @@ SELECT APPLY_CODE
   SELECT ta.APPLY_CODE AS 申请编码, ta.TRAIN_NAME AS 培训名称, ta.ORDER_LECTURE_STATE AS 点将状态
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_TYPE_ONE = 'train' AND ta.APPROVAL_STATE = 'approved'
-  ORDER BY ta.UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY ta.UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -554,7 +555,8 @@ SELECT APPLY_CODE
          ta.CRM_ORDER_STATUS AS CRM状态, ta.UPDATE_DATE AS 更新时间
   FROM TRAIN_APPLY ta
   WHERE ta.ERROR_INFO IS NOT NULL
-  ORDER BY ta.UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY ta.UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -568,7 +570,8 @@ SELECT APPLY_CODE
     <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_START_DATE AS 实际开始时间
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND ta.REAL_START_DATE IS NULL;</code></pre></div>
+    AND ta.REAL_START_DATE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -582,7 +585,8 @@ SELECT APPLY_CODE
     <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.REAL_END_DATE AS 实际结束时间
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND ta.REAL_END_DATE IS NULL;</code></pre></div>
+    AND ta.REAL_END_DATE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -596,7 +600,8 @@ SELECT APPLY_CODE
     <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.END_REMARK AS 结束备注
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'completed'
-    AND (ta.END_REMARK IS NULL OR ta.END_REMARK = '');</code></pre></div>
+    AND (ta.END_REMARK IS NULL OR ta.END_REMARK = '');
+--</code></pre></div>
 </div>
 
 
@@ -610,7 +615,8 @@ SELECT APPLY_CODE
     <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.CANCEL_REASON AS 取消原因
   FROM TRAIN_APPLY ta
   WHERE ta.ORDER_LECTURE_STATE = 'cancelled'
-    AND (ta.CANCEL_REASON IS NULL OR ta.CANCEL_REASON = '');</code></pre></div>
+    AND (ta.CANCEL_REASON IS NULL OR ta.CANCEL_REASON = '');
+--</code></pre></div>
 </div>
 
 
@@ -625,7 +631,8 @@ SELECT APPLY_CODE
          ta.FDD_PUSH_STATUS AS FDD推送状态, ta.ERROR_INFO AS 异常信息
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
-    AND (ta.FDD_PDF_URL IS NULL OR ta.FDD_PDF_URL = '');</code></pre></div>
+    AND (ta.FDD_PDF_URL IS NULL OR ta.FDD_PDF_URL = '');
+--</code></pre></div>
 </div>
 
 
@@ -642,7 +649,8 @@ SELECT APPLY_CODE
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -659,7 +667,8 @@ SELECT APPLY_CODE
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%single_store_general_execute%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%single_store_general_execute%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -674,7 +683,8 @@ SELECT APPLY_CODE
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -691,7 +701,8 @@ SELECT APPLY_CODE
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND ORDER_LECTURE_STATE NOT IN ('valid','executing','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -710,7 +721,8 @@ SELECT APPLY_CODE
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -725,7 +737,8 @@ SELECT APPLY_CODE
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.ORDER_LECTURE_STATE','MBO.APPLY_APPROVAL_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 

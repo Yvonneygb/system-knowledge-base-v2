@@ -332,7 +332,8 @@ SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :
     LEFT JOIN HZERO.HFLE_FILE H ON H.FILE_URL = F.FILE_URL
   WHERE F.REL_BUS_TYPE = 'prod'
     AND F.BUS_ID = :prodCode
-    AND H.FILE_URL IS NULL;</code></pre></div>
+    AND H.FILE_URL IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -347,7 +348,8 @@ SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :
   FROM OBJ_FILE_BUS_REL F
   WHERE F.REL_BUS_TYPE = 'prod'
     AND F.BUS_ID = :prodCode
-    AND F.FILE_TYPE_ID IN (SELECT ID FROM OBJ_FILE_TYPE WHERE BUS_TYPE = 'prodPhoto');</code></pre></div>
+    AND F.FILE_TYPE_ID IN (SELECT ID FROM OBJ_FILE_TYPE WHERE BUS_TYPE = 'prodPhoto');
+--</code></pre></div>
 </div>
 
 
@@ -362,7 +364,8 @@ SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :
   FROM OBJ_FILE_TYPE T
   WHERE T.BUS_TYPE = 'prodPhoto'
   ORDER BY T.FILE_BUS_TYPE;
-  -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置</code></pre></div>
+  -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置
+--</code></pre></div>
 </div>
 
 
@@ -379,7 +382,8 @@ SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :
   FROM OBJ_FILE_BUS_REL F
   WHERE F.SOURCE = 'PLM'
     AND F.CREATION_DATE &gt;= SYSDATE - 1
-  ORDER BY F.CREATION_DATE DESC;</code></pre></div>
+  ORDER BY F.CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -393,7 +397,8 @@ SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :
     <pre class="detail-sql language-sql" v-pre><code>SELECT T.FILE_BUS_TYPE AS 已配置类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
   FROM OBJ_FILE_TYPE T
   WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1';
-  -- 对比PLM返回的smallDocType值，补充缺失的类型配置</code></pre></div>
+  -- 对比PLM返回的smallDocType值，补充缺失的类型配置
+--</code></pre></div>
 </div>
 
 
@@ -409,7 +414,8 @@ SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.PERMISSION_CODE LIKE '%product_list.ps.import%'
-    AND R.ROLE_CODE = :currentRoleCode;</code></pre></div>
+    AND R.ROLE_CODE = :currentRoleCode;
+--</code></pre></div>
 </div>
 
 
@@ -423,7 +429,8 @@ SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :
     <pre class="detail-sql language-sql" v-pre><code>-- 无直接SQL，检查用户会话状态
   SELECT U.LOGIN_NAME, U.LAST_LOGIN_DATE AS 最后登录时间
   FROM HZERO.IAM_USER U
-  WHERE U.LOGIN_NAME = :currentLoginName;</code></pre></div>
+  WHERE U.LOGIN_NAME = :currentLoginName;
+--</code></pre></div>
 </div>
 
 

@@ -463,7 +463,8 @@
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM FEEDBACK
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -480,7 +481,8 @@
          STATE AS 问题状态,
          CREATE_NAME AS 提交人
   FROM FEEDBACK
-  ORDER BY CREATE_TIME DESC;</code></pre></div>
+  ORDER BY CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -498,7 +500,8 @@
          TO_CHAR(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS 提交时间
   FROM FEEDBACK
   WHERE STATE = 0
-  ORDER BY CREATE_TIME DESC;</code></pre></div>
+  ORDER BY CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -516,7 +519,8 @@
          TO_CHAR(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') AS 提交时间
   FROM FEEDBACK
   WHERE STATE = 1
-  ORDER BY CREATE_TIME DESC;</code></pre></div>
+  ORDER BY CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -532,7 +536,8 @@
          TYPE_CODE AS 问题类型,
          STATE AS 问题状态
   FROM FEEDBACK
-  WHERE TITLE IS NULL OR TITLE = '';</code></pre></div>
+  WHERE TITLE IS NULL OR TITLE = '';
+--</code></pre></div>
 </div>
 
 
@@ -548,7 +553,8 @@
          TYPE_CODE AS 问题类型,
          STATE AS 问题状态
   FROM FEEDBACK
-  WHERE TYPE_CODE IS NULL OR TYPE_CODE = '';</code></pre></div>
+  WHERE TYPE_CODE IS NULL OR TYPE_CODE = '';
+--</code></pre></div>
 </div>
 
 
@@ -564,7 +570,8 @@
          CONTENT AS 问题描述,
          STATE AS 问题状态
   FROM FEEDBACK
-  WHERE CONTENT IS NULL OR CONTENT = '';</code></pre></div>
+  WHERE CONTENT IS NULL OR CONTENT = '';
+--</code></pre></div>
 </div>
 
 
@@ -577,7 +584,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 反馈单数量
   FROM FEEDBACK
-  WHERE CREATE_TIME &gt;= SYSDATE - 30;</code></pre></div>
+  WHERE CREATE_TIME &gt;= SYSDATE - 30;
+--</code></pre></div>
 </div>
 
 
@@ -592,7 +600,8 @@
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM FEEDBACK
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -609,7 +618,8 @@
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%feedback%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%feedback%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -623,7 +633,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT QUESTIONID AS 问题编号, TITLE AS 问题标题, STATE AS 问题状态,
          DELETE_FLAG AS 删除标记
   FROM FEEDBACK
-  WHERE DELETE_FLAG = 'Y' OR QUESTIONID IS NULL;</code></pre></div>
+  WHERE DELETE_FLAG = 'Y' OR QUESTIONID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -638,7 +649,8 @@
          ERROR_INFO AS 异常问题
   FROM FEEDBACK
   WHERE STATE NOT IN (0,1,2,3,4,5)
-  ORDER BY CREATE_TIME DESC;</code></pre></div>
+  ORDER BY CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -653,7 +665,8 @@
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.FEEDBACK_TYPE','MBO.FEEDBACK_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -668,7 +681,8 @@
          FILE_URL AS 文件地址, ERROR_INFO AS 异常信息
   FROM FEEDBACK_FILE
   WHERE FILE_URL IS NULL OR ERROR_INFO IS NOT NULL
-  ORDER BY CREATION_DATE DESC;</code></pre></div>
+  ORDER BY CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -683,7 +697,8 @@
          STAR_LEVEL AS 评价星级, EVALUATE_CONTENT AS 评价内容
   FROM FEEDBACK
   WHERE STATE = 4
-    AND STAR_LEVEL IS NULL;</code></pre></div>
+    AND STAR_LEVEL IS NULL;
+--</code></pre></div>
 </div>
 
 

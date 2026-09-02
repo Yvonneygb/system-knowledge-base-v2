@@ -471,7 +471,8 @@ SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};
          PG.STATUS AS 状态, P.PROD_PROMOTE_GRADE AS 产品当前等级
   FROM LNK_PROD_PROMOTE_GRADE PG
     LEFT JOIN LNK_PROD P ON P.PROD_CODE = PG.PROD_CODE
-  WHERE PG.ID = :recordId;</code></pre></div>
+  WHERE PG.ID = :recordId;
+--</code></pre></div>
 </div>
 
 
@@ -485,7 +486,8 @@ SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};
     <pre class="detail-sql language-sql" v-pre><code>-- 检查是否存在产品编码为空的推广等级记录（异常数据）
   SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级, PG.STATUS AS 状态
   FROM LNK_PROD_PROMOTE_GRADE PG
-  WHERE PG.PROD_CODE IS NULL OR TRIM(PG.PROD_CODE) IS NULL;</code></pre></div>
+  WHERE PG.PROD_CODE IS NULL OR TRIM(PG.PROD_CODE) IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -499,7 +501,8 @@ SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};
     <pre class="detail-sql language-sql" v-pre><code>-- 检查是否存在等级为空的推广等级记录（异常数据）
   SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级, PG.STATUS AS 状态
   FROM LNK_PROD_PROMOTE_GRADE PG
-  WHERE PG.GRADE IS NULL OR TRIM(PG.GRADE) IS NULL;</code></pre></div>
+  WHERE PG.GRADE IS NULL OR TRIM(PG.GRADE) IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -515,7 +518,8 @@ SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};
          P.PROD_NAME AS 产品名称
   FROM LNK_PROD_PROMOTE_GRADE PG
     LEFT JOIN LNK_PROD P ON P.PROD_CODE = PG.PROD_CODE
-  WHERE P.PROD_CODE IS NULL;</code></pre></div>
+  WHERE P.PROD_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -533,7 +537,8 @@ SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.CODE LIKE 'hzero.product_data.product_info.promote_grade-list.ps.%'
-  ORDER BY P.CODE;</code></pre></div>
+  ORDER BY P.CODE;
+--</code></pre></div>
 </div>
 
 
@@ -550,7 +555,8 @@ SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};
   FROM HZERO.OAUTH_ACCESS_TOKEN T
     JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
   WHERE U.LOGIN_NAME = :loginName
-  ORDER BY T.EXPIRE_TIME DESC;</code></pre></div>
+  ORDER BY T.EXPIRE_TIME DESC;
+--</code></pre></div>
 </div>
 
 

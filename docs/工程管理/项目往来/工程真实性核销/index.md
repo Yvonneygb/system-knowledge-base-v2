@@ -641,7 +641,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.SA_OUT_BILL_HEAD_ID = :saOutBillHeadId
     AND LENGTH(TO_CHAR(vid.THIS_VERIFER_NUMBER - TRUNC(vid.THIS_VERIFER_NUMBER))) - 1 &gt; 3
-  -- 查出小数位超过3位的核销明细</code></pre></div>
+  -- 查出小数位超过3位的核销明细
+--</code></pre></div>
 </div>
 
 
@@ -658,7 +659,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
   WHERE vid.VERIFER_INVOICE_ID IS NULL
      OR vid.INVOICE_TRUTH_LINE_ID IS NULL
      OR vid.THIS_VERIFER_NUMBER IS NULL
-  -- 查出关键参数为空的核销明细</code></pre></div>
+  -- 查出关键参数为空的核销明细
+--</code></pre></div>
 </div>
 
 
@@ -672,7 +674,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUTH_LINE_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.THIS_VERIFER_NUMBER &lt;= 0
-  -- 查出核销数量≤0的异常数据</code></pre></div>
+  -- 查出核销数量≤0的异常数据
+--</code></pre></div>
 </div>
 
 
@@ -688,7 +691,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   JOIN EPM_INVOICE_TRUTH_LINE itl ON vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID
   WHERE vid.THIS_VERIFER_NUMBER &gt; itl.SURPLUS_CAN_VERIFER_NUMBER
-  -- 查出核销数量超限的明细</code></pre></div>
+  -- 查出核销数量超限的明细
+--</code></pre></div>
 </div>
 
 
@@ -704,7 +708,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   LEFT JOIN EPM_INVOICE_TRUTH_HEADER ith ON vid.INVOICE_TRUTH_ID = ith.INVOICE_TRUTH_ID
   WHERE vid.VERIFER_INVOICE_ID IS NULL OR ith.INVOICE_TRUTH_ID IS NULL
-  -- 查出未关联发票的核销明细</code></pre></div>
+  -- 查出未关联发票的核销明细
+--</code></pre></div>
 </div>
 
 
@@ -720,7 +725,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   LEFT JOIN EPM_INVOICE_TRUTH_LINE itl ON vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID
   WHERE itl.INVOICE_TRUTH_LINE_ID IS NULL
-  -- 查出核销行不存在的明细</code></pre></div>
+  -- 查出核销行不存在的明细
+--</code></pre></div>
 </div>
 
 
@@ -734,7 +740,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.ACTION_TYPE
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.ACTION_TYPE IS NULL
-  -- 查出操作类型为空的核销明细</code></pre></div>
+  -- 查出操作类型为空的核销明细
+--</code></pre></div>
 </div>
 
 
@@ -748,7 +755,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
-  -- 校验传入的ID列表对应数据是否存在</code></pre></div>
+  -- 校验传入的ID列表对应数据是否存在
+--</code></pre></div>
 </div>
 
 
@@ -762,7 +770,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.ACTION_TYPE, vid.EFFECT_STATUS
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.ACTION_TYPE NOT IN ('invoice', 'invoiceDetail', 'invLine', 'veriferDetail', 'obsInvoice')
-  -- 查出操作类型不合法的核销明细</code></pre></div>
+  -- 查出操作类型不合法的核销明细
+--</code></pre></div>
 </div>
 
 
@@ -778,7 +787,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
     AND vid.EFFECT_STATUS IN ('valid', 'invalid')
-  -- 若返回空，说明无可取消的核销明细</code></pre></div>
+  -- 若返回空，说明无可取消的核销明细
+--</code></pre></div>
 </div>
 
 
@@ -792,7 +802,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     <pre class="detail-sql language-sql" v-pre><code>SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.LAST_UPDATE_DATE, vid.OBJECT_VERSION_NUMBER
   FROM EPM_VERIFER_INVOICE_DETAILS vid
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
-  -- 检查核销明细当前状态和版本号，判断是否被并发修改</code></pre></div>
+  -- 检查核销明细当前状态和版本号，判断是否被并发修改
+--</code></pre></div>
 </div>
 
 
@@ -810,7 +821,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
   JOIN INV_OUT_BILL_LINE iobl ON vid.INV_OUT_BILL_LINE_ID = iobl.INV_OUT_BILL_LINE_ID
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
     AND iobl.VERIFERED_NUMBER - vid.THIS_VERIFER_NUMBER &lt; 0
-  -- 查出取消后已核销数量&lt;0的异常数据</code></pre></div>
+  -- 查出取消后已核销数量&lt;0的异常数据
+--</code></pre></div>
 </div>
 
 
@@ -824,7 +836,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     <pre class="detail-sql language-sql" v-pre><code>SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.VERIFER_TYPE
   FROM EPM_INVOICE_TRUTH_HEADER ith
   WHERE ith.VERIFER_TYPE IS NULL
-  -- 查出核销类型为空的核销单</code></pre></div>
+  -- 查出核销类型为空的核销单
+--</code></pre></div>
 </div>
 
 
@@ -840,7 +853,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
           WHERE itl.INVOICE_TRUTH_ID = ith.INVOICE_TRUTH_ID) AS 核销行数
   FROM EPM_INVOICE_TRUTH_HEADER ith
   WHERE ith.INVOICE_TRUTH_ID = :invoiceTruthId
-  -- 若核销行数为0，则触发该报错</code></pre></div>
+  -- 若核销行数为0，则触发该报错
+--</code></pre></div>
 </div>
 
 
@@ -858,7 +872,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
   FROM EPM_INVOICE_TRUTH_LINE itl
   WHERE (SELECT SUM(vid.THIS_VERIFER_NUMBER) FROM EPM_VERIFER_INVOICE_DETAILS vid
          WHERE vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID) &gt; itl.SUR_VERIFY_NUM
-  -- 查出合计核销数量超过可核销数量的核销行</code></pre></div>
+  -- 查出合计核销数量超过可核销数量的核销行
+--</code></pre></div>
 </div>
 
 
@@ -875,7 +890,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     AND (itl.INV_OUT_BILL_LINE_ID IS NULL
          OR NOT EXISTS (SELECT 1 FROM INV_OUT_BILL_LINE iobl
                         WHERE iobl.INV_OUT_BILL_LINE_ID = itl.INV_OUT_BILL_LINE_ID))
-  -- 查出出库单行不存在的核销行</code></pre></div>
+  -- 查出出库单行不存在的核销行
+--</code></pre></div>
 </div>
 
 
@@ -895,7 +911,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
   )
     AND iobl.CAN_VERIFY_NUM - NVL(iobl.USED_VERIFY_NUM, 0) &lt; 0
-  -- 查出可核销数量不足的出库单行</code></pre></div>
+  -- 查出可核销数量不足的出库单行
+--</code></pre></div>
 </div>
 
 
@@ -917,7 +934,8 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
     WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
   )
     AND uid.SURPLUS_CAN_VERIFER_NUMBER &lt; 0
-  -- 查出剩余可核销数量&lt;0的发票明细</code></pre></div>
+  -- 查出剩余可核销数量&lt;0的发票明细
+--</code></pre></div>
 </div>
 
 

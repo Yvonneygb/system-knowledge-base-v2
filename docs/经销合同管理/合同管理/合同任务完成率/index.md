@@ -251,7 +251,8 @@
   FROM EPM_PROJECT_CONTRACT
   WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
     AND (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
-  ORDER BY YEARMONTH DESC, CONTRACT_CODE;</code></pre></div>
+  ORDER BY YEARMONTH DESC, CONTRACT_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -265,7 +266,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT YEARMONTH, COUNT(*) AS 合同数量
   FROM EPM_PROJECT_CONTRACT
   GROUP BY YEARMONTH
-  ORDER BY YEARMONTH DESC;</code></pre></div>
+  ORDER BY YEARMONTH DESC;
+--</code></pre></div>
 </div>
 
 
@@ -279,7 +281,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME, TASK_AMT, DELIVERY_AMT
   FROM EPM_PROJECT_CONTRACT
   WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
-    AND (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL);</code></pre></div>
+    AND (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -292,7 +295,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, TASK_AMT, DELIVERY_AMT
   FROM EPM_PROJECT_CONTRACT
-  WHERE YEARMONTH = #{yearmonth};</code></pre></div>
+  WHERE YEARMONTH = #{yearmonth};
+--</code></pre></div>
 </div>
 
 
@@ -306,7 +310,8 @@
     <pre class="detail-sql language-sql" v-pre><code>-- 权限校验（伪SQL，具体表名依权限框架而定）
   SELECT ROLE_CODE, PERMISSION_CODE
   FROM USER_ROLE_PERMISSION
-  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractReport%';</code></pre></div>
+  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractReport%';
+--</code></pre></div>
 </div>
 
 
@@ -319,7 +324,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME, TASK_AMT, DELIVERY_AMT
   FROM EPM_PROJECT_CONTRACT
-  WHERE YEARMONTH = #{yearmonth} AND (TASK_AMT IS NULL OR TASK_AMT = 0);</code></pre></div>
+  WHERE YEARMONTH = #{yearmonth} AND (TASK_AMT IS NULL OR TASK_AMT = 0);
+--</code></pre></div>
 </div>
 
 

@@ -367,7 +367,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_ID, CUSTOMER_NAME,
          CONTRACT_YEAR, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE CUSTOMER_ID IS NULL OR CUSTOMER_NAME IS NULL;</code></pre></div>
+  WHERE CUSTOMER_ID IS NULL OR CUSTOMER_NAME IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -385,7 +386,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
   -- 核查经销商授权区域（经销商主数据，具体表名以主数据为准）
   SELECT CUSTOMER_CODE, CUSTOMER_NAME, SALE_AREA, ENABLED
   FROM CUSTOMER_SALE_AREA
-  WHERE CUSTOMER_CODE = #{customerCode};</code></pre></div>
+  WHERE CUSTOMER_CODE = #{customerCode};
+--</code></pre></div>
 </div>
 
 
@@ -399,7 +401,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CONTRACT_TYPE, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
   WHERE SALE_CONTRACT_HEAD_ID = #{id}
-    AND HZ_APPROVE_STATUS = 'NEW';</code></pre></div>
+    AND HZ_APPROVE_STATUS = 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -412,7 +415,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE SALE_CONTRACT_HEAD_ID IS NULL OR SALE_CONTRACT_HEAD_ID = 0;</code></pre></div>
+  WHERE SALE_CONTRACT_HEAD_ID IS NULL OR SALE_CONTRACT_HEAD_ID = 0;
+--</code></pre></div>
 </div>
 
 
@@ -427,7 +431,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
          HZ_APPROVE_STATUS, SYSDATE AS 当前日期
   FROM SA_SALE_CONTRACT_HEAD
   WHERE END_DATE &lt; SYSDATE
-    AND HZ_APPROVE_STATUS = 'NEW';</code></pre></div>
+    AND HZ_APPROVE_STATUS = 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -440,7 +445,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE, END_DATE, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE START_DATE &gt; END_DATE;</code></pre></div>
+  WHERE START_DATE &gt; END_DATE;
+--</code></pre></div>
 </div>
 
 
@@ -454,7 +460,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, START_DATE,
          EXTRACT(DAY FROM START_DATE) AS 开始日
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE EXTRACT(DAY FROM START_DATE) != 1;</code></pre></div>
+  WHERE EXTRACT(DAY FROM START_DATE) != 1;
+--</code></pre></div>
 </div>
 
 
@@ -469,7 +476,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
          C.CORPORATE_CODE, C.CORPORATE_NAME
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN CUSTOMER C ON S.CUSTOMER_ID = C.CUSTOMER_ID
-  WHERE C.CORPORATE_CODE IS NULL;</code></pre></div>
+  WHERE C.CORPORATE_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -484,7 +492,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
          P.CONTRACT_NO AS 母合同编号, P.HZ_APPROVE_STATUS AS 母合同状态
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN SA_SALE_CONTRACT_HEAD P ON S.PARENT_CONTRACT_ID = P.SALE_CONTRACT_HEAD_ID
-  WHERE S.PARENT_CONTRACT_ID IS NOT NULL AND P.SALE_CONTRACT_HEAD_ID IS NULL;</code></pre></div>
+  WHERE S.PARENT_CONTRACT_ID IS NOT NULL AND P.SALE_CONTRACT_HEAD_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -499,7 +508,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
          ACTUAL_END_DATE, HZ_APPROVE_STATUS
   FROM SA_SALE_CONTRACT_HEAD
   WHERE ACTUAL_END_DATE IS NOT NULL
-    AND ADD_MONTHS(ACTUAL_END_DATE, 1) &gt; END_DATE;</code></pre></div>
+    AND ADD_MONTHS(ACTUAL_END_DATE, 1) &gt; END_DATE;
+--</code></pre></div>
 </div>
 
 
@@ -517,7 +527,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
     AND CONTRACT_TYPE = #{contractType}
     AND HZ_APPROVE_STATUS = 'APPROVED'
     AND START_DATE &lt;= #{newEndDate}
-    AND END_DATE &gt;= #{newStartDate};</code></pre></div>
+    AND END_DATE &gt;= #{newStartDate};
+--</code></pre></div>
 </div>
 
 
@@ -533,7 +544,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN CM_DEPOSITS_PAY_STANDARD P ON S.ENTID = P.ENTID AND S.CONTRACT_TYPE = P.CONTRACT_TYPE
   WHERE P.PAY_STANDARD_ID IS NULL
-    AND S.HZ_APPROVE_STATUS = 'NEW';</code></pre></div>
+    AND S.HZ_APPROVE_STATUS = 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -546,7 +558,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT PARAM_CODE, PARAM_NAME, PARAM_VALUE
   FROM SYS_PARAM
-  WHERE PARAM_CODE = 'SALE_CONTRACT_DELAY_PIGEONHOLE_DAYS';</code></pre></div>
+  WHERE PARAM_CODE = 'SALE_CONTRACT_DELAY_PIGEONHOLE_DAYS';
+--</code></pre></div>
 </div>
 
 
@@ -561,7 +574,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
          PIGEONHOLE_DATE, ACTUAL_PIGEONHOLE_DATE, PIGEONHOLE_BY
   FROM SA_SALE_CONTRACT_HEAD
   WHERE HZ_APPROVE_STATUS = 'APPROVED'
-    AND PIGEONHOLE_DATE IS NULL;</code></pre></div>
+    AND PIGEONHOLE_DATE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -574,7 +588,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_ID, CUSTOMER_NAME, CUST_CODE
   FROM SA_SALE_CONTRACT_HEAD
-  WHERE CUST_CODE IS NULL OR CUST_CODE = '';</code></pre></div>
+  WHERE CUST_CODE IS NULL OR CUST_CODE = '';
+--</code></pre></div>
 </div>
 
 
@@ -585,7 +600,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用sa-sale-contract-heads相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -596,7 +612,8 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对合同保存、提交、归档等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

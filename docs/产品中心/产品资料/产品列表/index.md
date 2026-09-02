@@ -585,7 +585,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.CODE = 'hzero.product_data.product_info.product_list.ps.admin_search'
-    AND U.USER_TYPE = 'D';</code></pre></div>
+    AND U.USER_TYPE = 'D';
+--</code></pre></div>
 </div>
 
 
@@ -604,7 +605,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
   FROM LNK_CONTRACT C
   WHERE C.DEALER_CODE = :dealerCode
     AND C.CONTRACT_STATUS = '生效'
-    AND TRUNC(SYSDATE) BETWEEN C.EFF_START_DATE AND C.EFF_END_DATE;</code></pre></div>
+    AND TRUNC(SYSDATE) BETWEEN C.EFF_START_DATE AND C.EFF_END_DATE;
+--</code></pre></div>
 </div>
 
 
@@ -618,7 +620,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
     <pre class="detail-sql language-sql" v-pre><code>-- 无对应表查询，检查前端调用日志
   -- 接口: GET /v1/{organizationId}/prod?selectType={selectType}
   -- 合法值: general / other / all
-  SELECT '检查前端传入selectType参数是否为general/other/all' AS 提示 FROM DUAL;</code></pre></div>
+  SELECT '检查前端传入selectType参数是否为general/other/all' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -632,7 +635,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
          U.USER_TYPE AS 用户类型
   FROM HZERO.IAM_USER U
-  WHERE U.ID = :currentUserId;</code></pre></div>
+  WHERE U.ID = :currentUserId;
+--</code></pre></div>
 </div>
 
 
@@ -643,7 +647,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>跨事业部产品选择弹窗查询时，未输入任何查询条件（不含excludeDeptId）就点击查询<br><strong>逻辑分析：</strong>跨事业部产品选择接口/v1/&#123;orgId&#125;/prod/cross-bu-prod要求至少传入prodCode、prodName、lhProdModel中的一个，防止全表扫描。前端校验未通过则提示。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '跨事业部产品选择弹窗需至少输入产品编码/产品名称/型号其中一个' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '跨事业部产品选择弹窗需至少输入产品编码/产品名称/型号其中一个' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -654,7 +659,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>上下架校验时，传入的产品编码列表为空<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.checkProdStatusChange方法中，若prodCodeList为空集合则抛出CommonException。上下架操作需至少选择一个产品，前端未勾选产品就点击上下架按钮时触发。需先在产品列表中勾选产品再操作。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '上下架操作需至少选择一个产品，请先勾选产品' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '上下架操作需至少选择一个产品，请先勾选产品' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -671,7 +677,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
   -- 对比传入的产品编码列表，找出不存在的编码
   SELECT CODE AS 不存在的产品编码
   FROM (SELECT :prodCode1 AS CODE FROM DUAL UNION ALL SELECT :prodCode2 FROM DUAL) T
-  WHERE NOT EXISTS (SELECT 1 FROM LNK_PROD LP WHERE LP.PROD_CODE = T.CODE);</code></pre></div>
+  WHERE NOT EXISTS (SELECT 1 FROM LNK_PROD LP WHERE LP.PROD_CODE = T.CODE);
+--</code></pre></div>
 </div>
 
 
@@ -686,7 +693,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
          LP.SM_STATE AS 生命状态, '不允许上架' AS 校验结果
   FROM LNK_PROD LP
   WHERE LP.PROD_CODE IN (:prodCodeList)
-    AND LP.SM_STATE IN ('Z1', 'Z8');</code></pre></div>
+    AND LP.SM_STATE IN ('Z1', 'Z8');
+--</code></pre></div>
 </div>
 
 
@@ -701,7 +709,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
          LP.SM_STATE AS 生命状态, '需确认上架' AS 校验结果
   FROM LNK_PROD LP
   WHERE LP.PROD_CODE IN (:prodCodeList)
-    AND LP.SM_STATE IN ('Z3', 'Z6', 'Z7', 'S6');</code></pre></div>
+    AND LP.SM_STATE IN ('Z3', 'Z6', 'Z7', 'S6');
+--</code></pre></div>
 </div>
 
 
@@ -714,7 +723,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 待上架产品数量
   FROM LNK_PROD LP
-  WHERE LP.PROD_CODE IN (:prodCodeList);</code></pre></div>
+  WHERE LP.PROD_CODE IN (:prodCodeList);
+--</code></pre></div>
 </div>
 
 
@@ -733,7 +743,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
     LEFT JOIN LNK_PRICE_APP_FORM_OLDPROD LPAFO ON LPAFO.PRICE_APP_FORM_ITEM_ID = LPAFI.ROW_ID
   WHERE LP.PROD_CODE IN (:prodCodeList)
     AND LPAF.RELATE_OLD_PROD_CONTROL = 'Y'
-    AND LPAF.AUDIT_STATUS = '审批通过';</code></pre></div>
+    AND LPAF.AUDIT_STATUS = '审批通过';
+--</code></pre></div>
 </div>
 
 
@@ -747,7 +758,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT R.AE_OR_CODE AS AE事业部编码, R.CRM_OR_ID AS CRM事业部ID,
          R.AE_OR_NAME AS AE事业部名称
   FROM REL_CRM_AE_ORG R
-  WHERE R.AE_OR_CODE = :excludeDeptCode;</code></pre></div>
+  WHERE R.AE_OR_CODE = :excludeDeptCode;
+--</code></pre></div>
 </div>
 
 
@@ -758,7 +770,8 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>产品详情页批量下载附件时，未勾选附件记录<br><strong>逻辑分析：</strong>前端detailAttachmentTableConfig.tsx中onBatchDownFn方法，点击批量下载按钮时获取当前选中记录列表（prodectDs.currentSelected）。若列表长度为0，则通过notification.error提示"请选择附件！"并返回。需先在附件表格中勾选附件记录再点击批量下载按钮。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '批量下载附件需先勾选附件记录' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '批量下载附件需先勾选附件记录' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

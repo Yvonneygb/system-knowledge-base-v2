@@ -694,7 +694,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          APPLY_STATE AS 申请状态,
          APPROVAL_STATE AS 审核状态
   FROM TRAIN_CAMP_APPLY
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -711,7 +712,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          APPROVAL_STATE AS 审核状态,
          ROUND(PLAN_START_TIME - SYSDATE) AS 距开始天数
   FROM TRAIN_CAMP_APPLY
-  WHERE PLAN_START_TIME &lt; SYSDATE + 7;</code></pre></div>
+  WHERE PLAN_START_TIME &lt; SYSDATE + 7;
+--</code></pre></div>
 </div>
 
 
@@ -729,7 +731,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
   FROM TRAIN_CAMP_APPLY
   WHERE APPROVAL_STATE &lt;&gt; 'fdd_sign'
     OR (CANCEL_APPROVAL_STATE IS NOT NULL
-        AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject'));</code></pre></div>
+        AND CANCEL_APPROVAL_STATE NOT IN ('reject', 'oa_reject'));
+--</code></pre></div>
 </div>
 
 
@@ -746,7 +749,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          APPROVAL_STATE AS 审核状态
   FROM TRAIN_CAMP_APPLY
   WHERE APPLY_STATE &lt;&gt; 'draft'
-    AND APPROVAL_STATE NOT IN ('reject', 'oa_reject');</code></pre></div>
+    AND APPROVAL_STATE NOT IN ('reject', 'oa_reject');
+--</code></pre></div>
 </div>
 
 
@@ -762,7 +766,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          DEALER_CODE AS 经销商编码,
          DEALER_NAME AS 经销商名称
   FROM TRAIN_CAMP_APPLY
-  WHERE DEALER_NAME IS NULL OR DEALER_CODE IS NULL;</code></pre></div>
+  WHERE DEALER_NAME IS NULL OR DEALER_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -777,7 +782,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          CAMP_CODE AS 特训营编码,
          CAMP_NAME AS 特训营名称
   FROM TRAIN_CAMP_APPLY
-  WHERE CAMP_NAME IS NULL OR CAMP_CODE IS NULL;</code></pre></div>
+  WHERE CAMP_NAME IS NULL OR CAMP_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -793,7 +799,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          LEGAL_ENTITY_CODE AS 法人主体编码,
          LEGAL_ENTITY_NAME AS 法人主体名称
   FROM TRAIN_CAMP_APPLY
-  WHERE LEGAL_ENTITY_NAME IS NULL OR LEGAL_ENTITY_CODE IS NULL;</code></pre></div>
+  WHERE LEGAL_ENTITY_NAME IS NULL OR LEGAL_ENTITY_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -809,7 +816,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          LECTURER_CODE AS 讲师编码,
          LECTURER AS 讲师姓名
   FROM TRAIN_CAMP_APPLY
-  WHERE LECTURER IS NULL OR LECTURER_CODE IS NULL;</code></pre></div>
+  WHERE LECTURER IS NULL OR LECTURER_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -824,7 +832,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          CAMP_NAME AS 特训营名称,
          PRE_ORD_LECTURER_DAYS AS 拟点将天数
   FROM TRAIN_CAMP_APPLY
-  WHERE PRE_ORD_LECTURER_DAYS IS NULL;</code></pre></div>
+  WHERE PRE_ORD_LECTURER_DAYS IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -848,7 +857,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
     AND a.APPLY_STATE IN ('valid', 'executing')
     AND b.APPLY_STATE IN ('valid', 'executing')
     AND a.PLAN_START_TIME &lt;= b.PLAN_END_TIME
-    AND a.PLAN_END_TIME &gt;= b.PLAN_START_TIME;</code></pre></div>
+    AND a.PLAN_END_TIME &gt;= b.PLAN_START_TIME;
+--</code></pre></div>
 </div>
 
 
@@ -869,7 +879,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
            OR u.PHONE NOT LIKE '1[3456789]________'
            OR LENGTH(u.PHONE) &lt;&gt; 11
            OR REGEXP_LIKE(u.PHONE, '[^0-9]'))
-  );</code></pre></div>
+  );
+--</code></pre></div>
 </div>
 
 
@@ -888,7 +899,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_CAMP_APPLY
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -904,7 +916,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_CAMP_APPLY
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -921,7 +934,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%camp_general%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%camp_general%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -935,7 +949,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
          APPLY_STATE AS 申请状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_CAMP_APPLY
-  WHERE DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL;</code></pre></div>
+  WHERE DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -951,7 +966,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          CANCEL_APPROVAL_STATE AS 取消审核状态, ERROR_INFO AS 异常问题
   FROM TRAIN_CAMP_APPLY
   WHERE APPLY_STATE NOT IN ('draft','valid','executing','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -966,7 +982,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.ORDER_LECTURE_STATE','MBO.APPLY_APPROVAL_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -983,7 +1000,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
   LEFT JOIN TRAIN_CAMP_APPLY_LINE B ON A.APPLY_CODE = B.APPLY_CODE
   WHERE A.APPLY_STATE IN ('draft','valid')
   GROUP BY A.APPLY_CODE, A.CAMP_NAME
-  HAVING COUNT(B.LINE_ID) = 0;</code></pre></div>
+  HAVING COUNT(B.LINE_ID) = 0;
+--</code></pre></div>
 </div>
 
 
@@ -997,7 +1015,8 @@ WHERE tca.LECTURER_CODE = :lecturerCode
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_CODE AS 申请编码, CAMP_NAME AS 特训营名称,
          PRE_ORD_LECTURER_DAYS AS 拟点将天数
   FROM TRAIN_CAMP_APPLY
-  WHERE PRE_ORD_LECTURER_DAYS IS NOT NULL AND PRE_ORD_LECTURER_DAYS &lt;= 0;</code></pre></div>
+  WHERE PRE_ORD_LECTURER_DAYS IS NOT NULL AND PRE_ORD_LECTURER_DAYS &lt;= 0;
+--</code></pre></div>
 </div>
 
 

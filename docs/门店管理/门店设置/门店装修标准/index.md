@@ -505,7 +505,8 @@ ORDER BY TDL.DECORATE_PROJECT
          s.hz_approve_status       AS 审批状态
   FROM   terminal_decorate_standard s
   WHERE  s.entid IS NULL
-  ORDER  BY s.create_time DESC;</code></pre></div>
+  ORDER  BY s.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -526,7 +527,8 @@ ORDER BY TDL.DECORATE_PROJECT
     FROM   terminal_decorate_line l
     WHERE  l.decorate_standard_id = s.decorate_standard_id
   )
-  ORDER  BY s.create_time DESC;</code></pre></div>
+  ORDER  BY s.create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -545,7 +547,8 @@ ORDER BY TDL.DECORATE_PROJECT
          l.lower_area            AS 面积范围小于等于
   FROM   terminal_decorate_line l
   WHERE  l.lower_area &lt;= l.uper_area
-  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre></div>
+  ORDER  BY l.decorate_standard_id, l.decorate_project;
+--</code></pre></div>
 </div>
 
 
@@ -564,7 +567,8 @@ ORDER BY TDL.DECORATE_PROJECT
          l.end_date              AS 有效结束日期
   FROM   terminal_decorate_line l
   WHERE  l.end_date &lt; l.start_date
-  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre></div>
+  ORDER  BY l.decorate_standard_id, l.decorate_project;
+--</code></pre></div>
 </div>
 
 
@@ -584,7 +588,8 @@ ORDER BY TDL.DECORATE_PROJECT
   FROM   terminal_decorate_line l
   WHERE  l.in_standard &lt;= 0
   OR     l.out_standard &lt;= 0
-  ORDER  BY l.decorate_standard_id, l.decorate_project;</code></pre></div>
+  ORDER  BY l.decorate_standard_id, l.decorate_project;
+--</code></pre></div>
 </div>
 
 

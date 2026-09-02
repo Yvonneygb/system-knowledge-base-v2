@@ -250,7 +250,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 检查销售清单表是否可正常访问及数据量
   SELECT COUNT(1) AS 销售清单总记录数
-  FROM LNK_CROSS_BU_SALES_LIST;</code></pre></div>
+  FROM LNK_CROSS_BU_SALES_LIST;
+--</code></pre></div>
 </div>
 
 
@@ -269,7 +270,8 @@
   JOIN HZERO.IAM_ROLE_PERMISSION RP ON RP.ROLE_ID = R.ID
   JOIN HZERO.IAM_PERMISSION P ON P.ID = RP.PERMISSION_ID
   WHERE U.REAL_NAME = :用户名
-    AND P.CODE LIKE 'hzero.c.crm.cross-bu-sales-list%';</code></pre></div>
+    AND P.CODE LIKE 'hzero.c.crm.cross-bu-sales-list%';
+--</code></pre></div>
 </div>
 
 
@@ -286,7 +288,8 @@
   FROM HZERO.OAUTH_ACCESS_TOKEN T
   JOIN HZERO.IAM_USER U ON U.ID = T.USER_ID
   WHERE U.REAL_NAME = :用户名
-  ORDER BY T.CREATE_TIME DESC;</code></pre></div>
+  ORDER BY T.CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -303,7 +306,8 @@
          (SELECT COUNT(1) FROM LNK_CROSS_BU_SALES_LIST S WHERE S.FORM_CODE = F.FORM_CODE) AS 清单同步数
   FROM LNK_CROSS_BU_APP_FORM F
   WHERE F.STATUS = 'APPROVED'
-  ORDER BY F.CREATION_DATE DESC;</code></pre></div>
+  ORDER BY F.CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -320,7 +324,8 @@
          MAX(S.CREATION_DATE) AS 最晚记录时间
   FROM LNK_CROSS_BU_SALES_LIST S
   WHERE S.STATUS = 'valid'
-    AND TRUNC(S.CREATION_DATE) BETWEEN TRUNC(SYSDATE) - 30 AND TRUNC(SYSDATE);</code></pre></div>
+    AND TRUNC(S.CREATION_DATE) BETWEEN TRUNC(SYSDATE) - 30 AND TRUNC(SYSDATE);
+--</code></pre></div>
 </div>
 
 

@@ -232,7 +232,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
   FROM EPM_SERVICE_FEE_BG esfb
   WHERE esfb.BG_CODE IS NULL OR TRIM(esfb.BG_CODE) = ''
-  -- 查出背景编码为空的异常数据</code></pre></div>
+  -- 查出背景编码为空的异常数据
+--</code></pre></div>
 </div>
 
 
@@ -246,7 +247,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
   FROM EPM_SERVICE_FEE_BG esfb
   WHERE esfb.BG_NAME IS NULL OR TRIM(esfb.BG_NAME) = ''
-  -- 查出背景名称为空的异常数据</code></pre></div>
+  -- 查出背景名称为空的异常数据
+--</code></pre></div>
 </div>
 
 
@@ -261,7 +263,8 @@
   FROM EPM_SERVICE_FEE_BG esfb
   WHERE esfb.BG_CODE = :bgCode
     AND esfb.BG_ID &lt;&gt; :currentBgId
-  -- 查出背景编码重复的记录</code></pre></div>
+  -- 查出背景编码重复的记录
+--</code></pre></div>
 </div>
 
 
@@ -276,7 +279,8 @@
   SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME
   FROM EPM_SERVICE_FEE_BG esfb
   WHERE esfb.BG_ID = :selectedBgId
-  -- 校验选中行是否存在</code></pre></div>
+  -- 校验选中行是否存在
+--</code></pre></div>
 </div>
 
 
@@ -289,7 +293,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 系统级错误，检查后端服务状态
   SELECT COUNT(*) AS 服务费背景总数 FROM EPM_SERVICE_FEE_BG esfb
-  -- 校验数据库连接是否正常</code></pre></div>
+  -- 校验数据库连接是否正常
+--</code></pre></div>
 </div>
 
 
@@ -305,7 +310,8 @@
   JOIN IAM_USER_ROLE iur ON iu.USER_ID = iur.USER_ID
   JOIN IAM_ROLE ir ON iur.ROLE_ID = ir.ROLE_ID
   WHERE iu.USER_ID = :currentUserId
-  -- 查出当前用户角色，确认是否包含服务费背景维护权限</code></pre></div>
+  -- 查出当前用户角色，确认是否包含服务费背景维护权限
+--</code></pre></div>
 </div>
 
 
@@ -320,7 +326,8 @@
          esfb.OBJECT_VERSION_NUMBER, esfb.LAST_UPDATE_DATE, esfb.LAST_UPDATED_BY
   FROM EPM_SERVICE_FEE_BG esfb
   WHERE esfb.BG_ID = :bgId
-  -- 对比OBJECT_VERSION_NUMBER判断是否被并发修改</code></pre></div>
+  -- 对比OBJECT_VERSION_NUMBER判断是否被并发修改
+--</code></pre></div>
 </div>
 
 

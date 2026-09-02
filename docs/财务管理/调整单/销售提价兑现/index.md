@@ -590,7 +590,8 @@ SELECT ID, GL_DATE
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
 FROM CASH_SUMMARY
-WHERE ID = #{cashId};</code></pre></div>
+WHERE ID = #{cashId};
+--</code></pre></div>
 </div>
 
 
@@ -603,7 +604,8 @@ WHERE ID = #{cashId};</code></pre></div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, GL_DATE
 FROM CASH_SUMMARY
-WHERE ID = #{cashId};</code></pre></div>
+WHERE ID = #{cashId};
+--</code></pre></div>
 </div>
 
 
@@ -616,7 +618,8 @@ WHERE ID = #{cashId};</code></pre></div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
 FROM CASH_SUMMARY
-WHERE ID = #{cashId} AND PUSH_STATUS = 'SUCCESS';</code></pre></div>
+WHERE ID = #{cashId} AND PUSH_STATUS = 'SUCCESS';
+--</code></pre></div>
 </div>
 
 
@@ -638,7 +641,7 @@ SELECT
 FROM CASH_DETAILS cd
 WHERE cd.CASH_SUMMARY_ID = #{cashId}
   AND cd.PUSH_STATUS != 'SUCCESS';
-
+--
 -- 核查法人账户配置
 SELECT
   lea.LEGAL_ENTITY_ACCOUNT_ID AS 法人账户ID,
@@ -647,7 +650,8 @@ SELECT
   lea.ACCOUNT_ID              AS 账户ID
 FROM EPM_LEGAL_ENTITY_ACCOUNT lea
 WHERE lea.TRADING_COMPANY_ID = #{tradingCompanyId}
-  AND lea.CUSTOMER_ID = #{customerId};</code></pre></div>
+  AND lea.CUSTOMER_ID = #{customerId};
+--</code></pre></div>
 </div>
 
 
@@ -660,7 +664,8 @@ WHERE lea.TRADING_COMPANY_ID = #{tradingCompanyId}
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ID, AMOUNT, PUSH_STATUS, PUSH_TIME
 FROM CASH_SUMMARY
-WHERE ID = #{cashId};</code></pre></div>
+WHERE ID = #{cashId};
+--</code></pre></div>
 </div>
 
 
@@ -683,7 +688,8 @@ FROM REBATE_DETAILS rd
 WHERE rd.SIGN_FLAG = 'Y'
   AND rd.REDEMPTION_FLAG = 'N'
   AND rd.ENT_ID = #{entId}
-  AND (rd.CUSTOMER_ID = #{customerId} OR #{customerId} IS NULL);</code></pre></div>
+  AND (rd.CUSTOMER_ID = #{customerId} OR #{customerId} IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -696,7 +702,8 @@ WHERE rd.SIGN_FLAG = 'Y'
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ID, START_TIME, END_TIME
 FROM CASH_SUMMARY
-WHERE START_TIME IS NULL OR END_TIME IS NULL;</code></pre></div>
+WHERE START_TIME IS NULL OR END_TIME IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -709,7 +716,8 @@ WHERE START_TIME IS NULL OR END_TIME IS NULL;</code></pre></div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ID, GL_DATE
 FROM CASH_SUMMARY
-WHERE GL_DATE IS NULL;</code></pre></div>
+WHERE GL_DATE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -721,7 +729,8 @@ WHERE GL_DATE IS NULL;</code></pre></div>
     <div class="detail-text" v-pre><strong>触发条件：</strong>生成兑现汇总单时，后端处理异常<br><strong>逻辑分析：</strong>可能原因：(1)查询已生成兑现单但没有签收的数据异常(getUnsignedDeliveryLineIds方法)；(2)更新签收标识异常(updateSignFlag方法)；(3)汇总兑现明细数据异常(generateCashDetails方法)。需检查后端日志确认具体异常</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 检查返利明细数据是否异常
-SELECT COUNT(*) FROM REBATE_DETAILS WHERE SIGN_FLAG IS NULL OR REDEMPTION_FLAG IS NULL;</code></pre></div>
+SELECT COUNT(*) FROM REBATE_DETAILS WHERE SIGN_FLAG IS NULL OR REDEMPTION_FLAG IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -740,7 +749,8 @@ SELECT
   rd.DELIVERY_LINE_ID AS 发货行ID
 FROM REBATE_DETAILS rd
 WHERE rd.SIGN_FLAG = 'N'
-  AND rd.REDEMPTION_FLAG = 'N';</code></pre></div>
+  AND rd.REDEMPTION_FLAG = 'N';
+--</code></pre></div>
 </div>
 
 

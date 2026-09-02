@@ -226,7 +226,8 @@
          CASE WHEN TASK_AMT &gt; 0 THEN ROUND(DELIVERY_AMT / TASK_AMT * 100, 2) ELSE 0 END AS 完成率
   FROM EPM_PROJECT_CONTRACT
   WHERE (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
-  ORDER BY CONTRACT_CODE;</code></pre></div>
+  ORDER BY CONTRACT_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -240,7 +241,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 可导出记录数
   FROM EPM_PROJECT_CONTRACT
   WHERE (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
-    AND TASK_AMT IS NOT NULL;</code></pre></div>
+    AND TASK_AMT IS NOT NULL;
+--</code></pre></div>
 </div>
 
 
@@ -252,7 +254,8 @@
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用contractReport/epm-project-contract/searchContractInvRate或exportContractInvRate接口时，axios请求超时或返回非2xx状态码<br><strong>逻辑分析：</strong>报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。前端index.tsx通过DataSet.query()发起请求，失败时控制台输出"获取图表数据失败"日志。需确认ae-report服务状态及网关配置</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 确认报表服务数据源连通性（间接验证服务可用性）
-  SELECT COUNT(*) AS 合同总记录数 FROM EPM_PROJECT_CONTRACT;</code></pre></div>
+  SELECT COUNT(*) AS 合同总记录数 FROM EPM_PROJECT_CONTRACT;
+--</code></pre></div>
 </div>
 
 
@@ -265,7 +268,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 查询用户角色权限（示意，实际表名依权限框架）
   SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
-  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractInvRate%';</code></pre></div>
+  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractInvRate%';
+--</code></pre></div>
 </div>
 
 
@@ -277,7 +281,8 @@
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户未填写年度（POLICY_YEAR）或合同编码（CONTRACT_CODE）等必填查询条件直接点击查询<br><strong>逻辑分析：</strong>YearMonthContractRateDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端QueryDS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT DISTINCT POLICY_YEAR FROM EPM_PROJECT_CONTRACT
-  WHERE POLICY_YEAR IS NOT NULL ORDER BY POLICY_YEAR DESC;</code></pre></div>
+  WHERE POLICY_YEAR IS NOT NULL ORDER BY POLICY_YEAR DESC;
+--</code></pre></div>
 </div>
 
 

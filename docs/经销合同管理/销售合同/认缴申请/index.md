@@ -403,7 +403,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_ID, CONTRACT_NO, CUSTOMER_NAME,
          APPLY_AMT, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE CONTRACT_ID IS NULL OR CONTRACT_NO IS NULL;</code></pre></div>
+  WHERE CONTRACT_ID IS NULL OR CONTRACT_NO IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -416,7 +417,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, APPLY_AMT, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE APPLY_AMT IS NULL OR APPLY_AMT &lt;= 0;</code></pre></div>
+  WHERE APPLY_AMT IS NULL OR APPLY_AMT &lt;= 0;
+--</code></pre></div>
 </div>
 
 
@@ -433,7 +435,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
   FROM CM_CONTRACT_PAYMENT_APPLY A
   JOIN CM_CONTRACT_PAYMENT_SUMMARY S ON A.CONTRACT_ID = S.CONTRACT_ID
   WHERE A.APPLY_AMT &gt; S.UNPAID_AMT
-    AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN');</code></pre></div>
+    AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN');
+--</code></pre></div>
 </div>
 
 
@@ -449,7 +452,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
           WHERE L.APPLY_ID = A.APPLY_ID) AS 明细行数
   FROM CM_CONTRACT_PAYMENT_APPLY A
   WHERE NOT EXISTS (SELECT 1 FROM CM_CONTRACT_PAYMENT_APPLY_LINE L
-                    WHERE L.APPLY_ID = A.APPLY_ID);</code></pre></div>
+                    WHERE L.APPLY_ID = A.APPLY_ID);
+--</code></pre></div>
 </div>
 
 
@@ -465,7 +469,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
   FROM CM_CONTRACT_PAYMENT_SUMMARY S
   WHERE S.CUSTOMER_ID = #{customerId}
     AND S.PAY_COMPLETE = 'Y'
-    AND S.CONTRACT_TYPE = #{contractType};</code></pre></div>
+    AND S.CONTRACT_TYPE = #{contractType};
+--</code></pre></div>
 </div>
 
 
@@ -481,7 +486,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
   FROM CM_CONTRACT_PAYMENT_APPLY A
   WHERE A.CUSTOMER_ID = #{customerId}
     AND A.APPLY_TYPE = 'CEILING'
-    AND A.HZ_APPROVE_STATUS = 'RUN';</code></pre></div>
+    AND A.HZ_APPROVE_STATUS = 'RUN';
+--</code></pre></div>
 </div>
 
 
@@ -497,7 +503,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
   FROM CM_CONTRACT_PAYMENT_APPLY A
   WHERE A.CUSTOMER_ID = #{customerId}
     AND A.APPLY_TYPE = 'NORMAL'
-    AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED');</code></pre></div>
+    AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED');
+--</code></pre></div>
 </div>
 
 
@@ -514,7 +521,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
   FROM CM_CONTRACT_PAYMENT_APPLY A
   JOIN CM_DEPOSITS_CEILING C ON A.CUSTOMER_ID = C.CUSTOMER_ID
   WHERE A.APPLY_TYPE = 'CEILING'
-    AND A.APPLY_AMT != C.CEILING_AMT;</code></pre></div>
+    AND A.APPLY_AMT != C.CEILING_AMT;
+--</code></pre></div>
 </div>
 
 
@@ -533,7 +541,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
           WHERE A.PAYMENT_ID = P.PAYMENT_ID
             AND A.HZ_APPROVE_STATUS IN ('NEW', 'RUN', 'APPROVED')) AS 剩余可认款金额
   FROM CM_DEPOSITS_PAYMENT P
-  WHERE P.PAYMENT_ID = #{paymentId};</code></pre></div>
+  WHERE P.PAYMENT_ID = #{paymentId};
+--</code></pre></div>
 </div>
 
 
@@ -549,7 +558,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
   FROM CM_CONTRACT_PAYMENT_APPLY A
   LEFT JOIN CM_DEPOSITS_PAYMENT P ON A.PAYMENT_ID = P.PAYMENT_ID
   WHERE A.PAYMENT_ID IS NOT NULL
-    AND (P.PAYMENT_ID IS NULL OR P.STATUS = 'CANCELLED');</code></pre></div>
+    AND (P.PAYMENT_ID IS NULL OR P.STATUS = 'CANCELLED');
+--</code></pre></div>
 </div>
 
 
@@ -565,7 +575,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
           WHERE R.APPLY_ID = A.APPLY_ID) AS 认款记录数
   FROM CM_CONTRACT_PAYMENT_APPLY A
   WHERE EXISTS (SELECT 1 FROM CM_CONTRACT_PAYMENT_RECORD R
-                WHERE R.APPLY_ID = A.APPLY_ID);</code></pre></div>
+                WHERE R.APPLY_ID = A.APPLY_ID);
+--</code></pre></div>
 </div>
 
 
@@ -579,7 +590,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, APPLY_TYPE, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
   WHERE APPLY_ID = #{applyId}
-    AND HZ_APPROVE_STATUS = 'NEW';</code></pre></div>
+    AND HZ_APPROVE_STATUS = 'NEW';
+--</code></pre></div>
 </div>
 
 
@@ -590,7 +602,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选中任何认缴申请记录直接点击"删除"按钮<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在remove方法中校验传入的删除列表非空。未选中数据时删除操作无意义，且可能导致空指针异常。需先选中至少一条记录再删除</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '请在前端列表页选中需要删除的认缴申请记录' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '请在前端列表页选中需要删除的认缴申请记录' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -605,7 +618,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
          C.CUSTOMER_ID, C.CORPORATE_CODE, C.CORPORATE_NAME
   FROM CM_CONTRACT_PAYMENT_APPLY A
   LEFT JOIN CUSTOMER C ON A.CUSTOMER_ID = C.CUSTOMER_ID
-  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_NAME IS NULL;</code></pre></div>
+  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_NAME IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -618,7 +632,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, APPLY_AMT
   FROM CM_CONTRACT_PAYMENT_APPLY
-  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';</code></pre></div>
+  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';
+--</code></pre></div>
 </div>
 
 
@@ -629,7 +644,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用cm-contract-payment-applys相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -640,7 +656,8 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对认缴申请保存、提交、删除等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

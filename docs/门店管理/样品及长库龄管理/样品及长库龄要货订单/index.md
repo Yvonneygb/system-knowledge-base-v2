@@ -1271,7 +1271,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
   AND    h.business_type IS NULL
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1296,7 +1297,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   AND    (h.business_type &lt;&gt; dp.business_type
           OR h.channel &lt;&gt; dp.channel
           OR h.bill_type &lt;&gt; dp.bill_type)
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1319,7 +1321,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
                                 AND dpl.material_id = l.material_id
   WHERE  h.is_makt = 2
   AND    l.qty_bill &lt; dpl.moq
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1342,7 +1345,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
                                 AND dpl.material_id = l.material_id
   WHERE  h.is_makt = 2
   AND    l.qty_bill &gt; dpl.cap_qty
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1362,7 +1366,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   JOIN   discount_policy dp ON dp.policy_id = h.discount_policy_id
   WHERE  h.is_makt = 2
   AND    h.in_date &gt; dp.effective_date_end
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1384,7 +1389,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.bill_type IN (2, 14)
   GROUP  BY h.head_id, h.interim_biino, h.bill_type
-  HAVING SUM(CASE WHEN l.urgency = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.line_id) / 5);</code></pre></div>
+  HAVING SUM(CASE WHEN l.urgency = 2 THEN 1 ELSE 0 END) &gt; CEIL(COUNT(l.line_id) / 5);
+--</code></pre></div>
 </div>
 
 
@@ -1404,7 +1410,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   JOIN   sa_out_bill_head h ON h.head_id = l.head_id
   WHERE  h.is_makt = 2
   AND    l.sm_state = 'Z8'
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1427,7 +1434,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
                                 AND dpl.material_id = l.material_id
   WHERE  h.is_makt = 2
   AND    l.qty_bill &gt; dpl.active_qty
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1449,7 +1457,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   AND    (h.hz_approve_status = 'APPROVED'
           OR h.order_stat = 5
           OR h.is_auditing_wh = 2)
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1468,7 +1477,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
   AND    h.sa_salebillno IS NOT NULL
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1498,7 +1508,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
           OR l.discount_installation IS NULL OR l.discount_installation &lt;= 0
           OR l.discounted_price IS NULL OR l.discounted_price &lt;= 0
           OR l.wtamount_bill IS NULL OR l.wtamount_bill &lt;= 0)
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1520,7 +1531,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.bill_type = 1
   AND    l.urgency = 2
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1540,7 +1552,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   GROUP  BY h.head_id, h.interim_biino, l.material_code
   HAVING COUNT(l.line_id) &gt; 1
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1560,7 +1573,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    h.discount_policy_id IS NULL
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1579,7 +1593,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   LEFT   JOIN sa_out_bill_line l ON l.head_id = h.head_id
   WHERE  h.is_makt = 2
   GROUP  BY h.head_id, h.interim_biino, h.order_stat
-  HAVING COUNT(l.line_id) = 0;</code></pre></div>
+  HAVING COUNT(l.line_id) = 0;
+--</code></pre></div>
 </div>
 
 
@@ -1601,7 +1616,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   LEFT   JOIN customer_contract c ON c.customer_id = h.customer_id
   WHERE  h.is_makt = 2
   AND    c.valid_stat = 3
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1620,7 +1636,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.price_type = 3
   AND    h.hz_approve_status = 'NEW'
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1639,7 +1656,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
   AND    (h.hz_approve_status = 'APPROVED' OR h.order_stat = 5)
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1660,7 +1678,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    dp.policy_id IS NULL
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1681,7 +1700,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    dp.valid = 3
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1704,7 +1724,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    (SYSDATE &lt; dp.effective_date_begin OR SYSDATE &gt; dp.effective_date_end)
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1727,7 +1748,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    h.hz_instance_id IS NULL
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1749,7 +1771,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   LEFT   JOIN customer_address ca ON ca.address_id = h.take_man_id
   WHERE  h.is_makt = 2
   AND    (ca.address_id IS NULL OR ca.status &lt;&gt; 'ACTIVE')
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1771,7 +1794,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   WHERE  h.is_makt = 2
   AND    h.price_type = 2
   AND    dp.valid = 3
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1791,7 +1815,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
   AND    h.in_date &gt; h.effective_date_end
-  ORDER  BY h.creation_date DESC;</code></pre></div>
+  ORDER  BY h.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1809,7 +1834,8 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
          h.sa_salebillno      AS CRM订单号
   FROM   sa_out_bill_head h
   WHERE  h.is_makt = 2
-  AND    h.head_id = #{传入的headId};</code></pre></div>
+  AND    h.head_id = #{传入的headId};
+--</code></pre></div>
 </div>
 
 

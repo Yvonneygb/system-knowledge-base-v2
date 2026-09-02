@@ -320,7 +320,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME, ENTNAME, STATUS
   FROM ANNUAL_DEALER_POLICY_HEAD
-  WHERE POLICY_YEAR IS NULL;</code></pre></div>
+  WHERE POLICY_YEAR IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -337,7 +338,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
   -- 核查年度政策头表推送相关字段
   SELECT SA_POLICY_YEAR_HEADER_ID, PUSH_STATUS, PUSH_TIME, ERROR_MSG
   FROM SA_POLICY_YEAR_HEADER
-  WHERE PUSH_STATUS != 'SUCCESS' OR PUSH_STATUS IS NULL;</code></pre></div>
+  WHERE PUSH_STATUS != 'SUCCESS' OR PUSH_STATUS IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -349,7 +351,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户进入年度营销政策详情页，detail接口未传入政策头ID（id为null）<br><strong>逻辑分析：</strong>AnnualDealerPolicyHeadServiceImpl.detail方法首行校验id非空，id为null时抛CommonException。根因是前端跳转详情页时未携带POLICY_HEAD_ID参数，或URL参数丢失。需重新从列表页点击"查看"进入详情页</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME FROM ANNUAL_DEALER_POLICY_HEAD
-  WHERE POLICY_HEAD_ID = #{id};</code></pre></div>
+  WHERE POLICY_HEAD_ID = #{id};
+--</code></pre></div>
 </div>
 
 
@@ -364,7 +367,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
   FROM ANNUAL_DEALER_POLICY_HEAD H
   LEFT JOIN ANNUAL_DEALER_POLICY_LINE L ON H.POLICY_HEAD_ID = L.HEAD_ID
   GROUP BY H.POLICY_HEAD_ID, H.POLICY_YEAR
-  HAVING COUNT(L.LINE_ID) = 0;</code></pre></div>
+  HAVING COUNT(L.LINE_ID) = 0;
+--</code></pre></div>
 </div>
 
 
@@ -376,7 +380,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户对状态非"未生效"（POLICY_STATUS_DIS_NOT_ENABLE）的政策点击修改并提交update接口<br><strong>逻辑分析：</strong>AnnualDealerPolicyHeadServiceImpl.update方法校验dto.getPolicyStatus()必须为POLICY_STATUS_DIS_NOT_ENABLE（未生效），其他状态（已生效、已失效）不允许修改。已生效政策被合同引用，修改会影响已结算数据；已失效政策为历史归档。需先将政策失效再修改</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, POLICY_STATUS FROM ANNUAL_DEALER_POLICY_HEAD
-  WHERE POLICY_HEAD_ID = #{id} AND POLICY_STATUS != 'DIS_NOT_ENABLE';</code></pre></div>
+  WHERE POLICY_HEAD_ID = #{id} AND POLICY_STATUS != 'DIS_NOT_ENABLE';
+--</code></pre></div>
 </div>
 
 
@@ -388,7 +393,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户对状态非"未生效"的政策点击"生效"按钮，makeEffective接口校验不通过<br><strong>逻辑分析：</strong>AnnualDealerPolicyHeadServiceImpl.makeEffective方法校验dto非空且POLICY_STATUS为POLICY_STATUS_DIS_NOT_ENABLE（未生效），其他状态无法生效。生效逻辑会先将同事业部+年度已生效政策置为失效，再将当前政策置为已生效。需确认政策状态为未生效再生效</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT POLICY_HEAD_ID, POLICY_YEAR, ENTID, POLICY_STATUS FROM ANNUAL_DEALER_POLICY_HEAD
-  WHERE POLICY_HEAD_ID = #{id} AND POLICY_STATUS != 'DIS_NOT_ENABLE';</code></pre></div>
+  WHERE POLICY_HEAD_ID = #{id} AND POLICY_STATUS != 'DIS_NOT_ENABLE';
+--</code></pre></div>
 </div>
 
 
@@ -402,7 +408,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
     <pre class="detail-sql language-sql" v-pre><code>SELECT LINE_ID, HEAD_ID, EXECUTE_TYPE, EXECUTE_VAL_TYPE, EXECUTE_VAL
   FROM ANNUAL_DEALER_POLICY_LINE
   WHERE EXECUTE_TYPE = 'BREACH'
-    AND (EXECUTE_VAL_TYPE IS NULL OR EXECUTE_VAL IS NULL);</code></pre></div>
+    AND (EXECUTE_VAL_TYPE IS NULL OR EXECUTE_VAL IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -415,7 +422,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.CUSTOMER_ID, C.CUSTOMER_CODE, C.CUSTOMER_NAME, C.RANK
   FROM CUSTOMER C
-  WHERE C.CUSTOMER_CODE = #{custCode} AND (C.RANK IS NULL OR C.RANK = '');</code></pre></div>
+  WHERE C.CUSTOMER_CODE = #{custCode} AND (C.RANK IS NULL OR C.RANK = '');
+--</code></pre></div>
 </div>
 
 
@@ -429,7 +437,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
     <pre class="detail-sql language-sql" v-pre><code>SELECT S.SA_CONTR_HEAD_ID, S.CONTRACT_NO, A.SALE_AMOUNT AS 出库总额
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN ANNUAL_OUTBOUND_AMOUNT A ON S.SALE_CONTRACT_HEAD_ID = A.SA_CONTR_HEAD_ID
-  WHERE S.SALE_CONTRACT_HEAD_ID = #{saContrHeadId} AND A.SALE_AMOUNT IS NULL;</code></pre></div>
+  WHERE S.SALE_CONTRACT_HEAD_ID = #{saContrHeadId} AND A.SALE_AMOUNT IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -443,7 +452,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
     <pre class="detail-sql language-sql" v-pre><code>SELECT T.LINE_ID, T.START_POINT, T.END_POINT, T.TIER_VAL
   FROM ANNUAL_DEALER_POLICY_TIERS T
   WHERE T.LINE_ID = #{discountId}
-    AND #{completionRate} BETWEEN T.START_POINT AND T.END_POINT;</code></pre></div>
+    AND #{completionRate} BETWEEN T.START_POINT AND T.END_POINT;
+--</code></pre></div>
 </div>
 
 
@@ -457,7 +467,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
     <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.REBATE_ID, L.LINE_ID
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN ANNUAL_DEALER_POLICY_LINE L ON S.REBATE_ID = L.LINE_ID
-  WHERE S.REBATE_ID IS NOT NULL AND L.LINE_ID IS NULL;</code></pre></div>
+  WHERE S.REBATE_ID IS NOT NULL AND L.LINE_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -471,7 +482,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
     <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.BREACH_ID, L.LINE_ID
   FROM SA_SALE_CONTRACT_HEAD S
   LEFT JOIN ANNUAL_DEALER_POLICY_LINE L ON S.BREACH_ID = L.LINE_ID
-  WHERE S.BREACH_ID IS NOT NULL AND L.LINE_ID IS NULL;</code></pre></div>
+  WHERE S.BREACH_ID IS NOT NULL AND L.LINE_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -484,7 +496,8 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT PARAM_CODE, PARAM_VALUE FROM SYS_PARAM
   WHERE ENTID = #{entId}
-    AND PARAM_CODE IN ('Rank_B_Discount', 'Rank_B1_Discount');</code></pre></div>
+    AND PARAM_CODE IN ('Rank_B_Discount', 'Rank_B1_Discount');
+--</code></pre></div>
 </div>
 
 

@@ -364,7 +364,8 @@ SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS !=
     AND (SERVERNO = #{serverno} OR #{serverno} IS NULL)
     AND (BILLMONTH = #{billmonth} OR #{billmonth} IS NULL)
     AND (FUND_TYPE = #{fundType} OR #{fundType} IS NULL)
-  ORDER BY BILLMONTH DESC, SERVERNO;</code></pre></div>
+  ORDER BY BILLMONTH DESC, SERVERNO;
+--</code></pre></div>
 </div>
 
 
@@ -378,7 +379,8 @@ SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS !=
     <pre class="detail-sql language-sql" v-pre><code>SELECT HEADER_ID, BILLMONTH, SERVERNO, SERVERNAME, STATUS
   FROM LNK_CASH_BILL_HEAD_NEW
   WHERE STATUS != 'Confirmed'
-  ORDER BY BILLMONTH DESC;</code></pre></div>
+  ORDER BY BILLMONTH DESC;
+--</code></pre></div>
 </div>
 
 
@@ -394,7 +396,8 @@ SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS !=
                WHEN STATUS IS NULL THEN '状态异常'
                ELSE '待确认' END) AS 状态判断
   FROM LNK_CASH_BILL_HEAD_NEW
-  WHERE HEADER_ID = #{headerId};</code></pre></div>
+  WHERE HEADER_ID = #{headerId};
+--</code></pre></div>
 </div>
 
 
@@ -408,7 +411,8 @@ SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS !=
     <pre class="detail-sql language-sql" v-pre><code>SELECT H.HEADER_ID, H.BILLMONTH, H.SERVERNO, H.STATUS,
          (SELECT COUNT(1) FROM LNK_CASHPOOLS_BILL_LINE L WHERE L.HEADER_ID = H.HEADER_ID) AS 行明细数
   FROM LNK_CASH_BILL_HEAD_NEW H
-  WHERE H.HEADER_ID = #{headerId};</code></pre></div>
+  WHERE H.HEADER_ID = #{headerId};
+--</code></pre></div>
 </div>
 
 
@@ -421,7 +425,8 @@ SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS !=
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 核查对账单数据量是否异常增长导致查询/导出超时
   SELECT COUNT(1) AS 对账单总数, MAX(BILLMONTH) AS 最新期间
-  FROM LNK_CASH_BILL_HEAD_NEW;</code></pre></div>
+  FROM LNK_CASH_BILL_HEAD_NEW;
+--</code></pre></div>
 </div>
 
 
@@ -435,7 +440,8 @@ SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS !=
     <pre class="detail-sql language-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre></div>
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};
+--</code></pre></div>
 </div>
 
 

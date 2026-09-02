@@ -349,7 +349,8 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
   -- 核查头表是否已存在（唯一约束冲突排查）
   SELECT INLIMIT_BALANCE_ACCOUNT_ID, ENTNAME, TRADING_COMPANY_CODE, YEARMONTH, S_STAT
   FROM BUD_INLIMIT_BALANCE_ACCOUNT
-  WHERE ENTNAME = #{entname} AND YEARMONTH = #{yearmonth};</code></pre></div>
+  WHERE ENTNAME = #{entname} AND YEARMONTH = #{yearmonth};
+--</code></pre></div>
 </div>
 
 
@@ -366,7 +367,8 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
   WHERE (ENTNAME = #{entname} OR #{entname} IS NULL)
     AND (TRADING_COMPANY_CODE = #{tradingCompanyCode} OR #{tradingCompanyCode} IS NULL)
     AND (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
-  ORDER BY YEARMONTH DESC;</code></pre></div>
+  ORDER BY YEARMONTH DESC;
+--</code></pre></div>
 </div>
 
 
@@ -380,7 +382,8 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
     <pre class="detail-sql language-sql" v-pre><code>-- 核查当前已有的最大年月
   SELECT MAX(YEARMONTH) AS 最大年月, TO_CHAR(SYSDATE, 'YYYY/MM') AS 当前年月
   FROM BUD_INLIMIT_BALANCE_ACCOUNT
-  WHERE ENTNAME = #{entname};</code></pre></div>
+  WHERE ENTNAME = #{entname};
+--</code></pre></div>
 </div>
 
 
@@ -394,7 +397,8 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
     <pre class="detail-sql language-sql" v-pre><code>-- 核查选中记录的当前推送状态
   SELECT INLIMIT_BALANCE_ACCOUNT_ID, ENTNAME, YEARMONTH, SEND_STATUS, S_STAT
   FROM BUD_INLIMIT_BALANCE_ACCOUNT
-  WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});</code></pre></div>
+  WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
+--</code></pre></div>
 </div>
 
 
@@ -407,7 +411,8 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 核查头表数据量是否异常
   SELECT COUNT(*) AS 总对账单数, COUNT(DISTINCT YEARMONTH) AS 年月数
-  FROM BUD_INLIMIT_BALANCE_ACCOUNT;</code></pre></div>
+  FROM BUD_INLIMIT_BALANCE_ACCOUNT;
+--</code></pre></div>
 </div>
 
 
@@ -421,7 +426,8 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
     <pre class="detail-sql language-sql" v-pre><code>-- 核查用户可访问的事业部
   SELECT USER_ID, DIVISION_ID, DIVISION_NAME, ENABLED
   FROM USER_DIVISION_AUTH
-  WHERE USER_ID = #{userId};</code></pre></div>
+  WHERE USER_ID = #{userId};
+--</code></pre></div>
 </div>
 
 

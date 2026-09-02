@@ -332,7 +332,8 @@ WHERE 1 = 1
            GROUP  BY county_areaid
          ) mt ON sa3.areaid = mt.county_areaid
   WHERE  sa3.areatype = 6
-  ORDER  BY sa3.areaid;</code></pre></div>
+  ORDER  BY sa3.areaid;
+--</code></pre></div>
 </div>
 
 
@@ -345,7 +346,8 @@ WHERE 1 = 1
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 区县总数
   FROM   scparea
-  WHERE  areatype = 6;</code></pre></div>
+  WHERE  areatype = 6;
+--</code></pre></div>
 </div>
 
 
@@ -357,7 +359,8 @@ WHERE 1 = 1
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre></div>
+  FROM   dual;
+--</code></pre></div>
 </div>
 
 
@@ -375,7 +378,8 @@ WHERE 1 = 1
   LEFT   JOIN scparea sa3 ON sa2.areaid = sa3.superid AND sa3.areatype = 6
   WHERE  sa1.areatype = 4
   GROUP  BY sa1.areaname
-  ORDER  BY 区县数量 DESC;</code></pre></div>
+  ORDER  BY 区县数量 DESC;
+--</code></pre></div>
 </div>
 
 

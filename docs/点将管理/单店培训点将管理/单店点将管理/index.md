@@ -506,7 +506,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
          ta.APPROVAL_STATE AS 审核状态, ta.ORDER_LECTURE_STATE AS 点将状态
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_TYPE_ONE = 'train' AND ta.APPLY_TYPE_TWO = 'apply'
-  ORDER BY ta.CREATE_DATE DESC;</code></pre></div>
+  ORDER BY ta.CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -519,7 +520,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY7S 申请编码, ta.ERROR_INFO AS 异常信息
   FROM TRAIN_APPLY ta
-  WHERE ta.ERROR_INFO IS NOT NULL;</code></pre></div>
+  WHERE ta.ERROR_INFO IS NOT NULL;
+--</code></pre></div>
 </div>
 
 
@@ -533,7 +535,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
     <pre class="detail-sql language-sql" v-pre><code>SELECT ta.APPLY_CODE AS 申请编码, ta.APPROVAL_COMMENTS AS 审批意见
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
-    AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = '');</code></pre></div>
+    AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = '');
+--</code></pre></div>
 </div>
 
 
@@ -548,7 +551,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
   FROM TRAIN_APPLY ta
   WHERE ta.APPLY_CODE = :applyCode
     AND ta.APPROVAL_STATE = 'approved'
-    AND ta.SIGNER_ID IS NULL;</code></pre></div>
+    AND ta.SIGNER_ID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -564,7 +568,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
   FROM TRAIN_APPLY ta
   WHERE ta.APPROVAL_STATE = 'approving'
     AND (ta.APPROVAL_COMMENTS IS NULL OR ta.APPROVAL_COMMENTS = ''
-         OR (ta.SIGNER_ID IS NULL));</code></pre></div>
+         OR (ta.SIGNER_ID IS NULL));
+--</code></pre></div>
 </div>
 
 
@@ -581,7 +586,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -598,7 +604,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%single_store_general_manage%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%single_store_general_manage%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -613,7 +620,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
          ORDER_LECTURE_STATE AS 点将状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -630,7 +638,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -645,7 +654,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.APPLY_APPROVAL_STATE','MBO.ORDER_LECTURE_STATE','MBO.CANCEL_APPROVAL_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -659,7 +669,8 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
     <pre class="detail-sql language-sql" v-pre><code>SELECT U.USER_NAME AS 用户名, U.REAL_NAME AS 真实姓名,
          U.LOGIN_FLAG AS 登录标记, U.STATUS_CODE AS 状态
   FROM SYS_USER U
-  WHERE U.REAL_NAME IS NULL OR U.STATUS_CODE &lt;&gt; 'ACTIVE';</code></pre></div>
+  WHERE U.REAL_NAME IS NULL OR U.STATUS_CODE &lt;&gt; 'ACTIVE';
+--</code></pre></div>
 </div>
 
 

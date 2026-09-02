@@ -548,7 +548,8 @@ WHERE 1 = 1
          create_time           AS 创建时间
   FROM   fin_fee_terminal_re_cashout
   WHERE  create_time &lt; SYSDATE - 365
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -566,7 +567,8 @@ WHERE 1 = 1
          create_time           AS 创建时间
   FROM   fin_fee_terminal_re_cashout
   WHERE  create_time &gt;= SYSDATE - 30
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -580,7 +582,8 @@ WHERE 1 = 1
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 额度外兑现单总数,
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
-  FROM   fin_fee_terminal_re_cashout;</code></pre></div>
+  FROM   fin_fee_terminal_re_cashout;
+--</code></pre></div>
 </div>
 
 
@@ -592,7 +595,8 @@ WHERE 1 = 1
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION, permissionPublic = true)，permissionPublic=true表示公开权限接口，但仍需有效的登录态。若用户未登录（token过期/丢失）、或organizationId路径参数与用户所属组织不匹配、或前端路由未配置该报表菜单，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验。需重新登录或联系管理员分配报表查看权限。</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre></div>
+  FROM   dual;
+--</code></pre></div>
 </div>
 
 
@@ -607,7 +611,8 @@ WHERE 1 = 1
          COUNT(*)                     AS 兑现单数量
   FROM   fin_fee_terminal_re_cashout
   GROUP  BY TO_CHAR(create_time, 'YYYY')
-  ORDER  BY 年度 DESC;</code></pre></div>
+  ORDER  BY 年度 DESC;
+--</code></pre></div>
 </div>
 
 

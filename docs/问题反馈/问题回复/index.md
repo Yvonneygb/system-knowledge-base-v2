@@ -419,7 +419,8 @@
   FROM FEEDBACK 反馈单
   WHERE 反馈单.ANSWER_CONTENT IS NULL
      OR LENGTH(反馈单.ANSWER_CONTENT) &gt; 2000
-  ORDER BY 反馈单.LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY 反馈单.LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -430,7 +431,8 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>在列表未选中任何行的情况下，点击"回答/追评/完成/评价"等行操作按钮<br><strong>逻辑分析：</strong>前端在执行行操作前校验当前选中行集合，若 <code>selectedRows</code> 为空数组则弹出该警告，属于前端纯校验，不调用后端接口。解决方案：先点击列表某一行选中后再执行对应操作。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>-- 无（纯前端选中行校验，不涉及数据库操作）</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>-- 无（纯前端选中行校验，不涉及数据库操作）
+--</code></pre></div>
 </div>
 
 
@@ -450,7 +452,8 @@
   FROM FEEDBACK 反馈单
   WHERE 反馈单.STATE = 3
     AND (反馈单.ANSWER_CONTENT IS NULL OR TRIM(反馈单.ANSWER_CONTENT) = '')
-  ORDER BY 反馈单.ANSWER_TIME DESC;</code></pre></div>
+  ORDER BY 反馈单.ANSWER_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -469,7 +472,8 @@
          反馈单.ANSWER_TIME     AS 回答时间
   FROM FEEDBACK 反馈单
   WHERE 反馈单.STATE = 3
-  ORDER BY 反馈单.ANSWER_TIME DESC;</code></pre></div>
+  ORDER BY 反馈单.ANSWER_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -488,7 +492,8 @@
          反馈单.LAST_UPDATE_DATE AS 最后更新时间
   FROM FEEDBACK 反馈单
   WHERE 反馈单.QUESTIONID = :问题编号
-    AND 反馈单.STATE NOT IN (1, 2);</code></pre></div>
+    AND 反馈单.STATE NOT IN (1, 2);
+--</code></pre></div>
 </div>
 
 
@@ -507,7 +512,8 @@
          反馈单.LAST_UPDATE_DATE AS 最后更新时间
   FROM FEEDBACK 反馈单
   WHERE 反馈单.QUESTIONID = :问题编号
-    AND 反馈单.STATE &lt;&gt; 3;</code></pre></div>
+    AND 反馈单.STATE &lt;&gt; 3;
+--</code></pre></div>
 </div>
 
 
@@ -528,7 +534,8 @@
   WHERE 反馈单.CREATE_TIME BETWEEN :开始时间 AND :结束时间
     AND (:问题类型 IS NULL OR 反馈单.TYPE_CODE = :问题类型)
     AND (:问题状态 IS NULL OR 反馈单.STATE = :问题状态)
-    AND (:提交人   IS NULL OR 反馈单.CREATE_NAME LIKE '%' || :提交人 || '%');</code></pre></div>
+    AND (:提交人   IS NULL OR 反馈单.CREATE_NAME LIKE '%' || :提交人 || '%');
+--</code></pre></div>
 </div>
 
 
@@ -544,7 +551,8 @@
          TO_CHAR(反馈单.LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM FEEDBACK 反馈单
   WHERE 反馈单.LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY 反馈单.LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY 反馈单.LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -561,7 +569,8 @@
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%feedback_answer%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%feedback_answer%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -575,7 +584,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT 反馈单.QUESTIONID AS 问题编号, 反馈单.TITLE AS 问题标题,
          反馈单.STATE AS 问题状态, 反馈单.DELETE_FLAG AS 删除标记
   FROM FEEDBACK 反馈单
-  WHERE 反馈单.DELETE_FLAG = 'Y' OR 反馈单.QUESTIONID IS NULL;</code></pre></div>
+  WHERE 反馈单.DELETE_FLAG = 'Y' OR 反馈单.QUESTIONID IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -590,7 +600,8 @@
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.FEEDBACK_TYPE','MBO.FEEDBACK_STATE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -606,7 +617,8 @@
          反馈单.EVALUATE_CONTENT AS 评价内容
   FROM FEEDBACK 反馈单
   WHERE 反馈单.STATE = 4
-    AND 反馈单.STAR_LEVEL IS NULL;</code></pre></div>
+    AND 反馈单.STAR_LEVEL IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -622,7 +634,8 @@
          反馈单.EVALUATE_CONTENT AS 评价内容
   FROM FEEDBACK 反馈单
   WHERE 反馈单.STATE = 4
-    AND (反馈单.EVALUATE_CONTENT IS NULL OR TRIM(反馈单.EVALUATE_CONTENT) = '');</code></pre></div>
+    AND (反馈单.EVALUATE_CONTENT IS NULL OR TRIM(反馈单.EVALUATE_CONTENT) = '');
+--</code></pre></div>
 </div>
 
 

@@ -507,7 +507,8 @@ HAVING COUNT(*) > 1;
     <pre class="detail-sql language-sql" v-pre><code>SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类,
          H.PRODUCTION_BASE_CODE AS 生产基地
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  WHERE H.ID = :headId AND H.CATEGORY IS NULL;</code></pre></div>
+  WHERE H.ID = :headId AND H.CATEGORY IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -520,7 +521,8 @@ HAVING COUNT(*) > 1;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  WHERE H.ID = :headId AND H.STANDARD IS NULL;</code></pre></div>
+  WHERE H.ID = :headId AND H.STANDARD IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -533,7 +535,8 @@ HAVING COUNT(*) > 1;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT H.ID, H.STANDARD AS 规格, H.PRODUCTION_BASE_CODE AS 生产基地
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  WHERE H.ID = :headId AND H.PRODUCTION_BASE_CODE IS NULL;</code></pre></div>
+  WHERE H.ID = :headId AND H.PRODUCTION_BASE_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -546,7 +549,8 @@ HAVING COUNT(*) > 1;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
-  WHERE L.HEAD_ID = :headId AND L.TYPE_1 IS NULL;</code></pre></div>
+  WHERE L.HEAD_ID = :headId AND L.TYPE_1 IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -559,7 +563,8 @@ HAVING COUNT(*) > 1;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
-  WHERE L.HEAD_ID = :headId AND L.TYPE_2 IS NULL;</code></pre></div>
+  WHERE L.HEAD_ID = :headId AND L.TYPE_2 IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -573,7 +578,8 @@ HAVING COUNT(*) > 1;
     <pre class="detail-sql language-sql" v-pre><code>SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
          L.PRICE AS 定价
   FROM LNK_RSP_STM_PORC_CFG_LINE L
-  WHERE L.HEAD_ID = :headId AND L.PRICE IS NULL;</code></pre></div>
+  WHERE L.HEAD_ID = :headId AND L.PRICE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -588,7 +594,8 @@ HAVING COUNT(*) > 1;
          L.PRICE AS 定价, L.STATUS AS 状态
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.HEAD_ID = :headId
-  ORDER BY L.TYPE_1, L.TYPE_2;</code></pre></div>
+  ORDER BY L.TYPE_1, L.TYPE_2;
+--</code></pre></div>
 </div>
 
 
@@ -601,7 +608,8 @@ HAVING COUNT(*) > 1;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT H.ROW_ID AS 头表ID, H.RSP_STM_HEAD_CODE AS 配置编码, H.STANDARD AS 规格
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  WHERE H.ROW_ID = :headId;</code></pre></div>
+  WHERE H.ROW_ID = :headId;
+--</code></pre></div>
 </div>
 
 
@@ -614,7 +622,8 @@ HAVING COUNT(*) > 1;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT L.ROW_ID AS 行ID, L.HEAD_ID AS 头表ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
-  WHERE L.ROW_ID = :lineId;</code></pre></div>
+  WHERE L.ROW_ID = :lineId;
+--</code></pre></div>
 </div>
 
 
@@ -628,7 +637,8 @@ HAVING COUNT(*) > 1;
     <pre class="detail-sql language-sql" v-pre><code>SELECT L.ROW_ID AS 行ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.ROW_ID = :lineId
-    AND (L.TYPE_1 IS NULL OR L.TYPE_2 IS NULL);</code></pre></div>
+    AND (L.TYPE_1 IS NULL OR L.TYPE_2 IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -643,7 +653,8 @@ HAVING COUNT(*) > 1;
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.HEAD_ID = :headId
   GROUP BY L.HEAD_ID, L.TYPE_1, L.TYPE_2
-  HAVING COUNT(*) &gt; 1;</code></pre></div>
+  HAVING COUNT(*) &gt; 1;
+--</code></pre></div>
 </div>
 
 
@@ -658,7 +669,8 @@ HAVING COUNT(*) > 1;
          H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类,
          H.PRODUCTION_BASE_CODE AS 生产基地, H.STATUS AS 状态
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
-  ORDER BY H.LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY H.LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -669,7 +681,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>头表保存按钮点击时，请求抛出异常进入catch块<br><strong>逻辑分析：</strong>前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -680,7 +693,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询或详情页加载时，接口请求异常<br><strong>逻辑分析：</strong>前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmPorcCfgHead或rspStmPorcCfgLine接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD;
+--</code></pre></div>
 </div>
 
 
@@ -697,7 +711,8 @@ HAVING COUNT(*) > 1;
     JOIN HZERO.IAM_ROLE R ON M.ROLE_ID = R.ID
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
-  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.porc_cfg.ps.%';</code></pre></div>
+  WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.porc_cfg.ps.%';
+--</code></pre></div>
 </div>
 
 
@@ -708,7 +723,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询结果为空集或明细行表格无数据<br><strong>逻辑分析：</strong>前端Table组件查询后端返回content为空数组时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE STATUS = 'valid';</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE STATUS = 'valid';
+--</code></pre></div>
 </div>
 
 
@@ -719,7 +735,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态失效或Token过期<br><strong>逻辑分析：</strong>HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -730,7 +747,8 @@ HAVING COUNT(*) > 1;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>编辑模式下点击返回按钮<br><strong>逻辑分析：</strong>前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

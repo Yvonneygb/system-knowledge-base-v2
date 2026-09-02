@@ -320,7 +320,8 @@ ORDER BY ENTNAME, TRADING_COMPANY_NAME
   WHERE (ENTID = #{entid} OR #{entid} IS NULL)
     AND (TRADING_COMPANY_ID = #{tradingCompanyId} OR #{tradingCompanyId} IS NULL)
     AND START_TIME &gt;= #{startTime} AND END_TIME &lt;= #{endTime}
-  ORDER BY ENTNAME, TRADING_COMPANY_NAME, START_TIME;</code></pre></div>
+  ORDER BY ENTNAME, TRADING_COMPANY_NAME, START_TIME;
+--</code></pre></div>
 </div>
 
 
@@ -335,7 +336,8 @@ ORDER BY ENTNAME, TRADING_COMPANY_NAME
   SELECT ENT_ID, ENT_NAME, ENABLED
   FROM HPFM_DIVISION
   WHERE ENABLED = 1
-  ORDER BY ENT_NAME;</code></pre></div>
+  ORDER BY ENT_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -349,7 +351,8 @@ ORDER BY ENTNAME, TRADING_COMPANY_NAME
     <pre class="detail-sql language-sql" v-pre><code>-- 核查指定事业部+交易公司下的余额时间区间分布
   SELECT MIN(START_TIME) AS 最早期间, MAX(END_TIME) AS 最晚期间, COUNT(1) AS 记录数
   FROM MKT_INLIMIT_BALANCE_HEADER
-  WHERE ENTID = #{entid} AND TRADING_COMPANY_ID = #{tradingCompanyId};</code></pre></div>
+  WHERE ENTID = #{entid} AND TRADING_COMPANY_ID = #{tradingCompanyId};
+--</code></pre></div>
 </div>
 
 
@@ -363,7 +366,8 @@ ORDER BY ENTNAME, TRADING_COMPANY_NAME
     <pre class="detail-sql language-sql" v-pre><code>-- 核查余额头表数据量及同步时间
   SELECT COUNT(1) AS 余额记录数, MIN(START_TIME) AS 最早期间, MAX(END_TIME) AS 最晚期间
   FROM MKT_INLIMIT_BALANCE_HEADER
-  WHERE ENTID = #{entid};</code></pre></div>
+  WHERE ENTID = #{entid};
+--</code></pre></div>
 </div>
 
 
@@ -377,7 +381,8 @@ ORDER BY ENTNAME, TRADING_COMPANY_NAME
     <pre class="detail-sql language-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre></div>
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};
+--</code></pre></div>
 </div>
 
 
@@ -393,7 +398,8 @@ ORDER BY ENTNAME, TRADING_COMPANY_NAME
   FROM MKT_INLIMIT_BALANCE_HEADER
   WHERE ENTID = #{entid}
     AND TRADING_COMPANY_ID = #{tradingCompanyId}
-  ORDER BY START_TIME DESC;</code></pre></div>
+  ORDER BY START_TIME DESC;
+--</code></pre></div>
 </div>
 
 

@@ -568,7 +568,8 @@ ORDER BY LA.CREATION_DATE DESC;
          APPROVAL_STATE AS 审核状态
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -589,7 +590,8 @@ ORDER BY LA.CREATION_DATE DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -608,7 +610,8 @@ ORDER BY LA.CREATION_DATE DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND APPROVAL_STATE IN ('approved', 'reject')
-    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');</code></pre></div>
+    AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');
+--</code></pre></div>
 </div>
 
 
@@ -627,7 +630,8 @@ ORDER BY LA.CREATION_DATE DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND ORDER_LECTURE_STATE = 'valid'
-    AND (LECTURER_NAME IS NULL OR LECTURER_ARCHIVES_CODE IS NULL);</code></pre></div>
+    AND (LECTURER_NAME IS NULL OR LECTURER_ARCHIVES_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -645,7 +649,8 @@ ORDER BY LA.CREATION_DATE DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -665,7 +670,8 @@ ORDER BY LA.CREATION_DATE DESC;
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE 'hzero.general_manage.design.design_general_manage.ps.%'
-  ORDER BY U.USER_NAME;</code></pre></div>
+  ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -682,7 +688,8 @@ ORDER BY LA.CREATION_DATE DESC;
          DELETE_FLAG AS 删除标记
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -702,7 +709,8 @@ ORDER BY LA.CREATION_DATE DESC;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND APPROVAL_STATE NOT IN ('to_be_approval','approved','reject')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -719,7 +727,8 @@ ORDER BY LA.CREATION_DATE DESC;
          U.STATUS_CODE AS 状态
   FROM SYS_USER U
   WHERE U.REAL_NAME IS NULL
-     OR U.STATUS_CODE &lt;&gt; 'ACTIVE';</code></pre></div>
+     OR U.STATUS_CODE &lt;&gt; 'ACTIVE';
+--</code></pre></div>
 </div>
 
 
@@ -738,7 +747,8 @@ ORDER BY LA.CREATION_DATE DESC;
   FROM LECTURER_ARCHIVES
   WHERE STATUS_CODE &lt;&gt; 'ACTIVE'
      OR DELETE_FLAG = 'Y'
-  ORDER BY CREATION_DATE DESC;</code></pre></div>
+  ORDER BY CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 

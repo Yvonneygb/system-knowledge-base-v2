@@ -442,7 +442,8 @@ WHERE 1 = 1
   LEFT   JOIN lnk_ob_order_receivable o ON l.delivery_line_id = o.delivery_line_id
   WHERE  h.organization_id = #{当前用户组织ID}
   AND    l.item_number NOT IN ('CUX_OM_CASH_POOL', 'CUX_OM_PRICE_RAISE')
-  ORDER  BY h.delivery_date DESC;</code></pre></div>
+  ORDER  BY h.delivery_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -459,7 +460,8 @@ WHERE 1 = 1
          create_time          AS 创建时间
   FROM   inv_out_bill_intf_head
   WHERE  delivery_date IS NOT NULL
-  ORDER  BY delivery_date DESC;</code></pre></div>
+  ORDER  BY delivery_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -473,7 +475,8 @@ WHERE 1 = 1
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 出库单总数,
          MIN(delivery_date)  AS 最早发货日期,
          MAX(delivery_date)  AS 最晚发货日期
-  FROM   inv_out_bill_intf_head;</code></pre></div>
+  FROM   inv_out_bill_intf_head;
+--</code></pre></div>
 </div>
 
 
@@ -485,7 +488,8 @@ WHERE 1 = 1
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口为组织级权限接口，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre></div>
+  FROM   dual;
+--</code></pre></div>
 </div>
 
 
@@ -500,7 +504,8 @@ WHERE 1 = 1
          COUNT(*)                       AS 出库单数量
   FROM   inv_out_bill_intf_head
   GROUP  BY TO_CHAR(delivery_date, 'YYYY')
-  ORDER  BY 年度 DESC;</code></pre></div>
+  ORDER  BY 年度 DESC;
+--</code></pre></div>
 </div>
 
 

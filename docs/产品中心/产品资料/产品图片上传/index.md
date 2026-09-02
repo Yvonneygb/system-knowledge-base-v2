@@ -341,7 +341,8 @@ WHERE F.FILE_NAME = :fileName</blockquote>
          P.PROD_STATUS AS 上下架状态, P.SM_STATE AS 生命状态
   FROM LNK_PROD P
   WHERE P.PROD_CODE = :prodCode;
-  -- 若查询结果为空，确认产品编码不存在或已删除</code></pre></div>
+  -- 若查询结果为空，确认产品编码不存在或已删除
+--</code></pre></div>
 </div>
 
 
@@ -356,7 +357,8 @@ WHERE F.FILE_NAME = :fileName</blockquote>
   FROM OBJ_FILE_TYPE T
   WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1'
   ORDER BY T.FILE_BUS_TYPE;
-  -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置</code></pre></div>
+  -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置
+--</code></pre></div>
 </div>
 
 
@@ -370,7 +372,8 @@ WHERE F.FILE_NAME = :fileName</blockquote>
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(1) AS 产品存在数
   FROM LNK_PROD P
   WHERE P.PROD_CODE = :busId;
-  -- 若:busId为空或查询结果为0，则校验失败</code></pre></div>
+  -- 若:busId为空或查询结果为0，则校验失败
+--</code></pre></div>
 </div>
 
 
@@ -384,7 +387,8 @@ WHERE F.FILE_NAME = :fileName</blockquote>
     <pre class="detail-sql language-sql" v-pre><code>SELECT T.FILE_BUS_TYPE AS 类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
   FROM OBJ_FILE_TYPE T
   WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1';
-  -- 若未选择图片类型或选择的值不在上述结果中，则校验失败</code></pre></div>
+  -- 若未选择图片类型或选择的值不在上述结果中，则校验失败
+--</code></pre></div>
 </div>
 
 
@@ -402,7 +406,8 @@ WHERE F.FILE_NAME = :fileName</blockquote>
   WHERE F.REL_BUS_TYPE = 'prod'
     AND F.SOURCE = 'IMPORT'
     AND F.CREATION_DATE &gt;= SYSDATE - 1
-  ORDER BY F.CREATION_DATE DESC;</code></pre></div>
+  ORDER BY F.CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -418,7 +423,8 @@ WHERE F.FILE_NAME = :fileName</blockquote>
     JOIN HZERO.IAM_ROLE_PERMISSION RP ON R.ID = RP.ROLE_ID
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.PERMISSION_CODE LIKE '%product_list.ps.import%'
-    AND R.ROLE_CODE = :currentRoleCode;</code></pre></div>
+    AND R.ROLE_CODE = :currentRoleCode;
+--</code></pre></div>
 </div>
 
 
@@ -432,7 +438,8 @@ WHERE F.FILE_NAME = :fileName</blockquote>
     <pre class="detail-sql language-sql" v-pre><code>-- 无直接SQL，检查用户会话状态
   SELECT U.LOGIN_NAME, U.LAST_LOGIN_DATE AS 最后登录时间
   FROM HZERO.IAM_USER U
-  WHERE U.LOGIN_NAME = :currentLoginName;</code></pre></div>
+  WHERE U.LOGIN_NAME = :currentLoginName;
+--</code></pre></div>
 </div>
 
 

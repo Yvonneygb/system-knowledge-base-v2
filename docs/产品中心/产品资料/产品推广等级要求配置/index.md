@@ -429,7 +429,8 @@ HAVING COUNT(*) > 1;
   WHERE C.DEPT_CODE = :deptCode
     AND C.GRADE = :grade
     AND C.PROD_SIGN = :prodSign
-  ORDER BY C.CREATION_DATE DESC;</code></pre></div>
+  ORDER BY C.CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -444,7 +445,8 @@ HAVING COUNT(*) > 1;
          C.PROD_SIGN AS 物料类型, C.STATUS AS 状态,
          C.LAST_UPDATED_BY, C.LAST_UPDATE_DATE
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.ID = :recordId;</code></pre></div>
+  WHERE C.ID = :recordId;
+--</code></pre></div>
 </div>
 
 
@@ -458,7 +460,8 @@ HAVING COUNT(*) > 1;
     <pre class="detail-sql language-sql" v-pre><code>-- 检查存在品牌事业部为空的配置记录（异常数据）
   SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.DEPT_CODE IS NULL OR TRIM(C.DEPT_CODE) IS NULL;</code></pre></div>
+  WHERE C.DEPT_CODE IS NULL OR TRIM(C.DEPT_CODE) IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -471,7 +474,8 @@ HAVING COUNT(*) > 1;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.GRADE IS NULL OR TRIM(C.GRADE) IS NULL;</code></pre></div>
+  WHERE C.GRADE IS NULL OR TRIM(C.GRADE) IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -484,7 +488,8 @@ HAVING COUNT(*) > 1;
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.PROD_SIGN IS NULL OR TRIM(C.PROD_SIGN) IS NULL;</code></pre></div>
+  WHERE C.PROD_SIGN IS NULL OR TRIM(C.PROD_SIGN) IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -498,7 +503,8 @@ HAVING COUNT(*) > 1;
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.REQ_COLUMN_TYPE AS 字段类型, C.REQ_COLUMN AS 必填字段
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.REQ_COLUMN_TYPE IS NULL OR TRIM(C.REQ_COLUMN_TYPE) IS NULL;</code></pre></div>
+  WHERE C.REQ_COLUMN_TYPE IS NULL OR TRIM(C.REQ_COLUMN_TYPE) IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -512,7 +518,8 @@ HAVING COUNT(*) > 1;
     <pre class="detail-sql language-sql" v-pre><code>SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.REQ_COLUMN_TYPE AS 字段类型, C.REQ_COLUMN AS 必填字段
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.REQ_COLUMN IS NULL OR TRIM(C.REQ_COLUMN) IS NULL;</code></pre></div>
+  WHERE C.REQ_COLUMN IS NULL OR TRIM(C.REQ_COLUMN) IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -527,7 +534,8 @@ HAVING COUNT(*) > 1;
   SELECT C.ID, C.DEPT_CODE AS 事业部, C.GRADE AS 等级,
          C.PROD_SIGN AS 物料类型, C.STATUS AS 状态
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
-  WHERE C.STATUS IS NULL;</code></pre></div>
+  WHERE C.STATUS IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -548,7 +556,8 @@ HAVING COUNT(*) > 1;
     'hzero.product_data.product_info.promote_grade-list.ps.edit',
     'hzero.product_data.product_info.product_change_detail.ps.delete'
   )
-  ORDER BY P.CODE;</code></pre></div>
+  ORDER BY P.CODE;
+--</code></pre></div>
 </div>
 
 
@@ -565,7 +574,8 @@ HAVING COUNT(*) > 1;
   FROM HZERO.OAUTH_ACCESS_TOKEN T
     JOIN HZERO.IAM_USER U ON T.USER_ID = U.ID
   WHERE U.LOGIN_NAME = :loginName
-  ORDER BY T.EXPIRE_TIME DESC;</code></pre></div>
+  ORDER BY T.EXPIRE_TIME DESC;
+--</code></pre></div>
 </div>
 
 

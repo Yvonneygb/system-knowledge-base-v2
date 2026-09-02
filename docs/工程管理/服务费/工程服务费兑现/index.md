@@ -257,7 +257,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.PROJECT_CODE, esfc.CONTRACT_CODE, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_NO = :cashNo
-  -- 若返回空，说明兑现单不存在</code></pre></div>
+  -- 若返回空，说明兑现单不存在
+--</code></pre></div>
 </div>
 
 
@@ -273,7 +274,8 @@
          esfc.TOTAL_SERVICE_FEE - esfc.CASHED_AMOUNT AS 剩余可兑现金额
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_NO = :cashNo
-  -- 对比兑现金额与剩余可兑现金额</code></pre></div>
+  -- 对比兑现金额与剩余可兑现金额
+--</code></pre></div>
 </div>
 
 
@@ -287,7 +289,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS, esfc.VALID
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre></div>
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'
+--</code></pre></div>
 </div>
 
 
@@ -301,7 +304,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_TYPE, esfc.PROJECT_CODE
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查CASH_TYPE字段值是否在有效范围内</code></pre></div>
+  -- 检查CASH_TYPE字段值是否在有效范围内
+--</code></pre></div>
 </div>
 
 
@@ -315,7 +319,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT, esfc.PROJECT_CODE
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)</code></pre></div>
+    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)
+--</code></pre></div>
 </div>
 
 
@@ -331,7 +336,8 @@
          esfc.TOTAL_SERVICE_FEE - esfc.CASHED_AMOUNT AS 剩余可兑现金额
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_NO = :cashNo
-    AND esfc.CASH_AMOUNT &gt; (esfc.TOTAL_SERVICE_FEE - esfc.CASHED_AMOUNT)</code></pre></div>
+    AND esfc.CASH_AMOUNT &gt; (esfc.TOTAL_SERVICE_FEE - esfc.CASHED_AMOUNT)
+--</code></pre></div>
 </div>
 
 
@@ -345,7 +351,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.PROJECT_CODE, esfc.DIVISION_ID
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查事业部销售主体配置表是否存在该事业部配置</code></pre></div>
+  -- 检查事业部销售主体配置表是否存在该事业部配置
+--</code></pre></div>
 </div>
 
 
@@ -359,7 +366,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查单据ID是否有效</code></pre></div>
+  -- 检查单据ID是否有效
+--</code></pre></div>
 </div>
 
 
@@ -373,7 +381,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 若返回空，说明单据不存在</code></pre></div>
+  -- 若返回空，说明单据不存在
+--</code></pre></div>
 </div>
 
 
@@ -387,7 +396,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)</code></pre></div>
+    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)
+--</code></pre></div>
 </div>
 
 
@@ -403,7 +413,8 @@
          esfc.SETTLED_AMOUNT + esfc.CASH_AMOUNT AS 合计金额
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND esfc.SETTLED_AMOUNT + esfc.CASH_AMOUNT &gt; esfc.ACC_AMOUNT</code></pre></div>
+    AND esfc.SETTLED_AMOUNT + esfc.CASH_AMOUNT &gt; esfc.ACC_AMOUNT
+--</code></pre></div>
 </div>
 
 
@@ -418,7 +429,8 @@
          esfc.PROJECT_BALANCE AS 项目盈余
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND esfc.PROJECT_BALANCE &lt; esfc.CASH_AMOUNT</code></pre></div>
+    AND esfc.PROJECT_BALANCE &lt; esfc.CASH_AMOUNT
+--</code></pre></div>
 </div>
 
 
@@ -431,7 +443,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
-  WHERE esfc.CASH_ID = :cashId</code></pre></div>
+  WHERE esfc.CASH_ID = :cashId
+--</code></pre></div>
 </div>
 
 
@@ -445,7 +458,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 若返回空，说明单据不存在</code></pre></div>
+  -- 若返回空，说明单据不存在
+--</code></pre></div>
 </div>
 
 
@@ -459,7 +473,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CASH_AMOUNT
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)</code></pre></div>
+    AND (esfc.CASH_AMOUNT IS NULL OR esfc.CASH_AMOUNT &lt;= 0)
+--</code></pre></div>
 </div>
 
 
@@ -473,7 +488,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查审批人配置是否完整</code></pre></div>
+  -- 检查审批人配置是否完整
+--</code></pre></div>
 </div>
 
 
@@ -487,7 +503,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.HZ_APPROVE_STATUS
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查共享中心服务连通性</code></pre></div>
+  -- 检查共享中心服务连通性
+--</code></pre></div>
 </div>
 
 
@@ -501,7 +518,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT esfc.CASH_ID, esfc.CASH_NO, esfc.CREATED_BY
   FROM EPM_SERVICE_FEE_CASH esfc
   WHERE esfc.CASH_ID = :cashId
-  -- 检查申请人OA账号是否已配置</code></pre></div>
+  -- 检查申请人OA账号是否已配置
+--</code></pre></div>
 </div>
 
 

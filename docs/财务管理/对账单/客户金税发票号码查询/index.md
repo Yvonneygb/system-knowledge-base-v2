@@ -352,7 +352,8 @@ SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #{invoiceTruthId};
     AND (PROJECT_CODE = #{projectCode} OR #{projectCode} IS NULL)
     AND (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
     AND (INVOICE_VERIFER_NO = #{invoiceNo} OR #{invoiceNo} IS NULL)
-  ORDER BY CREATE_TIME DESC;</code></pre></div>
+  ORDER BY CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -366,7 +367,8 @@ SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #{invoiceTruthId};
     <pre class="detail-sql language-sql" v-pre><code>SELECT PROJECT_ID, PROJECT_CODE, PROJECT_NAME, ENABLED
   FROM EPM_PROJECT
   WHERE ORGANIZATION_ID = #{organizationId}
-    AND (PROJECT_CODE LIKE '%' || #{keyword} || '%' OR PROJECT_NAME LIKE '%' || #{keyword} || '%');</code></pre></div>
+    AND (PROJECT_CODE LIKE '%' || #{keyword} || '%' OR PROJECT_NAME LIKE '%' || #{keyword} || '%');
+--</code></pre></div>
 </div>
 
 
@@ -379,7 +381,8 @@ SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #{invoiceTruthId};
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT TC.TRADING_COMPANY_ID, TC.TRADING_COMPANY_CODE, TC.TRADING_COMPANY_NAME, TC.ENABLED
   FROM EPM_TRADING_COMPANY TC
-  WHERE TC.CUSTOMER_CODE = #{customerCode};</code></pre></div>
+  WHERE TC.CUSTOMER_CODE = #{customerCode};
+--</code></pre></div>
 </div>
 
 
@@ -393,7 +396,8 @@ SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #{invoiceTruthId};
     <pre class="detail-sql language-sql" v-pre><code>SELECT H.INVOICE_TRUTH_ID, H.INVOICE_TRUTH_NO, H.AUDIT_STAT,
          (SELECT COUNT(1) FROM EPM_INVOICE_TRUTH_LINE L WHERE L.INVOICE_TRUTH_ID = H.INVOICE_TRUTH_ID) AS 行明细数
   FROM EPM_INVOICE_TRUTH_HEADER H
-  WHERE H.INVOICE_TRUTH_ID = #{invoiceTruthId};</code></pre></div>
+  WHERE H.INVOICE_TRUTH_ID = #{invoiceTruthId};
+--</code></pre></div>
 </div>
 
 
@@ -407,7 +411,8 @@ SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #{invoiceTruthId};
     <pre class="detail-sql language-sql" v-pre><code>-- 核查核销头表数据量是否异常增长导致查询超时
   SELECT COUNT(1) AS 核销单总数, MAX(CREATE_TIME) AS 最新创建时间
   FROM EPM_INVOICE_TRUTH_HEADER
-  WHERE ORGANIZATION_ID = #{organizationId};</code></pre></div>
+  WHERE ORGANIZATION_ID = #{organizationId};
+--</code></pre></div>
 </div>
 
 
@@ -421,7 +426,8 @@ SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #{invoiceTruthId};
     <pre class="detail-sql language-sql" v-pre><code>-- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
   SELECT USER_ID, ROLE_ID, ORGANIZATION_ID
   FROM IAM_USER_ROLE
-  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};</code></pre></div>
+  WHERE USER_ID = #{userId} AND ORGANIZATION_ID = #{organizationId};
+--</code></pre></div>
 </div>
 
 

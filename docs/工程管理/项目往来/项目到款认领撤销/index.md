@@ -511,7 +511,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
          epcq.TOTAL_CLAIM_SERVICE_AMT - :cancelServiceChargeAmt - epcq.RETURN_SERVICE_AMT - epcq.APPLIED_AMT AS 撤销后可结算金额
   FROM EPM_PAD_CANCEL_QUERY epcq
   WHERE epcq.SVC_EXP_ACC_ID = :svcExpAccId
-  -- 若撤销后可结算金额 &lt; 0，则触发该报错</code></pre></div>
+  -- 若撤销后可结算金额 &lt; 0，则触发该报错
+--</code></pre></div>
 </div>
 
 
@@ -528,7 +529,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   JOIN EPM_PAD_CANCEL epc ON epad.PAYMENT_ALLOT_DETAIL_ID = epc.PAYMENT_ALLOT_DETAIL_ID
   WHERE epc.CANCEL_ID = :cancelId
     AND epad.CANCEL_FLAG = 'Y'
-  -- 查出已被撤销的认领明细</code></pre></div>
+  -- 查出已被撤销的认领明细
+--</code></pre></div>
 </div>
 
 
@@ -542,7 +544,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
     <pre class="detail-sql language-sql" v-pre><code>SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_INSTANCE_ID, epc.HZ_APPROVE_STATUS
   FROM EPM_PAD_CANCEL epc
   WHERE epc.CANCEL_ID = :cancelId
-  -- 校验撤销单ID是否存在</code></pre></div>
+  -- 校验撤销单ID是否存在
+--</code></pre></div>
 </div>
 
 
@@ -556,7 +559,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
     <pre class="detail-sql language-sql" v-pre><code>SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_APPROVE_STATUS, epc.VALID
   FROM EPM_PAD_CANCEL epc
   WHERE epc.CANCEL_ID = :cancelId
-  -- 若返回空，说明撤销单不存在</code></pre></div>
+  -- 若返回空，说明撤销单不存在
+--</code></pre></div>
 </div>
 
 
@@ -572,7 +576,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
           WHERE epcd.CANCEL_ID = epc.CANCEL_ID) AS 撤销明细数
   FROM EPM_PAD_CANCEL epc
   WHERE epc.CANCEL_ID = :cancelId
-  -- 若撤销明细数为0，则触发该报错</code></pre></div>
+  -- 若撤销明细数为0，则触发该报错
+--</code></pre></div>
 </div>
 
 
@@ -588,7 +593,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE sem.OBJID = :cancelId
     AND sem.OBJTYPENAME = '到款认领撤销'
   ORDER BY sem.CREATION_DATE DESC
-  -- 查询ERP推送异常记录</code></pre></div>
+  -- 查询ERP推送异常记录
+--</code></pre></div>
 </div>
 
 
@@ -604,7 +610,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
   WHERE sem.OBJID = :cancelId
     AND sem.OBJTYPENAME = '到款认领撤销'
   ORDER BY sem.CREATION_DATE DESC
-  -- 查询ERP推送异常详情</code></pre></div>
+  -- 查询ERP推送异常详情
+--</code></pre></div>
 </div>
 
 

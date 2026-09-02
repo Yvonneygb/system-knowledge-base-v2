@@ -349,7 +349,8 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
   WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
     AND (ENTID = #{entid} OR #{entid} IS NULL)
-  ORDER BY YEARMONTH DESC, IN_WRITEOFF_NO;</code></pre></div>
+  ORDER BY YEARMONTH DESC, IN_WRITEOFF_NO;
+--</code></pre></div>
 </div>
 
 
@@ -363,7 +364,8 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
     <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, BILLING_UNIT_CODE, COST_CENTER_CODE,
          SUBJECT_NAME, WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, SYNC_ITEM, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_ID IN (#{ids}) AND (BILL_STATUS != 1 OR SYNC_ITEM IS NULL);</code></pre></div>
+  WHERE IN_WRITEOFF_ID IN (#{ids}) AND (BILL_STATUS != 1 OR SYNC_ITEM IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -377,7 +379,8 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
     <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          TRADING_COMPANY_NAME, BILL_STATUS, WRITEOFF_TAX_AMT
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE YEARMONTH = #{yearMonth} AND TRADING_COMPANY_CODE = #{tradingCompanyCode};</code></pre></div>
+  WHERE YEARMONTH = #{yearMonth} AND TRADING_COMPANY_CODE = #{tradingCompanyCode};
+--</code></pre></div>
 </div>
 
 
@@ -391,7 +394,8 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
     <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, TRADING_COMPANY_CODE, YEARMONTH,
          BILL_STATUS, SYNC_ITEM
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};</code></pre></div>
+  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};
+--</code></pre></div>
 </div>
 
 
@@ -405,7 +409,8 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
     <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          WRITEOFF_TAX_AMT, WRITEOFF_NOTAX_AMT, BILL_STATUS, SUBJECT_NAME, CASH_OUT_MODE
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};</code></pre></div>
+  WHERE IN_WRITEOFF_HEADNO = #{apportionCode};
+--</code></pre></div>
 </div>
 
 
@@ -418,7 +423,8 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE YEARMONTH = #{yearMonth};</code></pre></div>
+  WHERE YEARMONTH = #{yearMonth};
+--</code></pre></div>
 </div>
 
 
@@ -432,7 +438,8 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
     <pre class="detail-sql language-sql" v-pre><code>SELECT IN_WRITEOFF_ID, IN_WRITEOFF_NO, YEARMONTH, TRADING_COMPANY_CODE,
          TRADING_COMPANY_NAME, BILL_STATUS
   FROM FIN_FEE_WRITEOFF_IN_QUOTA
-  WHERE TRADING_COMPANY_CODE = #{tradingCompanyCode};</code></pre></div>
+  WHERE TRADING_COMPANY_CODE = #{tradingCompanyCode};
+--</code></pre></div>
 </div>
 
 

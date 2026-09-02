@@ -278,7 +278,8 @@ ORDER BY create_time DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)            AS 兑现单数量
   FROM   fin_fee_cashout_header
   WHERE  bud_year IS NULL
-  AND    hz_approve_status = 'APPROVED';</code></pre></div>
+  AND    hz_approve_status = 'APPROVED';
+--</code></pre></div>
 </div>
 
 
@@ -297,7 +298,8 @@ ORDER BY create_time DESC;
   WHERE  hz_approve_status = 'APPROVED'
   AND    create_time BETWEEN #{startDate} AND #{endDate}
   AND    #{startDate} &gt; #{endDate}
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -315,7 +317,8 @@ ORDER BY create_time DESC;
   FROM   fin_fee_cashout_header
   WHERE  cashout_type IS NOT NULL
   AND    cashout_type NOT IN (1, 2)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -330,7 +333,8 @@ ORDER BY create_time DESC;
          MIN(create_time)    AS 最早创建时间,
          MAX(create_time)    AS 最晚创建时间
   FROM   fin_fee_cashout_header
-  WHERE  hz_approve_status = 'APPROVED';</code></pre></div>
+  WHERE  hz_approve_status = 'APPROVED';
+--</code></pre></div>
 </div>
 
 
@@ -342,7 +346,8 @@ ORDER BY create_time DESC;
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre></div>
+  FROM   dual;
+--</code></pre></div>
 </div>
 
 

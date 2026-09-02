@@ -1084,8 +1084,6 @@ SELECT COUNT(*) FROM EPM_UPLOAD_INVOICE_INFO WHERE INVOICE_VERIFER_ID = ?;
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 构建主要信息集合：key=noucherNumber-invoiceCode-invoiceNumber<br>(2) 遍历详细信息，检查每行的key是否在集合中<br>(3) 排查SQL见下方代码块</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-    
-
     <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT D.NOUCHER_NUMBER, D.INVOICE_CODE, D.INVOICE_NUMBER
 FROM EPM_UPLOAD_INVOICE_DETAILS D
@@ -1095,8 +1093,8 @@ FROM EPM_UPLOAD_INVOICE_INFO I
 WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
   AND I.NOUCHER_NUMBER = D.NOUCHER_NUMBER
   AND I.INVOICE_CODE = D.INVOICE_CODE
-  AND I.INVOICE_NUMBER = D.INVOICE_NUMBER)</code></pre>
-
+  AND I.INVOICE_NUMBER = D.INVOICE_NUMBER)
+--</code></pre>
   </div>
 </div>
 <div id="err-detail-3" class="error-detail-overlay">
@@ -1142,14 +1140,12 @@ WHERE I.INVOICE_VERIFER_ID = D.INVOICE_VERIFER_ID
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 调用后端check-invoice接口，传入invoiceValid(发票代码-发票号码)和invoiceVeriferId<br>(2) 后端查询EPM_UPLOAD_INVOICE_INFO中除当前核销单外是否存在相同发票代码+号码<br>(3) 排查SQL见下方代码块</div>
     <div class="detail-tip" v-pre>提示型提醒（toast），不阻断操作；按提示补充或修正数据后重试</div>
-    
-
     <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*)
 FROM EPM_UPLOAD_INVOICE_INFO
 WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
-  AND INVOICE_VERIFER_ID != ?</code></pre>
-
+  AND INVOICE_VERIFER_ID != ?
+--</code></pre>
   </div>
 </div>
 <div id="err-detail-8" class="error-detail-overlay">
@@ -1231,13 +1227,11 @@ WHERE INVOICE_CODE || '-' || INVOICE_NUMBER = ?
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 查询详细信息，计算每行：单价×数量，与金额字段比较(允许0.01差异)<br>(2) 排查SQL见下方代码块</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-    
-
     <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT INVOICE_NUMBER, UNIT_PRICE, MDF_ITEM_NUMBER, AMOUNT
 FROM EPM_UPLOAD_INVOICE_DETAILS
-WHERE INVOICE_VERIFER_ID = ?</code></pre>
-
+WHERE INVOICE_VERIFER_ID = ?
+--</code></pre>
   </div>
 </div>
 <div id="err-detail-17" class="error-detail-overlay">
@@ -1247,8 +1241,6 @@ WHERE INVOICE_VERIFER_ID = ?</code></pre>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>(1) 按发票号码汇总详细信息行金额，与主要信息的ALL_AMOUNT比较<br>(2) 排查SQL见下方代码块</div>
     <div class="detail-tip" v-pre>阻断型错误，操作被系统直接拦截，需修复后重新提交</div>
-    
-
     <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT I.INVOICE_NUMBER, I.ALL_AMOUNT, SUM(D.UNIT_PRICE * D.MDF_ITEM_NUMBER) AS DETAIL_SUM
 FROM EPM_UPLOAD_INVOICE_INFO I
@@ -1256,8 +1248,8 @@ LEFT
 JOIN EPM_UPLOAD_INVOICE_DETAILS D ON D.INVOICE_VERIFER_ID = I.INVOICE_VERIFER_ID
   AND D.INVOICE_NUMBER = I.INVOICE_NUMBER
 WHERE I.INVOICE_VERIFER_ID = ?
-GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT</code></pre>
-
+GROUP BY I.INVOICE_NUMBER, I.ALL_AMOUNT
+--</code></pre>
   </div>
 </div>
 <div id="err-detail-18" class="error-detail-overlay">

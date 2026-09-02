@@ -435,7 +435,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.CUSTOMER_CODE, epi.CUSTOMER_NAME,
          epi.RECEIVE_AMT, epi.RECEIVE_DATE
   FROM EPM_PAYMENT_IMPORT epi
-  WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.CUSTOMER_CODE)</code></pre></div>
+  WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.CUSTOMER_CODE)
+--</code></pre></div>
 </div>
 
 
@@ -449,7 +450,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_UNIT_NAME, epi.REMIT_UNIT_NAME,
          epi.RECEIVE_AMT, epi.RECEIVE_DATE
   FROM EPM_PAYMENT_IMPORT epi
-  WHERE NOT EXISTS (SELECT 1 FROM TRADING_COMPANY tc WHERE tc.COMPANY_NAME = epi.RECEIVE_UNIT_NAME)</code></pre></div>
+  WHERE NOT EXISTS (SELECT 1 FROM TRADING_COMPANY tc WHERE tc.COMPANY_NAME = epi.RECEIVE_UNIT_NAME)
+--</code></pre></div>
 </div>
 
 
@@ -463,7 +465,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.DEPT_CODE, epi.RECEIVE_AMT
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.DEPT_CODE IS NOT NULL
-    AND NOT EXISTS (SELECT 1 FROM DEPT d WHERE d.DEPT_CODE = epi.DEPT_CODE)</code></pre></div>
+    AND NOT EXISTS (SELECT 1 FROM DEPT d WHERE d.DEPT_CODE = epi.DEPT_CODE)
+--</code></pre></div>
 </div>
 
 
@@ -477,7 +480,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS,
          epi.IS_CASHOUT, epi.UNALLOT_AMT, epi.ALLOT_STATUS
   FROM EPM_PAYMENT_IMPORT epi
-  WHERE epi.PAYMENT_STATUS IN ('OVERDUE', 'SUSPENDED', 'WRITE_OFF', 'INSUFFICIENT_FUNDS')</code></pre></div>
+  WHERE epi.PAYMENT_STATUS IN ('OVERDUE', 'SUSPENDED', 'WRITE_OFF', 'INSUFFICIENT_FUNDS')
+--</code></pre></div>
 </div>
 
 
@@ -492,7 +496,8 @@ ORDER BY RECEIVE_DATE DESC;
          epi.IS_CASHOUT, epi.PAYMENT_STATUS, epi.BILL_TYPE
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.ACCEPTANCE_TYPE NOT IN ('COMMERCIAL_ACCEPTANCE', 'BANK_ACCEPTANCE')
-    AND epi.IS_CASHOUT = 'N'</code></pre></div>
+    AND epi.IS_CASHOUT = 'N'
+--</code></pre></div>
 </div>
 
 
@@ -506,7 +511,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.IS_CASHOUT,
          epi.PAYMENT_STATUS, epi.ACCEPTANCE_TYPE
   FROM EPM_PAYMENT_IMPORT epi
-  WHERE epi.IS_CASHOUT = 'Y'</code></pre></div>
+  WHERE epi.IS_CASHOUT = 'Y'
+--</code></pre></div>
 </div>
 
 
@@ -520,7 +526,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.CUSTOMER_CODE, epi.CUSTOMER_NAME,
          epi.RECEIVE_AMT, epi.RECEIVE_DATE
   FROM EPM_PAYMENT_IMPORT epi
-  WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.CUSTOMER_CODE)</code></pre></div>
+  WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.CUSTOMER_CODE)
+--</code></pre></div>
 </div>
 
 
@@ -534,7 +541,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.REMIT_UNIT_CODE, epi.REMIT_UNIT_NAME,
          epi.RECEIVE_AMT, epi.RECEIVE_DATE
   FROM EPM_PAYMENT_IMPORT epi
-  WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.REMIT_UNIT_CODE)</code></pre></div>
+  WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.REMIT_UNIT_CODE)
+--</code></pre></div>
 </div>
 
 
@@ -549,7 +557,8 @@ ORDER BY RECEIVE_DATE DESC;
          epi.SOURCE_SYSTEM, epi.IMPORT_STAT
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.EXT_PAYMENT_IMPORT_ID = :extPaymentImportId
-  -- 若返回空，说明ERP到款单未同步到系统</code></pre></div>
+  -- 若返回空，说明ERP到款单未同步到系统
+--</code></pre></div>
 </div>
 
 
@@ -564,7 +573,8 @@ ORDER BY RECEIVE_DATE DESC;
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.EXT_PAYMENT_IMPORT_ID = :extPaymentImportId
     AND epi.IMPORT_STAT IS NULL
-  -- 查出业务处理异常的到款单</code></pre></div>
+  -- 查出业务处理异常的到款单
+--</code></pre></div>
 </div>
 
 
@@ -578,7 +588,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.IMPORT_STAT
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
-  -- 校验到款单ID是否有效</code></pre></div>
+  -- 校验到款单ID是否有效
+--</code></pre></div>
 </div>
 
 
@@ -594,7 +605,8 @@ ORDER BY RECEIVE_DATE DESC;
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.IMPORT_STAT = '已失效'
      OR epi.ALLOT_STATUS = 'CANCEL'
-  -- 查出已撤销的到款单</code></pre></div>
+  -- 查出已撤销的到款单
+--</code></pre></div>
 </div>
 
 
@@ -608,7 +620,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.UNALLOT_AMT, epi.BILL_TYPE
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
-  -- 校验到款单ID是否有效</code></pre></div>
+  -- 校验到款单ID是否有效
+--</code></pre></div>
 </div>
 
 
@@ -624,7 +637,8 @@ ORDER BY RECEIVE_DATE DESC;
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.ACCEPTANCE_TYPE IN ('COMMERCIAL_ACCEPTANCE', 'BANK_ACCEPTANCE')
     AND epi.PAYMENT_STATUS NOT IN ('SUCCESS', 'PENDING')
-  -- 查出状态不允许兑付的商票到款单</code></pre></div>
+  -- 查出状态不允许兑付的商票到款单
+--</code></pre></div>
 </div>
 
 
@@ -638,7 +652,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 编码数量
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_IMPORT_CODE IN (:codeList)
-  -- 校验传入的编码数量是否超过100</code></pre></div>
+  -- 校验传入的编码数量是否超过100
+--</code></pre></div>
 </div>
 
 
@@ -652,7 +667,8 @@ ORDER BY RECEIVE_DATE DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_DATE, epi.IMPORT_DATE
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.RECEIVE_DATE BETWEEN :startDate AND :endDate
-  -- 校验时间区间是否完整</code></pre></div>
+  -- 校验时间区间是否完整
+--</code></pre></div>
 </div>
 
 

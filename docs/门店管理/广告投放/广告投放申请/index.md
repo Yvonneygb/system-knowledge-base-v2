@@ -500,7 +500,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
   AND    total_apply_amt_bx &lt;= 0
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -518,7 +519,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
   AND    (fee_apply_id = 0 OR fee_apply_id IS NULL)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -535,7 +537,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
          hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
-  AND    fee_apply_id = #{传入的feeApplyId};</code></pre></div>
+  AND    fee_apply_id = #{传入的feeApplyId};
+--</code></pre></div>
 </div>
 
 
@@ -553,7 +556,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
          callback_source     AS 回调来源
   FROM   fin_fee_apply_header
   WHERE  apply_type = 2
-  AND    fee_apply_id = #{OA回调报文中的feeApplyId};</code></pre></div>
+  AND    fee_apply_id = #{OA回调报文中的feeApplyId};
+--</code></pre></div>
 </div>
 
 
@@ -572,7 +576,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  apply_type = 2
   AND    hz_approve_status = 'RUN'
   AND    fee_apply_id IS NULL
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -591,7 +596,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  apply_type = 2
   AND    bx_type = 2
   AND    cyear IS NULL
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -610,7 +616,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  apply_type = 2
   AND    bx_type = 2
   AND    organization_id IS NULL
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -628,7 +635,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
          available_amt      AS 可用金额
   FROM   bud_over_budget
   WHERE  fee_type_id = 66014602
-  ORDER  BY bud_year DESC;</code></pre></div>
+  ORDER  BY bud_year DESC;
+--</code></pre></div>
 </div>
 
 
@@ -649,7 +657,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  apply_type = 2
   AND    hz_approve_status = 'RUN'
   AND    (fee_apply_id IS NULL OR fee_apply_id = 0)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -667,7 +676,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   FROM   fin_fee_cashout_header
   WHERE  save_type = 2
   AND    (fee_cashout_no IS NULL OR fee_cashout_no = '')
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -687,7 +697,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  apply_type = 2
   AND    hz_approve_status = 'APPROVED'
   AND    (trading_company_name IS NULL OR checker IS NULL)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 
@@ -707,7 +718,8 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
   WHERE  apply_type = 2
   AND    bx_type = 2
   AND    (cyear IS NULL OR organization_id IS NULL)
-  ORDER  BY create_time DESC;</code></pre></div>
+  ORDER  BY create_time DESC;
+--</code></pre></div>
 </div>
 
 

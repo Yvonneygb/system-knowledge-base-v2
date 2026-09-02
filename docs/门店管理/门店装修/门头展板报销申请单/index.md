@@ -609,7 +609,8 @@
   AND    h.valid = 2
   AND    h.start_date &lt;= SYSDATE
   AND    h.end_date &gt;= SYSDATE
-  ORDER  BY h.start_date DESC;</code></pre></div>
+  ORDER  BY h.start_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -625,7 +626,8 @@
          h.valid        AS 有效状态,
          CASE h.valid WHEN 2 THEN '有效' ELSE '失效' END AS 状态说明
   FROM   policy_standard_head h
-  WHERE  h.id = #{传入的policyStandardId};</code></pre></div>
+  WHERE  h.id = #{传入的policyStandardId};
+--</code></pre></div>
 </div>
 
 
@@ -644,7 +646,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'NEW'
   AND    (r.customer_id IS NULL OR r.customer_legal_id IS NULL)
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -663,7 +666,8 @@
   FROM   policy_standard_head h
   WHERE  h.valid = 2
   AND    (h.start_date &gt; SYSDATE OR h.end_date &lt; SYSDATE)
-  ORDER  BY h.end_date DESC;</code></pre></div>
+  ORDER  BY h.end_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -681,7 +685,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'NEW'
   AND    r.bx_type IS NULL
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -700,7 +705,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'NEW'
   AND    NOT EXISTS (SELECT 1 FROM cust_dh_reimburse_line l WHERE l.head_id = r.id)
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -720,7 +726,8 @@
   WHERE  r.hz_approve_status = 'NEW'
   GROUP  BY r.id, r.reimburse_code, r.policy_standard_id
   HAVING COUNT(DISTINCT l.terminal_id) &gt; 1
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -738,7 +745,8 @@
          l.decorate_project AS 装修项目
   FROM   cust_dh_reimburse_line l
   WHERE  NVL(l.apply_num, 0) = 0
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -757,7 +765,8 @@
   FROM   cust_dh_reimburse_line l
   JOIN   policy_standard_line p ON p.id = l.policy_line_id
   WHERE  l.apply_num &lt; p.min_num OR l.apply_num &gt; p.max_num
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -775,7 +784,8 @@
          l.before_doc_name AS 装修前照片名
   FROM   cust_dh_reimburse_line l
   WHERE  l.before_doc_id IS NULL
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -793,7 +803,8 @@
          l.after_doc_name AS 装修后照片名
   FROM   cust_dh_reimburse_line l
   WHERE  l.after_doc_id IS NULL
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -811,7 +822,8 @@
   FROM   cust_dh_reimburse_line l
   WHERE  l.policy_line_id IS NOT NULL
   AND    NOT EXISTS (SELECT 1 FROM policy_standard_line p WHERE p.id = l.policy_line_id)
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -830,7 +842,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'NEW'
   AND    r.customer_legal_id IS NULL
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -857,7 +870,8 @@
   FROM   fin_fee_check_bx_header b
   WHERE  b.fee_type_id = 66014602
   AND    b.bud_year = #{当前年份}
-  ORDER  BY b.division_id;</code></pre></div>
+  ORDER  BY b.division_id;
+--</code></pre></div>
 </div>
 
 
@@ -875,7 +889,8 @@
   FROM   policy_standard_head h
   WHERE  h.cust_limit_flag = 'Y'
   AND    h.extra_budget_excess_strategy NOT IN (1, 2)
-  ORDER  BY h.id;</code></pre></div>
+  ORDER  BY h.id;
+--</code></pre></div>
 </div>
 
 
@@ -897,7 +912,8 @@
   WHERE  r.hz_approve_status = 'RUN'
   AND    NVL(h.excess_flag, 'N') &lt;&gt; 'Y'
   AND    l.in_biz_amt &gt; l.in_standard_amt
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -919,7 +935,8 @@
   WHERE  r.hz_approve_status = 'RUN'
   AND    NVL(h.excess_flag, 'N') &lt;&gt; 'Y'
   AND    l.out_biz_amt &gt; l.out_standard_amt
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -937,7 +954,8 @@
   FROM   cust_dh_reimburse_line l
   WHERE  NVL(l.in_standard_amt, 0) = 0
   AND    NVL(l.in_biz_amt, 0) &gt; 0
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -955,7 +973,8 @@
   FROM   cust_dh_reimburse_line l
   WHERE  NVL(l.out_standard_amt, 0) = 0
   AND    NVL(l.out_biz_amt, 0) &gt; 0
-  ORDER  BY l.id DESC;</code></pre></div>
+  ORDER  BY l.id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -971,7 +990,8 @@
          l.terminal_id AS 门店ID
   FROM   cust_dh_reimburse_line l
   WHERE  l.id IS NULL
-  ORDER  BY l.head_id DESC;</code></pre></div>
+  ORDER  BY l.head_id DESC;
+--</code></pre></div>
 </div>
 
 
@@ -987,7 +1007,8 @@
          l.terminal_id AS 门店ID,
          l.apply_num  AS 申请数量
   FROM   cust_dh_reimburse_line l
-  WHERE  l.id = #{传入的lineId};</code></pre></div>
+  WHERE  l.id = #{传入的lineId};
+--</code></pre></div>
 </div>
 
 
@@ -1005,7 +1026,8 @@
          r.last_update_date AS 最后更新时间
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'RUN'
-  ORDER  BY r.last_update_date DESC;</code></pre></div>
+  ORDER  BY r.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1024,7 +1046,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'RUN'
   AND    r.last_update_date &lt; SYSDATE - 1
-  ORDER  BY r.last_update_date DESC;</code></pre></div>
+  ORDER  BY r.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1040,7 +1063,8 @@
          r.hz_approve_status AS 审批状态
   FROM   cust_dh_reimburse_head r
   WHERE  r.id IS NULL
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1056,7 +1080,8 @@
          r.hz_approve_status AS 审批状态,
          r.last_update_date AS 最后更新时间
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #{传入的id};</code></pre></div>
+  WHERE  r.id = #{传入的id};
+--</code></pre></div>
 </div>
 
 
@@ -1072,7 +1097,8 @@
          r.hz_approve_status AS 审批状态,
          r.last_update_date AS 最后更新时间
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #{传入的id};</code></pre></div>
+  WHERE  r.id = #{传入的id};
+--</code></pre></div>
 </div>
 
 
@@ -1090,7 +1116,8 @@
          r.last_update_date AS 最后更新时间
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'RUN'
-  ORDER  BY r.last_update_date DESC;</code></pre></div>
+  ORDER  BY r.last_update_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1107,7 +1134,8 @@
          r.policy_standard_id AS 政策ID,
          r.hz_approve_status AS 审批状态
   FROM   cust_dh_reimburse_head r
-  WHERE  r.id = #{传入的id};</code></pre></div>
+  WHERE  r.id = #{传入的id};
+--</code></pre></div>
 </div>
 
 
@@ -1126,7 +1154,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'NEW'
   AND    (r.customer_id IS NULL OR r.policy_standard_id IS NULL)
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1144,7 +1173,8 @@
           WHERE  l.head_id = r.id) AS 行表记录数
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'NEW'
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1163,7 +1193,8 @@
   FROM   cust_dh_reimburse_head r
   WHERE  r.hz_approve_status = 'NEW'
   AND    NOT EXISTS (SELECT 1 FROM cust_dh_reimburse_line l WHERE l.head_id = r.id)
-  ORDER  BY r.creation_date DESC;</code></pre></div>
+  ORDER  BY r.creation_date DESC;
+--</code></pre></div>
 </div>
 
 

@@ -419,7 +419,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
          edp.HZ_APPROVE_STATUS, edp.VALID
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.CHANNEL = 4
-    AND (edp.DISCOUNT_POLICY_NAME IS NULL OR TRIM(edp.DISCOUNT_POLICY_NAME) = '')</code></pre></div>
+    AND (edp.DISCOUNT_POLICY_NAME IS NULL OR TRIM(edp.DISCOUNT_POLICY_NAME) = '')
+--</code></pre></div>
 </div>
 
 
@@ -435,7 +436,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
     AND edp.CHANNEL = 4
-  -- 检查OA配置表是否存在该事业部配置</code></pre></div>
+  -- 检查OA配置表是否存在该事业部配置
+--</code></pre></div>
 </div>
 
 
@@ -452,7 +454,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
     AND edp.CHANNEL = 4
-  -- 期望 产品明细行数 &gt; 0</code></pre></div>
+  -- 期望 产品明细行数 &gt; 0
+--</code></pre></div>
 </div>
 
 
@@ -467,7 +470,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
   FROM EPM_DISCOUNT_POLICY_ITEM edpi
   WHERE edpi.DISCOUNT_POLICY_ID = :policyId
     AND edpi.APPLICATION_TYPE IN (1, 2, 3)
-  -- 检查是否存在APPLICATION_TYPE=3与其他类型同时存在</code></pre></div>
+  -- 检查是否存在APPLICATION_TYPE=3与其他类型同时存在
+--</code></pre></div>
 </div>
 
 
@@ -482,7 +486,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
          LENGTH(edp.DISCOUNT_POLICY_NAME) AS 名称长度
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-    AND LENGTH(edp.DISCOUNT_POLICY_NAME) &gt; 30</code></pre></div>
+    AND LENGTH(edp.DISCOUNT_POLICY_NAME) &gt; 30
+--</code></pre></div>
 </div>
 
 
@@ -496,7 +501,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre></div>
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'
+--</code></pre></div>
 </div>
 
 
@@ -510,7 +516,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-  -- 若返回空，说明单据不存在</code></pre></div>
+  -- 若返回空，说明单据不存在
+--</code></pre></div>
 </div>
 
 
@@ -524,7 +531,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME
   FROM EPM_DISCOUNT_POLICY_ITEM edpi
   WHERE edpi.DISCOUNT_POLICY_ID = :policyId
-    AND (edpi.ITEM_CODE IS NULL OR TRIM(edpi.ITEM_CODE) = '')</code></pre></div>
+    AND (edpi.ITEM_CODE IS NULL OR TRIM(edpi.ITEM_CODE) = '')
+--</code></pre></div>
 </div>
 
 
@@ -538,7 +546,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.CHANNEL
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-    AND (edp.CHANNEL IS NULL OR edp.CHANNEL = '')</code></pre></div>
+    AND (edp.CHANNEL IS NULL OR edp.CHANNEL = '')
+--</code></pre></div>
 </div>
 
 
@@ -552,7 +561,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.POLICY_TYPE
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-    AND (edp.POLICY_TYPE IS NULL OR edp.POLICY_TYPE = '' OR edp.POLICY_TYPE = '0')</code></pre></div>
+    AND (edp.POLICY_TYPE IS NULL OR edp.POLICY_TYPE = '' OR edp.POLICY_TYPE = '0')
+--</code></pre></div>
 </div>
 
 
@@ -566,7 +576,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.CURRENCY
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-    AND (edp.CURRENCY IS NULL OR edp.CURRENCY = '')</code></pre></div>
+    AND (edp.CURRENCY IS NULL OR edp.CURRENCY = '')
+--</code></pre></div>
 </div>
 
 
@@ -580,7 +591,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>-- 前端校验，无对应SQL
   SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE
   FROM EPM_DISCOUNT_POLICY edp
-  WHERE edp.DISCOUNT_POLICY_ID = :policyId</code></pre></div>
+  WHERE edp.DISCOUNT_POLICY_ID = :policyId
+--</code></pre></div>
 </div>
 
 
@@ -597,7 +609,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
   LEFT JOIN EPM_DISCOUNT_POLICY_ITEM_LINE edpil
     ON edpi.DISCOUNT_POLICY_ITEM_ID = edpil.DISCOUNT_POLICY_ITEM_ID
   WHERE edpi.DISCOUNT_POLICY_ID = :policyId
-    AND edpil.CAPPING_QTY &gt; edpi.TOTAL_CAP_NUMBER</code></pre></div>
+    AND edpil.CAPPING_QTY &gt; edpi.TOTAL_CAP_NUMBER
+--</code></pre></div>
 </div>
 
 
@@ -611,7 +624,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>-- 前端文件格式校验，无对应SQL
   SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE
   FROM EPM_DISCOUNT_POLICY edp
-  WHERE edp.DISCOUNT_POLICY_ID = :policyId</code></pre></div>
+  WHERE edp.DISCOUNT_POLICY_ID = :policyId
+--</code></pre></div>
 </div>
 
 
@@ -625,7 +639,8 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
     <pre class="detail-sql language-sql" v-pre><code>SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
   FROM EPM_DISCOUNT_POLICY edp
   WHERE edp.DISCOUNT_POLICY_ID = :policyId
-  -- 若返回空，说明单据未保存</code></pre></div>
+  -- 若返回空，说明单据未保存
+--</code></pre></div>
 </div>
 
 

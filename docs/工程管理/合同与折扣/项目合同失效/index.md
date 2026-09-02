@@ -269,7 +269,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_CODE, epd.CONTRACT_CODE, epd.HZ_APPROVE_STATUS
   FROM EPM_PROJECT_DISABLE epd
   WHERE epd.DISABLE_NO = :disableNo
-  -- 若返回空，说明失效单不存在</code></pre></div>
+  -- 若返回空，说明失效单不存在
+--</code></pre></div>
 </div>
 
 
@@ -284,7 +285,8 @@
   FROM EPM_PROJECT_CONTRACT epc
   WHERE epc.CONTRACT_CODE = :contractCode
     AND epc.VALID = 3
-  -- 查出已失效的合同</code></pre></div>
+  -- 查出已失效的合同
+--</code></pre></div>
 </div>
 
 
@@ -298,7 +300,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.HZ_APPROVE_STATUS, epd.VALID
   FROM EPM_PROJECT_DISABLE epd
   WHERE epd.DISABLE_ID = :disableId
-  -- 期望 HZ_APPROVE_STATUS = 'NEW'</code></pre></div>
+  -- 期望 HZ_APPROVE_STATUS = 'NEW'
+--</code></pre></div>
 </div>
 
 
@@ -314,7 +317,8 @@
          (SELECT COUNT(1) FROM EPM_REPORT er WHERE er.PROJECT_ID = epd.PROJECT_ID) AS 报备数据数
   FROM EPM_PROJECT_DISABLE epd
   WHERE epd.DISABLE_ID = :disableId
-  -- 期望 报备数据数 &gt; 0</code></pre></div>
+  -- 期望 报备数据数 &gt; 0
+--</code></pre></div>
 </div>
 
 

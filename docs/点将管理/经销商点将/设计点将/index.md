@@ -745,7 +745,8 @@ GROUP BY da.LECTURER_NAME;
          ORDER_LECTURE_STATE AS 点将状态,
          APPROVAL_STATE AS 审核状态
   FROM DESIGN_APPLY
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -762,7 +763,8 @@ GROUP BY da.LECTURER_NAME;
          ORDER_LECTURE_STATE AS 点将状态
   FROM DESIGN_APPLY
   WHERE APPROVAL_STATE &lt;&gt; 'fdd_in_approval'
-    AND ORDER_LECTURE_STATE IN ('valid', 'designing');</code></pre></div>
+    AND ORDER_LECTURE_STATE IN ('valid', 'designing');
+--</code></pre></div>
 </div>
 
 
@@ -779,7 +781,8 @@ GROUP BY da.LECTURER_NAME;
          ORDER_LECTURE_STATE AS 点将状态
   FROM DESIGN_APPLY
   WHERE SETTLEMENT_CONFIRM_STATE &lt;&gt; 'to_be_confirm'
-    AND ORDER_LECTURE_STATE = 'drawing_uploaded';</code></pre></div>
+    AND ORDER_LECTURE_STATE = 'drawing_uploaded';
+--</code></pre></div>
 </div>
 
 
@@ -796,7 +799,8 @@ GROUP BY da.LECTURER_NAME;
          DRAWING_TYPE AS 图纸类型,
          FILE_URL AS 文件URL
   FROM DESIGN_DRAWING
-  WHERE FILE_URL IS NULL OR FILE_URL = '';</code></pre></div>
+  WHERE FILE_URL IS NULL OR FILE_URL = '';
+--</code></pre></div>
 </div>
 
 
@@ -814,7 +818,8 @@ GROUP BY da.LECTURER_NAME;
          FEEDBACK_COMMENTS AS 反馈意见
   FROM DESIGN_DRAWING
   WHERE FEEDBACK_RESULT IS NOT NULL
-    AND (FEEDBACK_COMMENTS IS NULL OR FEEDBACK_COMMENTS = '');</code></pre></div>
+    AND (FEEDBACK_COMMENTS IS NULL OR FEEDBACK_COMMENTS = '');
+--</code></pre></div>
 </div>
 
 
@@ -830,7 +835,8 @@ GROUP BY da.LECTURER_NAME;
          DEALER_CODE AS 经销商编码,
          DEALER_NAME AS 经销商名称
   FROM DESIGN_APPLY
-  WHERE DEALER_NAME IS NULL OR DEALER_CODE IS NULL;</code></pre></div>
+  WHERE DEALER_NAME IS NULL OR DEALER_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -846,7 +852,8 @@ GROUP BY da.LECTURER_NAME;
          TERMINAL_CODE AS 门店编码,
          TERMINAL_NAME AS 门店名称
   FROM DESIGN_APPLY
-  WHERE TERMINAL_NAME IS NULL OR TERMINAL_CODE IS NULL;</code></pre></div>
+  WHERE TERMINAL_NAME IS NULL OR TERMINAL_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -862,7 +869,8 @@ GROUP BY da.LECTURER_NAME;
          LECTURER_CODE AS 设计师编码,
          LECTURER_NAME AS 设计师姓名
   FROM DESIGN_APPLY
-  WHERE LECTURER_NAME IS NULL OR LECTURER_CODE IS NULL;</code></pre></div>
+  WHERE LECTURER_NAME IS NULL OR LECTURER_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -877,7 +885,8 @@ GROUP BY da.LECTURER_NAME;
          DESIGN_NAME AS 设计名称,
          ORDER_LECTURE_STATE AS 点将状态
   FROM DESIGN_APPLY
-  WHERE DESIGN_NAME IS NULL OR DESIGN_NAME = '';</code></pre></div>
+  WHERE DESIGN_NAME IS NULL OR DESIGN_NAME = '';
+--</code></pre></div>
 </div>
 
 
@@ -892,7 +901,8 @@ GROUP BY da.LECTURER_NAME;
          DESIGN_NAME AS 设计名称,
          PRE_ORD_LECTURER_DAYS AS 拟点将天数
   FROM DESIGN_APPLY
-  WHERE PRE_ORD_LECTURER_DAYS IS NULL;</code></pre></div>
+  WHERE PRE_ORD_LECTURER_DAYS IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -909,7 +919,8 @@ GROUP BY da.LECTURER_NAME;
          APPROVAL_STATE AS 审核状态
   FROM DESIGN_APPLY
   WHERE ORDER_LECTURE_STATE &lt;&gt; 'draft'
-    AND APPROVAL_STATE NOT IN ('reject', 'oa_reject', 'fdd_reject');</code></pre></div>
+    AND APPROVAL_STATE NOT IN ('reject', 'oa_reject', 'fdd_reject');
+--</code></pre></div>
 </div>
 
 
@@ -928,7 +939,8 @@ GROUP BY da.LECTURER_NAME;
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGN_APPLY
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -944,7 +956,8 @@ GROUP BY da.LECTURER_NAME;
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM DESIGN_APPLY
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -964,7 +977,8 @@ GROUP BY da.LECTURER_NAME;
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE '%design_general%'
-  ORDER BY U.USER_NAME;</code></pre></div>
+  ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -980,7 +994,8 @@ GROUP BY da.LECTURER_NAME;
          ORDER_LECTURE_STATE AS 点将状态,
          DELETE_FLAG AS 删除标记
   FROM DESIGN_APPLY
-  WHERE DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL;</code></pre></div>
+  WHERE DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -998,7 +1013,8 @@ GROUP BY da.LECTURER_NAME;
          ERROR_INFO AS 异常问题
   FROM DESIGN_APPLY
   WHERE ORDER_LECTURE_STATE NOT IN ('draft','valid','designing','drawing_uploaded','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1014,7 +1030,8 @@ GROUP BY da.LECTURER_NAME;
          FILE_SIZE AS 文件大小
   FROM DESIGN_DRAWING
   WHERE FILE_SIZE &gt; 30 * 1024 * 1024
-  ORDER BY CREATION_DATE DESC;</code></pre></div>
+  ORDER BY CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1031,7 +1048,8 @@ GROUP BY da.LECTURER_NAME;
          ERROR_INFO AS 异常信息
   FROM DESIGN_DRAWING
   WHERE FILE_URL IS NULL OR ERROR_INFO IS NOT NULL
-  ORDER BY CREATION_DATE DESC;</code></pre></div>
+  ORDER BY CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1051,7 +1069,8 @@ GROUP BY da.LECTURER_NAME;
   FROM DESIGN_APPLY
   WHERE (ERROR_INFO IS NOT NULL OR CRM_ORDER_STATUS = 'FAIL')
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 7
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1075,7 +1094,8 @@ GROUP BY da.LECTURER_NAME;
     AND A.SERVICE_START_DATE &lt; B.SERVICE_END_DATE
     AND A.SERVICE_END_DATE &gt; B.SERVICE_START_DATE
   WHERE A.ORDER_LECTURE_STATE IN ('valid','designing')
-    AND B.ORDER_LECTURE_STATE IN ('valid','designing');</code></pre></div>
+    AND B.ORDER_LECTURE_STATE IN ('valid','designing');
+--</code></pre></div>
 </div>
 
 
@@ -1093,7 +1113,8 @@ GROUP BY da.LECTURER_NAME;
   FROM DESIGN_APPLY
   WHERE APPLY_TYPE_ONE = 'design'
     AND SCALE_AREA IS NOT NULL
-    AND SCALE_AREA &lt;= 0;</code></pre></div>
+    AND SCALE_AREA &lt;= 0;
+--</code></pre></div>
 </div>
 
 

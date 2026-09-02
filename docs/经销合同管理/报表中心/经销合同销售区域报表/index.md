@@ -228,7 +228,8 @@
     AND (CONTRACT_YEAR = #{contractYear} OR #{contractYear} IS NULL)
     AND (CUSTOMER_NAME = #{customerName} OR #{customerName} IS NULL)
     AND (SALE_AREA = #{saleArea} OR #{saleArea} IS NULL)
-  ORDER BY CONTRACT_YEAR DESC, CONTRACT_NO;</code></pre></div>
+  ORDER BY CONTRACT_YEAR DESC, CONTRACT_NO;
+--</code></pre></div>
 </div>
 
 
@@ -242,7 +243,8 @@
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 可导出记录数
   FROM SA_SALE_CONTRACT_HEAD
   WHERE HZ_APPROVE_STATUS = 'APPROVED'
-    AND (CONTRACT_YEAR = #{contractYear} OR #{contractYear} IS NULL);</code></pre></div>
+    AND (CONTRACT_YEAR = #{contractYear} OR #{contractYear} IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -254,7 +256,8 @@
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用contractReport/sa-sale-contract-head/search或export接口时，axios请求超时或返回非2xx状态码<br><strong>逻辑分析：</strong>报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。SaSaleContractHeadServiceImpl.saSaleContractHeadSearch通过PageHelper.doPageAndSort分页查询，服务异常时无法返回数据。需确认ae-report服务状态及网关配置</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 合同总记录数 FROM SA_SALE_CONTRACT_HEAD
-  WHERE HZ_APPROVE_STATUS = 'APPROVED';</code></pre></div>
+  WHERE HZ_APPROVE_STATUS = 'APPROVED';
+--</code></pre></div>
 </div>
 
 
@@ -266,7 +269,8 @@
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户角色未配置报表查询权限，访问页面时被拦截<br><strong>逻辑分析：</strong>报表页面通过permissionList控制访问权限，用户无对应权限码时无法进入页面或调用接口。需在角色管理中为用户分配"经销合同销售区域报表"查询权限</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
-  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%saSaleContractHead%';</code></pre></div>
+  WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%saSaleContractHead%';
+--</code></pre></div>
 </div>
 
 
@@ -278,7 +282,8 @@
     <div class="detail-text" v-pre><strong>触发条件：</strong>用户未填写年度（CONTRACT_YEAR）等必填查询条件直接点击查询<br><strong>逻辑分析：</strong>SaSaleContractHeadSearchDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端查询DS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT DISTINCT CONTRACT_YEAR FROM SA_SALE_CONTRACT_HEAD
-  WHERE CONTRACT_YEAR IS NOT NULL ORDER BY CONTRACT_YEAR DESC;</code></pre></div>
+  WHERE CONTRACT_YEAR IS NOT NULL ORDER BY CONTRACT_YEAR DESC;
+--</code></pre></div>
 </div>
 
 

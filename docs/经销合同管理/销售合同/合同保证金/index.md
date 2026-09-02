@@ -295,7 +295,8 @@
          (SELECT SUM(R.REDUCTION_AMT) FROM CM_DEPOSITS_REDUCTION_HEAD R
           WHERE R.CONTRACT_ID = P.CONTRACT_ID AND R.HZ_APPROVE_STATUS = 'APPROVED') AS 已减免金额
   FROM CM_DEPOSITS_PAYMENT P
-  WHERE P.PAYMENT_ID = #{paymentId};</code></pre></div>
+  WHERE P.PAYMENT_ID = #{paymentId};
+--</code></pre></div>
 </div>
 
 
@@ -308,7 +309,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, PAYMENT_AMT, PAYMENT_DATE, STATUS
   FROM CM_DEPOSITS_PAYMENT
-  WHERE PAYMENT_ID IS NULL OR PAYMENT_ID = 0;</code></pre></div>
+  WHERE PAYMENT_ID IS NULL OR PAYMENT_ID = 0;
+--</code></pre></div>
 </div>
 
 
@@ -324,7 +326,8 @@
   FROM CM_DEPOSITS_PAYMENT P
   LEFT JOIN CM_DEPOSITS_PAYMENT_HISTORY H ON P.PAYMENT_ID = H.PAYMENT_ID
   WHERE P.STATUS = 'CANCELLED'
-    AND H.OPERATION_TYPE = 'CANCEL';</code></pre></div>
+    AND H.OPERATION_TYPE = 'CANCEL';
+--</code></pre></div>
 </div>
 
 
@@ -339,7 +342,8 @@
          PAYMENT_STATUS, CONVERT_CEILING_FLAG, PAYMENT_TYPE
   FROM CM_DEPOSITS_PAYMENT
   WHERE CONVERT_CEILING_FLAG = 'Y'
-    AND PAYMENT_STATUS = 'SHARE_COMPLETE_PAY';</code></pre></div>
+    AND PAYMENT_STATUS = 'SHARE_COMPLETE_PAY';
+--</code></pre></div>
 </div>
 
 
@@ -354,7 +358,8 @@
          C.CUSTOMER_ID, C.CORPORATE_CODE, C.CORPORATE_NAME
   FROM CM_DEPOSITS_PAYMENT P
   LEFT JOIN CUSTOMER_CORPORATE_REL C ON P.BILLING_UNIT_CODE = C.CUSTOMER_CODE
-  WHERE C.CORPORATE_CODE IS NULL;</code></pre></div>
+  WHERE C.CORPORATE_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -369,7 +374,8 @@
          C.CUSTOMER_CODE, C.CORPORATE_CODE
   FROM CM_DEPOSITS_PAYMENT P
   LEFT JOIN CUSTOMER C ON P.BILLING_UNIT_CODE = C.CUSTOMER_CODE
-  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_CODE = '';</code></pre></div>
+  WHERE C.CORPORATE_CODE IS NULL OR C.CORPORATE_CODE = '';
+--</code></pre></div>
 </div>
 
 
@@ -382,7 +388,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, ENTID, BILLING_UNIT_CODE, CUSTOMER_NAME, PAYMENT_AMT
   FROM CM_DEPOSITS_PAYMENT
-  WHERE ENTID IS NULL OR BILLING_UNIT_CODE IS NULL;</code></pre></div>
+  WHERE ENTID IS NULL OR BILLING_UNIT_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -395,7 +402,8 @@
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT PAYMENT_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, PAYMENT_AMT
   FROM CM_DEPOSITS_PAYMENT
-  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';</code></pre></div>
+  WHERE CONTRACT_TYPE IS NULL OR CONTRACT_TYPE = '';
+--</code></pre></div>
 </div>
 
 
@@ -406,7 +414,8 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用cm-deposits-payments相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 
@@ -417,7 +426,8 @@
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对撤销认款、认缴申请等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
       <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;</code></pre></div>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
+--</code></pre></div>
 </div>
 
 

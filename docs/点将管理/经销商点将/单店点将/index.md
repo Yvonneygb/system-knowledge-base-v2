@@ -790,7 +790,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
          APPROVAL_STATE AS 审核状态
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -809,7 +810,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND (PRE_START_DATE &lt; SYSDATE + 7
-         OR ORDER_LECTURE_STATE &lt;&gt; 'valid');</code></pre></div>
+         OR ORDER_LECTURE_STATE &lt;&gt; 'valid');
+--</code></pre></div>
 </div>
 
 
@@ -828,7 +830,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND ORDER_LECTURE_STATE = 'valid'
     AND CANCEL_APPROVAL_STATE IS NOT NULL
-    AND CANCEL_APPROVAL_STATE &lt;&gt; 'oa_reject';</code></pre></div>
+    AND CANCEL_APPROVAL_STATE &lt;&gt; 'oa_reject';
+--</code></pre></div>
 </div>
 
 
@@ -846,7 +849,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND ORDER_LECTURE_STATE &lt;&gt; 'draft'
-    AND APPROVAL_STATE NOT IN ('reject', 'oa_reject', 'fdd_reject');</code></pre></div>
+    AND APPROVAL_STATE NOT IN ('reject', 'oa_reject', 'fdd_reject');
+--</code></pre></div>
 </div>
 
 
@@ -863,7 +867,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
          DEALER_NAME AS 经销商名称
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (DEALER_NAME IS NULL OR DEALER_CODE IS NULL);</code></pre></div>
+    AND (DEALER_NAME IS NULL OR DEALER_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -880,7 +885,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
          TERMINAL_NAME AS 门店名称
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (TERMINAL_NAME IS NULL OR TERMINAL_CODE IS NULL);</code></pre></div>
+    AND (TERMINAL_NAME IS NULL OR TERMINAL_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -897,7 +903,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
          LECTURER_NAME AS 讲师姓名
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (LECTURER_NAME IS NULL OR LECTURER_CODE IS NULL);</code></pre></div>
+    AND (LECTURER_NAME IS NULL OR LECTURER_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -913,7 +920,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
          ORDER_LECTURE_STATE AS 点将状态
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (TRAIN_NAME IS NULL OR TRAIN_NAME = '');</code></pre></div>
+    AND (TRAIN_NAME IS NULL OR TRAIN_NAME = '');
+--</code></pre></div>
 </div>
 
 
@@ -929,7 +937,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
          PRE_ORD_LECTURER_DAYS AS 拟点将天数
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND PRE_ORD_LECTURER_DAYS IS NULL;</code></pre></div>
+    AND PRE_ORD_LECTURER_DAYS IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -955,7 +964,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
     AND a.ORDER_LECTURE_STATE IN ('valid', 'executing')
     AND b.ORDER_LECTURE_STATE IN ('valid', 'executing')
     AND a.PRE_START_DATE &lt;= b.PRE_END_DATE
-    AND a.PRE_END_DATE &gt;= b.PRE_START_DATE;</code></pre></div>
+    AND a.PRE_END_DATE &gt;= b.PRE_START_DATE;
+--</code></pre></div>
 </div>
 
 
@@ -975,7 +985,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -993,7 +1004,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1013,7 +1025,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE '%single_store%'
-  ORDER BY U.USER_NAME;</code></pre></div>
+  ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -1030,7 +1043,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
          DELETE_FLAG AS 删除标记
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);</code></pre></div>
+    AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
+--</code></pre></div>
 </div>
 
 
@@ -1050,7 +1064,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND ORDER_LECTURE_STATE NOT IN ('draft','valid','executing','finished')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -1068,7 +1083,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.ORDER_LECTURE_STATE','MBO.APPLY_APPROVAL_STATE','MBO.CANCEL_APPROVAL_STATE')
     AND ENABLE_FLAG = 'N'
-  ORDER BY LOOKUP_CODE;</code></pre></div>
+  ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -1085,7 +1101,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
          TO_CHAR(PRE_END_DATE,'YYYY-MM-DD') AS 培训结束时间
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
-    AND PRE_START_DATE &gt; PRE_END_DATE;</code></pre></div>
+    AND PRE_START_DATE &gt; PRE_END_DATE;
+--</code></pre></div>
 </div>
 
 
@@ -1102,7 +1119,8 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
   FROM TRAIN_APPLY
   WHERE APPLY_TYPE_ONE = 'train' AND APPLY_TYPE_TWO = 'apply'
     AND PRE_ORD_LECTURER_DAYS IS NOT NULL
-    AND PRE_ORD_LECTURER_DAYS &lt;= 0;</code></pre></div>
+    AND PRE_ORD_LECTURER_DAYS &lt;= 0;
+--</code></pre></div>
 </div>
 
 

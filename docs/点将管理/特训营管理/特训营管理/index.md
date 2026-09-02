@@ -514,7 +514,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
          CAMP_NAME AS 特训营名称,
          STATUS AS 状态
   FROM TRAIN_CAMP
-  ORDER BY CREATION_DATE DESC;</code></pre></div>
+  ORDER BY CREATION_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -529,7 +530,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
          CAMP_NAME AS 特训营名称,
          STATUS AS 状态
   FROM TRAIN_CAMP
-  WHERE STATUS IN ('draft', 'valid', 'invalid');</code></pre></div>
+  WHERE STATUS IN ('draft', 'valid', 'invalid');
+--</code></pre></div>
 </div>
 
 
@@ -545,7 +547,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
          STATUS AS 状态,
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_CAMP
-  WHERE STATUS &lt;&gt; 'draft';</code></pre></div>
+  WHERE STATUS &lt;&gt; 'draft';
+--</code></pre></div>
 </div>
 
 
@@ -563,7 +566,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
   FROM TRAIN_CAMP
   WHERE STATUS = 'valid'
     AND PLAN_START_TIME &gt; SYSDATE
-    AND CAMPSIGN_END_TIME IS NULL;</code></pre></div>
+    AND CAMPSIGN_END_TIME IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -581,7 +585,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
          LAST_UPDATED_BY AS 最后更新人
   FROM TRAIN_CAMP
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -596,7 +601,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
          TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS 最后更新时间
   FROM TRAIN_CAMP
   WHERE LAST_UPDATE_DATE &gt;= SYSDATE - 1
-  ORDER BY LAST_UPDATE_DATE DESC;</code></pre></div>
+  ORDER BY LAST_UPDATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -613,7 +619,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
   LEFT JOIN SYS_ROLE R ON UR.ROLE_ID = R.ROLE_ID
   LEFT JOIN SYS_ROLE_PERMISSION RP ON R.ROLE_ID = RP.ROLE_ID
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
-  WHERE P.PERMISSION_CODE LIKE '%train_camp%' ORDER BY U.USER_NAME;</code></pre></div>
+  WHERE P.PERMISSION_CODE LIKE '%train_camp%' ORDER BY U.USER_NAME;
+--</code></pre></div>
 </div>
 
 
@@ -627,7 +634,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
     <pre class="detail-sql language-sql" v-pre><code>SELECT CAMP_CODE AS 特训营编码, CAMP_NAME AS 特训营名称,
          STATUS AS 状态, DELETE_FLAG AS 删除标记
   FROM TRAIN_CAMP
-  WHERE DELETE_FLAG = 'Y' OR CAMP_CODE IS NULL;</code></pre></div>
+  WHERE DELETE_FLAG = 'Y' OR CAMP_CODE IS NULL;
+--</code></pre></div>
 </div>
 
 
@@ -642,7 +650,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
          STATUS AS 状态, ERROR_INFO AS 异常问题
   FROM TRAIN_CAMP
   WHERE STATUS NOT IN ('draft','valid','invalid')
-  ORDER BY CREATE_DATE DESC;</code></pre></div>
+  ORDER BY CREATE_DATE DESC;
+--</code></pre></div>
 </div>
 
 
@@ -657,7 +666,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
          LOOKUP_VALUE_NAME AS 值名称, ENABLE_FLAG AS 启用标记
   FROM SYS_LOOKUP_VALUE
   WHERE LOOKUP_CODE IN ('MBO.TRAIN_CAMP_STATUS','MBO.CAMP_TYPE')
-    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;</code></pre></div>
+    AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
+--</code></pre></div>
 </div>
 
 
@@ -672,7 +682,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
   FROM TRAIN_CAMP
   WHERE DELETE_FLAG = 'N'
   GROUP BY CAMP_CODE
-  HAVING COUNT(*) &gt; 1;</code></pre></div>
+  HAVING COUNT(*) &gt; 1;
+--</code></pre></div>
 </div>
 
 
@@ -687,7 +698,8 @@ ORDER BY tc.PLAN_START_TIME DESC;
          TO_CHAR(CAMPSIGN_END_TIME,'YYYY-MM-DD') AS 报名结束时间,
          TO_CHAR(SYSDATE,'YYYY-MM-DD') AS 当前时间
   FROM TRAIN_CAMP
-  WHERE CAMPSIGN_END_TIME IS NOT NULL AND CAMPSIGN_END_TIME &lt;= SYSDATE;</code></pre></div>
+  WHERE CAMPSIGN_END_TIME IS NOT NULL AND CAMPSIGN_END_TIME &lt;= SYSDATE;
+--</code></pre></div>
 </div>
 
 

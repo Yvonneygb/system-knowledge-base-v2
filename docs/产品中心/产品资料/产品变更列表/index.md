@@ -573,7 +573,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE, F.STATUS, F.HZ_APPROVE_STATUS,
          F.LAST_UPDATED_BY, F.LAST_UPDATE_DATE
   FROM LNK_PROD_CHANGE_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -592,7 +593,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
     AND F.ID &lt;&gt; :currentFormId
     AND I.PROD_CODE IN (
       SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
-    );</code></pre></div>
+    );
+--</code></pre></div>
 </div>
 
 
@@ -606,7 +608,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE, F.STATUS,
          (SELECT COUNT(1) FROM LNK_PROD_CHANGE_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 行数
   FROM LNK_PROD_CHANGE_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -624,7 +627,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
   WHERE I.HEAD_ID = :formId
     AND I.CHANGE_TYPE = 'prodStatus'
     AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD')
-    AND P.SM_STATE IN ('Z1', 'Z8');</code></pre></div>
+    AND P.SM_STATE IN ('Z1', 'Z8');
+--</code></pre></div>
 </div>
 
 
@@ -641,7 +645,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
   WHERE I.HEAD_ID = :formId
     AND I.CHANGE_TYPE = 'prodStatus'
     AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD')
-    AND P.SM_STATE IN ('Z3', 'Z6', 'Z7', 'S6');</code></pre></div>
+    AND P.SM_STATE IN ('Z3', 'Z6', 'Z7', 'S6');
+--</code></pre></div>
 </div>
 
 
@@ -662,7 +667,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
       WHERE I.HEAD_ID = :formId
         AND I.CHANGE_TYPE = 'prodStatus'
         AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD')
-    );</code></pre></div>
+    );
+--</code></pre></div>
 </div>
 
 
@@ -675,7 +681,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE, F.STATUS
   FROM LNK_PROD_CHANGE_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -689,7 +696,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.FORM_CODE, F.REMARK AS 说明,
          (SELECT COUNT(1) FROM LNK_PROD_CHANGE_FORM_ITEM I WHERE I.HEAD_ID = F.ID) AS 变更行数
   FROM LNK_PROD_CHANGE_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -705,7 +713,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
   FROM LNK_PROD_CHANGE_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.CHANGE_TYPE = 'prodStatus'
-    AND (I.PROD_CODE IS NULL OR I.PROD_CODE = '');</code></pre></div>
+    AND (I.PROD_CODE IS NULL OR I.PROD_CODE = '');
+--</code></pre></div>
 </div>
 
 
@@ -721,7 +730,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
   FROM LNK_PROD_CHANGE_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.CHANGE_TYPE = 'prodStatus'
-    AND NOT EXISTS (SELECT 1 FROM LNK_PROD P WHERE P.PROD_CODE = I.PROD_CODE);</code></pre></div>
+    AND NOT EXISTS (SELECT 1 FROM LNK_PROD P WHERE P.PROD_CODE = I.PROD_CODE);
+--</code></pre></div>
 </div>
 
 
@@ -736,7 +746,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
   FROM LNK_PROD_CHANGE_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.CHANGE_TYPE = 'prodStatus'
-    AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD');</code></pre></div>
+    AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD');
+--</code></pre></div>
 </div>
 
 
@@ -757,7 +768,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
   SELECT O.PROD_ID AS 老款产品ID, O.PROD_CODE AS 老款产品编码
   FROM LNK_PRICE_APP_FORM_OLD_PROD O
   WHERE O.PRICE_APP_FORM_ITEM_ID = :priceAppFormItemId
-    AND NOT EXISTS (SELECT 1 FROM LNK_DISCOUNT_POLICY D WHERE D.PROD_ID = O.PROD_ID AND D.DEPT_ID = :deptId AND D.STATUS = 'valid');</code></pre></div>
+    AND NOT EXISTS (SELECT 1 FROM LNK_DISCOUNT_POLICY D WHERE D.PROD_ID = O.PROD_ID AND D.DEPT_ID = :deptId AND D.STATUS = 'valid');
+--</code></pre></div>
 </div>
 
 
@@ -772,7 +784,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
          (SELECT COUNT(1) FROM LNK_PROD P WHERE P.PROD_CODE = C.PROD_CODE) AS 主表存在数
   FROM LNK_PROD_PROMOTE_GRADE_CONTROL C
   WHERE C.STATUS = 'valid'
-    AND NOT EXISTS (SELECT 1 FROM LNK_PROD P WHERE P.PROD_CODE = C.PROD_CODE);</code></pre></div>
+    AND NOT EXISTS (SELECT 1 FROM LNK_PROD P WHERE P.PROD_CODE = C.PROD_CODE);
+--</code></pre></div>
 </div>
 
 
@@ -789,7 +802,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
   FROM LNK_PROD_CHANGE_FORM_ITEM I
   WHERE I.HEAD_ID = :formId
     AND I.CHANGE_TYPE IN ('prodPhoto', 'prodFiles')
-    AND NOT EXISTS (SELECT 1 FROM OBJ_FILE_TYPE T WHERE T.BUS_TYPE = I.CHANGE_TYPE AND T.FILE_BUS_TYPE = I.CHANGE_PROPERTY AND T.STATUS = '1');</code></pre></div>
+    AND NOT EXISTS (SELECT 1 FROM OBJ_FILE_TYPE T WHERE T.BUS_TYPE = I.CHANGE_TYPE AND T.FILE_BUS_TYPE = I.CHANGE_PROPERTY AND T.STATUS = '1');
+--</code></pre></div>
 </div>
 
 
@@ -803,7 +817,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE, F.STATUS, F.OBJECT_VERSION_NUMBER AS 乐观锁版本,
          F.LAST_UPDATE_DATE AS 最后更新时间, F.LAST_UPDATED_BY AS 最后更新人
   FROM LNK_PROD_CHANGE_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 
@@ -817,7 +832,8 @@ SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
     <pre class="detail-sql language-sql" v-pre><code>SELECT F.ID, F.FORM_CODE, F.STATUS, F.HZ_INSTANCE_ID AS 流程实例ID,
          F.HZ_APPROVE_STATUS AS 审批状态
   FROM LNK_PROD_CHANGE_FORM F
-  WHERE F.ID = :formId;</code></pre></div>
+  WHERE F.ID = :formId;
+--</code></pre></div>
 </div>
 
 

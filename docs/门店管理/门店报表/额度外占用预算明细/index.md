@@ -437,7 +437,8 @@ WHERE bod.occupy_amt > 0                                       -- 只展示占�
          cust_code           AS 经销商编码
   FROM   view_occupy_amt
   WHERE  occupy_amt &gt; 0
-  ORDER  BY bud_year DESC;</code></pre></div>
+  ORDER  BY bud_year DESC;
+--</code></pre></div>
 </div>
 
 
@@ -457,7 +458,8 @@ WHERE bod.occupy_amt > 0                                       -- 只展示占�
   LEFT   JOIN cust_dh_reimburse_head t ON c.reimburse_head_id = t.id
   WHERE  c.reimburse_head_id IS NOT NULL
   AND    t.id IS NULL
-  ORDER  BY c.created DESC;</code></pre></div>
+  ORDER  BY c.created DESC;
+--</code></pre></div>
 </div>
 
 
@@ -472,7 +474,8 @@ WHERE bod.occupy_amt > 0                                       -- 只展示占�
   FROM   view_occupy_amt
   WHERE  out_apply_amt &gt; 0
   OR     out_can_bx_amt &gt; 0
-  OR     out_sur_bx_amt &gt; 0;</code></pre></div>
+  OR     out_sur_bx_amt &gt; 0;
+--</code></pre></div>
 </div>
 
 
@@ -484,7 +487,8 @@ WHERE bod.occupy_amt > 0                                       -- 只展示占�
     <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
-  FROM   dual;</code></pre></div>
+  FROM   dual;
+--</code></pre></div>
 </div>
 
 
@@ -500,7 +504,8 @@ WHERE bod.occupy_amt > 0                                       -- 只展示占�
   FROM   view_occupy_amt
   WHERE  out_apply_amt &gt; 0
   GROUP  BY bud_year
-  ORDER  BY bud_year DESC;</code></pre></div>
+  ORDER  BY bud_year DESC;
+--</code></pre></div>
 </div>
 
 

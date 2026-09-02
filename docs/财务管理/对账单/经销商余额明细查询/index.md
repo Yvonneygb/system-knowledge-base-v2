@@ -286,7 +286,8 @@ ORDER BY CREATE_TIME DESC
   WHERE (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
     AND (ENTID = #{entid} OR #{entid} IS NULL)
     AND CREATE_TIME BETWEEN #{startTime} AND #{endTime}
-  ORDER BY CREATE_TIME DESC;</code></pre></div>
+  ORDER BY CREATE_TIME DESC;
+--</code></pre></div>
 </div>
 
 
@@ -299,7 +300,8 @@ ORDER BY CREATE_TIME DESC
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>-- 核查表数据量是否异常增长导致查询超时
   SELECT COUNT(*) AS 总记录数, MIN(CREATE_TIME) AS 最早时间, MAX(CREATE_TIME) AS 最晚时间
-  FROM MKT_INLIMIT_BALANCE_DETAILS;</code></pre></div>
+  FROM MKT_INLIMIT_BALANCE_DETAILS;
+--</code></pre></div>
 </div>
 
 
@@ -313,7 +315,8 @@ ORDER BY CREATE_TIME DESC
     <pre class="detail-sql language-sql" v-pre><code>-- 核查用户是否有该经销商的数据权限（具体权限表视系统配置而定）
   SELECT USER_ID, USER_NAME, CUSTOMER_CODE, ENABLED
   FROM USER_CUSTOMER_AUTH
-  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};</code></pre></div>
+  WHERE USER_ID = #{userId} AND CUSTOMER_CODE = #{customerCode};
+--</code></pre></div>
 </div>
 
 
@@ -327,7 +330,8 @@ ORDER BY CREATE_TIME DESC
     <pre class="detail-sql language-sql" v-pre><code>-- 核查未带时间条件的全表数据量
   SELECT COUNT(*) AS 全表记录数
   FROM MKT_INLIMIT_BALANCE_DETAILS
-  WHERE CUSTOMER_CODE = #{customerCode};</code></pre></div>
+  WHERE CUSTOMER_CODE = #{customerCode};
+--</code></pre></div>
 </div>
 
 
@@ -343,7 +347,8 @@ ORDER BY CREATE_TIME DESC
   FROM MKT_INLIMIT_BALANCE_DETAILS
   WHERE (CUSTOMER_CODE = #{customerCode} OR #{customerCode} IS NULL)
     AND (ENTID = #{entid} OR #{entid} IS NULL)
-    AND CREATE_TIME BETWEEN #{startTime} AND #{endTime};</code></pre></div>
+    AND CREATE_TIME BETWEEN #{startTime} AND #{endTime};
+--</code></pre></div>
 </div>
 
 
