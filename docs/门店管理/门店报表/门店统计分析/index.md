@@ -318,15 +318,21 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询结果为空</td><td>查询按钮点击时</td><td>当前查询条件下无门店统计数据，请调整查询条件后重试</td><td>低</td><td>[查看](#报错1查询结果为空)</td></tr>
-<tr><td>子查询返回多行</td><td>查询结果展示时</td><td>某经销商的门店在某维度有多条分组记录，子查询返回多行</td><td>中</td><td>[查看](#报错2子查询返回多行)</td></tr>
-<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错3网络请求失败接口调用异常)</td></tr>
-<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错4权限不足未登录)</td></tr>
-<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错5导出失败网络异常)</td></tr>
+<tr><td>查询结果为空</td><td>查询按钮点击时</td><td>当前查询条件下无门店统计数据，请调整查询条件后重试</td><td>低</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>子查询返回多行</td><td>查询结果展示时</td><td>某经销商的门店在某维度有多条分组记录，子查询返回多行</td><td>中</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：查询结果为空</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，按当前查询条件（事业部、销售区域、运营中心、省份、城市、经销商等）查询CUSTOMER关联CUSTOMER_ORG返回空结果集</li><li><strong>逻辑分析</strong>：报表查询CUSTOMER关联CUSTOMER_ORG，并通过 <code>WHERE EXISTS (SELECT 1 FROM epms.mkt_terminal t WHERE t.cust_id = a.customer_id)</code> 筛选必须存在门店的经销商。若查询条件过严（如经销商编码拼写错误、事业部ID不匹配）、或经销商名下无门店（EXISTS条件不成立）、或用户组织ID与数据不匹配，均会返回空结果。该报错为提示性，不影响系统。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，按当前查询条件（事业部、销售区域、运营中心、省份、城市、经销商等）查询CUSTOMER关联CUSTOMER_ORG返回空结果集<br><strong>逻辑分析：</strong>报表查询CUSTOMER关联CUSTOMER_ORG，并通过 <code>WHERE EXISTS (SELECT 1 FROM epms.mkt_terminal t WHERE t.cust_id = a.customer_id)</code> 筛选必须存在门店的经销商。若查询条件过严（如经销商编码拼写错误、事业部ID不匹配）、或经销商名下无门店（EXISTS条件不成立）、或用户组织ID与数据不匹配，均会返回空结果。该报错为提示性，不影响系统。</div>
+  </div>
+</div>
 
 ```sql
 SELECT c.customer_id        AS 客户ID,
@@ -342,8 +348,14 @@ SELECT c.customer_id        AS 客户ID,
   GROUP  BY c.customer_id, c.customer_code, c.customer_name
   ORDER  BY 门店数量 DESC;
 ```
-<h4>报错2：子查询返回多行</h4>
-<ul><li><strong>触发条件</strong>：查询结果展示时，某经销商在某维度（如装修风格、门店面积等）的子查询 <code>(SELECT COUNT(...) FROM epms.mkt_terminal t WHERE t.cust_id = c.customer_id AND t.某字段 = 某值 GROUP BY t.某字段)</code> 返回多行</li><li><strong>逻辑分析</strong>：报表通过50+个子查询按经销商维度统计门店各维度数量，每个子查询格式为 <code>(SELECT COUNT(...) FROM epms.mkt_terminal t WHERE t.cust_id = c.customer_id AND t.某字段 = 某值 GROUP BY t.某字段)</code>。正常情况下GROUP BY后每个分组值仅返回一行，但若子查询的WHERE条件和GROUP BY字段不一致（如WHERE按terminal_stat筛选但GROUP BY按decoration_style分组）、或数据存在异常重复、或entid关联错误导致同一经销商门店跨事业部统计，子查询可能返回多行，Oracle抛出ORA-01427单行子查询返回多行错误，整条查询失败。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>子查询返回多行</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询结果展示时，某经销商在某维度（如装修风格、门店面积等）的子查询 <code>(SELECT COUNT(...) FROM epms.mkt_terminal t WHERE t.cust_id = c.customer_id AND t.某字段 = 某值 GROUP BY t.某字段)</code> 返回多行<br><strong>逻辑分析：</strong>报表通过50+个子查询按经销商维度统计门店各维度数量，每个子查询格式为 <code>(SELECT COUNT(...) FROM epms.mkt_terminal t WHERE t.cust_id = c.customer_id AND t.某字段 = 某值 GROUP BY t.某字段)</code>。正常情况下GROUP BY后每个分组值仅返回一行，但若子查询的WHERE条件和GROUP BY字段不一致（如WHERE按terminal_stat筛选但GROUP BY按decoration_style分组）、或数据存在异常重复、或entid关联错误导致同一经销商门店跨事业部统计，子查询可能返回多行，Oracle抛出ORA-01427单行子查询返回多行错误，整条查询失败。</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.cust_id           AS 客户ID,
@@ -355,8 +367,14 @@ SELECT t.cust_id           AS 客户ID,
   HAVING COUNT(DISTINCT t.entid) > 1
   ORDER  BY 门店数量 DESC;
 ```
-<h4>报错3：网络请求失败/接口调用异常</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/search或GET /mkt-terminal-distribution/export接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalDistributionSearch接口分页查询CUSTOMER关联CUSTOMER_ORG，并通过50+个子查询统计MKT_TERMINAL各维度数量。若后端ae-report服务未启动、Oracle数据库连接异常、50+子查询导致严重慢SQL、子查询返回多行触发ORA-01427、网络中断、或网关转发失败，均会导致接口调用异常。因子查询数量多，该接口对数据库性能敏感。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败/接口调用异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/search或GET /mkt-terminal-distribution/export接口时，前端未收到响应或收到非2xx状态码（如500、502、504）<br><strong>逻辑分析：</strong>本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalDistributionSearch接口分页查询CUSTOMER关联CUSTOMER_ORG，并通过50+个子查询统计MKT_TERMINAL各维度数量。若后端ae-report服务未启动、Oracle数据库连接异常、50+子查询导致严重慢SQL、子查询返回多行触发ORA-01427、网络中断、或网关转发失败，均会导致接口调用异常。因子查询数量多，该接口对数据库性能敏感。需检查后端服务健康状态、数据库连接、网络连通性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*)            AS 客户总数,
@@ -368,15 +386,27 @@ SELECT COUNT(*)            AS 客户总数,
            WHERE t2.cust_id = c.customer_id
          );
 ```
-<h4>报错4：权限不足/未登录</h4>
-<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足/未登录</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
   FROM   dual;
 ```
-<h4>报错5：导出失败：网络异常</h4>
-<ul><li><strong>触发条件</strong>：点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/export接口过程中，网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口通过@ExcelExport(value = MktTerminalDistributionExportVO.class, asyncThreshold = 10000)注解实现Excel导出，超过1万条数据异步导出。后端先全量查询CUSTOMER关联CUSTOMER_ORG及50+子查询统计数据再生成Excel文件流返回。若查询数据量较大导致响应超时、或异步导出任务排队失败、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定事业部、销售区域）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出失败：网络异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-distribution/export接口过程中，网络中断、后端响应超时或Excel文件流传输中断<br><strong>逻辑分析：</strong>导出接口通过@ExcelExport(value = MktTerminalDistributionExportVO.class, asyncThreshold = 10000)注解实现Excel导出，超过1万条数据异步导出。后端先全量查询CUSTOMER关联CUSTOMER_ORG及50+子查询统计数据再生成Excel文件流返回。若查询数据量较大导致响应超时、或异步导出任务排队失败、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定事业部、销售区域）减少数据量。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*)            AS 有门店的经销商数量

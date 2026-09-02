@@ -335,8 +335,14 @@ WHERE CUSTOMER_CODE = #{customerCode}
 <tr><td>权限不足</td><td>进入页面时</td><td>当前用户无经销商/事业部数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询无数据</h4>
-<ul><li><strong>触发条件</strong>：用户按年度/经销商/事业部/交易公司查询额度外预算总额，MKT_OUTLIMIT_BUD_HEADER表返回空结果集</li><li><strong>逻辑分析</strong>：预算总额数据由"预算导入"功能写入MKT_OUTLIMIT_BUD_HEADER表，IMPORT_FLAG标记导入来源。无数据根因有三类：(1)该年度（BUD_YEAR）预算从未导入，头表无对应记录；(2)用户选择的年度与预算实际导入年度不符（如选2025但只导入了2024）；(3)经销商/事业部/交易公司组合条件与预算记录不匹配。需先确认预算是否已导入，再核对年度和经销商维度</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户按年度/经销商/事业部/交易公司查询额度外预算总额，MKT_OUTLIMIT_BUD_HEADER表返回空结果集<br><strong>逻辑分析：</strong>预算总额数据由"预算导入"功能写入MKT_OUTLIMIT_BUD_HEADER表，IMPORT_FLAG标记导入来源。无数据根因有三类：(1)该年度（BUD_YEAR）预算从未导入，头表无对应记录；(2)用户选择的年度与预算实际导入年度不符（如选2025但只导入了2024）；(3)经销商/事业部/交易公司组合条件与预算记录不匹配。需先确认预算是否已导入，再核对年度和经销商维度</div>
+  </div>
+</div>
 
 ```sql
 SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, ENTNAME, CUSTOMER_CODE, CUSTOMER_NAME,
@@ -348,8 +354,14 @@ SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, ENTNAME, CUSTOMER_CODE, CUSTOMER_NAME,
     AND (ENTID = #{entid} OR #{entid} IS NULL)
   ORDER BY CUSTOMER_CODE, BUD_YEAR;
 ```
-<h4>报错2：可用余额查询失败</h4>
-<ul><li><strong>触发条件</strong>：用户选中预算记录后点击"查询可用余额"按钮，POST /v1/&#123;organizationId&#125;/fin-fee-apply-headers/query-amt接口执行失败</li><li><strong>逻辑分析</strong>：可用余额通过汇总额度外费用申请单（FIN_FEE_APPLY_HEADER）已审批未冲销金额计算，公式为SUM(APPLY_AMT - CASHOUT_AMT)，条件为HZ_APPROVE_STATUS='APPROVED'且CASHOUT_AMT &lt; APPLY_AMT。失败根因有三类：(1)FIN_FEE_APPLY_HEADER表数据量过大，汇总超时；(2)费用申请单状态异常（HZ_APPROVE_STATUS字段值不规范）；(3)FinFeeApplyHeaderController服务异常。需确认费用申请单数据正常后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>可用余额查询失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中预算记录后点击"查询可用余额"按钮，POST /v1/&#123;organizationId&#125;/fin-fee-apply-headers/query-amt接口执行失败<br><strong>逻辑分析：</strong>可用余额通过汇总额度外费用申请单（FIN_FEE_APPLY_HEADER）已审批未冲销金额计算，公式为SUM(APPLY_AMT - CASHOUT_AMT)，条件为HZ_APPROVE_STATUS='APPROVED'且CASHOUT_AMT &lt; APPLY_AMT。失败根因有三类：(1)FIN_FEE_APPLY_HEADER表数据量过大，汇总超时；(2)费用申请单状态异常（HZ_APPROVE_STATUS字段值不规范）；(3)FinFeeApplyHeaderController服务异常。需确认费用申请单数据正常后重试</div>
+  </div>
+</div>
 
 ```sql
 -- 核查费用申请单汇总数据
@@ -360,8 +372,14 @@ SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, ENTNAME, CUSTOMER_CODE, CUSTOMER_NAME,
     AND HZ_APPROVE_STATUS = 'APPROVED'
     AND CASHOUT_AMT < APPLY_AMT;
 ```
-<h4>报错3：预算剩余为负数</h4>
-<ul><li><strong>触发条件</strong>：用户查询预算总额，返回的OUTLIMIT_BUD_SUR字段值小于0</li><li><strong>逻辑分析</strong>：预算剩余计算公式为OUTLIMIT_BUD_SUR = OUTLIMIT_BUD_TOTAL + OUTLIMIT_BUD_ADJ - TOTAL_OUTLIMIT_BUD_USED，其中TOTAL_OUTLIMIT_BUD_USED为1~12月已使用金额之和（THIS_OUTLIMIT_BUD_USED_1~12）。负数意味着累计已用金额超过预算总额+调整，存在超支。根因有二：(1)额度外兑现审批通过后同步更新预算表时未校验剩余预算，导致超额兑现；(2)预算调整（OUTLIMIT_BUD_ADJ）未及时同步。需核查兑现同步逻辑及调整单审批回写</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>预算剩余为负数</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户查询预算总额，返回的OUTLIMIT_BUD_SUR字段值小于0<br><strong>逻辑分析：</strong>预算剩余计算公式为OUTLIMIT_BUD_SUR = OUTLIMIT_BUD_TOTAL + OUTLIMIT_BUD_ADJ - TOTAL_OUTLIMIT_BUD_USED，其中TOTAL_OUTLIMIT_BUD_USED为1~12月已使用金额之和（THIS_OUTLIMIT_BUD_USED_1~12）。负数意味着累计已用金额超过预算总额+调整，存在超支。根因有二：(1)额度外兑现审批通过后同步更新预算表时未校验剩余预算，导致超额兑现；(2)预算调整（OUTLIMIT_BUD_ADJ）未及时同步。需核查兑现同步逻辑及调整单审批回写</div>
+  </div>
+</div>
 
 ```sql
 SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, CUSTOMER_CODE,
@@ -377,8 +395,14 @@ SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, CUSTOMER_CODE,
   WHERE OUTLIMIT_BUD_SUR < 0
     AND BUD_YEAR = #{budYear};
 ```
-<h4>报错4：年度查询条件为空</h4>
-<ul><li><strong>触发条件</strong>：用户未选择预算年度直接点击查询</li><li><strong>逻辑分析</strong>：预算年度（BUD_YEAR）是查询额度外预算总额的关键条件，预算数据按年度划分。未选择年度将导致跨年度全表查询，可能因数据量过大引起超时或返回无关数据。低代码页面查询栏配置年度为建议必填条件，未填写时toast提示后阻断查询</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>年度查询条件为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选择预算年度直接点击查询<br><strong>逻辑分析：</strong>预算年度（BUD_YEAR）是查询额度外预算总额的关键条件，预算数据按年度划分。未选择年度将导致跨年度全表查询，可能因数据量过大引起超时或返回无关数据。低代码页面查询栏配置年度为建议必填条件，未填写时toast提示后阻断查询</div>
+  </div>
+</div>
 
 ```sql
 -- 核查各年度数据分布
@@ -387,8 +411,14 @@ SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, CUSTOMER_CODE,
   GROUP BY BUD_YEAR
   ORDER BY BUD_YEAR;
 ```
-<h4>报错5：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击查询或查询可用余额按钮，前端调用对应接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面为hlod低代码页面，数据通过后端FinFeeApplyHeaderController的query-amt接口及MKT_OUTLIMIT_BUD_HEADER表查询提供。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)数据库连接异常；(3)query-amt接口汇总FIN_FEE_APPLY_HEADER表超时；(4)网关或网络层故障。需先确认ae-business服务健康状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击查询或查询可用余额按钮，前端调用对应接口返回非2xx状态码或超时<br><strong>逻辑分析：</strong>本页面为hlod低代码页面，数据通过后端FinFeeApplyHeaderController的query-amt接口及MKT_OUTLIMIT_BUD_HEADER表查询提供。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)数据库连接异常；(3)query-amt接口汇总FIN_FEE_APPLY_HEADER表超时；(4)网关或网络层故障。需先确认ae-business服务健康状态</div>
+  </div>
+</div>
 
 ```sql
 -- 核查预算表数据量
@@ -396,8 +426,14 @@ SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, CUSTOMER_CODE,
   FROM MKT_OUTLIMIT_BUD_HEADER
   GROUP BY BUD_YEAR;
 ```
-<h4>报错6：权限不足</h4>
-<ul><li><strong>触发条件</strong>：用户登录后进入额度外预算总额页面，当前用户无对应经销商或事业部的数据权限</li><li><strong>逻辑分析</strong>：本页面按经销商和事业部维度查询，数据权限通过用户上下文CustomUserDetails的additionInfo控制可见经销商范围。权限不足根因有二：(1)用户未分配对应经销商的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应经销商/事业部数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户登录后进入额度外预算总额页面，当前用户无对应经销商或事业部的数据权限<br><strong>逻辑分析：</strong>本页面按经销商和事业部维度查询，数据权限通过用户上下文CustomUserDetails的additionInfo控制可见经销商范围。权限不足根因有二：(1)用户未分配对应经销商的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应经销商/事业部数据权限</div>
+  </div>
+</div>
 
 ```sql
 -- 核查用户是否有该经销商的数据权限
@@ -408,8 +444,27 @@ SELECT OUTLIMIT_BUD_ID_NO, BUD_YEAR, CUSTOMER_CODE,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：预算剩余为负数</li><li>原因：累计已用金额超过预算总额+调整，存在超支</li><li>解决思路：检查SQL <code>SELECT OUTLIMIT_BUD_TOTAL, OUTLIMIT_BUD_ADJ, TOTAL_OUTLIMIT_BUD_USED, OUTLIMIT_BUD_SUR FROM MKT_OUTLIMIT_BUD_HEADER WHERE CUSTOMER_CODE = #&#123;customerCode&#125; AND BUD_YEAR = #&#123;budYear&#125;</code></li></ul>
-<ul><li>问题2：各月已用金额未更新</li><li>原因：额度外兑现审批通过后未同步到预算表</li><li>解决思路：检查兑现审批回调逻辑，确认FinFeeCashoutHeaderServiceImpl是否正确调用selectByBudYear</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">预算剩余为负数</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>累计已用金额超过预算总额+调整，存在超支<br><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT OUTLIMIT_BUD_TOTAL, OUTLIMIT_BUD_ADJ, TOTAL_OUTLIMIT_BUD_USED, OUTLIMIT_BUD_SUR FROM MKT_OUTLIMIT_BUD_HEADER WHERE CUSTOMER_CODE = #&#123;customerCode&#125; AND BUD_YEAR = #&#123;budYear&#125;</code>
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">各月已用金额未更新</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>额度外兑现审批通过后未同步到预算表<br><strong style="color:#7C3AED;">处理：</strong>检查兑现审批回调逻辑，确认FinFeeCashoutHeaderServiceImpl是否正确调用selectByBudYear
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

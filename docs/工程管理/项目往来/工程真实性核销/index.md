@@ -630,8 +630,14 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
 <tr><td>发票核销数量超过剩余可核销数量</td><td>提交审批</td><td>发票明细本次核销数量超过剩余可核销数量。调整核销数量</td><td>高</td><td>checkWorkFlowData中surplusCanVeriferNumber&lt;0校验</td></tr>
 </tbody>
 </table>
-<h4>报错1：本次核销数量的小数位不能超过3位</h4>
-<ul><li><strong>触发条件</strong>：保存核销时，本次核销数量(THIS_VERIFER_NUMBER)小数位超过3位</li><li><strong>逻辑分析</strong>：保存校验中检查THIS_VERIFER_NUMBER的小数位数，超过3位则抛出阻断性报错。需调整小数位至≤3位</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次核销数量的小数位不能超过3位</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存核销时，本次核销数量(THIS_VERIFER_NUMBER)小数位超过3位<br><strong>逻辑分析：</strong>保存校验中检查THIS_VERIFER_NUMBER的小数位数，超过3位则抛出阻断性报错。需调整小数位至≤3位</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUTH_LINE_ID
@@ -640,8 +646,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUT
     AND LENGTH(TO_CHAR(vid.THIS_VERIFER_NUMBER - TRUNC(vid.THIS_VERIFER_NUMBER))) - 1 > 3
   -- 查出小数位超过3位的核销明细
 ```
-<h4>报错2：参数不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存核销时，核销参数(如核销单ID、明细ID等)未填写</li><li><strong>逻辑分析</strong>：保存方法中校验关键参数非空，缺失则抛出阻断性报错。需补全核销参数后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>参数不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存核销时，核销参数(如核销单ID、明细ID等)未填写<br><strong>逻辑分析：</strong>保存方法中校验关键参数非空，缺失则抛出阻断性报错。需补全核销参数后保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_INVOICE_ID, vid.INVOICE_TRUTH_LINE_ID,
@@ -652,8 +664,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_INVOICE_ID, vid.INVOICE_TRUTH
      OR vid.THIS_VERIFER_NUMBER IS NULL
   -- 查出关键参数为空的核销明细
 ```
-<h4>报错3：核销数量必须大于0</h4>
-<ul><li><strong>触发条件</strong>：保存核销时，本次核销数量(THIS_VERIFER_NUMBER)≤0</li><li><strong>逻辑分析</strong>：保存校验中检查THIS_VERIFER_NUMBER&gt;0，因核销数量必须为正数。需调整核销数量大于0</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>核销数量必须大于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存核销时，本次核销数量(THIS_VERIFER_NUMBER)≤0<br><strong>逻辑分析：</strong>保存校验中检查THIS_VERIFER_NUMBER&gt;0，因核销数量必须为正数。需调整核销数量大于0</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUTH_LINE_ID
@@ -661,8 +679,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER, vid.INVOICE_TRUT
   WHERE vid.THIS_VERIFER_NUMBER <= 0
   -- 查出核销数量≤0的异常数据
 ```
-<h4>报错4：核销数量超过剩余可核销数量</h4>
-<ul><li><strong>触发条件</strong>：保存核销时，本次核销数量(THIS_VERIFER_NUMBER)超过剩余可核销数量(SURPLUS_CAN_VERIFER_NUMBER)</li><li><strong>逻辑分析</strong>：保存校验中按INVOICE_TRUTH_LINE_ID查询剩余可核销数量，若THIS_VERIFER_NUMBER&gt;SURPLUS_CAN_VERIFER_NUMBER则抛出阻断性报错。需调整至剩余可核销范围内</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>核销数量超过剩余可核销数量</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存核销时，本次核销数量(THIS_VERIFER_NUMBER)超过剩余可核销数量(SURPLUS_CAN_VERIFER_NUMBER)<br><strong>逻辑分析：</strong>保存校验中按INVOICE_TRUTH_LINE_ID查询剩余可核销数量，若THIS_VERIFER_NUMBER&gt;SURPLUS_CAN_VERIFER_NUMBER则抛出阻断性报错。需调整至剩余可核销范围内</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER,
@@ -672,8 +696,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.THIS_VERIFER_NUMBER,
   WHERE vid.THIS_VERIFER_NUMBER > itl.SURPLUS_CAN_VERIFER_NUMBER
   -- 查出核销数量超限的明细
 ```
-<h4>报错5：发票必须上传</h4>
-<ul><li><strong>触发条件</strong>：保存核销时，未上传核销发票(发票关联为空)</li><li><strong>逻辑分析</strong>：保存校验中检查发票关联非空，因核销必须关联已上传的发票。需先上传核销发票再保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>发票必须上传</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存核销时，未上传核销发票(发票关联为空)<br><strong>逻辑分析：</strong>保存校验中检查发票关联非空，因核销必须关联已上传的发票。需先上传核销发票再保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_INVOICE_ID, vid.INVOICE_TRUTH_LINE_ID,
@@ -683,8 +713,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.VERIFER_INVOICE_ID, vid.INVOICE_TRUTH
   WHERE vid.VERIFER_INVOICE_ID IS NULL OR ith.INVOICE_TRUTH_ID IS NULL
   -- 查出未关联发票的核销明细
 ```
-<h4>报错6：核销行不存在</h4>
-<ul><li><strong>触发条件</strong>：保存核销时，INVOICE_TRUTH_LINE_ID对应的核销行不存在</li><li><strong>逻辑分析</strong>：保存校验中按INVOICE_TRUTH_LINE_ID查询EPM_INVOICE_TRUTH_LINE，若返回null则抛出阻断性报错。需确认核销行有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>核销行不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存核销时，INVOICE_TRUTH_LINE_ID对应的核销行不存在<br><strong>逻辑分析：</strong>保存校验中按INVOICE_TRUTH_LINE_ID查询EPM_INVOICE_TRUTH_LINE，若返回null则抛出阻断性报错。需确认核销行有效性</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_TRUTH_LINE_ID,
@@ -694,8 +730,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.INVOICE_TRUTH_LINE_ID,
   WHERE itl.INVOICE_TRUTH_LINE_ID IS NULL
   -- 查出核销行不存在的明细
 ```
-<h4>报错7：操作类型不能为空</h4>
-<ul><li><strong>触发条件</strong>：取消核销时，actionType参数为空</li><li><strong>逻辑分析</strong>：cancel方法中校验actionType非空，因需根据操作类型确定取消范围。需传入合法actionType(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>操作类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，actionType参数为空<br><strong>逻辑分析：</strong>cancel方法中校验actionType非空，因需根据操作类型确定取消范围。需传入合法actionType(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.ACTION_TYPE
@@ -703,8 +745,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.ACTION_TYPE
   WHERE vid.ACTION_TYPE IS NULL
   -- 查出操作类型为空的核销明细
 ```
-<h4>报错8：对应列表id数组不能为空</h4>
-<ul><li><strong>触发条件</strong>：取消核销时，idList参数为空</li><li><strong>逻辑分析</strong>：cancel方法中校验idList非空，因需指定要取消的核销明细ID列表。需传入需取消的ID列表</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对应列表id数组不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，idList参数为空<br><strong>逻辑分析：</strong>cancel方法中校验idList非空，因需指定要取消的核销明细ID列表。需传入需取消的ID列表</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID
@@ -712,8 +760,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
   -- 校验传入的ID列表对应数据是否存在
 ```
-<h4>报错9：不支持xxx操作</h4>
-<ul><li><strong>触发条件</strong>：取消核销时，actionType不在5种合法值(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)范围内</li><li><strong>逻辑分析</strong>：cancel方法中校验actionType合法性，不在5种合法值内则抛出阻断性报错。需传入合法actionType</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>不支持xxx操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，actionType不在5种合法值(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)范围内<br><strong>逻辑分析：</strong>cancel方法中校验actionType合法性，不在5种合法值内则抛出阻断性报错。需传入合法actionType</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.ACTION_TYPE, vid.EFFECT_STATUS
@@ -721,8 +775,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.ACTION_TYPE, vid.EFFECT_STATUS
   WHERE vid.ACTION_TYPE NOT IN ('invoice', 'invoiceDetail', 'invLine', 'veriferDetail', 'obsInvoice')
   -- 查出操作类型不合法的核销明细
 ```
-<h4>报错10：核销取消数据为空</h4>
-<ul><li><strong>触发条件</strong>：取消核销时，按条件查询不到可取消的核销明细</li><li><strong>逻辑分析</strong>：cancel方法中按actionType和idList查询受影响的核销明细，若为空则抛出阻断性报错。需确认数据状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>核销取消数据为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，按条件查询不到可取消的核销明细<br><strong>逻辑分析：</strong>cancel方法中按actionType和idList查询受影响的核销明细，若为空则抛出阻断性报错。需确认数据状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID,
@@ -732,8 +792,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.VERIFER_INVOICE_ID
     AND vid.EFFECT_STATUS IN ('valid', 'invalid')
   -- 若返回空，说明无可取消的核销明细
 ```
-<h4>报错11：核销明细状态异常,请刷新数据后重试</h4>
-<ul><li><strong>触发条件</strong>：取消核销时，更新canceled状态时影响行数与预期不一致</li><li><strong>逻辑分析</strong>：cancel方法中更新EFFECT_STATUS为canceled，若更新影响行数与预期不一致(并发修改或数据已被其他操作变更)则抛出阻断性报错。需刷新数据后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>核销明细状态异常,请刷新数据后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，更新canceled状态时影响行数与预期不一致<br><strong>逻辑分析：</strong>cancel方法中更新EFFECT_STATUS为canceled，若更新影响行数与预期不一致(并发修改或数据已被其他操作变更)则抛出阻断性报错。需刷新数据后重试</div>
+  </div>
+</div>
 
 ```sql
 SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.LAST_UPDATE_DATE, vid.OBJECT_VERSION_NUMBER
@@ -741,8 +807,14 @@ SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.LAST_UPDATE_DATE, 
   WHERE vid.VERIFER_INVOICE_DETAILS_ID IN (:idList)
   -- 检查核销明细当前状态和版本号，判断是否被并发修改
 ```
-<h4>报错12：更新失败,取消后出库单行已核销数量小于0</h4>
-<ul><li><strong>触发条件</strong>：取消核销时，取消数量大于出库单行已核销数量</li><li><strong>逻辑分析</strong>：cancel方法中更新INV_OUT_BILL_LINE的已核销数量(原已核销数量-取消数量)，若结果&lt;0则抛出阻断性报错。需检查数据一致性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>更新失败,取消后出库单行已核销数量小于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销时，取消数量大于出库单行已核销数量<br><strong>逻辑分析：</strong>cancel方法中更新INV_OUT_BILL_LINE的已核销数量(原已核销数量-取消数量)，若结果&lt;0则抛出阻断性报错。需检查数据一致性</div>
+  </div>
+</div>
 
 ```sql
 SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.VERIFERED_NUMBER, iobl.CAN_VERIFER_NUMBER,
@@ -754,8 +826,14 @@ SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.VERIFERED_NUMBER, iobl.CAN_VERIFER_NUMBER
     AND iobl.VERIFERED_NUMBER - vid.THIS_VERIFER_NUMBER < 0
   -- 查出取消后已核销数量<0的异常数据
 ```
-<h4>报错13：请选择核销类型</h4>
-<ul><li><strong>触发条件</strong>：查询出库单(doSearchOutbillReport)或查询发票信息(doGetInvoiceInfo)时，未选择核销类型(VERIFER_TYPE为空)</li><li><strong>逻辑分析</strong>：doSearchOutbillReport和doGetInvoiceInfo方法中校验veriferType非空，因核销类型决定查询出库单的SQL逻辑(工程方queryProjectOutbillReportForInvoiceTruth/经销商方queryDealerOutbillReportForInvoiceTruth)。需先选择核销类型再查询</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择核销类型</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询出库单(doSearchOutbillReport)或查询发票信息(doGetInvoiceInfo)时，未选择核销类型(VERIFER_TYPE为空)<br><strong>逻辑分析：</strong>doSearchOutbillReport和doGetInvoiceInfo方法中校验veriferType非空，因核销类型决定查询出库单的SQL逻辑(工程方queryProjectOutbillReportForInvoiceTruth/经销商方queryDealerOutbillReportForInvoiceTruth)。需先选择核销类型再查询</div>
+  </div>
+</div>
 
 ```sql
 SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.VERIFER_TYPE
@@ -763,8 +841,14 @@ SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.VERIFER_TYPE
   WHERE ith.VERIFER_TYPE IS NULL
   -- 查出核销类型为空的核销单
 ```
-<h4>报错14：核销出库单明细不可为空</h4>
-<ul><li><strong>触发条件</strong>：提交审批时，核销单下无核销行数据(EPM_INVOICE_TRUTH_LINE为空)</li><li><strong>逻辑分析</strong>：checkWorkFlowData方法中按INVOICE_TRUTH_ID查询核销行列表，若为空则抛出阻断性报错。需先添加核销行再提交</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>核销出库单明细不可为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批时，核销单下无核销行数据(EPM_INVOICE_TRUTH_LINE为空)<br><strong>逻辑分析：</strong>checkWorkFlowData方法中按INVOICE_TRUTH_ID查询核销行列表，若为空则抛出阻断性报错。需先添加核销行再提交</div>
+  </div>
+</div>
 
 ```sql
 SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.HZ_APPROVE_STATUS,
@@ -774,8 +858,14 @@ SELECT ith.INVOICE_TRUTH_ID, ith.INVOICE_TRUTH_NO, ith.HZ_APPROVE_STATUS,
   WHERE ith.INVOICE_TRUTH_ID = :invoiceTruthId
   -- 若核销行数为0，则触发该报错
 ```
-<h4>报错15：本次核销数量不能大于可核销数量</h4>
-<ul><li><strong>触发条件</strong>：保存核销时，核销行下所有发票明细的本次核销数量合计超过出库单行可核销数量(CAN_VERIFY_NUM)</li><li><strong>逻辑分析</strong>：checkVeriferInvoice方法中累计核销行下所有发票明细的本次核销数量(sumThisVeriferNumber)，若超过出库单行可核销数量(canVerifyNum)则抛出阻断性报错。与"核销数量超过剩余可核销数量"不同，该校验针对单行发票明细，本校验针对核销行合计</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次核销数量不能大于可核销数量</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存核销时，核销行下所有发票明细的本次核销数量合计超过出库单行可核销数量(CAN_VERIFY_NUM)<br><strong>逻辑分析：</strong>checkVeriferInvoice方法中累计核销行下所有发票明细的本次核销数量(sumThisVeriferNumber)，若超过出库单行可核销数量(canVerifyNum)则抛出阻断性报错。与"核销数量超过剩余可核销数量"不同，该校验针对单行发票明细，本校验针对核销行合计</div>
+  </div>
+</div>
 
 ```sql
 SELECT itl.INVOICE_TRUTH_LINE_ID, itl.INVBILLNO, itl.ITEM_CODE,
@@ -787,8 +877,14 @@ SELECT itl.INVOICE_TRUTH_LINE_ID, itl.INVBILLNO, itl.ITEM_CODE,
          WHERE vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID) > itl.SUR_VERIFY_NUM
   -- 查出合计核销数量超过可核销数量的核销行
 ```
-<h4>报错16：对应的出库单明细不存在</h4>
-<ul><li><strong>触发条件</strong>：提交审批时，核销行关联的出库单行(INV_OUT_BILL_LINE_ID)不存在或为空</li><li><strong>逻辑分析</strong>：checkWorkFlowData方法中遍历核销行，若invOutBillLineId为空则收集错误信息并抛出阻断性报错。需确认出库单行有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对应的出库单明细不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批时，核销行关联的出库单行(INV_OUT_BILL_LINE_ID)不存在或为空<br><strong>逻辑分析：</strong>checkWorkFlowData方法中遍历核销行，若invOutBillLineId为空则收集错误信息并抛出阻断性报错。需确认出库单行有效性</div>
+  </div>
+</div>
 
 ```sql
 SELECT itl.INVOICE_TRUTH_LINE_ID, itl.INVBILLNO, itl.ITEM_CODE, itl.INV_OUT_BILL_LINE_ID
@@ -799,8 +895,14 @@ SELECT itl.INVOICE_TRUTH_LINE_ID, itl.INVBILLNO, itl.ITEM_CODE, itl.INV_OUT_BILL
                         WHERE iobl.INV_OUT_BILL_LINE_ID = itl.INV_OUT_BILL_LINE_ID))
   -- 查出出库单行不存在的核销行
 ```
-<h4>报错17：对应的出库单明细可核销数量不足</h4>
-<ul><li><strong>触发条件</strong>：提交审批时，出库单行可核销数量(selectCanVerifyNumOfLine)&lt;0</li><li><strong>逻辑分析</strong>：checkWorkFlowData方法中按invOutBillLineId查询出库单行可核销数量，若&lt;0则收集错误信息并抛出阻断性报错。可能原因：并发核销导致可核销数量被占用。需检查出库单行可核销数量</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对应的出库单明细可核销数量不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批时，出库单行可核销数量(selectCanVerifyNumOfLine)&lt;0<br><strong>逻辑分析：</strong>checkWorkFlowData方法中按invOutBillLineId查询出库单行可核销数量，若&lt;0则收集错误信息并抛出阻断性报错。可能原因：并发核销导致可核销数量被占用。需检查出库单行可核销数量</div>
+  </div>
+</div>
 
 ```sql
 SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.INV_BILL_NO, iobl.ITEM_CODE,
@@ -814,8 +916,14 @@ SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.INV_BILL_NO, iobl.ITEM_CODE,
     AND iobl.CAN_VERIFY_NUM - NVL(iobl.USED_VERIFY_NUM, 0) < 0
   -- 查出可核销数量不足的出库单行
 ```
-<h4>报错18：发票核销数量超过剩余可核销数量</h4>
-<ul><li><strong>触发条件</strong>：提交审批时，发票明细的本次核销数量合计超过发票明细剩余可核销数量(SURPLUS_CAN_VERIFER_NUMBER&lt;0)</li><li><strong>逻辑分析</strong>：checkWorkFlowData方法中按发票明细ID汇总本次核销数量，查询发票明细剩余可核销数量，若剩余可核销数量&lt;0则收集错误信息并抛出阻断性报错。需调整核销数量</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>发票核销数量超过剩余可核销数量</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批时，发票明细的本次核销数量合计超过发票明细剩余可核销数量(SURPLUS_CAN_VERIFER_NUMBER&lt;0)<br><strong>逻辑分析：</strong>checkWorkFlowData方法中按发票明细ID汇总本次核销数量，查询发票明细剩余可核销数量，若剩余可核销数量&lt;0则收集错误信息并抛出阻断性报错。需调整核销数量</div>
+  </div>
+</div>
 
 ```sql
 SELECT uid.INVOICE_DETAILS_ID, uid.INVOICE_NUMBER, uid.SERVICES_NAME,

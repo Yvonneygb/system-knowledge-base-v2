@@ -241,16 +241,28 @@
 <tr><td>导出失败，请稍后重试</td><td>导出按钮</td><td>导出接口异常或导出数据量超限。缩小查询范围后重试</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询失败，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：列表页点击"查询"按钮时，后端接口<code>GET /v1/&#123;orgId&#125;/crossBuSalesList</code>返回非200状态码或响应超时</li><li><strong>逻辑分析</strong>：前端DataSet transport.read发起GET请求至CRM服务<code>crossBuSalesList</code>接口，后端<code>LnkCrossBuSalesListServiceImpl.selectList</code>通过<code>PageHelper.doPageAndSort</code>分页查询<code>LnkCrossBuSalesListMapper.selectList</code>。当数据库连接异常、SQL执行超时或服务不可用时，HZERO框架捕获异常并返回错误响应，前端axios拦截器统一提示"查询失败"。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询失败，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页点击"查询"按钮时，后端接口<code>GET /v1/&#123;orgId&#125;/crossBuSalesList</code>返回非200状态码或响应超时<br><strong>逻辑分析：</strong>前端DataSet transport.read发起GET请求至CRM服务<code>crossBuSalesList</code>接口，后端<code>LnkCrossBuSalesListServiceImpl.selectList</code>通过<code>PageHelper.doPageAndSort</code>分页查询<code>LnkCrossBuSalesListMapper.selectList</code>。当数据库连接异常、SQL执行超时或服务不可用时，HZERO框架捕获异常并返回错误响应，前端axios拦截器统一提示"查询失败"。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查销售清单表是否可正常访问及数据量
   SELECT COUNT(1) AS 销售清单总记录数
   FROM LNK_CROSS_BU_SALES_LIST;
 ```
-<h4>报错2：权限不足，无法访问</h4>
-<ul><li><strong>触发条件</strong>：用户访问跨事业部产品销售清单菜单或点击导出按钮时，当前角色未配置对应权限编码</li><li><strong>逻辑分析</strong>：前端页面通过<code>PERMISSION_PREFIX=hzero.c.crm.cross-bu-sales-list</code>配置权限，导出按钮权限编码为<code>hzero.c.crm.cross-bu-sales-list.button.export</code>。HZERO权限拦截器校验用户角色权限，未配置时返回403，前端路由守卫或按钮权限指令拦截访问。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法访问</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问跨事业部产品销售清单菜单或点击导出按钮时，当前角色未配置对应权限编码<br><strong>逻辑分析：</strong>前端页面通过<code>PERMISSION_PREFIX=hzero.c.crm.cross-bu-sales-list</code>配置权限，导出按钮权限编码为<code>hzero.c.crm.cross-bu-sales-list.button.export</code>。HZERO权限拦截器校验用户角色权限，未配置时返回403，前端路由守卫或按钮权限指令拦截访问。</div>
+  </div>
+</div>
 
 ```sql
 -- 查询当前用户角色是否分配了销售清单菜单权限
@@ -263,8 +275,14 @@
   WHERE U.REAL_NAME = :用户名
     AND P.CODE LIKE 'hzero.c.crm.cross-bu-sales-list%';
 ```
-<h4>报错3：登录已过期，请重新登录</h4>
-<ul><li><strong>触发条件</strong>：用户在页面操作时，HZERO Token过期或被踢出登录</li><li><strong>逻辑分析</strong>：前端axios请求携带Authorization Token访问后端接口，后端网关校验Token有效性。Token过期时返回401状态码，前端axios响应拦截器捕获401并跳转登录页。常见于长时间未操作或单点登录会话超时。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>登录已过期，请重新登录</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在页面操作时，HZERO Token过期或被踢出登录<br><strong>逻辑分析：</strong>前端axios请求携带Authorization Token访问后端接口，后端网关校验Token有效性。Token过期时返回401状态码，前端axios响应拦截器捕获401并跳转登录页。常见于长时间未操作或单点登录会话超时。</div>
+  </div>
+</div>
 
 ```sql
 -- 查询用户最近登录会话状态（HZERO OAuth Token表）
@@ -275,8 +293,14 @@
   WHERE U.REAL_NAME = :用户名
   ORDER BY T.CREATE_TIME DESC;
 ```
-<h4>报错4：暂无数据</h4>
-<ul><li><strong>触发条件</strong>：列表页查询返回空列表，前端DataSet无数据渲染</li><li><strong>逻辑分析</strong>：前端<code>crossBuSalesList</code>接口返回<code>content</code>为空数组，<code>totalElements</code>为0。根因可能为：1）查询条件过严无匹配数据；2）上游跨事业部产品销售申请单未审批通过，<code>syncFromApprovedForm</code>未写入销售清单；3）定时任务已将所有记录置为失效。前端FilterTableCom展示"暂无数据"占位。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询返回空列表，前端DataSet无数据渲染<br><strong>逻辑分析：</strong>前端<code>crossBuSalesList</code>接口返回<code>content</code>为空数组，<code>totalElements</code>为0。根因可能为：1）查询条件过严无匹配数据；2）上游跨事业部产品销售申请单未审批通过，<code>syncFromApprovedForm</code>未写入销售清单；3）定时任务已将所有记录置为失效。前端FilterTableCom展示"暂无数据"占位。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查是否有审批通过的申请单及其明细行数、销售清单同步数
@@ -287,8 +311,14 @@
   WHERE F.STATUS = 'APPROVED'
   ORDER BY F.CREATION_DATE DESC;
 ```
-<h4>报错5：导出失败，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：点击"导出"按钮时，导出接口<code>GET /v1/&#123;orgId&#125;/crossBuSalesList/export</code>返回异常或导出文件生成失败</li><li><strong>逻辑分析</strong>：前端<code>ExcelExportPro</code>组件调用导出接口，后端<code>LnkCrossBuSalesListController.export</code>通过<code>@ExcelExport</code>注解导出<code>LnkCrossBuSalesListExport</code>类型数据。<code>exportList</code>方法先分页查询再通过<code>PageUtil.convert</code>转换为导出VO。失败原因可能为：1）查询数据量过大导致内存溢出；2）<code>@ProcessLovValue</code>值集翻译异常；3）Excel生成组件异常。前端异步导出，失败时notification.error提示。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出失败，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮时，导出接口<code>GET /v1/&#123;orgId&#125;/crossBuSalesList/export</code>返回异常或导出文件生成失败<br><strong>逻辑分析：</strong>前端<code>ExcelExportPro</code>组件调用导出接口，后端<code>LnkCrossBuSalesListController.export</code>通过<code>@ExcelExport</code>注解导出<code>LnkCrossBuSalesListExport</code>类型数据。<code>exportList</code>方法先分页查询再通过<code>PageUtil.convert</code>转换为导出VO。失败原因可能为：1）查询数据量过大导致内存溢出；2）<code>@ProcessLovValue</code>值集翻译异常；3）Excel生成组件异常。前端异步导出，失败时notification.error提示。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查当前查询条件下数据量是否过大

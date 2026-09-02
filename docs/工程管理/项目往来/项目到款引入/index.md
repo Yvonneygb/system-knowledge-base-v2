@@ -425,8 +425,14 @@ ORDER BY RECEIVE_DATE DESC;
 <tr><td>开始时间-结束时间必须同时有值</td><td>定时同步</td><td>时间区间同步时起止时间未同时传入。补全时间区间</td><td>高</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：客户不存在</h4>
-<ul><li><strong>触发条件</strong>：引入ERP到款数据时，到款单对应的CUSTOMER_ID/CUSTOMER_CODE在系统客户档案中不存在</li><li><strong>逻辑分析</strong>：在paymentImportErpProcess方法中校验，从ERP获取到款数据后，按CUSTOMER_CODE查询系统客户档案(CUSTOMER表)，若不存在则报错。需先通过客户同步接口将ERP客户数据同步到系统</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>客户不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>引入ERP到款数据时，到款单对应的CUSTOMER_ID/CUSTOMER_CODE在系统客户档案中不存在<br><strong>逻辑分析：</strong>在paymentImportErpProcess方法中校验，从ERP获取到款数据后，按CUSTOMER_CODE查询系统客户档案(CUSTOMER表)，若不存在则报错。需先通过客户同步接口将ERP客户数据同步到系统</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.CUSTOMER_CODE, epi.CUSTOMER_NAME,
@@ -434,8 +440,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.CUSTOMER_CODE, epi.CU
   FROM EPM_PAYMENT_IMPORT epi
   WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.CUSTOMER_CODE)
 ```
-<h4>报错2：交易公司不存在</h4>
-<ul><li><strong>触发条件</strong>：引入ERP到款数据时，到款单对应的交易公司(TRADING_COMPANY)在系统中不存在</li><li><strong>逻辑分析</strong>：在paymentImportErpProcess方法中校验，从ERP获取到款数据后，按交易公司编码查询系统交易公司主数据，若不存在则报错。需先同步交易公司数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>交易公司不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>引入ERP到款数据时，到款单对应的交易公司(TRADING_COMPANY)在系统中不存在<br><strong>逻辑分析：</strong>在paymentImportErpProcess方法中校验，从ERP获取到款数据后，按交易公司编码查询系统交易公司主数据，若不存在则报错。需先同步交易公司数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_UNIT_NAME, epi.REMIT_UNIT_NAME,
@@ -443,8 +455,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_UNIT_NAME, ep
   FROM EPM_PAYMENT_IMPORT epi
   WHERE NOT EXISTS (SELECT 1 FROM TRADING_COMPANY tc WHERE tc.COMPANY_NAME = epi.RECEIVE_UNIT_NAME)
 ```
-<h4>报错3：事业部不存在</h4>
-<ul><li><strong>触发条件</strong>：引入ERP到款数据时，到款单对应的事业部(DEPT_CODE)在系统中未配置</li><li><strong>逻辑分析</strong>：在paymentImportErpProcess方法中校验，从ERP获取到款数据后，按事业部编码查询系统事业部配置，若不存在则报错。需先在系统中配置对应事业部</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>事业部不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>引入ERP到款数据时，到款单对应的事业部(DEPT_CODE)在系统中未配置<br><strong>逻辑分析：</strong>在paymentImportErpProcess方法中校验，从ERP获取到款数据后，按事业部编码查询系统事业部配置，若不存在则报错。需先在系统中配置对应事业部</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.DEPT_CODE, epi.RECEIVE_AMT
@@ -452,8 +470,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.DEPT_CODE, epi.RECEIV
   WHERE epi.DEPT_CODE IS NOT NULL
     AND NOT EXISTS (SELECT 1 FROM DEPT d WHERE d.DEPT_CODE = epi.DEPT_CODE)
 ```
-<h4>报错4：到款单状态不允许认领</h4>
-<ul><li><strong>触发条件</strong>：认领到款单时，到款单状态(PAYMENT_STATUS)为信用卡拖欠/暂停付款/冲销付款/资金不足等异常状态</li><li><strong>逻辑分析</strong>：在verifyImportStat方法中校验，认领前检查到款单状态，仅正常状态(如已生效且未兑付异常)的到款单允许认领。状态为信用卡拖欠/暂停付款/冲销付款/资金不足等异常状态时阻断认领</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>到款单状态不允许认领</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>认领到款单时，到款单状态(PAYMENT_STATUS)为信用卡拖欠/暂停付款/冲销付款/资金不足等异常状态<br><strong>逻辑分析：</strong>在verifyImportStat方法中校验，认领前检查到款单状态，仅正常状态(如已生效且未兑付异常)的到款单允许认领。状态为信用卡拖欠/暂停付款/冲销付款/资金不足等异常状态时阻断认领</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS,
@@ -461,8 +485,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS,
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.PAYMENT_STATUS IN ('OVERDUE', 'SUSPENDED', 'WRITE_OFF', 'INSUFFICIENT_FUNDS')
 ```
-<h4>报错5：票据类型不支持兑付</h4>
-<ul><li><strong>触发条件</strong>：兑付到款单时，票据类型(ACCEPTANCE_TYPE)非商票类型(非商业承兑/银行承兑)</li><li><strong>逻辑分析</strong>：在draftPayment方法中校验，仅商业承兑汇票/银行承兑汇票类型(ACCEPTANCE_TYPE)的到款单支持兑付操作。其他票据类型(如电汇、现金)不支持兑付，默认已兑付(IS_CASHOUT=Y)</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>票据类型不支持兑付</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>兑付到款单时，票据类型(ACCEPTANCE_TYPE)非商票类型(非商业承兑/银行承兑)<br><strong>逻辑分析：</strong>在draftPayment方法中校验，仅商业承兑汇票/银行承兑汇票类型(ACCEPTANCE_TYPE)的到款单支持兑付操作。其他票据类型(如电汇、现金)不支持兑付，默认已兑付(IS_CASHOUT=Y)</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.ACCEPTANCE_TYPE,
@@ -471,8 +501,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.ACCEPTANCE_TYPE,
   WHERE epi.ACCEPTANCE_TYPE NOT IN ('COMMERCIAL_ACCEPTANCE', 'BANK_ACCEPTANCE')
     AND epi.IS_CASHOUT = 'N'
 ```
-<h4>报错6：已兑付不可重复兑付</h4>
-<ul><li><strong>触发条件</strong>：兑付到款单时，到款单已兑付(IS_CASHOUT=Y)</li><li><strong>逻辑分析</strong>：在draftPayment方法中校验，兑付前检查到款单的IS_CASHOUT字段，若已为Y(已兑付)则阻断重复兑付操作。无需重复操作</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>已兑付不可重复兑付</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>兑付到款单时，到款单已兑付(IS_CASHOUT=Y)<br><strong>逻辑分析：</strong>在draftPayment方法中校验，兑付前检查到款单的IS_CASHOUT字段，若已为Y(已兑付)则阻断重复兑付操作。无需重复操作</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.IS_CASHOUT,
@@ -480,8 +516,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.IS_CASHOUT,
   FROM EPM_PAYMENT_IMPORT epi
   WHERE epi.IS_CASHOUT = 'Y'
 ```
-<h4>报错7：对账单对应经销商信息查询异常</h4>
-<ul><li><strong>触发条件</strong>：引入ERP到款数据时，到款单对应的客户编码(CRM_NUM)在系统客户档案(CUSTOMER)中不存在</li><li><strong>逻辑分析</strong>：在paymentImportErpProcess方法中，按vo.getCrmNum()查询CUSTOMER表，若返回null则抛出阻断性报错，提示到款单号+客户编码。需先通过客户同步接口将ERP客户数据同步到系统</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对账单对应经销商信息查询异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>引入ERP到款数据时，到款单对应的客户编码(CRM_NUM)在系统客户档案(CUSTOMER)中不存在<br><strong>逻辑分析：</strong>在paymentImportErpProcess方法中，按vo.getCrmNum()查询CUSTOMER表，若返回null则抛出阻断性报错，提示到款单号+客户编码。需先通过客户同步接口将ERP客户数据同步到系统</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.CUSTOMER_CODE, epi.CUSTOMER_NAME,
@@ -489,8 +531,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.CUSTOMER_CODE, epi.CU
   FROM EPM_PAYMENT_IMPORT epi
   WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.CUSTOMER_CODE)
 ```
-<h4>报错8：对账单对应法人信息查询异常</h4>
-<ul><li><strong>触发条件</strong>：引入ERP到款数据时，到款单对应的汇款法人编码(PAY_FROM_CUST)在系统客户档案(CUSTOMER)中不存在</li><li><strong>逻辑分析</strong>：在paymentImportErpProcess方法中，按vo.getPayFromCust()查询CUSTOMER表作为汇款单位，若返回null则抛出阻断性报错，提示到款单号+法人编码。需先同步法人数据到系统客户档案</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对账单对应法人信息查询异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>引入ERP到款数据时，到款单对应的汇款法人编码(PAY_FROM_CUST)在系统客户档案(CUSTOMER)中不存在<br><strong>逻辑分析：</strong>在paymentImportErpProcess方法中，按vo.getPayFromCust()查询CUSTOMER表作为汇款单位，若返回null则抛出阻断性报错，提示到款单号+法人编码。需先同步法人数据到系统客户档案</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.REMIT_UNIT_CODE, epi.REMIT_UNIT_NAME,
@@ -498,8 +546,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.REMIT_UNIT_CODE, epi.
   FROM EPM_PAYMENT_IMPORT epi
   WHERE NOT EXISTS (SELECT 1 FROM CUSTOMER c WHERE c.CUSTOMER_CODE = epi.REMIT_UNIT_CODE)
 ```
-<h4>报错9：未找到该erp的到款单</h4>
-<ul><li><strong>触发条件</strong>：调用getOnePaymentImportFromErp接口从ERP获取到款单时，ERP接口返回空列表</li><li><strong>逻辑分析</strong>：getOnePaymentImportFromErp方法中调用erpSdk.getErpReceipt获取ERP到款数据，若返回null或空列表则抛出阻断性报错。可能原因：ERP到款单不存在、ERP接口异常。需确认ERP到款单存在</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到该erp的到款单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用getOnePaymentImportFromErp接口从ERP获取到款单时，ERP接口返回空列表<br><strong>逻辑分析：</strong>getOnePaymentImportFromErp方法中调用erpSdk.getErpReceipt获取ERP到款数据，若返回null或空列表则抛出阻断性报错。可能原因：ERP到款单不存在、ERP接口异常。需确认ERP到款单存在</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.EXT_PAYMENT_IMPORT_ID,
@@ -508,8 +562,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.EXT_PAYMENT_IMPORT_ID
   WHERE epi.EXT_PAYMENT_IMPORT_ID = :extPaymentImportId
   -- 若返回空，说明ERP到款单未同步到系统
 ```
-<h4>报错10：erp的到款单业务处理异常</h4>
-<ul><li><strong>触发条件</strong>：调用getOnePaymentImportFromErp接口处理ERP到款单时，handleErpReceiptBiz返回null</li><li><strong>逻辑分析</strong>：getOnePaymentImportFromErp方法中调用handleErpReceiptBiz处理ERP到款数据，若返回ID为null则抛出阻断性报错。可能原因：ERP数据字段缺失、客户/交易公司/事业部校验失败。需检查ERP数据完整性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>erp的到款单业务处理异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用getOnePaymentImportFromErp接口处理ERP到款单时，handleErpReceiptBiz返回null<br><strong>逻辑分析：</strong>getOnePaymentImportFromErp方法中调用handleErpReceiptBiz处理ERP到款数据，若返回ID为null则抛出阻断性报错。可能原因：ERP数据字段缺失、客户/交易公司/事业部校验失败。需检查ERP数据完整性</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.IMPORT_STAT, epi.VALID
@@ -518,8 +578,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.IMPORT_STAT, epi.VALI
     AND epi.IMPORT_STAT IS NULL
   -- 查出业务处理异常的到款单
 ```
-<h4>报错11：请传入到款单id</h4>
-<ul><li><strong>触发条件</strong>：调用verifyImportStat校验到款单状态时，到款单ID(paymentImportId)为空或&lt;=0</li><li><strong>逻辑分析</strong>：verifyImportStat方法中校验paymentImportId非空且&gt;0，因需按ID查询到款单状态。需传入有效到款单ID</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请传入到款单id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用verifyImportStat校验到款单状态时，到款单ID(paymentImportId)为空或&lt;=0<br><strong>逻辑分析：</strong>verifyImportStat方法中校验paymentImportId非空且&gt;0，因需按ID查询到款单状态。需传入有效到款单ID</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.IMPORT_STAT
@@ -527,8 +593,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.I
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
   -- 校验到款单ID是否有效
 ```
-<h4>报错12：该到款单已撤销，不允许认领</h4>
-<ul><li><strong>触发条件</strong>：校验到款单状态时，到款单已撤销(IMPORT_STAT=已失效或ALLOT_STATUS=CANCEL)</li><li><strong>逻辑分析</strong>：verifyImportStat方法中查询到款单状态，若到款单已撤销则抛出阻断性报错。需检查到款单状态，确认到款单未撤销</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>该到款单已撤销，不允许认领</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>校验到款单状态时，到款单已撤销(IMPORT_STAT=已失效或ALLOT_STATUS=CANCEL)<br><strong>逻辑分析：</strong>verifyImportStat方法中查询到款单状态，若到款单已撤销则抛出阻断性报错。需检查到款单状态，确认到款单未撤销</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.IMPORT_STAT, epi.ALLOT_STATUS,
@@ -538,8 +610,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.IMPORT_STAT, epi.ALLO
      OR epi.ALLOT_STATUS = 'CANCEL'
   -- 查出已撤销的到款单
 ```
-<h4>报错13：未指定到款单id</h4>
-<ul><li><strong>触发条件</strong>：调用getSurAmtByImport获取剩余可认款金额时，到款单ID未指定</li><li><strong>逻辑分析</strong>：getSurAmtByImport方法中校验到款单ID非空，因需按ID查询到款单剩余可认领金额。需传入有效到款单ID</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未指定到款单id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用getSurAmtByImport获取剩余可认款金额时，到款单ID未指定<br><strong>逻辑分析：</strong>getSurAmtByImport方法中校验到款单ID非空，因需按ID查询到款单剩余可认领金额。需传入有效到款单ID</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.UNALLOT_AMT, epi.BILL_TYPE
@@ -547,8 +625,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.UNALLOT_AMT, epi.BILL
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
   -- 校验到款单ID是否有效
 ```
-<h4>报错14：已核销、未核销的到款单才能发起兑付</h4>
-<ul><li><strong>触发条件</strong>：兑付到款单时，到款单状态(PAYMENT_STATUS)非已核销(SUCCESS)或未核销(PENDING)</li><li><strong>逻辑分析</strong>：draftPayment方法中校验到款单状态，仅PAYMENT_STATUS为SUCCESS(已核销)或PENDING(未核销)的到款单允许发起兑付。其他状态(如处理中、失败)不允许兑付。需确认到款单状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>已核销、未核销的到款单才能发起兑付</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>兑付到款单时，到款单状态(PAYMENT_STATUS)非已核销(SUCCESS)或未核销(PENDING)<br><strong>逻辑分析：</strong>draftPayment方法中校验到款单状态，仅PAYMENT_STATUS为SUCCESS(已核销)或PENDING(未核销)的到款单允许发起兑付。其他状态(如处理中、失败)不允许兑付。需确认到款单状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS,
@@ -558,8 +642,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS,
     AND epi.PAYMENT_STATUS NOT IN ('SUCCESS', 'PENDING')
   -- 查出状态不允许兑付的商票到款单
 ```
-<h4>报错15：编码最大支持100个</h4>
-<ul><li><strong>触发条件</strong>：定时同步任务syncPaymentDataFromErpJob按指定编码同步时，传入的编码列表超过100个</li><li><strong>逻辑分析</strong>：syncPaymentDataFromErpJob方法中校验编码列表大小，超过100个则抛出阻断性报错。因ERP接口对批量查询有数量限制。需减少批量编码数量，分批同步</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>编码最大支持100个</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>定时同步任务syncPaymentDataFromErpJob按指定编码同步时，传入的编码列表超过100个<br><strong>逻辑分析：</strong>syncPaymentDataFromErpJob方法中校验编码列表大小，超过100个则抛出阻断性报错。因ERP接口对批量查询有数量限制。需减少批量编码数量，分批同步</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*) AS 编码数量
@@ -567,8 +657,14 @@ SELECT COUNT(*) AS 编码数量
   WHERE epi.PAYMENT_IMPORT_CODE IN (:codeList)
   -- 校验传入的编码数量是否超过100
 ```
-<h4>报错16：开始时间-结束时间必须同时有值</h4>
-<ul><li><strong>触发条件</strong>：定时同步任务syncPaymentDataFromErpJob按时间区间同步时，开始时间或结束时间只传了一个</li><li><strong>逻辑分析</strong>：syncPaymentDataFromErpJob方法中校验时间区间，开始时间和结束时间必须同时有值或同时为空。需补全时间区间</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>开始时间-结束时间必须同时有值</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>定时同步任务syncPaymentDataFromErpJob按时间区间同步时，开始时间或结束时间只传了一个<br><strong>逻辑分析：</strong>syncPaymentDataFromErpJob方法中校验时间区间，开始时间和结束时间必须同时有值或同时为空。需补全时间区间</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_DATE, epi.IMPORT_DATE

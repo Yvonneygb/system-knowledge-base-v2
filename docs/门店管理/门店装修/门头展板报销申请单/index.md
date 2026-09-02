@@ -559,41 +559,47 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>报销政策不能为空</td><td>保存</td><td>未选择补贴政策。选择有效的店面建设补贴政策</td><td>高</td><td>[查看](#报错1报销政策不能为空)</td></tr>
-<tr><td>报销政策已失效，请重新选择有效报销政策</td><td>保存</td><td>政策valid!=2。选择有效的政策</td><td>高</td><td>[查看](#报错2报销政策已失效请重新选择有效报销政策)</td></tr>
-<tr><td>经销商法人不能为空</td><td>保存</td><td>未选择经销商或法人。选择经销商、交易公司、法人客户</td><td>高</td><td>[查看](#报错3经销商法人不能为空)</td></tr>
-<tr><td>报销政策已过期，请重新选择有效报销政策</td><td>保存</td><td>政策不在有效期内。选择有效期内的政策</td><td>高</td><td>[查看](#报错4报销政策已过期请重新选择有效报销政策)</td></tr>
-<tr><td>请选择报销类型</td><td>保存</td><td>未选择报销类型。选择额度内或额度外</td><td>中</td><td>[查看](#报错5请选择报销类型)</td></tr>
-<tr><td>报销明细不能为空</td><td>保存</td><td>未添加门店装修明细。添加至少一行明细</td><td>高</td><td>[查看](#报错6报销明细不能为空)</td></tr>
-<tr><td>单独门店申请，只能报销一个门店</td><td>保存</td><td>政策要求单独门店申请但选择了多个门店。只保留一个门店</td><td>中</td><td>[查看](#报错7单独门店申请只能报销一个门店)</td></tr>
-<tr><td>申请数量必须大于0</td><td>保存</td><td>申请数量为0。填写大于0的数量</td><td>高</td><td>[查看](#报错8申请数量必须大于0)</td></tr>
-<tr><td>报销申请数量必须在政策数量范围内</td><td>保存</td><td>数量超出政策范围。修改数量至[minNum, maxNum]范围</td><td>高</td><td>[查看](#报错9报销申请数量必须在政策数量范围内)</td></tr>
-<tr><td>请上传装修前文件</td><td>保存</td><td>未上传装修前照片。上传装修前照片</td><td>高</td><td>[查看](#报错10请上传装修前文件)</td></tr>
-<tr><td>请上传装修后文件</td><td>保存</td><td>未上传装修后照片。上传装修后照片</td><td>高</td><td>[查看](#报错11请上传装修后文件)</td></tr>
-<tr><td>报销明细无法关联到政策</td><td>保存</td><td>行表policyLineId无法匹配政策明细。重新选择补贴项目</td><td>高</td><td>[查看](#报错12报销明细无法关联到政策)</td></tr>
-<tr><td>获取法人信息失败</td><td>保存</td><td>经销商+交易公司+法人组合不存在。检查基础数据</td><td>高</td><td>[查看](#报错13获取法人信息失败)</td></tr>
-<tr><td>X年的额度外预算不足，有疑问请联系财务</td><td>提交</td><td>额度外实际报销金额超过剩余预算。联系财务确认预算或减少申请金额</td><td>高</td><td>[查看](#报错14x年的额度外预算不足有疑问请联系财务)</td></tr>
-<tr><td>当前额度外超限处理不存在，请联系相关人员处理</td><td>提交</td><td>政策extraBudgetExcessStrategy配置错误。联系管理员修正配置</td><td>高</td><td>[查看](#报错15当前额度外超限处理不存在请联系相关人员处理)</td></tr>
-<tr><td>非超额报销，额度内金额不允许大于政策标准</td><td>区域经理审批</td><td>非超额报销时业务批准金额超标准。修改金额至≤标准金额</td><td>中</td><td>[查看](#报错16非超额报销额度内金额不允许大于政策标准)</td></tr>
-<tr><td>非超额报销，额度外金额不允许大于政策标准</td><td>区域经理审批</td><td>非超额报销时业务批准金额超标准。修改金额至≤标准金额</td><td>中</td><td>[查看](#报错17非超额报销额度外金额不允许大于政策标准)</td></tr>
-<tr><td>额度内标准为0，不允许修改</td><td>区域经理审批</td><td>额度内标准金额为0时修改业务批准金额。检查政策配置</td><td>中</td><td>[查看](#报错18额度内标准为0不允许修改)</td></tr>
-<tr><td>额度外标准为0，不允许修改</td><td>区域经理审批</td><td>额度外标准金额为0时修改业务批准金额。检查政策配置</td><td>中</td><td>[查看](#报错19额度外标准为0不允许修改)</td></tr>
-<tr><td>修改的行表id不能为空</td><td>审批节点保存</td><td>行表缺少ID。确认行数据完整</td><td>低</td><td>[查看](#报错20修改的行表id不能为空)</td></tr>
-<tr><td>获取行数据失败</td><td>审批节点保存</td><td>行ID无法匹配原数据。刷新页面重试</td><td>低</td><td>[查看](#报错21获取行数据失败)</td></tr>
-<tr><td>当前审批节点不能修改</td><td>审批节点保存</td><td>未匹配到正确的审批节点。确认当前taskName</td><td>低</td><td>[查看](#报错22当前审批节点不能修改)</td></tr>
-<tr><td>门头报销申请不存在</td><td>工作流回调</td><td>报销单不存在或已删除。检查数据</td><td>低</td><td>[查看](#报错23门头报销申请不存在)</td></tr>
-<tr><td>单据id 不能为空</td><td>更新/删除</td><td>未传入单据ID。确认操作上下文</td><td>低</td><td>[查看](#报错24单据id不能为空)</td></tr>
-<tr><td>当前数据异常，请稍后再试</td><td>更新/删除</td><td>数据不存在或已被删除。刷新列表页</td><td>低</td><td>[查看](#报错25当前数据异常请稍后再试)</td></tr>
-<tr><td>数据异常,请稍后再试</td><td>查询详情</td><td>报销单不存在或已被删除</td><td>高</td><td>[查看](#报错26数据异常请稍后再试)</td></tr>
-<tr><td>单据信息不合法</td><td>工作流回调</td><td>报销单状态或数据不合法</td><td>高</td><td>[查看](#报错27单据信息不合法)</td></tr>
-<tr><td>报销单不存在</td><td>获取经销商限额</td><td>提交时按id查询CUST_DH_REIMBURSE_HEAD返回null</td><td>高</td><td>[查看](#报错28报销单不存在)</td></tr>
-<tr><td>请先选择经销商和店面建设补贴政策</td><td>添加明细行</td><td>未选择经销商或政策即添加行</td><td>中</td><td>[查看](#报错29请先选择经销商和店面建设补贴政策)</td></tr>
-<tr><td>请选择要删除的行</td><td>删除明细行</td><td>未选择行即点击删除</td><td>低</td><td>[查看](#报错30请选择要删除的行)</td></tr>
-<tr><td>请至少添加一条门店信息</td><td>保存/提交</td><td>terminalData为空</td><td>高</td><td>[查看](#报错31请至少添加一条门店信息)</td></tr>
+<tr><td>报销政策不能为空</td><td>保存</td><td>未选择补贴政策。选择有效的店面建设补贴政策</td><td>高</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>报销政策已失效，请重新选择有效报销政策</td><td>保存</td><td>政策valid!=2。选择有效的政策</td><td>高</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>经销商法人不能为空</td><td>保存</td><td>未选择经销商或法人。选择经销商、交易公司、法人客户</td><td>高</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>报销政策已过期，请重新选择有效报销政策</td><td>保存</td><td>政策不在有效期内。选择有效期内的政策</td><td>高</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>请选择报销类型</td><td>保存</td><td>未选择报销类型。选择额度内或额度外</td><td>中</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>报销明细不能为空</td><td>保存</td><td>未添加门店装修明细。添加至少一行明细</td><td>高</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>单独门店申请，只能报销一个门店</td><td>保存</td><td>政策要求单独门店申请但选择了多个门店。只保留一个门店</td><td>中</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>申请数量必须大于0</td><td>保存</td><td>申请数量为0。填写大于0的数量</td><td>高</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>报销申请数量必须在政策数量范围内</td><td>保存</td><td>数量超出政策范围。修改数量至[minNum, maxNum]范围</td><td>高</td><td><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>请上传装修前文件</td><td>保存</td><td>未上传装修前照片。上传装修前照片</td><td>高</td><td><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>请上传装修后文件</td><td>保存</td><td>未上传装修后照片。上传装修后照片</td><td>高</td><td><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>报销明细无法关联到政策</td><td>保存</td><td>行表policyLineId无法匹配政策明细。重新选择补贴项目</td><td>高</td><td><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>获取法人信息失败</td><td>保存</td><td>经销商+交易公司+法人组合不存在。检查基础数据</td><td>高</td><td><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>X年的额度外预算不足，有疑问请联系财务</td><td>提交</td><td>额度外实际报销金额超过剩余预算。联系财务确认预算或减少申请金额</td><td>高</td><td><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>当前额度外超限处理不存在，请联系相关人员处理</td><td>提交</td><td>政策extraBudgetExcessStrategy配置错误。联系管理员修正配置</td><td>高</td><td><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>非超额报销，额度内金额不允许大于政策标准</td><td>区域经理审批</td><td>非超额报销时业务批准金额超标准。修改金额至≤标准金额</td><td>中</td><td><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>非超额报销，额度外金额不允许大于政策标准</td><td>区域经理审批</td><td>非超额报销时业务批准金额超标准。修改金额至≤标准金额</td><td>中</td><td><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>额度内标准为0，不允许修改</td><td>区域经理审批</td><td>额度内标准金额为0时修改业务批准金额。检查政策配置</td><td>中</td><td><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>额度外标准为0，不允许修改</td><td>区域经理审批</td><td>额度外标准金额为0时修改业务批准金额。检查政策配置</td><td>中</td><td><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>修改的行表id不能为空</td><td>审批节点保存</td><td>行表缺少ID。确认行数据完整</td><td>低</td><td><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
+<tr><td>获取行数据失败</td><td>审批节点保存</td><td>行ID无法匹配原数据。刷新页面重试</td><td>低</td><td><a href="#err-detail-21" class="view-btn">查看</a></td></tr>
+<tr><td>当前审批节点不能修改</td><td>审批节点保存</td><td>未匹配到正确的审批节点。确认当前taskName</td><td>低</td><td><a href="#err-detail-22" class="view-btn">查看</a></td></tr>
+<tr><td>门头报销申请不存在</td><td>工作流回调</td><td>报销单不存在或已删除。检查数据</td><td>低</td><td><a href="#err-detail-23" class="view-btn">查看</a></td></tr>
+<tr><td>单据id 不能为空</td><td>更新/删除</td><td>未传入单据ID。确认操作上下文</td><td>低</td><td><a href="#err-detail-24" class="view-btn">查看</a></td></tr>
+<tr><td>当前数据异常，请稍后再试</td><td>更新/删除</td><td>数据不存在或已被删除。刷新列表页</td><td>低</td><td><a href="#err-detail-25" class="view-btn">查看</a></td></tr>
+<tr><td>数据异常,请稍后再试</td><td>查询详情</td><td>报销单不存在或已被删除</td><td>高</td><td><a href="#err-detail-26" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不合法</td><td>工作流回调</td><td>报销单状态或数据不合法</td><td>高</td><td><a href="#err-detail-27" class="view-btn">查看</a></td></tr>
+<tr><td>报销单不存在</td><td>获取经销商限额</td><td>提交时按id查询CUST_DH_REIMBURSE_HEAD返回null</td><td>高</td><td><a href="#err-detail-28" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择经销商和店面建设补贴政策</td><td>添加明细行</td><td>未选择经销商或政策即添加行</td><td>中</td><td><a href="#err-detail-29" class="view-btn">查看</a></td></tr>
+<tr><td>请选择要删除的行</td><td>删除明细行</td><td>未选择行即点击删除</td><td>低</td><td><a href="#err-detail-30" class="view-btn">查看</a></td></tr>
+<tr><td>请至少添加一条门店信息</td><td>保存/提交</td><td>terminalData为空</td><td>高</td><td><a href="#err-detail-31" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：报销政策不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验policyStandardHead为null（未选择补贴政策）</li><li><strong>逻辑分析</strong>：门头展板报销必须关联有效的店面建设补贴政策，按政策标准计算报销金额。若用户未通过LOV(AE.POLICY_STANDARD_VALID_HEAD)选择政策、policyStandardId传值丢失、或前端未触发联动查询，policyStandardHead为null抛异常。需在新增页面选择有效的补贴政策。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销政策不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，checkParams校验policyStandardHead为null（未选择补贴政策）<br><strong>逻辑分析：</strong>门头展板报销必须关联有效的店面建设补贴政策，按政策标准计算报销金额。若用户未通过LOV(AE.POLICY_STANDARD_VALID_HEAD)选择政策、policyStandardId传值丢失、或前端未触发联动查询，policyStandardHead为null抛异常。需在新增页面选择有效的补贴政策。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.id           AS 政策ID,
@@ -608,8 +614,14 @@ SELECT h.id           AS 政策ID,
   AND    h.end_date >= SYSDATE
   ORDER  BY h.start_date DESC;
 ```
-<h4>报错2：报销政策已失效，请重新选择有效报销政策</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验policyStandardHead.getValid()≠2</li><li><strong>逻辑分析</strong>：政策valid=2表示有效，其他值表示失效/草稿/作废。若用户选择了已失效的政策（如政策被管理员置为无效后用户仍使用前端缓存LOV）、或政策valid字段配置异常，校验不通过抛异常。需重新选择有效(valid=2)政策。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销政策已失效，请重新选择有效报销政策</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，checkParams校验policyStandardHead.getValid()≠2<br><strong>逻辑分析：</strong>政策valid=2表示有效，其他值表示失效/草稿/作废。若用户选择了已失效的政策（如政策被管理员置为无效后用户仍使用前端缓存LOV）、或政策valid字段配置异常，校验不通过抛异常。需重新选择有效(valid=2)政策。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.id           AS 政策ID,
@@ -619,8 +631,14 @@ SELECT h.id           AS 政策ID,
   FROM   policy_standard_head h
   WHERE  h.id = #{传入的policyStandardId};
 ```
-<h4>报错3：经销商法人不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验customerId或customerLegalId为空</li><li><strong>逻辑分析</strong>：报销单需关联经销商和交易公司法人组合，用于后续推送MBO和资金池。若用户未选择经销商、未选择交易公司/法人、或联动查询getCustLegal未返回customerLegalId，校验不通过抛异常。需依次选择经销商→交易公司→法人客户。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>经销商法人不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，checkParams校验customerId或customerLegalId为空<br><strong>逻辑分析：</strong>报销单需关联经销商和交易公司法人组合，用于后续推送MBO和资金池。若用户未选择经销商、未选择交易公司/法人、或联动查询getCustLegal未返回customerLegalId，校验不通过抛异常。需依次选择经销商→交易公司→法人客户。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id                 AS 报销单ID,
@@ -633,8 +651,14 @@ SELECT r.id                 AS 报销单ID,
   AND    (r.customer_id IS NULL OR r.customer_legal_id IS NULL)
   ORDER  BY r.creation_date DESC;
 ```
-<h4>报错4：报销政策已过期，请重新选择有效报销政策</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验policyStandardHead.startDate&gt;当前日期或endDate&lt;当前日期</li><li><strong>逻辑分析</strong>：政策有有效期限制，仅在[startDate, endDate]区间内有效。若用户选择了已过期或未生效的政策（如政策endDate&lt;当前日期已结束、或startDate&gt;当前日期尚未生效），校验不通过抛异常。需选择当前日期在有效期内的政策。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销政策已过期，请重新选择有效报销政策</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，checkParams校验policyStandardHead.startDate&gt;当前日期或endDate&lt;当前日期<br><strong>逻辑分析：</strong>政策有有效期限制，仅在[startDate, endDate]区间内有效。若用户选择了已过期或未生效的政策（如政策endDate&lt;当前日期已结束、或startDate&gt;当前日期尚未生效），校验不通过抛异常。需选择当前日期在有效期内的政策。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.id           AS 政策ID,
@@ -647,8 +671,14 @@ SELECT h.id           AS 政策ID,
   AND    (h.start_date > SYSDATE OR h.end_date < SYSDATE)
   ORDER  BY h.end_date DESC;
 ```
-<h4>报错5：请选择报销类型</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验bxType为空</li><li><strong>逻辑分析</strong>：报销类型bxType区分额度内(1)/额度外(2)，决定后续金额计算和预算控制逻辑。若用户未选择报销类型、或政策budgetType未正确联动赋值，bxType为空抛异常。需选择报销类型。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择报销类型</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，checkParams校验bxType为空<br><strong>逻辑分析：</strong>报销类型bxType区分额度内(1)/额度外(2)，决定后续金额计算和预算控制逻辑。若用户未选择报销类型、或政策budgetType未正确联动赋值，bxType为空抛异常。需选择报销类型。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id           AS 报销单ID,
@@ -660,8 +690,14 @@ SELECT r.id           AS 报销单ID,
   AND    r.bx_type IS NULL
   ORDER  BY r.creation_date DESC;
 ```
-<h4>报错6：报销明细不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams/computeBxLine校验lines集合为空</li><li><strong>逻辑分析</strong>：报销单需至少一行门店装修明细，含门店、补贴项目、数量、金额、装修前后照片等。若用户未添加明细行、前端行数据源未正确绑定、或行数据被误清空，lines为空抛异常。需添加至少一行明细。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销明细不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，checkParams/computeBxLine校验lines集合为空<br><strong>逻辑分析：</strong>报销单需至少一行门店装修明细，含门店、补贴项目、数量、金额、装修前后照片等。若用户未添加明细行、前端行数据源未正确绑定、或行数据被误清空，lines为空抛异常。需添加至少一行明细。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id              AS 报销单ID,
@@ -674,8 +710,14 @@ SELECT r.id              AS 报销单ID,
   AND    NOT EXISTS (SELECT 1 FROM cust_dh_reimburse_line l WHERE l.head_id = r.id)
   ORDER  BY r.creation_date DESC;
 ```
-<h4>报错7：单独门店申请，只能报销一个门店</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，checkParams校验政策singleStoreApplyFlag=Y时，行表中terminalId去重后数量≠1</li><li><strong>逻辑分析</strong>：部分政策要求每次报销只能申请一个门店，防止批量报销混用标准。若政策singleStoreApplyFlag=Y但用户在多行明细中选择了不同门店，校验不通过抛异常。需只保留一个门店的明细行。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单独门店申请，只能报销一个门店</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，checkParams校验政策singleStoreApplyFlag=Y时，行表中terminalId去重后数量≠1<br><strong>逻辑分析：</strong>部分政策要求每次报销只能申请一个门店，防止批量报销混用标准。若政策singleStoreApplyFlag=Y但用户在多行明细中选择了不同门店，校验不通过抛异常。需只保留一个门店的明细行。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id              AS 报销单ID,
@@ -689,8 +731,14 @@ SELECT r.id              AS 报销单ID,
   HAVING COUNT(DISTINCT l.terminal_id) > 1
   ORDER  BY r.creation_date DESC;
 ```
-<h4>报错8：申请数量必须大于0</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，computeBxLine校验某行applyNum=0或为空</li><li><strong>逻辑分析</strong>：申请数量用于计算标准金额(=标准单价×数量)，必须为正数。若用户未填写数量、数量被误置0、或前端NumberField未做必填校验，applyNum=0抛异常。需填写大于0的数量。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>申请数量必须大于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，computeBxLine校验某行applyNum=0或为空<br><strong>逻辑分析：</strong>申请数量用于计算标准金额(=标准单价×数量)，必须为正数。若用户未填写数量、数量被误置0、或前端NumberField未做必填校验，applyNum=0抛异常。需填写大于0的数量。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id            AS 行ID,
@@ -702,8 +750,14 @@ SELECT l.id            AS 行ID,
   WHERE  NVL(l.apply_num, 0) = 0
   ORDER  BY l.id DESC;
 ```
-<h4>报错9：报销申请数量必须在政策数量范围内</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，computeBxLine校验某行applyNum&lt;minNum或applyNum&gt;maxNum</li><li><strong>逻辑分析</strong>：政策明细行规定了数量上下限(minNum, maxNum)，确保报销数量在政策允许范围内。若用户填写的数量超出[minNum, maxNum]区间（如政策限1~5但填了10），校验不通过抛异常。需修改数量至政策范围内。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销申请数量必须在政策数量范围内</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，computeBxLine校验某行applyNum&lt;minNum或applyNum&gt;maxNum<br><strong>逻辑分析：</strong>政策明细行规定了数量上下限(minNum, maxNum)，确保报销数量在政策允许范围内。若用户填写的数量超出[minNum, maxNum]区间（如政策限1~5但填了10），校验不通过抛异常。需修改数量至政策范围内。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id            AS 行ID,
@@ -716,8 +770,14 @@ SELECT l.id            AS 行ID,
   WHERE  l.apply_num < p.min_num OR l.apply_num > p.max_num
   ORDER  BY l.id DESC;
 ```
-<h4>报错10：请上传装修前文件</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，computeBxLine校验某行beforeDocId为空</li><li><strong>逻辑分析</strong>：装修前照片用于证明门店装修前原貌，是报销必要凭证。若用户未上传装修前照片、上传后beforeDocId未正确回填、或附件被误删除，beforeDocId为空抛异常。需上传装修前照片。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请上传装修前文件</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，computeBxLine校验某行beforeDocId为空<br><strong>逻辑分析：</strong>装修前照片用于证明门店装修前原貌，是报销必要凭证。若用户未上传装修前照片、上传后beforeDocId未正确回填、或附件被误删除，beforeDocId为空抛异常。需上传装修前照片。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id            AS 行ID,
@@ -729,8 +789,14 @@ SELECT l.id            AS 行ID,
   WHERE  l.before_doc_id IS NULL
   ORDER  BY l.id DESC;
 ```
-<h4>报错11：请上传装修后文件</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，computeBxLine校验某行afterDocId为空</li><li><strong>逻辑分析</strong>：装修后照片用于证明门店装修完成情况，是报销必要凭证。若用户未上传装修后照片、上传后afterDocId未正确回填、或附件被误删除，afterDocId为空抛异常。需上传装修后照片。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请上传装修后文件</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，computeBxLine校验某行afterDocId为空<br><strong>逻辑分析：</strong>装修后照片用于证明门店装修完成情况，是报销必要凭证。若用户未上传装修后照片、上传后afterDocId未正确回填、或附件被误删除，afterDocId为空抛异常。需上传装修后照片。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id            AS 行ID,
@@ -742,8 +808,14 @@ SELECT l.id            AS 行ID,
   WHERE  l.after_doc_id IS NULL
   ORDER  BY l.id DESC;
 ```
-<h4>报错12：报销明细无法关联到政策</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，computeBxLine按policyLineId查询POLICY_STANDARD_LINE返回null（targetPolicy为null）</li><li><strong>逻辑分析</strong>：报销明细行需关联政策明细行获取标准金额、数量范围等。若policyLineId传值错误（如前端缓存了已失效政策行）、政策明细行被删除、或政策行与政策头不匹配，targetPolicy为null抛异常。需重新选择补贴项目。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销明细无法关联到政策</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，computeBxLine按policyLineId查询POLICY_STANDARD_LINE返回null（targetPolicy为null）<br><strong>逻辑分析：</strong>报销明细行需关联政策明细行获取标准金额、数量范围等。若policyLineId传值错误（如前端缓存了已失效政策行）、政策明细行被删除、或政策行与政策头不匹配，targetPolicy为null抛异常。需重新选择补贴项目。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id              AS 行ID,
@@ -755,8 +827,14 @@ SELECT l.id              AS 行ID,
   AND    NOT EXISTS (SELECT 1 FROM policy_standard_line p WHERE p.id = l.policy_line_id)
   ORDER  BY l.id DESC;
 ```
-<h4>报错13：获取法人信息失败</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，getCustLegal按经销商+交易公司+法人组合查询返回null</li><li><strong>逻辑分析</strong>：报销单需关联交易公司法人中间表，用于后续推送MBO和资金池。若经销商+交易公司+法人组合在中间表中不存在（基础数据未维护、组合关系被删除）、或传值错误，getCustLegal返回null抛异常。需检查经销商、交易公司、法人基础数据完整性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>获取法人信息失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，getCustLegal按经销商+交易公司+法人组合查询返回null<br><strong>逻辑分析：</strong>报销单需关联交易公司法人中间表，用于后续推送MBO和资金池。若经销商+交易公司+法人组合在中间表中不存在（基础数据未维护、组合关系被删除）、或传值错误，getCustLegal返回null抛异常。需检查经销商、交易公司、法人基础数据完整性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id                 AS 报销单ID,
@@ -769,8 +847,14 @@ SELECT r.id                 AS 报销单ID,
   AND    r.customer_legal_id IS NULL
   ORDER  BY r.creation_date DESC;
 ```
-<h4>报错14：X年的额度外预算不足，有疑问请联系财务</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，validBxAmt校验useExtraBudgetFlag=Y时，剩余额度外可用预算(viewOverBudgetAmt)-额度外实际报销金额(outBxAmt)&lt;0</li><li><strong>逻辑分析</strong>：额度外报销占用年度预算总额，需确保预算充足。校验逻辑查询FIN_FEE_CHECK_BX_HEADER中当前年份同事业部的剩余可用预算，若本次额度外实际报销金额超过剩余预算即抛异常。常见根因：年度预算配置不足、历史报销单占用过多、或本次申请金额过大。需联系财务确认预算或减少申请金额。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>X年的额度外预算不足，有疑问请联系财务</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，validBxAmt校验useExtraBudgetFlag=Y时，剩余额度外可用预算(viewOverBudgetAmt)-额度外实际报销金额(outBxAmt)&lt;0<br><strong>逻辑分析：</strong>额度外报销占用年度预算总额，需确保预算充足。校验逻辑查询FIN_FEE_CHECK_BX_HEADER中当前年份同事业部的剩余可用预算，若本次额度外实际报销金额超过剩余预算即抛异常。常见根因：年度预算配置不足、历史报销单占用过多、或本次申请金额过大。需联系财务确认预算或减少申请金额。</div>
+  </div>
+</div>
 
 ```sql
 SELECT b.bud_year              AS 预算年度,
@@ -791,8 +875,14 @@ SELECT b.bud_year              AS 预算年度,
   AND    b.bud_year = #{当前年份}
   ORDER  BY b.division_id;
 ```
-<h4>报错15：当前额度外超限处理不存在，请联系相关人员处理</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，computeLimitBxAmt校验政策extraBudgetExcessStrategy非1非2</li><li><strong>逻辑分析</strong>：限额模式下经销商超额时需按策略处理：1-超出不计(额度内实际报销=财务批准)、2-转额度内(额度内实际报销=财务批准-超限金额)。若政策extraBudgetExcessStrategy未配置、配置为非1非2的非法值、或政策被错误修改，校验不通过抛异常。需联系管理员修正政策配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前额度外超限处理不存在，请联系相关人员处理</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，computeLimitBxAmt校验政策extraBudgetExcessStrategy非1非2<br><strong>逻辑分析：</strong>限额模式下经销商超额时需按策略处理：1-超出不计(额度内实际报销=财务批准)、2-转额度内(额度内实际报销=财务批准-超限金额)。若政策extraBudgetExcessStrategy未配置、配置为非1非2的非法值、或政策被错误修改，校验不通过抛异常。需联系管理员修正政策配置。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.id                       AS 政策ID,
@@ -804,8 +894,14 @@ SELECT h.id                       AS 政策ID,
   AND    h.extra_budget_excess_strategy NOT IN (1, 2)
   ORDER  BY h.id;
 ```
-<h4>报错16：非超额报销，额度内金额不允许大于政策标准</h4>
-<ul><li><strong>触发条件</strong>：区域经理审批节点保存，bizNodeUpdate校验政策excessFlag≠Y且newInBizAmt&gt;=inStandardAmt</li><li><strong>逻辑分析</strong>：非超额报销(excessFlag≠Y)时，业务批准金额不能超过政策标准金额，确保报销合规。若区域经理修改的额度内业务批准金额超过标准金额、或政策excessFlag配置错误导致校验逻辑误判，抛异常。需修改金额至≤标准金额。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>非超额报销，额度内金额不允许大于政策标准</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>区域经理审批节点保存，bizNodeUpdate校验政策excessFlag≠Y且newInBizAmt&gt;=inStandardAmt<br><strong>逻辑分析：</strong>非超额报销(excessFlag≠Y)时，业务批准金额不能超过政策标准金额，确保报销合规。若区域经理修改的额度内业务批准金额超过标准金额、或政策excessFlag配置错误导致校验逻辑误判，抛异常。需修改金额至≤标准金额。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id              AS 行ID,
@@ -821,8 +917,14 @@ SELECT l.id              AS 行ID,
   AND    l.in_biz_amt > l.in_standard_amt
   ORDER  BY l.id DESC;
 ```
-<h4>报错17：非超额报销，额度外金额不允许大于政策标准</h4>
-<ul><li><strong>触发条件</strong>：区域经理审批节点保存，bizNodeUpdate校验政策excessFlag≠Y且newOutBizAmt&gt;=outStandardAmt</li><li><strong>逻辑分析</strong>：与额度内校验同理，非超额报销时额度外业务批准金额不能超过政策标准金额。若区域经理修改的额度外业务批准金额超过标准金额，抛异常。需修改金额至≤标准金额。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>非超额报销，额度外金额不允许大于政策标准</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>区域经理审批节点保存，bizNodeUpdate校验政策excessFlag≠Y且newOutBizAmt&gt;=outStandardAmt<br><strong>逻辑分析：</strong>与额度内校验同理，非超额报销时额度外业务批准金额不能超过政策标准金额。若区域经理修改的额度外业务批准金额超过标准金额，抛异常。需修改金额至≤标准金额。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id              AS 行ID,
@@ -838,8 +940,14 @@ SELECT l.id              AS 行ID,
   AND    l.out_biz_amt > l.out_standard_amt
   ORDER  BY l.id DESC;
 ```
-<h4>报错18：额度内标准为0，不允许修改</h4>
-<ul><li><strong>触发条件</strong>：区域经理审批节点保存，bizNodeUpdate校验某行inStandardAmt&lt;=0时区域经理修改了inBizAmt</li><li><strong>逻辑分析</strong>：额度内标准金额为0说明政策未配置该行额度内标准，不应有额度内报销金额。若区域经理在标准为0的行上修改业务批准金额，校验不通过抛异常。需检查政策配置是否遗漏额度内标准。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>额度内标准为0，不允许修改</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>区域经理审批节点保存，bizNodeUpdate校验某行inStandardAmt&lt;=0时区域经理修改了inBizAmt<br><strong>逻辑分析：</strong>额度内标准金额为0说明政策未配置该行额度内标准，不应有额度内报销金额。若区域经理在标准为0的行上修改业务批准金额，校验不通过抛异常。需检查政策配置是否遗漏额度内标准。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id              AS 行ID,
@@ -851,8 +959,14 @@ SELECT l.id              AS 行ID,
   AND    NVL(l.in_biz_amt, 0) > 0
   ORDER  BY l.id DESC;
 ```
-<h4>报错19：额度外标准为0，不允许修改</h4>
-<ul><li><strong>触发条件</strong>：区域经理审批节点保存，bizNodeUpdate校验某行outStandardAmt&lt;=0时区域经理修改了outBizAmt</li><li><strong>逻辑分析</strong>：与额度内校验同理，额度外标准金额为0说明政策未配置该行额度外标准。若区域经理在标准为0的行上修改业务批准金额，校验不通过抛异常。需检查政策配置是否遗漏额度外标准。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-19" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>额度外标准为0，不允许修改</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>区域经理审批节点保存，bizNodeUpdate校验某行outStandardAmt&lt;=0时区域经理修改了outBizAmt<br><strong>逻辑分析：</strong>与额度内校验同理，额度外标准金额为0说明政策未配置该行额度外标准。若区域经理在标准为0的行上修改业务批准金额，校验不通过抛异常。需检查政策配置是否遗漏额度外标准。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id              AS 行ID,
@@ -864,8 +978,14 @@ SELECT l.id              AS 行ID,
   AND    NVL(l.out_biz_amt, 0) > 0
   ORDER  BY l.id DESC;
 ```
-<h4>报错20：修改的行表id不能为空</h4>
-<ul><li><strong>触发条件</strong>：审批节点保存，nodeEditSave/bizNodeUpdate校验某行lineId为空</li><li><strong>逻辑分析</strong>：审批节点修改行表数据需按lineId定位更新记录。若前端未传lineId（如新增行未保存即提交审批、行数据未绑定ID）、或lineId字段名拼写错误，校验不通过抛异常。需确认行数据完整。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-20" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>修改的行表id不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>审批节点保存，nodeEditSave/bizNodeUpdate校验某行lineId为空<br><strong>逻辑分析：</strong>审批节点修改行表数据需按lineId定位更新记录。若前端未传lineId（如新增行未保存即提交审批、行数据未绑定ID）、或lineId字段名拼写错误，校验不通过抛异常。需确认行数据完整。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id         AS 行ID,
@@ -875,8 +995,14 @@ SELECT l.id         AS 行ID,
   WHERE  l.id IS NULL
   ORDER  BY l.head_id DESC;
 ```
-<h4>报错21：获取行数据失败</h4>
-<ul><li><strong>触发条件</strong>：审批节点保存，bizNodeUpdate按lineId查询原行数据originLine返回null</li><li><strong>逻辑分析</strong>：审批节点修改行表需先查询原行数据用于校验和同步更新。若行数据在审批期间被删除、lineId传值错误、或并发场景下被清理，originLine为null抛异常。需刷新页面重试。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-21" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>获取行数据失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>审批节点保存，bizNodeUpdate按lineId查询原行数据originLine返回null<br><strong>逻辑分析：</strong>审批节点修改行表需先查询原行数据用于校验和同步更新。若行数据在审批期间被删除、lineId传值错误、或并发场景下被清理，originLine为null抛异常。需刷新页面重试。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.id         AS 行ID,
@@ -886,8 +1012,14 @@ SELECT l.id         AS 行ID,
   FROM   cust_dh_reimburse_line l
   WHERE  l.id = #{传入的lineId};
 ```
-<h4>报错22：当前审批节点不能修改</h4>
-<ul><li><strong>触发条件</strong>：审批节点保存，nodeEditSave根据taskName未匹配到区域经理/销售会计任一节点</li><li><strong>逻辑分析</strong>：审批节点保存需根据当前taskName分发到对应更新方法。若taskName未配置、工作流节点名称与代码预期不一致、或当前用户不在审批节点上，无法匹配到处理方法即抛异常。需确认当前taskName是否为预期值（区域经理审批/销售会计审批）。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-22" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前审批节点不能修改</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>审批节点保存，nodeEditSave根据taskName未匹配到区域经理/销售会计任一节点<br><strong>逻辑分析：</strong>审批节点保存需根据当前taskName分发到对应更新方法。若taskName未配置、工作流节点名称与代码预期不一致、或当前用户不在审批节点上，无法匹配到处理方法即抛异常。需确认当前taskName是否为预期值（区域经理审批/销售会计审批）。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id               AS 报销单ID,
@@ -899,8 +1031,14 @@ SELECT r.id               AS 报销单ID,
   WHERE  r.hz_approve_status = 'RUN'
   ORDER  BY r.last_update_date DESC;
 ```
-<h4>报错23：门头报销申请不存在</h4>
-<ul><li><strong>触发条件</strong>：工作流回调(onWfComplete/wfProcSubmit/onWfBreak)按id查询CUST_DH_REIMBURSE_HEAD返回null</li><li><strong>逻辑分析</strong>：工作流回调需查询报销单更新审批状态、计算报销金额等。若回调期间报销单被删除、id传值错误、或OA回调报文与DMS不一致，查询返回空抛异常。需核查报销单数据与工作流实例一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-23" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门头报销申请不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流回调(onWfComplete/wfProcSubmit/onWfBreak)按id查询CUST_DH_REIMBURSE_HEAD返回null<br><strong>逻辑分析：</strong>工作流回调需查询报销单更新审批状态、计算报销金额等。若回调期间报销单被删除、id传值错误、或OA回调报文与DMS不一致，查询返回空抛异常。需核查报销单数据与工作流实例一致性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id               AS 报销单ID,
@@ -913,8 +1051,14 @@ SELECT r.id               AS 报销单ID,
   AND    r.last_update_date < SYSDATE - 1
   ORDER  BY r.last_update_date DESC;
 ```
-<h4>报错24：单据id 不能为空</h4>
-<ul><li><strong>触发条件</strong>：更新/删除操作，checkUpOrDelete校验传入的id参数为null</li><li><strong>逻辑分析</strong>：更新和删除操作需按单据ID定位报销单。若前端未传id（如列表行未绑定ID、操作上下文丢失）、或id字段名拼写错误，后端校验id为空即抛异常。需确认请求参数中包含有效的单据ID。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-24" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据id 不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>更新/删除操作，checkUpOrDelete校验传入的id参数为null<br><strong>逻辑分析：</strong>更新和删除操作需按单据ID定位报销单。若前端未传id（如列表行未绑定ID、操作上下文丢失）、或id字段名拼写错误，后端校验id为空即抛异常。需确认请求参数中包含有效的单据ID。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id              AS 报销单ID,
@@ -924,8 +1068,14 @@ SELECT r.id              AS 报销单ID,
   WHERE  r.id IS NULL
   ORDER  BY r.creation_date DESC;
 ```
-<h4>报错25：当前数据异常，请稍后再试</h4>
-<ul><li><strong>触发条件</strong>：更新/删除操作，checkUpOrDelete按id查询CUST_DH_REIMBURSE_HEAD返回null</li><li><strong>逻辑分析</strong>：更新、删除操作需先校验报销单存在。若报销单在操作期间被其他用户删除、id传值错误、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-25" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前数据异常，请稍后再试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>更新/删除操作，checkUpOrDelete按id查询CUST_DH_REIMBURSE_HEAD返回null<br><strong>逻辑分析：</strong>更新、删除操作需先校验报销单存在。若报销单在操作期间被其他用户删除、id传值错误、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id              AS 报销单ID,
@@ -935,8 +1085,14 @@ SELECT r.id              AS 报销单ID,
   FROM   cust_dh_reimburse_head r
   WHERE  r.id = #{传入的id};
 ```
-<h4>报错26：数据异常,请稍后再试</h4>
-<ul><li><strong>触发条件</strong>：doSelect查询详情时，按id查询CUST_DH_REIMBURSE_HEAD返回null</li><li><strong>逻辑分析</strong>：详情页加载需查询报销单完整信息（含行表、附件等）。若报销单在操作期间被删除、id传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需返回列表页重新进入详情。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-26" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>数据异常,请稍后再试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doSelect查询详情时，按id查询CUST_DH_REIMBURSE_HEAD返回null<br><strong>逻辑分析：</strong>详情页加载需查询报销单完整信息（含行表、附件等）。若报销单在操作期间被删除、id传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需返回列表页重新进入详情。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id              AS 报销单ID,
@@ -946,8 +1102,14 @@ SELECT r.id              AS 报销单ID,
   FROM   cust_dh_reimburse_head r
   WHERE  r.id = #{传入的id};
 ```
-<h4>报错27：单据信息不合法</h4>
-<ul><li><strong>触发条件</strong>：工作流回调(wfProcSubmit/onWfComplete等)时，校验报销单状态或数据不合法</li><li><strong>逻辑分析</strong>：工作流回调需校验报销单数据合法性后更新审批状态。若报销单状态与工作流操作不匹配（如已APPROVED的报销单再次提交）、数据被非法修改、或工作流实例与报销单状态不一致，校验不通过抛异常。需核查报销单状态与工作流实例一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-27" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不合法</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流回调(wfProcSubmit/onWfComplete等)时，校验报销单状态或数据不合法<br><strong>逻辑分析：</strong>工作流回调需校验报销单数据合法性后更新审批状态。若报销单状态与工作流操作不匹配（如已APPROVED的报销单再次提交）、数据被非法修改、或工作流实例与报销单状态不一致，校验不通过抛异常。需核查报销单状态与工作流实例一致性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id               AS 报销单ID,
@@ -959,8 +1121,14 @@ SELECT r.id               AS 报销单ID,
   WHERE  r.hz_approve_status = 'RUN'
   ORDER  BY r.last_update_date DESC;
 ```
-<h4>报错28：报销单不存在</h4>
-<ul><li><strong>触发条件</strong>：提交审批getCustLimit获取经销商限额时，按id查询CUST_DH_REIMBURSE_HEAD返回null</li><li><strong>逻辑分析</strong>：提交审批需查询报销单获取经销商ID和政策ID，进而获取经销商限额。若报销单在提交期间被删除、id传值错误、或并发场景下被清理，查询返回空抛异常。需核查报销单数据完整性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-28" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销单不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交审批getCustLimit获取经销商限额时，按id查询CUST_DH_REIMBURSE_HEAD返回null<br><strong>逻辑分析：</strong>提交审批需查询报销单获取经销商ID和政策ID，进而获取经销商限额。若报销单在提交期间被删除、id传值错误、或并发场景下被清理，查询返回空抛异常。需核查报销单数据完整性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id               AS 报销单ID,
@@ -971,8 +1139,14 @@ SELECT r.id               AS 报销单ID,
   FROM   cust_dh_reimburse_head r
   WHERE  r.id = #{传入的id};
 ```
-<h4>报错29：请先选择经销商和店面建设补贴政策</h4>
-<ul><li><strong>触发条件</strong>：添加门店装修明细行时，前端校验未选择经销商(customerId为空)或政策(policyStandardId为空)</li><li><strong>逻辑分析</strong>：添加明细行需基于经销商和政策联动带出门店LOV和补贴项目LOV。若用户未选择经销商或政策即点击添加行，无法触发联动查询，前端message.error提示。需先选择经销商和店面建设补贴政策。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-29" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先选择经销商和店面建设补贴政策</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>添加门店装修明细行时，前端校验未选择经销商(customerId为空)或政策(policyStandardId为空)<br><strong>逻辑分析：</strong>添加明细行需基于经销商和政策联动带出门店LOV和补贴项目LOV。若用户未选择经销商或政策即点击添加行，无法触发联动查询，前端message.error提示。需先选择经销商和店面建设补贴政策。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id                 AS 报销单ID,
@@ -985,8 +1159,14 @@ SELECT r.id                 AS 报销单ID,
   AND    (r.customer_id IS NULL OR r.policy_standard_id IS NULL)
   ORDER  BY r.creation_date DESC;
 ```
-<h4>报错30：请选择要删除的行</h4>
-<ul><li><strong>触发条件</strong>：删除门店装修明细行时，前端校验未选择任何行即点击删除</li><li><strong>逻辑分析</strong>：删除行操作需选中目标行。若用户未在行表格中选择任何行即点击删除按钮，前端message.error提示。需先选中要删除的行再点击删除。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-30" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择要删除的行</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除门店装修明细行时，前端校验未选择任何行即点击删除<br><strong>逻辑分析：</strong>删除行操作需选中目标行。若用户未在行表格中选择任何行即点击删除按钮，前端message.error提示。需先选中要删除的行再点击删除。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id              AS 报销单ID,
@@ -998,8 +1178,14 @@ SELECT r.id              AS 报销单ID,
   WHERE  r.hz_approve_status = 'NEW'
   ORDER  BY r.creation_date DESC;
 ```
-<h4>报错31：请至少添加一条门店信息</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"或"提交"按钮，前端handleSave/handleSaveWithWorkflow校验terminalData为空或length=0</li><li><strong>逻辑分析</strong>：报销单需至少一行门店装修明细，前端通过terminalTableDSRef管理行数据。若用户未添加明细行、行数据被误清空、或行数据源未正确绑定，terminalData为空前端message.error提示。需添加至少一行门店装修明细。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-31" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请至少添加一条门店信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"或"提交"按钮，前端handleSave/handleSaveWithWorkflow校验terminalData为空或length=0<br><strong>逻辑分析：</strong>报销单需至少一行门店装修明细，前端通过terminalTableDSRef管理行数据。若用户未添加明细行、行数据被误清空、或行数据源未正确绑定，terminalData为空前端message.error提示。需添加至少一行门店装修明细。</div>
+  </div>
+</div>
 
 ```sql
 SELECT r.id              AS 报销单ID,

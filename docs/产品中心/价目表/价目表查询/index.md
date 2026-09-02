@@ -420,8 +420,14 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
     AND t.EFFECTIVE_START_DT <= sysdate
     AND (t.EFFECTIVE_END_DT >= sysdate OR t.delay_date > sysdate);
 ```
-<h4>报错2：导出权限不足</h4>
-<ul><li><strong>触发条件</strong>：当前用户无导出权限时，导出按钮不显示；若通过API直接调用导出接口则返回403</li><li><strong>逻辑分析</strong>：前端PriceTable组件中通过checkPermissions(['hzero.crm.price.list.export'])异步校验导出权限（listConfig.tsx第228行），无权限时hasExportPermission为false，导出按钮不渲染。后端export接口标注@Permission(level=ResourceLevel.ORGANIZATION)，无权限时抛出403异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户无导出权限时，导出按钮不显示；若通过API直接调用导出接口则返回403<br><strong>逻辑分析：</strong>前端PriceTable组件中通过checkPermissions(['hzero.crm.price.list.export'])异步校验导出权限（listConfig.tsx第228行），无权限时hasExportPermission为false，导出按钮不渲染。后端export接口标注@Permission(level=ResourceLevel.ORGANIZATION)，无权限时抛出403异常。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查用户是否拥有价目表导出权限
@@ -433,8 +439,14 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
   WHERE P.CODE = 'hzero.crm.price.list.export'
   ORDER BY R.CODE;
 ```
-<h4>报错3：查询失败</h4>
-<ul><li><strong>触发条件</strong>：列表页加载或点击查询按钮时，后端列表查询接口返回失败</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/lnk-price-list-item/list接口，后端selectPriceListItemListPage方法通过LnkPriceListItemMapper.selectPriceListItemListPage查询LNK_PRICE_LIST_ITEM关联LNK_PROD、LNK_PRICE_LIST表，并调用cux_inv_convert_ex_pub.inv_um_convert函数计算转换率。若数据库连接异常、SQL执行超时、转换率函数异常或事业部价目表不存在则返回失败，前端DataSet自动提示查询失败。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页加载或点击查询按钮时，后端列表查询接口返回失败<br><strong>逻辑分析：</strong>前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/lnk-price-list-item/list接口，后端selectPriceListItemListPage方法通过LnkPriceListItemMapper.selectPriceListItemListPage查询LNK_PRICE_LIST_ITEM关联LNK_PROD、LNK_PRICE_LIST表，并调用cux_inv_convert_ex_pub.inv_um_convert函数计算转换率。若数据库连接异常、SQL执行超时、转换率函数异常或事业部价目表不存在则返回失败，前端DataSet自动提示查询失败。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查当前事业部是否存在有效价目表
@@ -452,8 +464,14 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
     LEFT JOIN LNK_PROD T2 ON T1.PROD_ID = T2.ROW_ID
   WHERE T2.ROW_ID IS NULL;
 ```
-<h4>报错4：会话过期</h4>
-<ul><li><strong>触发条件</strong>：用户登录会话已失效时执行任意操作（查询/导出）</li><li><strong>逻辑分析</strong>：前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。价目表查询为纯查询页面，会话过期主要影响查询和导出操作。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户登录会话已失效时执行任意操作（查询/导出）<br><strong>逻辑分析：</strong>前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。价目表查询为纯查询页面，会话过期主要影响查询和导出操作。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查用户登录会话状态
@@ -464,8 +482,14 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
   WHERE U.LOGIN_NAME = :loginName
   ORDER BY T.EXPIRE_TIME DESC;
 ```
-<h4>报错5：暂无数据</h4>
-<ul><li><strong>触发条件</strong>：查询条件匹配不到任何有效价格记录，列表展示为空</li><li><strong>逻辑分析</strong>：后端SQL条件PRICE_STATUS='Y'且trunc(SYSDATE) BETWEEN trunc(EFF_START_DATE) AND trunc(EFF_END_DATE)过滤有效价格，若当前日期不在任何价格有效期内、价格状态非Y、或事业部/币种/渠道过滤后无匹配数据，则返回空列表。前端DataSet接收空数据，列表区域显示"暂无数据"。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件匹配不到任何有效价格记录，列表展示为空<br><strong>逻辑分析：</strong>后端SQL条件PRICE_STATUS='Y'且trunc(SYSDATE) BETWEEN trunc(EFF_START_DATE) AND trunc(EFF_END_DATE)过滤有效价格，若当前日期不在任何价格有效期内、价格状态非Y、或事业部/币种/渠道过滤后无匹配数据，则返回空列表。前端DataSet接收空数据，列表区域显示"暂无数据"。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查当前事业部有效价格数据
@@ -485,11 +509,54 @@ WHERE t.accnt_id = (SELECT ac.row_id FROM lnk_accnt ac WHERE ac.acct_code = #{de
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：经销商用户为什么看不到"价目表名称"列？</li><li>原因：前端根据用户类型（userType='D'）隐藏价目表名称列，经销商仅能看到价格数据，不知道具体价目表来源</li><li>解决思路：如需查看价目表名称，联系内部用户查询</li></ul>
-<ul><li>问题2：经销商用户为什么不能选择币种？</li><li>原因：经销商用户的币种由其客商信息自动决定，前端隐藏币种查询条件</li><li>解决思路：如需更改币种，修改经销商客商（LNK_ACCNT）的currency字段</li></ul>
-<ul><li>问题3：导出按钮为什么不显示？</li><li>原因：导出按钮需要权限hzero.crm.price.list.export，前端通过checkPermissions异步校验</li><li>解决思路：联系管理员分配导出权限</li></ul>
-<ul><li>问题4：瓷砖产品的库存数为什么不等于原始库存数？</li><li>原因：瓷砖产品（LH_PROD_LINE='CeramicTile'）的库存数按计费单位与基本单位的转换率换算，展示值=Round(原始库存数/转换率, 2)</li><li>解决思路：查看转换率字段确认换算比例</li></ul>
-<ul><li>问题5：海外事业部经销商查询人民币价目表时为什么看到的价格和其他经销商不同？</li><li>原因：海外事业部+CNY场景下，系统根据经销商的出口标识（exportType）匹配不同价目表：出口客户匹配"海外事业部价目表_CNY（出口）"，非出口客户匹配"海外事业部价目表"</li><li>解决思路：检查经销商客商的outAccount字段确认出口标识</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">经销商用户为什么看不到"价目表名称"列？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>前端根据用户类型（userType='D'）隐藏价目表名称列，经销商仅能看到价格数据，不知道具体价目表来源<br><strong style="color:#7C3AED;">处理：</strong>如需查看价目表名称，联系内部用户查询
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">经销商用户为什么不能选择币种？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>经销商用户的币种由其客商信息自动决定，前端隐藏币种查询条件<br><strong style="color:#7C3AED;">处理：</strong>如需更改币种，修改经销商客商（LNK_ACCNT）的currency字段
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">导出按钮为什么不显示？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>导出按钮需要权限hzero.crm.price.list.export，前端通过checkPermissions异步校验<br><strong style="color:#7C3AED;">处理：</strong>联系管理员分配导出权限
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">瓷砖产品的库存数为什么不等于原始库存数？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>瓷砖产品（LH_PROD_LINE='CeramicTile'）的库存数按计费单位与基本单位的转换率换算，展示值=Round(原始库存数/转换率, 2)<br><strong style="color:#7C3AED;">处理：</strong>查看转换率字段确认换算比例
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q5</span>
+    <span style="font-size:15px;">海外事业部经销商查询人民币价目表时为什么看到的价格和其他经销商不同？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>海外事业部+CNY场景下，系统根据经销商的出口标识（exportType）匹配不同价目表：出口客户匹配"海外事业部价目表_CNY（出口）"，非出口客户匹配"海外事业部价目表"<br><strong style="color:#7C3AED;">处理：</strong>检查经销商客商的outAccount字段确认出口标识
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

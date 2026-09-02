@@ -456,8 +456,14 @@ JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID < b.LECTURER_SCHEDULE_ID
 <tr><td>讲师不能为空</td><td>新建排期提交</td><td>未选择讲师，选择讲师后提交</td><td>error</td><td>前端校验 LECTURER_ARCHIVES_CODE 非空</td></tr>
 </tbody>
 </table>
-<h4>报错1：日期类型不能为空</h4>
-<ul><li><strong>触发条件</strong>：新建排期提交时，dateType 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 dateType 字段配置 required 校验，提交前执行字段校验，若值为空则阻止提交并提示"日期类型不能为空"。dateType 用于区分排期类型（如出差、休假、培训等），是排期统计的分类依据，必须填写</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>日期类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新建排期提交时，dateType 字段为空<br><strong>逻辑分析：</strong>前端表单对 dateType 字段配置 required 校验，提交前执行字段校验，若值为空则阻止提交并提示"日期类型不能为空"。dateType 用于区分排期类型（如出差、休假、培训等），是排期统计的分类依据，必须填写</div>
+  </div>
+</div>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID AS 排期ID,
@@ -468,8 +474,14 @@ SELECT LECTURER_SCHEDULE_ID AS 排期ID,
   FROM MA_LECTURER_SCHEDULE
   WHERE DATE_TYPE IS NULL OR DATE_TYPE = '';
 ```
-<h4>报错2：日期不能为空</h4>
-<ul><li><strong>触发条件</strong>：新建排期或取消排期提交时，date 日期范围字段为空</li><li><strong>逻辑分析</strong>：前端 DatePicker(range) 组件对 date 字段配置 required 校验，提交前校验日期范围是否填写，为空则阻止提交并提示"日期不能为空"。日期范围是排期的核心数据，新建时用于确定占用时段，取消时用于确定释放时段，必须填写</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>日期不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新建排期或取消排期提交时，date 日期范围字段为空<br><strong>逻辑分析：</strong>前端 DatePicker(range) 组件对 date 字段配置 required 校验，提交前校验日期范围是否填写，为空则阻止提交并提示"日期不能为空"。日期范围是排期的核心数据，新建时用于确定占用时段，取消时用于确定释放时段，必须填写</div>
+  </div>
+</div>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID AS 排期ID,
@@ -480,8 +492,14 @@ SELECT LECTURER_SCHEDULE_ID AS 排期ID,
   FROM MA_LECTURER_SCHEDULE
   WHERE START_DATE IS NULL OR END_DATE IS NULL;
 ```
-<h4>报错3：该讲师在指定时间段已有排期，请重新选择</h4>
-<ul><li><strong>触发条件</strong>：新建排期提交时，新排期时间段与该讲师已有有效排期（STATUS='active'）时间段存在交集</li><li><strong>逻辑分析</strong>：后端 save 接口在保存前执行冲突校验，查询 MA_LECTURER_SCHEDULE 表中同一讲师（LECTURER_ARCHIVES_ID 相同）且状态为 active 的排期记录，判断新排期的 [START_DATE, END_DATE] 与已有排期的 [START_DATE, END_DATE] 是否存在交集（新排期.START_DATE &lt;= 已有.END_DATE AND 新排期.END_DATE &gt;= 已有.START_DATE）。若存在交集则抛出业务异常，提示"该讲师在指定时间段已有排期，请重新选择"。此校验从源头避免讲师被重复点用，保证排期数据唯一性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>该讲师在指定时间段已有排期，请重新选择</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新建排期提交时，新排期时间段与该讲师已有有效排期（STATUS='active'）时间段存在交集<br><strong>逻辑分析：</strong>后端 save 接口在保存前执行冲突校验，查询 MA_LECTURER_SCHEDULE 表中同一讲师（LECTURER_ARCHIVES_ID 相同）且状态为 active 的排期记录，判断新排期的 [START_DATE, END_DATE] 与已有排期的 [START_DATE, END_DATE] 是否存在交集（新排期.START_DATE &lt;= 已有.END_DATE AND 新排期.END_DATE &gt;= 已有.START_DATE）。若存在交集则抛出业务异常，提示"该讲师在指定时间段已有排期，请重新选择"。此校验从源头避免讲师被重复点用，保证排期数据唯一性</div>
+  </div>
+</div>
 
 ```sql
 SELECT a.LECTURER_SCHEDULE_ID AS 排期1ID,
@@ -498,8 +516,14 @@ SELECT a.LECTURER_SCHEDULE_ID AS 排期1ID,
     AND a.STATUS = 'active' AND b.STATUS = 'active'
     AND a.START_DATE <= b.END_DATE AND a.END_DATE >= b.START_DATE;
 ```
-<h4>报错4：请求失败</h4>
-<ul><li><strong>触发条件</strong>：调用 mlt/maLecturerSchedule/save、cancel 或 list 接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用 mlt/maLecturerSchedule/save、cancel 或 list 接口时，后端返回 HTTP 状态码非 2xx<br><strong>逻辑分析：</strong>前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、网络中断等。需检查 mbo-business 微服务运行状态、数据库连接池、后端日志定位具体异常堆栈</div>
+  </div>
+</div>
 
 ```sql
 -- 检查近期异常排期记录（结合后端日志时间排查）
@@ -513,8 +537,14 @@ SELECT a.LECTURER_SCHEDULE_ID AS 排期1ID,
   WHERE LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错5：网络异常/接口超时</h4>
-<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询等。需检查网络连通性、后端服务负载、数据库性能</div>
+  </div>
+</div>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
@@ -524,8 +554,14 @@ SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
   WHERE LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错6：权限不足</h4>
-<ul><li><strong>触发条件</strong>：点击新建、取消排期等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击新建、取消排期等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
@@ -536,8 +572,14 @@ SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE '%lecturer_schedule%' ORDER BY U.USER_NAME;
 ```
-<h4>报错7：数据不存在</h4>
-<ul><li><strong>触发条件</strong>：取消排期等操作时，接口返回数据为空或排期ID不存在</li><li><strong>逻辑分析</strong>：前端通过 lecturerScheduleId 调用接口，后端查询 MA_LECTURER_SCHEDULE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：排期ID错误、排期已被删除、跨租户查询、数据权限隔离等。需检查 LECTURER_SCHEDULE_ID 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>取消排期等操作时，接口返回数据为空或排期ID不存在<br><strong>逻辑分析：</strong>前端通过 lecturerScheduleId 调用接口，后端查询 MA_LECTURER_SCHEDULE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：排期ID错误、排期已被删除、跨租户查询、数据权限隔离等。需检查 LECTURER_SCHEDULE_ID 有效性及数据权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
@@ -545,8 +587,14 @@ SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
   FROM MA_LECTURER_SCHEDULE
   WHERE DELETE_FLAG = 'Y' OR LECTURER_SCHEDULE_ID IS NULL;
 ```
-<h4>报错8：状态不允许操作</h4>
-<ul><li><strong>触发条件</strong>：点击取消排期按钮时，排期状态不允许取消</li><li><strong>逻辑分析</strong>：后端校验状态机，如已取消（cancelled）不可重复取消、已过期不可取消等。状态不匹配时后端返回业务异常。需检查排期当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击取消排期按钮时，排期状态不允许取消<br><strong>逻辑分析：</strong>后端校验状态机，如已取消（cancelled）不可重复取消、已过期不可取消等。状态不匹配时后端返回业务异常。需检查排期当前状态及操作流程</div>
+  </div>
+</div>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
@@ -555,8 +603,14 @@ SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,
   WHERE STATUS NOT IN ('active','cancelled','expired')
   ORDER BY CREATE_DATE DESC;
 ```
-<h4>报错9：值集数据不显示</h4>
-<ul><li><strong>触发条件</strong>：查询条件或新建排期弹窗中日期类型等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.SCHEDULE_DATE_TYPE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或新建排期弹窗中日期类型等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.SCHEDULE_DATE_TYPE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
+  </div>
+</div>
 
 ```sql
 SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
@@ -565,8 +619,14 @@ SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
   WHERE LOOKUP_CODE IN ('MBO.SCHEDULE_DATE_TYPE')
     AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
 ```
-<h4>报错10：讲师不能为空</h4>
-<ul><li><strong>触发条件</strong>：新建排期提交时，LECTURER_ARCHIVES_CODE 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 lecturerArchivesCode 字段配置 required 校验，提交前校验讲师是否选择，为空则阻止提交并提示"讲师不能为空"。讲师是排期的核心对象，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>讲师不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新建排期提交时，LECTURER_ARCHIVES_CODE 字段为空<br><strong>逻辑分析：</strong>前端表单对 lecturerArchivesCode 字段配置 required 校验，提交前校验讲师是否选择，为空则阻止提交并提示"讲师不能为空"。讲师是排期的核心对象，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID AS 排期ID, LECTURER_NAME AS 讲师姓名,

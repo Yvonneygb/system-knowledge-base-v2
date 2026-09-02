@@ -467,18 +467,24 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>单据信息不匹配</td><td>同步门店档案时</td><td>申请单不存在或已被删除，请检查申请单状态</td><td>高</td><td>[查看](#报错1单据信息不匹配)</td></tr>
-<tr><td>当前数据不存在</td><td>流程回调时</td><td>工作流回调时申请单已被删除</td><td>高</td><td>[查看](#报错2当前数据不存在)</td></tr>
-<tr><td>门店编码生成失败</td><td>同步门店档案时</td><td>Redis连接异常或区域数据缺失</td><td>高</td><td>[查看](#报错3门店编码生成失败)</td></tr>
-<tr><td>单据信息不匹配</td><td>提交审批时</td><td>申请单不存在或已被删除，请检查申请单ID</td><td>高</td><td>[查看](#报错4单据信息不匹配)</td></tr>
-<tr><td>流程中objid为空，流程失败!</td><td>审批通过回调时</td><td>工作流回调报文objId为空或非正数，流程无法继续</td><td>高</td><td>[查看](#报错5流程中objid为空流程失败)</td></tr>
-<tr><td>单据信息不匹配</td><td>审批驳回回调时</td><td>回调时申请单已被删除，无法更新驳回状态</td><td>高</td><td>[查看](#报错6单据信息不匹配)</td></tr>
-<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时，请检查网络与服务状态</td><td>中</td><td>[查看](#报错7网络请求失败)</td></tr>
-<tr><td>权限不足</td><td>全局</td><td>当前用户无新建门店申请操作权限</td><td>中</td><td>[查看](#报错8权限不足)</td></tr>
+<tr><td>单据信息不匹配</td><td>同步门店档案时</td><td>申请单不存在或已被删除，请检查申请单状态</td><td>高</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>当前数据不存在</td><td>流程回调时</td><td>工作流回调时申请单已被删除</td><td>高</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>门店编码生成失败</td><td>同步门店档案时</td><td>Redis连接异常或区域数据缺失</td><td>高</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不匹配</td><td>提交审批时</td><td>申请单不存在或已被删除，请检查申请单ID</td><td>高</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>流程中objid为空，流程失败!</td><td>审批通过回调时</td><td>工作流回调报文objId为空或非正数，流程无法继续</td><td>高</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不匹配</td><td>审批驳回回调时</td><td>回调时申请单已被删除，无法更新驳回状态</td><td>高</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时，请检查网络与服务状态</td><td>中</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>全局</td><td>当前用户无新建门店申请操作权限</td><td>中</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：单据信息不匹配</h4>
-<ul><li><strong>触发条件</strong>：OA审批通过回调onWfComplete→syncMktTerminal时，按terminalApplyId调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null</li><li><strong>逻辑分析</strong>：审批通过同步门店档案前需读取申请单数据用于转换MktTerminal实体。若申请单在OA审批期间被其他用户物理删除、terminalApplyId传值错误（如工作流变量丢失）、或并发场景下被清理，查询返回空，无法组装门店档案数据，抛CommonException中断同步流程，门店档案不会生成，需人工核查申请单状态后重新触发同步。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批通过回调onWfComplete→syncMktTerminal时，按terminalApplyId调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null<br><strong>逻辑分析：</strong>审批通过同步门店档案前需读取申请单数据用于转换MktTerminal实体。若申请单在OA审批期间被其他用户物理删除、terminalApplyId传值错误（如工作流变量丢失）、或并发场景下被清理，查询返回空，无法组装门店档案数据，抛CommonException中断同步流程，门店档案不会生成，需人工核查申请单状态后重新触发同步。</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.terminal_apply_id   AS 申请单ID,
@@ -491,8 +497,14 @@ SELECT t.terminal_apply_id   AS 申请单ID,
   AND    NOT EXISTS (SELECT 1 FROM mkt_terminal m WHERE m.terminal_code = t.terminal_code)
   ORDER  BY t.create_time DESC;
 ```
-<h4>报错2：当前数据不存在</h4>
-<ul><li><strong>触发条件</strong>：OA审批驳回回调onWfBreak时，按terminalApplyId调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null</li><li><strong>逻辑分析</strong>：审批驳回需更新申请单hzApproveStatus=REJECTED并记录驳回意见。若回调期间申请单被删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法更新状态，申请单滞留RUN状态，需核查OA回调报文与申请单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批驳回回调onWfBreak时，按terminalApplyId调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null<br><strong>逻辑分析：</strong>审批驳回需更新申请单hzApproveStatus=REJECTED并记录驳回意见。若回调期间申请单被删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法更新状态，申请单滞留RUN状态，需核查OA回调报文与申请单数据一致性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.terminal_apply_id   AS 申请单ID,
@@ -505,8 +517,14 @@ SELECT t.terminal_apply_id   AS 申请单ID,
   AND    t.update_time < SYSDATE - 1
   ORDER  BY t.update_time DESC;
 ```
-<h4>报错3：门店编码生成失败</h4>
-<ul><li><strong>触发条件</strong>：syncMktTerminal→getMktTerminalCode生成门店编码时，Redis自增失败或SCPAREA区域数据查询为空</li><li><strong>逻辑分析</strong>：门店编码规则为barCode+divisionCode+5位Redis流水号（key="ae:terminal:"+divisionCode+":"+barCode）。若Redis连接异常、key被误删、或按城市ID查询SCPAREA区域表返回null（城市ID未维护、区域数据缺失），无法生成有效编码，同步门店档案流程中断。需核查Redis连通性及SCPAREA区域数据完整性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门店编码生成失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>syncMktTerminal→getMktTerminalCode生成门店编码时，Redis自增失败或SCPAREA区域数据查询为空<br><strong>逻辑分析：</strong>门店编码规则为barCode+divisionCode+5位Redis流水号（key="ae:terminal:"+divisionCode+":"+barCode）。若Redis连接异常、key被误删、或按城市ID查询SCPAREA区域表返回null（城市ID未维护、区域数据缺失），无法生成有效编码，同步门店档案流程中断。需核查Redis连通性及SCPAREA区域数据完整性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.terminal_apply_id   AS 申请单ID,
@@ -521,8 +539,14 @@ SELECT t.terminal_apply_id   AS 申请单ID,
    AND    (s.areaid IS NULL OR t.bar_code IS NULL OR t.division_code IS NULL)
    ORDER  BY t.create_time DESC;
 ```
-<h4>报错4：单据信息不匹配</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮发起审批时，wfProcSubmit方法按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null</li><li><strong>逻辑分析</strong>：提交审批前需读取申请单数据用于组装工作流参数（applyId、custId、terminalType、terminalNameFlag等）。若申请单在编辑期间被其他用户物理删除、前端传入的objId为空或与实际申请单ID不一致（如多标签页操作导致ID串台）、并发场景下被清理，查询返回空，无法组装流程参数，抛CommonException中断提交，工作流不会发起。需核查申请单是否存在及objId传值正确性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮发起审批时，wfProcSubmit方法按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null<br><strong>逻辑分析：</strong>提交审批前需读取申请单数据用于组装工作流参数（applyId、custId、terminalType、terminalNameFlag等）。若申请单在编辑期间被其他用户物理删除、前端传入的objId为空或与实际申请单ID不一致（如多标签页操作导致ID串台）、并发场景下被清理，查询返回空，无法组装流程参数，抛CommonException中断提交，工作流不会发起。需核查申请单是否存在及objId传值正确性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.terminal_apply_id   AS 申请单ID,
@@ -535,8 +559,14 @@ SELECT t.terminal_apply_id   AS 申请单ID,
   WHERE  t.terminal_apply_id = #{传入的objId}
   ORDER  BY t.create_time DESC;
 ```
-<h4>报错5：流程中objid为空，流程失败!</h4>
-<ul><li><strong>触发条件</strong>：OA审批通过回调onWfComplete时，WfApproveDTO.objId为null或小于等于0</li><li><strong>逻辑分析</strong>：onWfComplete方法首行校验objId合法性，objId是工作流回调定位业务单据的关键标识。若OA回调报文缺失objId字段、工作流变量配置错误未回传单据ID、或OA与DMS流程集成配置异常导致objId解析为空/0，校验不通过抛CommonException中断同步流程，门店档案不会生成。需核查OA流程节点变量配置及回调报文objId字段完整性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程中objid为空，流程失败!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批通过回调onWfComplete时，WfApproveDTO.objId为null或小于等于0<br><strong>逻辑分析：</strong>onWfComplete方法首行校验objId合法性，objId是工作流回调定位业务单据的关键标识。若OA回调报文缺失objId字段、工作流变量配置错误未回传单据ID、或OA与DMS流程集成配置异常导致objId解析为空/0，校验不通过抛CommonException中断同步流程，门店档案不会生成。需核查OA流程节点变量配置及回调报文objId字段完整性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.terminal_apply_id   AS 申请单ID,
@@ -549,8 +579,14 @@ SELECT t.terminal_apply_id   AS 申请单ID,
   AND    (t.hz_instance_id IS NULL OR t.terminal_apply_id IS NULL)
   ORDER  BY t.update_time DESC;
 ```
-<h4>报错6：单据信息不匹配</h4>
-<ul><li><strong>触发条件</strong>：OA审批驳回回调onWfBreak时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null</li><li><strong>逻辑分析</strong>：审批驳回需更新申请单hzApproveStatus为驳回状态并记录驳回意见。若回调期间申请单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常、objId传值错误），查询返回空，无法更新状态，申请单滞留RUN状态，需核查OA回调报文与申请单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批驳回回调onWfBreak时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_APPLY返回null<br><strong>逻辑分析：</strong>审批驳回需更新申请单hzApproveStatus为驳回状态并记录驳回意见。若回调期间申请单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常、objId传值错误），查询返回空，无法更新状态，申请单滞留RUN状态，需核查OA回调报文与申请单数据一致性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.terminal_apply_id   AS 申请单ID,
@@ -564,8 +600,14 @@ SELECT t.terminal_apply_id   AS 申请单ID,
   AND    t.update_time < SYSDATE - 1
   ORDER  BY t.update_time DESC;
 ```
-<h4>报错7：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：前端调用后端接口（保存、提交、同步门店档案）时，请求超时或后端服务不可达</li><li><strong>逻辑分析</strong>：低代码页面通过axios请求后端API，若后端ae-business服务未启动、网络中断、网关超时、或数据库连接池耗尽导致请求堆积，axios捕获网络异常，前端展示通用错误提示。需核查后端服务健康状态、网络连通性、网关配置及数据库连接池。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用后端接口（保存、提交、同步门店档案）时，请求超时或后端服务不可达<br><strong>逻辑分析：</strong>低代码页面通过axios请求后端API，若后端ae-business服务未启动、网络中断、网关超时、或数据库连接池耗尽导致请求堆积，axios捕获网络异常，前端展示通用错误提示。需核查后端服务健康状态、网络连通性、网关配置及数据库连接池。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '服务连通性检查' AS 检查项,
@@ -574,8 +616,14 @@ SELECT '服务连通性检查' AS 检查项,
   WHERE  t.hz_approve_status = 'RUN'
   AND    t.update_time >= SYSDATE - 1/24;
 ```
-<h4>报错8：权限不足</h4>
-<ul><li><strong>触发条件</strong>：当前用户无新建门店申请相关操作权限（保存/提交/查看）</li><li><strong>逻辑分析</strong>：低代码页面通过permissionLogin=true进行登录校验，按钮操作通过角色权限码控制。若用户角色未分配新建门店申请菜单权限、权限码配置缺失、或组织ID不匹配导致数据权限隔离，接口返回403/401，前端展示权限不足提示。需核查用户角色权限配置及组织数据权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户无新建门店申请相关操作权限（保存/提交/查看）<br><strong>逻辑分析：</strong>低代码页面通过permissionLogin=true进行登录校验，按钮操作通过角色权限码控制。若用户角色未分配新建门店申请菜单权限、权限码配置缺失、或组织ID不匹配导致数据权限隔离，接口返回403/401，前端展示权限不足提示。需核查用户角色权限配置及组织数据权限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.terminal_apply_id   AS 申请单ID,

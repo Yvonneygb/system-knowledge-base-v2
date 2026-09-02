@@ -238,8 +238,14 @@
 <tr><td>任务金额为0</td><td>查询时</td><td>合同任务金额为0，完成率无法计算，检查合同任务配置</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询无数据</h4>
-<ul><li><strong>触发条件</strong>：用户按年月/合同/经销商查询合同任务完成率，searchYearContractRate接口返回空结果集</li><li><strong>逻辑分析</strong>：完成率报表基于EPM_PROJECT_CONTRACT表，按YEARMONTH（年月）维度汇总合同B合同任务完成率，完成率=已出库金额（DELIVERY_AMT）/合同任务金额（TASK_AMT）×100%。无数据根因有三类：(1)年月（YEARMONTH）选择错误，该年月无合同任务数据；(2)该年月内合同已签订但未生成项目合同记录（EPM_PROJECT_CONTRACT由年度经销合同派生）；(3)合同/经销商筛选条件与记录不匹配。需先放宽条件（去掉合同和经销商只按年月查）确认是否有任何合同数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户按年月/合同/经销商查询合同任务完成率，searchYearContractRate接口返回空结果集<br><strong>逻辑分析：</strong>完成率报表基于EPM_PROJECT_CONTRACT表，按YEARMONTH（年月）维度汇总合同B合同任务完成率，完成率=已出库金额（DELIVERY_AMT）/合同任务金额（TASK_AMT）×100%。无数据根因有三类：(1)年月（YEARMONTH）选择错误，该年月无合同任务数据；(2)该年月内合同已签订但未生成项目合同记录（EPM_PROJECT_CONTRACT由年度经销合同派生）；(3)合同/经销商筛选条件与记录不匹配。需先放宽条件（去掉合同和经销商只按年月查）确认是否有任何合同数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME,
@@ -250,8 +256,14 @@ SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME,
     AND (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
   ORDER BY YEARMONTH DESC, CONTRACT_CODE;
 ```
-<h4>报错2：年月参数为空</h4>
-<ul><li><strong>触发条件</strong>：用户未选择年月即点击查询，searchYearContractRate接口接收到yearmonth为空</li><li><strong>逻辑分析</strong>：合同任务完成率报表按YEARMONTH（年月）维度汇总合同B合同任务完成率，年月为查询的核心过滤条件。YearMonthContractRateDTO中年月参数为空时，接口可能返回全量数据或空结果集，导致页面性能问题或无数据展示。前端应强制要求年月为必填项，后端应校验yearmonth非空</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>年月参数为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选择年月即点击查询，searchYearContractRate接口接收到yearmonth为空<br><strong>逻辑分析：</strong>合同任务完成率报表按YEARMONTH（年月）维度汇总合同B合同任务完成率，年月为查询的核心过滤条件。YearMonthContractRateDTO中年月参数为空时，接口可能返回全量数据或空结果集，导致页面性能问题或无数据展示。前端应强制要求年月为必填项，后端应校验yearmonth非空</div>
+  </div>
+</div>
 
 ```sql
 SELECT YEARMONTH, COUNT(*) AS 合同数量
@@ -259,8 +271,14 @@ SELECT YEARMONTH, COUNT(*) AS 合同数量
   GROUP BY YEARMONTH
   ORDER BY YEARMONTH DESC;
 ```
-<h4>报错3：导出无数据</h4>
-<ul><li><strong>触发条件</strong>：用户点击"导出"按钮，但当前查询结果为空</li><li><strong>逻辑分析</strong>：导出接口exportContractRate/exportProjectRate在EpmProjectContractServiceImpl.java:176和168处通过PageHelper.doPageAndSort查询数据，当查询结果为空时导出空Excel或提示无数据。根因有二：(1)当前查询条件无匹配数据；(2)未先执行查询直接导出。需先查询有效数据再导出</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"导出"按钮，但当前查询结果为空<br><strong>逻辑分析：</strong>导出接口exportContractRate/exportProjectRate在EpmProjectContractServiceImpl.java:176和168处通过PageHelper.doPageAndSort查询数据，当查询结果为空时导出空Excel或提示无数据。根因有二：(1)当前查询条件无匹配数据；(2)未先执行查询直接导出。需先查询有效数据再导出</div>
+  </div>
+</div>
 
 ```sql
 SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME, TASK_AMT, DELIVERY_AMT
@@ -268,16 +286,28 @@ SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME, TASK_AMT, DELIVER
   WHERE (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
     AND (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL);
 ```
-<h4>报错4：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：前端调用searchYearContractRate或导出接口时网络中断或AE_REPORT服务不可用</li><li><strong>逻辑分析</strong>：前端contractInvRateApi.ts中定义了searchYearContractRate、exportContractRateUrl、exportProjectRateUrl等接口，均指向AE_REPORT服务（envConfig.AE_REPORT）。fetchChartData方法在index.tsx:137处调用searchYearContractRate，catch块中console.error('获取图表数据失败:', error)处理异常。网络请求失败根因有三类：(1)AE_REPORT报表服务不可用；(2)网络连接中断；(3)请求超时。需检查网络连通性和AE_REPORT服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用searchYearContractRate或导出接口时网络中断或AE_REPORT服务不可用<br><strong>逻辑分析：</strong>前端contractInvRateApi.ts中定义了searchYearContractRate、exportContractRateUrl、exportProjectRateUrl等接口，均指向AE_REPORT服务（envConfig.AE_REPORT）。fetchChartData方法在index.tsx:137处调用searchYearContractRate，catch块中console.error('获取图表数据失败:', error)处理异常。网络请求失败根因有三类：(1)AE_REPORT报表服务不可用；(2)网络连接中断；(3)请求超时。需检查网络连通性和AE_REPORT服务状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, TASK_AMT, DELIVERY_AMT
   FROM EPM_PROJECT_CONTRACT
   WHERE YEARMONTH = #{yearmonth};
 ```
-<h4>报错5：权限不足</h4>
-<ul><li><strong>触发条件</strong>：当前用户无合同任务完成率报表的查询或导出权限</li><li><strong>逻辑分析</strong>：前端页面通过路由配置authorized: true进行权限校验，导出按钮通过ExcelExportPro组件配置permissionList进行权限控制。无权限时路由不可访问或导出按钮不显示。需联系管理员为当前用户分配报表查询和导出权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户无合同任务完成率报表的查询或导出权限<br><strong>逻辑分析：</strong>前端页面通过路由配置authorized: true进行权限校验，导出按钮通过ExcelExportPro组件配置permissionList进行权限控制。无权限时路由不可访问或导出按钮不显示。需联系管理员为当前用户分配报表查询和导出权限</div>
+  </div>
+</div>
 
 ```sql
 -- 权限校验（伪SQL，具体表名依权限框架而定）
@@ -285,8 +315,14 @@ SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, TASK_AMT, DELIVERY_AMT
   FROM USER_ROLE_PERMISSION
   WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractReport%';
 ```
-<h4>报错6：任务金额为0</h4>
-<ul><li><strong>触发条件</strong>：查询结果中某合同的TASK_AMT（任务金额）为0或null，完成率无法计算</li><li><strong>逻辑分析</strong>：完成率=已出库金额（DELIVERY_AMT）/合同任务金额（TASK_AMT）×100%，当TASK_AMT为0时除以0导致计算异常，前端通过CASE WHEN TASK_AMT &gt; 0 THEN ... ELSE 0 END处理为0。根因有二：(1)年度经销合同未配置任务金额；(2)合同任务金额字段未正确写入EPM_PROJECT_CONTRACT表。需检查合同任务配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>任务金额为0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询结果中某合同的TASK_AMT（任务金额）为0或null，完成率无法计算<br><strong>逻辑分析：</strong>完成率=已出库金额（DELIVERY_AMT）/合同任务金额（TASK_AMT）×100%，当TASK_AMT为0时除以0导致计算异常，前端通过CASE WHEN TASK_AMT &gt; 0 THEN ... ELSE 0 END处理为0。根因有二：(1)年度经销合同未配置任务金额；(2)合同任务金额字段未正确写入EPM_PROJECT_CONTRACT表。需检查合同任务配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME, TASK_AMT, DELIVERY_AMT
@@ -296,7 +332,18 @@ SELECT YEARMONTH, CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME, TASK_AMT, DELIVER
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：完成率为0</li><li>原因：该合同无出库数据或任务金额为0</li><li>解决思路：检查SQL <code>SELECT TASK_AMT, DELIVERY_AMT FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_CODE = #&#123;code&#125;</code></li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">完成率为0</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>该合同无出库数据或任务金额为0<br><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT TASK_AMT, DELIVERY_AMT FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_CODE = #&#123;code&#125;</code>
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

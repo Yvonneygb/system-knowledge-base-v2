@@ -254,18 +254,24 @@ SELECT * FROM fin_fee_apply_header WHERE apply_type = 1 ORDER BY create_time DES
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>年度不能为空</td><td>查询</td><td>未选择查询年度，默认当前年度失败</td><td>阻断性报错</td><td>[查看](#报错1年度不能为空)</td></tr>
-<tr><td>经销商名称不能为空</td><td>查询</td><td>经销商名称查询条件传参为空</td><td>提示性报错</td><td>[查看](#报错2经销商名称不能为空)</td></tr>
-<tr><td>门店名称不能为空</td><td>查询</td><td>门店名称查询条件传参为空</td><td>提示性报错</td><td>[查看](#报错3门店名称不能为空)</td></tr>
-<tr><td>报表查询失败：申请单状态异常</td><td>查询</td><td>装修申请单apply_type非1，数据来源错误</td><td>阻断性报错</td><td>[查看](#报错4报表查询失败申请单状态异常)</td></tr>
-<tr><td>导出失败：数据量超过限制</td><td>导出</td><td>导出数据量超过系统上限</td><td>阻断性报错</td><td>[查看](#报错5导出失败数据量超过限制)</td></tr>
-<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错6网络请求失败接口调用异常)</td></tr>
-<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错7权限不足未登录)</td></tr>
-<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错8导出失败网络异常)</td></tr>
+<tr><td>年度不能为空</td><td>查询</td><td>未选择查询年度，默认当前年度失败</td><td>阻断性报错</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>经销商名称不能为空</td><td>查询</td><td>经销商名称查询条件传参为空</td><td>提示性报错</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>门店名称不能为空</td><td>查询</td><td>门店名称查询条件传参为空</td><td>提示性报错</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>报表查询失败：申请单状态异常</td><td>查询</td><td>装修申请单apply_type非1，数据来源错误</td><td>阻断性报错</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>导出失败：数据量超过限制</td><td>导出</td><td>导出数据量超过系统上限</td><td>阻断性报错</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：年度不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用search接口时，传入的cyear（年度）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询依赖年度定位FIN_FEE_APPLY_HEADER记录。若前端未选择年度、年度下拉框默认值未正确赋值（如系统时间获取异常），或传参丢失，后端校验cyear为空即抛异常，无法执行查询。装修申请单按年度归档，缺失年度将导致全表扫描或空结果。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>年度不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，调用search接口时，传入的cyear（年度）参数为null或空字符串<br><strong>逻辑分析：</strong>报表查询依赖年度定位FIN_FEE_APPLY_HEADER记录。若前端未选择年度、年度下拉框默认值未正确赋值（如系统时间获取异常），或传参丢失，后端校验cyear为空即抛异常，无法执行查询。装修申请单按年度归档，缺失年度将导致全表扫描或空结果。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_apply_id        AS 申请单ID,
@@ -278,8 +284,14 @@ SELECT fee_apply_id        AS 申请单ID,
   AND    cyear IS NULL
   ORDER  BY create_time DESC;
 ```
-<h4>报错2：经销商名称不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，传入的custName（经销商名称）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询按经销商名称模糊匹配FIN_FEE_APPLY_HEADER.CUST_NAME。若前端未输入经销商名称且未设置默认值，或传参丢失，后端校验为空即抛异常。该条件用于缩小查询范围，缺失会导致全量数据返回，影响性能。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>经销商名称不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，传入的custName（经销商名称）参数为null或空字符串<br><strong>逻辑分析：</strong>报表查询按经销商名称模糊匹配FIN_FEE_APPLY_HEADER.CUST_NAME。若前端未输入经销商名称且未设置默认值，或传参丢失，后端校验为空即抛异常。该条件用于缩小查询范围，缺失会导致全量数据返回，影响性能。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_apply_id        AS 申请单ID,
@@ -292,8 +304,14 @@ SELECT fee_apply_id        AS 申请单ID,
   AND    (cust_name IS NULL OR cust_name = '')
   ORDER  BY create_time DESC;
 ```
-<h4>报错3：门店名称不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，传入的terminalName（门店名称）参数为null或空字符串</li><li><strong>逻辑分析</strong>：报表查询按门店名称模糊匹配FIN_FEE_APPLY_HEADER.TERMINAL_NAME。若前端未输入门店名称且未设置默认值，或传参丢失，后端校验为空即抛异常。该条件用于定位具体门店的装修进度，缺失会导致该经销商下所有门店数据返回。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门店名称不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，传入的terminalName（门店名称）参数为null或空字符串<br><strong>逻辑分析：</strong>报表查询按门店名称模糊匹配FIN_FEE_APPLY_HEADER.TERMINAL_NAME。若前端未输入门店名称且未设置默认值，或传参丢失，后端校验为空即抛异常。该条件用于定位具体门店的装修进度，缺失会导致该经销商下所有门店数据返回。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_apply_id        AS 申请单ID,
@@ -306,8 +324,14 @@ SELECT fee_apply_id        AS 申请单ID,
   AND    (terminal_name IS NULL OR terminal_name = '')
   ORDER  BY create_time DESC;
 ```
-<h4>报错4：报表查询失败：申请单状态异常</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，查询FIN_FEE_APPLY_HEADER时apply_type不等于1（装修申请类型）</li><li><strong>逻辑分析</strong>：本报表仅展示装修申请（apply_type=1）的进度数据。若数据来源错误（如apply_type被错误更新为其他值）、或历史数据迁移时apply_type未正确赋值，查询结果会缺失或包含非装修类申请单，导致报表数据异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报表查询失败：申请单状态异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，查询FIN_FEE_APPLY_HEADER时apply_type不等于1（装修申请类型）<br><strong>逻辑分析：</strong>本报表仅展示装修申请（apply_type=1）的进度数据。若数据来源错误（如apply_type被错误更新为其他值）、或历史数据迁移时apply_type未正确赋值，查询结果会缺失或包含非装修类申请单，导致报表数据异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_apply_id        AS 申请单ID,
@@ -321,8 +345,14 @@ SELECT fee_apply_id        AS 申请单ID,
   AND    fee_apply_no LIKE 'ZXSQ%'
   ORDER  BY create_time DESC;
 ```
-<h4>报错5：导出失败：数据量超过限制</h4>
-<ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel时查询结果数据量超过系统配置的上限（如10万条）</li><li><strong>逻辑分析</strong>：导出接口会先执行查询统计结果数量，若超过系统配置的导出上限（防止OOM和性能问题），抛出异常阻止导出。常见根因：查询条件过宽（如未限制年度、经销商）、或历史数据堆积过多。需缩小查询条件或分批导出。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出失败：数据量超过限制</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮，导出Excel时查询结果数据量超过系统配置的上限（如10万条）<br><strong>逻辑分析：</strong>导出接口会先执行查询统计结果数量，若超过系统配置的导出上限（防止OOM和性能问题），抛出异常阻止导出。常见根因：查询条件过宽（如未限制年度、经销商）、或历史数据堆积过多。需缩小查询条件或分批导出。</div>
+  </div>
+</div>
 
 ```sql
 SELECT cyear               AS 预算年度,
@@ -334,8 +364,14 @@ SELECT cyear               AS 预算年度,
   HAVING COUNT(*) > 10000
   ORDER  BY 申请单数量 DESC;
 ```
-<h4>报错6：网络请求失败/接口调用异常</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-apply-list/search或GET /mkt-terminal-export接口时，前端未收到响应或收到非2xx状态码</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalApplyListSearch接口分页查询FIN_FEE_APPLY_HEADER（apply_type=1）。若后端ae-report服务未启动、Oracle数据库连接异常、SQL执行超时（如全表扫描无索引）、网络中断、或网关转发失败，均会导致接口调用异常。导出接口因需全量查询数据更易超时。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败/接口调用异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-apply-list/search或GET /mkt-terminal-export接口时，前端未收到响应或收到非2xx状态码<br><strong>逻辑分析：</strong>本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalApplyListSearch接口分页查询FIN_FEE_APPLY_HEADER（apply_type=1）。若后端ae-report服务未启动、Oracle数据库连接异常、SQL执行超时（如全表扫描无索引）、网络中断、或网关转发失败，均会导致接口调用异常。导出接口因需全量查询数据更易超时。需检查后端服务健康状态、数据库连接、网络连通性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*)            AS 装修申请单总数,
@@ -344,15 +380,27 @@ SELECT COUNT(*)            AS 装修申请单总数,
   FROM   fin_fee_apply_header
   WHERE  apply_type = 1;
 ```
-<h4>报错7：权限不足/未登录</h4>
-<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足/未登录</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
   FROM   dual;
 ```
-<h4>报错8：导出失败：网络异常</h4>
-<ul><li><strong>触发条件</strong>：点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-export接口过程中，网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口通过@ExcelExport(MktTerminalApplyListExportVO.class)注解实现Excel导出，后端先全量查询FIN_FEE_APPLY_HEADER（apply_type=1）再生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。与"数据量超过限制"不同，本报错侧重网络/超时层面。需重试导出或缩小查询条件减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出失败：网络异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-export接口过程中，网络中断、后端响应超时或Excel文件流传输中断<br><strong>逻辑分析：</strong>导出接口通过@ExcelExport(MktTerminalApplyListExportVO.class)注解实现Excel导出，后端先全量查询FIN_FEE_APPLY_HEADER（apply_type=1）再生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。与"数据量超过限制"不同，本报错侧重网络/超时层面。需重试导出或缩小查询条件减少数据量。</div>
+  </div>
+</div>
 
 ```sql
 SELECT cyear               AS 预算年度,
@@ -365,7 +413,18 @@ SELECT cyear               AS 预算年度,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：报表数据为空</li><li>原因：无符合条件的装修申请数据</li><li>解决思路：放宽查询条件</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">报表数据为空</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>无符合条件的装修申请数据<br><strong style="color:#7C3AED;">处理：</strong>放宽查询条件
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

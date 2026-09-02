@@ -387,8 +387,14 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
 <tr><td>权限不足</td><td>进入页面时</td><td>当前用户无交易公司数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：交易公司不能为空</h4>
-<ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择交易公司直接点击保存</li><li><strong>逻辑分析</strong>：保存接口ads-quotas/save在写入ADS_FEE_ADJUST_IN_QUOTA前校验TRADING_COMPANY_ID非空。交易公司是广告费调整关联额度内余额和法人的前置条件，未选择交易公司将导致调整无法定位到具体余额账户，后续审批通过后也无法回写余额。校验在Controller层前置拦截，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>交易公司不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在新建/编辑页未选择交易公司直接点击保存<br><strong>逻辑分析：</strong>保存接口ads-quotas/save在写入ADS_FEE_ADJUST_IN_QUOTA前校验TRADING_COMPANY_ID非空。交易公司是广告费调整关联额度内余额和法人的前置条件，未选择交易公司将导致调整无法定位到具体余额账户，后续审批通过后也无法回写余额。校验在Controller层前置拦截，toast提示后阻断保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_ID, TRADING_COMPANY_NAME,
@@ -396,8 +402,14 @@ SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_ID, TRADIN
   FROM ADS_FEE_ADJUST_IN_QUOTA
   WHERE TRADING_COMPANY_ID IS NULL OR TRADING_COMPANY_NAME IS NULL;
 ```
-<h4>报错2：调整类型不能为空</h4>
-<ul><li><strong>触发条件</strong>：用户未选择调整类型（来源词汇adjust_type）直接点击保存</li><li><strong>逻辑分析</strong>：调整类型决定调整的业务场景和扣减逻辑，不同ADJUST_TYPE对应不同处理分支。未选择调整类型将导致后续扣减比例（DEDUCTION_RATIO）应用逻辑无法确定，审批通过后余额调整方向和金额计算无依据。校验ADJUST_TYPE非空，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>调整类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选择调整类型（来源词汇adjust_type）直接点击保存<br><strong>逻辑分析：</strong>调整类型决定调整的业务场景和扣减逻辑，不同ADJUST_TYPE对应不同处理分支。未选择调整类型将导致后续扣减比例（DEDUCTION_RATIO）应用逻辑无法确定，审批通过后余额调整方向和金额计算无依据。校验ADJUST_TYPE非空，toast提示后阻断保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, TRADING_COMPANY_NAME, ADJUST_TYPE,
@@ -405,8 +417,14 @@ SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, TRADING_COMPANY_NAME, ADJUST_TYPE,
   FROM ADS_FEE_ADJUST_IN_QUOTA
   WHERE ADJUST_TYPE IS NULL;
 ```
-<h4>报错3：推送OA失败：广告费调整申请不存在</h4>
-<ul><li><strong>触发条件</strong>：用户提交调整单后，doOaAudit方法中adsFeeAdjustInQuotaMapper.selectList查询返回空集合</li><li><strong>逻辑分析</strong>：提交后系统调用AdsFeeAdjustInQuotaServiceImpl.doOaAudit推送OA，先通过adsFeeAdjustInQuotaMapper.selectList按adjustHeaderId查询调整单数据。返回空集合（CollectionUtils.isEmpty(quotaList)）时抛出CommonException("推送OA失败：广告费调整申请不存在")。根因有三类：(1)调整单在提交后被其他用户删除；(2)adjustHeaderId传参错误；(3)数据权限过滤导致查询不到。需刷新列表确认调整单存在后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>推送OA失败：广告费调整申请不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户提交调整单后，doOaAudit方法中adsFeeAdjustInQuotaMapper.selectList查询返回空集合<br><strong>逻辑分析：</strong>提交后系统调用AdsFeeAdjustInQuotaServiceImpl.doOaAudit推送OA，先通过adsFeeAdjustInQuotaMapper.selectList按adjustHeaderId查询调整单数据。返回空集合（CollectionUtils.isEmpty(quotaList)）时抛出CommonException("推送OA失败：广告费调整申请不存在")。根因有三类：(1)调整单在提交后被其他用户删除；(2)adjustHeaderId传参错误；(3)数据权限过滤导致查询不到。需刷新列表确认调整单存在后重试</div>
+  </div>
+</div>
 
 ```sql
 SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_NAME,
@@ -414,8 +432,14 @@ SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_NAME,
   FROM ADS_FEE_ADJUST_IN_QUOTA
   WHERE ADJUST_HEADER_ID = #{adjustHeaderId};
 ```
-<h4>报错4：OA回传单号为空，请检查！</h4>
-<ul><li><strong>触发条件</strong>：OA审批完成后回调doProcessOA方法，回传报文中adjustHeaderNo字段为空</li><li><strong>逻辑分析</strong>：doProcessOA方法接收OABillCallbackDTO，从中获取adjustHeaderNo（OA回传单号）。若StringUtils.isBlank(adjustHeaderNo)为true则抛出CommonException("OA回传单号为空，请检查！")。根因有二：(1)OA流程表单配置缺少"调整单号"字段映射；(2)OA回传报文格式异常。需检查OA流程SUB_ADJ_FEES_QUOTA的表单字段配置及单据映射关系</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>OA回传单号为空，请检查！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批完成后回调doProcessOA方法，回传报文中adjustHeaderNo字段为空<br><strong>逻辑分析：</strong>doProcessOA方法接收OABillCallbackDTO，从中获取adjustHeaderNo（OA回传单号）。若StringUtils.isBlank(adjustHeaderNo)为true则抛出CommonException("OA回传单号为空，请检查！")。根因有二：(1)OA流程表单配置缺少"调整单号"字段映射；(2)OA回传报文格式异常。需检查OA流程SUB_ADJ_FEES_QUOTA的表单字段配置及单据映射关系</div>
+  </div>
+</div>
 
 ```sql
 -- 核查OA单据映射配置
@@ -423,8 +447,14 @@ SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, APPLICANT, TRADING_COMPANY_NAME,
   FROM OA_BILL_REF
   WHERE BILL_NAME = '广告费调整申请';
 ```
-<h4>报错5：OA回传单号不存在，请检查！</h4>
-<ul><li><strong>触发条件</strong>：OA审批回调时，按adjustHeaderNo查询ADS_FEE_ADJUST_IN_QUOTA表返回null</li><li><strong>逻辑分析</strong>：doProcessOA方法中通过adsFeeAdjustInQuotaMapper.selectByCondition按ADJUST_HEADER_NO查询调整单。若结果为空（adsFeeAdjustInQuota == null）则抛出CommonException("OA回传单号不存在，请检查！")。根因有三类：(1)OA回传的单号在系统中不存在（如测试环境OA回调到生产）；(2)调整单已被物理删除；(3)单号格式不匹配（如OA传带前缀的单号，系统中存储无前缀）。需核对OA回传单号与系统ADJUST_HEADER_NO字段</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>OA回传单号不存在，请检查！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批回调时，按adjustHeaderNo查询ADS_FEE_ADJUST_IN_QUOTA表返回null<br><strong>逻辑分析：</strong>doProcessOA方法中通过adsFeeAdjustInQuotaMapper.selectByCondition按ADJUST_HEADER_NO查询调整单。若结果为空（adsFeeAdjustInQuota == null）则抛出CommonException("OA回传单号不存在，请检查！")。根因有三类：(1)OA回传的单号在系统中不存在（如测试环境OA回调到生产）；(2)调整单已被物理删除；(3)单号格式不匹配（如OA传带前缀的单号，系统中存储无前缀）。需核对OA回传单号与系统ADJUST_HEADER_NO字段</div>
+  </div>
+</div>
 
 ```sql
 SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
@@ -432,8 +462,14 @@ SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
   FROM ADS_FEE_ADJUST_IN_QUOTA
   WHERE ADJUST_HEADER_NO = #{adjustHeaderNo};
 ```
-<h4>报错6：请选择要删除的记录！</h4>
-<ul><li><strong>触发条件</strong>：用户未选中任何调整单直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：batchDelete方法接收adjustHeaderIds列表，若CollectionUtils.isEmpty(adjustHeaderIds)为true则抛出CommonException("请选择要删除的记录！")。前端列表页需选中至少一条记录才可触发删除操作。需在列表中勾选目标记录后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择要删除的记录！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选中任何调整单直接点击"删除"按钮<br><strong>逻辑分析：</strong>batchDelete方法接收adjustHeaderIds列表，若CollectionUtils.isEmpty(adjustHeaderIds)为true则抛出CommonException("请选择要删除的记录！")。前端列表页需选中至少一条记录才可触发删除操作。需在列表中勾选目标记录后重试</div>
+  </div>
+</div>
 
 ```sql
 -- 核查可删除的调整单（未提交或已拒绝状态）
@@ -442,8 +478,14 @@ SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
   WHERE HZ_APPROVE_STATUS NOT IN ('RUN', 'APPROVED')
   ORDER BY APPLICANT_TIME DESC;
 ```
-<h4>报错7：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击保存/提交/删除按钮，前端调用对应接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面通过AdsFeeAdjustInQuotaController提供save/batchDelete接口，提交时通过oaSdkService.toDataOA推送OA系统。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)OA系统不可达，toDataOA调用超时或失败；(3)数据库连接异常；(4)网关或网络层故障。需先确认ae-business服务和OA系统连通性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击保存/提交/删除按钮，前端调用对应接口返回非2xx状态码或超时<br><strong>逻辑分析：</strong>本页面通过AdsFeeAdjustInQuotaController提供save/batchDelete接口，提交时通过oaSdkService.toDataOA推送OA系统。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)OA系统不可达，toDataOA调用超时或失败；(3)数据库连接异常；(4)网关或网络层故障。需先确认ae-business服务和OA系统连通性</div>
+  </div>
+</div>
 
 ```sql
 -- 核查调整单数据量
@@ -451,8 +493,14 @@ SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
   FROM ADS_FEE_ADJUST_IN_QUOTA
   GROUP BY HZ_APPROVE_STATUS;
 ```
-<h4>报错8：权限不足</h4>
-<ul><li><strong>触发条件</strong>：用户登录后进入广告费调整申请单页面，当前用户无对应交易公司的数据权限</li><li><strong>逻辑分析</strong>：本页面按交易公司维度查询，数据权限通过用户上下文控制可见交易公司范围。权限不足根因有二：(1)用户未分配对应交易公司的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应交易公司数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户登录后进入广告费调整申请单页面，当前用户无对应交易公司的数据权限<br><strong>逻辑分析：</strong>本页面按交易公司维度查询，数据权限通过用户上下文控制可见交易公司范围。权限不足根因有二：(1)用户未分配对应交易公司的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应交易公司数据权限</div>
+  </div>
+</div>
 
 ```sql
 -- 核查用户可访问的交易公司
@@ -463,7 +511,18 @@ SELECT ADJUST_HEADER_ID, ADJUST_HEADER_NO, HZ_APPROVE_STATUS, AUDIT_STAT,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：OA审批流程未发起</li><li>原因：OA系统不可用或工作流配置缺失</li><li>解决思路：检查工作流SUB_ADJ_FEES_QUOTA配置，确认OA系统连接</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">OA审批流程未发起</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>OA系统不可用或工作流配置缺失<br><strong style="color:#7C3AED;">处理：</strong>检查工作流SUB_ADJ_FEES_QUOTA配置，确认OA系统连接
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

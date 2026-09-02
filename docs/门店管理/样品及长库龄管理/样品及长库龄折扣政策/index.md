@@ -596,34 +596,40 @@ SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>折扣政策id不能为空</td><td>导入产品</td><td>未指定折扣政策ID，先保存政策</td><td>阻断性报错</td><td>[查看](#报错1折扣政策id不能为空)</td></tr>
-<tr><td>推送OA失败：折扣政策不存在</td><td>OA推送</td><td>政策已被删除，刷新列表</td><td>阻断性报错</td><td>[查看](#报错2推送oa失败折扣政策不存在)</td></tr>
-<tr><td>OA回调失败：折扣政策不存在</td><td>OA回调</td><td>政策已被删除</td><td>阻断性报错</td><td>[查看](#报错3oa回调失败折扣政策不存在)</td></tr>
-<tr><td>产品行不能为空，请检查！</td><td>保存/提交</td><td>政策未维护产品明细行，先添加产品行</td><td>阻断性报错</td><td>[查看](#报错4产品行不能为空请检查)</td></tr>
-<tr><td>订单类型为【计划订单】,业务类型不能为【长库龄】</td><td>保存校验</td><td>计划订单不允许长库龄业务类型，调整订单类型或业务类型</td><td>阻断性报错</td><td>[查看](#报错5订单类型为计划订单业务类型不能为长库龄)</td></tr>
-<tr><td>折扣政策名称最大输入30个字符</td><td>保存</td><td>政策名称超长，缩短名称</td><td>阻断性报错</td><td>[查看](#报错6折扣政策名称最大输入30个字符)</td></tr>
-<tr><td>物料明细不能为空</td><td>保存</td><td>适用类型为通用时物料明细为空，添加物料明细</td><td>阻断性报错</td><td>[查看](#报错7物料明细不能为空)</td></tr>
-<tr><td>适用类型为"通用"时，产品优惠方式只能为"折扣"</td><td>保存</td><td>通用适用类型仅支持折扣优惠方式，调整优惠方式</td><td>阻断性报错</td><td>[查看](#报错8适用类型为通用时产品优惠方式只能为折扣)</td></tr>
-<tr><td>在该时间区间内：...</td><td>保存</td><td>政策有效区间与已有政策重复，调整有效区间</td><td>阻断性报错</td><td>[查看](#报错9在该时间区间内)</td></tr>
-<tr><td>未找到该单据</td><td>删除</td><td>政策不存在或已被删除，刷新列表</td><td>阻断性报错</td><td>[查看](#报错10未找到该单据)</td></tr>
-<tr><td>仅新建状态单据允许删除.</td><td>删除</td><td>政策非新建状态不可删除，仅未审核政策可删除</td><td>阻断性报错</td><td>[查看](#报错11仅新建状态单据允许删除)</td></tr>
-<tr><td>导入数量不能超过&#123;pageSize&#125;</td><td>导入产品</td><td>导入行数超限，分批导入</td><td>阻断性报错</td><td>[查看](#报错12导入数量不能超过pagesize)</td></tr>
-<tr><td>导入的产品编码查询不到对应的产品信息：&#123;codes&#125;</td><td>导入产品</td><td>产品编码在CRM不存在，核对产品编码</td><td>阻断性报错</td><td>[查看](#报错13导入的产品编码查询不到对应的产品信息codes)</td></tr>
-<tr><td>产品导入异常，请联系管理员！</td><td>导入产品</td><td>导入过程系统异常，联系管理员排查日志</td><td>阻断性报错</td><td>[查看](#报错14产品导入异常请联系管理员)</td></tr>
-<tr><td>请先维护OA系统信息</td><td>保存并提交</td><td>OA系统参数未配置，联系管理员维护OA配置</td><td>阻断性报错</td><td>[查看](#报错15请先维护oa系统信息)</td></tr>
-<tr><td>流程编码不能为空。</td><td>保存并提交</td><td>OA流程编码缺失，配置对应流程编码</td><td>阻断性报错</td><td>[查看](#报错16流程编码不能为空)</td></tr>
-<tr><td>以下型号涉及新品，不允许通过型号定义折扣政策，请通过具体产品编码制定折扣政策</td><td>保存</td><td>新品型号不能定义政策，改用具体产品编码</td><td>阻断性报错</td><td>[查看](#报错17以下型号涉及新品不允许通过型号定义折扣政策请通过具体产品编码制定折扣政策)</td></tr>
-<tr><td>产品编码:[&#123;code&#125;] 与型号：[&#123;model&#125;] 折扣政策冲突</td><td>保存</td><td>同一产品编码与型号存在多个政策冲突，核对政策行</td><td>阻断性报错</td><td>[查看](#报错18产品编码code-与型号model-折扣政策冲突)</td></tr>
-<tr><td>产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策该经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</td><td>下单校验</td><td>该经销商可下单数量不足，调整下单数量或联系区域经理</td><td>阻断性报错</td><td>[查看](#报错19产品code本次下单数量qty超过政策该经销商剩余可下单数量activeqty请检查)</td></tr>
-<tr><td>产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策全部经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</td><td>下单校验</td><td>全部经销商可下单数量不足，调整下单数量或联系区域经理</td><td>阻断性报错</td><td>[查看](#报错20产品code本次下单数量qty超过政策全部经销商剩余可下单数量activeqty请检查)</td></tr>
-<tr><td>请求CRM返回数据解析异常！</td><td>获取价格</td><td>CRM接口返回数据格式异常，联系管理员排查CRM接口</td><td>阻断性报错</td><td>[查看](#报错21请求crm返回数据解析异常)</td></tr>
-<tr><td>产品编码[&#123;code&#125;]请求CRM获取失败原因:[&#123;msg&#125;]</td><td>获取价格</td><td>CRM产品查询失败，核对产品编码或联系CRM管理员</td><td>阻断性报错</td><td>[查看](#报错22产品编码code请求crm获取失败原因msg)</td></tr>
-<tr><td>Crm返回产品政策信息为空</td><td>获取价格</td><td>CRM未返回产品政策信息，核对产品是否配置政策</td><td>阻断性报错</td><td>[查看](#报错23crm返回产品政策信息为空)</td></tr>
-<tr><td>客户的签约方式存在异常，请检查</td><td>保存</td><td>客户签约方式数据异常，核对客户档案签约方式</td><td>阻断性报错</td><td>[查看](#报错24客户的签约方式存在异常请检查)</td></tr>
+<tr><td>折扣政策id不能为空</td><td>导入产品</td><td>未指定折扣政策ID，先保存政策</td><td>阻断性报错</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>推送OA失败：折扣政策不存在</td><td>OA推送</td><td>政策已被删除，刷新列表</td><td>阻断性报错</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>OA回调失败：折扣政策不存在</td><td>OA回调</td><td>政策已被删除</td><td>阻断性报错</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>产品行不能为空，请检查！</td><td>保存/提交</td><td>政策未维护产品明细行，先添加产品行</td><td>阻断性报错</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>订单类型为【计划订单】,业务类型不能为【长库龄】</td><td>保存校验</td><td>计划订单不允许长库龄业务类型，调整订单类型或业务类型</td><td>阻断性报错</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>折扣政策名称最大输入30个字符</td><td>保存</td><td>政策名称超长，缩短名称</td><td>阻断性报错</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>物料明细不能为空</td><td>保存</td><td>适用类型为通用时物料明细为空，添加物料明细</td><td>阻断性报错</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>适用类型为"通用"时，产品优惠方式只能为"折扣"</td><td>保存</td><td>通用适用类型仅支持折扣优惠方式，调整优惠方式</td><td>阻断性报错</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>在该时间区间内：...</td><td>保存</td><td>政策有效区间与已有政策重复，调整有效区间</td><td>阻断性报错</td><td><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>未找到该单据</td><td>删除</td><td>政策不存在或已被删除，刷新列表</td><td>阻断性报错</td><td><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>仅新建状态单据允许删除.</td><td>删除</td><td>政策非新建状态不可删除，仅未审核政策可删除</td><td>阻断性报错</td><td><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>导入数量不能超过&#123;pageSize&#125;</td><td>导入产品</td><td>导入行数超限，分批导入</td><td>阻断性报错</td><td><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>导入的产品编码查询不到对应的产品信息：&#123;codes&#125;</td><td>导入产品</td><td>产品编码在CRM不存在，核对产品编码</td><td>阻断性报错</td><td><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>产品导入异常，请联系管理员！</td><td>导入产品</td><td>导入过程系统异常，联系管理员排查日志</td><td>阻断性报错</td><td><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>请先维护OA系统信息</td><td>保存并提交</td><td>OA系统参数未配置，联系管理员维护OA配置</td><td>阻断性报错</td><td><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码不能为空。</td><td>保存并提交</td><td>OA流程编码缺失，配置对应流程编码</td><td>阻断性报错</td><td><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>以下型号涉及新品，不允许通过型号定义折扣政策，请通过具体产品编码制定折扣政策</td><td>保存</td><td>新品型号不能定义政策，改用具体产品编码</td><td>阻断性报错</td><td><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码:[&#123;code&#125;] 与型号：[&#123;model&#125;] 折扣政策冲突</td><td>保存</td><td>同一产品编码与型号存在多个政策冲突，核对政策行</td><td>阻断性报错</td><td><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策该经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</td><td>下单校验</td><td>该经销商可下单数量不足，调整下单数量或联系区域经理</td><td>阻断性报错</td><td><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策全部经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</td><td>下单校验</td><td>全部经销商可下单数量不足，调整下单数量或联系区域经理</td><td>阻断性报错</td><td><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
+<tr><td>请求CRM返回数据解析异常！</td><td>获取价格</td><td>CRM接口返回数据格式异常，联系管理员排查CRM接口</td><td>阻断性报错</td><td><a href="#err-detail-21" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码[&#123;code&#125;]请求CRM获取失败原因:[&#123;msg&#125;]</td><td>获取价格</td><td>CRM产品查询失败，核对产品编码或联系CRM管理员</td><td>阻断性报错</td><td><a href="#err-detail-22" class="view-btn">查看</a></td></tr>
+<tr><td>Crm返回产品政策信息为空</td><td>获取价格</td><td>CRM未返回产品政策信息，核对产品是否配置政策</td><td>阻断性报错</td><td><a href="#err-detail-23" class="view-btn">查看</a></td></tr>
+<tr><td>客户的签约方式存在异常，请检查</td><td>保存</td><td>客户签约方式数据异常，核对客户档案签约方式</td><td>阻断性报错</td><td><a href="#err-detail-24" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：折扣政策id不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"导入产品"按钮，调用importProduct接口时，传入的折扣政策ID（discountPolicyId）为null或0</li><li><strong>逻辑分析</strong>：导入产品明细需关联到具体折扣政策。若用户在政策头未保存（主键DISCOUNT_POLICY_ID未生成）时直接导入产品，或前端未传discountPolicyId字段，后端校验为空即抛异常，无法将产品明细挂载到政策。常见根因：用户未先保存政策头、保存失败后误点导入、或前端传参丢失。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策id不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导入产品"按钮，调用importProduct接口时，传入的折扣政策ID（discountPolicyId）为null或0<br><strong>逻辑分析：</strong>导入产品明细需关联到具体折扣政策。若用户在政策头未保存（主键DISCOUNT_POLICY_ID未生成）时直接导入产品，或前端未传discountPolicyId字段，后端校验为空即抛异常，无法将产品明细挂载到政策。常见根因：用户未先保存政策头、保存失败后误点导入、或前端传参丢失。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -636,8 +642,14 @@ SELECT discount_policy_id    AS 政策ID,
   AND    (discount_policy_id IS NULL OR discount_policy_id = 0)
   ORDER  BY createtime DESC;
 ```
-<h4>报错2：推送OA失败：折扣政策不存在</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮推送OA时，按discountPolicyId查询EPM_DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：OA推送前需查询政策单组装数据。若单据在推送前被其他用户删除（物理删除），或discountPolicyId传值错误，查询返回空，无法组装OA数据导致推送失败。常见根因：并发操作删除政策、传参错误、或事务未提交即调用OA推送。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>推送OA失败：折扣政策不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮推送OA时，按discountPolicyId查询EPM_DISCOUNT_POLICY返回null<br><strong>逻辑分析：</strong>OA推送前需查询政策单组装数据。若单据在推送前被其他用户删除（物理删除），或discountPolicyId传值错误，查询返回空，无法组装OA数据导致推送失败。常见根因：并发操作删除政策、传参错误、或事务未提交即调用OA推送。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -648,8 +660,14 @@ SELECT discount_policy_id    AS 政策ID,
   WHERE  source_type = 'YXCRM'
   AND    discount_policy_id = #{传入的discountPolicyId};
 ```
-<h4>报错3：OA回调失败：折扣政策不存在</h4>
-<ul><li><strong>触发条件</strong>：OA审批完成回调DMS时，按回调报文中的discountPolicyId查询EPM_DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：OA回调处理需更新政策有效状态（通过则valid=2，驳回则维持未审核）。若回调期间政策被删除，或OA回调报文的单据ID与DMS不一致（如OA配置错误、ID映射异常），查询返回空，回调处理失败，有效状态无法更新。常见根因：政策被并发删除、OA配置错误、或回调报文ID丢失。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>OA回调失败：折扣政策不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批完成回调DMS时，按回调报文中的discountPolicyId查询EPM_DISCOUNT_POLICY返回null<br><strong>逻辑分析：</strong>OA回调处理需更新政策有效状态（通过则valid=2，驳回则维持未审核）。若回调期间政策被删除，或OA回调报文的单据ID与DMS不一致（如OA配置错误、ID映射异常），查询返回空，回调处理失败，有效状态无法更新。常见根因：政策被并发删除、OA配置错误、或回调报文ID丢失。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -662,8 +680,14 @@ SELECT discount_policy_id    AS 政策ID,
   WHERE  source_type = 'YXCRM'
   AND    discount_policy_id = #{OA回调报文中的discountPolicyId};
 ```
-<h4>报错4：产品行不能为空，请检查！</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"或"保存并提交"按钮，checkProductLine校验时，EPM_DISCOUNT_POLICY_ITEM中该政策的产品明细行为空或全部被标记删除</li><li><strong>逻辑分析</strong>：折扣政策必须包含至少一行产品明细才能提交审批，否则OA审批无产品数据可推送。校验逻辑查询EPM_DISCOUNT_POLICY_ITEM中DISCOUNT_POLICY_ID对应且未删除的行，若为空则抛异常。常见根因：用户未导入产品或未添加产品行、产品行被全部删除、或导入产品失败后误点提交。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品行不能为空，请检查！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"或"保存并提交"按钮，checkProductLine校验时，EPM_DISCOUNT_POLICY_ITEM中该政策的产品明细行为空或全部被标记删除<br><strong>逻辑分析：</strong>折扣政策必须包含至少一行产品明细才能提交审批，否则OA审批无产品数据可推送。校验逻辑查询EPM_DISCOUNT_POLICY_ITEM中DISCOUNT_POLICY_ID对应且未删除的行，若为空则抛异常。常见根因：用户未导入产品或未添加产品行、产品行被全部删除、或导入产品失败后误点提交。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dp.discount_policy_id    AS 政策ID,
@@ -678,8 +702,14 @@ SELECT dp.discount_policy_id    AS 政策ID,
   GROUP  BY dp.discount_policy_id, dp.discount_policy_code, dp.hz_approve_status
   HAVING COUNT(dpi.discount_policy_item_id) = 0;
 ```
-<h4>报错5：订单类型为【计划订单】,业务类型不能为【长库龄】</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，校验长库龄业务类型时，IS_MAKT=2且BILL_TYPE=2(计划订单)或99且BUSINESS_TYPE=16(长库龄)</li><li><strong>逻辑分析</strong>：长库龄业务类型(BUSINESS_TYPE=16)仅适用于常规订单，计划订单(BILL_TYPE=2或99)不允许设置为长库龄业务类型。校验逻辑读取EPM_DISCOUNT_POLICY的BILL_TYPE和BUSINESS_TYPE，组合非法即抛异常。常见根因：用户误将计划订单与长库龄业务类型组合、或前端未做组合校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>订单类型为【计划订单】,业务类型不能为【长库龄】</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验长库龄业务类型时，IS_MAKT=2且BILL_TYPE=2(计划订单)或99且BUSINESS_TYPE=16(长库龄)<br><strong>逻辑分析：</strong>长库龄业务类型(BUSINESS_TYPE=16)仅适用于常规订单，计划订单(BILL_TYPE=2或99)不允许设置为长库龄业务类型。校验逻辑读取EPM_DISCOUNT_POLICY的BILL_TYPE和BUSINESS_TYPE，组合非法即抛异常。常见根因：用户误将计划订单与长库龄业务类型组合、或前端未做组合校验。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -693,8 +723,14 @@ SELECT discount_policy_id    AS 政策ID,
   AND    bill_type IN (2, 99)
   AND    business_type = 16;
 ```
-<h4>报错6：折扣政策名称最大输入30个字符</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，verifyPolicyName校验时，DISCOUNT_POLICY_NAME长度超过30</li><li><strong>逻辑分析</strong>：折扣政策名称有长度限制，超过30字符无法保存。校验逻辑读取DISCOUNT_POLICY_NAME字段长度，超过30即抛异常。常见根因：用户输入名称过长、或前端未做长度限制。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策名称最大输入30个字符</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，verifyPolicyName校验时，DISCOUNT_POLICY_NAME长度超过30<br><strong>逻辑分析：</strong>折扣政策名称有长度限制，超过30字符无法保存。校验逻辑读取DISCOUNT_POLICY_NAME字段长度，超过30即抛异常。常见根因：用户输入名称过长、或前端未做长度限制。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -705,8 +741,14 @@ SELECT discount_policy_id    AS 政策ID,
   WHERE  source_type = 'YXCRM'
   AND    LENGTH(discount_policy_name) > 30;
 ```
-<h4>报错7：物料明细不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，校验适用类型为通用(SUITABLE_TYPE=normal)时，EPM_DISCOUNT_POLICY_ITEM产品明细为空</li><li><strong>逻辑分析</strong>：适用类型为"通用"的折扣政策必须维护物料明细，否则政策无法适用任何产品。校验逻辑读取SUITABLE_TYPE，若为normal且产品明细为空则抛异常。常见根因：用户选择通用适用类型后未添加产品明细、或产品明细被全部删除。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>物料明细不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验适用类型为通用(SUITABLE_TYPE=normal)时，EPM_DISCOUNT_POLICY_ITEM产品明细为空<br><strong>逻辑分析：</strong>适用类型为"通用"的折扣政策必须维护物料明细，否则政策无法适用任何产品。校验逻辑读取SUITABLE_TYPE，若为normal且产品明细为空则抛异常。常见根因：用户选择通用适用类型后未添加产品明细、或产品明细被全部删除。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dp.discount_policy_id    AS 政策ID,
@@ -721,8 +763,14 @@ SELECT dp.discount_policy_id    AS 政策ID,
   GROUP  BY dp.discount_policy_id, dp.discount_policy_code, dp.suitable_type
   HAVING COUNT(dpi.discount_policy_item_id) = 0;
 ```
-<h4>报错8：适用类型为"通用"时，产品优惠方式只能为"折扣"</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，校验适用类型为通用(SUITABLE_TYPE=normal)时，某产品行PREFERENTIAL_TYPE≠1(折扣)</li><li><strong>逻辑分析</strong>：适用类型为"通用"的折扣政策，产品优惠方式只能为折扣(PREFERENTIAL_TYPE=1)，不支持其他优惠方式。校验逻辑遍历产品明细，若SUITABLE_TYPE=normal且PREFERENTIAL_TYPE≠1则抛异常。常见根因：用户选择通用适用类型后误设其他优惠方式、或前端未做联动限制。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>适用类型为"通用"时，产品优惠方式只能为"折扣"</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验适用类型为通用(SUITABLE_TYPE=normal)时，某产品行PREFERENTIAL_TYPE≠1(折扣)<br><strong>逻辑分析：</strong>适用类型为"通用"的折扣政策，产品优惠方式只能为折扣(PREFERENTIAL_TYPE=1)，不支持其他优惠方式。校验逻辑遍历产品明细，若SUITABLE_TYPE=normal且PREFERENTIAL_TYPE≠1则抛异常。常见根因：用户选择通用适用类型后误设其他优惠方式、或前端未做联动限制。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dp.discount_policy_id    AS 政策ID,
@@ -738,8 +786,14 @@ SELECT dp.discount_policy_id    AS 政策ID,
   AND    dp.suitable_type = 'normal'
   AND    dpi.preferential_type <> 1;
 ```
-<h4>报错9：在该时间区间内：...</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，checkTimeOverlap校验时，政策有效区间与同一产品/型号的已有政策有效区间重叠</li><li><strong>逻辑分析</strong>：同一产品或型号在同一时间区间内不允许存在多个有效折扣政策，避免折扣冲突。校验逻辑查询EPM_DISCOUNT_POLICY_ITEM关联的政策，比对EFFECTIVE_DATE_START和EFFECTIVE_DATE_END区间，重叠则抛异常并提示具体重叠区间。常见根因：用户新建政策有效区间与已有政策重叠、或未检查已有政策有效期。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>在该时间区间内：...</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，checkTimeOverlap校验时，政策有效区间与同一产品/型号的已有政策有效区间重叠<br><strong>逻辑分析：</strong>同一产品或型号在同一时间区间内不允许存在多个有效折扣政策，避免折扣冲突。校验逻辑查询EPM_DISCOUNT_POLICY_ITEM关联的政策，比对EFFECTIVE_DATE_START和EFFECTIVE_DATE_END区间，重叠则抛异常并提示具体重叠区间。常见根因：用户新建政策有效区间与已有政策重叠、或未检查已有政策有效期。</div>
+  </div>
+</div>
 
 ```sql
 SELECT a.discount_policy_id    AS 政策ID1,
@@ -763,8 +817,14 @@ SELECT a.discount_policy_id    AS 政策ID1,
   AND    a.effective_date_start <= b.effective_date_end
   AND    a.effective_date_end   >= b.effective_date_start;
 ```
-<h4>报错10：未找到该单据</h4>
-<ul><li><strong>触发条件</strong>：点击"删除"按钮，doDelete校验时，按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：删除操作需先查询政策确认存在。若政策在删除前被其他用户物理删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在，查询返回空，无法删除，抛异常。常见根因：并发操作删除政策、传参错误、或数据不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到该单据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"按钮，doDelete校验时，按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY返回null<br><strong>逻辑分析：</strong>删除操作需先查询政策确认存在。若政策在删除前被其他用户物理删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在，查询返回空，无法删除，抛异常。常见根因：并发操作删除政策、传参错误、或数据不一致。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -774,8 +834,14 @@ SELECT discount_policy_id    AS 政策ID,
   WHERE  source_type = 'YXCRM'
   AND    discount_policy_id = #{传入的discountPolicyId};
 ```
-<h4>报错11：仅新建状态单据允许删除.</h4>
-<ul><li><strong>触发条件</strong>：点击"删除"按钮，doDelete校验时，政策HZ_APPROVE_STATUS≠NEW(新建)</li><li><strong>逻辑分析</strong>：仅新建状态(HZ_APPROVE_STATUS=NEW)的政策允许删除，已提交审批、审批通过、审批驳回的政策不允许删除，避免破坏审批流程和数据一致性。校验逻辑读取HZ_APPROVE_STATUS，非NEW则抛异常。常见根因：用户尝试删除已提交或已审批的政策、或前端未做状态判断。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除.</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"按钮，doDelete校验时，政策HZ_APPROVE_STATUS≠NEW(新建)<br><strong>逻辑分析：</strong>仅新建状态(HZ_APPROVE_STATUS=NEW)的政策允许删除，已提交审批、审批通过、审批驳回的政策不允许删除，避免破坏审批流程和数据一致性。校验逻辑读取HZ_APPROVE_STATUS，非NEW则抛异常。常见根因：用户尝试删除已提交或已审批的政策、或前端未做状态判断。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -786,8 +852,14 @@ SELECT discount_policy_id    AS 政策ID,
   WHERE  source_type = 'YXCRM'
   AND    hz_approve_status <> 'NEW';
 ```
-<h4>报错12：导入数量不能超过&#123;pageSize&#125;</h4>
-<ul><li><strong>触发条件</strong>：点击"导入产品"按钮，Excel解析完成后，数据行数超过系统配置的pageSize上限</li><li><strong>逻辑分析</strong>：导入产品明细有数量限制，超过pageSize(系统配置)无法导入，避免性能问题和事务超时。校验逻辑统计解析后的数据行数，超过pageSize则抛异常。常见根因：用户上传过大Excel文件、或未分批导入。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导入数量不能超过&#123;pageSize&#125;</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导入产品"按钮，Excel解析完成后，数据行数超过系统配置的pageSize上限<br><strong>逻辑分析：</strong>导入产品明细有数量限制，超过pageSize(系统配置)无法导入，避免性能问题和事务超时。校验逻辑统计解析后的数据行数，超过pageSize则抛异常。常见根因：用户上传过大Excel文件、或未分批导入。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -797,8 +869,14 @@ SELECT discount_policy_id    AS 政策ID,
   GROUP  BY discount_policy_id
   HAVING COUNT(discount_policy_item_id) > #{pageSize};
 ```
-<h4>报错13：导入的产品编码查询不到对应的产品信息：&#123;codes&#125;</h4>
-<ul><li><strong>触发条件</strong>：点击"导入产品"按钮，调用CRM产品查询接口后，导入的产品编码在CRM返回结果中不存在</li><li><strong>逻辑分析</strong>：导入产品明细需关联CRM产品主数据，产品编码在CRM不存在则无法获取产品信息(名称、型号、价格等)。校验逻辑比对导入编码集合与CRM返回编码集合，差集非空则抛异常并提示具体不存在的编码。常见根因：用户输入错误产品编码、产品在CRM未建档、或产品已失效。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导入的产品编码查询不到对应的产品信息：&#123;codes&#125;</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导入产品"按钮，调用CRM产品查询接口后，导入的产品编码在CRM返回结果中不存在<br><strong>逻辑分析：</strong>导入产品明细需关联CRM产品主数据，产品编码在CRM不存在则无法获取产品信息(名称、型号、价格等)。校验逻辑比对导入编码集合与CRM返回编码集合，差集非空则抛异常并提示具体不存在的编码。常见根因：用户输入错误产品编码、产品在CRM未建档、或产品已失效。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dpi.discount_policy_item_id AS 产品行ID,
@@ -811,8 +889,14 @@ SELECT dpi.discount_policy_item_id AS 产品行ID,
   WHERE  dpi.discount_policy_id = #{discountPolicyId}
   AND    cp.product_code IS NULL;
 ```
-<h4>报错14：产品导入异常，请联系管理员！</h4>
-<ul><li><strong>触发条件</strong>：点击"导入产品"按钮，导入过程中抛出非CommonException异常(如IO异常、解析异常、空指针等)</li><li><strong>逻辑分析</strong>：导入过程涉及Excel解析、CRM接口调用、数据组装等环节，任一环节异常都会导致导入失败。系统捕获Exception后统一抛出"产品导入异常，请联系管理员！"，避免暴露技术细节。常见根因：Excel文件格式损坏、CRM接口超时、数据库异常、或代码bug。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品导入异常，请联系管理员！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导入产品"按钮，导入过程中抛出非CommonException异常(如IO异常、解析异常、空指针等)<br><strong>逻辑分析：</strong>导入过程涉及Excel解析、CRM接口调用、数据组装等环节，任一环节异常都会导致导入失败。系统捕获Exception后统一抛出"产品导入异常，请联系管理员！"，避免暴露技术细节。常见根因：Excel文件格式损坏、CRM接口超时、数据库异常、或代码bug。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -822,8 +906,14 @@ SELECT discount_policy_id    AS 政策ID,
   WHERE  source_type = 'YXCRM'
   AND    discount_policy_id = #{discountPolicyId};
 ```
-<h4>报错15：请先维护OA系统信息</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，推送OA前校验OA系统配置(接口地址、用户名、密码等)缺失</li><li><strong>逻辑分析</strong>：推送OA审批需依赖OA系统配置(接口地址、用户名、密码等)，配置缺失则无法推送。校验逻辑读取OA系统配置，任一缺失则抛异常。常见根因：OA系统配置未维护、配置被误删、或环境切换后配置未同步。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先维护OA系统信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，推送OA前校验OA系统配置(接口地址、用户名、密码等)缺失<br><strong>逻辑分析：</strong>推送OA审批需依赖OA系统配置(接口地址、用户名、密码等)，配置缺失则无法推送。校验逻辑读取OA系统配置，任一缺失则抛异常。常见根因：OA系统配置未维护、配置被误删、或环境切换后配置未同步。</div>
+  </div>
+</div>
 
 ```sql
 SELECT oa_bill_name        AS OA单据名称,
@@ -833,8 +923,14 @@ SELECT oa_bill_name        AS OA单据名称,
   FROM   oa_bill_ref
   WHERE  oa_bill_name = 'YXZT样品折扣政策申请';
 ```
-<h4>报错16：流程编码不能为空。</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，推送OA前校验流程编码(FlowCode)为空</li><li><strong>逻辑分析</strong>：推送OA审批需指定流程编码，流程编码为空则OA无法匹配审批流程。校验逻辑读取FlowCode，为空则抛异常。常见根因：前端未传FlowCode、流程编码配置缺失、或政策类型与流程编码映射未配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程编码不能为空。</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，推送OA前校验流程编码(FlowCode)为空<br><strong>逻辑分析：</strong>推送OA审批需指定流程编码，流程编码为空则OA无法匹配审批流程。校验逻辑读取FlowCode，为空则抛异常。常见根因：前端未传FlowCode、流程编码配置缺失、或政策类型与流程编码映射未配置。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -845,8 +941,14 @@ SELECT discount_policy_id    AS 政策ID,
   WHERE  source_type = 'YXCRM'
   AND    discount_policy_id = #{discountPolicyId};
 ```
-<h4>报错17：以下型号涉及新品，不允许通过型号定义折扣政策，请通过具体产品编码制定折扣政策</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，校验产品行时，某行按型号(ITEM_MODEL)定义且该型号涉及新品</li><li><strong>逻辑分析</strong>：涉及新品的型号不允许通过型号定义折扣政策，必须通过具体产品编码制定，避免新品政策范围不可控。校验逻辑识别新品型号，若政策行按型号定义且涉及新品则抛异常。常见根因：用户误用型号定义新品政策、或新品标识未同步。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>以下型号涉及新品，不允许通过型号定义折扣政策，请通过具体产品编码制定折扣政策</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验产品行时，某行按型号(ITEM_MODEL)定义且该型号涉及新品<br><strong>逻辑分析：</strong>涉及新品的型号不允许通过型号定义折扣政策，必须通过具体产品编码制定，避免新品政策范围不可控。校验逻辑识别新品型号，若政策行按型号定义且涉及新品则抛异常。常见根因：用户误用型号定义新品政策、或新品标识未同步。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dpi.discount_policy_item_id AS 产品行ID,
@@ -861,8 +963,14 @@ SELECT dpi.discount_policy_item_id AS 产品行ID,
   AND    dpi.item_model IS NOT NULL
   AND    dpi.item_model IN (SELECT item_model FROM epm_item_model WHERE new_prod_flag = 1);
 ```
-<h4>报错18：产品编码:[&#123;code&#125;] 与型号：[&#123;model&#125;] 折扣政策冲突</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，校验产品行时，同一产品编码与型号存在多个折扣政策行冲突</li><li><strong>逻辑分析</strong>：同一产品编码与型号不允许在多个折扣政策行中重复定义，避免折扣冲突。校验逻辑识别重复的产品编码+型号组合，冲突则抛异常。常见根因：用户重复添加同一产品、或导入文件包含重复产品。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码:[&#123;code&#125;] 与型号：[&#123;model&#125;] 折扣政策冲突</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验产品行时，同一产品编码与型号存在多个折扣政策行冲突<br><strong>逻辑分析：</strong>同一产品编码与型号不允许在多个折扣政策行中重复定义，避免折扣冲突。校验逻辑识别重复的产品编码+型号组合，冲突则抛异常。常见根因：用户重复添加同一产品、或导入文件包含重复产品。</div>
+  </div>
+</div>
 
 ```sql
 SELECT item_code            AS 产品编码,
@@ -875,8 +983,14 @@ SELECT item_code            AS 产品编码,
   GROUP  BY item_code, item_model
   HAVING COUNT(discount_policy_item_id) > 1;
 ```
-<h4>报错19：产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策该经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</h4>
-<ul><li><strong>触发条件</strong>：要货订单下单时，updateActiveQty校验，某行QTY_BILL&gt;折扣政策产品行该经销商剩余可下单数量</li><li><strong>逻辑分析</strong>：折扣政策对每个产品按经销商设定可下单数量上限，多个订单共享同一政策时需扣减。下单数量超过该经销商剩余可下单数量则抛异常。常见根因：并发下单导致可下单数量被其他订单扣减、或用户下单数量超过剩余可下单数量。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-19" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策该经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>要货订单下单时，updateActiveQty校验，某行QTY_BILL&gt;折扣政策产品行该经销商剩余可下单数量<br><strong>逻辑分析：</strong>折扣政策对每个产品按经销商设定可下单数量上限，多个订单共享同一政策时需扣减。下单数量超过该经销商剩余可下单数量则抛异常。常见根因：并发下单导致可下单数量被其他订单扣减、或用户下单数量超过剩余可下单数量。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dpi.discount_policy_item_id AS 产品行ID,
@@ -890,8 +1004,14 @@ SELECT dpi.discount_policy_item_id AS 产品行ID,
   WHERE  dp.source_type = 'YXCRM'
   AND    dpi.active_qty < dpc.remain_qty;
 ```
-<h4>报错20：产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策全部经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</h4>
-<ul><li><strong>触发条件</strong>：要货订单下单时，updateActiveQty校验，某行QTY_BILL&gt;折扣政策产品行全部经销商合计剩余可下单数量</li><li><strong>逻辑分析</strong>：折扣政策对每个产品设定全部经销商合计可下单数量上限，下单数量超过全部经销商剩余可下单数量则抛异常。常见根因：并发下单导致可下单数量被其他经销商订单扣减、或用户下单数量超过政策总剩余可下单数量。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-20" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品【&#123;code&#125;】本次下单数量【&#123;qty&#125;】，超过政策全部经销商剩余可下单数量【&#123;activeQty&#125;】，请检查！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>要货订单下单时，updateActiveQty校验，某行QTY_BILL&gt;折扣政策产品行全部经销商合计剩余可下单数量<br><strong>逻辑分析：</strong>折扣政策对每个产品设定全部经销商合计可下单数量上限，下单数量超过全部经销商剩余可下单数量则抛异常。常见根因：并发下单导致可下单数量被其他经销商订单扣减、或用户下单数量超过政策总剩余可下单数量。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dpi.discount_policy_item_id AS 产品行ID,
@@ -905,8 +1025,14 @@ SELECT dpi.discount_policy_item_id AS 产品行ID,
   GROUP  BY dpi.discount_policy_item_id, dpi.item_code, dpi.active_qty
   HAVING dpi.active_qty < SUM(dpc.remain_qty);
 ```
-<h4>报错21：请求CRM返回数据解析异常！</h4>
-<ul><li><strong>触发条件</strong>：点击"获取价格"按钮，调用CRM产品查询接口后，返回数据JSON解析失败</li><li><strong>逻辑分析</strong>：获取产品价格需调用CRM接口，返回数据为JSON格式，解析失败则无法获取价格。校验逻辑尝试解析JSON，异常则抛出。常见根因：CRM接口返回非JSON格式数据、CRM接口异常、或网络传输中断。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-21" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请求CRM返回数据解析异常！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"获取价格"按钮，调用CRM产品查询接口后，返回数据JSON解析失败<br><strong>逻辑分析：</strong>获取产品价格需调用CRM接口，返回数据为JSON格式，解析失败则无法获取价格。校验逻辑尝试解析JSON，异常则抛出。常见根因：CRM接口返回非JSON格式数据、CRM接口异常、或网络传输中断。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_id    AS 政策ID,
@@ -915,8 +1041,14 @@ SELECT discount_policy_id    AS 政策ID,
   WHERE  source_type = 'YXCRM'
   AND    discount_policy_id = #{discountPolicyId};
 ```
-<h4>报错22：产品编码[&#123;code&#125;]请求CRM获取失败原因:[&#123;msg&#125;]</h4>
-<ul><li><strong>触发条件</strong>：点击"获取价格"按钮，调用CRM产品查询接口，CRM返回失败信息(msg)</li><li><strong>逻辑分析</strong>：获取产品价格需调用CRM接口，CRM返回失败信息则无法获取价格。校验逻辑读取CRM返回的msg，非空则抛异常并提示具体失败原因。常见根因：产品编码在CRM不存在、产品已失效、或CRM接口业务异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-22" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码[&#123;code&#125;]请求CRM获取失败原因:[&#123;msg&#125;]</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"获取价格"按钮，调用CRM产品查询接口，CRM返回失败信息(msg)<br><strong>逻辑分析：</strong>获取产品价格需调用CRM接口，CRM返回失败信息则无法获取价格。校验逻辑读取CRM返回的msg，非空则抛异常并提示具体失败原因。常见根因：产品编码在CRM不存在、产品已失效、或CRM接口业务异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dpi.discount_policy_item_id AS 产品行ID,
@@ -929,8 +1061,14 @@ SELECT dpi.discount_policy_item_id AS 产品行ID,
   WHERE  dpi.discount_policy_id = #{discountPolicyId}
   AND    cp.product_code IS NULL;
 ```
-<h4>报错23：Crm返回产品政策信息为空</h4>
-<ul><li><strong>触发条件</strong>：调用CRM产品政策查询接口后，CRM返回空数据</li><li><strong>逻辑分析</strong>：获取产品政策信息需调用CRM接口，返回空则无法组装政策数据。校验逻辑判断返回数据为空则抛异常。常见根因：产品在CRM未配置政策、CRM接口异常、或产品编码错误。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-23" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>Crm返回产品政策信息为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用CRM产品政策查询接口后，CRM返回空数据<br><strong>逻辑分析：</strong>获取产品政策信息需调用CRM接口，返回空则无法组装政策数据。校验逻辑判断返回数据为空则抛异常。常见根因：产品在CRM未配置政策、CRM接口异常、或产品编码错误。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dpi.discount_policy_item_id AS 产品行ID,
@@ -942,8 +1080,14 @@ SELECT dpi.discount_policy_item_id AS 产品行ID,
     SELECT 1 FROM crm_policy_info cpi WHERE cpi.item_code = dpi.item_code
   );
 ```
-<h4>报错24：客户的签约方式存在异常，请检查</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，校验客户签约方式时，客户档案签约方式数据异常(为空或非法值)</li><li><strong>逻辑分析</strong>：折扣政策关联客户时需校验客户签约方式，签约方式异常则政策无法正确执行。校验逻辑读取客户档案签约方式，为空或非法值则抛异常。常见根因：客户档案签约方式未维护、签约方式数据被误改、或客户档案数据不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-24" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>客户的签约方式存在异常，请检查</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验客户签约方式时，客户档案签约方式数据异常(为空或非法值)<br><strong>逻辑分析：</strong>折扣政策关联客户时需校验客户签约方式，签约方式异常则政策无法正确执行。校验逻辑读取客户档案签约方式，为空或非法值则抛异常。常见根因：客户档案签约方式未维护、签约方式数据被误改、或客户档案数据不一致。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dp.discount_policy_id    AS 政策ID,
@@ -962,8 +1106,27 @@ SELECT dp.discount_policy_id    AS 政策ID,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：OA审批推送失败</li><li>原因：OA系统不可用或数据组装异常</li><li>解决思路：检查OA系统状态和OA单据配置"YXZT样品折扣政策申请"</li></ul>
-<ul><li>问题2：产品导入失败</li><li>原因：产品编码不存在或文件格式错误</li><li>解决思路：检查Excel文件格式和产品编码是否在CRM系统中存在</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">OA审批推送失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>OA系统不可用或数据组装异常<br><strong style="color:#7C3AED;">处理：</strong>检查OA系统状态和OA单据配置"YXZT样品折扣政策申请"
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">产品导入失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>产品编码不存在或文件格式错误<br><strong style="color:#7C3AED;">处理：</strong>检查Excel文件格式和产品编码是否在CRM系统中存在
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

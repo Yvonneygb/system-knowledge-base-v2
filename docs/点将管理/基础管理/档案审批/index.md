@@ -514,16 +514,28 @@ ORDER BY la.APPROVAL_TIME DESC;
 <tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.LECTURER_TYPE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
 </tbody>
 </table>
-<h4>报错1：请选择一条数据</h4>
-<ul><li><strong>触发条件</strong>：点击审批按钮前未选择列表行或选择多行</li><li><strong>逻辑分析</strong>：前端校验选中行数量=1，不满足时提示</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击审批按钮前未选择列表行或选择多行<br><strong>逻辑分析：</strong>前端校验选中行数量=1，不满足时提示</div>
+  </div>
+</div>
 
 ```sql
 2  FROM MA_LECTURER_APPROVAL la
   WHERE la.APPROVAL_RESULT = 'approving'
   ORDER BY la.CREATE_DATE DESC;
 ```
-<h4>报错2：请选择讲师类型</h4>
-<ul><li><strong>触发条件</strong>：查询时未选择讲师类型</li><li><strong>逻辑分析</strong>：查询参数 pageType 取自讲师类型值，未选择时阻止查询并提示</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择讲师类型</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询时未选择讲师类型<br><strong>逻辑分析：</strong>查询参数 pageType 取自讲师类型值，未选择时阻止查询并提示</div>
+  </div>
+</div>
 
 ```sql
 -- 查询存在审批数据但无讲师类型的异常记录

@@ -814,8 +814,14 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
 <tr><td>ERP推送失败-钉钉通知</td><td>ERP推送时</td><td>ERP返回部分行失败，更新行表ERP_STAT为"推送失败"并发送钉钉异常通知</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：请选择逆向变更</h4>
-<ul><li><strong>触发条件</strong>：产品弹窗查询时，入参isEliminate为空</li><li><strong>逻辑分析</strong>：产品弹窗需根据是否逆向变更（isEliminate）筛选可查询的SM状态范围。若头表IS_ELIMINATE字段未选择（为空），则无法确定查询范围，抛出异常阻断查询。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择逆向变更</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>产品弹窗查询时，入参isEliminate为空<br><strong>逻辑分析：</strong>产品弹窗需根据是否逆向变更（isEliminate）筛选可查询的SM状态范围。若头表IS_ELIMINATE字段未选择（为空），则无法确定查询范围，抛出异常阻断查询。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POH.PRODUCT_OVER_ID AS 申请单ID, POH.PRODUCT_OVER_NO AS 申请单号,
@@ -823,16 +829,28 @@ SELECT POH.PRODUCT_OVER_ID AS 申请单ID, POH.PRODUCT_OVER_NO AS 申请单号,
   FROM PRODUCT_OVER_HEADER POH
   WHERE POH.PRODUCT_OVER_ID = :productOverId;
 ```
-<h4>报错2：推送OA失败：产品SM状态变更申请不存在</h4>
-<ul><li><strong>触发条件</strong>：推送OA审批时，根据PRODUCT_OVER_ID查询头表记录不存在</li><li><strong>逻辑分析</strong>：提交审批推送OA前，后端查询PRODUCT_OVER_HEADER表获取申请单数据。若记录已被删除则推送失败，抛出异常并记录日志。常见于并发删除场景。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>推送OA失败：产品SM状态变更申请不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送OA审批时，根据PRODUCT_OVER_ID查询头表记录不存在<br><strong>逻辑分析：</strong>提交审批推送OA前，后端查询PRODUCT_OVER_HEADER表获取申请单数据。若记录已被删除则推送失败，抛出异常并记录日志。常见于并发删除场景。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POH.PRODUCT_OVER_ID, POH.PRODUCT_OVER_NO, POH.HZ_APPROVE_STATUS
   FROM PRODUCT_OVER_HEADER POH
   WHERE POH.PRODUCT_OVER_ID = :productOverId;
 ```
-<h4>报错3：OA回调失败：产品SM状态变更申请不存在！</h4>
-<ul><li><strong>触发条件</strong>：OA审批回调时，根据productOverId查询头表记录不存在</li><li><strong>逻辑分析</strong>：OA审批完成后回调DMS更新申请单状态。回调接口按productOverId查询PRODUCT_OVER_HEADER，若记录不存在则回调失败。常见于OA审批过程中申请单被删除。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>OA回调失败：产品SM状态变更申请不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批回调时，根据productOverId查询头表记录不存在<br><strong>逻辑分析：</strong>OA审批完成后回调DMS更新申请单状态。回调接口按productOverId查询PRODUCT_OVER_HEADER，若记录不存在则回调失败。常见于OA审批过程中申请单被删除。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POH.PRODUCT_OVER_ID AS 申请单ID, POH.PRODUCT_OVER_NO AS 申请单号,
@@ -840,14 +858,26 @@ SELECT POH.PRODUCT_OVER_ID AS 申请单ID, POH.PRODUCT_OVER_NO AS 申请单号,
   FROM PRODUCT_OVER_HEADER POH
   WHERE POH.PRODUCT_OVER_ID = :productOverId;
 ```
-<h4>报错4：ID不能为空</h4>
-<ul><li><strong>触发条件</strong>：OA回调时，入参productOverId为空或&lt;=0</li><li><strong>逻辑分析</strong>：OA回调接口要求productOverId必填且大于0。若OA系统配置错误导致回调未携带申请单ID，或ID值非法，则抛出异常。需检查OA流程配置的回调参数映射。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>ID不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA回调时，入参productOverId为空或&lt;=0<br><strong>逻辑分析：</strong>OA回调接口要求productOverId必填且大于0。若OA系统配置错误导致回调未携带申请单ID，或ID值非法，则抛出异常。需检查OA流程配置的回调参数映射。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '检查OA回调请求体是否包含productOverId且大于0' AS 提示 FROM DUAL;
 ```
-<h4>报错5：产品SM状态变更申请明细行不存在！</h4>
-<ul><li><strong>触发条件</strong>：提交校验时，PRODUCT_OVER_LINE表无对应头表ID的行记录</li><li><strong>逻辑分析</strong>：后端submitVerify接口根据PRODUCT_OVER_ID查询PRODUCT_OVER_LINE表，若COUNT为0则抛出异常。常见于用户新建申请单后未添加产品行就点击提交。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品SM状态变更申请明细行不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交校验时，PRODUCT_OVER_LINE表无对应头表ID的行记录<br><strong>逻辑分析：</strong>后端submitVerify接口根据PRODUCT_OVER_ID查询PRODUCT_OVER_LINE表，若COUNT为0则抛出异常。常见于用户新建申请单后未添加产品行就点击提交。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POH.PRODUCT_OVER_NO AS 申请单号,
@@ -855,8 +885,14 @@ SELECT POH.PRODUCT_OVER_NO AS 申请单号,
   FROM PRODUCT_OVER_HEADER POH
   WHERE POH.PRODUCT_OVER_ID = :productOverId;
 ```
-<h4>报错6：以下产品已有在途申请，无法重复提交...</h4>
-<ul><li><strong>触发条件</strong>：提交校验时，同一产品存在HZ_APPROVE_STATUS='RUN'的其他申请单</li><li><strong>逻辑分析</strong>：后端查询当前申请所有明细行的产品编码（去重），再查询其他HZ_APPROVE_STATUS='RUN'的申请单中包含相同产品编码的记录。若存在则提示具体的申请单号、申请人和产品编码，避免同一产品被多个SM状态变更单同时审批。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>以下产品已有在途申请，无法重复提交...</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交校验时，同一产品存在HZ_APPROVE_STATUS='RUN'的其他申请单<br><strong>逻辑分析：</strong>后端查询当前申请所有明细行的产品编码（去重），再查询其他HZ_APPROVE_STATUS='RUN'的申请单中包含相同产品编码的记录。若存在则提示具体的申请单号、申请人和产品编码，避免同一产品被多个SM状态变更单同时审批。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POH.PRODUCT_OVER_NO AS 申请单号, IU.REAL_NAME AS 申请人,
@@ -871,8 +907,14 @@ SELECT POH.PRODUCT_OVER_NO AS 申请单号, IU.REAL_NAME AS 申请人,
     )
   GROUP BY POH.PRODUCT_OVER_NO, IU.REAL_NAME;
 ```
-<h4>报错7：以下产品编码重复，请检查！</h4>
-<ul><li><strong>触发条件</strong>：保存校验时，同一申请单内产品编码重复</li><li><strong>逻辑分析</strong>：后端saveVerify接口遍历前端传入的行列表检测同一产品编码出现多次，同时查询数据库已存在的行检测前端行与数据库行的产品编码重复（pkId为空或pkId不同则为重复）。存在重复时抛出异常并提示重复编码。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>以下产品编码重复，请检查！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存校验时，同一申请单内产品编码重复<br><strong>逻辑分析：</strong>后端saveVerify接口遍历前端传入的行列表检测同一产品编码出现多次，同时查询数据库已存在的行检测前端行与数据库行的产品编码重复（pkId为空或pkId不同则为重复）。存在重复时抛出异常并提示重复编码。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POL.ITEM_CODE AS 产品编码, COUNT(*) AS 重复次数
@@ -881,8 +923,14 @@ SELECT POL.ITEM_CODE AS 产品编码, COUNT(*) AS 重复次数
   GROUP BY POL.ITEM_CODE
   HAVING COUNT(*) > 1;
 ```
-<h4>报错8：未获取到用户信息</h4>
-<ul><li><strong>触发条件</strong>：导入时，当前用户userType为空</li><li><strong>逻辑分析</strong>：导入接口data-upload需根据userType确定导入权限和数据范围。若登录态丢失或用户主档USER_TYPE字段为空，则抛出异常。需重新登录或检查IAM_USER配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未获取到用户信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入时，当前用户userType为空<br><strong>逻辑分析：</strong>导入接口data-upload需根据userType确定导入权限和数据范围。若登录态丢失或用户主档USER_TYPE字段为空，则抛出异常。需重新登录或检查IAM_USER配置。</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
@@ -890,8 +938,14 @@ SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
   FROM HZERO.IAM_USER U
   WHERE U.ID = :currentUserId;
 ```
-<h4>报错9：未获取到事业部信息</h4>
-<ul><li><strong>触发条件</strong>：导入时，当前用户事业部DEPT信息为空</li><li><strong>逻辑分析</strong>：导入接口需根据用户事业部筛选可导入的产品范围。若用户未关联事业部或事业部配置为空，则抛出异常。需检查用户角色的事业部权限配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未获取到事业部信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入时，当前用户事业部DEPT信息为空<br><strong>逻辑分析：</strong>导入接口需根据用户事业部筛选可导入的产品范围。若用户未关联事业部或事业部配置为空，则抛出异常。需检查用户角色的事业部权限配置。</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.ID AS 用户ID, U.REAL_NAME AS 姓名,
@@ -901,8 +955,14 @@ SELECT U.ID AS 用户ID, U.REAL_NAME AS 姓名,
     LEFT JOIN HZERO.IAM_ROLE R ON R.ID = MR.ROLE_ID
   WHERE U.ID = :currentUserId;
 ```
-<h4>报错10：导入数据异常！</h4>
-<ul><li><strong>触发条件</strong>：导入过程中发生异常，Excel格式或数据不符合要求</li><li><strong>逻辑分析</strong>：导入接口data-upload逐行解析Excel并校验产品编码存在性、SM状态合法性等。若Excel格式错误、产品编码不存在、SM状态值非法或数据库异常，则整体导入失败并提示"导入数据异常！"。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导入数据异常！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入过程中发生异常，Excel格式或数据不符合要求<br><strong>逻辑分析：</strong>导入接口data-upload逐行解析Excel并校验产品编码存在性、SM状态合法性等。若Excel格式错误、产品编码不存在、SM状态值非法或数据库异常，则整体导入失败并提示"导入数据异常！"。</div>
+  </div>
+</div>
 
 ```sql
 SELECT I.ITEM_CODE AS 产品编码, I.ITEM_NAME AS 产品名称,
@@ -912,8 +972,14 @@ SELECT I.ITEM_CODE AS 产品编码, I.ITEM_NAME AS 产品名称,
   WHERE I.ITEM_CODE IN (:importItemCodes)
     AND I.ITEM_TYPE <> 5;
 ```
-<h4>报错11：值集配置AE.PRODUCT_OVER_SM_STATUS</h4>
-<ul><li><strong>触发条件</strong>：导入校验时，查询值集AE.PRODUCT_OVER_SM_STATUS返回为空或查询失败</li><li><strong>逻辑分析</strong>：ProductOverLineValidator.validate方法中通过LovAdapter.queryLovValue查询值集AE.PRODUCT_OVER_SM_STATUS，若返回null则抛出CommonException。值集未配置或HZERO平台HPFM_LOV_VALUE表缺少对应LOV_CODE='AE.PRODUCT_OVER_SM_STATUS'的记录会导致此异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>值集配置AE.PRODUCT_OVER_SM_STATUS</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入校验时，查询值集AE.PRODUCT_OVER_SM_STATUS返回为空或查询失败<br><strong>逻辑分析：</strong>ProductOverLineValidator.validate方法中通过LovAdapter.queryLovValue查询值集AE.PRODUCT_OVER_SM_STATUS，若返回null则抛出CommonException。值集未配置或HZERO平台HPFM_LOV_VALUE表缺少对应LOV_CODE='AE.PRODUCT_OVER_SM_STATUS'的记录会导致此异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT LV.LOV_CODE AS 值集编码, LV.MEANING AS 含义, LV.TAG AS 标签,
@@ -923,8 +989,14 @@ SELECT LV.LOV_CODE AS 值集编码, LV.MEANING AS 含义, LV.TAG AS 标签,
     AND LV.TENANT_ID = 0
   ORDER BY LV.ORDER_ID;
 ```
-<h4>报错12：产品信息不存在或者产品品牌事业部与当前登录事业部不一致，请检查</h4>
-<ul><li><strong>触发条件</strong>：导入校验时，Excel中的产品编码在ITEM_ORG表不存在，或产品事业部与当前用户事业部不一致</li><li><strong>逻辑分析</strong>：ProductOverLineValidator.validate方法中通过productOverLineRepository.itemOrgByCodes根据产品编码列表和事业部ID查询ITEM_ORG表。若查询结果中不包含某产品编码（popUpVO为null），则通过addErrorMsg记录该行错误。常见于产品编码拼写错误、产品未在当前事业部建档。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品信息不存在或者产品品牌事业部与当前登录事业部不一致，请检查</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入校验时，Excel中的产品编码在ITEM_ORG表不存在，或产品事业部与当前用户事业部不一致<br><strong>逻辑分析：</strong>ProductOverLineValidator.validate方法中通过productOverLineRepository.itemOrgByCodes根据产品编码列表和事业部ID查询ITEM_ORG表。若查询结果中不包含某产品编码（popUpVO为null），则通过addErrorMsg记录该行错误。常见于产品编码拼写错误、产品未在当前事业部建档。</div>
+  </div>
+</div>
 
 ```sql
 SELECT I.ITEM_CODE AS 产品编码, I.ITEM_NAME AS 产品名称,
@@ -934,8 +1006,14 @@ SELECT I.ITEM_CODE AS 产品编码, I.ITEM_NAME AS 产品名称,
     LEFT JOIN ITEM_ORG IO ON IO.ITEM_ID = I.ITEM_ID
   WHERE I.ITEM_CODE IN (:importItemCodes);
 ```
-<h4>报错13：产品状态变更申请状态有误</h4>
-<ul><li><strong>触发条件</strong>：导入校验时，根据角色编码+是否逆向+当前SM状态在值集中未匹配到可变更状态配置（checkState为null）</li><li><strong>逻辑分析</strong>：ProductOverLineValidator.validate方法中构建key=roleCode+"_"+isEliminate，再拼接"_"+smState作为lovMap的key查询。若值集AE.PRODUCT_OVER_SM_STATUS中不存在meaning包含该key且tag包含当前smState的记录，则checkState为null，通过addErrorMsg记录错误。需检查值集配置是否覆盖该角色+是否逆向+SM状态组合。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品状态变更申请状态有误</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入校验时，根据角色编码+是否逆向+当前SM状态在值集中未匹配到可变更状态配置（checkState为null）<br><strong>逻辑分析：</strong>ProductOverLineValidator.validate方法中构建key=roleCode+"_"+isEliminate，再拼接"_"+smState作为lovMap的key查询。若值集AE.PRODUCT_OVER_SM_STATUS中不存在meaning包含该key且tag包含当前smState的记录，则checkState为null，通过addErrorMsg记录错误。需检查值集配置是否覆盖该角色+是否逆向+SM状态组合。</div>
+  </div>
+</div>
 
 ```sql
 SELECT LV.MEANING AS 含义, LV.TAG AS 标签, LV.DESCRIPTION AS 可变更状态
@@ -945,8 +1023,14 @@ SELECT LV.MEANING AS 含义, LV.TAG AS 标签, LV.DESCRIPTION AS 可变更状态
     AND LV.MEANING LIKE '%' || :roleCode || '_' || :isEliminate || '%'
     AND LV.TAG LIKE '%' || :smState || '%';
 ```
-<h4>报错14：产品状态变更申请状态有误,产品当前状态:xxx,产品可变更状态:xxx</h4>
-<ul><li><strong>触发条件</strong>：导入校验时，Excel中填写的目标SM状态不在值集配置的允许变更范围内</li><li><strong>逻辑分析</strong>：ProductOverLineValidator.validate方法中查询到checkState（可变更状态列表）后，检查item.getSmChangeState()是否包含在checkState中。若不包含则通过addErrorMsg记录错误，并提示当前SM状态和可变更状态范围。需修改Excel中的目标SM状态为值集允许的值。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品状态变更申请状态有误,产品当前状态:xxx,产品可变更状态:xxx</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入校验时，Excel中填写的目标SM状态不在值集配置的允许变更范围内<br><strong>逻辑分析：</strong>ProductOverLineValidator.validate方法中查询到checkState（可变更状态列表）后，检查item.getSmChangeState()是否包含在checkState中。若不包含则通过addErrorMsg记录错误，并提示当前SM状态和可变更状态范围。需修改Excel中的目标SM状态为值集允许的值。</div>
+  </div>
+</div>
 
 ```sql
 SELECT IO.ITEM_CODE AS 产品编码, IO.SM_STATE AS 当前SM状态,
@@ -958,8 +1042,14 @@ SELECT IO.ITEM_CODE AS 产品编码, IO.SM_STATE AS 当前SM状态,
       AND LV.TAG LIKE '%' || IO.SM_STATE || '%'
   WHERE IO.ITEM_CODE = :itemCode;
 ```
-<h4>报错15：产品生命状态为空，不允许导入</h4>
-<ul><li><strong>触发条件</strong>：导入校验时，产品在ITEM_ORG表的SM_STATE字段为空</li><li><strong>逻辑分析</strong>：ProductOverLineValidator.validate方法中查询到产品信息后，若popUpVO.getSmState()为null，则通过addErrorMsg记录错误。产品SM状态为空无法确定可变更的目标状态范围，需先在产品主档中维护产品的SM状态。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品生命状态为空，不允许导入</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入校验时，产品在ITEM_ORG表的SM_STATE字段为空<br><strong>逻辑分析：</strong>ProductOverLineValidator.validate方法中查询到产品信息后，若popUpVO.getSmState()为null，则通过addErrorMsg记录错误。产品SM状态为空无法确定可变更的目标状态范围，需先在产品主档中维护产品的SM状态。</div>
+  </div>
+</div>
 
 ```sql
 SELECT IO.ITEM_ID AS 产品ID, I.ITEM_CODE AS 产品编码,
@@ -969,8 +1059,14 @@ SELECT IO.ITEM_ID AS 产品ID, I.ITEM_CODE AS 产品编码,
   WHERE IO.SM_STATE IS NULL
     AND I.ITEM_CODE IN (:importItemCodes);
 ```
-<h4>报错16：产品编码重复:xxx</h4>
-<ul><li><strong>触发条件</strong>：导入校验时，导入的Excel中产品编码与已存在的行表记录重复</li><li><strong>逻辑分析</strong>：ProductOverLineValidator.validate方法中将导入行与数据库已存在的PRODUCT_OVER_LINE记录合并后，遍历检测产品编码重复。若同一产品编码出现多次则通过addErrorMsg记录错误。与保存校验的报错7不同，此报错发生在导入校验阶段（BatchValidatorHandler），报错7发生在保存校验阶段（saveVerify接口）。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码重复:xxx</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入校验时，导入的Excel中产品编码与已存在的行表记录重复<br><strong>逻辑分析：</strong>ProductOverLineValidator.validate方法中将导入行与数据库已存在的PRODUCT_OVER_LINE记录合并后，遍历检测产品编码重复。若同一产品编码出现多次则通过addErrorMsg记录错误。与保存校验的报错7不同，此报错发生在导入校验阶段（BatchValidatorHandler），报错7发生在保存校验阶段（saveVerify接口）。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POL.ITEM_CODE AS 产品编码, COUNT(*) AS 重复次数,
@@ -980,8 +1076,14 @@ SELECT POL.ITEM_CODE AS 产品编码, COUNT(*) AS 重复次数,
   GROUP BY POL.ITEM_CODE
   HAVING COUNT(*) > 1;
 ```
-<h4>报错17：推送ERP失败</h4>
-<ul><li><strong>触发条件</strong>：审批通过后推送ERP变更物料SM状态时，ERP接口返回空或缺少OutputParameters节点</li><li><strong>逻辑分析</strong>：ProductOverHeaderServiceImpl.wfComplete方法中调用erpSdkService.productStatusModify推送ERP。若返回结果为空字符串或JSON中不包含OutputParameters键，则errorMsg设置为"推送ERP失败"，并将所有行表的ERP_STAT更新为"推送失败"。常见于ERP接口不可用、网络异常或ERP返回格式变更。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>推送ERP失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>审批通过后推送ERP变更物料SM状态时，ERP接口返回空或缺少OutputParameters节点<br><strong>逻辑分析：</strong>ProductOverHeaderServiceImpl.wfComplete方法中调用erpSdkService.productStatusModify推送ERP。若返回结果为空字符串或JSON中不包含OutputParameters键，则errorMsg设置为"推送ERP失败"，并将所有行表的ERP_STAT更新为"推送失败"。常见于ERP接口不可用、网络异常或ERP返回格式变更。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POH.PRODUCT_OVER_NO AS 申请单号, POH.HZ_APPROVE_STATUS AS 审批状态,
@@ -992,8 +1094,14 @@ SELECT POH.PRODUCT_OVER_NO AS 申请单号, POH.HZ_APPROVE_STATUS AS 审批状�
   WHERE POH.PRODUCT_OVER_ID = :productOverId
     AND POL.ERP_STAT = '推送失败';
 ```
-<h4>报错18：ERP推送失败-钉钉通知</h4>
-<ul><li><strong>触发条件</strong>：ERP返回部分行推送失败（X_RETURN_STATUS不为S）</li><li><strong>逻辑分析</strong>：ProductOverHeaderServiceImpl.wfComplete方法中解析ERP返回的X_ITEMSM_TBL_ITEM列表，对每行检查returnStatus是否包含S。不包含S的行更新ERP_STAT为"推送失败"并记录RESULT_MESSAGE。若存在失败行（hasError=true），通过dingTalkService.robotSendTextTemplate发送钉钉机器人通知，标题"产品生命状态（SM值）变更申请"，内容包含申请单号和异常提示。运维人员收到通知后需排查ERP侧问题。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>ERP推送失败-钉钉通知</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>ERP返回部分行推送失败（X_RETURN_STATUS不为S）<br><strong>逻辑分析：</strong>ProductOverHeaderServiceImpl.wfComplete方法中解析ERP返回的X_ITEMSM_TBL_ITEM列表，对每行检查returnStatus是否包含S。不包含S的行更新ERP_STAT为"推送失败"并记录RESULT_MESSAGE。若存在失败行（hasError=true），通过dingTalkService.robotSendTextTemplate发送钉钉机器人通知，标题"产品生命状态（SM值）变更申请"，内容包含申请单号和异常提示。运维人员收到通知后需排查ERP侧问题。</div>
+  </div>
+</div>
 
 ```sql
 SELECT POH.PRODUCT_OVER_NO AS 申请单号, POL.ITEM_CODE AS 产品编码,
@@ -1008,8 +1116,54 @@ SELECT POH.PRODUCT_OVER_NO AS 申请单号, POL.ITEM_CODE AS 产品编码,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：SM状态有哪些值？</li><li>原因：SM状态由值集AE.PRODUCT_OVER_SM_STATUS配置，常见有正常销售、限制销售、停止销售、淘汰等</li><li>解决思路：查询值集配置 <code>SELECT * FROM HZERO.HPFM_LOV_VALUE WHERE LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'</code></li></ul>
-<ul><li>问题2：为什么产品弹窗查不到产品？</li><li>原因：可能原因：①当前角色不在ProdSMSC/ProdSMSC_CS中；②产品SM状态不在角色允许范围内；③产品item_type不为5（非成品）；④产品存在erp_stat='未推送'的在途记录；⑤产品不属于当前事业部且无生效售价单</li><li>解决思路：</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">SM状态有哪些值？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>SM状态由值集AE.PRODUCT_OVER_SM_STATUS配置，常见有正常销售、限制销售、停止销售、淘汰等<br><strong style="color:#7C3AED;">处理：</strong>查询值集配置 <code>SELECT * FROM HZERO.HPFM_LOV_VALUE WHERE LOV_CODE = 'AE.PRODUCT_OVER_SM_STATUS'</code>
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">为什么产品弹窗查不到产品？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>可能原因：①当前角色不在ProdSMSC/ProdSMSC_CS中；②产品SM状态不在角色允许范围内；③产品item_type不为5（非成品）；④产品存在erp_stat='未推送'的在途记录；⑤产品不属于当前事业部且无生效售价单
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">ERP推送失败如何处理？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>ERP接口返回异常，行表ERP_STAT更新为"推送失败"，RESULT_MESSAGE记录失败原因，同时发送钉钉通知
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">一个申请可以变更多个产品吗？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>可以，每个产品对应一行记录，支持通过产品弹窗逐个添加或Excel批量导入<br><strong style="color:#7C3AED;">处理：</strong>无需处理，正常业务流程
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q5</span>
+    <span style="font-size:15px;">审批驳回后可以重新提交吗？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>可以，HZ_APPROVE_STATUS='REJECTED'的申请可修改后重新提交审批<br><strong style="color:#7C3AED;">处理：</strong>修改申请内容后点击提交按钮重新提交
+  </div>
+</div>
+</div>
 
 ```sql
 -- 检查产品状态
@@ -1020,7 +1174,6 @@ SELECT POH.PRODUCT_OVER_NO AS 申请单号, POL.ITEM_CODE AS 产品编码,
     SELECT * FROM product_over_line pol
     WHERE pol.erp_stat = '未推送' AND pol.item_code = '产品编码';
 ```
-<ul><li>问题3：ERP推送失败如何处理？</li><li>原因：ERP接口返回异常，行表ERP_STAT更新为"推送失败"，RESULT_MESSAGE记录失败原因，同时发送钉钉通知</li><li>解决思路：</li></ul>
 
 ```sql
 SELECT pol.ITEM_CODE, pol.ERP_STAT, pol.RESULT_MESSAGE
@@ -1029,8 +1182,6 @@ SELECT pol.ITEM_CODE, pol.ERP_STAT, pol.RESULT_MESSAGE
       AND pol.ERP_STAT = '推送失败';
 ```
 <p>根据RESULT_MESSAGE排查ERP侧问题，修复后需重新推送</p>
-<ul><li>问题4：一个申请可以变更多个产品吗？</li><li>原因：可以，每个产品对应一行记录，支持通过产品弹窗逐个添加或Excel批量导入</li><li>解决思路：无需处理，正常业务流程</li></ul>
-<ul><li>问题5：审批驳回后可以重新提交吗？</li><li>原因：可以，HZ_APPROVE_STATUS='REJECTED'的申请可修改后重新提交审批</li><li>解决思路：修改申请内容后点击提交按钮重新提交</li></ul>
 </KbCard>
 
 </div>

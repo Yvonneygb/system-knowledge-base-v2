@@ -450,8 +450,14 @@
 <tr><td>评价星级不能为空</td><td>提交评价</td><td>未选择评价星级，选择后提交</td><td>error</td><td>前端校验 STAR_LEVEL 非空</td></tr>
 </tbody>
 </table>
-<h4>报错1：请求失败</h4>
-<ul><li><strong>触发条件</strong>：调用 feedback/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、文件服务异常、网络中断等。需检查 mbo-business 微服务运行状态、文件服务连通性、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用 feedback/* 系列接口时，后端返回 HTTP 状态码非 2xx<br><strong>逻辑分析：</strong>前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、文件服务异常、网络中断等。需检查 mbo-business 微服务运行状态、文件服务连通性、后端日志定位具体异常堆栈</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号,
@@ -462,8 +468,14 @@ SELECT QUESTIONID AS 问题编号,
   WHERE LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错2：请选择一条数据</h4>
-<ul><li><strong>触发条件</strong>：点击编辑、删除、取消、重新反馈、评价等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标反馈单，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击编辑、删除、取消、重新反馈、评价等行操作按钮时，未选择数据或选择了多行<br><strong>逻辑分析：</strong>前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标反馈单，未选择时无法确定操作对象，多选时操作对象不唯一</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号,
@@ -474,8 +486,14 @@ SELECT QUESTIONID AS 问题编号,
   FROM FEEDBACK
   ORDER BY CREATE_TIME DESC;
 ```
-<h4>报错3：确定删除该反馈单吗？</h4>
-<ul><li><strong>触发条件</strong>：点击删除按钮时，弹出二次确认框</li><li><strong>逻辑分析</strong>：前端删除操作前弹出确认框"确定删除该反馈单吗？"，用户确认后调用 DELETE feedback/delete/&#123;id&#125; 接口。仅草稿状态的反馈单可删除，删除后数据不可恢复</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>确定删除该反馈单吗？</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击删除按钮时，弹出二次确认框<br><strong>逻辑分析：</strong>前端删除操作前弹出确认框"确定删除该反馈单吗？"，用户确认后调用 DELETE feedback/delete/&#123;id&#125; 接口。仅草稿状态的反馈单可删除，删除后数据不可恢复</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号,
@@ -487,8 +505,14 @@ SELECT QUESTIONID AS 问题编号,
   WHERE STATE = 0
   ORDER BY CREATE_TIME DESC;
 ```
-<h4>报错4：确定取消该反馈单吗？</h4>
-<ul><li><strong>触发条件</strong>：点击取消按钮时，弹出二次确认框</li><li><strong>逻辑分析</strong>：前端取消操作前弹出确认框"确定取消该反馈单吗？"，用户确认后调用 POST feedback/cancel/&#123;id&#125; 接口。仅已提交状态的反馈单可取消，取消后状态变为已取消</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>确定取消该反馈单吗？</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击取消按钮时，弹出二次确认框<br><strong>逻辑分析：</strong>前端取消操作前弹出确认框"确定取消该反馈单吗？"，用户确认后调用 POST feedback/cancel/&#123;id&#125; 接口。仅已提交状态的反馈单可取消，取消后状态变为已取消</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号,
@@ -500,8 +524,14 @@ SELECT QUESTIONID AS 问题编号,
   WHERE STATE = 1
   ORDER BY CREATE_TIME DESC;
 ```
-<h4>报错5：问题标题不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存或提交反馈单时，TITLE 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 TITLE 字段配置 required 校验，提交前校验问题标题是否填写，为空则阻止提交并提示"问题标题不能为空"。问题标题是反馈单的概述，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>问题标题不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或提交反馈单时，TITLE 字段为空<br><strong>逻辑分析：</strong>前端表单对 TITLE 字段配置 required 校验，提交前校验问题标题是否填写，为空则阻止提交并提示"问题标题不能为空"。问题标题是反馈单的概述，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号,
@@ -511,8 +541,14 @@ SELECT QUESTIONID AS 问题编号,
   FROM FEEDBACK
   WHERE TITLE IS NULL OR TITLE = '';
 ```
-<h4>报错6：问题类型不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存或提交反馈单时，TYPE_CODE 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 TYPE_CODE 字段配置 required 校验，提交前校验问题类型是否选择，为空则阻止提交并提示"问题类型不能为空"。问题类型用于分类管理和分派处理，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>问题类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或提交反馈单时，TYPE_CODE 字段为空<br><strong>逻辑分析：</strong>前端表单对 TYPE_CODE 字段配置 required 校验，提交前校验问题类型是否选择，为空则阻止提交并提示"问题类型不能为空"。问题类型用于分类管理和分派处理，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号,
@@ -522,8 +558,14 @@ SELECT QUESTIONID AS 问题编号,
   FROM FEEDBACK
   WHERE TYPE_CODE IS NULL OR TYPE_CODE = '';
 ```
-<h4>报错7：问题描述不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存或提交反馈单时，CONTENT 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 CONTENT 字段配置 required 校验，提交前校验问题描述是否填写，为空则阻止提交并提示"问题描述不能为空"。问题描述是问题定位和处理的核心依据，必须详细填写</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>问题描述不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或提交反馈单时，CONTENT 字段为空<br><strong>逻辑分析：</strong>前端表单对 CONTENT 字段配置 required 校验，提交前校验问题描述是否填写，为空则阻止提交并提示"问题描述不能为空"。问题描述是问题定位和处理的核心依据，必须详细填写</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号,
@@ -533,16 +575,28 @@ SELECT QUESTIONID AS 问题编号,
   FROM FEEDBACK
   WHERE CONTENT IS NULL OR CONTENT = '';
 ```
-<h4>报错8：导出无数据</h4>
-<ul><li><strong>触发条件</strong>：点击导出按钮时，当前查询结果为空</li><li><strong>逻辑分析</strong>：前端导出前校验查询结果是否为空，若为空则提示"导出无数据"。需调整查询条件确保有数据可导出</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击导出按钮时，当前查询结果为空<br><strong>逻辑分析：</strong>前端导出前校验查询结果是否为空，若为空则提示"导出无数据"。需调整查询条件确保有数据可导出</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*) AS 反馈单数量
   FROM FEEDBACK
   WHERE CREATE_TIME >= SYSDATE - 30;
 ```
-<h4>报错9：网络异常/接口超时</h4>
-<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、文件存储服务响应慢等。需检查网络连通性、后端服务负载、文件存储服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、文件存储服务响应慢等。需检查网络连通性、后端服务负载、文件存储服务状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号, TITLE AS 问题标题, STATE AS 问题状态,
@@ -551,8 +605,14 @@ SELECT QUESTIONID AS 问题编号, TITLE AS 问题标题, STATE AS 问题状态,
   WHERE LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错10：权限不足</h4>
-<ul><li><strong>触发条件</strong>：点击新建、编辑、删除、取消、重新反馈、评价等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击新建、编辑、删除、取消、重新反馈、评价等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
@@ -563,8 +623,14 @@ SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE '%feedback%' ORDER BY U.USER_NAME;
 ```
-<h4>报错11：数据不存在</h4>
-<ul><li><strong>触发条件</strong>：编辑、删除、取消等操作时，接口返回数据为空或问题编号不存在</li><li><strong>逻辑分析</strong>：前端通过 questionId 调用接口，后端查询 FEEDBACK 表无对应记录或记录已逻辑删除，返回空数据。常见根因：问题编号错误、反馈单已被删除、跨租户查询、数据权限隔离等。需检查 QUESTIONID 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>编辑、删除、取消等操作时，接口返回数据为空或问题编号不存在<br><strong>逻辑分析：</strong>前端通过 questionId 调用接口，后端查询 FEEDBACK 表无对应记录或记录已逻辑删除，返回空数据。常见根因：问题编号错误、反馈单已被删除、跨租户查询、数据权限隔离等。需检查 QUESTIONID 有效性及数据权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号, TITLE AS 问题标题, STATE AS 问题状态,
@@ -572,8 +638,14 @@ SELECT QUESTIONID AS 问题编号, TITLE AS 问题标题, STATE AS 问题状态,
   FROM FEEDBACK
   WHERE DELETE_FLAG = 'Y' OR QUESTIONID IS NULL;
 ```
-<h4>报错12：状态不允许操作</h4>
-<ul><li><strong>触发条件</strong>：点击删除、取消、重新反馈等按钮时，反馈单状态不允许该操作</li><li><strong>逻辑分析</strong>：后端校验状态机，如删除要求 STATE=0（草稿）、取消要求 STATE=1（已提交）、重新反馈要求 STATE=3（已回答）等。状态不匹配时后端返回业务异常。需检查反馈单当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击删除、取消、重新反馈等按钮时，反馈单状态不允许该操作<br><strong>逻辑分析：</strong>后端校验状态机，如删除要求 STATE=0（草稿）、取消要求 STATE=1（已提交）、重新反馈要求 STATE=3（已回答）等。状态不匹配时后端返回业务异常。需检查反馈单当前状态及操作流程</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号, TITLE AS 问题标题, STATE AS 问题状态,
@@ -582,8 +654,14 @@ SELECT QUESTIONID AS 问题编号, TITLE AS 问题标题, STATE AS 问题状态,
   WHERE STATE NOT IN (0,1,2,3,4,5)
   ORDER BY CREATE_TIME DESC;
 ```
-<h4>报错13：值集数据不显示</h4>
-<ul><li><strong>触发条件</strong>：查询条件或列表中问题类型等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.FEEDBACK_TYPE、MBO.FEEDBACK_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中问题类型等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.FEEDBACK_TYPE、MBO.FEEDBACK_STATE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
+  </div>
+</div>
 
 ```sql
 SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
@@ -592,8 +670,14 @@ SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
   WHERE LOOKUP_CODE IN ('MBO.FEEDBACK_TYPE','MBO.FEEDBACK_STATE')
     AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
 ```
-<h4>报错14：附件上传失败</h4>
-<ul><li><strong>触发条件</strong>：上传反馈单附件时，OSS 上传抛错或上传成功但响应无 fileUrl</li><li><strong>逻辑分析</strong>：前端上传组件 onUploadError 钩子捕获上传异常提示"上传失败"，onUploadSuccess 钩子校验响应 fileUrl 字段，为空则提示"上传失败"。常见根因：OSS 存储服务不可用、bucketName 配置错误、文件格式不被接受、网络中断等</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>附件上传失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上传反馈单附件时，OSS 上传抛错或上传成功但响应无 fileUrl<br><strong>逻辑分析：</strong>前端上传组件 onUploadError 钩子捕获上传异常提示"上传失败"，onUploadSuccess 钩子校验响应 fileUrl 字段，为空则提示"上传失败"。常见根因：OSS 存储服务不可用、bucketName 配置错误、文件格式不被接受、网络中断等</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号, FILE_NAME AS 文件名,
@@ -602,8 +686,14 @@ SELECT QUESTIONID AS 问题编号, FILE_NAME AS 文件名,
   WHERE FILE_URL IS NULL OR ERROR_INFO IS NOT NULL
   ORDER BY CREATION_DATE DESC;
 ```
-<h4>报错15：评价星级不能为空</h4>
-<ul><li><strong>触发条件</strong>：提交评价时，STAR_LEVEL 字段为空</li><li><strong>逻辑分析</strong>：前端评价弹窗对 starLevel 字段配置 required 校验，提交前校验评价星级是否选择，为空则阻止提交并提示"评价星级不能为空"。评价星级用于量化反馈处理质量，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>评价星级不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交评价时，STAR_LEVEL 字段为空<br><strong>逻辑分析：</strong>前端评价弹窗对 starLevel 字段配置 required 校验，提交前校验评价星级是否选择，为空则阻止提交并提示"评价星级不能为空"。评价星级用于量化反馈处理质量，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT QUESTIONID AS 问题编号, TITLE AS 问题标题, STATE AS 问题状态,

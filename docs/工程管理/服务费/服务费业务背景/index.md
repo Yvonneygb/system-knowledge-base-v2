@@ -222,8 +222,14 @@
 <tr><td>操作失败，数据已被其他用户修改</td><td>编辑保存时</td><td>并发修改导致乐观锁失败。刷新数据后重新编辑</td><td>高</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：背景编码不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存服务费业务背景时，背景编码字段为空</li><li><strong>逻辑分析</strong>：保存校验中检查背景编码非空，因背景编码为业务背景的唯一标识。需填写背景编码后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>背景编码不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存服务费业务背景时，背景编码字段为空<br><strong>逻辑分析：</strong>保存校验中检查背景编码非空，因背景编码为业务背景的唯一标识。需填写背景编码后保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
@@ -231,8 +237,14 @@ SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
   WHERE esfb.BG_CODE IS NULL OR TRIM(esfb.BG_CODE) = ''
   -- 查出背景编码为空的异常数据
 ```
-<h4>报错2：背景名称不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存服务费业务背景时，背景名称字段为空</li><li><strong>逻辑分析</strong>：保存校验中检查背景名称非空，因背景名称为业务背景的显示名称。需填写背景名称后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>背景名称不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存服务费业务背景时，背景名称字段为空<br><strong>逻辑分析：</strong>保存校验中检查背景名称非空，因背景名称为业务背景的显示名称。需填写背景名称后保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
@@ -240,8 +252,14 @@ SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME, esfb.BG_DESC
   WHERE esfb.BG_NAME IS NULL OR TRIM(esfb.BG_NAME) = ''
   -- 查出背景名称为空的异常数据
 ```
-<h4>报错3：背景编码已存在</h4>
-<ul><li><strong>触发条件</strong>：保存服务费业务背景时，背景编码已存在其他记录</li><li><strong>逻辑分析</strong>：保存校验中按BG_CODE查询EPM_SERVICE_FEE_BG，若存在(排除当前记录)则抛出阻断性报错。需修改为唯一编码</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>背景编码已存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存服务费业务背景时，背景编码已存在其他记录<br><strong>逻辑分析：</strong>保存校验中按BG_CODE查询EPM_SERVICE_FEE_BG，若存在(排除当前记录)则抛出阻断性报错。需修改为唯一编码</div>
+  </div>
+</div>
 
 ```sql
 SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME
@@ -250,8 +268,14 @@ SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME
     AND esfb.BG_ID <> :currentBgId
   -- 查出背景编码重复的记录
 ```
-<h4>报错4：请选择一条数据</h4>
-<ul><li><strong>触发条件</strong>：在列表页未选中任何行即点击"删除"或"编辑"按钮</li><li><strong>逻辑分析</strong>：前端按钮事件中校验列表选中行数，若selectedRecords.length=0则弹出提示。需先选中一条数据再操作</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>在列表页未选中任何行即点击"删除"或"编辑"按钮<br><strong>逻辑分析：</strong>前端按钮事件中校验列表选中行数，若selectedRecords.length=0则弹出提示。需先选中一条数据再操作</div>
+  </div>
+</div>
 
 ```sql
 -- 前端校验，无对应SQL
@@ -260,16 +284,28 @@ SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME
   WHERE esfb.BG_ID = :selectedBgId
   -- 校验选中行是否存在
 ```
-<h4>报错5：请求失败，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：任意操作时后端服务异常或网络中断</li><li><strong>逻辑分析</strong>：前端axios请求捕获异常后统一弹出，可能原因：后端服务未启动、数据库连接异常、网络中断。稍后重试，仍失败需联系IT排查后端日志</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请求失败，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时后端服务异常或网络中断<br><strong>逻辑分析：</strong>前端axios请求捕获异常后统一弹出，可能原因：后端服务未启动、数据库连接异常、网络中断。稍后重试，仍失败需联系IT排查后端日志</div>
+  </div>
+</div>
 
 ```sql
 -- 系统级错误，检查后端服务状态
   SELECT COUNT(*) AS 服务费背景总数 FROM EPM_SERVICE_FEE_BG esfb
   -- 校验数据库连接是否正常
 ```
-<h4>报错6：权限不足</h4>
-<ul><li><strong>触发条件</strong>：当前用户无该菜单访问权限或操作权限</li><li><strong>逻辑分析</strong>：低代码平台权限校验中检查用户角色是否包含该菜单权限编码，若无则抛出阻断性报错。需联系管理员分配对应权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户无该菜单访问权限或操作权限<br><strong>逻辑分析：</strong>低代码平台权限校验中检查用户角色是否包含该菜单权限编码，若无则抛出阻断性报错。需联系管理员分配对应权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT iu.USER_ID, iu.LOGIN_NAME, iur.ROLE_ID, ir.ROLE_NAME
@@ -279,8 +315,14 @@ SELECT iu.USER_ID, iu.LOGIN_NAME, iur.ROLE_ID, ir.ROLE_NAME
   WHERE iu.USER_ID = :currentUserId
   -- 查出当前用户角色，确认是否包含服务费背景维护权限
 ```
-<h4>报错7：操作失败，数据已被其他用户修改</h4>
-<ul><li><strong>触发条件</strong>：编辑保存时，该记录已被其他用户并发修改，OBJECT_VERSION_NUMBER不一致</li><li><strong>逻辑分析</strong>：乐观锁校验中检查OBJECT_VERSION_NUMBER，若与编辑时获取的版本号不一致则抛出阻断性报错。需刷新数据后重新编辑</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>操作失败，数据已被其他用户修改</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>编辑保存时，该记录已被其他用户并发修改，OBJECT_VERSION_NUMBER不一致<br><strong>逻辑分析：</strong>乐观锁校验中检查OBJECT_VERSION_NUMBER，若与编辑时获取的版本号不一致则抛出阻断性报错。需刷新数据后重新编辑</div>
+  </div>
+</div>
 
 ```sql
 SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME,
@@ -292,7 +334,18 @@ SELECT esfb.BG_ID, esfb.BG_CODE, esfb.BG_NAME,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：页面无法访问</li><li>原因：低代码平台配置未完成</li><li>解决思路：检查低代码平台配置</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">页面无法访问</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>低代码平台配置未完成<br><strong style="color:#7C3AED;">处理：</strong>检查低代码平台配置
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

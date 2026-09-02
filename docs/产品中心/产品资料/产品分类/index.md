@@ -402,8 +402,14 @@ SELECT COUNT(*) FROM ITEM_CLASS
 <tr><td>暂无分类数据</td><td>查询时</td><td>当前组织下无分类数据，需先新增分类</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：产品分类新增成功</h4>
-<ul><li><strong>触发条件</strong>：新增分类保存成功后，前端toast提示</li><li><strong>逻辑分析</strong>：后端saveItemClass方法按"编码+组织ID+父级ID"查询ITEM_CLASS表，若已存在则静默跳过；若不存在则插入新记录（ITEM_CLASS_S.NEXTVAL生成主键），并更新父分类IS_END=1。前端根据接口返回成功标识显示toast。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品分类新增成功</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新增分类保存成功后，前端toast提示<br><strong>逻辑分析：</strong>后端saveItemClass方法按"编码+组织ID+父级ID"查询ITEM_CLASS表，若已存在则静默跳过；若不存在则插入新记录（ITEM_CLASS_S.NEXTVAL生成主键），并更新父分类IS_END=1。前端根据接口返回成功标识显示toast。</div>
+  </div>
+</div>
 
 ```sql
 SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
@@ -416,8 +422,14 @@ SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
     AND IC.ITEM_CLASS_PID = :itemClassPid
   ORDER BY IC.CREATION_DATE DESC;
 ```
-<h4>报错2：产品分类删除成功</h4>
-<ul><li><strong>触发条件</strong>：删除分类成功后，前端toast提示</li><li><strong>逻辑分析</strong>：后端deletaItemClass方法根据ITEM_CLASS_ID直接物理删除ITEM_CLASS记录，无子分类校验、无引用校验。删除成功后前端toast提示并刷新分类树。注意：若父分类被删除，子分类的ITEM_CLASS_PID将指向不存在的记录（孤儿节点）。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品分类删除成功</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除分类成功后，前端toast提示<br><strong>逻辑分析：</strong>后端deletaItemClass方法根据ITEM_CLASS_ID直接物理删除ITEM_CLASS记录，无子分类校验、无引用校验。删除成功后前端toast提示并刷新分类树。注意：若父分类被删除，子分类的ITEM_CLASS_PID将指向不存在的记录（孤儿节点）。</div>
+  </div>
+</div>
 
 ```sql
 -- 删除前检查是否存在子分类（避免孤儿节点）
@@ -428,8 +440,14 @@ SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
   -- 删除后确认记录已不存在
   SELECT COUNT(1) AS 剩余记录数 FROM ITEM_CLASS WHERE ITEM_CLASS_ID = :itemClassId;
 ```
-<h4>报错3：分类编码已存在，新增静默跳过</h4>
-<ul><li><strong>触发条件</strong>：新增分类时，编码+组织ID+父级ID在ITEM_CLASS表已存在</li><li><strong>逻辑分析</strong>：后端ManualClassificationServiceImpl.saveItemClass方法中，先通过manualClassificationMapper.getItemClass(dto)按"编码+组织ID+父级ID"查询ITEM_CLASS表。若查询结果不为空（CollectionUtils.isEmpty(list)为false），则不执行新增逻辑，直接返回。Controller层统一返回"产品分类新增成功"，前端显示成功提示但实际未新增数据。用户需检查ITEM_CLASS表确认是否已存在相同编码的分类。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>分类编码已存在，新增静默跳过</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新增分类时，编码+组织ID+父级ID在ITEM_CLASS表已存在<br><strong>逻辑分析：</strong>后端ManualClassificationServiceImpl.saveItemClass方法中，先通过manualClassificationMapper.getItemClass(dto)按"编码+组织ID+父级ID"查询ITEM_CLASS表。若查询结果不为空（CollectionUtils.isEmpty(list)为false），则不执行新增逻辑，直接返回。Controller层统一返回"产品分类新增成功"，前端显示成功提示但实际未新增数据。用户需检查ITEM_CLASS表确认是否已存在相同编码的分类。</div>
+  </div>
+</div>
 
 ```sql
 SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
@@ -442,8 +460,14 @@ SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
     AND IC.ITEM_CLASS_PID = :itemClassPid
   ORDER BY IC.CREATION_DATE DESC;
 ```
-<h4>报错4：删除父分类产生孤儿节点</h4>
-<ul><li><strong>触发条件</strong>：删除有子分类的父分类时，后端直接物理删除不校验子分类</li><li><strong>逻辑分析</strong>：后端ManualClassificationServiceImpl.deletaItemClass方法根据ITEM_CLASS_ID直接物理删除ITEM_CLASS记录，无子分类校验、无引用校验。若被删除的分类有子分类（ITEM_CLASS_PID指向被删除的分类ID），子分类将变成孤儿节点，查询分类树时无法挂载到父节点下。建议删除前先检查子分类，若有子分类应先删除所有子分类再删除父分类。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>删除父分类产生孤儿节点</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除有子分类的父分类时，后端直接物理删除不校验子分类<br><strong>逻辑分析：</strong>后端ManualClassificationServiceImpl.deletaItemClass方法根据ITEM_CLASS_ID直接物理删除ITEM_CLASS记录，无子分类校验、无引用校验。若被删除的分类有子分类（ITEM_CLASS_PID指向被删除的分类ID），子分类将变成孤儿节点，查询分类树时无法挂载到父节点下。建议删除前先检查子分类，若有子分类应先删除所有子分类再删除父分类。</div>
+  </div>
+</div>
 
 ```sql
 -- 删除前检查是否存在子分类
@@ -462,16 +486,28 @@ SELECT IC.ITEM_CLASS_ID AS 分类ID, IC.ITEM_CLASS_CODE AS 分类编码,
       SELECT 1 FROM ITEM_CLASS P WHERE P.ITEM_CLASS_ID = IC.ITEM_CLASS_PID
     );
 ```
-<h4>报错5：分类树查询失败</h4>
-<ul><li><strong>触发条件</strong>：查询分类树时，ITEM_CLASS表查询异常</li><li><strong>逻辑分析</strong>：前端调用AE微服务接口/v1/&#123;organizationId&#125;/manual-classification/查询分类列表，后端ManualClassificationMapper.selectList按组织ID查询ITEM_CLASS表。若组织ID参数为空、数据库连接异常或SQL执行错误，则查询失败返回错误信息。常见于用户未正确登录导致组织ID丢失、数据库连接超时。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>分类树查询失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询分类树时，ITEM_CLASS表查询异常<br><strong>逻辑分析：</strong>前端调用AE微服务接口/v1/&#123;organizationId&#125;/manual-classification/查询分类列表，后端ManualClassificationMapper.selectList按组织ID查询ITEM_CLASS表。若组织ID参数为空、数据库连接异常或SQL执行错误，则查询失败返回错误信息。常见于用户未正确登录导致组织ID丢失、数据库连接超时。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 分类总数
   FROM ITEM_CLASS IC
   WHERE IC.ORGANIZATION_ID = :organizationId;
 ```
-<h4>报错6：权限不足，无法操作分类</h4>
-<ul><li><strong>触发条件</strong>：用户未登录或无当前组织ID的访问权限时，新增/删除分类</li><li><strong>逻辑分析</strong>：Controller层@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)要求用户登录且具有组织级权限。若用户未登录或token过期，HZERO平台拦截器返回401/403错误。若用户无当前组织ID的访问权限，则无法操作分类数据。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法操作分类</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未登录或无当前组织ID的访问权限时，新增/删除分类<br><strong>逻辑分析：</strong>Controller层@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)要求用户登录且具有组织级权限。若用户未登录或token过期，HZERO平台拦截器返回401/403错误。若用户无当前组织ID的访问权限，则无法操作分类数据。</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
@@ -481,14 +517,26 @@ SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
     LEFT JOIN HZERO.IAM_ROLE R ON R.ID = MR.ROLE_ID
   WHERE U.ID = :currentUserId;
 ```
-<h4>报错7：会话过期，请重新登录</h4>
-<ul><li><strong>触发条件</strong>：任意操作时，登录态丢失或token过期</li><li><strong>逻辑分析</strong>：HZERO平台基于JWT token进行会话管理，token过期后所有接口请求返回401状态码。前端axios拦截器捕获401错误后提示"会话过期，请重新登录"并跳转登录页。常见于长时间未操作、token过期时间到达、服务端重启导致token失效。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>会话过期，请重新登录</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态丢失或token过期<br><strong>逻辑分析：</strong>HZERO平台基于JWT token进行会话管理，token过期后所有接口请求返回401状态码。前端axios拦截器捕获401错误后提示"会话过期，请重新登录"并跳转登录页。常见于长时间未操作、token过期时间到达、服务端重启导致token失效。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '检查用户登录态和token有效期，重新登录获取新token' AS 提示 FROM DUAL;
 ```
-<h4>报错8：暂无分类数据</h4>
-<ul><li><strong>触发条件</strong>：查询分类树时，当前组织下无分类数据</li><li><strong>逻辑分析</strong>：后端按组织ID查询ITEM_CLASS表，若查询结果为空则前端分类树显示"暂无数据"。常见于新组织未初始化分类数据、分类数据被全部删除。需先通过新增按钮创建大类分类。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无分类数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询分类树时，当前组织下无分类数据<br><strong>逻辑分析：</strong>后端按组织ID查询ITEM_CLASS表，若查询结果为空则前端分类树显示"暂无数据"。常见于新组织未初始化分类数据、分类数据被全部删除。需先通过新增按钮创建大类分类。</div>
+  </div>
+</div>
 
 ```sql
 SELECT IC.ITEM_CLASS_LEVEL AS 分类级别, COUNT(1) AS 数量
@@ -500,16 +548,59 @@ SELECT IC.ITEM_CLASS_LEVEL AS 分类级别, COUNT(1) AS 数量
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：分类层级最多支持几级？</li><li>原因：系统支持3级分类（大类→中类→小类），由ITEM_CLASS_LEVEL字段控制（1/2/3）</li><li>解决思路：查询现有分类层级 <code>SELECT DISTINCT ITEM_CLASS_LEVEL FROM ITEM_CLASS ORDER BY ITEM_CLASS_LEVEL</code></li></ul>
-<ul><li>问题2：删除有子分类的节点会怎样？</li><li>原因：后端删除接口直接物理删除，不校验子分类。若父分类被删除，子分类的ITEM_CLASS_PID将指向不存在的记录（孤儿节点）</li><li>解决思路：删除前应先检查子分类</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">分类层级最多支持几级？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>系统支持3级分类（大类→中类→小类），由ITEM_CLASS_LEVEL字段控制（1/2/3）<br><strong style="color:#7C3AED;">处理：</strong>查询现有分类层级 <code>SELECT DISTINCT ITEM_CLASS_LEVEL FROM ITEM_CLASS ORDER BY ITEM_CLASS_LEVEL</code>
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">删除有子分类的节点会怎样？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>后端删除接口直接物理删除，不校验子分类。若父分类被删除，子分类的ITEM_CLASS_PID将指向不存在的记录（孤儿节点）<br><strong style="color:#7C3AED;">处理：</strong>删除前应先检查子分类
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">分类编码可以修改吗？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>分类编码自动生成，新增后不支持修改。分类编码被产品引用后修改会影响关联关系<br><strong style="color:#7C3AED;">处理：</strong>不支持修改，如需调整请删除后重新新增
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">本菜单在CRM前端如何使用？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>作为嵌入式组件嵌入在CRM产品详情页中，通过AE微服务接口获取分类数据<br><strong style="color:#7C3AED;">处理：</strong>前端在arrow-crm包中调用AE微服务接口 <code>/v1/&#123;organizationId&#125;/manual-classification/</code>
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q5</span>
+    <span style="font-size:15px;">新增分类时编码已存在为什么不报错？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>后端saveItemClass方法中，若编码+组织ID+父级ID已存在，则静默跳过不执行新增，也不报错<br><strong style="color:#7C3AED;">处理：</strong>新增前可先查询确认
+  </div>
+</div>
+</div>
 
 ```sql
 SELECT * FROM ITEM_CLASS WHERE ITEM_CLASS_PID = #{要删除的分类ID};
 ```
 <p>若有子分类，应先删除所有子分类再删除父分类</p>
-<ul><li>问题3：分类编码可以修改吗？</li><li>原因：分类编码自动生成，新增后不支持修改。分类编码被产品引用后修改会影响关联关系</li><li>解决思路：不支持修改，如需调整请删除后重新新增</li></ul>
-<ul><li>问题4：本菜单在CRM前端如何使用？</li><li>原因：作为嵌入式组件嵌入在CRM产品详情页中，通过AE微服务接口获取分类数据</li><li>解决思路：前端在arrow-crm包中调用AE微服务接口 <code>/v1/&#123;organizationId&#125;/manual-classification/</code></li></ul>
-<ul><li>问题5：新增分类时编码已存在为什么不报错？</li><li>原因：后端saveItemClass方法中，若编码+组织ID+父级ID已存在，则静默跳过不执行新增，也不报错</li><li>解决思路：新增前可先查询确认</li></ul>
 
 ```sql
 SELECT * FROM ITEM_CLASS

@@ -384,19 +384,25 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请先审批通过/作废未审完的门店装修申请与进度更新单</td><td>提交审批时</td><td>撤店时该门店下存在未审批通过/作废的装修申请单，需先处理完关联单据</td><td>高</td><td>[查看](#报错1请先审批通过作废未审完的门店装修申请与进度更新单)</td></tr>
-<tr><td>请先审批通过/作废未审完的门店验收与报销单</td><td>提交审批时</td><td>撤店时该门店下存在未审批通过/作废的验收报销单，需先处理完关联单据</td><td>高</td><td>[查看](#报错2请先审批通过作废未审完的门店验收与报销单)</td></tr>
-<tr><td>当前数据不存在</td><td>流程回调时</td><td>工作流回调时变更单已被删除</td><td>高</td><td>[查看](#报错3当前数据不存在)</td></tr>
-<tr><td>单据信息不匹配</td><td>提交审批时</td><td>变更单不存在或已被删除，请检查变更单ID</td><td>高</td><td>[查看](#报错4单据信息不匹配)</td></tr>
-<tr><td>流程中objid为空，流程失败!</td><td>审批通过回调时</td><td>工作流回调报文objId为空或非正数，流程无法继续</td><td>高</td><td>[查看](#报错5流程中objid为空流程失败)</td></tr>
-<tr><td>单据信息不匹配</td><td>审批通过回调时</td><td>回调时变更单已被删除，无法写回门店档案</td><td>高</td><td>[查看](#报错6单据信息不匹配)</td></tr>
-<tr><td>门店档案信息不匹配</td><td>审批通过回调时</td><td>关联门店档案不存在或已被删除，无法更新门店档案</td><td>高</td><td>[查看](#报错7门店档案信息不匹配)</td></tr>
-<tr><td>单据信息不匹配</td><td>审批驳回回调时</td><td>回调时变更单已被删除，无法更新驳回状态</td><td>高</td><td>[查看](#报错8单据信息不匹配)</td></tr>
-<tr><td>销售渠道不能为空</td><td>保存时</td><td>变更类型为1时未选择销售渠道</td><td>中</td><td>[查看](#报错9销售渠道不能为空)</td></tr>
+<tr><td>请先审批通过/作废未审完的门店装修申请与进度更新单</td><td>提交审批时</td><td>撤店时该门店下存在未审批通过/作废的装修申请单，需先处理完关联单据</td><td>高</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请先审批通过/作废未审完的门店验收与报销单</td><td>提交审批时</td><td>撤店时该门店下存在未审批通过/作废的验收报销单，需先处理完关联单据</td><td>高</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>当前数据不存在</td><td>流程回调时</td><td>工作流回调时变更单已被删除</td><td>高</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不匹配</td><td>提交审批时</td><td>变更单不存在或已被删除，请检查变更单ID</td><td>高</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>流程中objid为空，流程失败!</td><td>审批通过回调时</td><td>工作流回调报文objId为空或非正数，流程无法继续</td><td>高</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不匹配</td><td>审批通过回调时</td><td>回调时变更单已被删除，无法写回门店档案</td><td>高</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>门店档案信息不匹配</td><td>审批通过回调时</td><td>关联门店档案不存在或已被删除，无法更新门店档案</td><td>高</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不匹配</td><td>审批驳回回调时</td><td>回调时变更单已被删除，无法更新驳回状态</td><td>高</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>销售渠道不能为空</td><td>保存时</td><td>变更类型为1时未选择销售渠道</td><td>中</td><td><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：请先审批通过/作废未审完的门店装修申请与进度更新单</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，变更后terminalStat=2（撤店）时，validTerminalStat校验FinFeeApplyFinishedHeader存在状态非APPROVED/INTERRUPT的记录</li><li><strong>逻辑分析</strong>：撤店意味着门店退出运营，需确保该门店下所有装修申请与进度更新单已闭环（APPROVED=已审批或INTERRUPT=作废），避免撤店后遗留未审单据造成流程悬挂。校验逻辑按terminalId查询FIN_FEE_APPLY_FINISHED_HEADER，若存在hzApproveStatus不在(APPROVED,INTERRUPT)集合的记录即抛异常阻断提交。常见根因：门店下有草稿/审批中的装修单未处理。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先审批通过/作废未审完的门店装修申请与进度更新单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，变更后terminalStat=2（撤店）时，validTerminalStat校验FinFeeApplyFinishedHeader存在状态非APPROVED/INTERRUPT的记录<br><strong>逻辑分析：</strong>撤店意味着门店退出运营，需确保该门店下所有装修申请与进度更新单已闭环（APPROVED=已审批或INTERRUPT=作废），避免撤店后遗留未审单据造成流程悬挂。校验逻辑按terminalId查询FIN_FEE_APPLY_FINISHED_HEADER，若存在hzApproveStatus不在(APPROVED,INTERRUPT)集合的记录即抛异常阻断提交。常见根因：门店下有草稿/审批中的装修单未处理。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,
@@ -413,8 +419,14 @@ SELECT m.terminal_modify_id    AS 变更单ID,
   AND    f.hz_approve_status NOT IN ('APPROVED','INTERRUPT')
   ORDER  BY m.create_time DESC;
 ```
-<h4>报错2：请先审批通过/作废未审完的门店验收与报销单</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，变更后terminalStat=2（撤店）时，validTerminalStat校验FinFeeCheckBxHeader存在状态非APPROVED/INTERRUPT的记录</li><li><strong>逻辑分析</strong>：与装修单校验同理，撤店前需确保该门店下所有验收与报销单已闭环。校验逻辑按terminalId查询FIN_FEE_CHECK_BX_HEADER，若存在hzApproveStatus不在(APPROVED,INTERRUPT)集合的记录即抛异常。常见根因：门店下有未审完的验收报销单（草稿/审批中/被驳回待处理），需先审批通过或作废后再提交撤店。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先审批通过/作废未审完的门店验收与报销单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，变更后terminalStat=2（撤店）时，validTerminalStat校验FinFeeCheckBxHeader存在状态非APPROVED/INTERRUPT的记录<br><strong>逻辑分析：</strong>与装修单校验同理，撤店前需确保该门店下所有验收与报销单已闭环。校验逻辑按terminalId查询FIN_FEE_CHECK_BX_HEADER，若存在hzApproveStatus不在(APPROVED,INTERRUPT)集合的记录即抛异常。常见根因：门店下有未审完的验收报销单（草稿/审批中/被驳回待处理），需先审批通过或作废后再提交撤店。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,
@@ -431,8 +443,14 @@ SELECT m.terminal_modify_id    AS 变更单ID,
   AND    c.hz_approve_status NOT IN ('APPROVED','INTERRUPT')
   ORDER  BY m.create_time DESC;
 ```
-<h4>报错3：当前数据不存在</h4>
-<ul><li><strong>触发条件</strong>：OA审批驳回回调onWfBreak时，按terminalModifyId调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null</li><li><strong>逻辑分析</strong>：审批驳回需更新变更单状态为REJECTED并记录驳回意见。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法更新状态，变更单滞留RUN状态，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批驳回回调onWfBreak时，按terminalModifyId调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null<br><strong>逻辑分析：</strong>审批驳回需更新变更单状态为REJECTED并记录驳回意见。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法更新状态，变更单滞留RUN状态，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,
@@ -447,8 +465,14 @@ SELECT m.terminal_modify_id    AS 变更单ID,
    AND    m.update_time < SYSDATE - 1
    ORDER  BY m.update_time DESC;
 ```
-<h4>报错4：单据信息不匹配</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮发起审批时，wfProcSubmit方法按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null</li><li><strong>逻辑分析</strong>：提交审批前需读取变更单数据用于组装工作流参数（terminalModifyId、operatCenterOrgId、salezoneOrgId、terminalStat、terminalType、tradeYears、customerId等）。若变更单在编辑期间被其他用户物理删除、前端传入的objId为空或与实际变更单ID不一致（如多标签页操作导致ID串台）、并发场景下被清理，查询返回空，无法组装流程参数，抛CommonException中断提交，工作流不会发起。需核查变更单是否存在及objId传值正确性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮发起审批时，wfProcSubmit方法按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null<br><strong>逻辑分析：</strong>提交审批前需读取变更单数据用于组装工作流参数（terminalModifyId、operatCenterOrgId、salezoneOrgId、terminalStat、terminalType、tradeYears、customerId等）。若变更单在编辑期间被其他用户物理删除、前端传入的objId为空或与实际变更单ID不一致（如多标签页操作导致ID串台）、并发场景下被清理，查询返回空，无法组装流程参数，抛CommonException中断提交，工作流不会发起。需核查变更单是否存在及objId传值正确性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,
@@ -462,8 +486,14 @@ SELECT m.terminal_modify_id    AS 变更单ID,
   WHERE  m.terminal_modify_id = #{传入的objId}
   ORDER  BY m.create_time DESC;
 ```
-<h4>报错5：流程中objid为空，流程失败!</h4>
-<ul><li><strong>触发条件</strong>：OA审批通过回调wfComplete时，WfApproveDTO.objId为null或小于等于0</li><li><strong>逻辑分析</strong>：wfComplete方法首行校验objId合法性，objId是工作流回调定位业务单据的关键标识。若OA回调报文缺失objId字段、工作流变量配置错误未回传单据ID、或OA与DMS流程集成配置异常导致objId解析为空/0，校验不通过抛CommonException中断回调流程，变更单不会被写回门店档案。需核查OA流程节点变量配置及回调报文objId字段完整性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程中objid为空，流程失败!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批通过回调wfComplete时，WfApproveDTO.objId为null或小于等于0<br><strong>逻辑分析：</strong>wfComplete方法首行校验objId合法性，objId是工作流回调定位业务单据的关键标识。若OA回调报文缺失objId字段、工作流变量配置错误未回传单据ID、或OA与DMS流程集成配置异常导致objId解析为空/0，校验不通过抛CommonException中断回调流程，变更单不会被写回门店档案。需核查OA流程节点变量配置及回调报文objId字段完整性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,
@@ -477,8 +507,14 @@ SELECT m.terminal_modify_id    AS 变更单ID,
   AND    (m.hz_instance_id IS NULL OR m.terminal_modify_id IS NULL)
   ORDER  BY m.update_time DESC;
 ```
-<h4>报错6：单据信息不匹配</h4>
-<ul><li><strong>触发条件</strong>：OA审批通过回调onWfComplete时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null</li><li><strong>逻辑分析</strong>：审批通过需读取变更单数据用于通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到门店档案。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法组装门店档案更新数据，抛CommonException中断写回流程，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批通过回调onWfComplete时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null<br><strong>逻辑分析：</strong>审批通过需读取变更单数据用于通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到门店档案。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常），查询返回空，无法组装门店档案更新数据，抛CommonException中断写回流程，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,
@@ -493,8 +529,14 @@ SELECT m.terminal_modify_id    AS 变更单ID,
   AND    NOT EXISTS (SELECT 1 FROM mkt_terminal t WHERE t.terminal_id = m.terminal_id AND t.update_time > m.update_time)
   ORDER  BY m.update_time DESC;
 ```
-<h4>报错7：门店档案信息不匹配</h4>
-<ul><li><strong>触发条件</strong>：OA审批通过回调onWfComplete时，按mktTerminalModify.getTerminalId()调用selectByPrimaryKey查询MKT_TERMINAL返回null</li><li><strong>逻辑分析</strong>：审批通过写回门店档案前需读取原门店档案数据用于保留terminalId、objectVersionNumber等关键字段。若门店档案在变更审批期间被上游"新建门店申请"流程异常回滚删除、terminalId传值错误（如变更单关联了不存在的门店）、或并发场景下门店档案被清理，查询返回空，无法定位更新目标，抛CommonException中断写回流程。需核查门店档案是否存在及变更单terminalId关联正确性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门店档案信息不匹配</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批通过回调onWfComplete时，按mktTerminalModify.getTerminalId()调用selectByPrimaryKey查询MKT_TERMINAL返回null<br><strong>逻辑分析：</strong>审批通过写回门店档案前需读取原门店档案数据用于保留terminalId、objectVersionNumber等关键字段。若门店档案在变更审批期间被上游"新建门店申请"流程异常回滚删除、terminalId传值错误（如变更单关联了不存在的门店）、或并发场景下门店档案被清理，查询返回空，无法定位更新目标，抛CommonException中断写回流程。需核查门店档案是否存在及变更单terminalId关联正确性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,
@@ -511,8 +553,14 @@ SELECT m.terminal_modify_id    AS 变更单ID,
   AND    t.terminal_id IS NULL
   ORDER  BY m.update_time DESC;
 ```
-<h4>报错8：单据信息不匹配</h4>
-<ul><li><strong>触发条件</strong>：OA审批驳回回调onWfBreak时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null</li><li><strong>逻辑分析</strong>：审批驳回需更新变更单hzApproveStatus为驳回状态。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常、objId传值错误），查询返回空，无法更新状态，变更单滞留RUN状态，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不匹配</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批驳回回调onWfBreak时，按dto.getObjId()调用selectByPrimaryKey查询MKT_TERMINAL_MODIFY返回null<br><strong>逻辑分析：</strong>审批驳回需更新变更单hzApproveStatus为驳回状态。若回调期间变更单被其他用户物理删除、OA回调报文的单据ID与DMS不一致（如OA流程配置错误、ID映射异常、objId传值错误），查询返回空，无法更新状态，变更单滞留RUN状态，门店档案不会被变更。需核查OA回调报文与变更单数据一致性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,
@@ -527,8 +575,14 @@ SELECT m.terminal_modify_id    AS 变更单ID,
   AND    m.update_time < SYSDATE - 1
   ORDER  BY m.update_time DESC;
 ```
-<h4>报错9：销售渠道不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮时，变更类型changeType=1且销售渠道saleChannel为空数组</li><li><strong>逻辑分析</strong>：前端handleSave方法在调用后端保存前进行前端校验，当变更类型为1（经销品类变更）时，销售渠道为必填项。若用户未选择销售渠道即点击保存，前端message.warning提示并中断保存，不会调用后端接口。此校验纯前端逻辑，不涉及数据库操作。需核查变更类型与销售渠道的必填联动配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>销售渠道不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，变更类型changeType=1且销售渠道saleChannel为空数组<br><strong>逻辑分析：</strong>前端handleSave方法在调用后端保存前进行前端校验，当变更类型为1（经销品类变更）时，销售渠道为必填项。若用户未选择销售渠道即点击保存，前端message.warning提示并中断保存，不会调用后端接口。此校验纯前端逻辑，不涉及数据库操作。需核查变更类型与销售渠道的必填联动配置。</div>
+  </div>
+</div>
 
 ```sql
 SELECT m.terminal_modify_id    AS 变更单ID,

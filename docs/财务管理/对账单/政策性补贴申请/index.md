@@ -502,32 +502,56 @@ SELECT H.POLICY_SPECIAL_ID, H.APPLY_AMT, C.CAPITAL_POOL
 <tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：经销商不能为空</h4>
-<ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择经销商直接点击保存</li><li><strong>逻辑分析</strong>：保存接口sa-policy-special-headers/save在写入SA_POLICY_SPECIAL_HEADER前校验CUST_ID非空。经销商是申请关联资金池和法人的前置条件，未选择经销商将导致后续交易公司、法人、余额账户无法带出，资金池余额校验也无从执行。校验在Controller层前置拦截，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>经销商不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在新建/编辑页未选择经销商直接点击保存<br><strong>逻辑分析：</strong>保存接口sa-policy-special-headers/save在写入SA_POLICY_SPECIAL_HEADER前校验CUST_ID非空。经销商是申请关联资金池和法人的前置条件，未选择经销商将导致后续交易公司、法人、余额账户无法带出，资金池余额校验也无从执行。校验在Controller层前置拦截，toast提示后阻断保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_ID, CUST_NAME, AUDIT_STAT
   FROM SA_POLICY_SPECIAL_HEADER
   WHERE CUST_ID IS NULL OR CUST_NAME IS NULL;
 ```
-<h4>报错2：申请金额必须大于0</h4>
-<ul><li><strong>触发条件</strong>：用户在申请金额输入框填写0、负数或留空后点击保存</li><li><strong>逻辑分析</strong>：保存校验APPLY_AMT &gt; 0，因补贴申请代表实际向经销商发放的补贴金额，必须为正数。0或负数无业务意义，且会导致后续资金池扣减异常（扣减0或反向增加余额）。校验在Service层执行，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>申请金额必须大于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在申请金额输入框填写0、负数或留空后点击保存<br><strong>逻辑分析：</strong>保存校验APPLY_AMT &gt; 0，因补贴申请代表实际向经销商发放的补贴金额，必须为正数。0或负数无业务意义，且会导致后续资金池扣减异常（扣减0或反向增加余额）。校验在Service层执行，toast提示后阻断保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT, AUDIT_STAT
   FROM SA_POLICY_SPECIAL_HEADER
   WHERE APPLY_AMT IS NULL OR APPLY_AMT <= 0;
 ```
-<h4>报错3：交易公司不能为空</h4>
-<ul><li><strong>触发条件</strong>：用户选择了经销商但未选择交易公司直接点击保存</li><li><strong>逻辑分析</strong>：交易公司是关联法人（LEGAL_ENTITY_ID）和余额账户（EXT_ACCOUNT_ID）的桥梁，未选择交易公司将导致法人信息无法带出、select-account接口无法查询余额账户、资金池余额校验无法执行。校验TRADING_COMPANY_ID非空，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>交易公司不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户选择了经销商但未选择交易公司直接点击保存<br><strong>逻辑分析：</strong>交易公司是关联法人（LEGAL_ENTITY_ID）和余额账户（EXT_ACCOUNT_ID）的桥梁，未选择交易公司将导致法人信息无法带出、select-account接口无法查询余额账户、资金池余额校验无法执行。校验TRADING_COMPANY_ID非空，toast提示后阻断保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, TRADING_COMPANY_ID, TRADING_COMPANY_NAME
   FROM SA_POLICY_SPECIAL_HEADER
   WHERE TRADING_COMPANY_ID IS NULL OR TRADING_COMPANY_NAME IS NULL;
 ```
-<h4>报错4：申请金额超过资金池余额</h4>
-<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，提交校验发现APPLY_AMT &gt; 资金池可用余额（CAPITAL_POOL）</li><li><strong>逻辑分析</strong>：提交时通过select-capital接口查询关联余额账户（CAPITAL_ACCOUNT）的CAPITAL_POOL当前余额，校验APPLY_AMT &lt;= CAPITAL_POOL。超出余额意味着补贴无充足资金来源，审批通过后扣减资金池将出现负数。此为阻断性报错，阻止OA流程（SA_POLICY_SPECIAL_MCS_AW）发起，需用户调减申请金额或先补充资金池</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>申请金额超过资金池余额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，提交校验发现APPLY_AMT &gt; 资金池可用余额（CAPITAL_POOL）<br><strong>逻辑分析：</strong>提交时通过select-capital接口查询关联余额账户（CAPITAL_ACCOUNT）的CAPITAL_POOL当前余额，校验APPLY_AMT &lt;= CAPITAL_POOL。超出余额意味着补贴无充足资金来源，审批通过后扣减资金池将出现负数。此为阻断性报错，阻止OA流程（SA_POLICY_SPECIAL_MCS_AW）发起，需用户调减申请金额或先补充资金池</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, H.CUST_NAME, H.APPLY_AMT,
@@ -537,8 +561,14 @@ SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, H.CUST_NAME, H.APPLY_AMT,
   WHERE H.APPLY_AMT > C.CAPITAL_POOL
     AND H.AUDIT_STAT IN ('NEW', 'RUN');
 ```
-<h4>报错5：流程编码缺失，请选择流程</h4>
-<ul><li><strong>触发条件</strong>：用户点击"保存并提交"但未选择OA审批流程（flowCode为空）</li><li><strong>逻辑分析</strong>：保存并提交接口saveAndSubmit（SaPolicySpecialHeaderServiceImpl.java:226）在执行保存前校验flowCode非空，若StringUtils.isEmpty(dto.getFlowCode())则抛出CommonException("流程编码缺失，请选择流程！")。flowCode是发起OA工作流（workFlowStart）的必要参数，缺失将导致WorkflowClient无法启动流程实例。校验在Service层前置拦截，阻断OA流程发起。需用户在提交前选择对应的审批流程</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"但未选择OA审批流程（flowCode为空）<br><strong>逻辑分析：</strong>保存并提交接口saveAndSubmit（SaPolicySpecialHeaderServiceImpl.java:226）在执行保存前校验flowCode非空，若StringUtils.isEmpty(dto.getFlowCode())则抛出CommonException("流程编码缺失，请选择流程！")。flowCode是发起OA工作流（workFlowStart）的必要参数，缺失将导致WorkflowClient无法启动流程实例。校验在Service层前置拦截，阻断OA流程发起。需用户在提交前选择对应的审批流程</div>
+  </div>
+</div>
 
 ```sql
 -- 核查政策性补贴申请可用的OA流程配置
@@ -546,8 +576,14 @@ SELECT H.POLICY_SPECIAL_ID, H.POLICY_SPECIAL_NO, H.CUST_NAME, H.APPLY_AMT,
   FROM HPFM_WORKFLOW_DEF
   WHERE WORKFLOW_CODE LIKE 'SA_POLICY_SPECIAL%' AND ENABLED = 1;
 ```
-<h4>报错6：请选择需要删除的数据</h4>
-<ul><li><strong>触发条件</strong>：用户在列表页未选中任何记录直接点击删除按钮</li><li><strong>逻辑分析</strong>：删除接口remove（SaPolicySpecialHeaderServiceImpl.java:252）校验入参列表非空，若CollectionUtils.isEmpty(cmContractPaymentApplyList)则抛出CommonException("请选择需要删除的数据！")。根因有二：(1)前端未选中行就调用删除接口，请求体为空列表；(2)前端选中行但policySpecialId未正确传递到请求参数。校验在Service层前置拦截，toast提示后阻断删除操作。需选中至少一条记录后再点击删除</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择需要删除的数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在列表页未选中任何记录直接点击删除按钮<br><strong>逻辑分析：</strong>删除接口remove（SaPolicySpecialHeaderServiceImpl.java:252）校验入参列表非空，若CollectionUtils.isEmpty(cmContractPaymentApplyList)则抛出CommonException("请选择需要删除的数据！")。根因有二：(1)前端未选中行就调用删除接口，请求体为空列表；(2)前端选中行但policySpecialId未正确传递到请求参数。校验在Service层前置拦截，toast提示后阻断删除操作。需选中至少一条记录后再点击删除</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT, AUDIT_STAT
@@ -555,8 +591,14 @@ SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT, AUDIT_STAT
   WHERE AUDIT_STAT IS NULL OR AUDIT_STAT = 'NEW'
   ORDER BY CREATE_TIME DESC;
 ```
-<h4>报错7：无法获事业部信息</h4>
-<ul><li><strong>触发条件</strong>：用户新建或保存政策性补贴申请时，epmDivisionService.getCurrentDivision()返回null</li><li><strong>逻辑分析</strong>：生成单据编号generateCode（SaPolicySpecialHeaderServiceImpl.java:177）和查询资金池selectCapital（SaPolicySpecialHeaderServiceImpl.java:279）均调用epmDivisionService.getCurrentDivision()获取当前事业部，若返回null则抛出CommonException("无法获事业部信息")。根因有三：(1)当前用户未配置默认事业部（HPFM_DIVISION_USER关联缺失）；(2)用户上下文中divisionId未正确设置（登录态异常）；(3)事业部配置已禁用或删除。需联系管理员为当前用户配置事业部</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无法获事业部信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户新建或保存政策性补贴申请时，epmDivisionService.getCurrentDivision()返回null<br><strong>逻辑分析：</strong>生成单据编号generateCode（SaPolicySpecialHeaderServiceImpl.java:177）和查询资金池selectCapital（SaPolicySpecialHeaderServiceImpl.java:279）均调用epmDivisionService.getCurrentDivision()获取当前事业部，若返回null则抛出CommonException("无法获事业部信息")。根因有三：(1)当前用户未配置默认事业部（HPFM_DIVISION_USER关联缺失）；(2)用户上下文中divisionId未正确设置（登录态异常）；(3)事业部配置已禁用或删除。需联系管理员为当前用户配置事业部</div>
+  </div>
+</div>
 
 ```sql
 -- 核查当前用户的事业部配置
@@ -565,8 +607,14 @@ SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT, AUDIT_STAT
   JOIN HPFM_DIVISION D ON DU.DIVISION_ID = D.ENT_ID
   WHERE DU.USER_ID = #{userId} AND D.ENABLED = 1;
 ```
-<h4>报错8：无法获上线文信息</h4>
-<ul><li><strong>触发条件</strong>：用户新建政策性补贴申请生成单据编号时，DetailsHelper.getUserDetails()返回空</li><li><strong>逻辑分析</strong>：生成单据编号generateCode（SaPolicySpecialHeaderServiceImpl.java:180）调用DetailsHelper.getUserDetails()获取用户上下文，若ObjectUtils.isEmpty(customUserDetails)则抛出CommonException("无法获上线文信息")。根因有二：(1)用户登录态过期或Token失效，上下文未正确注入；(2)线程上下文未传递（异步线程或Feign调用场景丢失UserDetails）。需用户重新登录后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无法获上线文信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户新建政策性补贴申请生成单据编号时，DetailsHelper.getUserDetails()返回空<br><strong>逻辑分析：</strong>生成单据编号generateCode（SaPolicySpecialHeaderServiceImpl.java:180）调用DetailsHelper.getUserDetails()获取用户上下文，若ObjectUtils.isEmpty(customUserDetails)则抛出CommonException("无法获上线文信息")。根因有二：(1)用户登录态过期或Token失效，上下文未正确注入；(2)线程上下文未传递（异步线程或Feign调用场景丢失UserDetails）。需用户重新登录后重试</div>
+  </div>
+</div>
 
 ```sql
 -- 核查用户账号状态（表名以HZERO IAM实际表为准）
@@ -574,8 +622,14 @@ SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, CUST_NAME, APPLY_AMT, AUDIT_STAT
   FROM IAM_USER
   WHERE USER_ID = #{userId};
 ```
-<h4>报错9：单据状态不允许删除</h4>
-<ul><li><strong>触发条件</strong>：用户选中已提交审批（AUDIT_STAT为RUN）或已审批通过（AUDIT_STAT为APPROVED）的单据点击删除</li><li><strong>逻辑分析</strong>：删除接口remove（SaPolicySpecialHeaderServiceImpl.java:250）当前实现直接按POLICY_SPECIAL_ID批量删除头表和行表，未显式校验单据状态。但根据业务规则，仅AUDIT_STAT为NEW或null的未提交单据允许删除，已提交OA审批的单据删除将导致OA流程实例残留（WFID/HZ_INSTANCE_ID指向不存在的业务单据）。前端应限制仅未提交单据可勾选删除，若绕过前端直接调用接口需后端补充状态校验。需先撤回OA审批再删除</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据状态不允许删除</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中已提交审批（AUDIT_STAT为RUN）或已审批通过（AUDIT_STAT为APPROVED）的单据点击删除<br><strong>逻辑分析：</strong>删除接口remove（SaPolicySpecialHeaderServiceImpl.java:250）当前实现直接按POLICY_SPECIAL_ID批量删除头表和行表，未显式校验单据状态。但根据业务规则，仅AUDIT_STAT为NEW或null的未提交单据允许删除，已提交OA审批的单据删除将导致OA流程实例残留（WFID/HZ_INSTANCE_ID指向不存在的业务单据）。前端应限制仅未提交单据可勾选删除，若绕过前端直接调用接口需后端补充状态校验。需先撤回OA审批再删除</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, AUDIT_STAT, WFID, HZ_INSTANCE_ID,
@@ -584,8 +638,14 @@ SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, AUDIT_STAT, WFID, HZ_INSTANCE_ID,
   FROM SA_POLICY_SPECIAL_HEADER
   WHERE POLICY_SPECIAL_ID IN (#{id1}, #{id2});
 ```
-<h4>报错10：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击保存、保存并提交、删除或查询，前端axios请求抛出网络异常或超时</li><li><strong>逻辑分析</strong>：前端调用/v1/&#123;organizationId&#125;/sa-policy-special-headers/*系列接口时，因后端ae-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)ae-business微服务未注册到Nacos或已宕机；(2)OA审批系统（workFlowStart）调用超时导致保存并提交接口整体超时；(3)EBS资金池查询（select-capital）接口超时；(4)网络中断或防火墙拦截。需联系运维确认ae-business、OA、EBS服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击保存、保存并提交、删除或查询，前端axios请求抛出网络异常或超时<br><strong>逻辑分析：</strong>前端调用/v1/&#123;organizationId&#125;/sa-policy-special-headers/*系列接口时，因后端ae-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)ae-business微服务未注册到Nacos或已宕机；(2)OA审批系统（workFlowStart）调用超时导致保存并提交接口整体超时；(3)EBS资金池查询（select-capital）接口超时；(4)网络中断或防火墙拦截。需联系运维确认ae-business、OA、EBS服务状态</div>
+  </div>
+</div>
 
 ```sql
 -- 核查政策性补贴申请单据量及OA流程状态分布
@@ -597,8 +657,27 @@ SELECT POLICY_SPECIAL_ID, POLICY_SPECIAL_NO, AUDIT_STAT, WFID, HZ_INSTANCE_ID,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：OA审批流程未发起</li><li>原因：OA系统不可用或workFlowStart调用失败</li><li>解决思路：检查OA系统连接状态，查看SA_POLICY_SPECIAL_HEADER.AUDIT_STAT是否为RUN</li></ul>
-<ul><li>问题2：审批通过后资金池余额未扣减</li><li>原因：doProcessOA回调未正确执行或资金池同步失败</li><li>解决思路：检查审批回调日志，确认CAPITAL_POOL是否更新</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">OA审批流程未发起</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>OA系统不可用或workFlowStart调用失败<br><strong style="color:#7C3AED;">处理：</strong>检查OA系统连接状态，查看SA_POLICY_SPECIAL_HEADER.AUDIT_STAT是否为RUN
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">审批通过后资金池余额未扣减</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>doProcessOA回调未正确执行或资金池同步失败<br><strong style="color:#7C3AED;">处理：</strong>检查审批回调日志，确认CAPITAL_POOL是否更新
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

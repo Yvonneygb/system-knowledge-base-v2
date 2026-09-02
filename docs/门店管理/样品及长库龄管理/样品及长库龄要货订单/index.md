@@ -1227,36 +1227,42 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>业务类型不能为空</td><td>保存校验</td><td>isMakt=2时businessType必填，选择业务类型后保存</td><td>高</td><td>[查看](#报错1业务类型不能为空)</td></tr>
-<tr><td>折扣政策与单据信息不一致</td><td>保存校验</td><td>businessType/channel/billType需与折扣政策一致，重新选择折扣政策或调整单据信息</td><td>高</td><td>[查看](#报错2折扣政策与单据信息不一致)</td></tr>
-<tr><td>样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;</td><td>保存校验</td><td>下单数量需≥折扣政策起订量，调整下单数量</td><td>高</td><td>[查看](#报错3样品code下单数量qty低于起订量moq)</td></tr>
-<tr><td>样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;</td><td>保存校验</td><td>下单数量需≤折扣政策封顶量，调整下单数量</td><td>高</td><td>[查看](#报错4样品code下单数量qty超过封顶量capqty)</td></tr>
-<tr><td>期望到达日期不能晚于政策有效期</td><td>保存校验</td><td>期望到达日期需≤政策有效期至，调整期望到达日期</td><td>高</td><td>[查看](#报错5期望到达日期不能晚于政策有效期)</td></tr>
-<tr><td>紧急行数超过上限&#123;maxQty&#125;</td><td>保存校验</td><td>紧急行数上限=ceil(总行数/5)，减少紧急行数</td><td>中</td><td>[查看](#报错6紧急行数超过上限maxqty)</td></tr>
-<tr><td>样品&#123;code&#125;已停产，禁止下单</td><td>保存校验</td><td>产品SM状态='Z8'禁止下单，移除该行</td><td>高</td><td>[查看](#报错7样品code已停产禁止下单)</td></tr>
-<tr><td>样品&#123;code&#125;可下单数量不足</td><td>提交校验</td><td>折扣政策可下单数量不足，调整下单数量或联系管理员</td><td>高</td><td>[查看](#报错8样品code可下单数量不足)</td></tr>
-<tr><td>单据已经审核，不允许删除</td><td>删除操作</td><td>hzApproveStatus=APPROVED或stat=5或isAuditingWh=2，不可删除</td><td>高</td><td>[查看](#报错9单据已经审核不允许删除)</td></tr>
-<tr><td>具备了订单号的订单，不允许删除</td><td>删除操作</td><td>saSalebillno不为空，已生成CRM订单不可删除</td><td>高</td><td>[查看](#报错10具备了订单号的订单不允许删除)</td></tr>
-<tr><td>价格不能为空或小于等于0</td><td>保存校验</td><td>行价格字段缺失或异常，重新选择产品或联系管理员</td><td>高</td><td>[查看](#报错11价格不能为空或小于等于0)</td></tr>
-<tr><td>只有计划订单可以加紧急</td><td>保存校验</td><td>仅计划订单(billType=2/14)允许加急，常规订单移除加急标记</td><td>高</td><td>[查看](#报错12只有计划订单可以加紧急)</td></tr>
-<tr><td>存在重复下单的产品：&#123;code&#125;</td><td>保存校验</td><td>同一单据存在重复产品行，合并或删除重复行</td><td>高</td><td>[查看](#报错13存在重复下单的产品code)</td></tr>
-<tr><td>价格类型为折扣政策的订单，政策id不能为空</td><td>保存校验</td><td>priceType=2时折扣政策ID必填，先选择折扣政策</td><td>高</td><td>[查看](#报错14价格类型为折扣政策的订单政策id不能为空)</td></tr>
-<tr><td>明细行不能为空</td><td>保存校验</td><td>未添加产品明细行，先添加产品行</td><td>高</td><td>[查看](#报错15明细行不能为空)</td></tr>
-<tr><td>您当前的经销合作合同已失效，暂无法正常下单，请联系业务员处理。</td><td>保存校验</td><td>经销商合作合同已失效，联系业务员续签合同</td><td>高</td><td>[查看](#报错16您当前的经销合作合同已失效暂无法正常下单请联系业务员处理)</td></tr>
-<tr><td>价目表或者折扣单要货，不需要送签OA，请选择生成crm订单</td><td>保存并提交</td><td>priceType=3无需OA审批，改用生成CRM订单按钮</td><td>高</td><td>[查看](#报错17价目表或者折扣单要货不需要送签oa请选择生成crm订单)</td></tr>
-<tr><td>该单据已经审核</td><td>保存并提交</td><td>单据已审核不可重复提交，刷新页面查看最新状态</td><td>高</td><td>[查看](#报错18该单据已经审核)</td></tr>
-<tr><td>折扣政策不存在，请联系管理员</td><td>保存并提交</td><td>折扣政策已被删除，重新选择有效折扣政策</td><td>高</td><td>[查看](#报错19折扣政策不存在请联系管理员)</td></tr>
-<tr><td>折扣政策【&#123;code&#125;】已失效，请联系区域经理</td><td>保存并提交</td><td>折扣政策已失效，联系区域经理重新配置或选择有效政策</td><td>高</td><td>[查看](#报错20折扣政策code已失效请联系区域经理)</td></tr>
-<tr><td>折扣政策【&#123;code&#125;】不在有效期内，请联系区域经理</td><td>保存并提交</td><td>折扣政策已过期，联系区域经理或选择有效期内政策</td><td>高</td><td>[查看](#报错21折扣政策code不在有效期内请联系区域经理)</td></tr>
-<tr><td>流程编码缺失，请选择流程！</td><td>保存并提交</td><td>OA流程编码未配置，联系管理员配置流程编码</td><td>高</td><td>[查看](#报错22流程编码缺失请选择流程)</td></tr>
-<tr><td>地址不存在或数据异常，请点击右上角【同步地址信息】按钮后，重新选择地址!</td><td>保存校验</td><td>收货地址数据异常，点击同步地址信息后重新选择</td><td>高</td><td>[查看](#报错23地址不存在或数据异常请点击右上角同步地址信息按钮后重新选择地址)</td></tr>
-<tr><td>当前折扣政策已失效，请重新选择！</td><td>保存并提交</td><td>折扣政策在提交前被失效，重新选择有效折扣政策</td><td>高</td><td>[查看](#报错24当前折扣政策已失效请重新选择)</td></tr>
-<tr><td>您当前的要货订单已超有效期，请联系业务员处理。</td><td>保存并提交</td><td>订单超过有效期限制，联系业务员处理</td><td>高</td><td>[查看](#报错25您当前的要货订单已超有效期请联系业务员处理)</td></tr>
-<tr><td>未查询到业务单据，请检查</td><td>操作校验</td><td>单据不存在或已被删除，刷新列表</td><td>高</td><td>[查看](#报错26未查询到业务单据请检查)</td></tr>
+<tr><td>业务类型不能为空</td><td>保存校验</td><td>isMakt=2时businessType必填，选择业务类型后保存</td><td>高</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>折扣政策与单据信息不一致</td><td>保存校验</td><td>businessType/channel/billType需与折扣政策一致，重新选择折扣政策或调整单据信息</td><td>高</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;</td><td>保存校验</td><td>下单数量需≥折扣政策起订量，调整下单数量</td><td>高</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;</td><td>保存校验</td><td>下单数量需≤折扣政策封顶量，调整下单数量</td><td>高</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>期望到达日期不能晚于政策有效期</td><td>保存校验</td><td>期望到达日期需≤政策有效期至，调整期望到达日期</td><td>高</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>紧急行数超过上限&#123;maxQty&#125;</td><td>保存校验</td><td>紧急行数上限=ceil(总行数/5)，减少紧急行数</td><td>中</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>样品&#123;code&#125;已停产，禁止下单</td><td>保存校验</td><td>产品SM状态='Z8'禁止下单，移除该行</td><td>高</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>样品&#123;code&#125;可下单数量不足</td><td>提交校验</td><td>折扣政策可下单数量不足，调整下单数量或联系管理员</td><td>高</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>单据已经审核，不允许删除</td><td>删除操作</td><td>hzApproveStatus=APPROVED或stat=5或isAuditingWh=2，不可删除</td><td>高</td><td><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>具备了订单号的订单，不允许删除</td><td>删除操作</td><td>saSalebillno不为空，已生成CRM订单不可删除</td><td>高</td><td><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>价格不能为空或小于等于0</td><td>保存校验</td><td>行价格字段缺失或异常，重新选择产品或联系管理员</td><td>高</td><td><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>只有计划订单可以加紧急</td><td>保存校验</td><td>仅计划订单(billType=2/14)允许加急，常规订单移除加急标记</td><td>高</td><td><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>存在重复下单的产品：&#123;code&#125;</td><td>保存校验</td><td>同一单据存在重复产品行，合并或删除重复行</td><td>高</td><td><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>价格类型为折扣政策的订单，政策id不能为空</td><td>保存校验</td><td>priceType=2时折扣政策ID必填，先选择折扣政策</td><td>高</td><td><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>明细行不能为空</td><td>保存校验</td><td>未添加产品明细行，先添加产品行</td><td>高</td><td><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>您当前的经销合作合同已失效，暂无法正常下单，请联系业务员处理。</td><td>保存校验</td><td>经销商合作合同已失效，联系业务员续签合同</td><td>高</td><td><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>价目表或者折扣单要货，不需要送签OA，请选择生成crm订单</td><td>保存并提交</td><td>priceType=3无需OA审批，改用生成CRM订单按钮</td><td>高</td><td><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>该单据已经审核</td><td>保存并提交</td><td>单据已审核不可重复提交，刷新页面查看最新状态</td><td>高</td><td><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>折扣政策不存在，请联系管理员</td><td>保存并提交</td><td>折扣政策已被删除，重新选择有效折扣政策</td><td>高</td><td><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>折扣政策【&#123;code&#125;】已失效，请联系区域经理</td><td>保存并提交</td><td>折扣政策已失效，联系区域经理重新配置或选择有效政策</td><td>高</td><td><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
+<tr><td>折扣政策【&#123;code&#125;】不在有效期内，请联系区域经理</td><td>保存并提交</td><td>折扣政策已过期，联系区域经理或选择有效期内政策</td><td>高</td><td><a href="#err-detail-21" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码缺失，请选择流程！</td><td>保存并提交</td><td>OA流程编码未配置，联系管理员配置流程编码</td><td>高</td><td><a href="#err-detail-22" class="view-btn">查看</a></td></tr>
+<tr><td>地址不存在或数据异常，请点击右上角【同步地址信息】按钮后，重新选择地址!</td><td>保存校验</td><td>收货地址数据异常，点击同步地址信息后重新选择</td><td>高</td><td><a href="#err-detail-23" class="view-btn">查看</a></td></tr>
+<tr><td>当前折扣政策已失效，请重新选择！</td><td>保存并提交</td><td>折扣政策在提交前被失效，重新选择有效折扣政策</td><td>高</td><td><a href="#err-detail-24" class="view-btn">查看</a></td></tr>
+<tr><td>您当前的要货订单已超有效期，请联系业务员处理。</td><td>保存并提交</td><td>订单超过有效期限制，联系业务员处理</td><td>高</td><td><a href="#err-detail-25" class="view-btn">查看</a></td></tr>
+<tr><td>未查询到业务单据，请检查</td><td>操作校验</td><td>单据不存在或已被删除，刷新列表</td><td>高</td><td><a href="#err-detail-26" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：业务类型不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"或"保存并提交"按钮，preCheckData校验时，IS_MAKT=2且BUSINESS_TYPE为空</li><li><strong>逻辑分析</strong>：样品及长库龄要货订单需明确业务类型以区分样品(3)/家装样品(12)/长库龄(16)，并驱动后续CRM订单类型映射。校验逻辑读取SA_OUT_BILL_HEAD.BUSINESS_TYPE，当IS_MAKT=2且BUSINESS_TYPE为空时抛异常。priceType=3（价目表）时必填，priceType=2（折扣政策）时由折扣政策带入但若政策未选也会为空。常见根因：用户未选择业务类型、折扣政策未带入业务类型、或前端未做必填校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>业务类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"或"保存并提交"按钮，preCheckData校验时，IS_MAKT=2且BUSINESS_TYPE为空<br><strong>逻辑分析：</strong>样品及长库龄要货订单需明确业务类型以区分样品(3)/家装样品(12)/长库龄(16)，并驱动后续CRM订单类型映射。校验逻辑读取SA_OUT_BILL_HEAD.BUSINESS_TYPE，当IS_MAKT=2且BUSINESS_TYPE为空时抛异常。priceType=3（价目表）时必填，priceType=2（折扣政策）时由折扣政策带入但若政策未选也会为空。常见根因：用户未选择业务类型、折扣政策未带入业务类型、或前端未做必填校验。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1270,8 +1276,14 @@ SELECT h.head_id            AS 头表ID,
   AND    h.business_type IS NULL
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错2：折扣政策与单据信息不一致</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，头表BUSINESS_TYPE/CHANNEL/BILL_TYPE与关联折扣政策对应字段任一不一致</li><li><strong>逻辑分析</strong>：折扣政策限定了业务类型、销售渠道、订单类型范围，要货订单必须与所选政策保持一致才能享受折扣。校验逻辑关联SA_OUT_BILL_HEAD与DISCOUNT_POLICY，比对BUSINESS_TYPE、CHANNEL、BILL_TYPE三个字段，任一不一致即抛异常。常见根因：用户先选政策后改单据字段、或先填单据后选不匹配的政策、或政策被修改后单据未同步。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策与单据信息不一致</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData校验时，头表BUSINESS_TYPE/CHANNEL/BILL_TYPE与关联折扣政策对应字段任一不一致<br><strong>逻辑分析：</strong>折扣政策限定了业务类型、销售渠道、订单类型范围，要货订单必须与所选政策保持一致才能享受折扣。校验逻辑关联SA_OUT_BILL_HEAD与DISCOUNT_POLICY，比对BUSINESS_TYPE、CHANNEL、BILL_TYPE三个字段，任一不一致即抛异常。常见根因：用户先选政策后改单据字段、或先填单据后选不匹配的政策、或政策被修改后单据未同步。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1290,8 +1302,14 @@ SELECT h.head_id            AS 头表ID,
           OR h.bill_type <> dp.bill_type)
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错3：样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData逐行校验时，某行QTY_BILL&lt;折扣政策产品行MOQ</li><li><strong>逻辑分析</strong>：折扣政策对每个产品设定了全国生产起订量，下单数量低于起订量无法享受折扣价且影响生产排期。校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对每行QTY_BILL与MOQ，低于则抛异常并提示具体产品编码、下单数量、起订量。常见根因：用户输入数量过小、未注意起订量提示、或折扣政策起订量配置过高。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData逐行校验时，某行QTY_BILL&lt;折扣政策产品行MOQ<br><strong>逻辑分析：</strong>折扣政策对每个产品设定了全国生产起订量，下单数量低于起订量无法享受折扣价且影响生产排期。校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对每行QTY_BILL与MOQ，低于则抛异常并提示具体产品编码、下单数量、起订量。常见根因：用户输入数量过小、未注意起订量提示、或折扣政策起订量配置过高。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.line_id           AS 行ID,
@@ -1308,8 +1326,14 @@ SELECT l.line_id           AS 行ID,
   AND    l.qty_bill < dpl.moq
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错4：样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData逐行校验时，某行QTY_BILL&gt;折扣政策产品行CAP_QTY（坎级封顶量）</li><li><strong>逻辑分析</strong>：折扣政策对每个产品设定了坎级封顶量，下单数量超过封顶量无法享受折扣优惠。校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对每行QTY_BILL与CAP_QTY，超过则抛异常并提示具体产品编码、下单数量、封顶量。常见根因：用户输入数量过大、未注意封顶量提示、或折扣政策封顶量配置过低。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData逐行校验时，某行QTY_BILL&gt;折扣政策产品行CAP_QTY（坎级封顶量）<br><strong>逻辑分析：</strong>折扣政策对每个产品设定了坎级封顶量，下单数量超过封顶量无法享受折扣优惠。校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对每行QTY_BILL与CAP_QTY，超过则抛异常并提示具体产品编码、下单数量、封顶量。常见根因：用户输入数量过大、未注意封顶量提示、或折扣政策封顶量配置过低。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.line_id           AS 行ID,
@@ -1326,8 +1350,14 @@ SELECT l.line_id           AS 行ID,
   AND    l.qty_bill > dpl.cap_qty
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错5：期望到达日期不能晚于政策有效期</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，头表IN_DATE&gt;折扣政策EFFECTIVE_DATE_END</li><li><strong>逻辑分析</strong>：折扣政策有有效期限，期望到达日期超过政策有效期则该订单无法享受政策折扣。校验逻辑关联SA_OUT_BILL_HEAD与DISCOUNT_POLICY，比对IN_DATE与EFFECTIVE_DATE_END，超过则抛异常。常见根因：用户选择期望到达日期过晚、折扣政策即将到期、或前端未做日期范围限制。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>期望到达日期不能晚于政策有效期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData校验时，头表IN_DATE&gt;折扣政策EFFECTIVE_DATE_END<br><strong>逻辑分析：</strong>折扣政策有有效期限，期望到达日期超过政策有效期则该订单无法享受政策折扣。校验逻辑关联SA_OUT_BILL_HEAD与DISCOUNT_POLICY，比对IN_DATE与EFFECTIVE_DATE_END，超过则抛异常。常见根因：用户选择期望到达日期过晚、折扣政策即将到期、或前端未做日期范围限制。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1341,8 +1371,14 @@ SELECT h.head_id            AS 头表ID,
   AND    h.in_date > dp.effective_date_end
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错6：紧急行数超过上限&#123;maxQty&#125;</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，紧急行数（URGENCY=2的行数）&gt;ceil(总行数/5)</li><li><strong>逻辑分析</strong>：为避免大量加急订单冲击正常生产排期，限制紧急行数比例不超过总行数的20%（ceil(总行数/5)）。仅计划订单（billType=2或14）允许加急，常规订单不允许有紧急行。校验逻辑统计SA_OUT_BILL_LINE中URGENCY=2的行数，超过上限则抛异常。常见根因：用户标记过多紧急行、或前端未做紧急行数限制提示。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>紧急行数超过上限&#123;maxQty&#125;</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData校验时，紧急行数（URGENCY=2的行数）&gt;ceil(总行数/5)<br><strong>逻辑分析：</strong>为避免大量加急订单冲击正常生产排期，限制紧急行数比例不超过总行数的20%（ceil(总行数/5)）。仅计划订单（billType=2或14）允许加急，常规订单不允许有紧急行。校验逻辑统计SA_OUT_BILL_LINE中URGENCY=2的行数，超过上限则抛异常。常见根因：用户标记过多紧急行、或前端未做紧急行数限制提示。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id                              AS 头表ID,
@@ -1358,8 +1394,14 @@ SELECT h.head_id                              AS 头表ID,
   GROUP  BY h.head_id, h.interim_biino, h.bill_type
   HAVING SUM(CASE WHEN l.urgency = 2 THEN 1 ELSE 0 END) > CEIL(COUNT(l.line_id) / 5);
 ```
-<h4>报错7：样品&#123;code&#125;已停产，禁止下单</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData逐行校验时，某行产品SM_STATE='Z8'（已停产）</li><li><strong>逻辑分析</strong>：产品生命周期状态为Z8表示已停产，禁止下单以避免库存积压和交付风险。校验逻辑关联SA_OUT_BILL_LINE与MATERIAL，比对SM_STATE，为Z8则抛异常并提示具体产品编码。常见根因：用户选择已停产产品、产品在选品后被标记停产、或前端产品选择列表未过滤停产产品。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>样品&#123;code&#125;已停产，禁止下单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData逐行校验时，某行产品SM_STATE='Z8'（已停产）<br><strong>逻辑分析：</strong>产品生命周期状态为Z8表示已停产，禁止下单以避免库存积压和交付风险。校验逻辑关联SA_OUT_BILL_LINE与MATERIAL，比对SM_STATE，为Z8则抛异常并提示具体产品编码。常见根因：用户选择已停产产品、产品在选品后被标记停产、或前端产品选择列表未过滤停产产品。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.line_id           AS 行ID,
@@ -1373,8 +1415,14 @@ SELECT l.line_id           AS 行ID,
   AND    l.sm_state = 'Z8'
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错8：样品&#123;code&#125;可下单数量不足</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，updateActiveQty校验时，某行QTY_BILL&gt;折扣政策产品行ACTIVE_QTY（可下单数量）</li><li><strong>逻辑分析</strong>：折扣政策对每个产品设定了可下单数量上限，多个订单共享同一政策时需扣减可下单数量。提交时校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对QTY_BILL与ACTIVE_QTY，超过则抛异常并提示具体产品编码。常见根因：并发提交导致可下单数量被其他订单扣减、或用户下单数量超过剩余可下单数量。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>样品&#123;code&#125;可下单数量不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，updateActiveQty校验时，某行QTY_BILL&gt;折扣政策产品行ACTIVE_QTY（可下单数量）<br><strong>逻辑分析：</strong>折扣政策对每个产品设定了可下单数量上限，多个订单共享同一政策时需扣减可下单数量。提交时校验逻辑关联SA_OUT_BILL_LINE与DISCOUNT_POLICY_LINE，比对QTY_BILL与ACTIVE_QTY，超过则抛异常并提示具体产品编码。常见根因：并发提交导致可下单数量被其他订单扣减、或用户下单数量超过剩余可下单数量。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.line_id           AS 行ID,
@@ -1391,8 +1439,14 @@ SELECT l.line_id           AS 行ID,
   AND    l.qty_bill > dpl.active_qty
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错9：单据已经审核，不允许删除</h4>
-<ul><li><strong>触发条件</strong>：点击"删除"按钮，删除前校验时，HZ_APPROVE_STATUS='APPROVED'或ORDER_STAT=5或IS_AUDITING_WH=2</li><li><strong>逻辑分析</strong>：已审核单据已进入下游业务流程（可能已生成CRM订单或推送ERP发货），删除会导致数据不一致。校验逻辑读取SA_OUT_BILL_HEAD的HZ_APPROVE_STATUS、ORDER_STAT、IS_AUDITING_WH，任一满足已审核条件则抛异常阻止删除。常见根因：用户尝试删除已审批通过的单据、或单据已进入发货流程。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据已经审核，不允许删除</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"按钮，删除前校验时，HZ_APPROVE_STATUS='APPROVED'或ORDER_STAT=5或IS_AUDITING_WH=2<br><strong>逻辑分析：</strong>已审核单据已进入下游业务流程（可能已生成CRM订单或推送ERP发货），删除会导致数据不一致。校验逻辑读取SA_OUT_BILL_HEAD的HZ_APPROVE_STATUS、ORDER_STAT、IS_AUDITING_WH，任一满足已审核条件则抛异常阻止删除。常见根因：用户尝试删除已审批通过的单据、或单据已进入发货流程。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id              AS 头表ID,
@@ -1408,8 +1462,14 @@ SELECT h.head_id              AS 头表ID,
           OR h.is_auditing_wh = 2)
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错10：具备了订单号的订单，不允许删除</h4>
-<ul><li><strong>触发条件</strong>：点击"删除"按钮，删除前校验时，SA_SALEBILLNO（CRM订单号）不为空</li><li><strong>逻辑分析</strong>：单据已生成CRM订单（SA_SALEBILLNO有值）表示已进入CRM系统流转，删除会导致DMS与CRM数据不一致。校验逻辑读取SA_OUT_BILL_HEAD.SA_SALEBILLNO，不为空则抛异常阻止删除。常见根因：用户尝试删除已生成CRM订单的单据、或CRM订单已生成但前端未禁用删除按钮。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>具备了订单号的订单，不允许删除</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"按钮，删除前校验时，SA_SALEBILLNO（CRM订单号）不为空<br><strong>逻辑分析：</strong>单据已生成CRM订单（SA_SALEBILLNO有值）表示已进入CRM系统流转，删除会导致DMS与CRM数据不一致。校验逻辑读取SA_OUT_BILL_HEAD.SA_SALEBILLNO，不为空则抛异常阻止删除。常见根因：用户尝试删除已生成CRM订单的单据、或CRM订单已生成但前端未禁用删除按钮。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id              AS 头表ID,
@@ -1422,8 +1482,14 @@ SELECT h.head_id              AS 头表ID,
   AND    h.sa_salebillno IS NOT NULL
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错11：价格不能为空或小于等于0</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData逐行校验时，某行价格字段（PRICE_BILL/STANDARD_PRICE/DISCOUNT_RATE/DISCOUNT_INSTALLATION/DISCOUNTED_PRICE/WTAMOUNT_BILL）为空或&lt;=0</li><li><strong>逻辑分析</strong>：要货订单行需有有效价格才能正确计算金额并生成CRM订单。校验逻辑读取SA_OUT_BILL_LINE的PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL六个价格字段，任一为空或&lt;=0则抛异常。常见根因：产品未正确带出价格、折扣政策折扣率异常、价目表未配置该产品价格、或价格计算逻辑异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>价格不能为空或小于等于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData逐行校验时，某行价格字段（PRICE_BILL/STANDARD_PRICE/DISCOUNT_RATE/DISCOUNT_INSTALLATION/DISCOUNTED_PRICE/WTAMOUNT_BILL）为空或&lt;=0<br><strong>逻辑分析：</strong>要货订单行需有有效价格才能正确计算金额并生成CRM订单。校验逻辑读取SA_OUT_BILL_LINE的PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL六个价格字段，任一为空或&lt;=0则抛异常。常见根因：产品未正确带出价格、折扣政策折扣率异常、价目表未配置该产品价格、或价格计算逻辑异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.line_id              AS 行ID,
@@ -1447,8 +1513,14 @@ SELECT l.line_id              AS 行ID,
           OR l.wtamount_bill IS NULL OR l.wtamount_bill <= 0)
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错12：只有计划订单可以加紧急</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，常规订单(BILL_TYPE=1)存在URGENCY=2(紧急)的行</li><li><strong>逻辑分析</strong>：仅计划订单(BILL_TYPE=2或14)允许加急，常规订单不允许有紧急行，避免加急订单冲击正常生产排期。校验逻辑读取SA_OUT_BILL_HEAD.BILL_TYPE和SA_OUT_BILL_LINE.URGENCY，常规订单存在紧急行则抛异常。常见根因：用户在常规订单中误标记紧急行、或前端未做订单类型与加急的联动限制。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>只有计划订单可以加紧急</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData校验时，常规订单(BILL_TYPE=1)存在URGENCY=2(紧急)的行<br><strong>逻辑分析：</strong>仅计划订单(BILL_TYPE=2或14)允许加急，常规订单不允许有紧急行，避免加急订单冲击正常生产排期。校验逻辑读取SA_OUT_BILL_HEAD.BILL_TYPE和SA_OUT_BILL_LINE.URGENCY，常规订单存在紧急行则抛异常。常见根因：用户在常规订单中误标记紧急行、或前端未做订单类型与加急的联动限制。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1464,8 +1536,14 @@ SELECT h.head_id            AS 头表ID,
   AND    l.urgency = 2
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错13：存在重复下单的产品：&#123;code&#125;</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，同一单据存在MATERIAL_CODE重复的行</li><li><strong>逻辑分析</strong>：同一要货订单不允许存在重复产品行，避免重复下单和金额计算错误。校验逻辑统计SA_OUT_BILL_LINE中MATERIAL_CODE重复的行，重复则抛异常并提示具体产品编码。常见根因：用户重复添加同一产品、或导入文件包含重复产品编码。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>存在重复下单的产品：&#123;code&#125;</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData校验时，同一单据存在MATERIAL_CODE重复的行<br><strong>逻辑分析：</strong>同一要货订单不允许存在重复产品行，避免重复下单和金额计算错误。校验逻辑统计SA_OUT_BILL_LINE中MATERIAL_CODE重复的行，重复则抛异常并提示具体产品编码。常见根因：用户重复添加同一产品、或导入文件包含重复产品编码。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1479,8 +1557,14 @@ SELECT h.head_id            AS 头表ID,
   HAVING COUNT(l.line_id) > 1
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错14：价格类型为折扣政策的订单，政策id不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，PRICE_TYPE=2(折扣政策)且DISCOUNT_POLICY_ID为空</li><li><strong>逻辑分析</strong>：价格类型为折扣政策的订单必须关联折扣政策，否则无法计算折扣价格和校验起订量/封顶量。校验逻辑读取PRICE_TYPE和DISCOUNT_POLICY_ID，PRICE_TYPE=2且DISCOUNT_POLICY_ID为空则抛异常。常见根因：用户未选择折扣政策、折扣政策选择后未正确传ID、或前端联动异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>价格类型为折扣政策的订单，政策id不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData校验时，PRICE_TYPE=2(折扣政策)且DISCOUNT_POLICY_ID为空<br><strong>逻辑分析：</strong>价格类型为折扣政策的订单必须关联折扣政策，否则无法计算折扣价格和校验起订量/封顶量。校验逻辑读取PRICE_TYPE和DISCOUNT_POLICY_ID，PRICE_TYPE=2且DISCOUNT_POLICY_ID为空则抛异常。常见根因：用户未选择折扣政策、折扣政策选择后未正确传ID、或前端联动异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1494,8 +1578,14 @@ SELECT h.head_id            AS 头表ID,
   AND    h.discount_policy_id IS NULL
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错15：明细行不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，preCheckData校验时，SA_OUT_BILL_LINE中该单据的明细行为空</li><li><strong>逻辑分析</strong>：要货订单必须包含至少一行产品明细才能保存，否则订单无意义。校验逻辑查询SA_OUT_BILL_LINE中HEAD_ID对应的行，为空则抛异常。常见根因：用户未添加产品行、产品行被全部删除、或导入失败后误点保存。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>明细行不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，preCheckData校验时，SA_OUT_BILL_LINE中该单据的明细行为空<br><strong>逻辑分析：</strong>要货订单必须包含至少一行产品明细才能保存，否则订单无意义。校验逻辑查询SA_OUT_BILL_LINE中HEAD_ID对应的行，为空则抛异常。常见根因：用户未添加产品行、产品行被全部删除、或导入失败后误点保存。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1508,8 +1598,14 @@ SELECT h.head_id            AS 头表ID,
   GROUP  BY h.head_id, h.interim_biino, h.order_stat
   HAVING COUNT(l.line_id) = 0;
 ```
-<h4>报错16：您当前的经销合作合同已失效，暂无法正常下单，请联系业务员处理。</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"或"保存并提交"按钮，校验经销商合作合同时，关联的经销合同已失效</li><li><strong>逻辑分析</strong>：经销商需有有效合作合同才能下单，合同失效则无法正常下单。校验逻辑查询经销商关联的经销合同状态，已失效则抛异常。常见根因：经销商合同到期未续签、合同被失效处理、或合同数据异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>您当前的经销合作合同已失效，暂无法正常下单，请联系业务员处理。</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"或"保存并提交"按钮，校验经销商合作合同时，关联的经销合同已失效<br><strong>逻辑分析：</strong>经销商需有有效合作合同才能下单，合同失效则无法正常下单。校验逻辑查询经销商关联的经销合同状态，已失效则抛异常。常见根因：经销商合同到期未续签、合同被失效处理、或合同数据异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1525,8 +1621,14 @@ SELECT h.head_id            AS 头表ID,
   AND    c.valid_stat = 3
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错17：价目表或者折扣单要货，不需要送签OA，请选择生成crm订单</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验时，PRICE_TYPE=3(价目表)但仍尝试推送OA审批</li><li><strong>逻辑分析</strong>：价目表(priceType=3)或折扣单要货无需OA审批，直接生成CRM订单即可。校验逻辑读取PRICE_TYPE，为3且尝试推送OA则抛异常提示改用生成CRM订单按钮。常见根因：用户误点保存并提交、或前端未根据priceType隐藏保存并提交按钮。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>价目表或者折扣单要货，不需要送签OA，请选择生成crm订单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，校验时，PRICE_TYPE=3(价目表)但仍尝试推送OA审批<br><strong>逻辑分析：</strong>价目表(priceType=3)或折扣单要货无需OA审批，直接生成CRM订单即可。校验逻辑读取PRICE_TYPE，为3且尝试推送OA则抛异常提示改用生成CRM订单按钮。常见根因：用户误点保存并提交、或前端未根据priceType隐藏保存并提交按钮。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1539,8 +1641,14 @@ SELECT h.head_id            AS 头表ID,
   AND    h.hz_approve_status = 'NEW'
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错18：该单据已经审核</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验时，单据HZ_APPROVE_STATUS=APPROVED或ORDER_STAT=5</li><li><strong>逻辑分析</strong>：已审核单据不允许重复提交审批，避免重复推送OA和生成CRM订单。校验逻辑读取HZ_APPROVE_STATUS和ORDER_STAT，已审核则抛异常。常见根因：用户重复点击保存并提交、或前端未做审核状态判断。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>该单据已经审核</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，校验时，单据HZ_APPROVE_STATUS=APPROVED或ORDER_STAT=5<br><strong>逻辑分析：</strong>已审核单据不允许重复提交审批，避免重复推送OA和生成CRM订单。校验逻辑读取HZ_APPROVE_STATUS和ORDER_STAT，已审核则抛异常。常见根因：用户重复点击保存并提交、或前端未做审核状态判断。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1553,8 +1661,14 @@ SELECT h.head_id            AS 头表ID,
   AND    (h.hz_approve_status = 'APPROVED' OR h.order_stat = 5)
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错19：折扣政策不存在，请联系管理员</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验折扣政策时，按DISCOUNT_POLICY_ID查询DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：提交时需校验折扣政策存在性，政策不存在则无法享受折扣。校验逻辑查询DISCOUNT_POLICY，返回空则抛异常。常见根因：折扣政策被并发删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-19" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策不存在，请联系管理员</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，校验折扣政策时，按DISCOUNT_POLICY_ID查询DISCOUNT_POLICY返回null<br><strong>逻辑分析：</strong>提交时需校验折扣政策存在性，政策不存在则无法享受折扣。校验逻辑查询DISCOUNT_POLICY，返回空则抛异常。常见根因：折扣政策被并发删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1569,8 +1683,14 @@ SELECT h.head_id            AS 头表ID,
   AND    dp.policy_id IS NULL
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错20：折扣政策【&#123;code&#125;】已失效，请联系区域经理</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验折扣政策时，DISCOUNT_POLICY.VALID=3(失效)</li><li><strong>逻辑分析</strong>：已失效折扣政策(VALID=3)不允许用于下单，避免享受已失效的折扣。校验逻辑读取DISCOUNT_POLICY.VALID，为3则抛异常并提示联系区域经理。常见根因：折扣政策被失效处理、政策过期被批量失效、或前端政策选择列表未实时刷新。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-20" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策【&#123;code&#125;】已失效，请联系区域经理</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，校验折扣政策时，DISCOUNT_POLICY.VALID=3(失效)<br><strong>逻辑分析：</strong>已失效折扣政策(VALID=3)不允许用于下单，避免享受已失效的折扣。校验逻辑读取DISCOUNT_POLICY.VALID，为3则抛异常并提示联系区域经理。常见根因：折扣政策被失效处理、政策过期被批量失效、或前端政策选择列表未实时刷新。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1585,8 +1705,14 @@ SELECT h.head_id            AS 头表ID,
   AND    dp.valid = 3
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错21：折扣政策【&#123;code&#125;】不在有效期内，请联系区域经理</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验折扣政策时，SYSDATE不在EFFECTIVE_DATE_START和EFFECTIVE_DATE_END区间内</li><li><strong>逻辑分析</strong>：折扣政策有有效期限，当前日期不在有效期内则不允许下单。校验逻辑比对SYSDATE与EFFECTIVE_DATE_START/EFFECTIVE_DATE_END，不在区间内则抛异常。常见根因：折扣政策已过期、政策未到生效日期、或系统时间异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-21" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策【&#123;code&#125;】不在有效期内，请联系区域经理</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，校验折扣政策时，SYSDATE不在EFFECTIVE_DATE_START和EFFECTIVE_DATE_END区间内<br><strong>逻辑分析：</strong>折扣政策有有效期限，当前日期不在有效期内则不允许下单。校验逻辑比对SYSDATE与EFFECTIVE_DATE_START/EFFECTIVE_DATE_END，不在区间内则抛异常。常见根因：折扣政策已过期、政策未到生效日期、或系统时间异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1603,8 +1729,14 @@ SELECT h.head_id            AS 头表ID,
   AND    (SYSDATE < dp.effective_date_begin OR SYSDATE > dp.effective_date_end)
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错22：流程编码缺失，请选择流程！</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，推送OA前校验流程编码(FlowCode)为空</li><li><strong>逻辑分析</strong>：推送OA审批需指定流程编码，流程编码为空则OA无法匹配审批流程。校验逻辑读取FlowCode，为空则抛异常。常见根因：前端未传FlowCode、流程编码配置缺失、或销售渠道与流程编码映射未配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-22" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，推送OA前校验流程编码(FlowCode)为空<br><strong>逻辑分析：</strong>推送OA审批需指定流程编码，流程编码为空则OA无法匹配审批流程。校验逻辑读取FlowCode，为空则抛异常。常见根因：前端未传FlowCode、流程编码配置缺失、或销售渠道与流程编码映射未配置。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1621,8 +1753,14 @@ SELECT h.head_id            AS 头表ID,
   AND    h.hz_instance_id IS NULL
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错23：地址不存在或数据异常，请点击右上角【同步地址信息】按钮后，重新选择地址!</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，校验收货地址时，TAKE_MAN_ID对应地址记录不存在或数据异常</li><li><strong>逻辑分析</strong>：要货订单需有有效收货地址，地址不存在或数据异常则无法发货。校验逻辑查询CUSTOMER_ADDRESS中TAKE_MAN_ID对应记录，不存在或异常则抛异常并提示同步地址。常见根因：经销商地址档案变更、地址被删除、或地址数据不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-23" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>地址不存在或数据异常，请点击右上角【同步地址信息】按钮后，重新选择地址!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验收货地址时，TAKE_MAN_ID对应地址记录不存在或数据异常<br><strong>逻辑分析：</strong>要货订单需有有效收货地址，地址不存在或数据异常则无法发货。校验逻辑查询CUSTOMER_ADDRESS中TAKE_MAN_ID对应记录，不存在或异常则抛异常并提示同步地址。常见根因：经销商地址档案变更、地址被删除、或地址数据不一致。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1638,8 +1776,14 @@ SELECT h.head_id            AS 头表ID,
   AND    (ca.address_id IS NULL OR ca.status <> 'ACTIVE')
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错24：当前折扣政策已失效，请重新选择！</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，updateActiveQty校验时，折扣政策在提交期间被失效(VALID变为3)</li><li><strong>逻辑分析</strong>：折扣政策在用户编辑期间有效，但提交时被其他用户失效处理，导致政策无法使用。校验逻辑重新读取DISCOUNT_POLICY.VALID，为3则抛异常。常见根因：并发操作导致政策在提交前被失效、或政策过期被批量失效。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-24" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前折扣政策已失效，请重新选择！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，updateActiveQty校验时，折扣政策在提交期间被失效(VALID变为3)<br><strong>逻辑分析：</strong>折扣政策在用户编辑期间有效，但提交时被其他用户失效处理，导致政策无法使用。校验逻辑重新读取DISCOUNT_POLICY.VALID，为3则抛异常。常见根因：并发操作导致政策在提交前被失效、或政策过期被批量失效。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1655,8 +1799,14 @@ SELECT h.head_id            AS 头表ID,
   AND    dp.valid = 3
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错25：您当前的要货订单已超有效期，请联系业务员处理。</h4>
-<ul><li><strong>触发条件</strong>：点击"保存并提交"按钮，校验时，单据IN_DATE(期望到达日期)超过允许的有效期范围</li><li><strong>逻辑分析</strong>：要货订单有有效期限制，期望到达日期超过有效期则无法正常下单。校验逻辑比对IN_DATE与允许的有效期范围，超过则抛异常。常见根因：用户选择期望到达日期过晚、订单编辑时间过长导致超期、或有效期配置过短。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-25" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>您当前的要货订单已超有效期，请联系业务员处理。</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存并提交"按钮，校验时，单据IN_DATE(期望到达日期)超过允许的有效期范围<br><strong>逻辑分析：</strong>要货订单有有效期限制，期望到达日期超过有效期则无法正常下单。校验逻辑比对IN_DATE与允许的有效期范围，超过则抛异常。常见根因：用户选择期望到达日期过晚、订单编辑时间过长导致超期、或有效期配置过短。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1670,8 +1820,14 @@ SELECT h.head_id            AS 头表ID,
   AND    h.in_date > h.effective_date_end
   ORDER  BY h.creation_date DESC;
 ```
-<h4>报错26：未查询到业务单据，请检查</h4>
-<ul><li><strong>触发条件</strong>：点击"删除"、"生成CRM订单"等操作按钮，按HEAD_ID查询SA_OUT_BILL_HEAD返回null</li><li><strong>逻辑分析</strong>：操作前需查询单据确认存在，单据不存在则无法执行后续操作。校验逻辑查询SA_OUT_BILL_HEAD，返回空则抛异常。常见根因：单据被并发删除、HEAD_ID传值错误、或单据从未存在。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-26" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未查询到业务单据，请检查</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"、"生成CRM订单"等操作按钮，按HEAD_ID查询SA_OUT_BILL_HEAD返回null<br><strong>逻辑分析：</strong>操作前需查询单据确认存在，单据不存在则无法执行后续操作。校验逻辑查询SA_OUT_BILL_HEAD，返回空则抛异常。常见根因：单据被并发删除、HEAD_ID传值错误、或单据从未存在。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.head_id            AS 头表ID,
@@ -1686,13 +1842,72 @@ SELECT h.head_id            AS 头表ID,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：折扣政策选择弹窗无数据</li><li>原因：当前经销商无可用折扣政策，或折扣政策已过期，或isMakt参数未正确传入</li><li>解决思路：检查经销商是否已选择，检查折扣政策是否在有效期内，检查lovPara中isMakt是否为'2'</li></ul>
-<ul><li>问题2：保存并提交按钮不可点击</li><li>原因：priceType=3时保存并提交按钮隐藏，priceType=2时需满足(backEditFlag或新建)条件</li><li>解决思路：priceType=3时使用生成CRM订单按钮，priceType=2时确认编辑状态</li></ul>
-<ul><li>问题3：OA审批流程未推送</li><li>原因：流程编码未正确匹配，或OA接口异常，或hzInstanceId未生成</li><li>解决思路：检查渠道是否正确(渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT)，检查OA接口连通性</li></ul>
-<ul><li>问题4：CRM订单生成失败</li><li>原因：businessType映射异常，或CRM接口异常，或单据信息不完整</li><li>解决思路：检查businessType是否为3/12/16，查看INTF_INFO字段获取CRM返回信息，检查单据完整性</li></ul>
-<ul><li>问题5：可下单数量未正确扣减</li><li>原因：updateActiveQty未正确执行，或折扣政策产品行不存在</li><li>解决思路：检查DISCOUNT_POLICY_LINE是否存在对应产品行，检查ACTIVE_QTY字段值</li></ul>
-<ul><li>问题6：期望到达日期无法选择当月之后</li><li>原因：常规订单(billType=1)25号前仅允许当月，计划订单(billType=2)渠道限制范围</li><li>解决思路：确认订单类型，25号后仅瓷砖产品线可下常规订单，计划订单电商渠道6个月内其他3个月内</li></ul>
-<ul><li>问题7：展厅产品安装金额不为0</li><li>原因：customerSubclass=5展厅产品未正确识别</li><li>解决思路：检查CUSTOMER_SUBCLASS字段是否为5，展厅产品强制INSTALL_UNIT_AMT=0、IS_INSTALL=0</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">折扣政策选择弹窗无数据</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>当前经销商无可用折扣政策，或折扣政策已过期，或isMakt参数未正确传入<br><strong style="color:#7C3AED;">处理：</strong>检查经销商是否已选择，检查折扣政策是否在有效期内，检查lovPara中isMakt是否为'2'
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">保存并提交按钮不可点击</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>priceType=3时保存并提交按钮隐藏，priceType=2时需满足(backEditFlag或新建)条件<br><strong style="color:#7C3AED;">处理：</strong>priceType=3时使用生成CRM订单按钮，priceType=2时确认编辑状态
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">OA审批流程未推送</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>流程编码未正确匹配，或OA接口异常，或hzInstanceId未生成<br><strong style="color:#7C3AED;">处理：</strong>检查渠道是否正确(渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT)，检查OA接口连通性
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">CRM订单生成失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>businessType映射异常，或CRM接口异常，或单据信息不完整<br><strong style="color:#7C3AED;">处理：</strong>检查businessType是否为3/12/16，查看INTF_INFO字段获取CRM返回信息，检查单据完整性
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q5</span>
+    <span style="font-size:15px;">可下单数量未正确扣减</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>updateActiveQty未正确执行，或折扣政策产品行不存在<br><strong style="color:#7C3AED;">处理：</strong>检查DISCOUNT_POLICY_LINE是否存在对应产品行，检查ACTIVE_QTY字段值
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q6</span>
+    <span style="font-size:15px;">期望到达日期无法选择当月之后</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>常规订单(billType=1)25号前仅允许当月，计划订单(billType=2)渠道限制范围<br><strong style="color:#7C3AED;">处理：</strong>确认订单类型，25号后仅瓷砖产品线可下常规订单，计划订单电商渠道6个月内其他3个月内
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q7</span>
+    <span style="font-size:15px;">展厅产品安装金额不为0</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>customerSubclass=5展厅产品未正确识别<br><strong style="color:#7C3AED;">处理：</strong>检查CUSTOMER_SUBCLASS字段是否为5，展厅产品强制INSTALL_UNIT_AMT=0、IS_INSTALL=0
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

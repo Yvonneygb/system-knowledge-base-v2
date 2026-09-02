@@ -313,19 +313,25 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>政策已失效</td><td>保存</td><td>选定的政策已处于失效状态，选择有效政策</td><td>阻断性报错</td><td>[查看](#报错1政策已失效)</td></tr>
-<tr><td>政策不存在</td><td>保存</td><td>关联的政策不存在或已删除</td><td>阻断性报错</td><td>[查看](#报错2政策不存在)</td></tr>
-<tr><td>失效政策行不允许为空</td><td>保存</td><td>未选择要失效的政策行，先选择失效政策行</td><td>阻断性报错</td><td>[查看](#报错3失效政策行不允许为空)</td></tr>
-<tr><td>当前折扣政策不允许失效 请检查</td><td>保存</td><td>折扣政策编码不存在或不允许发起失效，核对政策编码</td><td>阻断性报错</td><td>[查看](#报错4当前折扣政策不允许失效-请检查)</td></tr>
-<tr><td>未找到该单据</td><td>删除</td><td>失效单不存在或已被删除，刷新列表</td><td>阻断性报错</td><td>[查看](#报错5未找到该单据)</td></tr>
-<tr><td>仅新建状态单据允许删除.</td><td>删除</td><td>失效单非新建状态不可删除，仅新建失效单可删除</td><td>阻断性报错</td><td>[查看](#报错6仅新建状态单据允许删除)</td></tr>
-<tr><td>政策失效id不能为空</td><td>工作流回调</td><td>工作流回调objId为空，联系管理员排查工作流配置</td><td>阻断性报错</td><td>[查看](#报错7政策失效id不能为空)</td></tr>
-<tr><td>政策明细推送crm出错,请稍后再试</td><td>审批回调</td><td>CRM接口返回空，稍后重试或联系管理员</td><td>阻断性报错</td><td>[查看](#报错8政策明细推送crm出错请稍后再试)</td></tr>
-<tr><td>政策明细推送crm出错：&#123;lineId&#125;:&#123;message&#125;</td><td>审批回调</td><td>CRM接口返回失败，查看具体错误信息处理</td><td>阻断性报错</td><td>[查看](#报错9政策明细推送crm出错lineidmessage)</td></tr>
+<tr><td>政策已失效</td><td>保存</td><td>选定的政策已处于失效状态，选择有效政策</td><td>阻断性报错</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>政策不存在</td><td>保存</td><td>关联的政策不存在或已删除</td><td>阻断性报错</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>失效政策行不允许为空</td><td>保存</td><td>未选择要失效的政策行，先选择失效政策行</td><td>阻断性报错</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>当前折扣政策不允许失效 请检查</td><td>保存</td><td>折扣政策编码不存在或不允许发起失效，核对政策编码</td><td>阻断性报错</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>未找到该单据</td><td>删除</td><td>失效单不存在或已被删除，刷新列表</td><td>阻断性报错</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>仅新建状态单据允许删除.</td><td>删除</td><td>失效单非新建状态不可删除，仅新建失效单可删除</td><td>阻断性报错</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>政策失效id不能为空</td><td>工作流回调</td><td>工作流回调objId为空，联系管理员排查工作流配置</td><td>阻断性报错</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>政策明细推送crm出错,请稍后再试</td><td>审批回调</td><td>CRM接口返回空，稍后重试或联系管理员</td><td>阻断性报错</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>政策明细推送crm出错：&#123;lineId&#125;:&#123;message&#125;</td><td>审批回调</td><td>CRM接口返回失败，查看具体错误信息处理</td><td>阻断性报错</td><td><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：政策已失效</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，校验关联的原折扣政策DISCOUNT_POLICY_ID对应记录的VALID=3（失效）</li><li><strong>逻辑分析</strong>：失效单只能针对有效状态（valid=2）的政策发起。校验逻辑按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY.VALID，若该值=3则抛异常，阻止保存。常见根因：用户选择的政策已被其他失效单失效、政策在保存前被并发失效、或前端政策选择列表未实时刷新。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>政策已失效</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，校验关联的原折扣政策DISCOUNT_POLICY_ID对应记录的VALID=3（失效）<br><strong>逻辑分析：</strong>失效单只能针对有效状态（valid=2）的政策发起。校验逻辑按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY.VALID，若该值=3则抛异常，阻止保存。常见根因：用户选择的政策已被其他失效单失效、政策在保存前被并发失效、或前端政策选择列表未实时刷新。</div>
+  </div>
+</div>
 
 ```sql
 SELECT d.discount_policy_disabled_id AS 失效单ID,
@@ -340,8 +346,14 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   WHERE  p.valid = 3
   ORDER  BY d.createtime DESC;
 ```
-<h4>报错2：政策不存在</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY返回null</li><li><strong>逻辑分析</strong>：失效单需关联到原折扣政策。若原政策在保存前被其他用户物理删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在，查询返回空，无法关联，抛异常阻止保存。常见根因：政策被并发删除、前端传参错误、或数据不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>政策不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY返回null<br><strong>逻辑分析：</strong>失效单需关联到原折扣政策。若原政策在保存前被其他用户物理删除、DISCOUNT_POLICY_ID传值错误、或政策从未存在，查询返回空，无法关联，抛异常阻止保存。常见根因：政策被并发删除、前端传参错误、或数据不一致。</div>
+  </div>
+</div>
 
 ```sql
 SELECT d.discount_policy_disabled_id AS 失效单ID,
@@ -354,8 +366,14 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   WHERE  p.discount_policy_id IS NULL
   ORDER  BY d.createtime DESC;
 ```
-<h4>报错3：失效政策行不允许为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，saveData校验时，DISCOUNT_POLICY_ITEM_DTO_LIST为空或全部被标记删除</li><li><strong>逻辑分析</strong>：失效单必须关联至少一行要失效的政策产品行，否则失效无意义。校验逻辑读取discountPolicyItemDTOList，为空则抛异常。常见根因：用户未选择要失效的政策行、政策行被全部删除、或前端未传政策行数据。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>失效政策行不允许为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，saveData校验时，DISCOUNT_POLICY_ITEM_DTO_LIST为空或全部被标记删除<br><strong>逻辑分析：</strong>失效单必须关联至少一行要失效的政策产品行，否则失效无意义。校验逻辑读取discountPolicyItemDTOList，为空则抛异常。常见根因：用户未选择要失效的政策行、政策行被全部删除、或前端未传政策行数据。</div>
+  </div>
+</div>
 
 ```sql
 SELECT d.discount_policy_disabled_id AS 失效单ID,
@@ -368,8 +386,14 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   GROUP  BY d.discount_policy_disabled_id, d.discount_policy_disabled_code, d.hz_approve_status
   HAVING COUNT(dpi.discount_policy_item_id) = 0;
 ```
-<h4>报错4：当前折扣政策不允许失效 请检查</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮，generateCode校验时，按DISCOUNT_POLICY_CODE查询EPM_DISCOUNT_POLICY返回空</li><li><strong>逻辑分析</strong>：失效单生成编码时需查询原折扣政策确认存在，若政策编码不存在则无法确定失效类型(工程/家装/样品)和编码规则，抛异常。常见根因：用户输入错误政策编码、政策已被删除、或政策编码从未存在。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前折扣政策不允许失效 请检查</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，generateCode校验时，按DISCOUNT_POLICY_CODE查询EPM_DISCOUNT_POLICY返回空<br><strong>逻辑分析：</strong>失效单生成编码时需查询原折扣政策确认存在，若政策编码不存在则无法确定失效类型(工程/家装/样品)和编码规则，抛异常。常见根因：用户输入错误政策编码、政策已被删除、或政策编码从未存在。</div>
+  </div>
+</div>
 
 ```sql
 SELECT d.discount_policy_disabled_id AS 失效单ID,
@@ -384,8 +408,14 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   WHERE  p.discount_policy_id IS NULL
   ORDER  BY d.createtime DESC;
 ```
-<h4>报错5：未找到该单据</h4>
-<ul><li><strong>触发条件</strong>：点击"删除"按钮，doDelete校验时，按DISCOUNT_POLICY_DISABLED_ID查询EPM_DISCOUNT_POLICY_DISABLED返回null</li><li><strong>逻辑分析</strong>：删除操作需先查询失效单确认存在。若失效单在删除前被其他用户物理删除、DISCOUNT_POLICY_DISABLED_ID传值错误、或失效单从未存在，查询返回空，无法删除，抛异常。常见根因：并发操作删除失效单、传参错误、或数据不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到该单据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"按钮，doDelete校验时，按DISCOUNT_POLICY_DISABLED_ID查询EPM_DISCOUNT_POLICY_DISABLED返回null<br><strong>逻辑分析：</strong>删除操作需先查询失效单确认存在。若失效单在删除前被其他用户物理删除、DISCOUNT_POLICY_DISABLED_ID传值错误、或失效单从未存在，查询返回空，无法删除，抛异常。常见根因：并发操作删除失效单、传参错误、或数据不一致。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_disabled_id AS 失效单ID,
@@ -394,8 +424,14 @@ SELECT discount_policy_disabled_id AS 失效单ID,
   FROM   epm_discount_policy_disabled
   WHERE  discount_policy_disabled_id = #{传入的discountPolicyDisabledId};
 ```
-<h4>报错6：仅新建状态单据允许删除.</h4>
-<ul><li><strong>触发条件</strong>：点击"删除"按钮，doDelete校验时，失效单HZ_APPROVE_STATUS≠NEW(新建)</li><li><strong>逻辑分析</strong>：仅新建状态(HZ_APPROVE_STATUS=NEW)的失效单允许删除，已提交审批或审批通过的失效单不允许删除，避免破坏审批流程和原政策状态。校验逻辑读取HZ_APPROVE_STATUS，非NEW则抛异常。常见根因：用户尝试删除已提交或已审批的失效单、或前端未做状态判断。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除.</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除"按钮，doDelete校验时，失效单HZ_APPROVE_STATUS≠NEW(新建)<br><strong>逻辑分析：</strong>仅新建状态(HZ_APPROVE_STATUS=NEW)的失效单允许删除，已提交审批或审批通过的失效单不允许删除，避免破坏审批流程和原政策状态。校验逻辑读取HZ_APPROVE_STATUS，非NEW则抛异常。常见根因：用户尝试删除已提交或已审批的失效单、或前端未做状态判断。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_disabled_id AS 失效单ID,
@@ -405,8 +441,14 @@ SELECT discount_policy_disabled_id AS 失效单ID,
   FROM   epm_discount_policy_disabled
   WHERE  hz_approve_status <> 'NEW';
 ```
-<h4>报错7：政策失效id不能为空</h4>
-<ul><li><strong>触发条件</strong>：工作流审批回调(wfComplete)时，回调报文中的objId(政策失效单ID)为null</li><li><strong>逻辑分析</strong>：工作流回调处理需根据objId查询失效单并更新状态，objId为空则无法定位失效单，回调处理失败。校验逻辑读取objId，为空则抛异常。常见根因：工作流配置错误、回调报文丢失objId、或工作流实例与业务单据映射异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>政策失效id不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流审批回调(wfComplete)时，回调报文中的objId(政策失效单ID)为null<br><strong>逻辑分析：</strong>工作流回调处理需根据objId查询失效单并更新状态，objId为空则无法定位失效单，回调处理失败。校验逻辑读取objId，为空则抛异常。常见根因：工作流配置错误、回调报文丢失objId、或工作流实例与业务单据映射异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT discount_policy_disabled_id AS 失效单ID,
@@ -416,8 +458,14 @@ SELECT discount_policy_disabled_id AS 失效单ID,
   FROM   epm_discount_policy_disabled
   WHERE  hz_instance_id = #{工作流实例ID};
 ```
-<h4>报错8：政策明细推送crm出错,请稍后再试</h4>
-<ul><li><strong>触发条件</strong>：工作流审批通过回调(wfComplete)时，调用CRM政策失效接口(policyDisabled)，CRM返回resultLine为null</li><li><strong>逻辑分析</strong>：失效审批通过后需推送CRM同步政策失效状态，CRM返回空则无法确认同步结果，抛异常。常见根因：CRM接口超时、CRM服务不可用、或网络异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>政策明细推送crm出错,请稍后再试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流审批通过回调(wfComplete)时，调用CRM政策失效接口(policyDisabled)，CRM返回resultLine为null<br><strong>逻辑分析：</strong>失效审批通过后需推送CRM同步政策失效状态，CRM返回空则无法确认同步结果，抛异常。常见根因：CRM接口超时、CRM服务不可用、或网络异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT d.discount_policy_disabled_id AS 失效单ID,
@@ -431,8 +479,14 @@ SELECT d.discount_policy_disabled_id AS 失效单ID,
   AND    p.suitable_type <> 'normal'
   ORDER  BY d.createtime DESC;
 ```
-<h4>报错9：政策明细推送crm出错：&#123;lineId&#125;:&#123;message&#125;</h4>
-<ul><li><strong>触发条件</strong>：工作流审批通过回调(wfComplete)时，调用CRM政策失效接口(policyDisabled)，CRM返回success=false且message非空</li><li><strong>逻辑分析</strong>：失效审批通过后需推送CRM同步政策失效状态，CRM返回失败信息则同步失败，抛异常并提示具体CRM行ID和错误信息。常见根因：CRM政策行不存在、CRM政策行状态异常、或CRM业务校验失败。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>政策明细推送crm出错：&#123;lineId&#125;:&#123;message&#125;</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流审批通过回调(wfComplete)时，调用CRM政策失效接口(policyDisabled)，CRM返回success=false且message非空<br><strong>逻辑分析：</strong>失效审批通过后需推送CRM同步政策失效状态，CRM返回失败信息则同步失败，抛异常并提示具体CRM行ID和错误信息。常见根因：CRM政策行不存在、CRM政策行状态异常、或CRM业务校验失败。</div>
+  </div>
+</div>
 
 ```sql
 SELECT dpi.discount_policy_item_id AS 政策行ID,
@@ -451,7 +505,18 @@ SELECT dpi.discount_policy_item_id AS 政策行ID,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：失效审批通过后原政策状态未更新</li><li>原因：工作流回调处理异常</li><li>解决思路：检查工作流回调逻辑，确认原政策valid是否已更新为3</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">失效审批通过后原政策状态未更新</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>工作流回调处理异常<br><strong style="color:#7C3AED;">处理：</strong>检查工作流回调逻辑，确认原政策valid是否已更新为3
+  </div>
+</div>
+</div>
 
 ```sql
 SELECT discount_policy_id, valid FROM epm_discount_policy WHERE discount_policy_id = {id};

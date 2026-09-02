@@ -318,8 +318,14 @@ WHERE F.REL_BUS_TYPE = 'prod'
 -- 检查产品图册数据是否存在
 SELECT COUNT(1) FROM OBJ_FILE_BUS_REL WHERE REL_BUS_TYPE = 'prod' AND BUS_ID = :prodCode;
 </code>``</blockquote>
-<h4>报错2：图片预览失败/空白</h4>
-<ul><li><strong>触发条件</strong>：点击图片卡片预览大图时，签名URL获取失败或图片加载失败</li><li><strong>逻辑分析</strong>：前端调用GET /hfle/v1/0/files/signedUrl获取OSS签名URL，若HFLE_FILE表中文件不存在、OSS文件已被删除、或签名URL过期则预览失败。前端逻辑：签名失败时跳过该图片不影响其他图片展示，但该卡片显示空白。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>图片预览失败/空白</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击图片卡片预览大图时，签名URL获取失败或图片加载失败<br><strong>逻辑分析：</strong>前端调用GET /hfle/v1/0/files/signedUrl获取OSS签名URL，若HFLE_FILE表中文件不存在、OSS文件已被删除、或签名URL过期则预览失败。前端逻辑：签名失败时跳过该图片不影响其他图片展示，但该卡片显示空白。</div>
+  </div>
+</div>
 
 ```sql
 SELECT F.ID AS 关联ID, F.FILE_URL AS 文件URL, F.BUS_ID AS 产品编码,
@@ -331,8 +337,14 @@ SELECT F.ID AS 关联ID, F.FILE_URL AS 文件URL, F.BUS_ID AS 产品编码,
     AND F.BUS_ID = :prodCode
     AND H.FILE_URL IS NULL;
 ```
-<h4>报错3：暂无数据</h4>
-<ul><li><strong>触发条件</strong>：查询产品图册时，GET /v1/&#123;organizationId&#125;/files接口返回空列表content=[]</li><li><strong>逻辑分析</strong>：前端searchFn调用files接口查询busType=prodPhoto&amp;relBusType=prod&amp;busId=&#123;prodCode&#125;的图册数据，若返回content为空数组则前端List组件渲染"暂无数据"占位图。常见于产品无图册数据、PLM同步任务未执行或图册数据被删除。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询产品图册时，GET /v1/&#123;organizationId&#125;/files接口返回空列表content=[]<br><strong>逻辑分析：</strong>前端searchFn调用files接口查询busType=prodPhoto&amp;relBusType=prod&amp;busId=&#123;prodCode&#125;的图册数据，若返回content为空数组则前端List组件渲染"暂无数据"占位图。常见于产品无图册数据、PLM同步任务未执行或图册数据被删除。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 图册数量
@@ -341,8 +353,14 @@ SELECT COUNT(1) AS 图册数量
     AND F.BUS_ID = :prodCode
     AND F.FILE_TYPE_ID IN (SELECT ID FROM OBJ_FILE_TYPE WHERE BUS_TYPE = 'prodPhoto');
 ```
-<h4>报错4：文件类型不存在:prodPhoto:xxx</h4>
-<ul><li><strong>触发条件</strong>：通过Excel导入产品图册时，导入的图片类型在OBJ_FILE_TYPE表中不存在</li><li><strong>逻辑分析</strong>：后端ObjFileBusRelServiceImpl.getFileBusRel方法根据fileBusType=prodPhoto和fileType查询OBJ_FILE_TYPE表（status=1），若objFileTypeDb为null则抛出RuntimeException。导入处理类ProdPhotoImport继承ObjFileBusRelImportServiceImpl，固定busType=prodPhoto。常见于导入模板的图片类型值与系统配置不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>文件类型不存在:prodPhoto:xxx</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>通过Excel导入产品图册时，导入的图片类型在OBJ_FILE_TYPE表中不存在<br><strong>逻辑分析：</strong>后端ObjFileBusRelServiceImpl.getFileBusRel方法根据fileBusType=prodPhoto和fileType查询OBJ_FILE_TYPE表（status=1），若objFileTypeDb为null则抛出RuntimeException。导入处理类ProdPhotoImport继承ObjFileBusRelImportServiceImpl，固定busType=prodPhoto。常见于导入模板的图片类型值与系统配置不一致。</div>
+  </div>
+</div>
 
 ```sql
 SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
@@ -351,8 +369,14 @@ SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
   ORDER BY T.FILE_BUS_TYPE;
   -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置
 ```
-<h4>报错5：PLM同步图册失败</h4>
-<ul><li><strong>触发条件</strong>：定时任务getProdPhotosJob执行时，调用PLM接口获取图册压缩包或解压上传文件失败</li><li><strong>逻辑分析</strong>：后端ProdPicturesJob.uploadFile方法将PLM返回的压缩包写入临时文件、解压、按文件类型上传至OSS并写入OBJ_FILE_BUS_REL。任一环节异常（PLM接口超时、压缩包损坏、解压失败、OSS上传失败）均抛出RuntimeException，事务回滚。常见于PLM接口不可用、OSS配置错误或磁盘空间不足。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>PLM同步图册失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>定时任务getProdPhotosJob执行时，调用PLM接口获取图册压缩包或解压上传文件失败<br><strong>逻辑分析：</strong>后端ProdPicturesJob.uploadFile方法将PLM返回的压缩包写入临时文件、解压、按文件类型上传至OSS并写入OBJ_FILE_BUS_REL。任一环节异常（PLM接口超时、压缩包损坏、解压失败、OSS上传失败）均抛出RuntimeException，事务回滚。常见于PLM接口不可用、OSS配置错误或磁盘空间不足。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查最近PLM同步的图册数据
@@ -363,8 +387,14 @@ SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
     AND F.CREATION_DATE >= SYSDATE - 1
   ORDER BY F.CREATION_DATE DESC;
 ```
-<h4>报错6：PLM同步文件类型xxx不存在</h4>
-<ul><li><strong>触发条件</strong>：PLM同步任务执行时，PLM返回的图片类型（smallDocType）在OBJ_FILE_TYPE表中不存在</li><li><strong>逻辑分析</strong>：后端ProdPicturesJob.uploadFile方法根据busType=prodPhoto和smallDocType查询OBJ_FILE_TYPE表，若objFileTypeDb为null则记录error日志并跳过该文件（continue），不抛出异常。该图片不会被同步，需在OBJ_FILE_TYPE表补充对应文件类型配置后重新同步。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>PLM同步文件类型xxx不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>PLM同步任务执行时，PLM返回的图片类型（smallDocType）在OBJ_FILE_TYPE表中不存在<br><strong>逻辑分析：</strong>后端ProdPicturesJob.uploadFile方法根据busType=prodPhoto和smallDocType查询OBJ_FILE_TYPE表，若objFileTypeDb为null则记录error日志并跳过该文件（continue），不抛出异常。该图片不会被同步，需在OBJ_FILE_TYPE表补充对应文件类型配置后重新同步。</div>
+  </div>
+</div>
 
 ```sql
 SELECT T.FILE_BUS_TYPE AS 已配置类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
@@ -372,8 +402,14 @@ SELECT T.FILE_BUS_TYPE AS 已配置类型编码, T.FILE_BUS_TYPE_NAME AS 类型�
   WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1';
   -- 对比PLM返回的smallDocType值，补充缺失的类型配置
 ```
-<h4>报错7：权限不足</h4>
-<ul><li><strong>触发条件</strong>：用户访问产品图册查询页或执行导入操作时，当前用户无对应权限</li><li><strong>逻辑分析</strong>：产品图册查询页通过低代码平台渲染，权限由HZERO IAM控制。导入操作需权限hzero.product_data.product_info.product_list.ps.import。若用户无权限则接口返回403或前端按钮不显示。常见于用户角色未分配产品图册相关权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问产品图册查询页或执行导入操作时，当前用户无对应权限<br><strong>逻辑分析：</strong>产品图册查询页通过低代码平台渲染，权限由HZERO IAM控制。导入操作需权限hzero.product_data.product_info.product_list.ps.import。若用户无权限则接口返回403或前端按钮不显示。常见于用户角色未分配产品图册相关权限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
@@ -383,8 +419,14 @@ SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
   WHERE P.PERMISSION_CODE LIKE '%product_list.ps.import%'
     AND R.ROLE_CODE = :currentRoleCode;
 ```
-<h4>报错8：会话过期</h4>
-<ul><li><strong>触发条件</strong>：用户在产品图册页面操作时，登录会话（access_token）已过期</li><li><strong>逻辑分析</strong>：前端请求携带的access_token过期，后端返回401未授权。前端HZERO框架拦截401状态码跳转登录页。常见于长时间未操作页面或token有效期过短。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在产品图册页面操作时，登录会话（access_token）已过期<br><strong>逻辑分析：</strong>前端请求携带的access_token过期，后端返回401未授权。前端HZERO框架拦截401状态码跳转登录页。常见于长时间未操作页面或token有效期过短。</div>
+  </div>
+</div>
 
 ```sql
 -- 无直接SQL，检查用户会话状态
@@ -395,7 +437,36 @@ SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：图册数据为空</li><li>原因：可能PLM同步任务未执行、产品无图册数据、或图册数据被删除</li><li>解决思路：</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">图册数据为空</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>可能PLM同步任务未执行、产品无图册数据、或图册数据被删除
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">PLM同步的图册未更新</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>定时任务getProdPhotosJob未执行或PLM接口异常<br><strong style="color:#7C3AED;">处理：</strong>检查定时任务执行日志和PLM接口连通性
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">图片无法预览</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>OSS文件已被删除或签名URL过期<br><strong style="color:#7C3AED;">处理：</strong>检查HFLE_FILE表中文件是否存在，重新上传或同步图册
+  </div>
+</div>
+</div>
 
 ```sql
 -- 检查图册数据
@@ -404,8 +475,6 @@ SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
       LEFT JOIN OBJ_FILE_TYPE T ON F.FILE_TYPE_ID = T.ID
     WHERE F.REL_BUS_TYPE = 'prod' AND F.BUS_ID = :prodCode;
 ```
-<ul><li>问题2：PLM同步的图册未更新</li><li>原因：定时任务getProdPhotosJob未执行或PLM接口异常</li><li>解决思路：检查定时任务执行日志和PLM接口连通性</li></ul>
-<ul><li>问题3：图片无法预览</li><li>原因：OSS文件已被删除或签名URL过期</li><li>解决思路：检查HFLE_FILE表中文件是否存在，重新上传或同步图册</li></ul>
 </KbCard>
 
 </div>

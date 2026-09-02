@@ -259,8 +259,14 @@
 <tr><td>项目报备数据不存在</td><td>审批通过推送CRM时</td><td>按PROJECT_ID查询EPM_REPORT为空。检查项目报备数据完整性</td><td>高</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：失效单不存在</h4>
-<ul><li><strong>触发条件</strong>：查询项目合同失效单详情时，按DISABLE_NO查询EPM_PROJECT_DISABLE返回null</li><li><strong>逻辑分析</strong>：详情方法中按DISABLE_NO查询失效单，若返回null则抛出阻断性报错。需检查失效单号有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>失效单不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询项目合同失效单详情时，按DISABLE_NO查询EPM_PROJECT_DISABLE返回null<br><strong>逻辑分析：</strong>详情方法中按DISABLE_NO查询失效单，若返回null则抛出阻断性报错。需检查失效单号有效性</div>
+  </div>
+</div>
 
 ```sql
 SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_CODE, epd.CONTRACT_CODE, epd.HZ_APPROVE_STATUS
@@ -268,8 +274,14 @@ SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_CODE, epd.CONTRACT_CODE, epd.
   WHERE epd.DISABLE_NO = :disableNo
   -- 若返回空，说明失效单不存在
 ```
-<h4>报错2：合同已失效，不可重复失效</h4>
-<ul><li><strong>触发条件</strong>：提交项目合同失效申请时，合同VALID=3(已失效)</li><li><strong>逻辑分析</strong>：提交校验中按CONTRACT_CODE查询EPM_PROJECT_CONTRACT，若VALID=3则抛出阻断性报错。无需重复操作</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>合同已失效，不可重复失效</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交项目合同失效申请时，合同VALID=3(已失效)<br><strong>逻辑分析：</strong>提交校验中按CONTRACT_CODE查询EPM_PROJECT_CONTRACT，若VALID=3则抛出阻断性报错。无需重复操作</div>
+  </div>
+</div>
 
 ```sql
 SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.VALID, epc.HZ_APPROVE_STATUS
@@ -278,8 +290,14 @@ SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.VALID, epc.HZ_
     AND epc.VALID = 3
   -- 查出已失效的合同
 ```
-<h4>报错3：仅新建状态单据允许删除</h4>
-<ul><li><strong>触发条件</strong>：删除项目合同失效单时，单据HZ_APPROVE_STATUS非NEW</li><li><strong>逻辑分析</strong>：删除方法中校验单据状态为NEW，其他状态(审批中/已通过/已拒绝)不允许删除。该报错为阻断性报错</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除项目合同失效单时，单据HZ_APPROVE_STATUS非NEW<br><strong>逻辑分析：</strong>删除方法中校验单据状态为NEW，其他状态(审批中/已通过/已拒绝)不允许删除。该报错为阻断性报错</div>
+  </div>
+</div>
 
 ```sql
 SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.HZ_APPROVE_STATUS, epd.VALID
@@ -287,8 +305,14 @@ SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.HZ_APPROVE_STATUS, epd.VALID
   WHERE epd.DISABLE_ID = :disableId
   -- 期望 HZ_APPROVE_STATUS = 'NEW'
 ```
-<h4>报错4：项目报备数据不存在</h4>
-<ul><li><strong>触发条件</strong>：项目合同失效审批通过后推送CRM时，按PROJECT_ID查询EPM_REPORT为空</li><li><strong>逻辑分析</strong>：在EpmProjectDisableServiceImpl审批回调方法中(line 133)，审批通过后按PROJECT_ID查询EPM_REPORT项目报备表，若返回空集合则抛出CommonException("项目报备数据不存在")。该报错发生在审批通过后的CRM推送环节，需检查项目报备数据是否完整</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>项目报备数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>项目合同失效审批通过后推送CRM时，按PROJECT_ID查询EPM_REPORT为空<br><strong>逻辑分析：</strong>在EpmProjectDisableServiceImpl审批回调方法中(line 133)，审批通过后按PROJECT_ID查询EPM_REPORT项目报备表，若返回空集合则抛出CommonException("项目报备数据不存在")。该报错发生在审批通过后的CRM推送环节，需检查项目报备数据是否完整</div>
+  </div>
+</div>
 
 ```sql
 SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_ID, epd.PROJECT_CODE,
@@ -301,7 +325,18 @@ SELECT epd.DISABLE_ID, epd.DISABLE_NO, epd.PROJECT_ID, epd.PROJECT_CODE,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：合同失效后能否恢复</li><li>原因：合同失效审批通过后状态不可逆</li><li>解决思路：需重新签订合同</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">合同失效后能否恢复</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>合同失效审批通过后状态不可逆<br><strong style="color:#7C3AED;">处理：</strong>需重新签订合同
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

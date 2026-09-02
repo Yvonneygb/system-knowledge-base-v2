@@ -497,8 +497,14 @@ FROM LNK_RSP_STM_PORC_CFG_LINE
 GROUP BY HEAD_ID, TYPE_1, TYPE_2
 HAVING COUNT(*) > 1;
 ```
-<h4>报错1：瓷砖品类不能为空</h4>
-<ul><li><strong>触发条件</strong>：头表保存时，未填写瓷砖品类（CATEGORY字段）</li><li><strong>逻辑分析</strong>：后端保存头表前校验CATEGORY非空。瓷砖品类是瓷砖参数配置的核心维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>瓷砖品类不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>头表保存时，未填写瓷砖品类（CATEGORY字段）<br><strong>逻辑分析：</strong>后端保存头表前校验CATEGORY非空。瓷砖品类是瓷砖参数配置的核心维度，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类,
@@ -506,40 +512,70 @@ SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类,
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
   WHERE H.ID = :headId AND H.CATEGORY IS NULL;
 ```
-<h4>报错2：规格不能为空</h4>
-<ul><li><strong>触发条件</strong>：头表保存时，未填写规格（STANDARD字段）</li><li><strong>逻辑分析</strong>：后端校验STANDARD非空。规格是瓷砖参数配置的核心维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>规格不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>头表保存时，未填写规格（STANDARD字段）<br><strong>逻辑分析：</strong>后端校验STANDARD非空。规格是瓷砖参数配置的核心维度，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.ID, H.STANDARD AS 规格, H.CATEGORY AS 瓷砖品类
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
   WHERE H.ID = :headId AND H.STANDARD IS NULL;
 ```
-<h4>报错3：生产基地不能为空</h4>
-<ul><li><strong>触发条件</strong>：头表保存时，未选择生产基地（PRODUCTION_BASE_CODE字段）</li><li><strong>逻辑分析</strong>：后端校验PRODUCTION_BASE_CODE非空。生产基地是瓷砖参数配置的核心维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>生产基地不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>头表保存时，未选择生产基地（PRODUCTION_BASE_CODE字段）<br><strong>逻辑分析：</strong>后端校验PRODUCTION_BASE_CODE非空。生产基地是瓷砖参数配置的核心维度，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.ID, H.STANDARD AS 规格, H.PRODUCTION_BASE_CODE AS 生产基地
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
   WHERE H.ID = :headId AND H.PRODUCTION_BASE_CODE IS NULL;
 ```
-<h4>报错4：大类不能为空</h4>
-<ul><li><strong>触发条件</strong>：行表保存时，未选择大类（TYPE_1字段）</li><li><strong>逻辑分析</strong>：后端保存行表前校验TYPE_1非空。大类是瓷砖定价的分类维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>大类不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>行表保存时，未选择大类（TYPE_1字段）<br><strong>逻辑分析：</strong>后端保存行表前校验TYPE_1非空。大类是瓷砖定价的分类维度，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.HEAD_ID = :headId AND L.TYPE_1 IS NULL;
 ```
-<h4>报错5：中类不能为空</h4>
-<ul><li><strong>触发条件</strong>：行表保存时，未选择中类（TYPE_2字段）</li><li><strong>逻辑分析</strong>：后端校验TYPE_2非空。中类级联大类，必须先选择大类后选择中类，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>中类不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>行表保存时，未选择中类（TYPE_2字段）<br><strong>逻辑分析：</strong>后端校验TYPE_2非空。中类级联大类，必须先选择大类后选择中类，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.HEAD_ID = :headId AND L.TYPE_2 IS NULL;
 ```
-<h4>报错6：定价不能为空</h4>
-<ul><li><strong>触发条件</strong>：行表保存时，未填写定价（PRICE字段）</li><li><strong>逻辑分析</strong>：后端校验PRICE非空。定价是瓷砖参数配置的核心输出值，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>定价不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>行表保存时，未填写定价（PRICE字段）<br><strong>逻辑分析：</strong>后端校验PRICE非空。定价是瓷砖参数配置的核心输出值，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
@@ -547,8 +583,14 @@ SELECT L.ID, L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.HEAD_ID = :headId AND L.PRICE IS NULL;
 ```
-<h4>报错7：保存明细行失败</h4>
-<ul><li><strong>触发条件</strong>：行表保存弹窗点击确认按钮，后端保存接口返回失败</li><li><strong>逻辑分析</strong>：后端saveData方法校验必填项（大类、中类、定价）和唯一性（同一HEAD_ID下TYPE_1+TYPE_2不重复）后插入LNK_RSP_STM_PORC_CFG_LINE表。若校验失败或数据库异常则返回失败，前端提示"保存明细行失败"。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保存明细行失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>行表保存弹窗点击确认按钮，后端保存接口返回失败<br><strong>逻辑分析：</strong>后端saveData方法校验必填项（大类、中类、定价）和唯一性（同一HEAD_ID下TYPE_1+TYPE_2不重复）后插入LNK_RSP_STM_PORC_CFG_LINE表。若校验失败或数据库异常则返回失败，前端提示"保存明细行失败"。</div>
+  </div>
+</div>
 
 ```sql
 SELECT L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
@@ -557,24 +599,42 @@ SELECT L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类,
   WHERE L.HEAD_ID = :headId
   ORDER BY L.TYPE_1, L.TYPE_2;
 ```
-<h4>报错8：头表ID不能为空</h4>
-<ul><li><strong>触发条件</strong>：新增明细行保存时，headId字段为空</li><li><strong>逻辑分析</strong>：后端RspStmPorcCfgLineServiceImpl.saveData方法中，对新增行校验line.getHeadId()是否为空，为空则抛出CommonException。常见于前端未正确传入头表ID或头表尚未保存就操作明细行。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>头表ID不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新增明细行保存时，headId字段为空<br><strong>逻辑分析：</strong>后端RspStmPorcCfgLineServiceImpl.saveData方法中，对新增行校验line.getHeadId()是否为空，为空则抛出CommonException。常见于前端未正确传入头表ID或头表尚未保存就操作明细行。</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.ROW_ID AS 头表ID, H.RSP_STM_HEAD_CODE AS 配置编码, H.STANDARD AS 规格
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
   WHERE H.ROW_ID = :headId;
 ```
-<h4>报错9：更新行ID不能为空</h4>
-<ul><li><strong>触发条件</strong>：更新明细行时，行id字段为空</li><li><strong>逻辑分析</strong>：后端RspStmPorcCfgLineServiceImpl.saveData方法中，对更新列表校验line.getId()是否为空，为空则抛出CommonException。常见于前端编辑弹窗未带出明细行ID。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>更新行ID不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>更新明细行时，行id字段为空<br><strong>逻辑分析：</strong>后端RspStmPorcCfgLineServiceImpl.saveData方法中，对更新列表校验line.getId()是否为空，为空则抛出CommonException。常见于前端编辑弹窗未带出明细行ID。</div>
+  </div>
+</div>
 
 ```sql
 SELECT L.ROW_ID AS 行ID, L.HEAD_ID AS 头表ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   FROM LNK_RSP_STM_PORC_CFG_LINE L
   WHERE L.ROW_ID = :lineId;
 ```
-<h4>报错10：大类和小类必须同时传入</h4>
-<ul><li><strong>触发条件</strong>：更新明细行时，type1与type2仅传入其中一个</li><li><strong>逻辑分析</strong>：后端RspStmPorcCfgLineServiceImpl.saveData方法中，对更新行校验type1Present与type2Present是否一致，不一致则抛出CommonException。确保大类中类成对修改。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>大类和小类必须同时传入</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>更新明细行时，type1与type2仅传入其中一个<br><strong>逻辑分析：</strong>后端RspStmPorcCfgLineServiceImpl.saveData方法中，对更新行校验type1Present与type2Present是否一致，不一致则抛出CommonException。确保大类中类成对修改。</div>
+  </div>
+</div>
 
 ```sql
 SELECT L.ROW_ID AS 行ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
@@ -582,8 +642,14 @@ SELECT L.ROW_ID AS 行ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类
   WHERE L.ROW_ID = :lineId
     AND (L.TYPE_1 IS NULL OR L.TYPE_2 IS NULL);
 ```
-<h4>报错11：该头表下已存在相同大类和中类的配置，请勿重复设置</h4>
-<ul><li><strong>触发条件</strong>：编辑明细行时，修改大类或中类后与同一头表下其他行重复</li><li><strong>逻辑分析</strong>：后端RspStmPorcCfgLineServiceImpl.saveData方法中，更新行时若type1或type2发生变化，查询同一headId下是否已存在相同type1+type2的记录（排除自身），存在则抛出CommonException。与新增校验的区别在于排除自身ID。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>该头表下已存在相同大类和中类的配置，请勿重复设置</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>编辑明细行时，修改大类或中类后与同一头表下其他行重复<br><strong>逻辑分析：</strong>后端RspStmPorcCfgLineServiceImpl.saveData方法中，更新行时若type1或type2发生变化，查询同一headId下是否已存在相同type1+type2的记录（排除自身），存在则抛出CommonException。与新增校验的区别在于排除自身ID。</div>
+  </div>
+</div>
 
 ```sql
 SELECT L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类, COUNT(*) AS 重复数
@@ -592,8 +658,14 @@ SELECT L.HEAD_ID, L.TYPE_1 AS 大类, L.TYPE_2 AS 中类, COUNT(*) AS 重复数
   GROUP BY L.HEAD_ID, L.TYPE_1, L.TYPE_2
   HAVING COUNT(*) > 1;
 ```
-<h4>报错12：保存失败</h4>
-<ul><li><strong>触发条件</strong>：头表保存按钮点击时，后端接口返回res.failed=true</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleSave调用rspStmPorcCfgHeadApi.save后，若res.failed为true则通过commonFn_showErrMsg展示后端错误信息。常见于头表重复校验（该规格已存在）或必填校验被前端捕获。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保存失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>头表保存按钮点击时，后端接口返回res.failed=true<br><strong>逻辑分析：</strong>前端detail.tsx中handleSave调用rspStmPorcCfgHeadApi.save后，若res.failed为true则通过commonFn_showErrMsg展示后端错误信息。常见于头表重复校验（该规格已存在）或必填校验被前端捕获。</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.ROW_ID AS 头表ID, H.RSP_STM_HEAD_CODE AS 配置编码,
@@ -602,20 +674,38 @@ SELECT H.ROW_ID AS 头表ID, H.RSP_STM_HEAD_CODE AS 配置编码,
   FROM LNK_RSP_STM_PORC_CFG_HEAD H
   ORDER BY H.LAST_UPDATE_DATE DESC;
 ```
-<h4>报错13：保存异常，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：头表保存按钮点击时，请求抛出异常进入catch块</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保存异常，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>头表保存按钮点击时，请求抛出异常进入catch块<br><strong>逻辑分析：</strong>前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;
 ```
-<h4>报错14：查询失败</h4>
-<ul><li><strong>触发条件</strong>：列表页查询或详情页加载时，接口请求异常</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmPorcCfgHead或rspStmPorcCfgLine接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询或详情页加载时，接口请求异常<br><strong>逻辑分析：</strong>前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmPorcCfgHead或rspStmPorcCfgLine接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD;
 ```
-<h4>报错15：权限不足</h4>
-<ul><li><strong>触发条件</strong>：用户访问页面或点击按钮时，未拥有对应权限编码</li><li><strong>逻辑分析</strong>：前端Button组件通过permissionList配置权限编码（如hzero.product_data.rsp_stm.porc_cfg.ps.add、import、export），HZERO平台校验当前用户角色是否包含该权限编码。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问页面或点击按钮时，未拥有对应权限编码<br><strong>逻辑分析：</strong>前端Button组件通过permissionList配置权限编码（如hzero.product_data.rsp_stm.porc_cfg.ps.add、import、export），HZERO平台校验当前用户角色是否包含该权限编码。</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
@@ -626,20 +716,38 @@ SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.porc_cfg.ps.%';
 ```
-<h4>报错16：暂无数据</h4>
-<ul><li><strong>触发条件</strong>：列表页查询结果为空集或明细行表格无数据</li><li><strong>逻辑分析</strong>：前端Table组件查询后端返回content为空数组时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询结果为空集或明细行表格无数据<br><strong>逻辑分析：</strong>前端Table组件查询后端返回content为空数组时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 头表记录数 FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE STATUS = 'valid';
 ```
-<h4>报错17：会话过期</h4>
-<ul><li><strong>触发条件</strong>：任意操作时，登录态失效或Token过期</li><li><strong>逻辑分析</strong>：HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态失效或Token过期<br><strong>逻辑分析：</strong>HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
 ```
-<h4>报错18：当前有未保存的更改，确定要离开吗？</h4>
-<ul><li><strong>触发条件</strong>：编辑模式下点击返回按钮</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前有未保存的更改，确定要离开吗？</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>编辑模式下点击返回按钮<br><strong>逻辑分析：</strong>前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
@@ -647,10 +755,45 @@ SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：新建头表保存后为什么自动出现很多明细行？</li><li>原因：头表保存后系统自动按值集CRM.RSP_STM_PORC_CFG_TYPE_SUB的所有条目生成明细行，price=0，status=valid</li><li>解决思路：自动生成的明细行可在详情页逐行编辑定价</li></ul>
-<ul><li>问题2：编辑头表时为什么规格/生产基地/瓷砖品类不能修改？</li><li>原因：编辑时这些字段disabled=!isNew=true，防止修改导致重复校验冲突</li><li>解决思路：如需修改，新建一条配置并将原配置失效</li></ul>
-<ul><li>问题3：瓷砖参数配置与基础参数配置的区别？</li><li>原因：基础参数配置为通用定价参数（按产品分类），瓷砖参数配置针对瓷砖品类特殊定价（按规格+品类+生产基地），采用头行结构</li><li>解决思路：瓷砖产品使用瓷砖参数配置，其他产品使用基础参数配置</li></ul>
-<ul><li>问题4：中类选项为什么有时为空？</li><li>原因：中类（type2）级联大类（type1），必须先选择大类后才能选择中类</li><li>解决思路：先选择大类，中类选项会自动过滤为该大类下的中类</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">新建头表保存后为什么自动出现很多明细行？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>头表保存后系统自动按值集CRM.RSP_STM_PORC_CFG_TYPE_SUB的所有条目生成明细行，price=0，status=valid<br><strong style="color:#7C3AED;">处理：</strong>自动生成的明细行可在详情页逐行编辑定价
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">编辑头表时为什么规格/生产基地/瓷砖品类不能修改？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>编辑时这些字段disabled=!isNew=true，防止修改导致重复校验冲突<br><strong style="color:#7C3AED;">处理：</strong>如需修改，新建一条配置并将原配置失效
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">瓷砖参数配置与基础参数配置的区别？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>基础参数配置为通用定价参数（按产品分类），瓷砖参数配置针对瓷砖品类特殊定价（按规格+品类+生产基地），采用头行结构<br><strong style="color:#7C3AED;">处理：</strong>瓷砖产品使用瓷砖参数配置，其他产品使用基础参数配置
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">中类选项为什么有时为空？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>中类（type2）级联大类（type1），必须先选择大类后才能选择中类<br><strong style="color:#7C3AED;">处理：</strong>先选择大类，中类选项会自动过滤为该大类下的中类
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

@@ -484,15 +484,21 @@ ORDER BY TDL.DECORATE_PROJECT
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>事业部不能为空</td><td>保存时</td><td>未选择事业部，选择事业部后保存</td><td>toast提醒</td><td>[查看](#报错1事业部不能为空)</td></tr>
-<tr><td>行信息不能为空</td><td>保存时</td><td>未添加明细行，至少配置一行明细</td><td>toast提醒</td><td>[查看](#报错2行信息不能为空)</td></tr>
-<tr><td>面积范围不合法</td><td>保存时</td><td>面积范围小于等于未大于面积范围大于，修正面积区间</td><td>toast提醒</td><td>[查看](#报错3面积范围不合法)</td></tr>
-<tr><td>有效日期不合法</td><td>保存时</td><td>有效结束日期早于开始日期，修正日期范围</td><td>toast提醒</td><td>[查看](#报错4有效日期不合法)</td></tr>
-<tr><td>金额标准必须大于0</td><td>保存时</td><td>额度内/外标准填写了0或负数，输入正确单价</td><td>toast提醒</td><td>[查看](#报错5金额标准必须大于0)</td></tr>
+<tr><td>事业部不能为空</td><td>保存时</td><td>未选择事业部，选择事业部后保存</td><td>toast提醒</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>行信息不能为空</td><td>保存时</td><td>未添加明细行，至少配置一行明细</td><td>toast提醒</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>面积范围不合法</td><td>保存时</td><td>面积范围小于等于未大于面积范围大于，修正面积区间</td><td>toast提醒</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>有效日期不合法</td><td>保存时</td><td>有效结束日期早于开始日期，修正日期范围</td><td>toast提醒</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>金额标准必须大于0</td><td>保存时</td><td>额度内/外标准填写了0或负数，输入正确单价</td><td>toast提醒</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：事业部不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验头信息中TERMINAL_DECORATE_STANDARD.ENTID(事业部ID)为null</li><li><strong>逻辑分析</strong>：装修标准按事业部隔离维护，不同事业部装修政策和补贴标准不同，事业部ID是数据隔离和下游匹配的关键字段。若用户新建装修标准时未选择事业部即点击保存，或事业部LOV选择后未正确回传ENTID，后端校验ENTID为空即抛出toast提醒"事业部不能为空"，保存被拦截。该异常为非阻断性提示，用户选择事业部后可重新保存。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>事业部不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验头信息中TERMINAL_DECORATE_STANDARD.ENTID(事业部ID)为null<br><strong>逻辑分析：</strong>装修标准按事业部隔离维护，不同事业部装修政策和补贴标准不同，事业部ID是数据隔离和下游匹配的关键字段。若用户新建装修标准时未选择事业部即点击保存，或事业部LOV选择后未正确回传ENTID，后端校验ENTID为空即抛出toast提醒"事业部不能为空"，保存被拦截。该异常为非阻断性提示，用户选择事业部后可重新保存。</div>
+  </div>
+</div>
 
 ```sql
 SELECT s.decorate_standard_id   AS 装修标准ID,
@@ -504,8 +510,14 @@ SELECT s.decorate_standard_id   AS 装修标准ID,
   WHERE  s.entid IS NULL
   ORDER  BY s.create_time DESC;
 ```
-<h4>报错2：行信息不能为空</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验明细行列表为空或行数为0</li><li><strong>逻辑分析</strong>：装修标准以头行结构维护，头表记录归属事业部，明细行记录具体装修项目+装修等级+面积范围+补贴单价。若无任何明细行，头表记录无实际补贴配置，下游装修申请/验收报销查询时匹配不到任何标准行，无法计算补贴金额。后端校验明细行列表非空且至少一行，若为空即抛出toast提醒"行信息不能为空"，保存被拦截。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>行信息不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验明细行列表为空或行数为0<br><strong>逻辑分析：</strong>装修标准以头行结构维护，头表记录归属事业部，明细行记录具体装修项目+装修等级+面积范围+补贴单价。若无任何明细行，头表记录无实际补贴配置，下游装修申请/验收报销查询时匹配不到任何标准行，无法计算补贴金额。后端校验明细行列表非空且至少一行，若为空即抛出toast提醒"行信息不能为空"，保存被拦截。</div>
+  </div>
+</div>
 
 ```sql
 SELECT s.decorate_standard_id   AS 装修标准ID,
@@ -520,8 +532,14 @@ SELECT s.decorate_standard_id   AS 装修标准ID,
   )
   ORDER  BY s.create_time DESC;
 ```
-<h4>报错3：面积范围不合法</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验某行明细的LOWER_AREA(面积范围小于等于)不大于UPER_AREA(面积范围大于)</li><li><strong>逻辑分析</strong>：面积范围通过UPER_AREA(下限，不含)和LOWER_AREA(上限，含)定义左开右闭区间，门店面积A匹配条件为UPER_AREA &lt; A &lt;= LOWER_AREA，要求LOWER_AREA &gt; UPER_AREA。若用户配置时误将下限填大于上限（如UPER_AREA=100、LOWER_AREA=50），区间为空集，任何门店面积都无法匹配该行，导致下游装修申请/验收报销匹配不到对应面积区间的补贴单价。后端校验LOWER_AREA &lt;= UPER_AREA即抛出toast提醒"面积范围不合法"。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>面积范围不合法</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验某行明细的LOWER_AREA(面积范围小于等于)不大于UPER_AREA(面积范围大于)<br><strong>逻辑分析：</strong>面积范围通过UPER_AREA(下限，不含)和LOWER_AREA(上限，含)定义左开右闭区间，门店面积A匹配条件为UPER_AREA &lt; A &lt;= LOWER_AREA，要求LOWER_AREA &gt; UPER_AREA。若用户配置时误将下限填大于上限（如UPER_AREA=100、LOWER_AREA=50），区间为空集，任何门店面积都无法匹配该行，导致下游装修申请/验收报销匹配不到对应面积区间的补贴单价。后端校验LOWER_AREA &lt;= UPER_AREA即抛出toast提醒"面积范围不合法"。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.decorate_line_id      AS 明细行ID,
@@ -534,8 +552,14 @@ SELECT l.decorate_line_id      AS 明细行ID,
   WHERE  l.lower_area <= l.uper_area
   ORDER  BY l.decorate_standard_id, l.decorate_project;
 ```
-<h4>报错4：有效日期不合法</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验某行明细的END_DATE(有效结束日期)早于START_DATE(有效开始日期)</li><li><strong>逻辑分析</strong>：每行明细有独立的有效期，下游单据引用时仅匹配当前日期在START_DATE至END_DATE之间的行。要求END_DATE &gt;= START_DATE，确保有效期内有可被引用的时间段。若用户选择日期时误将结束日期早于开始日期（如跨年配置时年份选错），该行有效期为空区间，任何日期都无法匹配，下游装修申请/验收报销查询时该行永不生效。后端校验END_DATE &lt; START_DATE即抛出toast提醒"有效日期不合法"。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>有效日期不合法</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验某行明细的END_DATE(有效结束日期)早于START_DATE(有效开始日期)<br><strong>逻辑分析：</strong>每行明细有独立的有效期，下游单据引用时仅匹配当前日期在START_DATE至END_DATE之间的行。要求END_DATE &gt;= START_DATE，确保有效期内有可被引用的时间段。若用户选择日期时误将结束日期早于开始日期（如跨年配置时年份选错），该行有效期为空区间，任何日期都无法匹配，下游装修申请/验收报销查询时该行永不生效。后端校验END_DATE &lt; START_DATE即抛出toast提醒"有效日期不合法"。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.decorate_line_id      AS 明细行ID,
@@ -548,8 +572,14 @@ SELECT l.decorate_line_id      AS 明细行ID,
   WHERE  l.end_date < l.start_date
   ORDER  BY l.decorate_standard_id, l.decorate_project;
 ```
-<h4>报错5：金额标准必须大于0</h4>
-<ul><li><strong>触发条件</strong>：点击"保存"按钮时，校验某行明细的IN_STANDARD(额度内标准)或OUT_STANDARD(额度外标准)小于等于0</li><li><strong>逻辑分析</strong>：IN_STANDARD和OUT_STANDARD分别为额度内和额度外的补贴单价(元/m²)，下游装修申请预估补贴和验收报销计算实际报销金额时按"面积×单价"计算，要求单价大于0才有业务意义。若用户误填0或负数（如未输入默认0、或误填负值），会导致补贴金额计算为0或负数，造成经销商利益受损或财务数据异常。后端校验IN_STANDARD &lt;= 0或OUT_STANDARD &lt;= 0即抛出toast提醒"金额标准必须大于0"。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>金额标准必须大于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮时，校验某行明细的IN_STANDARD(额度内标准)或OUT_STANDARD(额度外标准)小于等于0<br><strong>逻辑分析：</strong>IN_STANDARD和OUT_STANDARD分别为额度内和额度外的补贴单价(元/m²)，下游装修申请预估补贴和验收报销计算实际报销金额时按"面积×单价"计算，要求单价大于0才有业务意义。若用户误填0或负数（如未输入默认0、或误填负值），会导致补贴金额计算为0或负数，造成经销商利益受损或财务数据异常。后端校验IN_STANDARD &lt;= 0或OUT_STANDARD &lt;= 0即抛出toast提醒"金额标准必须大于0"。</div>
+  </div>
+</div>
 
 ```sql
 SELECT l.decorate_line_id      AS 明细行ID,
@@ -566,10 +596,45 @@ SELECT l.decorate_line_id      AS 明细行ID,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：装修标准查询无数据</li><li>原因：TERMINAL_DECORATE_LINE中该装修等级(FIXUP_GRADE)无配置，或当前日期不在有效期内</li><li>解决思路：检查SQL <code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE FIXUP_GRADE = #&#123;grade&#125; AND SYSDATE BETWEEN START_DATE AND END_DATE</code></li></ul>
-<ul><li>问题2：装修申请中标准金额不正确</li><li>原因：TERMINAL_DECORATE_LINE的IN_STANDARD/OUT_STANDARD配置错误</li><li>解决思路：核对装修标准明细表中对应装修项目和等级的单价配置</li></ul>
-<ul><li>问题3：面积范围匹配不上</li><li>原因：门店面积不在任何配置行的面积区间内（UPER_AREA, LOWER_AREA）</li><li>解决思路：检查面积区间配置是否覆盖该门店面积范围</li></ul>
-<ul><li>问题4：该页面无独立Controller</li><li>原因：本页面为hlod低代码页面，通过TerminalDecorateStandardRepository直接访问数据，查询接口嵌入在FinFeeCheckBxHeaderController和FinFeeApplyFinishedHeaderController中</li><li>解决思路：通过doSearchDecorate/searchDecorate/do-search-decorate接口间接查询</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">装修标准查询无数据</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>TERMINAL_DECORATE_LINE中该装修等级(FIXUP_GRADE)无配置，或当前日期不在有效期内<br><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE FIXUP_GRADE = #&#123;grade&#125; AND SYSDATE BETWEEN START_DATE AND END_DATE</code>
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">装修申请中标准金额不正确</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>TERMINAL_DECORATE_LINE的IN_STANDARD/OUT_STANDARD配置错误<br><strong style="color:#7C3AED;">处理：</strong>核对装修标准明细表中对应装修项目和等级的单价配置
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">面积范围匹配不上</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>门店面积不在任何配置行的面积区间内（UPER_AREA, LOWER_AREA）<br><strong style="color:#7C3AED;">处理：</strong>检查面积区间配置是否覆盖该门店面积范围
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">该页面无独立Controller</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>本页面为hlod低代码页面，通过TerminalDecorateStandardRepository直接访问数据，查询接口嵌入在FinFeeCheckBxHeaderController和FinFeeApplyFinishedHeaderController中<br><strong style="color:#7C3AED;">处理：</strong>通过doSearchDecorate/searchDecorate/do-search-decorate接口间接查询
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

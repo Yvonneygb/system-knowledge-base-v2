@@ -732,8 +732,14 @@ GROUP BY da.LECTURER_NAME;
 <tr><td>面积必须大于0</td><td>面积确认</td><td>确认面积非正数，检查 SCALE_AREA 字段</td><td>error</td><td>后端校验 SCALE_AREA &gt; 0</td></tr>
 </tbody>
 </table>
-<h4>报错1：请选择一条数据</h4>
-<ul><li><strong>触发条件</strong>：点击编辑、删除、取消申请、下载图纸、设计改派、查看反馈、终止、效果图补申等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击编辑、删除、取消申请、下载图纸、设计改派、查看反馈、终止、效果图补申等行操作按钮时，未选择数据或选择了多行<br><strong>逻辑分析：</strong>前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -744,8 +750,14 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   ORDER BY CREATE_DATE DESC;
 ```
-<h4>报错2：只有FDD签署中的申请单才可以签合同</h4>
-<ul><li><strong>触发条件</strong>：点击面积确认按钮时，审批状态不为 fdd_in_approval</li><li><strong>逻辑分析</strong>：前端校验 APPROVAL_STATE = 'fdd_in_approval'（FDD签署中），仅在此状态下才允许调用 useFDD 签合同。校验不通过提示"只有FDD签署中的申请单才可以签合同"。面积确认涉及合同签订，需在法大大签署流程中执行</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>只有FDD签署中的申请单才可以签合同</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击面积确认按钮时，审批状态不为 fdd_in_approval<br><strong>逻辑分析：</strong>前端校验 APPROVAL_STATE = 'fdd_in_approval'（FDD签署中），仅在此状态下才允许调用 useFDD 签合同。校验不通过提示"只有FDD签署中的申请单才可以签合同"。面积确认涉及合同签订，需在法大大签署流程中执行</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -756,8 +768,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE APPROVAL_STATE <> 'fdd_in_approval'
     AND ORDER_LECTURE_STATE IN ('valid', 'designing');
 ```
-<h4>报错3：只有待确认的申请单才可以签结算合同</h4>
-<ul><li><strong>触发条件</strong>：点击图纸确认按钮时，结算确认状态不为 to_be_confirm</li><li><strong>逻辑分析</strong>：前端校验 SETTLEMENT_CONFIRM_STATE = 'to_be_confirm'（待确认），仅在此状态下才允许调用 useFDD 签结算合同。校验不通过提示"只有待确认的申请单才可以签结算合同"。图纸确认涉及结算合同签订，需在待确认状态下执行</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>只有待确认的申请单才可以签结算合同</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击图纸确认按钮时，结算确认状态不为 to_be_confirm<br><strong>逻辑分析：</strong>前端校验 SETTLEMENT_CONFIRM_STATE = 'to_be_confirm'（待确认），仅在此状态下才允许调用 useFDD 签结算合同。校验不通过提示"只有待确认的申请单才可以签结算合同"。图纸确认涉及结算合同签订，需在待确认状态下执行</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -768,8 +786,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE SETTLEMENT_CONFIRM_STATE <> 'to_be_confirm'
     AND ORDER_LECTURE_STATE = 'drawing_uploaded';
 ```
-<h4>报错4：文件url不存在！</h4>
-<ul><li><strong>触发条件</strong>：下载图纸弹窗中点击文件名称预览时，文件URL为空</li><li><strong>逻辑分析</strong>：前端校验 FILE_URL 字段非空，若为空则提示"文件url不存在！"。文件URL由上传时生成，若为空说明文件未成功上传或上传后未回写URL，需检查文件存储服务状态和上传接口调用结果</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>文件url不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>下载图纸弹窗中点击文件名称预览时，文件URL为空<br><strong>逻辑分析：</strong>前端校验 FILE_URL 字段非空，若为空则提示"文件url不存在！"。文件URL由上传时生成，若为空说明文件未成功上传或上传后未回写URL，需检查文件存储服务状态和上传接口调用结果</div>
+  </div>
+</div>
 
 ```sql
 SELECT DESIGN_DRAWING_ID AS 图纸ID,
@@ -780,8 +804,14 @@ SELECT DESIGN_DRAWING_ID AS 图纸ID,
   FROM DESIGN_DRAWING
   WHERE FILE_URL IS NULL OR FILE_URL = '';
 ```
-<h4>报错5：反馈意见不能为空</h4>
-<ul><li><strong>触发条件</strong>：图纸反馈提交时，feedbackComments 字段为空</li><li><strong>逻辑分析</strong>：前端反馈弹窗对 feedbackComments 字段配置 required 校验，提交前校验反馈意见是否填写，为空则阻止提交并提示"反馈意见不能为空"。反馈意见用于记录经销商对设计图纸的意见，是设计沟通闭环的核心数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>反馈意见不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>图纸反馈提交时，feedbackComments 字段为空<br><strong>逻辑分析：</strong>前端反馈弹窗对 feedbackComments 字段配置 required 校验，提交前校验反馈意见是否填写，为空则阻止提交并提示"反馈意见不能为空"。反馈意见用于记录经销商对设计图纸的意见，是设计沟通闭环的核心数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT DESIGN_DRAWING_ID AS 图纸ID,
@@ -793,8 +823,14 @@ SELECT DESIGN_DRAWING_ID AS 图纸ID,
   WHERE FEEDBACK_RESULT IS NOT NULL
     AND (FEEDBACK_COMMENTS IS NULL OR FEEDBACK_COMMENTS = '');
 ```
-<h4>报错6：经销商不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存或保存并提交时，dealerName 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 dealerName 字段配置 required 校验，提交前校验经销商是否选择，为空则阻止提交并提示"经销商不能为空"。经销商是点将申请的发起主体，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>经销商不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或保存并提交时，dealerName 字段为空<br><strong>逻辑分析：</strong>前端表单对 dealerName 字段配置 required 校验，提交前校验经销商是否选择，为空则阻止提交并提示"经销商不能为空"。经销商是点将申请的发起主体，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -804,8 +840,14 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE DEALER_NAME IS NULL OR DEALER_CODE IS NULL;
 ```
-<h4>报错7：门店不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存或保存并提交时，terminalName 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 terminalName 字段配置 required 校验，提交前校验门店是否选择，为空则阻止提交并提示"门店不能为空"。门店是设计服务落地位置，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门店不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或保存并提交时，terminalName 字段为空<br><strong>逻辑分析：</strong>前端表单对 terminalName 字段配置 required 校验，提交前校验门店是否选择，为空则阻止提交并提示"门店不能为空"。门店是设计服务落地位置，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -815,8 +857,14 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE TERMINAL_NAME IS NULL OR TERMINAL_CODE IS NULL;
 ```
-<h4>报错8：设计师不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存或保存并提交时，lecturerName 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 lecturerName 字段配置 required 校验，提交前校验设计师是否选择，为空则阻止提交并提示"设计师不能为空"。设计师是点将的核心对象，必须明确被点将人</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>设计师不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或保存并提交时，lecturerName 字段为空<br><strong>逻辑分析：</strong>前端表单对 lecturerName 字段配置 required 校验，提交前校验设计师是否选择，为空则阻止提交并提示"设计师不能为空"。设计师是点将的核心对象，必须明确被点将人</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -826,8 +874,14 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE LECTURER_NAME IS NULL OR LECTURER_CODE IS NULL;
 ```
-<h4>报错9：设计名称不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存或保存并提交时，designName 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 designName 字段配置 required 校验，提交前校验设计名称是否填写，为空则阻止提交并提示"设计名称不能为空"。设计名称用于标识本次设计服务，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>设计名称不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或保存并提交时，designName 字段为空<br><strong>逻辑分析：</strong>前端表单对 designName 字段配置 required 校验，提交前校验设计名称是否填写，为空则阻止提交并提示"设计名称不能为空"。设计名称用于标识本次设计服务，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -836,8 +890,14 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE DESIGN_NAME IS NULL OR DESIGN_NAME = '';
 ```
-<h4>报错10：拟点将天数不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存或保存并提交时，preOrdLecturerDays 字段为空</li><li><strong>逻辑分析</strong>：前端表单对 preOrdLecturerDays 字段配置 required 校验，提交前校验拟点将天数是否填写，为空则阻止提交并提示"拟点将天数不能为空"。拟点将天数用于费用计算与设计师排期，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>拟点将天数不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或保存并提交时，preOrdLecturerDays 字段为空<br><strong>逻辑分析：</strong>前端表单对 preOrdLecturerDays 字段配置 required 校验，提交前校验拟点将天数是否填写，为空则阻止提交并提示"拟点将天数不能为空"。拟点将天数用于费用计算与设计师排期，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -846,8 +906,14 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE PRE_ORD_LECTURER_DAYS IS NULL;
 ```
-<h4>报错11：当前状态数据无法编辑！</h4>
-<ul><li><strong>触发条件</strong>：点击编辑按钮时，状态非草稿且非各类驳回状态</li><li><strong>逻辑分析</strong>：前端校验 ORDER_LECTURE_STATE = 'draft'（草稿）或 APPROVAL_STATE 为 reject/oa_reject/fdd_reject（各种驳回），任一条件满足才允许编辑。已生效（valid）、审批中（approving）等状态的申请已被下游引用，编辑可能影响数据一致性，故限制编辑。校验不通过提示"当前状态数据无法编辑！"</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前状态数据无法编辑！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击编辑按钮时，状态非草稿且非各类驳回状态<br><strong>逻辑分析：</strong>前端校验 ORDER_LECTURE_STATE = 'draft'（草稿）或 APPROVAL_STATE 为 reject/oa_reject/fdd_reject（各种驳回），任一条件满足才允许编辑。已生效（valid）、审批中（approving）等状态的申请已被下游引用，编辑可能影响数据一致性，故限制编辑。校验不通过提示"当前状态数据无法编辑！"</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -858,8 +924,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE ORDER_LECTURE_STATE <> 'draft'
     AND APPROVAL_STATE NOT IN ('reject', 'oa_reject', 'fdd_reject');
 ```
-<h4>报错12：请求失败</h4>
-<ul><li><strong>触发条件</strong>：调用 mlt/designApply/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM/文件存储）调用失败、工作流引擎异常、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、文件存储服务、工作流配置、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用 mlt/designApply/* 系列接口时，后端返回 HTTP 状态码非 2xx<br><strong>逻辑分析：</strong>前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM/文件存储）调用失败、工作流引擎异常、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、文件存储服务、工作流配置、后端日志定位具体异常堆栈</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -872,8 +944,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错13：网络异常/接口超时</h4>
-<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢、文件存储服务异常等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、工作流引擎响应慢、文件存储服务异常等。需检查网络连通性、后端服务负载、数据库性能</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -883,8 +961,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错14：权限不足</h4>
-<ul><li><strong>触发条件</strong>：点击编辑、删除、取消申请、面积确认、图纸确认、设计改派等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击编辑、删除、取消申请、面积确认、图纸确认、设计改派等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.USER_NAME AS 用户名,
@@ -898,8 +982,14 @@ SELECT U.USER_NAME AS 用户名,
   WHERE P.PERMISSION_CODE LIKE '%design_general%'
   ORDER BY U.USER_NAME;
 ```
-<h4>报错15：数据不存在</h4>
-<ul><li><strong>触发条件</strong>：查看、编辑、删除等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 DESIGN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查看、编辑、删除等操作时，接口返回数据为空或申请编码不存在<br><strong>逻辑分析：</strong>前端通过 applyCode 调用详情接口，后端查询 DESIGN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -909,8 +999,14 @@ SELECT APPLY_CODE AS 申请编码,
   FROM DESIGN_APPLY
   WHERE DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL;
 ```
-<h4>报错16：状态不允许操作</h4>
-<ul><li><strong>触发条件</strong>：点击取消申请、终止、设计改派等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如取消申请要求已生效且提前7天、终止要求非已完成、设计改派要求审批通过等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击取消申请、终止、设计改派等按钮时，申请状态不在允许操作的状态范围内<br><strong>逻辑分析：</strong>后端校验申请状态机，如取消申请要求已生效且提前7天、终止要求非已完成、设计改派要求审批通过等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -922,8 +1018,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE ORDER_LECTURE_STATE NOT IN ('draft','valid','designing','drawing_uploaded','finished')
   ORDER BY CREATE_DATE DESC;
 ```
-<h4>报错17：单个文件不能大于30MB</h4>
-<ul><li><strong>触发条件</strong>：上传图纸时，所选文件 file.size &gt; 30 * 1024 * 1024（30MB）</li><li><strong>逻辑分析</strong>：前端 UploadDrawing 组件 beforeUpload 钩子校验文件大小，超过30MB则阻止上传并提示"单个文件不能大于30MB"。限制源于OSS存储和后端解析性能考虑，大文件需压缩或拆分后上传</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单个文件不能大于30MB</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上传图纸时，所选文件 file.size &gt; 30 * 1024 * 1024（30MB）<br><strong>逻辑分析：</strong>前端 UploadDrawing 组件 beforeUpload 钩子校验文件大小，超过30MB则阻止上传并提示"单个文件不能大于30MB"。限制源于OSS存储和后端解析性能考虑，大文件需压缩或拆分后上传</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -933,8 +1035,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE FILE_SIZE > 30 * 1024 * 1024
   ORDER BY CREATION_DATE DESC;
 ```
-<h4>报错18：上传失败</h4>
-<ul><li><strong>触发条件</strong>：上传图纸时，OSS 上传抛错或上传成功但响应无 fileUrl</li><li><strong>逻辑分析</strong>：前端 UploadDrawing 组件 onUploadError 钩子捕获上传异常提示"上传失败：&#123;err.message&#125;"，onUploadSuccess 钩子校验响应 fileUrl 字段，为空则提示"上传失败：&#123;res.message&#125;"。常见根因：OSS 存储服务不可用、bucketName 配置错误、文件格式不被接受、网络中断等</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>上传失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上传图纸时，OSS 上传抛错或上传成功但响应无 fileUrl<br><strong>逻辑分析：</strong>前端 UploadDrawing 组件 onUploadError 钩子捕获上传异常提示"上传失败：&#123;err.message&#125;"，onUploadSuccess 钩子校验响应 fileUrl 字段，为空则提示"上传失败：&#123;res.message&#125;"。常见根因：OSS 存储服务不可用、bucketName 配置错误、文件格式不被接受、网络中断等</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -945,8 +1053,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE FILE_URL IS NULL OR ERROR_INFO IS NOT NULL
   ORDER BY CREATION_DATE DESC;
 ```
-<h4>报错19：同步外部系统失败</h4>
-<ul><li><strong>触发条件</strong>：点击同步CRM/同步OA/同步FDD按钮，对应推送接口返回失败</li><li><strong>逻辑分析</strong>：前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-19" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>同步外部系统失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击同步CRM/同步OA/同步FDD按钮，对应推送接口返回失败<br><strong>逻辑分析：</strong>前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -960,8 +1074,14 @@ SELECT APPLY_CODE AS 申请编码,
     AND LAST_UPDATE_DATE >= SYSDATE - 7
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错20：讲师排期冲突</h4>
-<ul><li><strong>触发条件</strong>：保存或保存并提交时，后端校验设计师在所选服务时间范围内已有其他排期</li><li><strong>逻辑分析</strong>：后端校验设计师 SERVICE_START_DATE 至 SERVICE_END_DATE 范围内是否与其他设计点将排期重叠，重叠则返回业务异常。需调整服务时间或更换设计师</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-20" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>讲师排期冲突</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或保存并提交时，后端校验设计师在所选服务时间范围内已有其他排期<br><strong>逻辑分析：</strong>后端校验设计师 SERVICE_START_DATE 至 SERVICE_END_DATE 范围内是否与其他设计点将排期重叠，重叠则返回业务异常。需调整服务时间或更换设计师</div>
+  </div>
+</div>
 
 ```sql
 SELECT A.APPLY_CODE AS 申请编码,
@@ -979,8 +1099,14 @@ SELECT A.APPLY_CODE AS 申请编码,
   WHERE A.ORDER_LECTURE_STATE IN ('valid','designing')
     AND B.ORDER_LECTURE_STATE IN ('valid','designing');
 ```
-<h4>报错21：面积必须大于0</h4>
-<ul><li><strong>触发条件</strong>：提交面积确认时，SCALE_AREA 字段非正数</li><li><strong>逻辑分析</strong>：后端校验 SCALE_AREA &gt; 0，面积用于计算设计费用，必须为正数。若为0或负数则返回业务异常。需检查面积输入是否正确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-21" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>面积必须大于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交面积确认时，SCALE_AREA 字段非正数<br><strong>逻辑分析：</strong>后端校验 SCALE_AREA &gt; 0，面积用于计算设计费用，必须为正数。若为0或负数则返回业务异常。需检查面积输入是否正确</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,

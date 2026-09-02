@@ -412,8 +412,14 @@ APPROVED（已审核） ──版本升级──→ NEW（新建，版本+1）
 <tr><td>版本升级失败，请稍后重试</td><td>版本升级按钮</td><td>版本升级接口异常或说明书ID为空。刷新页面后重试</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：说明书名称不能为空！</h4>
-<ul><li><strong>触发条件</strong>：详情页点击"保存"按钮时，说明书名称字段为空</li><li><strong>逻辑分析</strong>：前端DataSet.validate()校验说明书名称必填字段未通过，或后端实体注解@NotBlank校验失败。说明书名称是产品说明书的唯一标识，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>说明书名称不能为空！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页点击"保存"按钮时，说明书名称字段为空<br><strong>逻辑分析：</strong>前端DataSet.validate()校验说明书名称必填字段未通过，或后端实体注解@NotBlank校验失败。说明书名称是产品说明书的唯一标识，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
@@ -421,8 +427,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
   FROM LNK_PROD_MANUAL S
   WHERE S.ID = :manualId AND S.NAME IS NULL;
 ```
-<h4>报错2：产品编码不能为空</h4>
-<ul><li><strong>触发条件</strong>：调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，请求参数EsSpecDTO的itemCode字段为空</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>方法首先校验esSpec参数及itemCode，当<code>StringUtils.isEmpty(esSpec.getItemCode())</code>为true时，抛出<code>CommonException("产品编码不能为空")</code>。该接口供产品前端展示说明书PDF时调用，itemCode为必传参数。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，请求参数EsSpecDTO的itemCode字段为空<br><strong>逻辑分析：</strong>后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>方法首先校验esSpec参数及itemCode，当<code>StringUtils.isEmpty(esSpec.getItemCode())</code>为true时，抛出<code>CommonException("产品编码不能为空")</code>。该接口供产品前端展示说明书PDF时调用，itemCode为必传参数。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查产品是否关联了说明书
@@ -431,8 +443,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
   FROM LNK_PROD P
   WHERE P.PROD_CODE = :产品编码;
 ```
-<h4>报错3：说明书不存在</h4>
-<ul><li><strong>触发条件</strong>：调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，根据itemCode、manualItemCode、attachmentUuid查询ES_SPEC未找到记录</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>调用<code>esSpecRepository.selectSpecDocs(itemCode, manualItemCode, attachmentUuid)</code>查询说明书，返回vo为null时抛出<code>CommonException("说明书不存在")</code>。根因可能为：1）产品未关联说明书；2）说明书未审批通过（APPROVED）；3）说明书为历史版本（history=2）未纳入查询。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>说明书不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，根据itemCode、manualItemCode、attachmentUuid查询ES_SPEC未找到记录<br><strong>逻辑分析：</strong>后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>调用<code>esSpecRepository.selectSpecDocs(itemCode, manualItemCode, attachmentUuid)</code>查询说明书，返回vo为null时抛出<code>CommonException("说明书不存在")</code>。根因可能为：1）产品未关联说明书；2）说明书未审批通过（APPROVED）；3）说明书为历史版本（history=2）未纳入查询。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查产品编码对应的说明书是否存在且已审核
@@ -445,8 +463,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
     AND S.HZ_APPROVE_STATUS = 'APPROVED'
     AND NVL(S.HISTORY, 0) <> 2;
 ```
-<h4>报错4：说明书文件下载失败</h4>
-<ul><li><strong>触发条件</strong>：调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，说明书记录存在但文件下载异常</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>在查询到说明书后，通过<code>fileClient</code>下载文件。若fileUrl包含<code>@his_data@</code>则获取签名URL下载，否则通过<code>fileClient.downloadFile</code>下载。下载过程抛出Exception时，logger记录错误日志并抛出<code>CommonException(e.getMessage())</code>。根因可能为：1）文件存储服务不可用；2）附件已被删除；3）文件URL失效。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>说明书文件下载失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用<code>GET /v1/&#123;orgId&#125;/es-specs</code>查询说明书PDF流时，说明书记录存在但文件下载异常<br><strong>逻辑分析：</strong>后端<code>EsSpecServiceImpl.queryStreamByItemCode</code>在查询到说明书后，通过<code>fileClient</code>下载文件。若fileUrl包含<code>@his_data@</code>则获取签名URL下载，否则通过<code>fileClient.downloadFile</code>下载。下载过程抛出Exception时，logger记录错误日志并抛出<code>CommonException(e.getMessage())</code>。根因可能为：1）文件存储服务不可用；2）附件已被删除；3）文件URL失效。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查说明书附件文档记录
@@ -456,8 +480,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
   JOIN ES_DOCS D ON D.SPEC_ID = S.SPEC_ID
   WHERE S.SPEC_ID = :说明书ID;
 ```
-<h4>报错5：查询参数不能为空!</h4>
-<ul><li><strong>触发条件</strong>：调用<code>POST /v1/&#123;orgId&#125;/es-specs</code>（BcsApiController.querySpecUrl）查询说明书URL时，请求参数EsSpecParamDTO为null</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.querySpecUrl</code>方法首先校验param是否为null，为null时抛出<code>CommonException("查询参数不能为空!")</code>。该接口供BCS外部系统查询说明书URL调用。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询参数不能为空!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用<code>POST /v1/&#123;orgId&#125;/es-specs</code>（BcsApiController.querySpecUrl）查询说明书URL时，请求参数EsSpecParamDTO为null<br><strong>逻辑分析：</strong>后端<code>EsSpecServiceImpl.querySpecUrl</code>方法首先校验param是否为null，为null时抛出<code>CommonException("查询参数不能为空!")</code>。该接口供BCS外部系统查询说明书URL调用。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查说明书关联型号表是否有数据（确认查询目标存在）
@@ -465,8 +495,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
   FROM ES_SPECMODEL_REF R
   WHERE R.ITEMCODE = :产品编码;
 ```
-<h4>报错6：查询类型只能是normal、custom，且对应值不能为空</h4>
-<ul><li><strong>触发条件</strong>：调用<code>POST /v1/&#123;orgId&#125;/es-specs</code>查询说明书URL时，type参数不为"normal"或"custom"，或type为normal时itemCode为空，type为custom时model为空</li><li><strong>逻辑分析</strong>：后端<code>EsSpecServiceImpl.querySpecUrl</code>根据type分支校验：type="normal"时校验itemCode非空，type="custom"时校验model非空，其他type值均抛出<code>CommonException("查询类型只能是normal、custom，且对应值不能为空")</code>。normal模式按产品编码查询，custom模式按产品型号查询。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询类型只能是normal、custom，且对应值不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用<code>POST /v1/&#123;orgId&#125;/es-specs</code>查询说明书URL时，type参数不为"normal"或"custom"，或type为normal时itemCode为空，type为custom时model为空<br><strong>逻辑分析：</strong>后端<code>EsSpecServiceImpl.querySpecUrl</code>根据type分支校验：type="normal"时校验itemCode非空，type="custom"时校验model非空，其他type值均抛出<code>CommonException("查询类型只能是normal、custom，且对应值不能为空")</code>。normal模式按产品编码查询，custom模式按产品型号查询。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查按产品编码(normal)或型号(custom)能否查到说明书关联
@@ -475,8 +511,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
   FROM ES_SPECMODEL_REF R
   WHERE R.ITEMCODE = :产品编码 OR R.MODEL = :产品型号;
 ```
-<h4>报错7：权限不足，无法访问</h4>
-<ul><li><strong>触发条件</strong>：用户访问产品说明书列表页/详情页或点击新建/导出/版本升级按钮时，当前角色未配置对应权限编码</li><li><strong>逻辑分析</strong>：前端<code>PERMISSION_PREFIX=arrow-ae:productInfo:esSpecProp</code>，新建按钮权限<code>arrow-ae:productInfo:esSpecProp.button.create</code>，导出按钮权限<code>arrow-ae:productInfo:esSpecProp.button.export</code>，列表行查看权限<code>arrow-ae:productInfo:esSpecProp.list.button.line.view</code>。HZERO权限拦截器校验失败返回403。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法访问</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问产品说明书列表页/详情页或点击新建/导出/版本升级按钮时，当前角色未配置对应权限编码<br><strong>逻辑分析：</strong>前端<code>PERMISSION_PREFIX=arrow-ae:productInfo:esSpecProp</code>，新建按钮权限<code>arrow-ae:productInfo:esSpecProp.button.create</code>，导出按钮权限<code>arrow-ae:productInfo:esSpecProp.button.export</code>，列表行查看权限<code>arrow-ae:productInfo:esSpecProp.list.button.line.view</code>。HZERO权限拦截器校验失败返回403。</div>
+  </div>
+</div>
 
 ```sql
 -- 查询当前用户是否分配了说明书管理权限
@@ -489,8 +531,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
   WHERE U.REAL_NAME = :用户名
     AND P.CODE LIKE 'arrow-ae:productInfo:esSpecProp%';
 ```
-<h4>报错8：登录已过期，请重新登录</h4>
-<ul><li><strong>触发条件</strong>：用户在说明书页面操作时，HZERO Token过期或被踢出登录</li><li><strong>逻辑分析</strong>：前端axios请求携带Authorization Token访问后端接口，后端网关校验Token有效性。Token过期时返回401状态码，前端axios响应拦截器捕获401并跳转登录页。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>登录已过期，请重新登录</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在说明书页面操作时，HZERO Token过期或被踢出登录<br><strong>逻辑分析：</strong>前端axios请求携带Authorization Token访问后端接口，后端网关校验Token有效性。Token过期时返回401状态码，前端axios响应拦截器捕获401并跳转登录页。</div>
+  </div>
+</div>
 
 ```sql
 -- 查询用户最近登录会话状态
@@ -501,8 +549,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
   WHERE U.REAL_NAME = :用户名
   ORDER BY T.CREATE_TIME DESC;
 ```
-<h4>报错9：暂无数据</h4>
-<ul><li><strong>触发条件</strong>：列表页查询返回空列表，前端DataSet无数据渲染</li><li><strong>逻辑分析</strong>：前端<code>es-specs/report</code>接口返回content为空数组。根因可能为：1）查询条件过严无匹配说明书；2）尚未创建任何说明书；3）说明书均为历史版本被过滤。前端FilterTableCom展示"暂无数据"占位。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询返回空列表，前端DataSet无数据渲染<br><strong>逻辑分析：</strong>前端<code>es-specs/report</code>接口返回content为空数组。根因可能为：1）查询条件过严无匹配说明书；2）尚未创建任何说明书；3）说明书均为历史版本被过滤。前端FilterTableCom展示"暂无数据"占位。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查说明书总数及非历史版本数量
@@ -511,8 +565,14 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
          SUM(CASE WHEN HZ_APPROVE_STATUS = 'APPROVED' THEN 1 ELSE 0 END) AS 已审核数
   FROM ES_SPEC;
 ```
-<h4>报错10：版本升级失败，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：详情页点击"版本升级"按钮后保存时，调用<code>POST /v1/&#123;orgId&#125;/product-data/version-upgrade</code>接口返回异常</li><li><strong>逻辑分析</strong>：前端<code>handleUpgrade</code>将upgrade置为2、hzApproveStatus置为NEW、ver+1后保存。后端<code>ProductDataServiceImpl.versionUpgrade</code>根据specid查询原说明书主数据、关联型号、附件文档，复制创建新版本。当specid为null时直接返回null不创建新版本；当esSpecRepository.selectByPrimary查询不到原数据时后续操作NPE。版本升级按钮仅审批状态=APPROVED且history≠2时显示。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>版本升级失败，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页点击"版本升级"按钮后保存时，调用<code>POST /v1/&#123;orgId&#125;/product-data/version-upgrade</code>接口返回异常<br><strong>逻辑分析：</strong>前端<code>handleUpgrade</code>将upgrade置为2、hzApproveStatus置为NEW、ver+1后保存。后端<code>ProductDataServiceImpl.versionUpgrade</code>根据specid查询原说明书主数据、关联型号、附件文档，复制创建新版本。当specid为null时直接返回null不创建新版本；当esSpecRepository.selectByPrimary查询不到原数据时后续操作NPE。版本升级按钮仅审批状态=APPROVED且history≠2时显示。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查待版本升级的说明书状态是否符合条件
@@ -527,8 +587,27 @@ SELECT S.ID AS 说明书ID, S.NAME AS 说明书名称, S.VERSION AS 版本,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：说明书提交审批后能否修改</li><li>原因：审批中（RUN）和审批通过（APPROVED）状态不可修改</li><li>解决思路：审批拒绝后可重新编辑提交，或通过版本升级创建新版本</li></ul>
-<ul><li>问题2：版本升级后原版本数据是否保留</li><li>原因：版本升级创建新版本，原版本标记为历史版本（history=2）</li><li>解决思路：原版本数据保留，可通过历史版本查看</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">说明书提交审批后能否修改</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>审批中（RUN）和审批通过（APPROVED）状态不可修改<br><strong style="color:#7C3AED;">处理：</strong>审批拒绝后可重新编辑提交，或通过版本升级创建新版本
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">版本升级后原版本数据是否保留</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>版本升级创建新版本，原版本标记为历史版本（history=2）<br><strong style="color:#7C3AED;">处理：</strong>原版本数据保留，可通过历史版本查看
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

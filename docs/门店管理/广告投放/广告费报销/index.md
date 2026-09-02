@@ -489,21 +489,27 @@ NEW(新建) ──提交──→ RUN(审批中) ──OA审批通过──→ A
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>本次报销金额必须大于0！</td><td>提交</td><td>报销金额为0或负数，填写有效金额</td><td>阻断性报错</td><td>[查看](#报错1本次报销金额必须大于0)</td></tr>
-<tr><td>本次报销金额不能超过申请总金额！</td><td>提交</td><td>报销金额超过申请金额，减少报销金额</td><td>阻断性报错</td><td>[查看](#报错2本次报销金额不能超过申请总金额)</td></tr>
-<tr><td>本次报销金额不可超过可使用资源额度！</td><td>提交</td><td>额度内报销金额超过可用额度</td><td>阻断性报错</td><td>[查看](#报错3本次报销金额不可超过可使用资源额度)</td></tr>
-<tr><td>本次批准金额不可超过本次报销金额！</td><td>提交</td><td>批准金额超过报销金额</td><td>阻断性报错</td><td>[查看](#报错4本次批准金额不可超过本次报销金额)</td></tr>
-<tr><td>已有在途的广告投放申请单</td><td>提交</td><td>同一申请单已有在途报销单，等待审批完成</td><td>阻断性报错</td><td>[查看](#报错5已有在途的广告投放申请单)</td></tr>
-<tr><td>推送OA失败：门店广告投放报销申请不存在</td><td>OA推送</td><td>报销单已被删除</td><td>阻断性报错</td><td>[查看](#报错6推送oa失败门店广告投放报销申请不存在)</td></tr>
-<tr><td>费用项目未找到！</td><td>OA推送</td><td>费用项目配置异常</td><td>阻断性报错</td><td>[查看](#报错7费用项目未找到)</td></tr>
-<tr><td>OA回调失败：广告投放报销申请不存在！</td><td>OA回调</td><td>报销单已被删除</td><td>阻断性报错</td><td>[查看](#报错8oa回调失败广告投放报销申请不存在)</td></tr>
-<tr><td>ID不能为空</td><td>OA回调</td><td>OA回调缺少单据ID</td><td>阻断性报错</td><td>[查看](#报错9id不能为空)</td></tr>
-<tr><td>报销申请不存在</td><td>提交校验</td><td>报销单不存在</td><td>阻断性报错</td><td>[查看](#报错10报销申请不存在)</td></tr>
-<tr><td>主键不能为空!</td><td>更新工作流</td><td>工作流回调缺少单据ID</td><td>阻断性报错</td><td>[查看](#报错11主键不能为空)</td></tr>
+<tr><td>本次报销金额必须大于0！</td><td>提交</td><td>报销金额为0或负数，填写有效金额</td><td>阻断性报错</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>本次报销金额不能超过申请总金额！</td><td>提交</td><td>报销金额超过申请金额，减少报销金额</td><td>阻断性报错</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>本次报销金额不可超过可使用资源额度！</td><td>提交</td><td>额度内报销金额超过可用额度</td><td>阻断性报错</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>本次批准金额不可超过本次报销金额！</td><td>提交</td><td>批准金额超过报销金额</td><td>阻断性报错</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>已有在途的广告投放申请单</td><td>提交</td><td>同一申请单已有在途报销单，等待审批完成</td><td>阻断性报错</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>推送OA失败：门店广告投放报销申请不存在</td><td>OA推送</td><td>报销单已被删除</td><td>阻断性报错</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>费用项目未找到！</td><td>OA推送</td><td>费用项目配置异常</td><td>阻断性报错</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>OA回调失败：广告投放报销申请不存在！</td><td>OA回调</td><td>报销单已被删除</td><td>阻断性报错</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>ID不能为空</td><td>OA回调</td><td>OA回调缺少单据ID</td><td>阻断性报错</td><td><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>报销申请不存在</td><td>提交校验</td><td>报销单不存在</td><td>阻断性报错</td><td><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>主键不能为空!</td><td>更新工作流</td><td>工作流回调缺少单据ID</td><td>阻断性报错</td><td><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：本次报销金额必须大于0！</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，额度内（BX_TYPE=1）且广告费报销（SAVE_TYPE=2）时，校验本次报销金额thisStandardAmt&lt;=0</li><li><strong>逻辑分析</strong>：报销单需有有效报销金额才能占用资源额度与推送OA。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT，若该值&lt;=0则抛出阻断性异常，阻止OA推送和工作流发起。常见根因：用户未填写报销金额、金额被错误置0、或前端未做必填校验直接提交空单。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次报销金额必须大于0！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，额度内（BX_TYPE=1）且广告费报销（SAVE_TYPE=2）时，校验本次报销金额thisStandardAmt&lt;=0<br><strong>逻辑分析：</strong>报销单需有有效报销金额才能占用资源额度与推送OA。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT，若该值&lt;=0则抛出阻断性异常，阻止OA推送和工作流发起。常见根因：用户未填写报销金额、金额被错误置0、或前端未做必填校验直接提交空单。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -518,8 +524,14 @@ SELECT bx_id                AS 报销单ID,
   AND    (this_standard_amt IS NULL OR this_standard_amt <= 0)
   ORDER  BY create_time DESC;
 ```
-<h4>报错2：本次报销金额不能超过申请总金额！</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，校验本次报销金额thisStandardAmt&gt;申请总金额totalApplyAmtBx</li><li><strong>逻辑分析</strong>：报销金额受申请单总金额约束。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT与TOTAL_APPLY_AMT_BX，当本次报销金额超过申请总金额则抛异常。常见根因：用户输入报销金额超限、申请单金额被修改、或前端未实时带入最新申请总金额。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次报销金额不能超过申请总金额！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，校验本次报销金额thisStandardAmt&gt;申请总金额totalApplyAmtBx<br><strong>逻辑分析：</strong>报销金额受申请单总金额约束。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT与TOTAL_APPLY_AMT_BX，当本次报销金额超过申请总金额则抛异常。常见根因：用户输入报销金额超限、申请单金额被修改、或前端未实时带入最新申请总金额。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -533,8 +545,14 @@ SELECT bx_id                AS 报销单ID,
   AND    this_standard_amt > total_apply_amt_bx
   ORDER  BY create_time DESC;
 ```
-<h4>报错3：本次报销金额不可超过可使用资源额度！</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，额度内（BX_TYPE=1）时，校验本次报销金额thisStandardAmt&gt;额度内可用金额inCanUseAmt</li><li><strong>逻辑分析</strong>：额度内报销需占用资源额度，报销金额不能超过当前可用额度。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT与IN_CAN_USE_AMT，当BX_TYPE=1且本次报销金额&gt;额度内可用金额时抛异常。常见根因：资源额度已被其他报销单占用、额度未及时刷新、或用户输入报销金额超限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次报销金额不可超过可使用资源额度！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，额度内（BX_TYPE=1）时，校验本次报销金额thisStandardAmt&gt;额度内可用金额inCanUseAmt<br><strong>逻辑分析：</strong>额度内报销需占用资源额度，报销金额不能超过当前可用额度。校验逻辑读取FIN_FEE_BX_HEADER.THIS_STANDARD_AMT与IN_CAN_USE_AMT，当BX_TYPE=1且本次报销金额&gt;额度内可用金额时抛异常。常见根因：资源额度已被其他报销单占用、额度未及时刷新、或用户输入报销金额超限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -550,8 +568,14 @@ SELECT bx_id                AS 报销单ID,
   AND    this_standard_amt > in_can_use_amt
   ORDER  BY create_time DESC;
 ```
-<h4>报错4：本次批准金额不可超过本次报销金额！</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，校验本次批准金额thisAuthorizeStandardAmt&gt;本次报销金额thisStandardAmt</li><li><strong>逻辑分析</strong>：OA回调写入的批准金额不能超过用户提交的报销金额。校验逻辑读取FIN_FEE_BX_HEADER.THIS_AUTHORIZE_STANDARD_AMT与THIS_STANDARD_AMT，当批准金额超过报销金额则抛异常。常见根因：OA审批时批准金额被错误调大、数据回写异常、或前端未做边界校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次批准金额不可超过本次报销金额！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，校验本次批准金额thisAuthorizeStandardAmt&gt;本次报销金额thisStandardAmt<br><strong>逻辑分析：</strong>OA回调写入的批准金额不能超过用户提交的报销金额。校验逻辑读取FIN_FEE_BX_HEADER.THIS_AUTHORIZE_STANDARD_AMT与THIS_STANDARD_AMT，当批准金额超过报销金额则抛异常。常见根因：OA审批时批准金额被错误调大、数据回写异常、或前端未做边界校验。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                       AS 报销单ID,
@@ -564,8 +588,14 @@ SELECT bx_id                       AS 报销单ID,
   AND    this_authorize_standard_amt > this_standard_amt
   ORDER  BY create_time DESC;
 ```
-<h4>报错5：已有在途的广告投放申请单</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，校验同一申请单号FEE_APPLY_NO下已存在审批状态为RUN的报销单</li><li><strong>逻辑分析</strong>：为防止同一申请单重复报销，提交前查询FIN_FEE_BX_HEADER中同一FEE_APPLY_NO且HZ_APPROVE_STATUS='RUN'的记录数。若存在在途单据则抛异常，阻止重复提交。常见根因：用户在第一张报销单审批未完成时又提交第二张、或前端未做在途校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>已有在途的广告投放申请单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，校验同一申请单号FEE_APPLY_NO下已存在审批状态为RUN的报销单<br><strong>逻辑分析：</strong>为防止同一申请单重复报销，提交前查询FIN_FEE_BX_HEADER中同一FEE_APPLY_NO且HZ_APPROVE_STATUS='RUN'的记录数。若存在在途单据则抛异常，阻止重复提交。常见根因：用户在第一张报销单审批未完成时又提交第二张、或前端未做在途校验。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_apply_no        AS 申请单号,
@@ -577,8 +607,14 @@ SELECT fee_apply_no        AS 申请单号,
   GROUP  BY fee_apply_no
   HAVING COUNT(*) >= 1;
 ```
-<h4>报错6：推送OA失败：门店广告投放报销申请不存在</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮推送OA时，按bxId查询FIN_FEE_BX_HEADER返回null</li><li><strong>逻辑分析</strong>：OA推送前需查询报销单组装数据。若单据在推送前被其他用户删除（物理删除），或bxId传值错误，查询返回空，无法组装OA数据导致推送失败。常见根因：并发操作删除单据、传参错误、或事务未提交即调用OA推送。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>推送OA失败：门店广告投放报销申请不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮推送OA时，按bxId查询FIN_FEE_BX_HEADER返回null<br><strong>逻辑分析：</strong>OA推送前需查询报销单组装数据。若单据在推送前被其他用户删除（物理删除），或bxId传值错误，查询返回空，无法组装OA数据导致推送失败。常见根因：并发操作删除单据、传参错误、或事务未提交即调用OA推送。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -589,8 +625,14 @@ SELECT bx_id                AS 报销单ID,
   WHERE  save_type = 2
   AND    bx_id = #{传入的bxId};
 ```
-<h4>报错7：费用项目未找到！</h4>
-<ul><li><strong>触发条件</strong>：OA推送时，按报销单费用项目配置查询费用项目主数据返回null</li><li><strong>逻辑分析</strong>：OA推送需用费用项目组装OA表单。若报销单关联的费用项目（OBJECT_NAME）在费用项目主数据表中不存在、费用项目被停用删除、或配置错误，查询返回空，无法组装OA数据。常见根因：费用项目主数据未同步、配置错误、或报销单费用项目字段为空。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>费用项目未找到！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA推送时，按报销单费用项目配置查询费用项目主数据返回null<br><strong>逻辑分析：</strong>OA推送需用费用项目组装OA表单。若报销单关联的费用项目（OBJECT_NAME）在费用项目主数据表中不存在、费用项目被停用删除、或配置错误，查询返回空，无法组装OA数据。常见根因：费用项目主数据未同步、配置错误、或报销单费用项目字段为空。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -603,8 +645,14 @@ SELECT bx_id                AS 报销单ID,
   AND    (object_name IS NULL OR object_name NOT IN (SELECT project_code FROM fin_fee_project WHERE stat = 1))
   ORDER  BY create_time DESC;
 ```
-<h4>报错8：OA回调失败：广告投放报销申请不存在！</h4>
-<ul><li><strong>触发条件</strong>：OA审批完成回调DMS时，按回调报文中的bxId查询FIN_FEE_BX_HEADER返回null</li><li><strong>逻辑分析</strong>：OA回调处理需更新报销单审批状态、批准金额、发票信息等。若回调期间单据被删除，或OA回调报文的单据ID与DMS不一致（如OA配置错误、ID映射异常），查询返回空，回调处理失败，审批状态无法更新。常见根因：单据被并发删除、OA配置错误、或回调报文ID丢失。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>OA回调失败：广告投放报销申请不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA审批完成回调DMS时，按回调报文中的bxId查询FIN_FEE_BX_HEADER返回null<br><strong>逻辑分析：</strong>OA回调处理需更新报销单审批状态、批准金额、发票信息等。若回调期间单据被删除，或OA回调报文的单据ID与DMS不一致（如OA配置错误、ID映射异常），查询返回空，回调处理失败，审批状态无法更新。常见根因：单据被并发删除、OA配置错误、或回调报文ID丢失。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -616,8 +664,14 @@ SELECT bx_id                AS 报销单ID,
   WHERE  save_type = 2
   AND    bx_id = #{OA回调报文中的bxId};
 ```
-<h4>报错9：ID不能为空</h4>
-<ul><li><strong>触发条件</strong>：OA回调处理方法接收到的bxId参数为null或空字符串</li><li><strong>逻辑分析</strong>：OA回调接口需用bxId定位单据。若OA系统未正确配置回调用单据ID字段，或回调报文丢失ID字段，DMS接收到的ID为空，无法执行后续更新逻辑。常见根因：OA单据配置缺失ID字段、回调报文格式异常、或接口映射错误。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>ID不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>OA回调处理方法接收到的bxId参数为null或空字符串<br><strong>逻辑分析：</strong>OA回调接口需用bxId定位单据。若OA系统未正确配置回调用单据ID字段，或回调报文丢失ID字段，DMS接收到的ID为空，无法执行后续更新逻辑。常见根因：OA单据配置缺失ID字段、回调报文格式异常、或接口映射错误。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -630,8 +684,14 @@ SELECT bx_id                AS 报销单ID,
   AND    bx_id IS NULL
   ORDER  BY create_time DESC;
 ```
-<h4>报错10：报销申请不存在</h4>
-<ul><li><strong>触发条件</strong>：提交校验时，按bxId查询FIN_FEE_BX_HEADER返回null</li><li><strong>逻辑分析</strong>：提交校验需查询报销单确认单据存在且状态合法。若单据已被删除、bxId传值错误、或事务未提交即调用校验，查询返回空，无法继续提交逻辑。常见根因：单据被并发删除、前端传参错误、或保存失败后误调提交。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销申请不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交校验时，按bxId查询FIN_FEE_BX_HEADER返回null<br><strong>逻辑分析：</strong>提交校验需查询报销单确认单据存在且状态合法。若单据已被删除、bxId传值错误、或事务未提交即调用校验，查询返回空，无法继续提交逻辑。常见根因：单据被并发删除、前端传参错误、或保存失败后误调提交。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -642,8 +702,14 @@ SELECT bx_id                AS 报销单ID,
   WHERE  save_type = 2
   AND    bx_id = #{传入的bxId};
 ```
-<h4>报错11：主键不能为空!</h4>
-<ul><li><strong>触发条件</strong>：工作流回调更新报销单时，接收到的bxId（单据主键）为null或0</li><li><strong>逻辑分析</strong>：工作流回调需用bxId定位并更新报销单审批状态。若工作流配置未正确传回单据ID、回调报文丢失ID、或保存时未正确回写BX_ID，会导致主键为空，无法执行更新逻辑。常见根因：工作流配置错误、回调报文异常、或自增序列未取回。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>主键不能为空!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流回调更新报销单时，接收到的bxId（单据主键）为null或0<br><strong>逻辑分析：</strong>工作流回调需用bxId定位并更新报销单审批状态。若工作流配置未正确传回单据ID、回调报文丢失ID、或保存时未正确回写BX_ID，会导致主键为空，无法执行更新逻辑。常见根因：工作流配置错误、回调报文异常、或自增序列未取回。</div>
+  </div>
+</div>
 
 ```sql
 SELECT bx_id                AS 报销单ID,
@@ -659,8 +725,27 @@ SELECT bx_id                AS 报销单ID,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：OA审批推送失败</li><li>原因：OA系统不可用或数据组装异常</li><li>解决思路：检查OA系统状态和OA单据配置</li></ul>
-<ul><li>问题2：提交时提示已有在途单据</li><li>原因：同一申请单已有审批中的报销单</li><li>解决思路：等待在途单据审批完成或作废在途单据后重新提交</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">OA审批推送失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>OA系统不可用或数据组装异常<br><strong style="color:#7C3AED;">处理：</strong>检查OA系统状态和OA单据配置
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">提交时提示已有在途单据</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>同一申请单已有审批中的报销单<br><strong style="color:#7C3AED;">处理：</strong>等待在途单据审批完成或作废在途单据后重新提交
+  </div>
+</div>
+</div>
 
 ```sql
 SELECT bx_id, bx_no, hz_approve_status FROM fin_fee_bx_header

@@ -331,8 +331,14 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
 <tr><td>权限不足</td><td>进入页面时</td><td>当前用户无事业部数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：重新生成失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击"重新生成"按钮，regenerate接口执行汇总计算时抛出异常</li><li><strong>逻辑分析</strong>：重新生成接口按入参（事业部+交易公司+开票单位+起始时间）汇总明细行（BUD_INLIMIT_ACCOUNT_LINE）总额，计算期初余额、扣减金额、到期调整、其他调整、额度内兑现、期末余额，插入/更新BUD_INLIMIT_BALANCE_ACCOUNT头表。失败根因有三类：(1)明细数据未就绪，上游MKT_INLIMIT_BALANCE_DETAILS明细行数据未生成或未同步；(2)汇总计算异常，如除零错误（税率为0时计算不含税金额）或金额溢出；(3)头表唯一约束冲突（同事业部+交易公司+年月重复生成）。需核查明细行数据及汇总日志</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>重新生成失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"重新生成"按钮，regenerate接口执行汇总计算时抛出异常<br><strong>逻辑分析：</strong>重新生成接口按入参（事业部+交易公司+开票单位+起始时间）汇总明细行（BUD_INLIMIT_ACCOUNT_LINE）总额，计算期初余额、扣减金额、到期调整、其他调整、额度内兑现、期末余额，插入/更新BUD_INLIMIT_BALANCE_ACCOUNT头表。失败根因有三类：(1)明细数据未就绪，上游MKT_INLIMIT_BALANCE_DETAILS明细行数据未生成或未同步；(2)汇总计算异常，如除零错误（税率为0时计算不含税金额）或金额溢出；(3)头表唯一约束冲突（同事业部+交易公司+年月重复生成）。需核查明细行数据及汇总日志</div>
+  </div>
+</div>
 
 ```sql
 -- 核查明细行数据是否就绪
@@ -348,8 +354,14 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
   FROM BUD_INLIMIT_BALANCE_ACCOUNT
   WHERE ENTNAME = #{entname} AND YEARMONTH = #{yearmonth};
 ```
-<h4>报错2：查询无数据</h4>
-<ul><li><strong>触发条件</strong>：用户按事业部/交易公司/年月查询对账单，BUD_INLIMIT_BALANCE_ACCOUNT表返回空结果集</li><li><strong>逻辑分析</strong>：对账单头表数据由"重新生成"操作写入，非自动生成。无数据根因有二：(1)从未执行过重新生成，头表为空；(2)查询条件（ENTNAME+TRADING_COMPANY_CODE+YEARMONTH）与头表记录不匹配。需先执行重新生成，再查询确认</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户按事业部/交易公司/年月查询对账单，BUD_INLIMIT_BALANCE_ACCOUNT表返回空结果集<br><strong>逻辑分析：</strong>对账单头表数据由"重新生成"操作写入，非自动生成。无数据根因有二：(1)从未执行过重新生成，头表为空；(2)查询条件（ENTNAME+TRADING_COMPANY_CODE+YEARMONTH）与头表记录不匹配。需先执行重新生成，再查询确认</div>
+  </div>
+</div>
 
 ```sql
 SELECT INLIMIT_BALANCE_ACCOUNT_ID, ENTNAME, TRADING_COMPANY_CODE, BILLING_UNIT_CODE,
@@ -360,8 +372,14 @@ SELECT INLIMIT_BALANCE_ACCOUNT_ID, ENTNAME, TRADING_COMPANY_CODE, BILLING_UNIT_C
     AND (YEARMONTH = #{yearmonth} OR #{yearmonth} IS NULL)
   ORDER BY YEARMONTH DESC;
 ```
-<h4>报错3：生成出库单的日期最迟为前一个月</h4>
-<ul><li><strong>触发条件</strong>：用户在重新生成时传入的查询年月（yearmonth）超过当前年月</li><li><strong>逻辑分析</strong>：后端BudInlimitBalanceAccountServiceImpl.regenerate方法中，将当前年月（cal.get(Calendar.YEAR)+"/"+cal.get(Calendar.MONTH)）作为可查询上限，校验format1.parse(newYearMonth).getTime() &lt; format1.parse(yearmonth).getTime()时抛出IllegalArgumentException("生成出库单的日期最迟为前一个月")。该校验防止生成未来月份的对账单，因为未来月份的明细数据尚未产生。需将查询年月调整为当前月或更早</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>生成出库单的日期最迟为前一个月</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在重新生成时传入的查询年月（yearmonth）超过当前年月<br><strong>逻辑分析：</strong>后端BudInlimitBalanceAccountServiceImpl.regenerate方法中，将当前年月（cal.get(Calendar.YEAR)+"/"+cal.get(Calendar.MONTH)）作为可查询上限，校验format1.parse(newYearMonth).getTime() &lt; format1.parse(yearmonth).getTime()时抛出IllegalArgumentException("生成出库单的日期最迟为前一个月")。该校验防止生成未来月份的对账单，因为未来月份的明细数据尚未产生。需将查询年月调整为当前月或更早</div>
+  </div>
+</div>
 
 ```sql
 -- 核查当前已有的最大年月
@@ -369,8 +387,14 @@ SELECT INLIMIT_BALANCE_ACCOUNT_ID, ENTNAME, TRADING_COMPANY_CODE, BILLING_UNIT_C
   FROM BUD_INLIMIT_BALANCE_ACCOUNT
   WHERE ENTNAME = #{entname};
 ```
-<h4>报错4：推送状态更新失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击"更新推送状态"按钮，POST /v1/&#123;organizationId&#125;/inlimit-balance-account/update-status接口执行失败</li><li><strong>逻辑分析</strong>：updateStatus方法接收BalanceAccountBatchSendDTO，从中获取inlimitBalanceAccountIds列表。若ids为空（CollectionUtils.isEmpty(ids)）则直接return不处理，不抛异常但前端无效果。失败根因有三类：(1)未选中记录，ids为空；(2)选中记录的SEND_STATUS已为2（已推送），不可重复推送；(3)数据库更新异常。需确认选中记录且SEND_STATUS不为2后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>推送状态更新失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"更新推送状态"按钮，POST /v1/&#123;organizationId&#125;/inlimit-balance-account/update-status接口执行失败<br><strong>逻辑分析：</strong>updateStatus方法接收BalanceAccountBatchSendDTO，从中获取inlimitBalanceAccountIds列表。若ids为空（CollectionUtils.isEmpty(ids)）则直接return不处理，不抛异常但前端无效果。失败根因有三类：(1)未选中记录，ids为空；(2)选中记录的SEND_STATUS已为2（已推送），不可重复推送；(3)数据库更新异常。需确认选中记录且SEND_STATUS不为2后重试</div>
+  </div>
+</div>
 
 ```sql
 -- 核查选中记录的当前推送状态
@@ -378,16 +402,28 @@ SELECT INLIMIT_BALANCE_ACCOUNT_ID, ENTNAME, TRADING_COMPANY_CODE, BILLING_UNIT_C
   FROM BUD_INLIMIT_BALANCE_ACCOUNT
   WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
 ```
-<h4>报错5：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击查询/重新生成/更新推送状态按钮，前端调用对应接口返回非2xx状态码或超时</li><li><strong>逻辑分析</strong>：本页面为hlod低代码页面，数据通过后端BudInlimitBalanceAccountController提供。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)数据库连接异常；(3)重新生成时数据量过大，分页循环（每次200条）执行超时；(4)网关或网络层故障。需先确认ae-business服务健康状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击查询/重新生成/更新推送状态按钮，前端调用对应接口返回非2xx状态码或超时<br><strong>逻辑分析：</strong>本页面为hlod低代码页面，数据通过后端BudInlimitBalanceAccountController提供。网络请求失败根因有四类：(1)ae-business服务未启动或宕机；(2)数据库连接异常；(3)重新生成时数据量过大，分页循环（每次200条）执行超时；(4)网关或网络层故障。需先确认ae-business服务健康状态</div>
+  </div>
+</div>
 
 ```sql
 -- 核查头表数据量是否异常
   SELECT COUNT(*) AS 总对账单数, COUNT(DISTINCT YEARMONTH) AS 年月数
   FROM BUD_INLIMIT_BALANCE_ACCOUNT;
 ```
-<h4>报错6：权限不足</h4>
-<ul><li><strong>触发条件</strong>：用户登录后进入额度内市场推广服务费对账单页面，当前用户无对应事业部的数据权限</li><li><strong>逻辑分析</strong>：本页面按事业部维度查询，数据权限通过用户上下文控制可见事业部范围。权限不足根因有二：(1)用户未分配对应事业部的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应事业部数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户登录后进入额度内市场推广服务费对账单页面，当前用户无对应事业部的数据权限<br><strong>逻辑分析：</strong>本页面按事业部维度查询，数据权限通过用户上下文控制可见事业部范围。权限不足根因有二：(1)用户未分配对应事业部的数据权限，查询时自动过滤导致空结果；(2)用户未分配菜单访问权限，页面入口不可见。需联系管理员在权限系统中分配对应事业部数据权限</div>
+  </div>
+</div>
 
 ```sql
 -- 核查用户可访问的事业部
@@ -398,8 +434,27 @@ SELECT INLIMIT_BALANCE_ACCOUNT_ID, ENTNAME, TRADING_COMPANY_CODE, BILLING_UNIT_C
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：对账单数据不正确</li><li>原因：明细数据未及时更新或汇总计算有误</li><li>解决思路：执行重新生成操作，检查SQL <code>SELECT * FROM BUD_INLIMIT_BALANCE_ACCOUNT WHERE YEARMONTH = #&#123;yearmonth&#125;</code></li></ul>
-<ul><li>问题2：推送状态未更新</li><li>原因：update-status接口调用失败或参数错误</li><li>解决思路：检查推送状态更新日志，确认SEND_STATUS字段是否更新</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">对账单数据不正确</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>明细数据未及时更新或汇总计算有误<br><strong style="color:#7C3AED;">处理：</strong>执行重新生成操作，检查SQL <code>SELECT * FROM BUD_INLIMIT_BALANCE_ACCOUNT WHERE YEARMONTH = #&#123;yearmonth&#125;</code>
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">推送状态未更新</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>update-status接口调用失败或参数错误<br><strong style="color:#7C3AED;">处理：</strong>检查推送状态更新日志，确认SEND_STATUS字段是否更新
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

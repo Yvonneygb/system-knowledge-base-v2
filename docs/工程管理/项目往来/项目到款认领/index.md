@@ -663,8 +663,14 @@ APPROVED ──撤销──→ CANCEL(已撤销)
 <tr><td>删除异常：未找到该到款单</td><td>删除</td><td>到款引入单不存在，检查到款引入数据</td><td>阻断性报错</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：事业部信息为空</h4>
-<ul><li><strong>触发条件</strong>：保存认领单时，当前用户上下文缺少事业部(ORGANIZATION_ID)信息</li><li><strong>逻辑分析</strong>：保存方法中通过DetailsHelper.getUserDetail()获取用户事业部信息，若为空则抛出阻断性报错。需联系管理员补充事业部配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>事业部信息为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存认领单时，当前用户上下文缺少事业部(ORGANIZATION_ID)信息<br><strong>逻辑分析：</strong>保存方法中通过DetailsHelper.getUserDetail()获取用户事业部信息，若为空则抛出阻断性报错。需联系管理员补充事业部配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT iu.USER_ID, iu.LOGIN_NAME, iu.REAL_NAME, iu.ORGANIZATION_ID, iu.DEPT_ID
@@ -672,8 +678,14 @@ SELECT iu.USER_ID, iu.LOGIN_NAME, iu.REAL_NAME, iu.ORGANIZATION_ID, iu.DEPT_ID
   WHERE iu.USER_ID = :currentUserId
   -- 若ORGANIZATION_ID为空，则需补充用户事业部配置
 ```
-<h4>报错2：未找到该到款单</h4>
-<ul><li><strong>触发条件</strong>：保存或提交认领单时，到款引入单(PAYMENT_IMPORT_ID)不存在或已删除</li><li><strong>逻辑分析</strong>：保存/提交方法中按PAYMENT_IMPORT_ID查询EPM_PAYMENT_IMPORT，若返回null则抛出阻断性报错。需检查paymentImportId有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到该到款单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或提交认领单时，到款引入单(PAYMENT_IMPORT_ID)不存在或已删除<br><strong>逻辑分析：</strong>保存/提交方法中按PAYMENT_IMPORT_ID查询EPM_PAYMENT_IMPORT，若返回null则抛出阻断性报错。需检查paymentImportId有效性</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.IS_CASHOUT, epi.VALID
@@ -681,8 +693,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.I
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
   -- 若返回空，说明到款单不存在
 ```
-<h4>报错3：本次认款金额合计大于到款接口剩余认款金额</h4>
-<ul><li><strong>触发条件</strong>：保存或提交认领单时，本次认款金额合计超过到款单剩余可认领金额</li><li><strong>逻辑分析</strong>：保存/提交校验中查询到款单剩余可认领金额(虚拟单查DB/实际单实时查ERP)，若本次认领金额合计&gt;剩余金额则抛出阻断性报错。可能原因：并发认领占用金额、金额超限。需刷新后重新认领</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次认款金额合计大于到款接口剩余认款金额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或提交认领单时，本次认款金额合计超过到款单剩余可认领金额<br><strong>逻辑分析：</strong>保存/提交校验中查询到款单剩余可认领金额(虚拟单查DB/实际单实时查ERP)，若本次认领金额合计&gt;剩余金额则抛出阻断性报错。可能原因：并发认领占用金额、金额超限。需刷新后重新认领</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_AMT, epi.ALLOTED_AMT,
@@ -691,8 +709,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_AMT, epi.ALLO
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
   -- 对比本次认领金额合计与剩余可认领金额
 ```
-<h4>报错4：已认领金额+本次认领金额已超工程金额</h4>
-<ul><li><strong>触发条件</strong>：保存认领单时，出库明细的已认领金额+本次认领金额超过工程金额</li><li><strong>逻辑分析</strong>：保存校验中按出库明细查询已认领金额，加上本次认领金额若超过工程金额则抛出阻断性报错。需减少本次认领金额</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>已认领金额+本次认领金额已超工程金额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存认领单时，出库明细的已认领金额+本次认领金额超过工程金额<br><strong>逻辑分析：</strong>保存校验中按出库明细查询已认领金额，加上本次认领金额若超过工程金额则抛出阻断性报错。需减少本次认领金额</div>
+  </div>
+</div>
 
 ```sql
 SELECT epad.PAYMENT_ALLOT_DETAIL_ID, epad.INV_BILL_NO, epad.ITEM_CODE,
@@ -703,8 +727,14 @@ SELECT epad.PAYMENT_ALLOT_DETAIL_ID, epad.INV_BILL_NO, epad.ITEM_CODE,
     AND epad.ALLOTTED_AMT + epad.THIS_ALLOT_AMT > epad.CONTRACT_AMT
   -- 查出认领金额超工程金额的明细
 ```
-<h4>报错5：删除异常：新建状态下的认领才可删除</h4>
-<ul><li><strong>触发条件</strong>：删除认领单时，认领单状态(HZ_APPROVE_STATUS)非NEW(新建)或INTERRUPT(驳回)</li><li><strong>逻辑分析</strong>：delete方法中校验认领单状态为NEW或INTERRUPT，其他状态(审批中/已通过)不允许删除。已审批通过的认领单需走撤销流程</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>删除异常：新建状态下的认领才可删除</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除认领单时，认领单状态(HZ_APPROVE_STATUS)非NEW(新建)或INTERRUPT(驳回)<br><strong>逻辑分析：</strong>delete方法中校验认领单状态为NEW或INTERRUPT，其他状态(审批中/已通过)不允许删除。已审批通过的认领单需走撤销流程</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
@@ -712,8 +742,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 期望 HZ_APPROVE_STATUS IN ('NEW', 'INTERRUPT')，否则不允许删除
 ```
-<h4>报错6：流程发起异常，单据主键为空</h4>
-<ul><li><strong>触发条件</strong>：提交认领单时，工作流回调缺少单据ID(objId为空)</li><li><strong>逻辑分析</strong>：工作流回调方法中校验objId非空，因需按单据ID定位认领单记录。该报错为阻断性报错，需检查工作流配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程发起异常，单据主键为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交认领单时，工作流回调缺少单据ID(objId为空)<br><strong>逻辑分析：</strong>工作流回调方法中校验objId非空，因需按单据ID定位认领单记录。该报错为阻断性报错，需检查工作流配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_INSTANCE_ID, epa.HZ_APPROVE_STATUS
@@ -721,8 +757,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_INSTANCE_ID, epa.HZ_
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 校验认领单ID是否存在
 ```
-<h4>报错7：流程发起异常，单据不存在</h4>
-<ul><li><strong>触发条件</strong>：提交认领单时，按单据ID查询EPM_PAYMENT_ALLOT返回null</li><li><strong>逻辑分析</strong>：工作流回调方法中按PAYMENT_ALLOT_ID查询认领单，若返回null则抛出阻断性报错。可能原因：认领单已被删除、ID传递错误。需刷新列表</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程发起异常，单据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交认领单时，按单据ID查询EPM_PAYMENT_ALLOT返回null<br><strong>逻辑分析：</strong>工作流回调方法中按PAYMENT_ALLOT_ID查询认领单，若返回null则抛出阻断性报错。可能原因：认领单已被删除、ID传递错误。需刷新列表</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
@@ -730,8 +772,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 若返回空，说明认领单不存在
 ```
-<h4>报错8：流程发起异常，到款单不存在</h4>
-<ul><li><strong>触发条件</strong>：提交认领单时，关联的到款引入单(PAYMENT_IMPORT_ID)已被删除</li><li><strong>逻辑分析</strong>：工作流回调方法中按PAYMENT_IMPORT_ID查询EPM_PAYMENT_IMPORT，若返回null则抛出阻断性报错。需检查到款引入数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程发起异常，到款单不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交认领单时，关联的到款引入单(PAYMENT_IMPORT_ID)已被删除<br><strong>逻辑分析：</strong>工作流回调方法中按PAYMENT_IMPORT_ID查询EPM_PAYMENT_IMPORT，若返回null则抛出阻断性报错。需检查到款引入数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.VALID
@@ -740,8 +788,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 若PAYMENT_IMPORT_CODE为空，说明到款单不存在
 ```
-<h4>报错9：查询认领数据为空</h4>
-<ul><li><strong>触发条件</strong>：推送ERP时，认领单头行数据查询为空</li><li><strong>逻辑分析</strong>：ERP推送方法中按PAYMENT_ALLOT_ID查询认领单头行数据，若为空则抛出阻断性报错。需检查头行数据完整性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询认领数据为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP时，认领单头行数据查询为空<br><strong>逻辑分析：</strong>ERP推送方法中按PAYMENT_ALLOT_ID查询认领单头行数据，若为空则抛出阻断性报错。需检查头行数据完整性</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS,
@@ -751,8 +805,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS,
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 若明细行数为0，则触发该报错
 ```
-<h4>报错10：erp返回认领结果为空</h4>
-<ul><li><strong>触发条件</strong>：推送ERP时，ERP接口返回认领结果为空</li><li><strong>逻辑分析</strong>：ERP推送方法中调用ERP接口获取认领结果，若返回null则抛出阻断性报错。可能原因：ERP服务不可用、网络异常。需检查ERP服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>erp返回认领结果为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP时，ERP接口返回认领结果为空<br><strong>逻辑分析：</strong>ERP推送方法中调用ERP接口获取认领结果，若返回null则抛出阻断性报错。可能原因：ERP服务不可用、网络异常。需检查ERP服务状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE
@@ -762,8 +822,14 @@ SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE
   ORDER BY sem.CREATION_DATE DESC
   -- 查询ERP推送异常记录
 ```
-<h4>报错11：认领推送erp异常</h4>
-<ul><li><strong>触发条件</strong>：推送ERP时，ERP接口返回错误信息</li><li><strong>逻辑分析</strong>：ERP推送方法中调用ERP接口，若返回错误信息则抛出阻断性报错。需查看具体错误内容并修复后重新提交</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>认领推送erp异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP时，ERP接口返回错误信息<br><strong>逻辑分析：</strong>ERP推送方法中调用ERP接口，若返回错误信息则抛出阻断性报错。需查看具体错误内容并修复后重新提交</div>
+  </div>
+</div>
 
 ```sql
 SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE, sem.CREATED_BY
@@ -773,8 +839,14 @@ SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE, sem.CREATED
   ORDER BY sem.CREATION_DATE DESC
   -- 查询ERP推送异常详情
 ```
-<h4>报错12：查询项目列表异常，未指定客户id</h4>
-<ul><li><strong>触发条件</strong>：查询可认领项目时，到款单缺少客户信息(CUSTOMER_ID为空)</li><li><strong>逻辑分析</strong>：查询可认领项目方法中按CUSTOMER_ID查询项目列表，若CUSTOMER_ID为空则抛出阻断性报错。需检查到款引入数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询项目列表异常，未指定客户id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询可认领项目时，到款单缺少客户信息(CUSTOMER_ID为空)<br><strong>逻辑分析：</strong>查询可认领项目方法中按CUSTOMER_ID查询项目列表，若CUSTOMER_ID为空则抛出阻断性报错。需检查到款引入数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.CUSTOMER_ID, epi.CUSTOMER_CODE, epi.CUSTOMER_NAME
@@ -783,8 +855,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.CUSTOMER_ID, epi.CUST
     AND epi.CUSTOMER_ID IS NULL
   -- 查出客户ID为空的到款单
 ```
-<h4>报错13：项目到款引入数据异常</h4>
-<ul><li><strong>触发条件</strong>：查询出库明细时，到款引入单(PAYMENT_IMPORT_ID)不存在</li><li><strong>逻辑分析</strong>：查询出库明细方法中按PAYMENT_IMPORT_ID查询EPM_PAYMENT_IMPORT，若返回null则抛出阻断性报错。需检查paymentImportId有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>项目到款引入数据异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询出库明细时，到款引入单(PAYMENT_IMPORT_ID)不存在<br><strong>逻辑分析：</strong>查询出库明细方法中按PAYMENT_IMPORT_ID查询EPM_PAYMENT_IMPORT，若返回null则抛出阻断性报错。需检查paymentImportId有效性</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.VALID
@@ -792,8 +870,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.V
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
   -- 若返回空，说明到款引入单不存在
 ```
-<h4>报错14：项目合同相关信息异常</h4>
-<ul><li><strong>触发条件</strong>：查询出库明细时，该项目下无已审批通过(HZ_APPROVE_STATUS=APPROVED)的合同</li><li><strong>逻辑分析</strong>：查询出库明细方法中按PROJECT_ID查询EPM_PROJECT_CONTRACT，筛选HZ_APPROVE_STATUS='APPROVED'的合同，若为空则抛出阻断性报错。需检查合同审批状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>项目合同相关信息异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询出库明细时，该项目下无已审批通过(HZ_APPROVE_STATUS=APPROVED)的合同<br><strong>逻辑分析：</strong>查询出库明细方法中按PROJECT_ID查询EPM_PROJECT_CONTRACT，筛选HZ_APPROVE_STATUS='APPROVED'的合同，若为空则抛出阻断性报错。需检查合同审批状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.PROJECT_ID,
@@ -803,8 +887,14 @@ SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.PROJECT_ID,
     AND epc.HZ_APPROVE_STATUS = 'APPROVED'
   -- 若返回空，说明该项目下无已审批通过的合同
 ```
-<h4>报错15：单据id异常，核销接口返回信息</h4>
-<ul><li><strong>触发条件</strong>：推送ERP核销数据时，ERP接口返回状态(RETURN_STATUS)非S(成功)</li><li><strong>逻辑分析</strong>：pushAllotDataToErp方法中调用ERP核销接口，遍历返回结果，若RETURN_STATUS非S则抛出阻断性报错，提示单据ID和ERP返回信息(RETURN_MESSAGE)。需查看具体错误内容并修复后重新提交</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据id异常，核销接口返回信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP核销数据时，ERP接口返回状态(RETURN_STATUS)非S(成功)<br><strong>逻辑分析：</strong>pushAllotDataToErp方法中调用ERP核销接口，遍历返回结果，若RETURN_STATUS非S则抛出阻断性报错，提示单据ID和ERP返回信息(RETURN_MESSAGE)。需查看具体错误内容并修复后重新提交</div>
+  </div>
+</div>
 
 ```sql
 SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE
@@ -814,8 +904,14 @@ SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE
   ORDER BY sem.CREATION_DATE DESC
   -- 查询ERP核销接口异常记录
 ```
-<h4>报错16：流程完结异常，单据主键为空</h4>
-<ul><li><strong>触发条件</strong>：审批完结(wfComplete)时，工作流回调缺少单据ID(objId为空或为0)</li><li><strong>逻辑分析</strong>：wfComplete方法中校验objId非空且非0，因需按单据ID定位认领单记录。该报错为阻断性报错，需检查工作流配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程完结异常，单据主键为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>审批完结(wfComplete)时，工作流回调缺少单据ID(objId为空或为0)<br><strong>逻辑分析：</strong>wfComplete方法中校验objId非空且非0，因需按单据ID定位认领单记录。该报错为阻断性报错，需检查工作流配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_INSTANCE_ID, epa.HZ_APPROVE_STATUS
@@ -823,8 +919,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_INSTANCE_ID, epa.HZ_
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 校验认领单ID是否存在
 ```
-<h4>报错17：流程完结异常，单据不存在</h4>
-<ul><li><strong>触发条件</strong>：审批完结(wfComplete)时，按单据ID查询EPM_PAYMENT_ALLOT返回null</li><li><strong>逻辑分析</strong>：wfComplete方法中按PAYMENT_ALLOT_ID查询认领单，若返回null则抛出阻断性报错。可能原因：认领单已被删除、ID传递错误。需刷新列表</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程完结异常，单据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>审批完结(wfComplete)时，按单据ID查询EPM_PAYMENT_ALLOT返回null<br><strong>逻辑分析：</strong>wfComplete方法中按PAYMENT_ALLOT_ID查询认领单，若返回null则抛出阻断性报错。可能原因：认领单已被删除、ID传递错误。需刷新列表</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
@@ -832,8 +934,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 若返回空，说明认领单不存在
 ```
-<h4>报错18：流程终止异常，单据主键为空</h4>
-<ul><li><strong>触发条件</strong>：流程终止(eventExecute)时，工作流回调缺少单据ID(objId为空或为0)</li><li><strong>逻辑分析</strong>：eventExecute方法中校验objId非空且非0，因需按单据ID定位认领单记录并发送ERP CANCEL。该报错为阻断性报错，需检查工作流配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程终止异常，单据主键为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>流程终止(eventExecute)时，工作流回调缺少单据ID(objId为空或为0)<br><strong>逻辑分析：</strong>eventExecute方法中校验objId非空且非0，因需按单据ID定位认领单记录并发送ERP CANCEL。该报错为阻断性报错，需检查工作流配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.HZ_INSTANCE_ID
@@ -841,8 +949,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 校验认领单ID是否存在
 ```
-<h4>报错19：到款认领异常，未指定到款单id</h4>
-<ul><li><strong>触发条件</strong>：查询认领信息时，到款单ID(paymentImportId)未指定</li><li><strong>逻辑分析</strong>：查询方法中校验paymentImportId非空，因需按到款单ID查询认领数据。需传入有效到款单ID</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-19" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>到款认领异常，未指定到款单id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询认领信息时，到款单ID(paymentImportId)未指定<br><strong>逻辑分析：</strong>查询方法中校验paymentImportId非空，因需按到款单ID查询认领数据。需传入有效到款单ID</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.UNALLOT_AMT
@@ -850,8 +964,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.PAYMENT_STATUS, epi.U
   WHERE epi.PAYMENT_IMPORT_ID = :paymentImportId
   -- 校验到款单ID是否有效
 ```
-<h4>报错20：查询到款认领单数据为空</h4>
-<ul><li><strong>触发条件</strong>：查询认领信息时，按到款单ID查询认领单数据返回空</li><li><strong>逻辑分析</strong>：查询方法中按paymentImportId查询EPM_PAYMENT_ALLOT，若返回空则抛出阻断性报错。需检查认领单ID有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-20" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询到款认领单数据为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询认领信息时，按到款单ID查询认领单数据返回空<br><strong>逻辑分析：</strong>查询方法中按paymentImportId查询EPM_PAYMENT_ALLOT，若返回空则抛出阻断性报错。需检查认领单ID有效性</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PAYMENT_IMPORT_ID, epa.HZ_APPROVE_STATUS
@@ -859,8 +979,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PAYMENT_IMPORT_ID, epa.
   WHERE epa.PAYMENT_IMPORT_ID = :paymentImportId
   -- 若返回空，说明该到款单下无认领单
 ```
-<h4>报错21：查询项目列表异常，未指定交易公司id</h4>
-<ul><li><strong>触发条件</strong>：查询可认领项目时，到款单缺少交易公司信息(RECEIVE_UNIT_ID为空)</li><li><strong>逻辑分析</strong>：查询可认领项目方法中按RECEIVE_UNIT_ID筛选项目，若为空则抛出阻断性报错。需检查到款引入数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-21" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询项目列表异常，未指定交易公司id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询可认领项目时，到款单缺少交易公司信息(RECEIVE_UNIT_ID为空)<br><strong>逻辑分析：</strong>查询可认领项目方法中按RECEIVE_UNIT_ID筛选项目，若为空则抛出阻断性报错。需检查到款引入数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_UNIT_ID, epi.RECEIVE_UNIT_NAME
@@ -869,8 +995,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.RECEIVE_UNIT_ID, epi.
     AND epi.RECEIVE_UNIT_ID IS NULL
   -- 查出交易公司ID为空的到款单
 ```
-<h4>报错22：查询项目列表异常，未指定收款公司id</h4>
-<ul><li><strong>触发条件</strong>：查询可认领项目时，到款单缺少收款公司信息(REMIT_UNIT_ID为空)</li><li><strong>逻辑分析</strong>：查询可认领项目方法中按REMIT_UNIT_ID筛选项目，若为空则抛出阻断性报错。需检查到款引入数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-22" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询项目列表异常，未指定收款公司id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询可认领项目时，到款单缺少收款公司信息(REMIT_UNIT_ID为空)<br><strong>逻辑分析：</strong>查询可认领项目方法中按REMIT_UNIT_ID筛选项目，若为空则抛出阻断性报错。需检查到款引入数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.REMIT_UNIT_ID, epi.REMIT_UNIT_NAME
@@ -879,8 +1011,14 @@ SELECT epi.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.REMIT_UNIT_ID, epi.RE
     AND epi.REMIT_UNIT_ID IS NULL
   -- 查出收款公司ID为空的到款单
 ```
-<h4>报错23：查询合同列表异常，未指定项目id</h4>
-<ul><li><strong>触发条件</strong>：查询可认领合同时，未指定项目ID(projectId为空)</li><li><strong>逻辑分析</strong>：查询可认领合同方法中校验projectId非空，因需按项目ID查询该项目下已审批通过的合同。需先选择项目</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-23" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询合同列表异常，未指定项目id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询可认领合同时，未指定项目ID(projectId为空)<br><strong>逻辑分析：</strong>查询可认领合同方法中校验projectId非空，因需按项目ID查询该项目下已审批通过的合同。需先选择项目</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PROJECT_ID
@@ -889,8 +1027,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PROJECT_ID
     AND epa.PROJECT_ID IS NULL
   -- 查出项目ID为空的认领单
 ```
-<h4>报错24：查询可认领明细异常，未指定项目id</h4>
-<ul><li><strong>触发条件</strong>：查询可认领出库明细时，未指定项目ID(projectId为空)</li><li><strong>逻辑分析</strong>：查询可认领明细方法中校验projectId非空，因需按项目ID查询出库签收明细。需先选择项目</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-24" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询可认领明细异常，未指定项目id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询可认领出库明细时，未指定项目ID(projectId为空)<br><strong>逻辑分析：</strong>查询可认领明细方法中校验projectId非空，因需按项目ID查询出库签收明细。需先选择项目</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PROJECT_ID
@@ -899,8 +1043,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PROJECT_ID
     AND epa.PROJECT_ID IS NULL
   -- 查出项目ID为空的认领单
 ```
-<h4>报错25：未指定到款认领id</h4>
-<ul><li><strong>触发条件</strong>：获取剩余可认款金额时，认领单ID(paymentAllotId)未指定</li><li><strong>逻辑分析</strong>：getPaymentImportCanAllotAmt方法中校验paymentAllotId非空，因需按认领单ID查询关联的到款单。需传入有效认领单ID</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-25" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未指定到款认领id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>获取剩余可认款金额时，认领单ID(paymentAllotId)未指定<br><strong>逻辑分析：</strong>getPaymentImportCanAllotAmt方法中校验paymentAllotId非空，因需按认领单ID查询关联的到款单。需传入有效认领单ID</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PAYMENT_IMPORT_ID
@@ -908,8 +1058,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.PAYMENT_IMPORT_ID
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 校验认领单ID是否有效
 ```
-<h4>报错26：未找到该到款认领</h4>
-<ul><li><strong>触发条件</strong>：获取剩余可认款金额时，按认领单ID查询EPM_PAYMENT_ALLOT返回null</li><li><strong>逻辑分析</strong>：getPaymentImportCanAllotAmt方法中按PAYMENT_ALLOT_ID查询认领单，若返回null则抛出阻断性报错。可能原因：认领单已删除、ID传递错误。需检查认领单ID</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-26" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到该到款认领</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>获取剩余可认款金额时，按认领单ID查询EPM_PAYMENT_ALLOT返回null<br><strong>逻辑分析：</strong>getPaymentImportCanAllotAmt方法中按PAYMENT_ALLOT_ID查询认领单，若返回null则抛出阻断性报错。可能原因：认领单已删除、ID传递错误。需检查认领单ID</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
@@ -917,8 +1073,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 若返回空，说明认领单不存在
 ```
-<h4>报错27：删除异常：未指定到款认领id</h4>
-<ul><li><strong>触发条件</strong>：删除认领单时，认领单ID(paymentAllotId)未指定</li><li><strong>逻辑分析</strong>：deleteAllot方法中校验paymentAllotId非空，因需按ID定位认领单记录。需传入有效认领单ID</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-27" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>删除异常：未指定到款认领id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除认领单时，认领单ID(paymentAllotId)未指定<br><strong>逻辑分析：</strong>deleteAllot方法中校验paymentAllotId非空，因需按ID定位认领单记录。需传入有效认领单ID</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS
@@ -926,8 +1088,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 校验认领单ID是否有效
 ```
-<h4>报错28：删除异常：未查询到该认领单</h4>
-<ul><li><strong>触发条件</strong>：删除认领单时，按认领单ID查询EPM_PAYMENT_ALLOT返回null</li><li><strong>逻辑分析</strong>：deleteAllot方法中按PAYMENT_ALLOT_ID查询认领单，若返回null则抛出阻断性报错。可能原因：认领单已被删除。需刷新列表</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-28" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>删除异常：未查询到该认领单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除认领单时，按认领单ID查询EPM_PAYMENT_ALLOT返回null<br><strong>逻辑分析：</strong>deleteAllot方法中按PAYMENT_ALLOT_ID查询认领单，若返回null则抛出阻断性报错。可能原因：认领单已被删除。需刷新列表</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.VALID
@@ -935,8 +1103,14 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_ALLOT_CODE, epa.HZ_APPROVE_STATUS, epa.
   WHERE epa.PAYMENT_ALLOT_ID = :paymentAllotId
   -- 若返回空，说明认领单不存在
 ```
-<h4>报错29：删除异常：未找到该到款单</h4>
-<ul><li><strong>触发条件</strong>：删除认领单时，关联的到款引入单(PAYMENT_IMPORT_ID)不存在</li><li><strong>逻辑分析</strong>：deleteAllot方法中按PAYMENT_IMPORT_ID查询EPM_PAYMENT_IMPORT，若返回null则抛出阻断性报错。需检查到款引入数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-29" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>删除异常：未找到该到款单</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除认领单时，关联的到款引入单(PAYMENT_IMPORT_ID)不存在<br><strong>逻辑分析：</strong>deleteAllot方法中按PAYMENT_IMPORT_ID查询EPM_PAYMENT_IMPORT，若返回null则抛出阻断性报错。需检查到款引入数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi.VALID
@@ -948,14 +1122,49 @@ SELECT epa.PAYMENT_ALLOT_ID, epa.PAYMENT_IMPORT_ID, epi.PAYMENT_IMPORT_CODE, epi
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：认领金额与到款单可认领金额不一致</li><li>原因：并发认领导致可认领金额被其他认领单占用，真实到款单以ERP实时数据为准</li><li>解决思路：1.刷新页面重新获取最新可认领金额；2.减少本次认领金额；3.真实到款单会自动查ERP最新数据</li></ul>
-<ul><li>问题2：ERP推送失败</li><li>原因：ERP接口不可用或推送数据异常</li><li>解决思路：1.检查ERP接口状态；2.检查推送数据是否完整；3.修复后重新提交</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">认领金额与到款单可认领金额不一致</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>并发认领导致可认领金额被其他认领单占用，真实到款单以ERP实时数据为准<br><strong style="color:#7C3AED;">处理：</strong>1.刷新页面重新获取最新可认领金额；2.减少本次认领金额；3.真实到款单会自动查ERP最新数据
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">ERP推送失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或推送数据异常<br><strong style="color:#7C3AED;">处理：</strong>1.检查ERP接口状态；2.检查推送数据是否完整；3.修复后重新提交
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">可认领项目/合同/明细查询为空</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>合同未审批通过、客户/交易公司/收款公司不匹配、合同金额已全部认领<br><strong style="color:#7C3AED;">处理：</strong>1.检查合同是否审批通过；2.检查到款单客户与合同客户是否一致；3.检查合同是否还有剩余可认领金额
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">删除认领单失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>仅NEW和INTERRUPT状态的认领单可删除<br><strong style="color:#7C3AED;">处理：</strong>确认认领单状态为新建或驳回后再删除；若已审批通过需走撤销流程
+  </div>
+</div>
+</div>
 
 ```sql
 SELECT * FROM sys_exception_msg WHERE objid = {paymentAllotId} AND objtypename = '到款认领';
 ```
-<ul><li>问题3：可认领项目/合同/明细查询为空</li><li>原因：合同未审批通过、客户/交易公司/收款公司不匹配、合同金额已全部认领</li><li>解决思路：1.检查合同是否审批通过；2.检查到款单客户与合同客户是否一致；3.检查合同是否还有剩余可认领金额</li></ul>
-<ul><li>问题4：删除认领单失败</li><li>原因：仅NEW和INTERRUPT状态的认领单可删除</li><li>解决思路：确认认领单状态为新建或驳回后再删除；若已审批通过需走撤销流程</li></ul>
 </KbCard>
 
 </div>

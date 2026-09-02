@@ -332,8 +332,14 @@ SELECT H.REDUCTION_AMT, P.PAYMENT_AMT FROM CM_DEPOSITS_REDUCTION_HEAD H, CM_DEPO
 <tr><td>请先维护明细信息</td><td>提交时</td><td>减免申请未添加明细行，添加明细后提交</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：减免金额必须大于0</h4>
-<ul><li><strong>触发条件</strong>：用户在减免金额输入框填写0、负数或留空后点击保存</li><li><strong>逻辑分析</strong>：保证金减免金额（REDUCTION_AMT）代表实际减免的保证金金额，必须为正数。0或负数无业务意义，且审批通过后扣减保证金余额（CM_DEPOSITS_PAYMENT）将出现异常（扣减0或反向增加余额）。校验REDUCTION_AMT &gt; 0，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>减免金额必须大于0</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在减免金额输入框填写0、负数或留空后点击保存<br><strong>逻辑分析：</strong>保证金减免金额（REDUCTION_AMT）代表实际减免的保证金金额，必须为正数。0或负数无业务意义，且审批通过后扣减保证金余额（CM_DEPOSITS_PAYMENT）将出现异常（扣减0或反向增加余额）。校验REDUCTION_AMT &gt; 0，toast提示后阻断保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT REDUCTION_HEAD_ID, REDUCTION_NO, CUSTOMER_NAME, CONTRACT_NO,
@@ -341,8 +347,14 @@ SELECT REDUCTION_HEAD_ID, REDUCTION_NO, CUSTOMER_NAME, CONTRACT_NO,
   FROM CM_DEPOSITS_REDUCTION_HEAD
   WHERE REDUCTION_AMT IS NULL OR REDUCTION_AMT <= 0;
 ```
-<h4>报错2：减免金额超过保证金余额</h4>
-<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，提交校验发现REDUCTION_AMT &gt; 已缴保证金余额（PAYMENT_AMT）</li><li><strong>逻辑分析</strong>：提交时校验减免金额不超过关联合同的已缴保证金余额，通过关联CM_DEPOSITS_REDUCTION_HEAD.CONTRACT_ID与CM_DEPOSITS_PAYMENT.CONTRACT_ID比对。超出余额意味着减免无充足保证金来源，审批通过后保证金余额将出现负数。此为阻断性报错，阻止OA流程（DEPOSITS_REDUCTION_HEAD_MCS_AW）发起，需调减减免金额或先确认保证金到款</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>减免金额超过保证金余额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，提交校验发现REDUCTION_AMT &gt; 已缴保证金余额（PAYMENT_AMT）<br><strong>逻辑分析：</strong>提交时校验减免金额不超过关联合同的已缴保证金余额，通过关联CM_DEPOSITS_REDUCTION_HEAD.CONTRACT_ID与CM_DEPOSITS_PAYMENT.CONTRACT_ID比对。超出余额意味着减免无充足保证金来源，审批通过后保证金余额将出现负数。此为阻断性报错，阻止OA流程（DEPOSITS_REDUCTION_HEAD_MCS_AW）发起，需调减减免金额或先确认保证金到款</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, H.CONTRACT_NO, H.REDUCTION_AMT,
@@ -352,31 +364,55 @@ SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, H.CONTRACT_NO, H.REDUCTION_AMT,
   WHERE H.REDUCTION_AMT > P.PAYMENT_AMT
     AND H.HZ_APPROVE_STATUS IN ('NEW', 'RUN');
 ```
-<h4>报错3：流程编码缺失</h4>
-<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，dto.getFlowCode()为空字符串或null</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.saveAndSubmit方法首行校验flowCode非空，保证金减免需通过工作流DEPOSITS_REDUCTION_HEAD_MCS_AW审批，flowCode为空无法启动工作流。根因是前端未选择审批流程或流程配置缺失。需在提交前选择OA审批流程</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，dto.getFlowCode()为空字符串或null<br><strong>逻辑分析：</strong>CmDepositsReductionHeadServiceImpl.saveAndSubmit方法首行校验flowCode非空，保证金减免需通过工作流DEPOSITS_REDUCTION_HEAD_MCS_AW审批，flowCode为空无法启动工作流。根因是前端未选择审批流程或流程配置缺失。需在提交前选择OA审批流程</div>
+  </div>
+</div>
 
 ```sql
 SELECT WORKFLOW_CODE, WORKFLOW_NAME FROM WORKFLOW_CONFIG
   WHERE WORKFLOW_CODE = 'DEPOSITS_REDUCTION_HEAD_MCS_AW';
 ```
-<h4>报错4：请选择需要删除的数据</h4>
-<ul><li><strong>触发条件</strong>：用户未选中任何减免申请记录直接点击"删除"按钮</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.remove方法校验cCmDepositsReductionHeadList非空，空集合时抛CommonException。前端列表页未勾选记录时删除按钮应禁用，此报错为前置校验。需先在列表勾选待删除的未提交记录再点击删除</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择需要删除的数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选中任何减免申请记录直接点击"删除"按钮<br><strong>逻辑分析：</strong>CmDepositsReductionHeadServiceImpl.remove方法校验cCmDepositsReductionHeadList非空，空集合时抛CommonException。前端列表页未勾选记录时删除按钮应禁用，此报错为前置校验。需先在列表勾选待删除的未提交记录再点击删除</div>
+  </div>
+</div>
 
 ```sql
 SELECT REDUCTION_HEAD_ID, REDUCTION_NO, HZ_APPROVE_STATUS, STATUS
   FROM CM_DEPOSITS_REDUCTION_HEAD
   WHERE HZ_APPROVE_STATUS = 'NEW' AND STATUS = 'pending';
 ```
-<h4>报错5：无法获取上下文信息</h4>
-<ul><li><strong>触发条件</strong>：保存减免申请生成减免单号时，DetailsHelper.getUserDetails()返回空</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.generateCode方法通过DetailsHelper.getUserDetails()获取用户上下文，customUserDetails为空时抛CommonException。根因是用户登录态失效（Token过期、会话超时）或未登录调用接口。需重新登录后再次保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无法获取上下文信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存减免申请生成减免单号时，DetailsHelper.getUserDetails()返回空<br><strong>逻辑分析：</strong>CmDepositsReductionHeadServiceImpl.generateCode方法通过DetailsHelper.getUserDetails()获取用户上下文，customUserDetails为空时抛CommonException。根因是用户登录态失效（Token过期、会话超时）或未登录调用接口。需重新登录后再次保存</div>
+  </div>
+</div>
 
 ```sql
 -- 验证用户登录态（示意，实际依会话框架）
   SELECT USER_ID, USER_NAME, LAST_LOGIN_TIME FROM USER_SESSION
   WHERE USER_ID = #{userId} AND SESSION_STATUS = 'ACTIVE';
 ```
-<h4>报错6：无法获取事业部信息</h4>
-<ul><li><strong>触发条件</strong>：保存减免申请生成减免单号时，epmDivisionService.getCurrentDivision()返回null</li><li><strong>逻辑分析</strong>：CmDepositsReductionHeadServiceImpl.generateCode方法获取当前用户所属事业部，currentDivision为null时抛CommonException。事业部用于生成减免单号前缀（DIVISION_CODE）和关联ENTID。根因是用户未关联事业部或事业部主数据缺失。需联系管理员为用户配置事业部关联</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无法获取事业部信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存减免申请生成减免单号时，epmDivisionService.getCurrentDivision()返回null<br><strong>逻辑分析：</strong>CmDepositsReductionHeadServiceImpl.generateCode方法获取当前用户所属事业部，currentDivision为null时抛CommonException。事业部用于生成减免单号前缀（DIVISION_CODE）和关联ENTID。根因是用户未关联事业部或事业部主数据缺失。需联系管理员为用户配置事业部关联</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.USER_ID, U.USER_NAME, D.DIVISION_ID, D.DIVISION_CODE, D.DIVISION_NAME
@@ -385,8 +421,14 @@ SELECT U.USER_ID, U.USER_NAME, D.DIVISION_ID, D.DIVISION_CODE, D.DIVISION_NAME
   LEFT JOIN DIVISION_BASE_SET D ON UD.DIVISION_ID = D.DIVISION_ID
   WHERE U.USER_ID = #{userId} AND D.DIVISION_ID IS NULL;
 ```
-<h4>报错7：请先维护明细信息</h4>
-<ul><li><strong>触发条件</strong>：用户点击"保存并提交"，前端校验lineDs.records为空（未添加任何减免明细行）</li><li><strong>逻辑分析</strong>：前端DetailPage.hadleChcek方法校验lineDs.records非空，明细行缺失时notification.error提示。减免申请需关联具体的保证金缴纳明细（CM_DEPOSITS_REDUCTION_LINE），无明细行意味着减免无具体来源。需在明细页点击"新建"添加减免明细行后提交</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先维护明细信息</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，前端校验lineDs.records为空（未添加任何减免明细行）<br><strong>逻辑分析：</strong>前端DetailPage.hadleChcek方法校验lineDs.records非空，明细行缺失时notification.error提示。减免申请需关联具体的保证金缴纳明细（CM_DEPOSITS_REDUCTION_LINE），无明细行意味着减免无具体来源。需在明细页点击"新建"添加减免明细行后提交</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, COUNT(L.REDUCTION_LINE_ID) AS 明细行数
@@ -398,7 +440,18 @@ SELECT H.REDUCTION_HEAD_ID, H.REDUCTION_NO, COUNT(L.REDUCTION_LINE_ID) AS 明细
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：OA审批未发起</li><li>原因：OA系统不可用或工作流配置缺失</li><li>解决思路：检查工作流DEPOSITS_REDUCTION_HEAD_MCS_AW配置</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">OA审批未发起</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>OA系统不可用或工作流配置缺失<br><strong style="color:#7C3AED;">处理：</strong>检查工作流DEPOSITS_REDUCTION_HEAD_MCS_AW配置
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

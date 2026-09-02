@@ -500,8 +500,14 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
 <tr><td>认领推送erp异常</td><td>ERP推送</td><td>ERP返回错误信息，查看具体错误内容</td><td>阻断性报错</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销</h4>
-<ul><li><strong>触发条件</strong>：保存撤销单时，撤销明细中含已报销的认领明细，且撤销后可结算工程服务费(total_claim_service_amt - cancelServiceChargeAmt - return_service_amt - applied_amt) &lt; 0</li><li><strong>逻辑分析</strong>：保存校验中查询epm_pad_cancel_query按svcExpAccId获取已认领工程服务费总额，减去本次撤销金额、已退回金额、已申请兑现金额后若&lt;0则抛出阻断性报错。需减少撤销明细中工程服务费金额</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存撤销单时，撤销明细中含已报销的认领明细，且撤销后可结算工程服务费(total_claim_service_amt - cancelServiceChargeAmt - return_service_amt - applied_amt) &lt; 0<br><strong>逻辑分析：</strong>保存校验中查询epm_pad_cancel_query按svcExpAccId获取已认领工程服务费总额，减去本次撤销金额、已退回金额、已申请兑现金额后若&lt;0则抛出阻断性报错。需减少撤销明细中工程服务费金额</div>
+  </div>
+</div>
 
 ```sql
 SELECT epcq.SVC_EXP_ACC_ID, epcq.TOTAL_CLAIM_SERVICE_AMT, epcq.RETURN_SERVICE_AMT, epcq.APPLIED_AMT,
@@ -510,8 +516,14 @@ SELECT epcq.SVC_EXP_ACC_ID, epcq.TOTAL_CLAIM_SERVICE_AMT, epcq.RETURN_SERVICE_AM
   WHERE epcq.SVC_EXP_ACC_ID = :svcExpAccId
   -- 若撤销后可结算金额 < 0，则触发该报错
 ```
-<h4>报错2：明细中以下认领明细已被撤销，请剔除后再重新提交撤销</h4>
-<ul><li><strong>触发条件</strong>：提交撤销单时，选中的认领明细已被其他撤销单撤销(CANCEL_FLAG=Y)</li><li><strong>逻辑分析</strong>：提交校验中按CANCEL_ID关联EPM_PAD_CANCEL和EPM_PAYMENT_ALLOT_DETAIL，若CANCEL_FLAG=Y则收集到已撤销明细列表并抛出阻断性报错。需剔除已撤销明细后重新提交</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>明细中以下认领明细已被撤销，请剔除后再重新提交撤销</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交撤销单时，选中的认领明细已被其他撤销单撤销(CANCEL_FLAG=Y)<br><strong>逻辑分析：</strong>提交校验中按CANCEL_ID关联EPM_PAD_CANCEL和EPM_PAYMENT_ALLOT_DETAIL，若CANCEL_FLAG=Y则收集到已撤销明细列表并抛出阻断性报错。需剔除已撤销明细后重新提交</div>
+  </div>
+</div>
 
 ```sql
 SELECT epad.PAYMENT_ALLOT_DETAIL_ID, epad.PAYMENT_ALLOT_CODE, epad.INV_BILL_NO, epad.ITEM_CODE,
@@ -522,8 +534,14 @@ SELECT epad.PAYMENT_ALLOT_DETAIL_ID, epad.PAYMENT_ALLOT_CODE, epad.INV_BILL_NO, 
     AND epad.CANCEL_FLAG = 'Y'
   -- 查出已被撤销的认领明细
 ```
-<h4>报错3：流程启动异常，单据id不能为空</h4>
-<ul><li><strong>触发条件</strong>：提交或完结撤销单时，工作流回调缺少单据ID(objId为空)</li><li><strong>逻辑分析</strong>：工作流回调方法中校验objId非空，因需按单据ID定位撤销单记录。该报错为阻断性报错，需检查工作流配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，单据id不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交或完结撤销单时，工作流回调缺少单据ID(objId为空)<br><strong>逻辑分析：</strong>工作流回调方法中校验objId非空，因需按单据ID定位撤销单记录。该报错为阻断性报错，需检查工作流配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_INSTANCE_ID, epc.HZ_APPROVE_STATUS
@@ -531,8 +549,14 @@ SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_INSTANCE_ID, epc.HZ_APPROVE_STATUS
   WHERE epc.CANCEL_ID = :cancelId
   -- 校验撤销单ID是否存在
 ```
-<h4>报错4：流程启动异常，单据不存在</h4>
-<ul><li><strong>触发条件</strong>：提交或完结撤销单时，按单据ID查询EPM_PAD_CANCEL返回null</li><li><strong>逻辑分析</strong>：工作流回调方法中按CANCEL_ID查询撤销单，若返回null则抛出阻断性报错。可能原因：撤销单已被删除、ID传递错误。需刷新列表</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，单据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交或完结撤销单时，按单据ID查询EPM_PAD_CANCEL返回null<br><strong>逻辑分析：</strong>工作流回调方法中按CANCEL_ID查询撤销单，若返回null则抛出阻断性报错。可能原因：撤销单已被删除、ID传递错误。需刷新列表</div>
+  </div>
+</div>
 
 ```sql
 SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_APPROVE_STATUS, epc.VALID
@@ -540,8 +564,14 @@ SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_APPROVE_STATUS, epc.VALID
   WHERE epc.CANCEL_ID = :cancelId
   -- 若返回空，说明撤销单不存在
 ```
-<h4>报错5：流程启动异常，撤销明细不存在</h4>
-<ul><li><strong>触发条件</strong>：提交或完结撤销单时，撤销单缺少明细行(EPM_PAD_CANCEL_DETAIL为空)</li><li><strong>逻辑分析</strong>：工作流回调方法中按CANCEL_ID查询撤销明细，若为空则抛出阻断性报错。需检查明细数据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程启动异常，撤销明细不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交或完结撤销单时，撤销单缺少明细行(EPM_PAD_CANCEL_DETAIL为空)<br><strong>逻辑分析：</strong>工作流回调方法中按CANCEL_ID查询撤销明细，若为空则抛出阻断性报错。需检查明细数据</div>
+  </div>
+</div>
 
 ```sql
 SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_APPROVE_STATUS,
@@ -551,8 +581,14 @@ SELECT epc.CANCEL_ID, epc.CANCEL_CODE, epc.HZ_APPROVE_STATUS,
   WHERE epc.CANCEL_ID = :cancelId
   -- 若撤销明细数为0，则触发该报错
 ```
-<h4>报错6：erp返回认领结果为空</h4>
-<ul><li><strong>触发条件</strong>：ERP推送时，ERP接口返回认领结果为空</li><li><strong>逻辑分析</strong>：ERP推送方法中调用ERP接口获取认领结果，若返回null则抛出阻断性报错。可能原因：ERP服务不可用、网络异常、ERP接口异常。需检查ERP服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>erp返回认领结果为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>ERP推送时，ERP接口返回认领结果为空<br><strong>逻辑分析：</strong>ERP推送方法中调用ERP接口获取认领结果，若返回null则抛出阻断性报错。可能原因：ERP服务不可用、网络异常、ERP接口异常。需检查ERP服务状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE
@@ -562,8 +598,14 @@ SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE
   ORDER BY sem.CREATION_DATE DESC
   -- 查询ERP推送异常记录
 ```
-<h4>报错7：认领推送erp异常</h4>
-<ul><li><strong>触发条件</strong>：ERP推送时，ERP接口返回错误信息</li><li><strong>逻辑分析</strong>：ERP推送方法中调用ERP接口，若返回错误信息则抛出阻断性报错。需查看具体错误内容并修复后重新提交</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>认领推送erp异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>ERP推送时，ERP接口返回错误信息<br><strong>逻辑分析：</strong>ERP推送方法中调用ERP接口，若返回错误信息则抛出阻断性报错。需查看具体错误内容并修复后重新提交</div>
+  </div>
+</div>
 
 ```sql
 SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE, sem.CREATED_BY
@@ -576,18 +618,45 @@ SELECT sem.OBJID, sem.OBJTYPENAME, sem.ERROR_MSG, sem.CREATION_DATE, sem.CREATED
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：撤销后可结算工程服务费小于0</li><li>原因：撤销的工程服务费过大，导致已认领工程服务费无法覆盖已申请兑现金额</li><li>解决思路：减少撤销明细中工程服务费金额，确保撤销后可结算金额&gt;=0</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">撤销后可结算工程服务费小于0</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>撤销的工程服务费过大，导致已认领工程服务费无法覆盖已申请兑现金额<br><strong style="color:#7C3AED;">处理：</strong>减少撤销明细中工程服务费金额，确保撤销后可结算金额&gt;=0
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">ERP撤销推送失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或推送数据异常<br><strong style="color:#7C3AED;">处理：</strong>检查ERP接口状态和推送数据，修复后重新提交
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">提交时提示明细已被撤销</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>选中的认领明细已被其他撤销单撤销（cancelFlag=Y）<br><strong style="color:#7C3AED;">处理：</strong>剔除已撤销的明细后重新提交
+  </div>
+</div>
+</div>
 
 ```sql
 SELECT total_claim_service_amt - #{cancelServiceChargeAmt} - return_service_amt - applied_amt AS settleable_amt
 FROM epm_pad_cancel_query WHERE svc_exp_acc_id = {svcExpAccId};
 ```
-<ul><li>问题2：ERP撤销推送失败</li><li>原因：ERP接口不可用或推送数据异常</li><li>解决思路：检查ERP接口状态和推送数据，修复后重新提交</li></ul>
 
 ```sql
 SELECT * FROM sys_exception_msg WHERE objid = {cancelId} AND objtypename = '到款认领撤销';
 ```
-<ul><li>问题3：提交时提示明细已被撤销</li><li>原因：选中的认领明细已被其他撤销单撤销（cancelFlag=Y）</li><li>解决思路：剔除已撤销的明细后重新提交</li></ul>
 
 ```sql
 SELECT d.cancel_flag, pa.payment_allot_code, d.inv_bill_no, d.item_code

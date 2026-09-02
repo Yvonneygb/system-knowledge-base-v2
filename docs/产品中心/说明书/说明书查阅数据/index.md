@@ -246,8 +246,14 @@
 <tr><td>分类删除失败</td><td>删除分类按钮</td><td>删除产品分类接口异常或分类下存在子级数据。先删除子级分类</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询失败，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：列表/地图模式或汇总模式查询时，后端接口<code>GET /v1/&#123;orgId&#125;/manual-classification/list-mode-data</code>或<code>GET /v1/&#123;orgId&#125;/manual-classification/summary-mode-data</code>返回异常</li><li><strong>逻辑分析</strong>：低代码页面通过配置绑定后端接口渲染。后端<code>ManualClassificationServiceImpl.getMapMode</code>/<code>getSummaryMmode</code>通过<code>PageHelper.doPageAndSort</code>分页查询<code>ManualClassificationMapper.getMapMode</code>/<code>getSummaryMmode</code>。当数据库连接异常、SQL执行超时或服务不可用时，HZERO框架捕获异常返回错误响应，低代码页面展示查询失败提示。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询失败，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表/地图模式或汇总模式查询时，后端接口<code>GET /v1/&#123;orgId&#125;/manual-classification/list-mode-data</code>或<code>GET /v1/&#123;orgId&#125;/manual-classification/summary-mode-data</code>返回异常<br><strong>逻辑分析：</strong>低代码页面通过配置绑定后端接口渲染。后端<code>ManualClassificationServiceImpl.getMapMode</code>/<code>getSummaryMmode</code>通过<code>PageHelper.doPageAndSort</code>分页查询<code>ManualClassificationMapper.getMapMode</code>/<code>getSummaryMmode</code>。当数据库连接异常、SQL执行超时或服务不可用时，HZERO框架捕获异常返回错误响应，低代码页面展示查询失败提示。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查查阅日志表是否有数据及数据量
@@ -256,8 +262,14 @@
          MAX(L.CREATION_DATE) AS 最近查阅时间
   FROM ES_SEARCH_LOG L;
 ```
-<h4>报错2：权限不足，无法访问</h4>
-<ul><li><strong>触发条件</strong>：用户访问说明书查阅数据菜单或操作关联/新增/删除分类按钮时，当前角色未配置对应权限</li><li><strong>逻辑分析</strong>：低代码页面权限由低代码平台配置，后端接口<code>@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)</code>要求登录态访问。HZERO权限拦截器校验用户角色权限，未配置时返回403，低代码页面拦截访问。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法访问</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问说明书查阅数据菜单或操作关联/新增/删除分类按钮时，当前角色未配置对应权限<br><strong>逻辑分析：</strong>低代码页面权限由低代码平台配置，后端接口<code>@Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)</code>要求登录态访问。HZERO权限拦截器校验用户角色权限，未配置时返回403，低代码页面拦截访问。</div>
+  </div>
+</div>
 
 ```sql
 -- 查询当前用户角色是否分配了说明书查阅数据相关权限
@@ -270,8 +282,14 @@
   WHERE U.REAL_NAME = :用户名
     AND P.CODE LIKE '%manual-classification%';
 ```
-<h4>报错3：登录已过期，请重新登录</h4>
-<ul><li><strong>触发条件</strong>：用户在说明书查阅数据页面操作时，HZERO Token过期或被踢出登录</li><li><strong>逻辑分析</strong>：低代码页面请求携带Authorization Token访问后端接口，后端网关校验Token有效性。Token过期时返回401状态码，低代码平台捕获401并跳转登录页。常见于长时间未操作或单点登录会话超时。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>登录已过期，请重新登录</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在说明书查阅数据页面操作时，HZERO Token过期或被踢出登录<br><strong>逻辑分析：</strong>低代码页面请求携带Authorization Token访问后端接口，后端网关校验Token有效性。Token过期时返回401状态码，低代码平台捕获401并跳转登录页。常见于长时间未操作或单点登录会话超时。</div>
+  </div>
+</div>
 
 ```sql
 -- 查询用户最近登录会话状态
@@ -282,8 +300,14 @@
   WHERE U.REAL_NAME = :用户名
   ORDER BY T.CREATE_TIME DESC;
 ```
-<h4>报错4：暂无数据</h4>
-<ul><li><strong>触发条件</strong>：列表/地图模式或汇总模式查询返回空列表，低代码表格无数据渲染</li><li><strong>逻辑分析</strong>：后端<code>getMapMode</code>/<code>getSummaryMmode</code>返回Page内容为空。根因可能为：1）查询条件过严无匹配查阅记录；2）尚无用户查阅过说明书，ES_SEARCH_LOG表无数据；3）说明书未关联产品分类。低代码表格展示"暂无数据"占位。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表/地图模式或汇总模式查询返回空列表，低代码表格无数据渲染<br><strong>逻辑分析：</strong>后端<code>getMapMode</code>/<code>getSummaryMmode</code>返回Page内容为空。根因可能为：1）查询条件过严无匹配查阅记录；2）尚无用户查阅过说明书，ES_SEARCH_LOG表无数据；3）说明书未关联产品分类。低代码表格展示"暂无数据"占位。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查是否有查阅日志记录及关联说明书
@@ -294,8 +318,14 @@
     AND NVL(S.HISTORY, 0) <> 2
   ORDER BY 查阅次数 DESC;
 ```
-<h4>报错5：产品分类已存在，新增失败</h4>
-<ul><li><strong>触发条件</strong>：点击"新增分类"按钮调用<code>POST /v1/&#123;orgId&#125;/manual-classification/save-item-class</code>时，同一组织下相同父级ID已存在相同编码的分类</li><li><strong>逻辑分析</strong>：后端<code>ManualClassificationServiceImpl.saveItemClass</code>首先通过<code>manualClassificationMapper.getItemClass(dto)</code>按"编码+组织ID+父级ID"查询是否已存在。若<code>CollectionUtils.isEmpty(list)</code>为false（即已存在），方法直接返回不保存，不抛异常但前端未收到新增成功反馈。低代码页面根据返回结果提示新增失败。该逻辑为静默判重，无显式异常抛出。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品分类已存在，新增失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"新增分类"按钮调用<code>POST /v1/&#123;orgId&#125;/manual-classification/save-item-class</code>时，同一组织下相同父级ID已存在相同编码的分类<br><strong>逻辑分析：</strong>后端<code>ManualClassificationServiceImpl.saveItemClass</code>首先通过<code>manualClassificationMapper.getItemClass(dto)</code>按"编码+组织ID+父级ID"查询是否已存在。若<code>CollectionUtils.isEmpty(list)</code>为false（即已存在），方法直接返回不保存，不抛异常但前端未收到新增成功反馈。低代码页面根据返回结果提示新增失败。该逻辑为静默判重，无显式异常抛出。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查同一父级下是否已存在相同编码的产品分类
@@ -307,8 +337,14 @@
     AND ORGANIZATION_ID = :组织ID
     AND ITEM_CLASS_PID = :父级ID;
 ```
-<h4>报错6：分类关联/取消关联失败</h4>
-<ul><li><strong>触发条件</strong>：点击"关联产品"按钮调用<code>POST /v1/&#123;orgId&#125;/manual-classification/save-specclas-ref-es</code>时，批量更新分类关联接口返回异常</li><li><strong>逻辑分析</strong>：后端<code>ManualClassificationServiceImpl.batchUpdateByPrimaryKey</code>遍历dtos列表，对每条记录设置updatetime后调用<code>manualClassificationMapper.updateByPrimaryKey(item)</code>更新。方法标注<code>@Transactional(rollbackFor = Exception.class)</code>，任一记录更新失败则整体回滚。失败原因可能为：1）关联记录SPECCLAS_REF_ID不存在；2）数据库死锁；3）并发修改冲突。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>分类关联/取消关联失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"关联产品"按钮调用<code>POST /v1/&#123;orgId&#125;/manual-classification/save-specclas-ref-es</code>时，批量更新分类关联接口返回异常<br><strong>逻辑分析：</strong>后端<code>ManualClassificationServiceImpl.batchUpdateByPrimaryKey</code>遍历dtos列表，对每条记录设置updatetime后调用<code>manualClassificationMapper.updateByPrimaryKey(item)</code>更新。方法标注<code>@Transactional(rollbackFor = Exception.class)</code>，任一记录更新失败则整体回滚。失败原因可能为：1）关联记录SPECCLAS_REF_ID不存在；2）数据库死锁；3）并发修改冲突。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查说明书分类关联记录是否存在
@@ -317,8 +353,14 @@
   FROM ES_SPECCLAS_REF R
   WHERE R.SPEC_ID = :说明书ID;
 ```
-<h4>报错7：分类删除失败</h4>
-<ul><li><strong>触发条件</strong>：点击"删除分类"按钮调用<code>POST /v1/&#123;orgId&#125;/manual-classification/deleta-item-class</code>时，删除产品分类接口返回异常</li><li><strong>逻辑分析</strong>：后端<code>ManualClassificationServiceImpl.deletaItemClass</code>直接调用<code>manualClassificationMapper.deletaItemClass(dto)</code>执行删除。方法标注<code>@Transactional(rollbackFor = Exception.class)</code>，删除失败则回滚。失败原因可能为：1）分类下存在子级分类未先删除；2）分类被说明书引用（存在ES_SPECCLAS_REF关联记录）；3）数据库外键约束冲突。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>分类删除失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"删除分类"按钮调用<code>POST /v1/&#123;orgId&#125;/manual-classification/deleta-item-class</code>时，删除产品分类接口返回异常<br><strong>逻辑分析：</strong>后端<code>ManualClassificationServiceImpl.deletaItemClass</code>直接调用<code>manualClassificationMapper.deletaItemClass(dto)</code>执行删除。方法标注<code>@Transactional(rollbackFor = Exception.class)</code>，删除失败则回滚。失败原因可能为：1）分类下存在子级分类未先删除；2）分类被说明书引用（存在ES_SPECCLAS_REF关联记录）；3）数据库外键约束冲突。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查待删除分类是否有子级分类或被说明书引用
@@ -331,8 +373,27 @@
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：查阅数据多久更新一次</li><li>原因：查阅日志实时写入，每次查阅说明书时自动记录</li><li>解决思路：数据实时更新，无需手动刷新</li></ul>
-<ul><li>问题2：列表模式和汇总模式的区别</li><li>原因：列表模式展示每条查阅明细记录，汇总模式按说明书维度聚合统计</li><li>解决思路：根据分析需求选择模式，明细查看用列表模式，统计分析用汇总模式</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">查阅数据多久更新一次</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>查阅日志实时写入，每次查阅说明书时自动记录<br><strong style="color:#7C3AED;">处理：</strong>数据实时更新，无需手动刷新
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">列表模式和汇总模式的区别</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>列表模式展示每条查阅明细记录，汇总模式按说明书维度聚合统计<br><strong style="color:#7C3AED;">处理：</strong>根据分析需求选择模式，明细查看用列表模式，统计分析用汇总模式
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

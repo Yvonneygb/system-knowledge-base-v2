@@ -214,8 +214,14 @@
 <tr><td>必填查询条件为空</td><td>查询时</td><td>未填写年度/合同编码等必填条件，补全后查询</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询无数据</h4>
-<ul><li><strong>触发条件</strong>：用户按合同/产品查询合同出货完成率明细，searchContractInvRate接口返回空结果集</li><li><strong>逻辑分析</strong>：明细报表为完成率报表（菜单108）的下钻视图，通过searchContractDetailWithSubtotal接口按合同维度展示出货完成率明细，完成率=已出货数量/合同任务数量×100%，含小计行。无数据根因有三类：(1)选中的合同无出货数据（DELIVERY_AMT为0或出库单未生成）；(2)合同任务数量为0（合同未配置任务明细行）；(3)产品/合同筛选条件与记录不匹配。需先确认合同是否有出库单及任务明细</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户按合同/产品查询合同出货完成率明细，searchContractInvRate接口返回空结果集<br><strong>逻辑分析：</strong>明细报表为完成率报表（菜单108）的下钻视图，通过searchContractDetailWithSubtotal接口按合同维度展示出货完成率明细，完成率=已出货数量/合同任务数量×100%，含小计行。无数据根因有三类：(1)选中的合同无出货数据（DELIVERY_AMT为0或出库单未生成）；(2)合同任务数量为0（合同未配置任务明细行）；(3)产品/合同筛选条件与记录不匹配。需先确认合同是否有出库单及任务明细</div>
+  </div>
+</div>
 
 ```sql
 SELECT CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME,
@@ -225,8 +231,14 @@ SELECT CONTRACT_CODE, CONTRACT_NAME, CUSTOMER_NAME,
   WHERE (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
   ORDER BY CONTRACT_CODE;
 ```
-<h4>报错2：导出失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击"导出"按钮，exportContractInvRate接口返回空数据集或抛出异常</li><li><strong>逻辑分析</strong>：导出接口exportContractInvRate基于searchContractDetailWithSubtotal同一查询逻辑（ContractInvRateConvert.INSTANCE.toExportVO），若查询结果集为空则导出文件无内容；若导出过程中后端服务异常（如内存溢出、LOV翻译失败@ProcessLovValue）也会失败。前端通过ExcelExportCom组件触发导出，需先执行查询确认有数据再导出</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"导出"按钮，exportContractInvRate接口返回空数据集或抛出异常<br><strong>逻辑分析：</strong>导出接口exportContractInvRate基于searchContractDetailWithSubtotal同一查询逻辑（ContractInvRateConvert.INSTANCE.toExportVO），若查询结果集为空则导出文件无内容；若导出过程中后端服务异常（如内存溢出、LOV翻译失败@ProcessLovValue）也会失败。前端通过ExcelExportCom组件触发导出，需先执行查询确认有数据再导出</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*) AS 可导出记录数
@@ -234,23 +246,41 @@ SELECT COUNT(*) AS 可导出记录数
   WHERE (CONTRACT_CODE = #{contractCode} OR #{contractCode} IS NULL)
     AND TASK_AMT IS NOT NULL;
 ```
-<h4>报错3：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：前端调用contractReport/epm-project-contract/searchContractInvRate或exportContractInvRate接口时，axios请求超时或返回非2xx状态码</li><li><strong>逻辑分析</strong>：报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。前端index.tsx通过DataSet.query()发起请求，失败时控制台输出"获取图表数据失败"日志。需确认ae-report服务状态及网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用contractReport/epm-project-contract/searchContractInvRate或exportContractInvRate接口时，axios请求超时或返回非2xx状态码<br><strong>逻辑分析：</strong>报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。前端index.tsx通过DataSet.query()发起请求，失败时控制台输出"获取图表数据失败"日志。需确认ae-report服务状态及网关配置</div>
+  </div>
+</div>
 
 ```sql
 -- 确认报表服务数据源连通性（间接验证服务可用性）
   SELECT COUNT(*) AS 合同总记录数 FROM EPM_PROJECT_CONTRACT;
 ```
-<h4>报错4：权限不足</h4>
-<ul><li><strong>触发条件</strong>：当前用户角色未配置报表查询权限（PERMISSION_PREFIX.arrow-ae:contractInvRate），访问页面时被拦截</li><li><strong>逻辑分析</strong>：报表页面通过permissionList控制访问权限，用户无对应权限码时无法进入页面或调用接口。需在角色管理中为用户分配"合同任务完成率明细报表"查询权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户角色未配置报表查询权限（PERMISSION_PREFIX.arrow-ae:contractInvRate），访问页面时被拦截<br><strong>逻辑分析：</strong>报表页面通过permissionList控制访问权限，用户无对应权限码时无法进入页面或调用接口。需在角色管理中为用户分配"合同任务完成率明细报表"查询权限</div>
+  </div>
+</div>
 
 ```sql
 -- 查询用户角色权限（示意，实际表名依权限框架）
   SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
   WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%contractInvRate%';
 ```
-<h4>报错5：必填查询条件为空</h4>
-<ul><li><strong>触发条件</strong>：用户未填写年度（POLICY_YEAR）或合同编码（CONTRACT_CODE）等必填查询条件直接点击查询</li><li><strong>逻辑分析</strong>：YearMonthContractRateDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端QueryDS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>必填查询条件为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未填写年度（POLICY_YEAR）或合同编码（CONTRACT_CODE）等必填查询条件直接点击查询<br><strong>逻辑分析：</strong>YearMonthContractRateDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端QueryDS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</div>
+  </div>
+</div>
 
 ```sql
 SELECT DISTINCT POLICY_YEAR FROM EPM_PROJECT_CONTRACT
@@ -259,7 +289,18 @@ SELECT DISTINCT POLICY_YEAR FROM EPM_PROJECT_CONTRACT
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：与菜单108的关系</li><li>原因：菜单108为年月汇总视图，菜单109为合同明细下钻视图</li><li>解决思路：两个菜单共用ContractReportController，分别调用不同API方法</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">与菜单108的关系</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>菜单108为年月汇总视图，菜单109为合同明细下钻视图<br><strong style="color:#7C3AED;">处理：</strong>两个菜单共用ContractReportController，分别调用不同API方法
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

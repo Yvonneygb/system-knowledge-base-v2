@@ -460,8 +460,14 @@ WHERE PROD_CODE = #{prodCode}
 -- 检查产品编码是否存在
 SELECT * FROM LNK_PROD WHERE PROD_CODE = #{prodCode};
 ```
-<h4>报错3：操作失败！</h4>
-<ul><li><strong>触发条件</strong>：点击失效确认框确认后，后端保存接口返回失败</li><li><strong>逻辑分析</strong>：前端onDisabledFn方法调用POST /v1/&#123;organizationId&#125;/prodPromoteGrade/disable接口，后端将LNK_PROD_PROMOTE_GRADE记录状态置为invalid，同时将LNK_PROD.PROD_PROMOTE_GRADE重置为C。若产品编码不存在或数据库异常则返回失败，前端提示"操作失败！"。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>操作失败！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击失效确认框确认后，后端保存接口返回失败<br><strong>逻辑分析：</strong>前端onDisabledFn方法调用POST /v1/&#123;organizationId&#125;/prodPromoteGrade/disable接口，后端将LNK_PROD_PROMOTE_GRADE记录状态置为invalid，同时将LNK_PROD.PROD_PROMOTE_GRADE重置为C。若产品编码不存在或数据库异常则返回失败，前端提示"操作失败！"。</div>
+  </div>
+</div>
 
 ```sql
 SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
@@ -470,8 +476,14 @@ SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
     LEFT JOIN LNK_PROD P ON P.PROD_CODE = PG.PROD_CODE
   WHERE PG.ID = :recordId;
 ```
-<h4>报错4：产品编码不能为空</h4>
-<ul><li><strong>触发条件</strong>：新增弹窗中未选择产品编码就点击确认按钮</li><li><strong>逻辑分析</strong>：前端onOkFn方法中先调用commonFn_formValid(ds)进行表单校验，产品编码字段配置required=true（listConfig.tsx第74行），校验不通过时弹窗提示"产品编码不能为空"并阻止提交。后端Controller的validObject方法校验LnkProdPromoteGrade实体prodCode字段的@NotBlank注解，若前端校验被绕过则后端抛出校验异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新增弹窗中未选择产品编码就点击确认按钮<br><strong>逻辑分析：</strong>前端onOkFn方法中先调用commonFn_formValid(ds)进行表单校验，产品编码字段配置required=true（listConfig.tsx第74行），校验不通过时弹窗提示"产品编码不能为空"并阻止提交。后端Controller的validObject方法校验LnkProdPromoteGrade实体prodCode字段的@NotBlank注解，若前端校验被绕过则后端抛出校验异常。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查是否存在产品编码为空的推广等级记录（异常数据）
@@ -479,8 +491,14 @@ SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
   FROM LNK_PROD_PROMOTE_GRADE PG
   WHERE PG.PROD_CODE IS NULL OR TRIM(PG.PROD_CODE) IS NULL;
 ```
-<h4>报错5：等级不能为空</h4>
-<ul><li><strong>触发条件</strong>：新增弹窗中未选择等级就点击确认按钮</li><li><strong>逻辑分析</strong>：前端onOkFn方法中commonFn_formValid校验等级字段required=true（listConfig.tsx第91行），校验不通过时弹窗提示"等级不能为空"。后端Entity的grade字段标注@NotBlank，validObject校验失败时抛出阻断性异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>等级不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新增弹窗中未选择等级就点击确认按钮<br><strong>逻辑分析：</strong>前端onOkFn方法中commonFn_formValid校验等级字段required=true（listConfig.tsx第91行），校验不通过时弹窗提示"等级不能为空"。后端Entity的grade字段标注@NotBlank，validObject校验失败时抛出阻断性异常。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查是否存在等级为空的推广等级记录（异常数据）
@@ -488,8 +506,14 @@ SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
   FROM LNK_PROD_PROMOTE_GRADE PG
   WHERE PG.GRADE IS NULL OR TRIM(PG.GRADE) IS NULL;
 ```
-<h4>报错6：查询失败</h4>
-<ul><li><strong>触发条件</strong>：列表页加载或点击查询按钮时，后端列表查询接口返回失败</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/prodPromoteGrades接口，后端selectList方法通过LnkProdPromoteGradeMapper.selectList查询LNK_PROD_PROMOTE_GRADE关联LNK_PROD、LNK_ORG_EXT、HZERO.IAM_USER表。若数据库连接异常、SQL执行超时或关联的产品资料不存在（INNER JOIN导致数据丢失）则返回失败，前端DataSet自动提示查询失败。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页加载或点击查询按钮时，后端列表查询接口返回失败<br><strong>逻辑分析：</strong>前端DataSet的transport.read调用GET /v1/&#123;organizationId&#125;/prodPromoteGrades接口，后端selectList方法通过LnkProdPromoteGradeMapper.selectList查询LNK_PROD_PROMOTE_GRADE关联LNK_PROD、LNK_ORG_EXT、HZERO.IAM_USER表。若数据库连接异常、SQL执行超时或关联的产品资料不存在（INNER JOIN导致数据丢失）则返回失败，前端DataSet自动提示查询失败。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查推广等级记录关联的产品资料是否存在
@@ -499,8 +523,14 @@ SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
     LEFT JOIN LNK_PROD P ON P.PROD_CODE = PG.PROD_CODE
   WHERE P.PROD_CODE IS NULL;
 ```
-<h4>报错7：权限不足</h4>
-<ul><li><strong>触发条件</strong>：当前用户无对应操作权限时点击新增/批量失效/行内失效/导出/导入按钮</li><li><strong>逻辑分析</strong>：前端按钮配置permissionList权限编码（新增/失效：hzero.product_data.product_info.promote_grade-list.ps.edit；导出：hzero.product_data.product_info.promote_grade-list.ps.export；导入：hzero.product_data.product_info.promote_grade-list.ps.import），无权限时按钮不显示。若通过API直接调用，后端@Permission(level=ResourceLevel.ORGANIZATION)注解校验组织级权限，无权限时抛出403异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户无对应操作权限时点击新增/批量失效/行内失效/导出/导入按钮<br><strong>逻辑分析：</strong>前端按钮配置permissionList权限编码（新增/失效：hzero.product_data.product_info.promote_grade-list.ps.edit；导出：hzero.product_data.product_info.promote_grade-list.ps.export；导入：hzero.product_data.product_info.promote_grade-list.ps.import），无权限时按钮不显示。若通过API直接调用，后端@Permission(level=ResourceLevel.ORGANIZATION)注解校验组织级权限，无权限时抛出403异常。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查用户角色权限配置（HZERO平台权限表）
@@ -512,8 +542,14 @@ SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
   WHERE P.CODE LIKE 'hzero.product_data.product_info.promote_grade-list.ps.%'
   ORDER BY P.CODE;
 ```
-<h4>报错8：会话过期</h4>
-<ul><li><strong>触发条件</strong>：用户登录会话已失效时执行任意操作（查询/新增/失效/导出/导入）</li><li><strong>逻辑分析</strong>：前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户登录会话已失效时执行任意操作（查询/新增/失效/导出/导入）<br><strong>逻辑分析：</strong>前端request请求携带的access_token过期，后端网关拦截返回401状态码，前端axios拦截器检测到401后弹出登录确认框提示"会话过期，请重新登录"，跳转登录页面。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查用户登录会话状态（HZERO平台Token表）
@@ -527,10 +563,45 @@ SELECT PG.ID, PG.PROD_CODE AS 产品编码, PG.GRADE AS 推广等级,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：推广等级被产品引用后能否删除？</li><li>原因：本菜单不提供删除按钮，只提供失效操作。失效后产品推广等级重置为C</li><li>解决思路：使用"行内失效"或"批量失效"按钮将状态置为invalid</li></ul>
-<ul><li>问题2：同一产品能否有多个有效推广等级？</li><li>原因：后端saveData方法自动处理唯一性，新增有效记录时自动将旧的有效记录失效</li><li>解决思路：无需手动处理，系统自动保证同一产品同一时间只有一个有效推广等级</li></ul>
-<ul><li>问题3：推广等级和推广等级要求配置的关系？</li><li>原因：推广等级维护定义产品具体归属的等级（A/B/C等），推广等级要求配置（prodPromoteGradesControls）定义达到某等级需满足的指标条件</li><li>解决思路：两者配合使用，要求配置评估产品指标后自动判定等级，本菜单可手动指定等级</li></ul>
-<ul><li>问题4：失效后产品的推广等级是什么？</li><li>原因：后端saveData方法中，status=invalid时将LNK_PROD.PROD_PROMOTE_GRADE重置为C</li><li>解决思路：失效后产品推广等级自动回归默认值C</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">推广等级被产品引用后能否删除？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>本菜单不提供删除按钮，只提供失效操作。失效后产品推广等级重置为C<br><strong style="color:#7C3AED;">处理：</strong>使用"行内失效"或"批量失效"按钮将状态置为invalid
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">同一产品能否有多个有效推广等级？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>后端saveData方法自动处理唯一性，新增有效记录时自动将旧的有效记录失效<br><strong style="color:#7C3AED;">处理：</strong>无需手动处理，系统自动保证同一产品同一时间只有一个有效推广等级
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">推广等级和推广等级要求配置的关系？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>推广等级维护定义产品具体归属的等级（A/B/C等），推广等级要求配置（prodPromoteGradesControls）定义达到某等级需满足的指标条件<br><strong style="color:#7C3AED;">处理：</strong>两者配合使用，要求配置评估产品指标后自动判定等级，本菜单可手动指定等级
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">失效后产品的推广等级是什么？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>后端saveData方法中，status=invalid时将LNK_PROD.PROD_PROMOTE_GRADE重置为C<br><strong style="color:#7C3AED;">处理：</strong>失效后产品推广等级自动回归默认值C
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

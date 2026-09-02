@@ -550,8 +550,14 @@ ORDER BY MDF.OPERATION_TIME DESC;
 <tr><td>状态不允许操作</td><td>开始接单/开始设计/图纸验收</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
 </tbody>
 </table>
-<h4>报错1：请选择一条数据</h4>
-<ul><li><strong>触发条件</strong>：点击查看申请、查看确认书、特殊取消、结束执行、同步OA/FDD/CRM、下载图纸、设计改派、查看反馈、上传图纸、下单、区域确认、开始设计、图纸确认、终止等行操作按钮时，未选择数据或选择了多行</li><li><strong>逻辑分析</strong>：前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择一条数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击查看申请、查看确认书、特殊取消、结束执行、同步OA/FDD/CRM、下载图纸、设计改派、查看反馈、上传图纸、下单、区域确认、开始设计、图纸确认、终止等行操作按钮时，未选择数据或选择了多行<br><strong>逻辑分析：</strong>前端在执行单选操作前校验选中行数量，若 selectedRows.length ≠ 1 则阻止操作并提示"请选择一条数据"。单选操作需要明确的目标申请，未选择时无法确定操作对象，多选时操作对象不唯一</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -564,8 +570,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE APPLY_TYPE_ONE = 'design'
   ORDER BY CREATE_DATE DESC;
 ```
-<h4>报错2：请求失败</h4>
-<ul><li><strong>触发条件</strong>：调用 mlt/designApply/* 系列接口时，后端返回 HTTP 状态码非 2xx</li><li><strong>逻辑分析</strong>：前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM/文件存储）调用失败、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、文件存储服务、后端日志定位具体异常堆栈</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用 mlt/designApply/* 系列接口时，后端返回 HTTP 状态码非 2xx<br><strong>逻辑分析：</strong>前端通过 axios 调用后端接口，若响应状态码非 2xx 或网络异常则触发错误回调，统一提示"请求失败"。常见根因包括：mbo-business 微服务未启动或异常、数据库连接失败、SQL 执行超时、后端业务异常未捕获、外部系统（OA/FDD/CRM/文件存储）调用失败、网络中断等。需检查 mbo-business 微服务运行状态、外部系统连通性、文件存储服务、后端日志定位具体异常堆栈</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -580,8 +592,14 @@ SELECT APPLY_CODE AS 申请编码,
     AND LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错3：当前进展不能为空</h4>
-<ul><li><strong>触发条件</strong>：提交终止项目时，CURRENT_PROGRESS 字段为空</li><li><strong>逻辑分析</strong>：前端终止项目弹窗对 currentProgress 字段配置 required 校验，提交前校验当前进展是否填写，为空则阻止提交并提示"当前进展不能为空"。当前进展用于记录终止时的项目状态，便于追溯终止原因</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前进展不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交终止项目时，CURRENT_PROGRESS 字段为空<br><strong>逻辑分析：</strong>前端终止项目弹窗对 currentProgress 字段配置 required 校验，提交前校验当前进展是否填写，为空则阻止提交并提示"当前进展不能为空"。当前进展用于记录终止时的项目状态，便于追溯终止原因</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -593,8 +611,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE APPLY_TYPE = 'termination'
     AND (CURRENT_PROGRESS IS NULL OR CURRENT_PROGRESS = '');
 ```
-<h4>报错4：终止原因不能为空</h4>
-<ul><li><strong>触发条件</strong>：提交终止项目时，TERMINATION_REASON 字段为空</li><li><strong>逻辑分析</strong>：前端终止项目弹窗对 terminationReason 字段配置 required 校验，提交前校验终止原因是否填写，为空则阻止提交并提示"终止原因不能为空"。终止原因用于记录项目终止的具体原因，是终止审批的核心依据</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>终止原因不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交终止项目时，TERMINATION_REASON 字段为空<br><strong>逻辑分析：</strong>前端终止项目弹窗对 terminationReason 字段配置 required 校验，提交前校验终止原因是否填写，为空则阻止提交并提示"终止原因不能为空"。终止原因用于记录项目终止的具体原因，是终止审批的核心依据</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -606,8 +630,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE APPLY_TYPE = 'termination'
     AND (TERMINATION_REASON IS NULL OR TERMINATION_REASON = '');
 ```
-<h4>报错5：签订人不能为空</h4>
-<ul><li><strong>触发条件</strong>：提交图纸确认时，SIGNER 字段为空</li><li><strong>逻辑分析</strong>：前端图纸确认弹窗对 signer 字段配置 required 校验，提交前校验签订人是否选择，为空则阻止提交并提示"签订人不能为空"。签订人用于法大大电子签署，必须明确签署责任主体</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>签订人不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交图纸确认时，SIGNER 字段为空<br><strong>逻辑分析：</strong>前端图纸确认弹窗对 signer 字段配置 required 校验，提交前校验签订人是否选择，为空则阻止提交并提示"签订人不能为空"。签订人用于法大大电子签署，必须明确签署责任主体</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -620,8 +650,14 @@ SELECT APPLY_CODE AS 申请编码,
     AND ORDER_LECTURE_STATE = 'drawing_uploaded'
     AND (SIGNER_NAME IS NULL OR SIGNER_ID IS NULL);
 ```
-<h4>报错6：面积确认校验失败</h4>
-<ul><li><strong>触发条件</strong>：提交区域确认时，generalFormDS.validate() 校验未通过，SCALE_AREA 等必填字段为空</li><li><strong>逻辑分析</strong>：前端区域确认弹窗通过 generalFormDS.validate() 校验表单，对 SCALE_AREA（确认面积）等字段配置 required 校验，提交前校验完整性，校验不通过则提示"面积确认校验失败"。面积用于计算设计费用，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>面积确认校验失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交区域确认时，generalFormDS.validate() 校验未通过，SCALE_AREA 等必填字段为空<br><strong>逻辑分析：</strong>前端区域确认弹窗通过 generalFormDS.validate() 校验表单，对 SCALE_AREA（确认面积）等字段配置 required 校验，提交前校验完整性，校验不通过则提示"面积确认校验失败"。面积用于计算设计费用，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -634,8 +670,14 @@ SELECT APPLY_CODE AS 申请编码,
     AND ORDER_LECTURE_STATE = 'ordered'
     AND (SCALE_AREA IS NULL OR SIGNER_NAME IS NULL);
 ```
-<h4>报错7：单个文件不能大于30MB</h4>
-<ul><li><strong>触发条件</strong>：上传图纸时，所选文件 file.size &gt; 30 * 1024 * 1024（30MB）</li><li><strong>逻辑分析</strong>：前端 UploadDrawing 组件 beforeUpload 钩子校验文件大小，超过30MB则阻止上传并提示"单个文件不能大于30MB"。限制源于OSS存储和后端解析性能考虑，大文件需压缩或拆分后上传</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单个文件不能大于30MB</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上传图纸时，所选文件 file.size &gt; 30 * 1024 * 1024（30MB）<br><strong>逻辑分析：</strong>前端 UploadDrawing 组件 beforeUpload 钩子校验文件大小，超过30MB则阻止上传并提示"单个文件不能大于30MB"。限制源于OSS存储和后端解析性能考虑，大文件需压缩或拆分后上传</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -646,8 +688,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE FILE_SIZE > 30 * 1024 * 1024
   ORDER BY CREATION_DATE DESC;
 ```
-<h4>报错8：上传失败</h4>
-<ul><li><strong>触发条件</strong>：上传图纸时，OSS 上传抛错（onUploadError）或上传成功但响应无 fileUrl（onUploadSuccess res.fileUrl 为空）</li><li><strong>逻辑分析</strong>：前端 UploadDrawing 组件 onUploadError 钩子捕获上传异常提示"上传失败：&#123;err.message&#125;"，onUploadSuccess 钩子校验响应 fileUrl 字段，为空则提示"上传失败：&#123;res.message&#125;"。常见根因：OSS 存储服务不可用、bucketName/bucketDirectory 配置错误、storageCode 未配置、文件格式不被接受、网络中断等</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>上传失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上传图纸时，OSS 上传抛错（onUploadError）或上传成功但响应无 fileUrl（onUploadSuccess res.fileUrl 为空）<br><strong>逻辑分析：</strong>前端 UploadDrawing 组件 onUploadError 钩子捕获上传异常提示"上传失败：&#123;err.message&#125;"，onUploadSuccess 钩子校验响应 fileUrl 字段，为空则提示"上传失败：&#123;res.message&#125;"。常见根因：OSS 存储服务不可用、bucketName/bucketDirectory 配置错误、storageCode 未配置、文件格式不被接受、网络中断等</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -659,8 +707,14 @@ SELECT APPLY_CODE AS 申请编码,
      OR ERROR_INFO IS NOT NULL
   ORDER BY CREATION_DATE DESC;
 ```
-<h4>报错9：同步外部系统失败</h4>
-<ul><li><strong>触发条件</strong>：点击同步CRM/同步OA/同步FDD按钮，调用 pushCrm/pushOa/pushFdd 接口返回失败</li><li><strong>逻辑分析</strong>：前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>同步外部系统失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击同步CRM/同步OA/同步FDD按钮，调用 pushCrm/pushOa/pushFdd 接口返回失败<br><strong>逻辑分析：</strong>前端通过 PRequest 调用 pushCrm/pushOa/pushFdd 接口，接口返回 success=false 或非2xx状态码时触发错误回调。常见根因：CRM/OA/FDD 外部系统不可用、数据不符合外部接口要求、申请状态不允许同步、网络中断等。后端会将异常写入 ERROR_INFO 字段</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -675,8 +729,14 @@ SELECT APPLY_CODE AS 申请编码,
     AND LAST_UPDATE_DATE >= SYSDATE - 7
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错10：网络异常/接口超时</h4>
-<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、后端服务假死、数据库慢查询、接口处理时间超过 timeout 阈值等。需检查网络连通性、后端服务负载、数据库性能</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、后端服务假死、数据库慢查询、接口处理时间超过 timeout 阈值等。需检查网络连通性、后端服务负载、数据库性能</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -687,8 +747,14 @@ SELECT APPLY_CODE AS 申请编码,
     AND LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错11：权限不足</h4>
-<ul><li><strong>触发条件</strong>：点击查看申请、开始接单、面积确认、开始设计、图纸验收、终止项目、同步CRM/OA/FDD等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码（如 hzero.general_manage.design.design_general_execute.ps.show_apply 等），HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击查看申请、开始接单、面积确认、开始设计、图纸验收、终止项目、同步CRM/OA/FDD等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码（如 hzero.general_manage.design.design_general_execute.ps.show_apply 等），HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.USER_NAME AS 用户名,
@@ -702,8 +768,14 @@ SELECT U.USER_NAME AS 用户名,
   WHERE P.PERMISSION_CODE LIKE 'hzero.general_manage.design.design_general_execute.ps.%'
   ORDER BY U.USER_NAME;
 ```
-<h4>报错12：数据不存在</h4>
-<ul><li><strong>触发条件</strong>：查看申请、查看反馈、上传图纸等操作时，接口返回数据为空或申请编码不存在</li><li><strong>逻辑分析</strong>：前端通过 applyCode 调用详情接口，后端查询 DESIGN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查看申请、查看反馈、上传图纸等操作时，接口返回数据为空或申请编码不存在<br><strong>逻辑分析：</strong>前端通过 applyCode 调用详情接口，后端查询 DESIGN_APPLY 表无对应记录或记录已逻辑删除，返回空数据。常见根因：申请编码错误、申请已被删除、跨租户查询、数据权限隔离等。需检查 APPLY_CODE 有效性及数据权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,
@@ -714,8 +786,14 @@ SELECT APPLY_CODE AS 申请编码,
   WHERE APPLY_TYPE_ONE = 'design'
     AND (DELETE_FLAG = 'Y' OR APPLY_CODE IS NULL);
 ```
-<h4>报错13：状态不允许操作</h4>
-<ul><li><strong>触发条件</strong>：点击开始接单、开始设计、图纸验收、终止项目等按钮时，申请状态不在允许操作的状态范围内</li><li><strong>逻辑分析</strong>：后端校验申请状态机，如开始接单要求 ORDER_LECTURE_STATE 为待接单、开始设计要求为已接单、图纸验收要求图纸已上传、终止项目要求非已完成等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击开始接单、开始设计、图纸验收、终止项目等按钮时，申请状态不在允许操作的状态范围内<br><strong>逻辑分析：</strong>后端校验申请状态机，如开始接单要求 ORDER_LECTURE_STATE 为待接单、开始设计要求为已接单、图纸验收要求图纸已上传、终止项目要求非已完成等。状态不匹配时后端返回业务异常，前端提示后端返回的 message。需检查申请当前状态及操作流程</div>
+  </div>
+</div>
 
 ```sql
 SELECT APPLY_CODE AS 申请编码,

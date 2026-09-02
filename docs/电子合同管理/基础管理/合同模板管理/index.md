@@ -449,8 +449,14 @@ ORDER BY T.CREATION_DATE DESC;
 <tr><td>模板编码已存在</td><td>新建保存</td><td>模板编码重复，更换编码后保存</td><td>error</td><td>后端校验 TEMPLATE_CODE 唯一性</td></tr>
 </tbody>
 </table>
-<h4>报错1：模板名称不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存模板时，ELECTRONIC_CONTRACT_TEMPLATE_NAME 字段为空</li><li><strong>逻辑分析</strong>：前端 baseFormDS.validate() 对模板名称字段配置 required 校验，提交前校验模板名称是否填写，为空则阻止提交并提示"模板名称不能为空"。模板名称是模板的唯一标识，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>模板名称不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存模板时，ELECTRONIC_CONTRACT_TEMPLATE_NAME 字段为空<br><strong>逻辑分析：</strong>前端 baseFormDS.validate() 对模板名称字段配置 required 校验，提交前校验模板名称是否填写，为空则阻止提交并提示"模板名称不能为空"。模板名称是模板的唯一标识，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -461,8 +467,14 @@ SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
   WHERE ELECTRONIC_CONTRACT_TEMPLATE_NAME IS NULL
      OR ELECTRONIC_CONTRACT_TEMPLATE_NAME = '';
 ```
-<h4>报错2：模板类型不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存模板时，TEMPLATE_TYPE 字段为空</li><li><strong>逻辑分析</strong>：前端 baseFormDS.validate() 对模板类型字段配置 required 校验，提交前校验模板类型是否选择，为空则阻止提交并提示"模板类型不能为空"。模板类型决定页面字段显隐和子类型值集切换，必须明确</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>模板类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存模板时，TEMPLATE_TYPE 字段为空<br><strong>逻辑分析：</strong>前端 baseFormDS.validate() 对模板类型字段配置 required 校验，提交前校验模板类型是否选择，为空则阻止提交并提示"模板类型不能为空"。模板类型决定页面字段显隐和子类型值集切换，必须明确</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -472,8 +484,14 @@ SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
   FROM ELECTRONIC_CONTRACT_TEMPLATE
   WHERE TEMPLATE_TYPE IS NULL OR TEMPLATE_TYPE = '';
 ```
-<h4>报错3：模板子类型不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存模板时，模板类型为经销合同/装修协议/广告协议但 TEMPLATE_SUBTYPE 字段为空</li><li><strong>逻辑分析</strong>：前端 baseFormDS.validate() 对模板子类型字段配置 required 校验（仅当模板类型为经销合同/装修协议/广告协议时显示），提交前校验模板子类型是否选择，为空则阻止提交并提示"模板子类型不能为空"。子类型用于进一步细分模板分类</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>模板子类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存模板时，模板类型为经销合同/装修协议/广告协议但 TEMPLATE_SUBTYPE 字段为空<br><strong>逻辑分析：</strong>前端 baseFormDS.validate() 对模板子类型字段配置 required 校验（仅当模板类型为经销合同/装修协议/广告协议时显示），提交前校验模板子类型是否选择，为空则阻止提交并提示"模板子类型不能为空"。子类型用于进一步细分模板分类</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -484,8 +502,14 @@ SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
   WHERE TEMPLATE_TYPE IN ('dealer_contract', 'decoration_agreement', 'advertising_agreement')
     AND (TEMPLATE_SUBTYPE IS NULL OR TEMPLATE_SUBTYPE = '');
 ```
-<h4>报错4：授权单位不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存模板时，更换授权单位=Y 但 AUTHORIZED_COMPANY 字段为空</li><li><strong>逻辑分析</strong>：前端 baseFormDS.validate() 对授权单位字段配置 required 校验（仅当更换授权单位=Y 时显示），提交前校验授权单位是否选择，为空则阻止提交并提示"授权单位不能为空"。授权单位用于明确模板的授权主体</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>授权单位不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存模板时，更换授权单位=Y 但 AUTHORIZED_COMPANY 字段为空<br><strong>逻辑分析：</strong>前端 baseFormDS.validate() 对授权单位字段配置 required 校验（仅当更换授权单位=Y 时显示），提交前校验授权单位是否选择，为空则阻止提交并提示"授权单位不能为空"。授权单位用于明确模板的授权主体</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -496,8 +520,14 @@ SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
   WHERE USE_OTHER_COMPANY = 'Y'
     AND (AUTHORIZED_COMPANY IS NULL OR AUTHORIZED_COMPANY = '');
 ```
-<h4>报错5：请上传合同模板文件</h4>
-<ul><li><strong>触发条件</strong>：保存模板时，模板文件 fileUrl 不存在</li><li><strong>逻辑分析</strong>：前端提交前校验模板文件是否已上传，若 fileUrl 为空则阻止提交并提示"请上传合同模板文件"。模板文件是合同生成的核心依据，必须上传</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请上传合同模板文件</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存模板时，模板文件 fileUrl 不存在<br><strong>逻辑分析：</strong>前端提交前校验模板文件是否已上传，若 fileUrl 为空则阻止提交并提示"请上传合同模板文件"。模板文件是合同生成的核心依据，必须上传</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -511,8 +541,14 @@ SELECT t.ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
   WHERE t.TEMPLATE_STATUS IN ('ENABLE', 'NOT_ENABLE')
     AND (f.FILE_URL IS NULL OR f.FILE_URL = '');
 ```
-<h4>报错6：单个文件不能大于30MB</h4>
-<ul><li><strong>触发条件</strong>：上传模板文件时，文件大小超过30MB</li><li><strong>逻辑分析</strong>：前端上传组件对文件大小配置 maxSize=30MB 校验，上传前校验文件大小，超过30MB则阻止上传并提示"单个文件不能大于30MB"。限制文件大小避免OSS存储压力和上传超时</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单个文件不能大于30MB</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上传模板文件时，文件大小超过30MB<br><strong>逻辑分析：</strong>前端上传组件对文件大小配置 maxSize=30MB 校验，上传前校验文件大小，超过30MB则阻止上传并提示"单个文件不能大于30MB"。限制文件大小避免OSS存储压力和上传超时</div>
+  </div>
+</div>
 
 ```sql
 SELECT FILE_ID AS 文件ID,
@@ -524,8 +560,14 @@ SELECT FILE_ID AS 文件ID,
   WHERE FILE_NAME IS NOT NULL
     AND LENGTH(FILE_NAME) > 100;
 ```
-<h4>报错7：上传失败</h4>
-<ul><li><strong>触发条件</strong>：上传模板文件时，OSS服务异常或文件格式不支持</li><li><strong>逻辑分析</strong>：前端调用OSS上传接口，若OSS服务不可用、网络异常、文件格式非 doc/docx、文件损坏等则上传失败，提示"上传失败"。需检查OSS服务连通性、网络、文件格式、文件完整性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>上传失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上传模板文件时，OSS服务异常或文件格式不支持<br><strong>逻辑分析：</strong>前端调用OSS上传接口，若OSS服务不可用、网络异常、文件格式非 doc/docx、文件损坏等则上传失败，提示"上传失败"。需检查OSS服务连通性、网络、文件格式、文件完整性</div>
+  </div>
+</div>
 
 ```sql
 SELECT FILE_ID AS 文件ID,
@@ -539,8 +581,14 @@ SELECT FILE_ID AS 文件ID,
   WHERE FILE_URL IS NULL OR FILE_URL = ''
      OR FILE_TYPE NOT IN ('doc', 'docx');
 ```
-<h4>报错8：模板已被引用，不可删除</h4>
-<ul><li><strong>触发条件</strong>：删除模板时，有合同引用了该模板</li><li><strong>逻辑分析</strong>：后端校验模板引用关系，查询 ELECTRONIC_CONTRACT 表中引用该模板的合同记录，若存在引用则提示"模板已被引用，不可删除"。已引用的模板删除会导致合同生成异常，需先禁用模板（设置为 NOT_ENABLE 状态）而非删除</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>模板已被引用，不可删除</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除模板时，有合同引用了该模板<br><strong>逻辑分析：</strong>后端校验模板引用关系，查询 ELECTRONIC_CONTRACT 表中引用该模板的合同记录，若存在引用则提示"模板已被引用，不可删除"。已引用的模板删除会导致合同生成异常，需先禁用模板（设置为 NOT_ENABLE 状态）而非删除</div>
+  </div>
+</div>
 
 ```sql
 SELECT t.ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -555,8 +603,14 @@ SELECT t.ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
            t.TEMPLATE_STATUS
   HAVING COUNT(c.ELECTRONIC_CONTRACT_ID) > 0;
 ```
-<h4>报错9：网络异常/接口超时</h4>
-<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、OSS服务响应慢等。需检查网络连通性、后端服务负载、OSS服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、OSS服务响应慢等。需检查网络连通性、后端服务负载、OSS服务状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -567,8 +621,14 @@ SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
   WHERE LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错10：权限不足</h4>
-<ul><li><strong>触发条件</strong>：点击新建、编辑、删除、生效/失效等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击新建、编辑、删除、生效/失效等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
@@ -579,8 +639,14 @@ SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE '%contract_template%' ORDER BY U.USER_NAME;
 ```
-<h4>报错11：模板不存在</h4>
-<ul><li><strong>触发条件</strong>：编辑、删除、生效/失效等操作时，接口返回数据为空或模板编码不存在</li><li><strong>逻辑分析</strong>：前端通过 templateCode 调用详情接口，后端查询 ELECTRONIC_CONTRACT_TEMPLATE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：模板编码错误、模板已被删除、跨租户查询、数据权限隔离等。需检查 TEMPLATE_CODE 有效性及数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>模板不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>编辑、删除、生效/失效等操作时，接口返回数据为空或模板编码不存在<br><strong>逻辑分析：</strong>前端通过 templateCode 调用详情接口，后端查询 ELECTRONIC_CONTRACT_TEMPLATE 表无对应记录或记录已逻辑删除，返回空数据。常见根因：模板编码错误、模板已被删除、跨租户查询、数据权限隔离等。需检查 TEMPLATE_CODE 有效性及数据权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -589,8 +655,14 @@ SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
   FROM ELECTRONIC_CONTRACT_TEMPLATE
   WHERE DELETE_FLAG = 'Y' OR ELECTRONIC_CONTRACT_TEMPLATE_CODE IS NULL;
 ```
-<h4>报错12：状态不允许操作</h4>
-<ul><li><strong>触发条件</strong>：点击生效/失效按钮时，模板状态不允许该操作</li><li><strong>逻辑分析</strong>：后端校验状态机，如已生效（ENABLE）不可重复生效、已失效（NOT_ENABLE）不可重复失效等。状态不匹配时后端返回业务异常。需检查模板当前状态及操作流程</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>状态不允许操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击生效/失效按钮时，模板状态不允许该操作<br><strong>逻辑分析：</strong>后端校验状态机，如已生效（ENABLE）不可重复生效、已失效（NOT_ENABLE）不可重复失效等。状态不匹配时后端返回业务异常。需检查模板当前状态及操作流程</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
@@ -600,8 +672,14 @@ SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码,
   WHERE TEMPLATE_STATUS NOT IN ('ENABLE','NOT_ENABLE')
   ORDER BY CREATE_DATE DESC;
 ```
-<h4>报错13：值集数据不显示</h4>
-<ul><li><strong>触发条件</strong>：查询条件或列表中模板类型等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.CONTRACT_TEMPLATE、MBO.CONTRACT_TEMPLATE_SUBTYPE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中模板类型等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.CONTRACT_TEMPLATE、MBO.CONTRACT_TEMPLATE_SUBTYPE 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
+  </div>
+</div>
 
 ```sql
 SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
@@ -610,8 +688,14 @@ SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
   WHERE LOOKUP_CODE IN ('MBO.CONTRACT_TEMPLATE','MBO.CONTRACT_TEMPLATE_SUBTYPE')
     AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
 ```
-<h4>报错14：模板编码已存在</h4>
-<ul><li><strong>触发条件</strong>：新建模板保存时，ELECTRONIC_CONTRACT_TEMPLATE_CODE 已存在于 ELECTRONIC_CONTRACT_TEMPLATE 表</li><li><strong>逻辑分析</strong>：后端校验 ELECTRONIC_CONTRACT_TEMPLATE_CODE 唯一性，若已存在则返回业务异常。需更换模板编码后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>模板编码已存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>新建模板保存时，ELECTRONIC_CONTRACT_TEMPLATE_CODE 已存在于 ELECTRONIC_CONTRACT_TEMPLATE 表<br><strong>逻辑分析：</strong>后端校验 ELECTRONIC_CONTRACT_TEMPLATE_CODE 唯一性，若已存在则返回业务异常。需更换模板编码后保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_TEMPLATE_CODE AS 模板编码, COUNT(*) AS 重复数

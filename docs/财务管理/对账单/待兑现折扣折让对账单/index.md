@@ -350,8 +350,14 @@ SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS !=
 <tr><td>权限不足</td><td>查询/确认/导出时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询无数据</h4>
-<ul><li><strong>触发条件</strong>：用户按事业部/经销商/年月/资金池类型组合条件查询待兑现折扣折让对账单，返回结果集为空</li><li><strong>逻辑分析</strong>：查询接口lHCASHFINBillHead/list基于LNK_CASH_BILL_HEAD_NEW表过滤，该表数据来源于折扣折让政策审批通过后由系统汇总生成，并关联资金池（LNK_CASHPOOLS_BILL_LINE）。无数据根因有三类：(1)查询条件（BILLMONTH+SERVERNO+DEPT_ID）组合过窄；(2)折扣折让政策未审批通过或资金池数据未同步，对账单尚未生成；(3)FUND_TYPE资金池类型筛选与对账单实际类型不匹配。需先确认表中有数据，再核对上游政策审批状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户按事业部/经销商/年月/资金池类型组合条件查询待兑现折扣折让对账单，返回结果集为空<br><strong>逻辑分析：</strong>查询接口lHCASHFINBillHead/list基于LNK_CASH_BILL_HEAD_NEW表过滤，该表数据来源于折扣折让政策审批通过后由系统汇总生成，并关联资金池（LNK_CASHPOOLS_BILL_LINE）。无数据根因有三类：(1)查询条件（BILLMONTH+SERVERNO+DEPT_ID）组合过窄；(2)折扣折让政策未审批通过或资金池数据未同步，对账单尚未生成；(3)FUND_TYPE资金池类型筛选与对账单实际类型不匹配。需先确认表中有数据，再核对上游政策审批状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT HEADER_ID, BILLMONTH, SERVERNO, SERVERNAME, DEPT_NAME, FUND_TYPE,
@@ -363,8 +369,14 @@ SELECT HEADER_ID, BILLMONTH, SERVERNO, SERVERNAME, DEPT_NAME, FUND_TYPE,
     AND (FUND_TYPE = #{fundType} OR #{fundType} IS NULL)
   ORDER BY BILLMONTH DESC, SERVERNO;
 ```
-<h4>报错2：请输入id</h4>
-<ul><li><strong>触发条件</strong>：用户在列表页未选中记录或选中后ID未传入，直接触发法人确认操作</li><li><strong>逻辑分析</strong>：法人确认接口confirmBill在Controller层（LnkCashBillHeadNewController.java:92）校验入参id非空，若StringUtils.isBlank(id)则抛出CommonException("请输入id")。根因有二：(1)前端未选中行就调用确认接口，id参数为null或空字符串；(2)前端选中行但headerId字段未正确传递到请求参数。校验在Controller层前置拦截，toast提示后阻断确认操作。需选中一条待确认的对账单后再点击法人确认</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请输入id</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在列表页未选中记录或选中后ID未传入，直接触发法人确认操作<br><strong>逻辑分析：</strong>法人确认接口confirmBill在Controller层（LnkCashBillHeadNewController.java:92）校验入参id非空，若StringUtils.isBlank(id)则抛出CommonException("请输入id")。根因有二：(1)前端未选中行就调用确认接口，id参数为null或空字符串；(2)前端选中行但headerId字段未正确传递到请求参数。校验在Controller层前置拦截，toast提示后阻断确认操作。需选中一条待确认的对账单后再点击法人确认</div>
+  </div>
+</div>
 
 ```sql
 SELECT HEADER_ID, BILLMONTH, SERVERNO, SERVERNAME, STATUS
@@ -372,8 +384,14 @@ SELECT HEADER_ID, BILLMONTH, SERVERNO, SERVERNAME, STATUS
   WHERE STATUS != 'Confirmed'
   ORDER BY BILLMONTH DESC;
 ```
-<h4>报错3：确认对账单失败，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：用户点击法人确认，updateBillStatus方法返回的影响行数updateCount为0</li><li><strong>逻辑分析</strong>：法人确认调用LnkCashBillHeadNewServiceImpl.updateBillStatus（LnkCashBillHeadNewServiceImpl.java:115），执行UPDATE LNK_CASH_BILL_HEAD_NEW SET STATUS='Confirmed' WHERE HEADER_ID=#&#123;id&#125;后判断updateCount==0则抛出CommonException("确认对账单失败，请稍后重试")。根因有三：(1)对账单已被他人确认（并发场景），STATUS已为'Confirmed'，UPDATE的WHERE条件未匹配；(2)对账单HEADER_ID不存在或已被删除；(3)对账单状态非待确认（如已关闭、已作废），不允许确认。需刷新列表确认对账单当前状态后重试</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>确认对账单失败，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击法人确认，updateBillStatus方法返回的影响行数updateCount为0<br><strong>逻辑分析：</strong>法人确认调用LnkCashBillHeadNewServiceImpl.updateBillStatus（LnkCashBillHeadNewServiceImpl.java:115），执行UPDATE LNK_CASH_BILL_HEAD_NEW SET STATUS='Confirmed' WHERE HEADER_ID=#&#123;id&#125;后判断updateCount==0则抛出CommonException("确认对账单失败，请稍后重试")。根因有三：(1)对账单已被他人确认（并发场景），STATUS已为'Confirmed'，UPDATE的WHERE条件未匹配；(2)对账单HEADER_ID不存在或已被删除；(3)对账单状态非待确认（如已关闭、已作废），不允许确认。需刷新列表确认对账单当前状态后重试</div>
+  </div>
+</div>
 
 ```sql
 SELECT HEADER_ID, BILLMONTH, SERVERNO, SERVERNAME, STATUS, 
@@ -383,8 +401,14 @@ SELECT HEADER_ID, BILLMONTH, SERVERNO, SERVERNAME, STATUS,
   FROM LNK_CASH_BILL_HEAD_NEW
   WHERE HEADER_ID = #{headerId};
 ```
-<h4>报错4：对账单明细不存在</h4>
-<ul><li><strong>触发条件</strong>：用户在列表页选中对账单点击"查看明细"，detail接口或queryCashPoolsBillLine接口返回空</li><li><strong>逻辑分析</strong>：查看明细调用/v1/&#123;organizationId&#125;/lHCASHFINBillHead/&#123;headerId&#125;/detail接口，按HEADER_ID查询LNK_CASH_BILL_HEAD_NEW头表和LNK_CASHPOOLS_BILL_LINE行表。根因有三：(1)并发场景下他人已删除该对账单，头表记录不存在；(2)对账单头表存在但行表LNK_CASHPOOLS_BILL_LINE无关联明细（HEADER_ID外键失效或行数据未生成）；(3)传入的headerId参数格式错误或为null。需核对头行表数据一致性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对账单明细不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在列表页选中对账单点击"查看明细"，detail接口或queryCashPoolsBillLine接口返回空<br><strong>逻辑分析：</strong>查看明细调用/v1/&#123;organizationId&#125;/lHCASHFINBillHead/&#123;headerId&#125;/detail接口，按HEADER_ID查询LNK_CASH_BILL_HEAD_NEW头表和LNK_CASHPOOLS_BILL_LINE行表。根因有三：(1)并发场景下他人已删除该对账单，头表记录不存在；(2)对账单头表存在但行表LNK_CASHPOOLS_BILL_LINE无关联明细（HEADER_ID外键失效或行数据未生成）；(3)传入的headerId参数格式错误或为null。需核对头行表数据一致性</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.HEADER_ID, H.BILLMONTH, H.SERVERNO, H.STATUS,
@@ -392,16 +416,28 @@ SELECT H.HEADER_ID, H.BILLMONTH, H.SERVERNO, H.STATUS,
   FROM LNK_CASH_BILL_HEAD_NEW H
   WHERE H.HEADER_ID = #{headerId};
 ```
-<h4>报错5：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击查询、查看明细、法人确认或导出，前端axios请求抛出网络异常或超时</li><li><strong>逻辑分析</strong>：前端调用/v1/&#123;organizationId&#125;/lHCASHFINBillHead/list、detail、confirmBill、export等接口时，因后端crm-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)crm-business微服务未注册到Nacos或已宕机；(2)网关路由配置错误找不到服务；(3)网络中断或防火墙拦截；(4)导出数据量超过maxDataCount=50000限制或SQL执行超时。需联系运维确认服务状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击查询、查看明细、法人确认或导出，前端axios请求抛出网络异常或超时<br><strong>逻辑分析：</strong>前端调用/v1/&#123;organizationId&#125;/lHCASHFINBillHead/list、detail、confirmBill、export等接口时，因后端crm-business服务不可用、网关路由异常、网络中断或请求超时导致连接失败。根因有四：(1)crm-business微服务未注册到Nacos或已宕机；(2)网关路由配置错误找不到服务；(3)网络中断或防火墙拦截；(4)导出数据量超过maxDataCount=50000限制或SQL执行超时。需联系运维确认服务状态</div>
+  </div>
+</div>
 
 ```sql
 -- 核查对账单数据量是否异常增长导致查询/导出超时
   SELECT COUNT(1) AS 对账单总数, MAX(BILLMONTH) AS 最新期间
   FROM LNK_CASH_BILL_HEAD_NEW;
 ```
-<h4>报错6：权限不足</h4>
-<ul><li><strong>触发条件</strong>：用户访问待兑现折扣折让对账单页面或调用接口时，返回403或"无权限访问"提示</li><li><strong>逻辑分析</strong>：后端Controller使用@Permission(level = ResourceLevel.ORGANIZATION)控制访问权限，要求用户拥有当前组织（organizationId）的访问权限。根因有三：(1)用户未分配该菜单（arrow-crm/src/pages/financialManagement/cashFinBill）的访问角色；(2)用户当前切换的组织不在其授权组织范围内；(3)用户数据权限未覆盖查询的经销商（CUSTOMER_ORG）或事业部。需联系管理员分配菜单角色和数据权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问待兑现折扣折让对账单页面或调用接口时，返回403或"无权限访问"提示<br><strong>逻辑分析：</strong>后端Controller使用@Permission(level = ResourceLevel.ORGANIZATION)控制访问权限，要求用户拥有当前组织（organizationId）的访问权限。根因有三：(1)用户未分配该菜单（arrow-crm/src/pages/financialManagement/cashFinBill）的访问角色；(2)用户当前切换的组织不在其授权组织范围内；(3)用户数据权限未覆盖查询的经销商（CUSTOMER_ORG）或事业部。需联系管理员分配菜单角色和数据权限</div>
+  </div>
+</div>
 
 ```sql
 -- 核查用户在当前组织下的角色分配（表名以HZERO IAM实际表为准）
@@ -412,8 +448,27 @@ SELECT H.HEADER_ID, H.BILLMONTH, H.SERVERNO, H.STATUS,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：对账单数据不正确</li><li>原因：折扣折让政策或资金池数据未及时同步</li><li>解决思路：检查SQL <code>SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE BILLMONTH = #&#123;billmonth&#125;</code></li></ul>
-<ul><li>问题2：法人确认失败</li><li>原因：对账单状态不是"待确认"，已被确认或数据异常</li><li>解决思路：检查对账单状态 <code>SELECT STATUS FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #&#123;headerId&#125;</code></li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">对账单数据不正确</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>折扣折让政策或资金池数据未及时同步<br><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE BILLMONTH = #&#123;billmonth&#125;</code>
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">法人确认失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>对账单状态不是"待确认"，已被确认或数据异常<br><strong style="color:#7C3AED;">处理：</strong>检查对账单状态 <code>SELECT STATUS FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #&#123;headerId&#125;</code>
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

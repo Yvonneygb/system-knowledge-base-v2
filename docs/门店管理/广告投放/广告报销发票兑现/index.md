@@ -489,23 +489,29 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>发票金额异常，请检查！</td><td>提交</td><td>实际兑现金额&lt;=0，检查发票金额</td><td>阻断性报错</td><td>[查看](#报错1发票金额异常请检查)</td></tr>
-<tr><td>本次申请兑现金额不可超过该报销单据剩余的可兑现金额</td><td>提交</td><td>兑现金额超限，减少本次兑现金额</td><td>阻断性报错</td><td>[查看](#报错2本次申请兑现金额不可超过该报销单据剩余的可兑现金额)</td></tr>
-<tr><td>本次核销金额不可超过额度内可用金额</td><td>提交</td><td>额度内核销金额超限，减少核销金额</td><td>阻断性报错</td><td>[查看](#报错3本次核销金额不可超过额度内可用金额)</td></tr>
-<tr><td>本次申请兑现金额不可超过额度外可用金额</td><td>提交</td><td>额度外兑现金额超限，减少兑现金额</td><td>阻断性报错</td><td>[查看](#报错4本次申请兑现金额不可超过额度外可用金额)</td></tr>
-<tr><td>额度外金额已占用</td><td>提交</td><td>额度外可用金额已被其他单据占用，减少兑现金额</td><td>阻断性报错</td><td>[查看](#报错5额度外金额已占用)</td></tr>
-<tr><td>申请兑现金额已超剩余未兑现总额</td><td>提交</td><td>并发兑现导致剩余不足，刷新后重新提交</td><td>阻断性报错</td><td>[查看](#报错6申请兑现金额已超剩余未兑现总额)</td></tr>
-<tr><td>流程中objid为0，流程失败！</td><td>提交</td><td>工作流缺少单据ID</td><td>阻断性报错</td><td>[查看](#报错7流程中objid为0流程失败)</td></tr>
-<tr><td>兑现类型异常！</td><td>ERP同步</td><td>兑现类型非1或2，检查数据</td><td>阻断性报错</td><td>[查看](#报错8兑现类型异常)</td></tr>
-<tr><td>该单据流程信息不存在</td><td>签章校验</td><td>单据不存在或流程信息缺失</td><td>阻断性报错</td><td>[查看](#报错9该单据流程信息不存在)</td></tr>
-<tr><td>门店编码或预算年度不能为空</td><td>额度外预算更新</td><td>门店编码或预算年度缺失</td><td>阻断性报错</td><td>[查看](#报错10门店编码或预算年度不能为空)</td></tr>
-<tr><td>可兑现总额不能为零或负数</td><td>额度外预算更新</td><td>可兑现总额异常</td><td>阻断性报错</td><td>[查看](#报错11可兑现总额不能为零或负数)</td></tr>
-<tr><td>税率配置格式错误</td><td>额度外预算更新</td><td>系统配置Outlimit_Tax_Rate格式错误</td><td>阻断性报错</td><td>[查看](#报错12税率配置格式错误)</td></tr>
-<tr><td>额度外预算数据不存在，请检查！</td><td>额度外预算更新</td><td>额度外预算未配置</td><td>阻断性报错</td><td>[查看](#报错13额度外预算数据不存在请检查)</td></tr>
+<tr><td>发票金额异常，请检查！</td><td>提交</td><td>实际兑现金额&lt;=0，检查发票金额</td><td>阻断性报错</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>本次申请兑现金额不可超过该报销单据剩余的可兑现金额</td><td>提交</td><td>兑现金额超限，减少本次兑现金额</td><td>阻断性报错</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>本次核销金额不可超过额度内可用金额</td><td>提交</td><td>额度内核销金额超限，减少核销金额</td><td>阻断性报错</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>本次申请兑现金额不可超过额度外可用金额</td><td>提交</td><td>额度外兑现金额超限，减少兑现金额</td><td>阻断性报错</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>额度外金额已占用</td><td>提交</td><td>额度外可用金额已被其他单据占用，减少兑现金额</td><td>阻断性报错</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>申请兑现金额已超剩余未兑现总额</td><td>提交</td><td>并发兑现导致剩余不足，刷新后重新提交</td><td>阻断性报错</td><td><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>流程中objid为0，流程失败！</td><td>提交</td><td>工作流缺少单据ID</td><td>阻断性报错</td><td><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>兑现类型异常！</td><td>ERP同步</td><td>兑现类型非1或2，检查数据</td><td>阻断性报错</td><td><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>该单据流程信息不存在</td><td>签章校验</td><td>单据不存在或流程信息缺失</td><td>阻断性报错</td><td><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>门店编码或预算年度不能为空</td><td>额度外预算更新</td><td>门店编码或预算年度缺失</td><td>阻断性报错</td><td><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>可兑现总额不能为零或负数</td><td>额度外预算更新</td><td>可兑现总额异常</td><td>阻断性报错</td><td><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>税率配置格式错误</td><td>额度外预算更新</td><td>系统配置Outlimit_Tax_Rate格式错误</td><td>阻断性报错</td><td><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>额度外预算数据不存在，请检查！</td><td>额度外预算更新</td><td>额度外预算未配置</td><td>阻断性报错</td><td><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：发票金额异常，请检查！</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"或"保存"按钮，支付方式非3（非虚拟收款）时，校验发票实际兑现金额factInvoiceAmt&lt;=0</li><li><strong>逻辑分析</strong>：兑现单需有有效发票金额才能进行核销与预算更新。校验逻辑读取FIN_FEE_CASHOUT_HEADER.FACT_INVOICE_AMT，当PAY_TYPE≠3且FACT_INVOICE_AMT&lt;=0时抛出阻断性异常。常见根因：用户未填写发票金额、发票金额被错误置0或负数、或前端未做必填校验直接提交空单。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>发票金额异常，请检查！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"或"保存"按钮，支付方式非3（非虚拟收款）时，校验发票实际兑现金额factInvoiceAmt&lt;=0<br><strong>逻辑分析：</strong>兑现单需有有效发票金额才能进行核销与预算更新。校验逻辑读取FIN_FEE_CASHOUT_HEADER.FACT_INVOICE_AMT，当PAY_TYPE≠3且FACT_INVOICE_AMT&lt;=0时抛出阻断性异常。常见根因：用户未填写发票金额、发票金额被错误置0或负数、或前端未做必填校验直接提交空单。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_cashout_id      AS 兑现单ID,
@@ -519,8 +525,14 @@ SELECT fee_cashout_id      AS 兑现单ID,
   AND    (fact_invoice_amt IS NULL OR fact_invoice_amt <= 0)
   ORDER  BY create_time DESC;
 ```
-<h4>报错2：本次申请兑现金额不可超过该报销单据剩余的可兑现金额</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，校验本次兑现金额thisCashoutAmt&gt;报销单剩余可兑现金额（TOTAL_CAN_CASHOUT_AMT-USED_CASHOUT_AMT）</li><li><strong>逻辑分析</strong>：兑现金额受报销单可兑现总额约束。校验逻辑从关联报销单FIN_FEE_BX_HEADER读取可兑现总额与已兑现总额，若本次兑现金额超过剩余可兑现（可兑现总额-已兑现总额）则抛异常。常见根因：用户输入金额超限、报销单已被其他兑现单占用部分额度、或前端未实时刷新剩余可兑现金额。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次申请兑现金额不可超过该报销单据剩余的可兑现金额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，校验本次兑现金额thisCashoutAmt&gt;报销单剩余可兑现金额（TOTAL_CAN_CASHOUT_AMT-USED_CASHOUT_AMT）<br><strong>逻辑分析：</strong>兑现金额受报销单可兑现总额约束。校验逻辑从关联报销单FIN_FEE_BX_HEADER读取可兑现总额与已兑现总额，若本次兑现金额超过剩余可兑现（可兑现总额-已兑现总额）则抛异常。常见根因：用户输入金额超限、报销单已被其他兑现单占用部分额度、或前端未实时刷新剩余可兑现金额。</div>
+  </div>
+</div>
 
 ```sql
 SELECT c.fee_cashout_id      AS 兑现单ID,
@@ -535,8 +547,14 @@ SELECT c.fee_cashout_id      AS 兑现单ID,
   AND    c.this_cashout_amt > (c.total_can_cashout_amt - c.used_cashout_amt)
   ORDER  BY c.create_time DESC;
 ```
-<h4>报错3：本次核销金额不可超过额度内可用金额</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，兑现类型为额度内（CASHOUT_TYPE=1）时，校验本次核销金额thisWriteoffAmt&gt;额度内可用金额inCanUseAmt</li><li><strong>逻辑分析</strong>：额度内兑现需核销资源额度，核销金额不能超过当前可用额度。校验逻辑读取FIN_FEE_CASHOUT_HEADER.THIS_WRITEOFF_AMT与IN_CAN_USE_AMT，当CASHOUT_TYPE=1且THIS_WRITEOFF_AMT&gt;IN_CAN_USE_AMT时抛异常。常见根因：资源额度已被其他单据占用、额度未及时刷新、或用户输入核销金额超限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次核销金额不可超过额度内可用金额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，兑现类型为额度内（CASHOUT_TYPE=1）时，校验本次核销金额thisWriteoffAmt&gt;额度内可用金额inCanUseAmt<br><strong>逻辑分析：</strong>额度内兑现需核销资源额度，核销金额不能超过当前可用额度。校验逻辑读取FIN_FEE_CASHOUT_HEADER.THIS_WRITEOFF_AMT与IN_CAN_USE_AMT，当CASHOUT_TYPE=1且THIS_WRITEOFF_AMT&gt;IN_CAN_USE_AMT时抛异常。常见根因：资源额度已被其他单据占用、额度未及时刷新、或用户输入核销金额超限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_cashout_id      AS 兑现单ID,
@@ -551,8 +569,14 @@ SELECT fee_cashout_id      AS 兑现单ID,
   AND    this_writeoff_amt > in_can_use_amt
   ORDER  BY create_time DESC;
 ```
-<h4>报错4：本次申请兑现金额不可超过额度外可用金额</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，兑现类型为额度外（CASHOUT_TYPE=2）时，校验本次兑现金额thisCashoutAmt&gt;额度外可用金额outCanUseAmt</li><li><strong>逻辑分析</strong>：额度外兑现受额度外预算可用金额约束。校验逻辑读取FIN_FEE_CASHOUT_HEADER.THIS_CASHOUT_AMT与OUT_CAN_USE_AMT，当CASHOUT_TYPE=2且THIS_CASHOUT_AMT&gt;OUT_CAN_USE_AMT时抛异常。常见根因：额度外预算已使用较多、可用金额未及时刷新、或用户输入兑现金额超限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次申请兑现金额不可超过额度外可用金额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，兑现类型为额度外（CASHOUT_TYPE=2）时，校验本次兑现金额thisCashoutAmt&gt;额度外可用金额outCanUseAmt<br><strong>逻辑分析：</strong>额度外兑现受额度外预算可用金额约束。校验逻辑读取FIN_FEE_CASHOUT_HEADER.THIS_CASHOUT_AMT与OUT_CAN_USE_AMT，当CASHOUT_TYPE=2且THIS_CASHOUT_AMT&gt;OUT_CAN_USE_AMT时抛异常。常见根因：额度外预算已使用较多、可用金额未及时刷新、或用户输入兑现金额超限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_cashout_id      AS 兑现单ID,
@@ -567,8 +591,14 @@ SELECT fee_cashout_id      AS 兑现单ID,
   AND    this_cashout_amt > out_can_use_amt
   ORDER  BY create_time DESC;
 ```
-<h4>报错5：额度外金额已占用</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，兑现类型为额度外（CASHOUT_TYPE=2）时，校验本次兑现金额&gt;额度外可用金额-已占用金额</li><li><strong>逻辑分析</strong>：额度外可用金额需扣除已被其他单据占用部分。校验逻辑查询MKT_OUTLIMIT_BUD_HEADER的已占用金额，若本次兑现金额超过剩余可用（可用金额-已占用金额）则抛异常。常见根因：并发提交导致额度外可用金额被其他兑现单占用、或前端未实时获取最新已占用金额。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>额度外金额已占用</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，兑现类型为额度外（CASHOUT_TYPE=2）时，校验本次兑现金额&gt;额度外可用金额-已占用金额<br><strong>逻辑分析：</strong>额度外可用金额需扣除已被其他单据占用部分。校验逻辑查询MKT_OUTLIMIT_BUD_HEADER的已占用金额，若本次兑现金额超过剩余可用（可用金额-已占用金额）则抛异常。常见根因：并发提交导致额度外可用金额被其他兑现单占用、或前端未实时获取最新已占用金额。</div>
+  </div>
+</div>
 
 ```sql
 SELECT c.fee_cashout_id      AS 兑现单ID,
@@ -586,8 +616,14 @@ SELECT c.fee_cashout_id      AS 兑现单ID,
   AND    c.this_cashout_amt > (c.out_can_use_amt - NVL(b.this_outlimit_bud_used_amt, 0))
   ORDER  BY c.create_time DESC;
 ```
-<h4>报错6：申请兑现金额已超剩余未兑现总额</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，提交时二次校验可兑现总额-已使用兑现金额-本次兑现金额&lt;0</li><li><strong>逻辑分析</strong>：提交时再次校验防止并发兑现导致超额。校验逻辑重新查询关联报销单的已使用兑现金额，若可兑现总额-已使用-本次兑现&lt;0则抛异常。常见根因：多用户并发对同一报销单提交兑现、或保存后到提交期间其他兑现单已占用额度，需刷新后重新提交。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>申请兑现金额已超剩余未兑现总额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，提交时二次校验可兑现总额-已使用兑现金额-本次兑现金额&lt;0<br><strong>逻辑分析：</strong>提交时再次校验防止并发兑现导致超额。校验逻辑重新查询关联报销单的已使用兑现金额，若可兑现总额-已使用-本次兑现&lt;0则抛异常。常见根因：多用户并发对同一报销单提交兑现、或保存后到提交期间其他兑现单已占用额度，需刷新后重新提交。</div>
+  </div>
+</div>
 
 ```sql
 SELECT c.fee_cashout_id      AS 兑现单ID,
@@ -603,8 +639,14 @@ SELECT c.fee_cashout_id      AS 兑现单ID,
   AND    (c.total_can_cashout_amt - c.used_cashout_amt - c.this_cashout_amt) < 0
   ORDER  BY c.create_time DESC;
 ```
-<h4>报错7：流程中objid为0，流程失败！</h4>
-<ul><li><strong>触发条件</strong>：点击"提交"按钮，发起工作流ADJ_GGBXFPDX时，传入的objid（单据主键FEE_CASHOUT_ID）为0或null</li><li><strong>逻辑分析</strong>：工作流引擎需用objid关联业务单据。若保存时未正确回写FEE_CASHOUT_ID（如自增序列未取回、事务未提交即发起流程），或前端未传id字段，会导致objid=0。工作流无法定位兑现单，流程发起失败。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程中objid为0，流程失败！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"提交"按钮，发起工作流ADJ_GGBXFPDX时，传入的objid（单据主键FEE_CASHOUT_ID）为0或null<br><strong>逻辑分析：</strong>工作流引擎需用objid关联业务单据。若保存时未正确回写FEE_CASHOUT_ID（如自增序列未取回、事务未提交即发起流程），或前端未传id字段，会导致objid=0。工作流无法定位兑现单，流程发起失败。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_cashout_id      AS 兑现单ID,
@@ -616,8 +658,14 @@ SELECT fee_cashout_id      AS 兑现单ID,
   AND    (fee_cashout_id = 0 OR fee_cashout_id IS NULL)
   ORDER  BY create_time DESC;
 ```
-<h4>报错8：兑现类型异常！</h4>
-<ul><li><strong>触发条件</strong>：ERP资金池同步时，读取兑现单CASHOUT_TYPE既非1（额度内）也非2（额度外）</li><li><strong>逻辑分析</strong>：ERP同步需根据兑现类型决定sourceType（额度内="广告费（额内）"，额度外="广告费（额外）"）。若CASHOUT_TYPE被错误写入其他值（如0、3、null），无法匹配sourceType分支，抛异常终止同步。常见根因：数据迁移错误、手动修改数据库、或新建时未正确初始化兑现类型。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>兑现类型异常！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>ERP资金池同步时，读取兑现单CASHOUT_TYPE既非1（额度内）也非2（额度外）<br><strong>逻辑分析：</strong>ERP同步需根据兑现类型决定sourceType（额度内="广告费（额内）"，额度外="广告费（额外）"）。若CASHOUT_TYPE被错误写入其他值（如0、3、null），无法匹配sourceType分支，抛异常终止同步。常见根因：数据迁移错误、手动修改数据库、或新建时未正确初始化兑现类型。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_cashout_id      AS 兑现单ID,
@@ -629,8 +677,14 @@ SELECT fee_cashout_id      AS 兑现单ID,
   AND    cashout_type NOT IN (1, 2)
   ORDER  BY create_time DESC;
 ```
-<h4>报错9：该单据流程信息不存在</h4>
-<ul><li><strong>触发条件</strong>：电子签章校验时，按兑现单ID查询工作流流程信息返回null</li><li><strong>逻辑分析</strong>：电子签章需关联工作流实例。若兑现单未发起工作流（HZ_INSTANCE_ID为空）、工作流实例已被清理、或兑现单已被删除，查询流程信息返回空，签章校验失败。常见根因：单据未提交即触发签章、工作流实例过期、或单据ID传值错误。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>该单据流程信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>电子签章校验时，按兑现单ID查询工作流流程信息返回null<br><strong>逻辑分析：</strong>电子签章需关联工作流实例。若兑现单未发起工作流（HZ_INSTANCE_ID为空）、工作流实例已被清理、或兑现单已被删除，查询流程信息返回空，签章校验失败。常见根因：单据未提交即触发签章、工作流实例过期、或单据ID传值错误。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_cashout_id      AS 兑现单ID,
@@ -643,8 +697,14 @@ SELECT fee_cashout_id      AS 兑现单ID,
   AND    (hz_instance_id IS NULL OR hz_approve_status = 'NEW')
   ORDER  BY create_time DESC;
 ```
-<h4>报错10：门店编码或预算年度不能为空</h4>
-<ul><li><strong>触发条件</strong>：额度外兑现审批通过后更新额度外预算时，门店编码TERMINAL_CODE或预算年度BUD_YEAR为空</li><li><strong>逻辑分析</strong>：额度外预算更新需用门店编码和预算年度定位MKT_OUTLIMIT_BUD_HEADER记录。若报销单未带入门店编码、预算年度未填写，或字段在流转中丢失，后端校验为空即抛异常，无法更新预算已使用金额。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门店编码或预算年度不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>额度外兑现审批通过后更新额度外预算时，门店编码TERMINAL_CODE或预算年度BUD_YEAR为空<br><strong>逻辑分析：</strong>额度外预算更新需用门店编码和预算年度定位MKT_OUTLIMIT_BUD_HEADER记录。若报销单未带入门店编码、预算年度未填写，或字段在流转中丢失，后端校验为空即抛异常，无法更新预算已使用金额。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_cashout_id      AS 兑现单ID,
@@ -658,8 +718,14 @@ SELECT fee_cashout_id      AS 兑现单ID,
   AND    (terminal_code IS NULL OR bud_year IS NULL)
   ORDER  BY create_time DESC;
 ```
-<h4>报错11：可兑现总额不能为零或负数</h4>
-<ul><li><strong>触发条件</strong>：额度外预算更新时，读取报销单可兑现总额TOTAL_CAN_CASHOUT_AMT&lt;=0</li><li><strong>逻辑分析</strong>：额度外预算更新需用可兑现总额计算使用金额（使用金额=本次申请金额×兑现比例÷税率）。若可兑现总额为0或负数，计算结果异常，抛异常终止预算更新。常见根因：报销单可兑现总额被错误置0、数据迁移错误、或报销单本身金额异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>可兑现总额不能为零或负数</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>额度外预算更新时，读取报销单可兑现总额TOTAL_CAN_CASHOUT_AMT&lt;=0<br><strong>逻辑分析：</strong>额度外预算更新需用可兑现总额计算使用金额（使用金额=本次申请金额×兑现比例÷税率）。若可兑现总额为0或负数，计算结果异常，抛异常终止预算更新。常见根因：报销单可兑现总额被错误置0、数据迁移错误、或报销单本身金额异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT fee_cashout_id      AS 兑现单ID,
@@ -673,8 +739,14 @@ SELECT fee_cashout_id      AS 兑现单ID,
   AND    (total_can_cashout_amt IS NULL OR total_can_cashout_amt <= 0)
   ORDER  BY create_time DESC;
 ```
-<h4>报错12：税率配置格式错误</h4>
-<ul><li><strong>触发条件</strong>：额度外预算更新时，读取系统配置SCPSYSCONF中Outlimit_Tax_Rate的值格式错误（非数字或为空）</li><li><strong>逻辑分析</strong>：额度外预算使用金额需除以税率（使用金额=本次申请金额×兑现比例÷税率）。税率从系统配置Outlimit_Tax_Rate读取，若配置缺失、值为非数字字符串、或为0（除零异常），抛异常终止预算更新。常见根因：运维未配置Outlimit_Tax_Rate、配置值被误改、或格式不规范。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>税率配置格式错误</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>额度外预算更新时，读取系统配置SCPSYSCONF中Outlimit_Tax_Rate的值格式错误（非数字或为空）<br><strong>逻辑分析：</strong>额度外预算使用金额需除以税率（使用金额=本次申请金额×兑现比例÷税率）。税率从系统配置Outlimit_Tax_Rate读取，若配置缺失、值为非数字字符串、或为0（除零异常），抛异常终止预算更新。常见根因：运维未配置Outlimit_Tax_Rate、配置值被误改、或格式不规范。</div>
+  </div>
+</div>
 
 ```sql
 SELECT confname            AS 配置名称,
@@ -682,8 +754,14 @@ SELECT confname            AS 配置名称,
   FROM   scpsysconf
   WHERE  confname = 'Outlimit_Tax_Rate';
 ```
-<h4>报错13：额度外预算数据不存在，请检查！</h4>
-<ul><li><strong>触发条件</strong>：额度外兑现审批通过后更新预算时，按门店编码+预算年度查询MKT_OUTLIMIT_BUD_HEADER返回null</li><li><strong>逻辑分析</strong>：额度外预算更新需定位预算头表记录。若该门店该年度未配置额度外预算、预算已被删除、或门店编码与预算年度不匹配，查询返回空，无法更新已使用金额，抛异常。常见根因：预算未配置、门店未纳入预算范围、或预算年度错误。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>额度外预算数据不存在，请检查！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>额度外兑现审批通过后更新预算时，按门店编码+预算年度查询MKT_OUTLIMIT_BUD_HEADER返回null<br><strong>逻辑分析：</strong>额度外预算更新需定位预算头表记录。若该门店该年度未配置额度外预算、预算已被删除、或门店编码与预算年度不匹配，查询返回空，无法更新已使用金额，抛异常。常见根因：预算未配置、门店未纳入预算范围、或预算年度错误。</div>
+  </div>
+</div>
 
 ```sql
 SELECT c.fee_cashout_id      AS 兑现单ID,
@@ -703,8 +781,27 @@ SELECT c.fee_cashout_id      AS 兑现单ID,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：ERP资金池同步失败</li><li>原因：ERP接口不可用或数据异常</li><li>解决思路：检查ERP接口状态和数据完整性</li></ul>
-<ul><li>问题2：额度外预算更新不正确</li><li>原因：预算表数据异常或税率配置错误</li><li>解决思路：检查额度外预算表和Outlimit_Tax_Rate配置</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">ERP资金池同步失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>ERP接口不可用或数据异常<br><strong style="color:#7C3AED;">处理：</strong>检查ERP接口状态和数据完整性
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">额度外预算更新不正确</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>预算表数据异常或税率配置错误<br><strong style="color:#7C3AED;">处理：</strong>检查额度外预算表和Outlimit_Tax_Rate配置
+  </div>
+</div>
+</div>
 
 ```sql
 SELECT * FROM mkt_outlimit_bud_header WHERE terminal_code = #{code} AND bud_year = #{year};

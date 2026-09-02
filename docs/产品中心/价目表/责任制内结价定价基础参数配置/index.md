@@ -458,8 +458,14 @@ WHERE T1.TOP_CATEGORY = #{topCategory}
 </table>
 <blockquote><strong>分类非空校验详细逻辑</strong>：
 后端validateRequiredFields方法逐一检查topCategory、secCategory、thrCategory、priceType是否为空，为空则抛出对应异常。</blockquote>
-<h4>报错1：一级分类不能为空！</h4>
-<ul><li><strong>触发条件</strong>：保存按钮点击时，未选择一级分类（TOP_CATEGORY字段）</li><li><strong>逻辑分析</strong>：后端validateRequiredFields方法校验TOP_CATEGORY非空。一级分类是定价配置的基础维度，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>一级分类不能为空！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，未选择一级分类（TOP_CATEGORY字段）<br><strong>逻辑分析：</strong>后端validateRequiredFields方法校验TOP_CATEGORY非空。一级分类是定价配置的基础维度，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
@@ -467,24 +473,42 @@ SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类,
   FROM LNK_PM_RSP_STM_CFG C
   WHERE C.ID = :configId AND C.TOP_CATEGORY IS NULL;
 ```
-<h4>报错2：二级分类不能为空！</h4>
-<ul><li><strong>触发条件</strong>：保存按钮点击时，未选择二级分类（SEC_CATEGORY字段）</li><li><strong>逻辑分析</strong>：后端校验SEC_CATEGORY非空。二级分类级联一级分类，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>二级分类不能为空！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，未选择二级分类（SEC_CATEGORY字段）<br><strong>逻辑分析：</strong>后端校验SEC_CATEGORY非空。二级分类级联一级分类，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.SEC_CATEGORY AS 二级分类
   FROM LNK_PM_RSP_STM_CFG C
   WHERE C.ID = :configId AND C.SEC_CATEGORY IS NULL;
 ```
-<h4>报错3：三级分类不能为空！</h4>
-<ul><li><strong>触发条件</strong>：保存按钮点击时，未选择三级分类（THR_CATEGORY字段）</li><li><strong>逻辑分析</strong>：后端校验THR_CATEGORY非空。三级分类级联二级分类，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>三级分类不能为空！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，未选择三级分类（THR_CATEGORY字段）<br><strong>逻辑分析：</strong>后端校验THR_CATEGORY非空。三级分类级联二级分类，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.ID, C.SEC_CATEGORY AS 二级分类, C.THR_CATEGORY AS 三级分类
   FROM LNK_PM_RSP_STM_CFG C
   WHERE C.ID = :configId AND C.THR_CATEGORY IS NULL;
 ```
-<h4>报错4：定价类型不能为空！</h4>
-<ul><li><strong>触发条件</strong>：保存按钮点击时，未选择定价类型（PRICE_TYPE字段）</li><li><strong>逻辑分析</strong>：后端校验PRICE_TYPE非空。定价类型决定定价计算方式，必填。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>定价类型不能为空！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，未选择定价类型（PRICE_TYPE字段）<br><strong>逻辑分析：</strong>后端校验PRICE_TYPE非空。定价类型决定定价计算方式，必填。</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.ID, C.TOP_CATEGORY AS 一级分类, C.PRICE_TYPE AS 定价类型
@@ -511,8 +535,14 @@ WHERE STATUS = 'valid'
 GROUP BY TOP_CATEGORY, SEC_CATEGORY, THR_CATEGORY, FOUR_CATEGORY
 HAVING COUNT(*) > 1;
 ```
-<h4>报错7：保存失败</h4>
-<ul><li><strong>触发条件</strong>：保存按钮点击时，后端接口返回res.failed=true或抛出CommonException</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleSave调用rspStmCfgApi.save后，若res.failed为true则通过commonFn_showErrMsg展示后端错误信息。常见于后端校验异常（分类唯一性、必填校验）被前端捕获并展示。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保存失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，后端接口返回res.failed=true或抛出CommonException<br><strong>逻辑分析：</strong>前端detail.tsx中handleSave调用rspStmCfgApi.save后，若res.failed为true则通过commonFn_showErrMsg展示后端错误信息。常见于后端校验异常（分类唯一性、必填校验）被前端捕获并展示。</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.ROW_ID AS 配置ID, C.RSP_STM_CODE AS 配置编码, C.STATUS AS 状态,
@@ -522,20 +552,38 @@ SELECT C.ROW_ID AS 配置ID, C.RSP_STM_CODE AS 配置编码, C.STATUS AS 状态,
   WHERE C.STATUS = 'valid'
   ORDER BY C.LAST_UPDATE_DATE DESC;
 ```
-<h4>报错8：保存异常，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：保存按钮点击时，请求抛出异常进入catch块</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保存异常，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存按钮点击时，请求抛出异常进入catch块<br><strong>逻辑分析：</strong>前端detail.tsx中handleSave的try-catch块，当网络异常、服务不可用、超时等非业务异常时，notification.error提示"保存异常，请稍后重试"。属于兜底异常处理。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '检查后端服务连通性与数据库连接状态' AS 排查方向 FROM DUAL;
 ```
-<h4>报错9：查询失败</h4>
-<ul><li><strong>触发条件</strong>：列表页查询或详情页加载时，接口请求异常</li><li><strong>逻辑分析</strong>：前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmCfg接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。常见于数据库连接异常、SQL执行错误。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询或详情页加载时，接口请求异常<br><strong>逻辑分析：</strong>前端DataSet的transport.read请求后端/v1/&#123;organizationId&#125;/rspStmCfg接口，若后端抛出CommonException或网络异常，DataSet自动展示错误提示。常见于数据库连接异常、SQL执行错误。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 总记录数 FROM LNK_PM_RSP_STM_CFG;
 ```
-<h4>报错10：权限不足</h4>
-<ul><li><strong>触发条件</strong>：用户访问页面或点击按钮时，未拥有对应权限编码</li><li><strong>逻辑分析</strong>：前端Button组件通过permissionList配置权限编码（如hzero.product_data.rsp_stm.cfg.ps.add、hzero.product_data.rsp_stm.cfg.ps.import、hzero.product_data.rsp_stm.cfg.ps.export），HZERO平台校验当前用户角色是否包含该权限编码，未包含则按钮不可见或不可点击。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户访问页面或点击按钮时，未拥有对应权限编码<br><strong>逻辑分析：</strong>前端Button组件通过permissionList配置权限编码（如hzero.product_data.rsp_stm.cfg.ps.add、hzero.product_data.rsp_stm.cfg.ps.import、hzero.product_data.rsp_stm.cfg.ps.export），HZERO平台校验当前用户角色是否包含该权限编码，未包含则按钮不可见或不可点击。</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
@@ -546,20 +594,38 @@ SELECT U.REAL_NAME AS 用户名, R.NAME AS 角色名, P.CODE AS 权限编码
     JOIN HZERO.IAM_PERMISSION P ON RP.PERMISSION_ID = P.ID
   WHERE P.CODE LIKE 'hzero.product_data.rsp_stm.cfg.ps.%';
 ```
-<h4>报错11：暂无数据</h4>
-<ul><li><strong>触发条件</strong>：列表页查询结果为空集</li><li><strong>逻辑分析</strong>：前端Table组件查询后端返回content为空数组或totalElements=0时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询结果为空集<br><strong>逻辑分析：</strong>前端Table组件查询后端返回content为空数组或totalElements=0时，自动展示"暂无数据"占位。属于正常业务场景，非异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 记录数 FROM LNK_PM_RSP_STM_CFG WHERE STATUS = 'valid';
 ```
-<h4>报错12：会话过期</h4>
-<ul><li><strong>触发条件</strong>：任意操作时，登录态失效或Token过期</li><li><strong>逻辑分析</strong>：HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。常见于长时间未操作或单点登录会话超时。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，登录态失效或Token过期<br><strong>逻辑分析：</strong>HZERO平台网关层校验请求头中的Authorization Token，若Token过期或无效，返回401状态码，前端拦截器跳转登录页。常见于长时间未操作或单点登录会话超时。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '检查HZERO.IAM_USER_TOKEN表或SSO会话状态' AS 排查方向 FROM DUAL;
 ```
-<h4>报错13：当前有未保存的更改，确定要离开吗？</h4>
-<ul><li><strong>触发条件</strong>：编辑模式下点击返回按钮</li><li><strong>逻辑分析</strong>：前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前有未保存的更改，确定要离开吗？</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>编辑模式下点击返回按钮<br><strong>逻辑分析：</strong>前端detail.tsx中handleBack方法，当editFlag为true时弹出Modal.confirm确认框，用户确认后关闭tab并跳转列表页，取消则留在当前页。防止用户误操作丢失未保存数据。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
@@ -567,10 +633,45 @@ SELECT '前端确认弹窗，无需SQL排查' AS 提示 FROM DUAL;
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：编辑时为什么不能修改产品分类？</li><li>原因：编辑时分类字段disabled=!isNew=true，防止修改分类导致唯一性冲突</li><li>解决思路：如需修改分类，新建一条配置并将原配置失效</li></ul>
-<ul><li>问题2：定价比例什么时候必填？</li><li>原因：当定价类型为base_gross_margin（基础毛利率）或standard_price_ratio（标准价比率）时，定价比例必填</li><li>解决思路：选择这两种定价类型时务必填写定价比例</li></ul>
-<ul><li>问题3：配置编码如何生成？</li><li>原因：新建保存时通过编码规则CRM.RSP_STM_CFG_CODE自动生成</li><li>解决思路：配置编码由系统自动生成，无需手动输入</li></ul>
-<ul><li>问题4：四级分类为空时如何做唯一性校验？</li><li>原因：SQL中当fourCategory为空时，匹配条件为FOUR_CATEGORY IS NULL</li><li>解决思路：四级分类非必填，为空时按一二三级分类做唯一性校验</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">编辑时为什么不能修改产品分类？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>编辑时分类字段disabled=!isNew=true，防止修改分类导致唯一性冲突<br><strong style="color:#7C3AED;">处理：</strong>如需修改分类，新建一条配置并将原配置失效
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">定价比例什么时候必填？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>当定价类型为base_gross_margin（基础毛利率）或standard_price_ratio（标准价比率）时，定价比例必填<br><strong style="color:#7C3AED;">处理：</strong>选择这两种定价类型时务必填写定价比例
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">配置编码如何生成？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>新建保存时通过编码规则CRM.RSP_STM_CFG_CODE自动生成<br><strong style="color:#7C3AED;">处理：</strong>配置编码由系统自动生成，无需手动输入
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">四级分类为空时如何做唯一性校验？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>SQL中当fourCategory为空时，匹配条件为FOUR_CATEGORY IS NULL<br><strong style="color:#7C3AED;">处理：</strong>四级分类非必填，为空时按一二三级分类做唯一性校验
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

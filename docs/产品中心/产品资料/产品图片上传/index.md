@@ -330,8 +330,14 @@ FROM HZERO.HFLE_FILE F
 WHERE F.FILE_NAME = :fileName</blockquote>
 <p>ORDER BY F.CREATION_DATE DESC;</p>
 <blockquote>```</blockquote>
-<h4>报错2：产品编码不存在</h4>
-<ul><li><strong>触发条件</strong>：保存图片关联关系时，校验输入的产品编码在LNK_PROD表中不存在</li><li><strong>逻辑分析</strong>：后端保存OBJ_FILE_BUS_REL记录前，先查询LNK_PROD表确认产品编码存在。若产品编码拼写错误、产品已被删除或产品尚未同步入库，则校验失败抛出异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存图片关联关系时，校验输入的产品编码在LNK_PROD表中不存在<br><strong>逻辑分析：</strong>后端保存OBJ_FILE_BUS_REL记录前，先查询LNK_PROD表确认产品编码存在。若产品编码拼写错误、产品已被删除或产品尚未同步入库，则校验失败抛出异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
@@ -340,8 +346,14 @@ SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
   WHERE P.PROD_CODE = :prodCode;
   -- 若查询结果为空，确认产品编码不存在或已删除
 ```
-<h4>报错3：文件类型不存在:prodPhoto:xxx</h4>
-<ul><li><strong>触发条件</strong>：通过Excel导入产品图片时，导入的图片类型在OBJ_FILE_TYPE表中不存在</li><li><strong>逻辑分析</strong>：后端ObjFileBusRelServiceImpl.getFileBusRel方法根据fileBusType=prodPhoto和fileType查询OBJ_FILE_TYPE表（status=1），若objFileTypeDb为null则抛出RuntimeException。导入处理类ProdPhotoImport继承ObjFileBusRelImportServiceImpl，固定busType=prodPhoto、relBusType=prod。常见于导入模板的图片类型值与系统配置不一致。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>文件类型不存在:prodPhoto:xxx</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>通过Excel导入产品图片时，导入的图片类型在OBJ_FILE_TYPE表中不存在<br><strong>逻辑分析：</strong>后端ObjFileBusRelServiceImpl.getFileBusRel方法根据fileBusType=prodPhoto和fileType查询OBJ_FILE_TYPE表（status=1），若objFileTypeDb为null则抛出RuntimeException。导入处理类ProdPhotoImport继承ObjFileBusRelImportServiceImpl，固定busType=prodPhoto、relBusType=prod。常见于导入模板的图片类型值与系统配置不一致。</div>
+  </div>
+</div>
 
 ```sql
 SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
@@ -350,8 +362,14 @@ SELECT T.ID, T.BUS_TYPE, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME, T.STATUS
   ORDER BY T.FILE_BUS_TYPE;
   -- 若查询结果不含导入的fileType值，则需在OBJ_FILE_TYPE表中新增配置
 ```
-<h4>报错4：产品编码必填</h4>
-<ul><li><strong>触发条件</strong>：保存或导入时，未填写产品编码（busId）字段</li><li><strong>逻辑分析</strong>：产品编码为OBJ_FILE_BUS_REL.BUS_ID字段，对应界面"产品编码"必填项。前端表单校验或导入框架按模板CRM.PROD_PHOTO配置校验，若为空则阻断保存。产品编码需关联LNK_PROD.PROD_CODE，确保图片关联到有效产品。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码必填</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或导入时，未填写产品编码（busId）字段<br><strong>逻辑分析：</strong>产品编码为OBJ_FILE_BUS_REL.BUS_ID字段，对应界面"产品编码"必填项。前端表单校验或导入框架按模板CRM.PROD_PHOTO配置校验，若为空则阻断保存。产品编码需关联LNK_PROD.PROD_CODE，确保图片关联到有效产品。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 产品存在数
@@ -359,8 +377,14 @@ SELECT COUNT(1) AS 产品存在数
   WHERE P.PROD_CODE = :busId;
   -- 若:busId为空或查询结果为0，则校验失败
 ```
-<h4>报错5：图片类型必填</h4>
-<ul><li><strong>触发条件</strong>：保存或导入时，未选择图片类型（fileType）字段</li><li><strong>逻辑分析</strong>：图片类型对应OBJ_FILE_TYPE.FILE_BUS_TYPE，界面为下拉选择框，来源值集CRM.OBJ_FILE_TYPE（busType=prodPhoto）。前端表单校验或导入框架按模板配置校验，若为空则阻断保存。图片类型需在OBJ_FILE_TYPE表中存在且busType=prodPhoto、status=1。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>图片类型必填</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或导入时，未选择图片类型（fileType）字段<br><strong>逻辑分析：</strong>图片类型对应OBJ_FILE_TYPE.FILE_BUS_TYPE，界面为下拉选择框，来源值集CRM.OBJ_FILE_TYPE（busType=prodPhoto）。前端表单校验或导入框架按模板配置校验，若为空则阻断保存。图片类型需在OBJ_FILE_TYPE表中存在且busType=prodPhoto、status=1。</div>
+  </div>
+</div>
 
 ```sql
 SELECT T.FILE_BUS_TYPE AS 类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
@@ -368,8 +392,14 @@ SELECT T.FILE_BUS_TYPE AS 类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
   WHERE T.BUS_TYPE = 'prodPhoto' AND T.STATUS = '1';
   -- 若未选择图片类型或选择的值不在上述结果中，则校验失败
 ```
-<h4>报错6：导入失败</h4>
-<ul><li><strong>触发条件</strong>：通过Excel模板CRM.PROD_PHOTO导入产品图片时，导入框架校验失败或批量写入OBJ_FILE_BUS_REL异常</li><li><strong>逻辑分析</strong>：导入由HZERO导入框架处理，ProdPhotoImport.doImport方法解析每行数据为busId、fileUrl、fileType，调用getFileBusRel构建ObjFileBusRel实体，再批量调用saveData写入数据库。任一行校验失败（如文件类型不存在、产品编码为空）或数据库写入异常均导致导入失败，支持失败明细导出。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导入失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>通过Excel模板CRM.PROD_PHOTO导入产品图片时，导入框架校验失败或批量写入OBJ_FILE_BUS_REL异常<br><strong>逻辑分析：</strong>导入由HZERO导入框架处理，ProdPhotoImport.doImport方法解析每行数据为busId、fileUrl、fileType，调用getFileBusRel构建ObjFileBusRel实体，再批量调用saveData写入数据库。任一行校验失败（如文件类型不存在、产品编码为空）或数据库写入异常均导致导入失败，支持失败明细导出。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查导入的图片关联数据
@@ -381,8 +411,14 @@ SELECT T.FILE_BUS_TYPE AS 类型编码, T.FILE_BUS_TYPE_NAME AS 类型名称
     AND F.CREATION_DATE >= SYSDATE - 1
   ORDER BY F.CREATION_DATE DESC;
 ```
-<h4>报错7：权限不足</h4>
-<ul><li><strong>触发条件</strong>：用户执行产品图片导入操作时，当前用户无对应权限</li><li><strong>逻辑分析</strong>：产品图片上传页为低代码页面，导入操作需权限hzero.product_data.product_info.product_list.ps.import。若用户无权限则接口返回403或导入按钮不显示。常见于用户角色未分配产品图片导入权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户执行产品图片导入操作时，当前用户无对应权限<br><strong>逻辑分析：</strong>产品图片上传页为低代码页面，导入操作需权限hzero.product_data.product_info.product_list.ps.import。若用户无权限则接口返回403或导入按钮不显示。常见于用户角色未分配产品图片导入权限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
@@ -392,8 +428,14 @@ SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
   WHERE P.PERMISSION_CODE LIKE '%product_list.ps.import%'
     AND R.ROLE_CODE = :currentRoleCode;
 ```
-<h4>报错8：会话过期</h4>
-<ul><li><strong>触发条件</strong>：用户在产品图片上传页面操作时，登录会话（access_token）已过期</li><li><strong>逻辑分析</strong>：前端请求携带的access_token过期，后端返回401未授权。前端HZERO框架拦截401状态码跳转登录页。常见于长时间未操作页面或token有效期过短。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>会话过期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在产品图片上传页面操作时，登录会话（access_token）已过期<br><strong>逻辑分析：</strong>前端请求携带的access_token过期，后端返回401未授权。前端HZERO框架拦截401状态码跳转登录页。常见于长时间未操作页面或token有效期过短。</div>
+  </div>
+</div>
 
 ```sql
 -- 无直接SQL，检查用户会话状态
@@ -404,7 +446,27 @@ SELECT R.ROLE_CODE, R.ROLE_NAME, P.PERMISSION_CODE, P.DESCRIPTION
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：上传后图片在图册页面看不到</li><li>原因：OBJ_FILE_BUS_REL记录的REL_BUS_TYPE或BUS_TYPE不正确，或FILE_TYPE_ID未正确关联</li><li>解决思路：</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">上传后图片在图册页面看不到</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>OBJ_FILE_BUS_REL记录的REL_BUS_TYPE或BUS_TYPE不正确，或FILE_TYPE_ID未正确关联
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">导入失败提示文件类型不存在</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>OBJ_FILE_TYPE表中未配置对应的busType=prodPhoto的文件类型<br><strong style="color:#7C3AED;">处理：</strong>在OBJ_FILE_TYPE表中添加对应的文件类型配置
+  </div>
+</div>
+</div>
 
 ```sql
 SELECT F.*, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME
@@ -412,7 +474,6 @@ SELECT F.*, T.FILE_BUS_TYPE, T.FILE_BUS_TYPE_NAME
       LEFT JOIN OBJ_FILE_TYPE T ON F.FILE_TYPE_ID = T.ID
     WHERE F.REL_BUS_TYPE = 'prod' AND F.BUS_ID = :prodCode;
 ```
-<ul><li>问题2：导入失败提示文件类型不存在</li><li>原因：OBJ_FILE_TYPE表中未配置对应的busType=prodPhoto的文件类型</li><li>解决思路：在OBJ_FILE_TYPE表中添加对应的文件类型配置</li></ul>
 </KbCard>
 
 </div>

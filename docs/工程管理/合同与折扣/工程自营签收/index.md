@@ -370,8 +370,14 @@
 <tr><td>批量设置签收时间不能为空</td><td>保存校验</td><td>头表MODEL_SIGN_DATE字段为空。需设置批量签收时间</td><td>高</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：旧CRM网关调用失败</h4>
-<ul><li><strong>触发条件</strong>：提交工程自营签收时，调用旧CRM网关接口失败</li><li><strong>逻辑分析</strong>：提交方法中调用旧CRM网关推送签收数据，若失败则记录错误信息。可能原因：旧CRM服务不可用、网关配置错误、网络异常。需检查旧CRM服务连通性和网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>旧CRM网关调用失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程自营签收时，调用旧CRM网关接口失败<br><strong>逻辑分析：</strong>提交方法中调用旧CRM网关推送签收数据，若失败则记录错误信息。可能原因：旧CRM服务不可用、网关配置错误、网络异常。需检查旧CRM服务连通性和网关配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS,
@@ -381,8 +387,14 @@ SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS,
   WHERE ddh.BILL_NO = :billNo
   -- 检查签收单数据完整性
 ```
-<h4>报错2：签收单不存在</h4>
-<ul><li><strong>触发条件</strong>：查询签收单详情时，按BILL_NO查询DRP_DIFFPROCBILL_HEADER返回null</li><li><strong>逻辑分析</strong>：详情方法中按BILL_NO查询签收单，若返回null则抛出阻断性报错。需检查签收单号有效性</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>签收单不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询签收单详情时，按BILL_NO查询DRP_DIFFPROCBILL_HEADER返回null<br><strong>逻辑分析：</strong>详情方法中按BILL_NO查询签收单，若返回null则抛出阻断性报错。需检查签收单号有效性</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS
@@ -390,8 +402,14 @@ SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS
   WHERE ddh.BILL_NO = :billNo
   -- 若返回空，说明签收单不存在
 ```
-<h4>报错3：加载签收单详情失败</h4>
-<ul><li><strong>触发条件</strong>：进入详情页加载签收单详情时，后端接口返回异常</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/detail.tsx详情加载方法中(line 72)，调用后端接口查询签收单详情，若接口异常则弹出message.error("加载签收单详情失败")并打印console.error。可能原因：后端服务不可用、网络异常、签收单号无效</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>加载签收单详情失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>进入详情页加载签收单详情时，后端接口返回异常<br><strong>逻辑分析：</strong>在前端SelfOperatedEngineeringSign/detail.tsx详情加载方法中(line 72)，调用后端接口查询签收单详情，若接口异常则弹出message.error("加载签收单详情失败")并打印console.error。可能原因：后端服务不可用、网络异常、签收单号无效</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS
@@ -399,8 +417,14 @@ SELECT ddh.BILL_NO, ddh.PROJECT_CODE, ddh.CONTRACT_CODE, ddh.HZ_APPROVE_STATUS
   WHERE ddh.BILL_NO = :billNo
   -- 检查签收单是否存在及数据完整性
 ```
-<h4>报错4：保存失败</h4>
-<ul><li><strong>触发条件</strong>：保存工程自营签收单时，后端校验未通过或接口异常</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/detail.tsx保存方法中(line 103)，调用后端保存接口，若接口返回失败或异常则弹出message.error("保存失败")并打印console.error。可能原因：必填字段为空、后端校验未通过、网络异常</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保存失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程自营签收单时，后端校验未通过或接口异常<br><strong>逻辑分析：</strong>在前端SelfOperatedEngineeringSign/detail.tsx保存方法中(line 103)，调用后端保存接口，若接口返回失败或异常则弹出message.error("保存失败")并打印console.error。可能原因：必填字段为空、后端校验未通过、网络异常</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.CUST_CODE, ddh.BILLING_UNIT_CODE, ddh.CONTRACT_CODE,
@@ -409,8 +433,14 @@ SELECT ddh.BILL_NO, ddh.CUST_CODE, ddh.BILLING_UNIT_CODE, ddh.CONTRACT_CODE,
   WHERE ddh.BILL_NO = :billNo
   -- 检查必填字段是否完整
 ```
-<h4>报错5：提交失败</h4>
-<ul><li><strong>触发条件</strong>：提交工程自营签收单审批时，后端校验未通过或工作流启动异常</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/detail.tsx提交方法中(line 126)，调用后端提交接口触发工作流，若接口返回失败或异常则弹出message.error("提交失败")并打印console.error。可能原因：工作流配置异常、旧CRM网关调用失败、数据校验未通过</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>提交失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交工程自营签收单审批时，后端校验未通过或工作流启动异常<br><strong>逻辑分析：</strong>在前端SelfOperatedEngineeringSign/detail.tsx提交方法中(line 126)，调用后端提交接口触发工作流，若接口返回失败或异常则弹出message.error("提交失败")并打印console.error。可能原因：工作流配置异常、旧CRM网关调用失败、数据校验未通过</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.HZ_APPROVE_STATUS, ddh.STAT
@@ -418,8 +448,14 @@ SELECT ddh.BILL_NO, ddh.HZ_APPROVE_STATUS, ddh.STAT
   WHERE ddh.BILL_NO = :billNo
   -- 检查单据状态是否允许提交(NEW/REJECTED)
 ```
-<h4>报错6：获取合同明细失败</h4>
-<ul><li><strong>触发条件</strong>：选择合同后获取合同明细行时，后端接口返回异常</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/detail.tsx合同选择回调中(line 174)，调用后端接口查询合同明细行，若接口异常则弹出message.error("获取合同明细失败")并打印console.error。可能原因：合同编码无效、合同无明细行、后端服务异常</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>获取合同明细失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>选择合同后获取合同明细行时，后端接口返回异常<br><strong>逻辑分析：</strong>在前端SelfOperatedEngineeringSign/detail.tsx合同选择回调中(line 174)，调用后端接口查询合同明细行，若接口异常则弹出message.error("获取合同明细失败")并打印console.error。可能原因：合同编码无效、合同无明细行、后端服务异常</div>
+  </div>
+</div>
 
 ```sql
 SELECT epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.PROJECT_CODE,
@@ -429,8 +465,14 @@ SELECT epc.CONTRACT_CODE, epc.CONTRACT_NAME, epc.PROJECT_CODE,
   WHERE epc.CONTRACT_CODE = :contractCode
   -- 检查合同明细行数是否大于0
 ```
-<h4>报错7：经销商编码不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存工程自营签收单时，头表CUST_CODE字段为空</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 25)，经销商编码字段cust_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入经销商编码"提醒。该报错为前端必填校验</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>经销商编码不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程自营签收单时，头表CUST_CODE字段为空<br><strong>逻辑分析：</strong>在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 25)，经销商编码字段cust_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入经销商编码"提醒。该报错为前端必填校验</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.CUST_CODE, ddh.CUST_NAME
@@ -438,8 +480,14 @@ SELECT ddh.BILL_NO, ddh.CUST_CODE, ddh.CUST_NAME
   WHERE ddh.BILL_NO = :billNo
     AND (ddh.CUST_CODE IS NULL OR TRIM(ddh.CUST_CODE) = '')
 ```
-<h4>报错8：法人客户编码不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存工程自营签收单时，头表BILLING_UNIT_CODE字段为空</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 66)，法人客户编码字段billing_unit_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入法人客户编码"提醒。该报错为前端必填校验</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>法人客户编码不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程自营签收单时，头表BILLING_UNIT_CODE字段为空<br><strong>逻辑分析：</strong>在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 66)，法人客户编码字段billing_unit_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入法人客户编码"提醒。该报错为前端必填校验</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.BILLING_UNIT_CODE, ddh.BILLING_UNIT_NAME
@@ -447,8 +495,14 @@ SELECT ddh.BILL_NO, ddh.BILLING_UNIT_CODE, ddh.BILLING_UNIT_NAME
   WHERE ddh.BILL_NO = :billNo
     AND (ddh.BILLING_UNIT_CODE IS NULL OR TRIM(ddh.BILLING_UNIT_CODE) = '')
 ```
-<h4>报错9：合同编码不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存工程自营签收单时，头表CONTRACT_CODE字段为空</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 71)，合同编码字段contract_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入合同编码"提醒。该报错为前端必填校验</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>合同编码不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程自营签收单时，头表CONTRACT_CODE字段为空<br><strong>逻辑分析：</strong>在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 71)，合同编码字段contract_code配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入合同编码"提醒。该报错为前端必填校验</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.CONTRACT_CODE, ddh.CONTRACT_NAME
@@ -456,8 +510,14 @@ SELECT ddh.BILL_NO, ddh.CONTRACT_CODE, ddh.CONTRACT_NAME
   WHERE ddh.BILL_NO = :billNo
     AND (ddh.CONTRACT_CODE IS NULL OR TRIM(ddh.CONTRACT_CODE) = '')
 ```
-<h4>报错10：批量设置签收时间不能为空</h4>
-<ul><li><strong>触发条件</strong>：保存工程自营签收单时，头表MODEL_SIGN_DATE字段为空</li><li><strong>逻辑分析</strong>：在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 91)，批量设置签收时间字段model_sign_date配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入批量设置签收时间"提醒。该报错为前端必填校验</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>批量设置签收时间不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存工程自营签收单时，头表MODEL_SIGN_DATE字段为空<br><strong>逻辑分析：</strong>在前端SelfOperatedEngineeringSign/stores/detailDS.ts中(line 91)，批量设置签收时间字段model_sign_date配置required: true，保存时DataSet自动校验必填字段，若为空则框架弹出"请输入批量设置签收时间"提醒。该报错为前端必填校验</div>
+  </div>
+</div>
 
 ```sql
 SELECT ddh.BILL_NO, ddh.MODEL_SIGN_DATE
@@ -468,7 +528,18 @@ SELECT ddh.BILL_NO, ddh.MODEL_SIGN_DATE
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：旧CRM网关调用失败</li><li>原因：旧CRM服务不可用或网关配置错误</li><li>解决思路：检查旧CRM服务连通性和网关配置</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">旧CRM网关调用失败</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>旧CRM服务不可用或网关配置错误<br><strong style="color:#7C3AED;">处理：</strong>检查旧CRM服务连通性和网关配置
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

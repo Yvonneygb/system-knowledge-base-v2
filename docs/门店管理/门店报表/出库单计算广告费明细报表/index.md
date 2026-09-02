@@ -417,15 +417,21 @@ WHERE 1 = 1
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询结果为空</td><td>查询按钮点击时</td><td>当前查询条件下无出库单广告费明细数据，请调整查询条件后重试</td><td>低</td><td>[查看](#报错1查询结果为空)</td></tr>
-<tr><td>日期格式错误</td><td>查询按钮点击时</td><td>发货日期或签收日期格式不正确，请按YYYY-MM-DD格式输入</td><td>中</td><td>[查看](#报错2日期格式错误)</td></tr>
-<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错3网络请求失败接口调用异常)</td></tr>
-<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错4权限不足未登录)</td></tr>
-<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错5导出失败网络异常)</td></tr>
+<tr><td>查询结果为空</td><td>查询按钮点击时</td><td>当前查询条件下无出库单广告费明细数据，请调整查询条件后重试</td><td>低</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>日期格式错误</td><td>查询按钮点击时</td><td>发货日期或签收日期格式不正确，请按YYYY-MM-DD格式输入</td><td>中</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：查询结果为空</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，按当前查询条件（经销商、出库单号、是否计广告费、发货日期范围、签收日期范围等）关联查询INV_OUT_BILL_INTF_HEAD等7张表返回空结果集</li><li><strong>逻辑分析</strong>：报表关联出库接口头表（INV_OUT_BILL_INTF_HEAD）、出库接口确认表（INV_OUT_BILL_INTF_CONFIRM）、订单应收关联表（LNK_OB_ORDER_RECEIVABLE）等7张表，并排除物料编码为'CUX_OM_CASH_POOL'和'CUX_OM_PRICE_RAISE'的特殊物料。若查询条件过严、或出库单未签收（LNK_OB_ORDER_RECEIVABLE无关联记录）、或物料全部为特殊物料被排除、或经销商编码不匹配，均会返回空结果。该报错为提示性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询结果为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，按当前查询条件（经销商、出库单号、是否计广告费、发货日期范围、签收日期范围等）关联查询INV_OUT_BILL_INTF_HEAD等7张表返回空结果集<br><strong>逻辑分析：</strong>报表关联出库接口头表（INV_OUT_BILL_INTF_HEAD）、出库接口确认表（INV_OUT_BILL_INTF_CONFIRM）、订单应收关联表（LNK_OB_ORDER_RECEIVABLE）等7张表，并排除物料编码为'CUX_OM_CASH_POOL'和'CUX_OM_PRICE_RAISE'的特殊物料。若查询条件过严、或出库单未签收（LNK_OB_ORDER_RECEIVABLE无关联记录）、或物料全部为特殊物料被排除、或经销商编码不匹配，均会返回空结果。该报错为提示性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT h.delivery_number      AS 出库单号,
@@ -441,8 +447,14 @@ SELECT h.delivery_number      AS 出库单号,
   AND    l.item_number NOT IN ('CUX_OM_CASH_POOL', 'CUX_OM_PRICE_RAISE')
   ORDER  BY h.delivery_date DESC;
 ```
-<h4>报错2：日期格式错误</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，发货日期或签收日期参数传入TO_DATE转换时格式不匹配，Oracle抛出ORA-01861或类似异常</li><li><strong>逻辑分析</strong>：报表查询按发货日期范围（deliveryDateStart/deliveryDateEnd）和签收日期范围（glDateStart/glDateEnd）筛选，SQL中使用 <code>TO_DATE(#&#123;date&#125;, 'YYYY-MM-DD HH24:MI:SS')</code> 转换字符串为日期。若前端传入格式非YYYY-MM-DD HH24:MI:SS（如传入YYYY/MM/DD、带毫秒、或空字符串），TO_DATE转换失败抛出Oracle异常，查询中断。常见根因：前端日期选择器异常、手工拼接参数格式错误。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>日期格式错误</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，发货日期或签收日期参数传入TO_DATE转换时格式不匹配，Oracle抛出ORA-01861或类似异常<br><strong>逻辑分析：</strong>报表查询按发货日期范围（deliveryDateStart/deliveryDateEnd）和签收日期范围（glDateStart/glDateEnd）筛选，SQL中使用 <code>TO_DATE(#&#123;date&#125;, 'YYYY-MM-DD HH24:MI:SS')</code> 转换字符串为日期。若前端传入格式非YYYY-MM-DD HH24:MI:SS（如传入YYYY/MM/DD、带毫秒、或空字符串），TO_DATE转换失败抛出Oracle异常，查询中断。常见根因：前端日期选择器异常、手工拼接参数格式错误。</div>
+  </div>
+</div>
 
 ```sql
 SELECT delivery_id          AS 出库单ID,
@@ -453,8 +465,14 @@ SELECT delivery_id          AS 出库单ID,
   WHERE  delivery_date IS NOT NULL
   ORDER  BY delivery_date DESC;
 ```
-<h4>报错3：网络请求失败/接口调用异常</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/rebate-details/mktOutBillHead/search或GET /mktOutBillHead/export接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端RebateDetailsController接口分页查询INV_OUT_BILL_INTF_HEAD等7张表关联数据。若后端ae-business服务未启动、Oracle数据库连接异常、7表关联JOIN导致慢SQL、TO_DATE转换失败抛出ORA-01861、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败/接口调用异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/rebate-details/mktOutBillHead/search或GET /mktOutBillHead/export接口时，前端未收到响应或收到非2xx状态码（如500、502、504）<br><strong>逻辑分析：</strong>本页面为hlod低代码报表页面，查询依赖后端RebateDetailsController接口分页查询INV_OUT_BILL_INTF_HEAD等7张表关联数据。若后端ae-business服务未启动、Oracle数据库连接异常、7表关联JOIN导致慢SQL、TO_DATE转换失败抛出ORA-01861、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*)            AS 出库单总数,
@@ -462,15 +480,27 @@ SELECT COUNT(*)            AS 出库单总数,
          MAX(delivery_date)  AS 最晚发货日期
   FROM   inv_out_bill_intf_head;
 ```
-<h4>报错4：权限不足/未登录</h4>
-<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口为组织级权限接口，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足/未登录</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口为组织级权限接口，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
   FROM   dual;
 ```
-<h4>报错5：导出失败：网络异常</h4>
-<ul><li><strong>触发条件</strong>：点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/rebate-details/mktOutBillHead/export接口过程中，网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口通过@ProcessLovValue注解翻译是否计广告费字段（LOV_CODE='AE.YESNO'），后端先全量查询7表关联数据再通过SaOutBillHeadConvert转换生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定发货日期范围、经销商）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出失败：网络异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮，调用GET /v1/&#123;organizationId&#125;/rebate-details/mktOutBillHead/export接口过程中，网络中断、后端响应超时或Excel文件流传输中断<br><strong>逻辑分析：</strong>导出接口通过@ProcessLovValue注解翻译是否计广告费字段（LOV_CODE='AE.YESNO'），后端先全量查询7表关联数据再通过SaOutBillHeadConvert转换生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定发货日期范围、经销商）减少数据量。</div>
+  </div>
+</div>
 
 ```sql
 SELECT TO_CHAR(delivery_date, 'YYYY') AS 年度,

@@ -215,8 +215,14 @@
 <tr><td>必填查询条件为空</td><td>查询时</td><td>未填写年度/经销商等必填条件，补全后查询</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询无数据</h4>
-<ul><li><strong>触发条件</strong>：用户按年度/经销商/事业部/销售区域查询经销合同销售区域报表，saSaleContractHeadSearch接口返回空结果集</li><li><strong>逻辑分析</strong>：报表基于SA_SALE_CONTRACT_HEAD表按销售区域（SALE_AREA）维度统计经销合同数据。无数据根因有三类：(1)查询条件（CONTRACT_YEAR+CUSTOMER_NAME+ENTNAME+SALE_AREA）组合过窄，无匹配合同；(2)合同未审批通过（HZ_APPROVE_STATUS != 'APPROVED'），报表仅展示已审批合同；(3)合同销售区域（SALE_AREA）未配置，字段为空导致按区域筛选时被过滤。需先放宽条件（去掉销售区域）确认是否有合同数据，再核查SALE_AREA配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户按年度/经销商/事业部/销售区域查询经销合同销售区域报表，saSaleContractHeadSearch接口返回空结果集<br><strong>逻辑分析：</strong>报表基于SA_SALE_CONTRACT_HEAD表按销售区域（SALE_AREA）维度统计经销合同数据。无数据根因有三类：(1)查询条件（CONTRACT_YEAR+CUSTOMER_NAME+ENTNAME+SALE_AREA）组合过窄，无匹配合同；(2)合同未审批通过（HZ_APPROVE_STATUS != 'APPROVED'），报表仅展示已审批合同；(3)合同销售区域（SALE_AREA）未配置，字段为空导致按区域筛选时被过滤。需先放宽条件（去掉销售区域）确认是否有合同数据，再核查SALE_AREA配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR, SALE_AREA, ENTNAME, HZ_APPROVE_STATUS
@@ -227,8 +233,14 @@ SELECT CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR, SALE_AREA, ENTNAME, HZ_APPROVE
     AND (SALE_AREA = #{saleArea} OR #{saleArea} IS NULL)
   ORDER BY CONTRACT_YEAR DESC, CONTRACT_NO;
 ```
-<h4>报错2：导出失败</h4>
-<ul><li><strong>触发条件</strong>：用户点击"导出"按钮，saSaleContractHeadExport接口返回空数据集或抛出异常</li><li><strong>逻辑分析</strong>：导出接口saSaleContractHeadExport基于saSaleContractHeadSearch同一查询逻辑，通过SaSaleContractHeadConvert.INSTANCE.convert转换导出VO。若查询结果集为空则导出文件无内容；若导出过程中LOV翻译失败（@ProcessLovValue注解处理）或内存溢出也会失败。需先执行查询确认有数据再导出</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"导出"按钮，saSaleContractHeadExport接口返回空数据集或抛出异常<br><strong>逻辑分析：</strong>导出接口saSaleContractHeadExport基于saSaleContractHeadSearch同一查询逻辑，通过SaSaleContractHeadConvert.INSTANCE.convert转换导出VO。若查询结果集为空则导出文件无内容；若导出过程中LOV翻译失败（@ProcessLovValue注解处理）或内存溢出也会失败。需先执行查询确认有数据再导出</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*) AS 可导出记录数
@@ -236,22 +248,40 @@ SELECT COUNT(*) AS 可导出记录数
   WHERE HZ_APPROVE_STATUS = 'APPROVED'
     AND (CONTRACT_YEAR = #{contractYear} OR #{contractYear} IS NULL);
 ```
-<h4>报错3：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：前端调用contractReport/sa-sale-contract-head/search或export接口时，axios请求超时或返回非2xx状态码</li><li><strong>逻辑分析</strong>：报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。SaSaleContractHeadServiceImpl.saSaleContractHeadSearch通过PageHelper.doPageAndSort分页查询，服务异常时无法返回数据。需确认ae-report服务状态及网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用contractReport/sa-sale-contract-head/search或export接口时，axios请求超时或返回非2xx状态码<br><strong>逻辑分析：</strong>报表服务ae-report与前端跨服务调用，网络中断、服务未启动、网关路由异常均会导致请求失败。SaSaleContractHeadServiceImpl.saSaleContractHeadSearch通过PageHelper.doPageAndSort分页查询，服务异常时无法返回数据。需确认ae-report服务状态及网关配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*) AS 合同总记录数 FROM SA_SALE_CONTRACT_HEAD
   WHERE HZ_APPROVE_STATUS = 'APPROVED';
 ```
-<h4>报错4：权限不足</h4>
-<ul><li><strong>触发条件</strong>：当前用户角色未配置报表查询权限，访问页面时被拦截</li><li><strong>逻辑分析</strong>：报表页面通过permissionList控制访问权限，用户无对应权限码时无法进入页面或调用接口。需在角色管理中为用户分配"经销合同销售区域报表"查询权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户角色未配置报表查询权限，访问页面时被拦截<br><strong>逻辑分析：</strong>报表页面通过permissionList控制访问权限，用户无对应权限码时无法进入页面或调用接口。需在角色管理中为用户分配"经销合同销售区域报表"查询权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT ROLE_CODE, PERMISSION_CODE FROM USER_ROLE_PERMISSION
   WHERE USER_ID = #{userId} AND PERMISSION_CODE LIKE '%saSaleContractHead%';
 ```
-<h4>报错5：必填查询条件为空</h4>
-<ul><li><strong>触发条件</strong>：用户未填写年度（CONTRACT_YEAR）等必填查询条件直接点击查询</li><li><strong>逻辑分析</strong>：SaSaleContractHeadSearchDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端查询DS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>必填查询条件为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未填写年度（CONTRACT_YEAR）等必填查询条件直接点击查询<br><strong>逻辑分析：</strong>SaSaleContractHeadSearchDTO中年度是报表维度核心字段，未填写年度将导致查询无明确时间范围，返回全量或空数据。前端查询DS中年度字段配置required校验，未填写时DataSet.query()前置校验拦截并提示</div>
+  </div>
+</div>
 
 ```sql
 SELECT DISTINCT CONTRACT_YEAR FROM SA_SALE_CONTRACT_HEAD
@@ -260,7 +290,18 @@ SELECT DISTINCT CONTRACT_YEAR FROM SA_SALE_CONTRACT_HEAD
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：报表数据不完整</li><li>原因：部分合同未审批通过或销售区域未配置</li><li>解决思路：检查SQL <code>SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED' AND SALE_AREA IS NOT NULL</code></li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">报表数据不完整</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>部分合同未审批通过或销售区域未配置<br><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED' AND SALE_AREA IS NOT NULL</code>
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

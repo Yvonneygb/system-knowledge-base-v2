@@ -311,16 +311,28 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
 <tr><td>未找到对应的B/B1类系统参数值</td><td>推送ERP时</td><td>系统参数未配置B/B1类折扣比例，联系管理员</td><td>阻断性报错</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：年度不能为空</h4>
-<ul><li><strong>触发条件</strong>：用户在新建/编辑页未选择政策年度（POLICY_YEAR）直接点击保存</li><li><strong>逻辑分析</strong>：年度营销政策按年度（POLICY_YEAR）归属，年度是政策生效期和合同引用的前置维度。未选择年度将导致政策无法被年度经销合同按年度引用，也无法推送ERP（ERP按年度建账）。校验POLICY_YEAR非空，toast提示后阻断保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>年度不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在新建/编辑页未选择政策年度（POLICY_YEAR）直接点击保存<br><strong>逻辑分析：</strong>年度营销政策按年度（POLICY_YEAR）归属，年度是政策生效期和合同引用的前置维度。未选择年度将导致政策无法被年度经销合同按年度引用，也无法推送ERP（ERP按年度建账）。校验POLICY_YEAR非空，toast提示后阻断保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME, ENTNAME, STATUS
   FROM ANNUAL_DEALER_POLICY_HEAD
   WHERE POLICY_YEAR IS NULL;
 ```
-<h4>报错2：ERP推送失败</h4>
-<ul><li><strong>触发条件</strong>：用户对已生效政策点击"推送ERP"，pushErpAndCrm接口推送至ERP/CRM时返回失败</li><li><strong>逻辑分析</strong>：推送接口将营销政策推送至ERP和CRM系统，支持更新ERP总账日期（modifyLegerDate）。失败根因有三类：(1)ERP/CRM系统不可用或网络中断；(2)推送数据异常，如政策年度在ERP中不存在、经销商编码在ERP中不匹配、政策行明细数据缺失；(3)ERP侧重复推送或政策状态非"已生效"（仅已生效政策可推送）。需确认政策STATUS为已生效及ERP/CRM连接状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>ERP推送失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对已生效政策点击"推送ERP"，pushErpAndCrm接口推送至ERP/CRM时返回失败<br><strong>逻辑分析：</strong>推送接口将营销政策推送至ERP和CRM系统，支持更新ERP总账日期（modifyLegerDate）。失败根因有三类：(1)ERP/CRM系统不可用或网络中断；(2)推送数据异常，如政策年度在ERP中不存在、经销商编码在ERP中不匹配、政策行明细数据缺失；(3)ERP侧重复推送或政策状态非"已生效"（仅已生效政策可推送）。需确认政策STATUS为已生效及ERP/CRM连接状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME, ENTNAME, STATUS
@@ -331,15 +343,27 @@ SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME, ENTNAME, STATUS
   FROM SA_POLICY_YEAR_HEADER
   WHERE PUSH_STATUS != 'SUCCESS' OR PUSH_STATUS IS NULL;
 ```
-<h4>报错3：参数id不能为空</h4>
-<ul><li><strong>触发条件</strong>：用户进入年度营销政策详情页，detail接口未传入政策头ID（id为null）</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.detail方法首行校验id非空，id为null时抛CommonException。根因是前端跳转详情页时未携带POLICY_HEAD_ID参数，或URL参数丢失。需重新从列表页点击"查看"进入详情页</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>参数id不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户进入年度营销政策详情页，detail接口未传入政策头ID（id为null）<br><strong>逻辑分析：</strong>AnnualDealerPolicyHeadServiceImpl.detail方法首行校验id非空，id为null时抛CommonException。根因是前端跳转详情页时未携带POLICY_HEAD_ID参数，或URL参数丢失。需重新从列表页点击"查看"进入详情页</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_HEAD_ID, POLICY_YEAR, CUSTOMER_NAME FROM ANNUAL_DEALER_POLICY_HEAD
   WHERE POLICY_HEAD_ID = #{id};
 ```
-<h4>报错4：配置类型行不能为空</h4>
-<ul><li><strong>触发条件</strong>：用户新建营销政策未添加任何配置类型行（lines为空集合）直接点击保存</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.insert方法校验dto.getLines()非空，政策头必须关联至少一行配置（折扣/返点/违约金）。无配置行的政策无业务意义，无法被合同引用计算折扣返点。需在编辑页点击"增加行"添加配置类型行后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>配置类型行不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户新建营销政策未添加任何配置类型行（lines为空集合）直接点击保存<br><strong>逻辑分析：</strong>AnnualDealerPolicyHeadServiceImpl.insert方法校验dto.getLines()非空，政策头必须关联至少一行配置（折扣/返点/违约金）。无配置行的政策无业务意义，无法被合同引用计算折扣返点。需在编辑页点击"增加行"添加配置类型行后保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT H.POLICY_HEAD_ID, H.POLICY_YEAR, COUNT(L.LINE_ID) AS 配置行数
@@ -348,22 +372,40 @@ SELECT H.POLICY_HEAD_ID, H.POLICY_YEAR, COUNT(L.LINE_ID) AS 配置行数
   GROUP BY H.POLICY_HEAD_ID, H.POLICY_YEAR
   HAVING COUNT(L.LINE_ID) = 0;
 ```
-<h4>报错5：数据的审核状态异常</h4>
-<ul><li><strong>触发条件</strong>：用户对状态非"未生效"（POLICY_STATUS_DIS_NOT_ENABLE）的政策点击修改并提交update接口</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.update方法校验dto.getPolicyStatus()必须为POLICY_STATUS_DIS_NOT_ENABLE（未生效），其他状态（已生效、已失效）不允许修改。已生效政策被合同引用，修改会影响已结算数据；已失效政策为历史归档。需先将政策失效再修改</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>数据的审核状态异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对状态非"未生效"（POLICY_STATUS_DIS_NOT_ENABLE）的政策点击修改并提交update接口<br><strong>逻辑分析：</strong>AnnualDealerPolicyHeadServiceImpl.update方法校验dto.getPolicyStatus()必须为POLICY_STATUS_DIS_NOT_ENABLE（未生效），其他状态（已生效、已失效）不允许修改。已生效政策被合同引用，修改会影响已结算数据；已失效政策为历史归档。需先将政策失效再修改</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_HEAD_ID, POLICY_YEAR, POLICY_STATUS FROM ANNUAL_DEALER_POLICY_HEAD
   WHERE POLICY_HEAD_ID = #{id} AND POLICY_STATUS != 'DIS_NOT_ENABLE';
 ```
-<h4>报错6：数据的状态异常</h4>
-<ul><li><strong>触发条件</strong>：用户对状态非"未生效"的政策点击"生效"按钮，makeEffective接口校验不通过</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.makeEffective方法校验dto非空且POLICY_STATUS为POLICY_STATUS_DIS_NOT_ENABLE（未生效），其他状态无法生效。生效逻辑会先将同事业部+年度已生效政策置为失效，再将当前政策置为已生效。需确认政策状态为未生效再生效</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>数据的状态异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对状态非"未生效"的政策点击"生效"按钮，makeEffective接口校验不通过<br><strong>逻辑分析：</strong>AnnualDealerPolicyHeadServiceImpl.makeEffective方法校验dto非空且POLICY_STATUS为POLICY_STATUS_DIS_NOT_ENABLE（未生效），其他状态无法生效。生效逻辑会先将同事业部+年度已生效政策置为失效，再将当前政策置为已生效。需确认政策状态为未生效再生效</div>
+  </div>
+</div>
 
 ```sql
 SELECT POLICY_HEAD_ID, POLICY_YEAR, ENTID, POLICY_STATUS FROM ANNUAL_DEALER_POLICY_HEAD
   WHERE POLICY_HEAD_ID = #{id} AND POLICY_STATUS != 'DIS_NOT_ENABLE';
 ```
-<h4>报错7：执行值类型不能为空</h4>
-<ul><li><strong>触发条件</strong>：用户添加违约金类型（EXECUTE_TYPE_BREACH）配置行，未填写执行值类型（EXECUTE_VAL_TYPE）或执行值（EXECUTE_VAL）直接保存</li><li><strong>逻辑分析</strong>：AnnualDealerPolicyHeadServiceImpl.validateLine方法对违约金行校验executeValType和executeVal非空。违约金计算需依据执行值类型（按金额或按比例）和执行值，缺失将导致违约金无法计算。需补全执行值类型和执行值后保存</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>执行值类型不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户添加违约金类型（EXECUTE_TYPE_BREACH）配置行，未填写执行值类型（EXECUTE_VAL_TYPE）或执行值（EXECUTE_VAL）直接保存<br><strong>逻辑分析：</strong>AnnualDealerPolicyHeadServiceImpl.validateLine方法对违约金行校验executeValType和executeVal非空。违约金计算需依据执行值类型（按金额或按比例）和执行值，缺失将导致违约金无法计算。需补全执行值类型和执行值后保存</div>
+  </div>
+</div>
 
 ```sql
 SELECT LINE_ID, HEAD_ID, EXECUTE_TYPE, EXECUTE_VAL_TYPE, EXECUTE_VAL
@@ -371,16 +413,28 @@ SELECT LINE_ID, HEAD_ID, EXECUTE_TYPE, EXECUTE_VAL_TYPE, EXECUTE_VAL
   WHERE EXECUTE_TYPE = 'BREACH'
     AND (EXECUTE_VAL_TYPE IS NULL OR EXECUTE_VAL IS NULL);
 ```
-<h4>报错8：经销商信息异常</h4>
-<ul><li><strong>触发条件</strong>：推送ERP/CRM时，saPolicyYearHeaderMapper.getCustomerOrgRankByCode返回空，经销商在系统中无对应等级</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.getSuccessfulRecords方法通过getCustomerOrgRankByCode查询经销商等级（rank），rank为空时抛CommonException。等级用于决定折扣修正值计算方式（1=直营，2=B类，3=B1类）。需核对经销商主数据是否配置等级</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>经销商信息异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP/CRM时，saPolicyYearHeaderMapper.getCustomerOrgRankByCode返回空，经销商在系统中无对应等级<br><strong>逻辑分析：</strong>SaPolicyYearHeaderServiceImpl.getSuccessfulRecords方法通过getCustomerOrgRankByCode查询经销商等级（rank），rank为空时抛CommonException。等级用于决定折扣修正值计算方式（1=直营，2=B类，3=B1类）。需核对经销商主数据是否配置等级</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.CUSTOMER_ID, C.CUSTOMER_CODE, C.CUSTOMER_NAME, C.RANK
   FROM CUSTOMER C
   WHERE C.CUSTOMER_CODE = #{custCode} AND (C.RANK IS NULL OR C.RANK = '');
 ```
-<h4>报错9：对应的出库总额未找到</h4>
-<ul><li><strong>触发条件</strong>：推送ERP/CRM计算完成率或返点时，ANNUAL_OUTBOUND_AMOUNT表无该合同的出库总额记录</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.getCompletionRate方法查询ANNUAL_OUTBOUND_AMOUNT表，若结果集为空抛CommonException。出库总额是完成率计算的分母来源，缺失意味着合同从未执行出库总额计算任务。需先执行出库总额计算任务（MktSaPolicyYearIntfJob）</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>对应的出库总额未找到</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP/CRM计算完成率或返点时，ANNUAL_OUTBOUND_AMOUNT表无该合同的出库总额记录<br><strong>逻辑分析：</strong>SaPolicyYearHeaderServiceImpl.getCompletionRate方法查询ANNUAL_OUTBOUND_AMOUNT表，若结果集为空抛CommonException。出库总额是完成率计算的分母来源，缺失意味着合同从未执行出库总额计算任务。需先执行出库总额计算任务（MktSaPolicyYearIntfJob）</div>
+  </div>
+</div>
 
 ```sql
 SELECT S.SA_CONTR_HEAD_ID, S.CONTRACT_NO, A.SALE_AMOUNT AS 出库总额
@@ -388,8 +442,14 @@ SELECT S.SA_CONTR_HEAD_ID, S.CONTRACT_NO, A.SALE_AMOUNT AS 出库总额
   LEFT JOIN ANNUAL_OUTBOUND_AMOUNT A ON S.SALE_CONTRACT_HEAD_ID = A.SA_CONTR_HEAD_ID
   WHERE S.SALE_CONTRACT_HEAD_ID = #{saContrHeadId} AND A.SALE_AMOUNT IS NULL;
 ```
-<h4>报错10：次年折扣分段区间未找到对应数值</h4>
-<ul><li><strong>触发条件</strong>：推送ERP/CRM计算次年折扣时，合同完成率未落入任何折扣分段区间（START_POINT, END_POINT）</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.calculateDiscount方法通过matchingInterval匹配完成率所在区间，未匹配时tierVal为0，抛CommonException。根因是政策行未配置覆盖该完成率的区间（如完成率105%但区间仅配置到100%）。需在政策编辑页补全区间配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>次年折扣分段区间未找到对应数值</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP/CRM计算次年折扣时，合同完成率未落入任何折扣分段区间（START_POINT, END_POINT）<br><strong>逻辑分析：</strong>SaPolicyYearHeaderServiceImpl.calculateDiscount方法通过matchingInterval匹配完成率所在区间，未匹配时tierVal为0，抛CommonException。根因是政策行未配置覆盖该完成率的区间（如完成率105%但区间仅配置到100%）。需在政策编辑页补全区间配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT T.LINE_ID, T.START_POINT, T.END_POINT, T.TIER_VAL
@@ -397,8 +457,14 @@ SELECT T.LINE_ID, T.START_POINT, T.END_POINT, T.TIER_VAL
   WHERE T.LINE_ID = #{discountId}
     AND #{completionRate} BETWEEN T.START_POINT AND T.END_POINT;
 ```
-<h4>报错11：返点政策行配置为空</h4>
-<ul><li><strong>触发条件</strong>：推送ERP/CRM计算返点时，annualDealerPolicyLineRepository.selectByPrimaryKey(rebateId)返回null</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.calculateRatesAndDiscounts方法在完成率≥100%时查询返点政策行，policyLine为null时抛CommonException。根因是合同关联的返点行（REBATE_ID）已被删除或不存在。需重新为合同关联有效的返点政策行</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>返点政策行配置为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP/CRM计算返点时，annualDealerPolicyLineRepository.selectByPrimaryKey(rebateId)返回null<br><strong>逻辑分析：</strong>SaPolicyYearHeaderServiceImpl.calculateRatesAndDiscounts方法在完成率≥100%时查询返点政策行，policyLine为null时抛CommonException。根因是合同关联的返点行（REBATE_ID）已被删除或不存在。需重新为合同关联有效的返点政策行</div>
+  </div>
+</div>
 
 ```sql
 SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.REBATE_ID, L.LINE_ID
@@ -406,8 +472,14 @@ SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.REBATE_ID, L.LINE_ID
   LEFT JOIN ANNUAL_DEALER_POLICY_LINE L ON S.REBATE_ID = L.LINE_ID
   WHERE S.REBATE_ID IS NOT NULL AND L.LINE_ID IS NULL;
 ```
-<h4>报错12：违约金政策行配置为空</h4>
-<ul><li><strong>触发条件</strong>：推送ERP/CRM计算违约金时，annualDealerPolicyLineRepository.selectByPrimaryKey(breachId)返回null</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.calculateBreach方法查询违约金政策行，policyLine为null时抛CommonException。根因是合同关联的违约金行（BREACH_ID）已被删除或不存在。需重新为合同关联有效的违约金政策行</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>违约金政策行配置为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP/CRM计算违约金时，annualDealerPolicyLineRepository.selectByPrimaryKey(breachId)返回null<br><strong>逻辑分析：</strong>SaPolicyYearHeaderServiceImpl.calculateBreach方法查询违约金政策行，policyLine为null时抛CommonException。根因是合同关联的违约金行（BREACH_ID）已被删除或不存在。需重新为合同关联有效的违约金政策行</div>
+  </div>
+</div>
 
 ```sql
 SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.BREACH_ID, L.LINE_ID
@@ -415,8 +487,14 @@ SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.BREACH_ID, L.LINE_ID
   LEFT JOIN ANNUAL_DEALER_POLICY_LINE L ON S.BREACH_ID = L.LINE_ID
   WHERE S.BREACH_ID IS NOT NULL AND L.LINE_ID IS NULL;
 ```
-<h4>报错13：未找到对应的B/B1类系统参数值</h4>
-<ul><li><strong>触发条件</strong>：推送ERP/CRM计算修正值时，经销商等级为B类(2)或B1类(3)，但系统参数未配置Rank_B_Discount或Rank_B1_Discount</li><li><strong>逻辑分析</strong>：SaPolicyYearHeaderServiceImpl.getCorrectionValue方法根据经销商等级查询系统参数（SYS_PARAM），B类查询Rank_B_Discount，B1类查询Rank_B1_Discount，未找到时抛CommonException。修正值用于调整非直营经销商的出库总额计算。需联系管理员在系统参数配置中补全B/B1类折扣比例</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到对应的B/B1类系统参数值</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送ERP/CRM计算修正值时，经销商等级为B类(2)或B1类(3)，但系统参数未配置Rank_B_Discount或Rank_B1_Discount<br><strong>逻辑分析：</strong>SaPolicyYearHeaderServiceImpl.getCorrectionValue方法根据经销商等级查询系统参数（SYS_PARAM），B类查询Rank_B_Discount，B1类查询Rank_B1_Discount，未找到时抛CommonException。修正值用于调整非直营经销商的出库总额计算。需联系管理员在系统参数配置中补全B/B1类折扣比例</div>
+  </div>
+</div>
 
 ```sql
 SELECT PARAM_CODE, PARAM_VALUE FROM SYS_PARAM
@@ -426,7 +504,18 @@ SELECT PARAM_CODE, PARAM_VALUE FROM SYS_PARAM
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：政策无法被合同引用</li><li>原因：政策状态不是"已生效"</li><li>解决思路：检查SQL <code>SELECT STATUS FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_HEAD_ID = #&#123;id&#125;</code>，确认状态为已生效</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">政策无法被合同引用</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>政策状态不是"已生效"<br><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT STATUS FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_HEAD_ID = #&#123;id&#125;</code>，确认状态为已生效
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

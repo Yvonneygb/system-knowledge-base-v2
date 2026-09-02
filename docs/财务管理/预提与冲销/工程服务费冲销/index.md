@@ -355,8 +355,14 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_S
 <tr><td>时间格式错误，请输入正确的时间格式：yyyy-MM</td><td>定时任务</td><td>定时任务参数startDate/endDate格式错误</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：推送共享财务失败</h4>
-<ul><li><strong>触发条件</strong>：用户选中未推送记录点击"推送共享财务"，doserviceWithHolding接口推送至GCCX系统时返回失败</li><li><strong>逻辑分析</strong>：推送接口将EXPENSE_WRITEOFF_IN_QUOTA冲销数据推送至共享财务系统（GCCX），单据类型在SharedBillTypeEnum中定义，编码规则在CodeRuleConstants中定义。失败根因有三类：(1)GCCX共享财务系统不可用或网络中断；(2)推送数据异常，如冲销含税/不含税金额为0、法人编码（BILLING_UNIT_CODE）在GCCX中不存在、成本中心编码不匹配；(3)GCCX侧重复推送校验。推送失败需检查SYNC_ITEM和BILL_STATUS字段，修复后重推</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>推送共享财务失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中未推送记录点击"推送共享财务"，doserviceWithHolding接口推送至GCCX系统时返回失败<br><strong>逻辑分析：</strong>推送接口将EXPENSE_WRITEOFF_IN_QUOTA冲销数据推送至共享财务系统（GCCX），单据类型在SharedBillTypeEnum中定义，编码规则在CodeRuleConstants中定义。失败根因有三类：(1)GCCX共享财务系统不可用或网络中断；(2)推送数据异常，如冲销含税/不含税金额为0、法人编码（BILLING_UNIT_CODE）在GCCX中不存在、成本中心编码不匹配；(3)GCCX侧重复推送校验。推送失败需检查SYNC_ITEM和BILL_STATUS字段，修复后重推</div>
+  </div>
+</div>
 
 ```sql
 SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILLING_UNIT_CODE, BILLING_UNIT_NAME,
@@ -364,8 +370,14 @@ SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILLING_UNIT_CODE, BILLING_UNIT_NAME
   FROM EXPENSE_WRITEOFF_IN_QUOTA
   WHERE BILL_STATUS != 1 OR SYNC_ITEM IS NULL;
 ```
-<h4>报错2：冲销数据未生成</h4>
-<ul><li><strong>触发条件</strong>：用户按年月/事业部/交易公司查询冲销数据，EXPENSE_WRITEOFF_IN_QUOTA表返回空结果集</li><li><strong>逻辑分析</strong>：冲销数据由定时任务ExpenseWriteoffInQuotaJob定期执行生成，从工程服务费兑现（EXPENSE_TO_CASH）审批通过的数据中提取冲销信息写入EXPENSE_WRITEOFF_IN_QUOTA表。无数据根因有三类：(1)定时任务ExpenseWriteoffInQuotaJob未配置或未启动；(2)上游工程服务费兑现单未审批通过，无冲销数据来源；(3)查询的年月/事业部区间内无冲销记录。需先确认定时任务执行日志，再核查上游兑现审批状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>冲销数据未生成</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户按年月/事业部/交易公司查询冲销数据，EXPENSE_WRITEOFF_IN_QUOTA表返回空结果集<br><strong>逻辑分析：</strong>冲销数据由定时任务ExpenseWriteoffInQuotaJob定期执行生成，从工程服务费兑现（EXPENSE_TO_CASH）审批通过的数据中提取冲销信息写入EXPENSE_WRITEOFF_IN_QUOTA表。无数据根因有三类：(1)定时任务ExpenseWriteoffInQuotaJob未配置或未启动；(2)上游工程服务费兑现单未审批通过，无冲销数据来源；(3)查询的年月/事业部区间内无冲销记录。需先确认定时任务执行日志，再核查上游兑现审批状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, ENTNAME, TRADING_COMPANY_NAME,
@@ -375,16 +387,28 @@ SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, ENTNAME, TRADING_COMPANY_NAME,
     AND (ENTID = #{entid} OR #{entid} IS NULL)
   ORDER BY YEARMONTH DESC, WRITEOFF_NO;
 ```
-<h4>报错3：请传入冲销单号</h4>
-<ul><li><strong>触发条件</strong>：用户点击"推送共享财务"但未传入冲销头单号（headNo为空或空字符串）</li><li><strong>逻辑分析</strong>：doserviceWithHolding接口在ExpenseWriteoffInQuotaServiceImpl.java:93处通过StringUtils.isBlank(headNo)校验冲销单号为空时抛出CommonException("请传入冲销单号！")。该校验为前置参数校验，headNo用于查询表头数据（selectHead）和经销商明细（selectDealerDetail）。需在列表页选中有效的冲销记录后再点击推送</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请传入冲销单号</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"推送共享财务"但未传入冲销头单号（headNo为空或空字符串）<br><strong>逻辑分析：</strong>doserviceWithHolding接口在ExpenseWriteoffInQuotaServiceImpl.java:93处通过StringUtils.isBlank(headNo)校验冲销单号为空时抛出CommonException("请传入冲销单号！")。该校验为前置参数校验，headNo用于查询表头数据（selectHead）和经销商明细（selectDealerDetail）。需在列表页选中有效的冲销记录后再点击推送</div>
+  </div>
+</div>
 
 ```sql
 SELECT WRITEOFF_ID, WRITEOFF_NO, WRITEOFF_HEADNO, YEARMONTH, BILL_STATUS
   FROM EXPENSE_WRITEOFF_IN_QUOTA
   WHERE WRITEOFF_HEADNO = #{headNo};
 ```
-<h4>报错4：推共享预提时间转换异常</h4>
-<ul><li><strong>触发条件</strong>：推送共享财务时，冲销记录的YEARMONTH（年月）字段格式错误或为空，LocalDate.parse解析失败</li><li><strong>逻辑分析</strong>：doserviceWithHolding接口在ExpenseWriteoffInQuotaServiceImpl.java:161和193处对ATTRIBUTE2（年月）和feeHappendDate进行LocalDate.parse解析，格式为yyyy-MM-dd。当YEARMONTH格式非yyyy-MM（如空值、乱码、缺少分隔符）时抛出CommonException("推共享预提 时间转换异常")。根因有二：(1)定时任务生成冲销数据时YEARMONTH字段写入异常；(2)历史数据YEARMONTH格式不规范。需核查冲销记录的YEARMONTH字段格式</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>推共享预提时间转换异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>推送共享财务时，冲销记录的YEARMONTH（年月）字段格式错误或为空，LocalDate.parse解析失败<br><strong>逻辑分析：</strong>doserviceWithHolding接口在ExpenseWriteoffInQuotaServiceImpl.java:161和193处对ATTRIBUTE2（年月）和feeHappendDate进行LocalDate.parse解析，格式为yyyy-MM-dd。当YEARMONTH格式非yyyy-MM（如空值、乱码、缺少分隔符）时抛出CommonException("推共享预提 时间转换异常")。根因有二：(1)定时任务生成冲销数据时YEARMONTH字段写入异常；(2)历史数据YEARMONTH格式不规范。需核查冲销记录的YEARMONTH字段格式</div>
+  </div>
+</div>
 
 ```sql
 SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILL_STATUS
@@ -392,8 +416,14 @@ SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILL_STATUS
   WHERE WRITEOFF_HEADNO = #{headNo}
     AND (YEARMONTH IS NULL OR LENGTH(YEARMONTH) != 7 OR INSTR(YEARMONTH, '-') != 5);
 ```
-<h4>报错5：时间格式错误，请输入正确的时间格式：yyyy-MM</h4>
-<ul><li><strong>触发条件</strong>：定时任务ExpenseWriteoffInQuotaJob执行时，传入的startDate或endDate参数格式不符合yyyy-MM</li><li><strong>逻辑分析</strong>：generateExpenseWriteoffInQuota方法在ExpenseWriteoffInQuotaServiceImpl.java:351处通过checkDateFormat校验时间格式，使用SimpleDateFormat("yyyy-MM")解析，解析失败抛出CommonException("【" + dateStr + "】该时间格式错误，请输入正确的时间格式：yyyy-MM")。该异常针对定时任务参数配置，非页面操作触发。需检查定时任务参数配置中PARAM_START_DATE和PARAM_END_DATE的格式</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>时间格式错误，请输入正确的时间格式：yyyy-MM</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>定时任务ExpenseWriteoffInQuotaJob执行时，传入的startDate或endDate参数格式不符合yyyy-MM<br><strong>逻辑分析：</strong>generateExpenseWriteoffInQuota方法在ExpenseWriteoffInQuotaServiceImpl.java:351处通过checkDateFormat校验时间格式，使用SimpleDateFormat("yyyy-MM")解析，解析失败抛出CommonException("【" + dateStr + "】该时间格式错误，请输入正确的时间格式：yyyy-MM")。该异常针对定时任务参数配置，非页面操作触发。需检查定时任务参数配置中PARAM_START_DATE和PARAM_END_DATE的格式</div>
+  </div>
+</div>
 
 ```sql
 -- 核查定时任务参数配置（伪SQL，具体表名依定时任务框架而定）
@@ -404,7 +434,18 @@ SELECT WRITEOFF_ID, WRITEOFF_NO, YEARMONTH, BILL_STATUS
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：冲销数据不及时</li><li>原因：定时任务ExpenseWriteoffInQuotaJob未执行或执行间隔过长</li><li>解决思路：检查定时任务配置，确认执行频率</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">冲销数据不及时</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>定时任务ExpenseWriteoffInQuotaJob未执行或执行间隔过长<br><strong style="color:#7C3AED;">处理：</strong>检查定时任务配置，确认执行频率
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

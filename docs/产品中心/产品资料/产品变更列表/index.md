@@ -563,8 +563,14 @@ AND I.PROD_CODE IN (
 SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
 );
 </code>``</blockquote>
-<h4>报错1：申请单状态为不为新建或审核拒绝，不可提交！</h4>
-<ul><li><strong>触发条件</strong>：详情页点击"提交"按钮时，后端校验申请单当前状态</li><li><strong>逻辑分析</strong>：后端提交接口先查询LNK_PROD_CHANGE_FORM.STATUS，仅允许NEW（新建）和REJECTED（审核拒绝）状态提交。其他状态（RUN审批中/APPROVED审核通过）提交会抛出CommonException。常见于并发场景：多人同时操作同一申请单，或前端状态未及时刷新。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>申请单状态为不为新建或审核拒绝，不可提交！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页点击"提交"按钮时，后端校验申请单当前状态<br><strong>逻辑分析：</strong>后端提交接口先查询LNK_PROD_CHANGE_FORM.STATUS，仅允许NEW（新建）和REJECTED（审核拒绝）状态提交。其他状态（RUN审批中/APPROVED审核通过）提交会抛出CommonException。常见于并发场景：多人同时操作同一申请单，或前端状态未及时刷新。</div>
+  </div>
+</div>
 
 ```sql
 SELECT F.ID, F.FORM_CODE, F.STATUS, F.HZ_APPROVE_STATUS,
@@ -572,8 +578,14 @@ SELECT F.ID, F.FORM_CODE, F.STATUS, F.HZ_APPROVE_STATUS,
   FROM LNK_PROD_CHANGE_FORM F
   WHERE F.ID = :formId;
 ```
-<h4>报错2：变更单涉及产品【xxx】所在申请单【xxx】申请人【xxx】正在审批中</h4>
-<ul><li><strong>触发条件</strong>：提交时校验在途单据，变更行产品已在其他审批中的申请单内</li><li><strong>逻辑分析</strong>：后端查询当前申请单所有变更行的产品编码集合，再查询其他STATUS='RUN'的申请单中是否包含相同产品。若存在则提示具体产品编码、申请单号和申请人，避免同一产品被多个变更单同时变更造成冲突。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>变更单涉及产品【xxx】所在申请单【xxx】申请人【xxx】正在审批中</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时校验在途单据，变更行产品已在其他审批中的申请单内<br><strong>逻辑分析：</strong>后端查询当前申请单所有变更行的产品编码集合，再查询其他STATUS='RUN'的申请单中是否包含相同产品。若存在则提示具体产品编码、申请单号和申请人，避免同一产品被多个变更单同时变更造成冲突。</div>
+  </div>
+</div>
 
 ```sql
 SELECT DISTINCT I.PROD_CODE AS 产品编码, F.FORM_CODE AS 申请单号,
@@ -586,8 +598,14 @@ SELECT DISTINCT I.PROD_CODE AS 产品编码, F.FORM_CODE AS 申请单号,
       SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
     );
 ```
-<h4>报错3：变更单行为空，不允许提交</h4>
-<ul><li><strong>触发条件</strong>：提交时校验变更行非空，申请单无任何变更行数据</li><li><strong>逻辑分析</strong>：后端根据HEAD_ID查询LNK_PROD_CHANGE_FORM_ITEM表，若COUNT为0则抛出异常。常见于用户新建申请单后未添加任何变更行就点击提交。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>变更单行为空，不允许提交</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时校验变更行非空，申请单无任何变更行数据<br><strong>逻辑分析：</strong>后端根据HEAD_ID查询LNK_PROD_CHANGE_FORM_ITEM表，若COUNT为0则抛出异常。常见于用户新建申请单后未添加任何变更行就点击提交。</div>
+  </div>
+</div>
 
 ```sql
 SELECT F.FORM_CODE, F.STATUS,
@@ -595,8 +613,14 @@ SELECT F.FORM_CODE, F.STATUS,
   FROM LNK_PROD_CHANGE_FORM F
   WHERE F.ID = :formId;
 ```
-<h4>报错4：产品xxx的生命状态为Z1/Z8不允许上架!</h4>
-<ul><li><strong>触发条件</strong>：提交时校验上下架产品状态，变更行包含上架操作且产品SM状态为Z1或Z8</li><li><strong>逻辑分析</strong>：后端调用产品服务校验产品生命状态。Z1（淘汰）、Z8（停产）状态产品不允许上架，仅Z5（正常）可直接上架，Z3/Z6/Z7/S6需用户二次确认。校验时关联LNK_PROD.SM_STATE字段。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品xxx的生命状态为Z1/Z8不允许上架!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时校验上下架产品状态，变更行包含上架操作且产品SM状态为Z1或Z8<br><strong>逻辑分析：</strong>后端调用产品服务校验产品生命状态。Z1（淘汰）、Z8（停产）状态产品不允许上架，仅Z5（正常）可直接上架，Z3/Z6/Z7/S6需用户二次确认。校验时关联LNK_PROD.SM_STATE字段。</div>
+  </div>
+</div>
 
 ```sql
 SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
@@ -608,8 +632,14 @@ SELECT P.PROD_CODE AS 产品编码, P.PROD_NAME AS 产品名称,
     AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD')
     AND P.SM_STATE IN ('Z1', 'Z8');
 ```
-<h4>报错5：产品xxx的生命状态为Z3/Z6/Z7/S6是否确认上架!</h4>
-<ul><li><strong>触发条件</strong>：提交时校验上下架产品状态，产品SM状态为Z3/Z6/Z7/S6</li><li><strong>逻辑分析</strong>：这些状态产品上架需用户二次确认。后端返回CONFIRM_REQUIRED错误码，前端弹窗确认后带confirmShelf=true重新提交。若用户取消则不提交。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品xxx的生命状态为Z3/Z6/Z7/S6是否确认上架!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时校验上下架产品状态，产品SM状态为Z3/Z6/Z7/S6<br><strong>逻辑分析：</strong>这些状态产品上架需用户二次确认。后端返回CONFIRM_REQUIRED错误码，前端弹窗确认后带confirmShelf=true重新提交。若用户取消则不提交。</div>
+  </div>
+</div>
 
 ```sql
 SELECT P.PROD_CODE AS 产品编码, P.SM_STATE AS 生命状态
@@ -620,8 +650,14 @@ SELECT P.PROD_CODE AS 产品编码, P.SM_STATE AS 生命状态
     AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD')
     AND P.SM_STATE IN ('Z3', 'Z6', 'Z7', 'S6');
 ```
-<h4>报错6：产品&lt;xxx&gt;的xxx的值为空，不可上架</h4>
-<ul><li><strong>触发条件</strong>：提交时校验上架必填项，产品推广等级配置要求的必填字段未填写</li><li><strong>逻辑分析</strong>：后端查询LNK_PROD_PROMOTE_GRADE_CONTROL获取上架产品必填字段配置，逐字段检查LNK_PROD对应字段是否为空。若变更单中已包含该字段的变更（CHANGE_PROPERTY匹配）则视为已填写。必填字段通常包括基础信息、图册、附件等。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品&lt;xxx&gt;的xxx的值为空，不可上架</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时校验上架必填项，产品推广等级配置要求的必填字段未填写<br><strong>逻辑分析：</strong>后端查询LNK_PROD_PROMOTE_GRADE_CONTROL获取上架产品必填字段配置，逐字段检查LNK_PROD对应字段是否为空。若变更单中已包含该字段的变更（CHANGE_PROPERTY匹配）则视为已填写。必填字段通常包括基础信息、图册、附件等。</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型,
@@ -636,16 +672,28 @@ SELECT C.DEPT_CODE AS 事业部, C.GRADE AS 等级, C.PROD_SIGN AS 物料类型,
         AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD')
     );
 ```
-<h4>报错7：产品信息变更申请xxx不存在！</h4>
-<ul><li><strong>触发条件</strong>：工作流审批回调时，根据申请单ID查询LNK_PROD_CHANGE_FORM找不到记录</li><li><strong>逻辑分析</strong>：审批通过/拒绝回调时，后端按ID查询申请单。若记录已被删除则抛出异常，工作流回调失败。常见于审批过程中申请单被他人删除。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品信息变更申请xxx不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流审批回调时，根据申请单ID查询LNK_PROD_CHANGE_FORM找不到记录<br><strong>逻辑分析：</strong>审批通过/拒绝回调时，后端按ID查询申请单。若记录已被删除则抛出异常，工作流回调失败。常见于审批过程中申请单被他人删除。</div>
+  </div>
+</div>
 
 ```sql
 SELECT F.ID, F.FORM_CODE, F.STATUS
   FROM LNK_PROD_CHANGE_FORM F
   WHERE F.ID = :formId;
 ```
-<h4>报错8：请检查表单必填项!</h4>
-<ul><li><strong>触发条件</strong>：详情页点击"保存"按钮时，前端DataSet.validate()校验必填字段未通过</li><li><strong>逻辑分析</strong>：前端表单校验未通过，常见于申请说明、变更行产品编码等必填字段为空。此为前端校验，不调用后端接口。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请检查表单必填项!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页点击"保存"按钮时，前端DataSet.validate()校验必填字段未通过<br><strong>逻辑分析：</strong>前端表单校验未通过，常见于申请说明、变更行产品编码等必填字段为空。此为前端校验，不调用后端接口。</div>
+  </div>
+</div>
 
 ```sql
 SELECT F.FORM_CODE, F.REMARK AS 说明,
@@ -653,8 +701,14 @@ SELECT F.FORM_CODE, F.REMARK AS 说明,
   FROM LNK_PROD_CHANGE_FORM F
   WHERE F.ID = :formId;
 ```
-<h4>报错9：请传入需要上下架的产品！</h4>
-<ul><li><strong>触发条件</strong>：提交时校验上下架变更行，变更行CHANGE_TYPE=prodStatus但产品编码集合为空</li><li><strong>逻辑分析</strong>：后端checkProdStatusChange方法首先校验prodCodeList是否为空。若上下架变更行中产品编码全部为空或变更行过滤后产品编码集合为空则抛出CommonException。常见于变更行产品编码未填写就提交。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请传入需要上下架的产品！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时校验上下架变更行，变更行CHANGE_TYPE=prodStatus但产品编码集合为空<br><strong>逻辑分析：</strong>后端checkProdStatusChange方法首先校验prodCodeList是否为空。若上下架变更行中产品编码全部为空或变更行过滤后产品编码集合为空则抛出CommonException。常见于变更行产品编码未填写就提交。</div>
+  </div>
+</div>
 
 ```sql
 SELECT I.ID AS 行ID, I.PROD_CODE AS 产品编码, I.CHANGE_TYPE AS 变更类型,
@@ -664,8 +718,14 @@ SELECT I.ID AS 行ID, I.PROD_CODE AS 产品编码, I.CHANGE_TYPE AS 变更类型
     AND I.CHANGE_TYPE = 'prodStatus'
     AND (I.PROD_CODE IS NULL OR I.PROD_CODE = '');
 ```
-<h4>报错10：产品编码【xxx】不存在！</h4>
-<ul><li><strong>触发条件</strong>：提交时校验上下架产品，变更行产品编码在LNK_PROD表中不存在或当前用户事业部无权访问</li><li><strong>逻辑分析</strong>：后端根据prodCodeList查询LNK_PROD表（含事业部权限过滤），将查询结果与传入的产品编码集合对比，差集即为不存在的产品编码。常见于产品编码拼写错误、产品已被删除或用户无该事业部权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码【xxx】不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时校验上下架产品，变更行产品编码在LNK_PROD表中不存在或当前用户事业部无权访问<br><strong>逻辑分析：</strong>后端根据prodCodeList查询LNK_PROD表（含事业部权限过滤），将查询结果与传入的产品编码集合对比，差集即为不存在的产品编码。常见于产品编码拼写错误、产品已被删除或用户无该事业部权限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT I.PROD_CODE AS 变更行产品编码,
@@ -675,8 +735,14 @@ SELECT I.PROD_CODE AS 变更行产品编码,
     AND I.CHANGE_TYPE = 'prodStatus'
     AND NOT EXISTS (SELECT 1 FROM LNK_PROD P WHERE P.PROD_CODE = I.PROD_CODE);
 ```
-<h4>报错11：申请产品上架数量不能超过1千！</h4>
-<ul><li><strong>触发条件</strong>：提交时校验上架产品数量，单次上架产品编码数量超过1000条</li><li><strong>逻辑分析</strong>：后端prodUpperProdCheck方法首先校验prodCodeList.size()是否&gt;=1000，超过则直接抛出CommonException。此为性能保护限制，避免单次上架校验关联老款产品时查询量过大。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>申请产品上架数量不能超过1千！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时校验上架产品数量，单次上架产品编码数量超过1000条<br><strong>逻辑分析：</strong>后端prodUpperProdCheck方法首先校验prodCodeList.size()是否&gt;=1000，超过则直接抛出CommonException。此为性能保护限制，避免单次上架校验关联老款产品时查询量过大。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(DISTINCT I.PROD_CODE) AS 上架产品数
@@ -685,8 +751,14 @@ SELECT COUNT(DISTINCT I.PROD_CODE) AS 上架产品数
     AND I.CHANGE_TYPE = 'prodStatus'
     AND I.CHANGE_CONTENT IN ('UPPERSHELF', 'UPPERSPECIALPROD');
 ```
-<h4>报错12：物料编码xxx关联老款产品xxx没有找到当前有效的折扣政策，不允许产品上架！</h4>
-<ul><li><strong>触发条件</strong>：提交时上架产品关联老款产品校验，关联老款产品无有效折扣政策且可售月份大于1个月</li><li><strong>逻辑分析</strong>：后端prodUpperProdCheck方法查询产品所属价目表申请单（事业部开启关联老品管控、最新审批通过、存在关联老款产品），再查询老款产品是否有有效折扣政策（按事业部），并调用EBS接口/api/ebs/productPolicyReference/getProductPolicyReference查询可售月份。若可售月份&gt;1且无有效政策则报错。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>物料编码xxx关联老款产品xxx没有找到当前有效的折扣政策，不允许产品上架！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时上架产品关联老款产品校验，关联老款产品无有效折扣政策且可售月份大于1个月<br><strong>逻辑分析：</strong>后端prodUpperProdCheck方法查询产品所属价目表申请单（事业部开启关联老品管控、最新审批通过、存在关联老款产品），再查询老款产品是否有有效折扣政策（按事业部），并调用EBS接口/api/ebs/productPolicyReference/getProductPolicyReference查询可售月份。若可售月份&gt;1且无有效政策则报错。</div>
+  </div>
+</div>
 
 ```sql
 -- 查询关联老款产品的价目表申请单
@@ -701,8 +773,14 @@ SELECT COUNT(DISTINCT I.PROD_CODE) AS 上架产品数
   WHERE O.PRICE_APP_FORM_ITEM_ID = :priceAppFormItemId
     AND NOT EXISTS (SELECT 1 FROM LNK_DISCOUNT_POLICY D WHERE D.PROD_ID = O.PROD_ID AND D.DEPT_ID = :deptId AND D.STATUS = 'valid');
 ```
-<h4>报错13：产品xxx不存在！</h4>
-<ul><li><strong>触发条件</strong>：提交时上架必填项校验，根据产品推广等级配置校验基础信息必填字段时，产品在LNK_PROD表中不存在</li><li><strong>逻辑分析</strong>：后端checkUpperShelfProd方法根据prodCode查询LnkProd，若lnkProdDb为null或lnkProdVO为null则抛出CommonException。常见于产品在配置表LNK_PROD_PROMOTE_GRADE_CONTROL中存在但主表LNK_PROD已被删除。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品xxx不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交时上架必填项校验，根据产品推广等级配置校验基础信息必填字段时，产品在LNK_PROD表中不存在<br><strong>逻辑分析：</strong>后端checkUpperShelfProd方法根据prodCode查询LnkProd，若lnkProdDb为null或lnkProdVO为null则抛出CommonException。常见于产品在配置表LNK_PROD_PROMOTE_GRADE_CONTROL中存在但主表LNK_PROD已被删除。</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.PROD_CODE AS 配置表产品编码,
@@ -711,8 +789,14 @@ SELECT C.PROD_CODE AS 配置表产品编码,
   WHERE C.STATUS = 'valid'
     AND NOT EXISTS (SELECT 1 FROM LNK_PROD P WHERE P.PROD_CODE = C.PROD_CODE);
 ```
-<h4>报错14：prodPhoto/prodFiles: xxx文件类型不存在！</h4>
-<ul><li><strong>触发条件</strong>：工作流审批通过回调执行图册/附件变更时，变更行的文件类型在OBJ_FILE_TYPE表中不存在</li><li><strong>逻辑分析</strong>：后端wfComplete方法处理图册/附件变更时，根据CHANGE_TYPE和CHANGE_PROPERTY查询OBJ_FILE_TYPE表（busType=prodPhoto/prodFiles，fileBusType=CHANGE_PROPERTY）。若查询结果为空则抛出CommonException，工作流回调失败。常见于文件类型未配置或已被禁用。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>prodPhoto/prodFiles: xxx文件类型不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流审批通过回调执行图册/附件变更时，变更行的文件类型在OBJ_FILE_TYPE表中不存在<br><strong>逻辑分析：</strong>后端wfComplete方法处理图册/附件变更时，根据CHANGE_TYPE和CHANGE_PROPERTY查询OBJ_FILE_TYPE表（busType=prodPhoto/prodFiles，fileBusType=CHANGE_PROPERTY）。若查询结果为空则抛出CommonException，工作流回调失败。常见于文件类型未配置或已被禁用。</div>
+  </div>
+</div>
 
 ```sql
 SELECT I.PROD_CODE AS 产品编码, I.CHANGE_TYPE AS 变更类型,
@@ -723,8 +807,14 @@ SELECT I.PROD_CODE AS 产品编码, I.CHANGE_TYPE AS 变更类型,
     AND I.CHANGE_TYPE IN ('prodPhoto', 'prodFiles')
     AND NOT EXISTS (SELECT 1 FROM OBJ_FILE_TYPE T WHERE T.BUS_TYPE = I.CHANGE_TYPE AND T.FILE_BUS_TYPE = I.CHANGE_PROPERTY AND T.STATUS = '1');
 ```
-<h4>报错15：保存失败</h4>
-<ul><li><strong>触发条件</strong>：详情页点击"保存"按钮时，POST /v1/&#123;organizationId&#125;/prodChangeForm接口返回failed=true</li><li><strong>逻辑分析</strong>：前端saveFn调用保存接口，若res.failed为true则调用commonFn_showErrMsg提示"保存失败"并展示后端错误消息。常见于后端校验失败、数据库异常、乐观锁冲突（OBJECT_VERSION_NUMBER不匹配）或网络中断。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保存失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页点击"保存"按钮时，POST /v1/&#123;organizationId&#125;/prodChangeForm接口返回failed=true<br><strong>逻辑分析：</strong>前端saveFn调用保存接口，若res.failed为true则调用commonFn_showErrMsg提示"保存失败"并展示后端错误消息。常见于后端校验失败、数据库异常、乐观锁冲突（OBJECT_VERSION_NUMBER不匹配）或网络中断。</div>
+  </div>
+</div>
 
 ```sql
 SELECT F.ID, F.FORM_CODE, F.STATUS, F.OBJECT_VERSION_NUMBER AS 乐观锁版本,
@@ -732,8 +822,14 @@ SELECT F.ID, F.FORM_CODE, F.STATUS, F.OBJECT_VERSION_NUMBER AS 乐观锁版本,
   FROM LNK_PROD_CHANGE_FORM F
   WHERE F.ID = :formId;
 ```
-<h4>报错16：提交失败</h4>
-<ul><li><strong>触发条件</strong>：详情页点击"提交"按钮时，POST /v1/&#123;organizationId&#125;/prodChangeForm/submit接口返回failed=true且错误码非CONFIRM_REQUIRED</li><li><strong>逻辑分析</strong>：前端onSubmitFn调用提交接口，若res.failed为true且res.code非CONFIRM_REQUIRED，则调用commonFn_showErrMsg提示"提交失败"并展示后端错误消息。常见于工作流引擎启动失败、数据库异常或网络中断。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>提交失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页点击"提交"按钮时，POST /v1/&#123;organizationId&#125;/prodChangeForm/submit接口返回failed=true且错误码非CONFIRM_REQUIRED<br><strong>逻辑分析：</strong>前端onSubmitFn调用提交接口，若res.failed为true且res.code非CONFIRM_REQUIRED，则调用commonFn_showErrMsg提示"提交失败"并展示后端错误消息。常见于工作流引擎启动失败、数据库异常或网络中断。</div>
+  </div>
+</div>
 
 ```sql
 SELECT F.ID, F.FORM_CODE, F.STATUS, F.HZ_INSTANCE_ID AS 流程实例ID,
@@ -744,8 +840,36 @@ SELECT F.ID, F.FORM_CODE, F.STATUS, F.HZ_INSTANCE_ID AS 流程实例ID,
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：提交后申请类型自动变化</li><li>原因：提交时后端根据变更行类型自动汇总FORM_TYPE字段，覆盖原有值</li><li>解决思路：这是正常逻辑，申请类型由变更行内容决定</li></ul>
-<ul><li>问题2：审核通过后产品状态未变更</li><li>原因：可能工作流回调未成功执行，或变更行CHANGE_CONTENT值不正确</li><li>解决思路：</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">提交后申请类型自动变化</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>提交时后端根据变更行类型自动汇总FORM_TYPE字段，覆盖原有值<br><strong style="color:#7C3AED;">处理：</strong>这是正常逻辑，申请类型由变更行内容决定
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">审核通过后产品状态未变更</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>可能工作流回调未成功执行，或变更行CHANGE_CONTENT值不正确
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">特殊新品上架后变为普通上架</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>审批回调时，UPPERSPECIALPROD类型会自动转为UPPERSHELF写入产品表<br><strong style="color:#7C3AED;">处理：</strong>这是正常逻辑，特殊新品上架审批通过后即转为正常上架状态
+  </div>
+</div>
+</div>
 
 ```sql
 -- 检查变更行数据
@@ -754,7 +878,6 @@ SELECT F.ID, F.FORM_CODE, F.STATUS, F.HZ_INSTANCE_ID AS 流程实例ID,
       JOIN LNK_PROD_CHANGE_FORM_ITEM I ON F.ID = I.HEAD_ID
     WHERE F.ID = :formId AND F.STATUS = 'APPROVED';
 ```
-<ul><li>问题3：特殊新品上架后变为普通上架</li><li>原因：审批回调时，UPPERSPECIALPROD类型会自动转为UPPERSHELF写入产品表</li><li>解决思路：这是正常逻辑，特殊新品上架审批通过后即转为正常上架状态</li></ul>
 </KbCard>
 
 </div>

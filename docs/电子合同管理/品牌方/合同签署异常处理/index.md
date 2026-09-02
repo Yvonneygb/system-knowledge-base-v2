@@ -448,8 +448,14 @@ ORDER BY EC.CREATE_TIME DESC;
 <tr><td>经销商手机号缺失</td><td>重发短信</td><td>经销商手机号为空或格式错误，检查经销商档案手机号</td><td>error</td><td>后端校验手机号非空</td></tr>
 </tbody>
 </table>
-<h4>报错1：合同状态不允许此操作</h4>
-<ul><li><strong>触发条件</strong>：执行重新归档、修改合同状态、重发签署短信、合同同步等操作时，当前合同状态不允许该操作</li><li><strong>逻辑分析</strong>：后端校验合同状态与操作匹配性，如归档失败状态才允许重新归档、签署超时/签署失败状态才允许重发短信、回调失败状态才允许合同同步。若当前状态与操作不匹配则提示"合同状态不允许此操作"。确保操作合法性，避免在错误状态下执行操作导致数据混乱</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>合同状态不允许此操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行重新归档、修改合同状态、重发签署短信、合同同步等操作时，当前合同状态不允许该操作<br><strong>逻辑分析：</strong>后端校验合同状态与操作匹配性，如归档失败状态才允许重新归档、签署超时/签署失败状态才允许重发短信、回调失败状态才允许合同同步。若当前状态与操作不匹配则提示"合同状态不允许此操作"。确保操作合法性，避免在错误状态下执行操作导致数据混乱</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
@@ -463,8 +469,14 @@ SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
                                 'filing_failed', 'callback_failed',
                                 'pending_sign', 'completed', 'filed');
 ```
-<h4>报错2：重新归档失败</h4>
-<ul><li><strong>触发条件</strong>：调用 fddContractFiling 接口重新归档时，法大大接口调用异常</li><li><strong>逻辑分析</strong>：后端调用法大大归档接口 fddContractFiling，若法大大服务不可用、网络异常、归档参数错误、合同已归档等则接口返回失败，提示"重新归档失败"。需检查法大大服务连通性、合同归档参数、法大大服务日志</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>重新归档失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用 fddContractFiling 接口重新归档时，法大大接口调用异常<br><strong>逻辑分析：</strong>后端调用法大大归档接口 fddContractFiling，若法大大服务不可用、网络异常、归档参数错误、合同已归档等则接口返回失败，提示"重新归档失败"。需检查法大大服务连通性、合同归档参数、法大大服务日志</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
@@ -477,8 +489,14 @@ SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
   WHERE EXCEPTION_TYPE = 'filing_failed'
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错3：重发短信失败</h4>
-<ul><li><strong>触发条件</strong>：调用 noticeDistributor/rePush 接口重发签署短信时，短信平台接口异常</li><li><strong>逻辑分析</strong>：后端调用短信平台接口 noticeDistributor/rePush，若短信平台服务不可用、网络异常、经销商手机号缺失或错误、短信模板配置错误等则接口返回失败，提示"重发短信失败"。需检查短信平台服务状态、经销商手机号、短信模板配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>重发短信失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用 noticeDistributor/rePush 接口重发签署短信时，短信平台接口异常<br><strong>逻辑分析：</strong>后端调用短信平台接口 noticeDistributor/rePush，若短信平台服务不可用、网络异常、经销商手机号缺失或错误、短信模板配置错误等则接口返回失败，提示"重发短信失败"。需检查短信平台服务状态、经销商手机号、短信模板配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
@@ -491,8 +509,14 @@ SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
   WHERE EXCEPTION_TYPE IN ('signing_timeout', 'signing_failed')
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错4：合同同步失败</h4>
-<ul><li><strong>触发条件</strong>：调用 callback/retry/update-signature 接口合同同步时，回调接口异常</li><li><strong>逻辑分析</strong>：后端调用回调接口 callback/retry/update-signature，若外部系统（法大大/OA）不可用、网络异常、unifyContractCode 无效、签署状态不匹配等则接口返回失败，提示"合同同步失败"。需检查外部系统状态、unifyContractCode 有效性、外部系统签署状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>合同同步失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用 callback/retry/update-signature 接口合同同步时，回调接口异常<br><strong>逻辑分析：</strong>后端调用回调接口 callback/retry/update-signature，若外部系统（法大大/OA）不可用、网络异常、unifyContractCode 无效、签署状态不匹配等则接口返回失败，提示"合同同步失败"。需检查外部系统状态、unifyContractCode 有效性、外部系统签署状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
@@ -505,8 +529,14 @@ SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号,
   WHERE EXCEPTION_TYPE = 'callback_failed'
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错5：合同不存在</h4>
-<ul><li><strong>触发条件</strong>：执行异常处理操作时，传入的 electronicContractId 或 unifyContractCode 在数据库中不存在</li><li><strong>逻辑分析</strong>：后端校验合同存在性，根据传入的 electronicContractId 或 unifyContractCode 查询 ELECTRONIC_CONTRACT 表，若不存在则提示"合同不存在"。常见根因包括：合同ID被删除、合同ID传参错误、合同编码被修改等</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>合同不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行异常处理操作时，传入的 electronicContractId 或 unifyContractCode 在数据库中不存在<br><strong>逻辑分析：</strong>后端校验合同存在性，根据传入的 electronicContractId 或 unifyContractCode 查询 ELECTRONIC_CONTRACT 表，若不存在则提示"合同不存在"。常见根因包括：合同ID被删除、合同ID传参错误、合同编码被修改等</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_ID AS 合同ID,
@@ -518,8 +548,14 @@ SELECT ELECTRONIC_CONTRACT_ID AS 合同ID,
   WHERE ELECTRONIC_CONTRACT_ID IS NULL
      OR UNIFY_CONTRACT_CODE IS NULL;
 ```
-<h4>报错6：网络异常/接口超时</h4>
-<ul><li><strong>触发条件</strong>：任意接口调用时，网络中断或接口响应超过 axios timeout 配置</li><li><strong>逻辑分析</strong>：前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、法大大/短信平台响应慢等。需检查网络连通性、后端服务负载、外部系统状态</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络异常/接口超时</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意接口调用时，网络中断或接口响应超过 axios timeout 配置<br><strong>逻辑分析：</strong>前端 axios 请求未收到响应或响应超时，触发 catch 回调统一提示"请求失败"。常见根因：网络中断、mbo-business 服务假死、数据库慢查询、法大大/短信平台响应慢等。需检查网络连通性、后端服务负载、外部系统状态</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
@@ -529,8 +565,14 @@ SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
   WHERE LAST_UPDATE_DATE >= SYSDATE - 1
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错7：权限不足</h4>
-<ul><li><strong>触发条件</strong>：点击重新归档、修改合同状态、重发短信、合同同步等按钮时，当前用户无对应 permissionList 权限码</li><li><strong>逻辑分析</strong>：前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击重新归档、修改合同状态、重发短信、合同同步等按钮时，当前用户无对应 permissionList 权限码<br><strong>逻辑分析：</strong>前端 Button 组件通过 permissionList 配置权限码，HZERO 框架校验当前用户角色是否包含该权限码，未包含则按钮不可见或禁用。若强制调用接口，后端也会校验权限返回403。需联系管理员配置对应角色权限</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 权限码
@@ -541,8 +583,14 @@ SELECT U.USER_NAME AS 用户名, R.ROLE_NAME AS 角色名, P.PERMISSION_CODE AS 
   LEFT JOIN SYS_PERMISSION P ON RP.PERMISSION_ID = P.PERMISSION_ID
   WHERE P.PERMISSION_CODE LIKE '%contract_exception%' ORDER BY U.USER_NAME;
 ```
-<h4>报错8：法大大服务不可用</h4>
-<ul><li><strong>触发条件</strong>：调用重新归档、合同同步等涉及法大大的接口时，法大大服务异常</li><li><strong>逻辑分析</strong>：后端调用法大大接口，若法大大服务不可用、网络异常、接口超时等则接口返回失败。需检查法大大服务运行状态、网络连通性、法大大接口配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>法大大服务不可用</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用重新归档、合同同步等涉及法大大的接口时，法大大服务异常<br><strong>逻辑分析：</strong>后端调用法大大接口，若法大大服务不可用、网络异常、接口超时等则接口返回失败。需检查法大大服务运行状态、网络连通性、法大大接口配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
@@ -554,8 +602,14 @@ SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, CONTRACT_NAME AS 合同名称,
     AND LAST_UPDATE_DATE >= SYSDATE - 7
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错9：短信平台不可用</h4>
-<ul><li><strong>触发条件</strong>：调用重发短信接口时，短信平台服务异常</li><li><strong>逻辑分析</strong>：后端调用短信平台接口，若短信平台服务不可用、网络异常、接口超时等则接口返回失败。需检查短信平台服务状态、网络连通性、短信平台配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>短信平台不可用</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用重发短信接口时，短信平台服务异常<br><strong>逻辑分析：</strong>后端调用短信平台接口，若短信平台服务不可用、网络异常、接口超时等则接口返回失败。需检查短信平台服务状态、网络连通性、短信平台配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, AGENT_NAME AS 经销商,
@@ -566,8 +620,14 @@ SELECT ELECTRONIC_CONTRACT_CODE AS 合同编号, AGENT_NAME AS 经销商,
     AND LAST_UPDATE_DATE >= SYSDATE - 7
   ORDER BY LAST_UPDATE_DATE DESC;
 ```
-<h4>报错10：值集数据不显示</h4>
-<ul><li><strong>触发条件</strong>：查询条件或列表中异常类型等下拉选项为空</li><li><strong>逻辑分析</strong>：前端通过 lookupCode 查询值集 MBO.CONTRACT_EXCEPTION_TYPE、MBO.CONTRACT_STATUS 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>值集数据不显示</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询条件或列表中异常类型等下拉选项为空<br><strong>逻辑分析：</strong>前端通过 lookupCode 查询值集 MBO.CONTRACT_EXCEPTION_TYPE、MBO.CONTRACT_STATUS 等，值集未配置或未启用则下拉选项为空。需在值集管理页面配置对应值集</div>
+  </div>
+</div>
 
 ```sql
 SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
@@ -576,8 +636,14 @@ SELECT LOOKUP_CODE AS 值集编码, LOOKUP_VALUE_CODE AS 值编码,
   WHERE LOOKUP_CODE IN ('MBO.CONTRACT_EXCEPTION_TYPE','MBO.CONTRACT_STATUS')
     AND ENABLE_FLAG = 'N' ORDER BY LOOKUP_CODE;
 ```
-<h4>报错11：经销商手机号缺失</h4>
-<ul><li><strong>触发条件</strong>：重发签署短信时，经销商手机号为空或格式错误</li><li><strong>逻辑分析</strong>：后端校验经销商手机号非空且格式正确，若手机号为空或格式错误则返回业务异常。需检查经销商档案中的手机号字段</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>经销商手机号缺失</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>重发签署短信时，经销商手机号为空或格式错误<br><strong>逻辑分析：</strong>后端校验经销商手机号非空且格式正确，若手机号为空或格式错误则返回业务异常。需检查经销商档案中的手机号字段</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.ELECTRONIC_CONTRACT_CODE AS 合同编号, C.AGENT_NAME AS 经销商,

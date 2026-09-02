@@ -570,8 +570,14 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
 <tr><td>请选择附件！</td><td>批量下载附件时</td><td>未勾选附件记录就点击批量下载，需先选择附件</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：分配了管理员权限，不可查询，请联系管理员处理！</h4>
-<ul><li><strong>触发条件</strong>：外部用户（userType=D）查询产品列表时，range参数为"ALL"（管理员全量查询）</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.selectList方法中，外部用户查询时若检测到range参数为"ALL"，则抛出CommonException。外部用户（经销商）不应拥有管理员全量查询权限，该权限仅限内部用户使用。需联系管理员取消外部用户的hzero.product_data.product_info.product_list.ps.admin_search权限分配。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>分配了管理员权限，不可查询，请联系管理员处理！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>外部用户（userType=D）查询产品列表时，range参数为"ALL"（管理员全量查询）<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.selectList方法中，外部用户查询时若检测到range参数为"ALL"，则抛出CommonException。外部用户（经销商）不应拥有管理员全量查询权限，该权限仅限内部用户使用。需联系管理员取消外部用户的hzero.product_data.product_info.product_list.ps.admin_search权限分配。</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名, U.USER_TYPE AS 用户类型,
@@ -584,8 +590,14 @@ SELECT U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名, U.USER_TYPE AS 用户�
   WHERE P.CODE = 'hzero.product_data.product_info.product_list.ps.admin_search'
     AND U.USER_TYPE = 'D';
 ```
-<h4>报错2：无有效合同渠道，不可查询</h4>
-<ul><li><strong>触发条件</strong>：外部用户（userType=D）查询产品列表时，经销商无有效合同渠道</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.selectList方法中，外部用户查询时通过经销商编码查询LNK_CONTRACT获取有效合同渠道列表。若合同状态非"生效"或当前日期不在合同有效期内，则渠道列表为空，抛出CommonException。经销商无有效合同渠道时无法过滤产品范围，需检查经销商合同是否生效且包含渠道配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无有效合同渠道，不可查询</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>外部用户（userType=D）查询产品列表时，经销商无有效合同渠道<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.selectList方法中，外部用户查询时通过经销商编码查询LNK_CONTRACT获取有效合同渠道列表。若合同状态非"生效"或当前日期不在合同有效期内，则渠道列表为空，抛出CommonException。经销商无有效合同渠道时无法过滤产品范围，需检查经销商合同是否生效且包含渠道配置。</div>
+  </div>
+</div>
 
 ```sql
 SELECT C.CONTRACT_CODE AS 合同编码, C.CONTRACT_STATUS AS 合同状态,
@@ -598,8 +610,14 @@ SELECT C.CONTRACT_CODE AS 合同编码, C.CONTRACT_STATUS AS 合同状态,
     AND C.CONTRACT_STATUS = '生效'
     AND TRUNC(SYSDATE) BETWEEN C.EFF_START_DATE AND C.EFF_END_DATE;
 ```
-<h4>报错3：查询类型错误！</h4>
-<ul><li><strong>触发条件</strong>：查询产品列表时，前端传入的selectType参数非general/other/all</li><li><strong>逻辑分析</strong>：后端按selectType分流查询逻辑：general=商品检索Tab、other=配件&amp;其它Tab、all=全量查询（下单等场景）。若传入其他值则无法匹配查询分支，抛出CommonException。属于程序异常，通常由前端传参错误导致。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询类型错误！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询产品列表时，前端传入的selectType参数非general/other/all<br><strong>逻辑分析：</strong>后端按selectType分流查询逻辑：general=商品检索Tab、other=配件&amp;其它Tab、all=全量查询（下单等场景）。若传入其他值则无法匹配查询分支，抛出CommonException。属于程序异常，通常由前端传参错误导致。</div>
+  </div>
+</div>
 
 ```sql
 -- 无对应表查询，检查前端调用日志
@@ -607,8 +625,14 @@ SELECT C.CONTRACT_CODE AS 合同编码, C.CONTRACT_STATUS AS 合同状态,
   -- 合法值: general / other / all
   SELECT '检查前端传入selectType参数是否为general/other/all' AS 提示 FROM DUAL;
 ```
-<h4>报错4：用户类型错误</h4>
-<ul><li><strong>触发条件</strong>：查询产品列表时，当前用户userType既非E（内部用户）也非D（外部用户）</li><li><strong>逻辑分析</strong>：后端根据userType区分内部/外部用户查询逻辑。userType为空或非E/D时无法确定查询范围，抛出CommonException。常见于用户主档配置异常或登录态丢失。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>用户类型错误</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询产品列表时，当前用户userType既非E（内部用户）也非D（外部用户）<br><strong>逻辑分析：</strong>后端根据userType区分内部/外部用户查询逻辑。userType为空或非E/D时无法确定查询范围，抛出CommonException。常见于用户主档配置异常或登录态丢失。</div>
+  </div>
+</div>
 
 ```sql
 SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
@@ -616,20 +640,38 @@ SELECT U.ID AS 用户ID, U.LOGIN_NAME AS 登录名, U.REAL_NAME AS 姓名,
   FROM HZERO.IAM_USER U
   WHERE U.ID = :currentUserId;
 ```
-<h4>报错5：请至少输入一个查询条件！</h4>
-<ul><li><strong>触发条件</strong>：跨事业部产品选择弹窗查询时，未输入任何查询条件（不含excludeDeptId）就点击查询</li><li><strong>逻辑分析</strong>：跨事业部产品选择接口/v1/&#123;orgId&#125;/prod/cross-bu-prod要求至少传入prodCode、prodName、lhProdModel中的一个，防止全表扫描。前端校验未通过则提示。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请至少输入一个查询条件！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>跨事业部产品选择弹窗查询时，未输入任何查询条件（不含excludeDeptId）就点击查询<br><strong>逻辑分析：</strong>跨事业部产品选择接口/v1/&#123;orgId&#125;/prod/cross-bu-prod要求至少传入prodCode、prodName、lhProdModel中的一个，防止全表扫描。前端校验未通过则提示。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '跨事业部产品选择弹窗需至少输入产品编码/产品名称/型号其中一个' AS 提示 FROM DUAL;
 ```
-<h4>报错6：请传入需要上下架的产品！</h4>
-<ul><li><strong>触发条件</strong>：上下架校验时，传入的产品编码列表为空</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.checkProdStatusChange方法中，若prodCodeList为空集合则抛出CommonException。上下架操作需至少选择一个产品，前端未勾选产品就点击上下架按钮时触发。需先在产品列表中勾选产品再操作。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请传入需要上下架的产品！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上下架校验时，传入的产品编码列表为空<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.checkProdStatusChange方法中，若prodCodeList为空集合则抛出CommonException。上下架操作需至少选择一个产品，前端未勾选产品就点击上下架按钮时触发。需先在产品列表中勾选产品再操作。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '上下架操作需至少选择一个产品，请先勾选产品' AS 提示 FROM DUAL;
 ```
-<h4>报错7：产品编码【xxx】不存在！</h4>
-<ul><li><strong>触发条件</strong>：上下架校验时，传入的产品编码在LNK_PROD表不存在</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.checkProdStatusChange方法中，根据prodCodeList查询LNK_PROD表（selectListEAll），找出在prodCodeList中但不在数据库查询结果中的产品编码（missingProdCodes）。若missingProdCodes不为空，则拼接错误信息"产品编码【xxx】不存在！"并抛出CommonException。常见于产品编码被删除、前端传入错误的产品编码。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码【xxx】不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上下架校验时，传入的产品编码在LNK_PROD表不存在<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.checkProdStatusChange方法中，根据prodCodeList查询LNK_PROD表（selectListEAll），找出在prodCodeList中但不在数据库查询结果中的产品编码（missingProdCodes）。若missingProdCodes不为空，则拼接错误信息"产品编码【xxx】不存在！"并抛出CommonException。常见于产品编码被删除、前端传入错误的产品编码。</div>
+  </div>
+</div>
 
 ```sql
 SELECT LP.PROD_CODE AS 产品编码, LP.PROD_NAME AS 产品名称, LP.SM_STATE AS 生命状态
@@ -640,8 +682,14 @@ SELECT LP.PROD_CODE AS 产品编码, LP.PROD_NAME AS 产品名称, LP.SM_STATE A
   FROM (SELECT :prodCode1 AS CODE FROM DUAL UNION ALL SELECT :prodCode2 FROM DUAL) T
   WHERE NOT EXISTS (SELECT 1 FROM LNK_PROD LP WHERE LP.PROD_CODE = T.CODE);
 ```
-<h4>报错8：产品xxx的生命状态为xxx不允许上架!</h4>
-<ul><li><strong>触发条件</strong>：上架校验时，产品SM状态为Z1或Z8</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.checkProdStatusChange方法中，当prodChangeStatus为上架（UPPERSHELF）时，检查每个产品的SM状态。若SM状态为Z1或Z8，则拼接错误信息"产品xxx的生命状态为xxx不允许上架!"并抛出CommonException。Z1/Z8状态的产品不允许上架，需先通过产品SM状态变更申请将SM状态变更为可上架状态。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品xxx的生命状态为xxx不允许上架!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上架校验时，产品SM状态为Z1或Z8<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.checkProdStatusChange方法中，当prodChangeStatus为上架（UPPERSHELF）时，检查每个产品的SM状态。若SM状态为Z1或Z8，则拼接错误信息"产品xxx的生命状态为xxx不允许上架!"并抛出CommonException。Z1/Z8状态的产品不允许上架，需先通过产品SM状态变更申请将SM状态变更为可上架状态。</div>
+  </div>
+</div>
 
 ```sql
 SELECT LP.PROD_CODE AS 产品编码, LP.PROD_NAME AS 产品名称,
@@ -650,8 +698,14 @@ SELECT LP.PROD_CODE AS 产品编码, LP.PROD_NAME AS 产品名称,
   WHERE LP.PROD_CODE IN (:prodCodeList)
     AND LP.SM_STATE IN ('Z1', 'Z8');
 ```
-<h4>报错9：产品xxx的生命状态为xxx是否确认上架!</h4>
-<ul><li><strong>触发条件</strong>：上架校验时，产品SM状态为Z3/Z6/Z7/S6，且用户未确认（confirmShelf为null或false）</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.checkProdStatusChange方法中，当prodChangeStatus为上架且产品SM状态为Z3/Z6/Z7/S6时，拼接确认信息"产品xxx的生命状态为xxx是否确认上架!"并抛出带CONFIRM_REQUIRED错误码的CommonException。前端捕获该错误码后弹出确认弹窗，用户确认后携带confirmShelf=true重新请求。此为确认弹窗类报错，非阻断性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品xxx的生命状态为xxx是否确认上架!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上架校验时，产品SM状态为Z3/Z6/Z7/S6，且用户未确认（confirmShelf为null或false）<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.checkProdStatusChange方法中，当prodChangeStatus为上架且产品SM状态为Z3/Z6/Z7/S6时，拼接确认信息"产品xxx的生命状态为xxx是否确认上架!"并抛出带CONFIRM_REQUIRED错误码的CommonException。前端捕获该错误码后弹出确认弹窗，用户确认后携带confirmShelf=true重新请求。此为确认弹窗类报错，非阻断性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT LP.PROD_CODE AS 产品编码, LP.PROD_NAME AS 产品名称,
@@ -660,16 +714,28 @@ SELECT LP.PROD_CODE AS 产品编码, LP.PROD_NAME AS 产品名称,
   WHERE LP.PROD_CODE IN (:prodCodeList)
     AND LP.SM_STATE IN ('Z3', 'Z6', 'Z7', 'S6');
 ```
-<h4>报错10：申请产品上架数量不能超过1千！</h4>
-<ul><li><strong>触发条件</strong>：上架校验时，一次上架产品数量超过1000条</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.prodUpperProdCheck方法中，若prodCodeList.size()&gt;=1000则抛出CommonException。限制单次上架产品数量不超过1000条，避免批量操作性能问题和ERP接口超时。需分批上架，每批不超过1000条产品。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>申请产品上架数量不能超过1千！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上架校验时，一次上架产品数量超过1000条<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.prodUpperProdCheck方法中，若prodCodeList.size()&gt;=1000则抛出CommonException。限制单次上架产品数量不超过1000条，避免批量操作性能问题和ERP接口超时。需分批上架，每批不超过1000条产品。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 待上架产品数量
   FROM LNK_PROD LP
   WHERE LP.PROD_CODE IN (:prodCodeList);
 ```
-<h4>报错11：物料编码xxx关联老款产品xxx没有找到当前有效的折扣政策，不允许产品上架！</h4>
-<ul><li><strong>触发条件</strong>：上架校验时，关联老款产品无有效折扣政策且可售月份大于1个月</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.prodUpperProdCheck方法中，根据产品查询事业部开启了"关联老品管控"、最新审批通过的、关联了"老款产品"的价目表申请单行。对每个关联老款产品查询有效折扣政策（queryProdNotEffectPxy），若无有效政策则调用EBS接口查询可售月份（fetchProductPolicyReferenceFromEbs）。若可售月份大于1个月，则拼接错误信息并抛出CommonException。需先为关联老款产品配置有效的折扣政策。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>物料编码xxx关联老款产品xxx没有找到当前有效的折扣政策，不允许产品上架！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>上架校验时，关联老款产品无有效折扣政策且可售月份大于1个月<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.prodUpperProdCheck方法中，根据产品查询事业部开启了"关联老品管控"、最新审批通过的、关联了"老款产品"的价目表申请单行。对每个关联老款产品查询有效折扣政策（queryProdNotEffectPxy），若无有效政策则调用EBS接口查询可售月份（fetchProductPolicyReferenceFromEbs）。若可售月份大于1个月，则拼接错误信息并抛出CommonException。需先为关联老款产品配置有效的折扣政策。</div>
+  </div>
+</div>
 
 ```sql
 SELECT LP.PROD_CODE AS 产品编码, LP.PROD_NAME AS 产品名称,
@@ -682,8 +748,14 @@ SELECT LP.PROD_CODE AS 产品编码, LP.PROD_NAME AS 产品名称,
     AND LPAF.RELATE_OLD_PROD_CONTROL = 'Y'
     AND LPAF.AUDIT_STATUS = '审批通过';
 ```
-<h4>报错12：未找到事业部编码[xxx]对应的CRM事业部！</h4>
-<ul><li><strong>触发条件</strong>：跨事业部产品选择查询时，AE事业部编码在REL_CRM_AE_ORG表未映射到CRM事业部ID</li><li><strong>逻辑分析</strong>：后端LnkProdServiceImpl.selectCrossBuProdList方法中，若传入excludeDeptCode但未传入excludeDeptId，则通过RelCrmAeOrg查询AE事业部编码对应的CRM事业部ID。若查询结果为空或crmOrgId为空，则抛出CommonException。需检查REL_CRM_AE_ORG表中AE事业部编码与CRM事业部的映射配置。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到事业部编码[xxx]对应的CRM事业部！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>跨事业部产品选择查询时，AE事业部编码在REL_CRM_AE_ORG表未映射到CRM事业部ID<br><strong>逻辑分析：</strong>后端LnkProdServiceImpl.selectCrossBuProdList方法中，若传入excludeDeptCode但未传入excludeDeptId，则通过RelCrmAeOrg查询AE事业部编码对应的CRM事业部ID。若查询结果为空或crmOrgId为空，则抛出CommonException。需检查REL_CRM_AE_ORG表中AE事业部编码与CRM事业部的映射配置。</div>
+  </div>
+</div>
 
 ```sql
 SELECT R.AE_OR_CODE AS AE事业部编码, R.CRM_OR_ID AS CRM事业部ID,
@@ -691,8 +763,14 @@ SELECT R.AE_OR_CODE AS AE事业部编码, R.CRM_OR_ID AS CRM事业部ID,
   FROM REL_CRM_AE_ORG R
   WHERE R.AE_OR_CODE = :excludeDeptCode;
 ```
-<h4>报错13：请选择附件！</h4>
-<ul><li><strong>触发条件</strong>：产品详情页批量下载附件时，未勾选附件记录</li><li><strong>逻辑分析</strong>：前端detailAttachmentTableConfig.tsx中onBatchDownFn方法，点击批量下载按钮时获取当前选中记录列表（prodectDs.currentSelected）。若列表长度为0，则通过notification.error提示"请选择附件！"并返回。需先在附件表格中勾选附件记录再点击批量下载按钮。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择附件！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>产品详情页批量下载附件时，未勾选附件记录<br><strong>逻辑分析：</strong>前端detailAttachmentTableConfig.tsx中onBatchDownFn方法，点击批量下载按钮时获取当前选中记录列表（prodectDs.currentSelected）。若列表长度为0，则通过notification.error提示"请选择附件！"并返回。需先在附件表格中勾选附件记录再点击批量下载按钮。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '批量下载附件需先勾选附件记录' AS 提示 FROM DUAL;
@@ -700,8 +778,45 @@ SELECT '批量下载附件需先勾选附件记录' AS 提示 FROM DUAL;
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：外部用户看不到品牌事业部、品牌等字段</li><li>原因：外部用户（userType=D）前端通过getHideField()函数隐藏了deptId、brand、launchDate、obsolescenceDate、prodPromoteGrade、planningMakeBuyCodeMir字段</li><li>解决思路：这是正常的业务设计，外部经销商不需要看到内部管理字段</li></ul>
-<ul><li>问题2：查询结果为空，但产品确实存在</li><li>原因：可能原因有：1）产品在当前用户所属事业部价目表中无有效价格（pli.has_price≠1）；2）外部用户产品渠道不在经销商有效合同渠道内；3）外部用户产品生命状态为Z1或Z3被过滤；4）产品在"商品检索"Tab但物料类型为"配件"被过滤</li><li>解决思路：</li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">外部用户看不到品牌事业部、品牌等字段</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>外部用户（userType=D）前端通过getHideField()函数隐藏了deptId、brand、launchDate、obsolescenceDate、prodPromoteGrade、planningMakeBuyCodeMir字段<br><strong style="color:#7C3AED;">处理：</strong>这是正常的业务设计，外部经销商不需要看到内部管理字段
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">查询结果为空，但产品确实存在</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>可能原因有：1）产品在当前用户所属事业部价目表中无有效价格（pli.has_price≠1）；2）外部用户产品渠道不在经销商有效合同渠道内；3）外部用户产品生命状态为Z1或Z3被过滤；4）产品在"商品检索"Tab但物料类型为"配件"被过滤
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q3</span>
+    <span style="font-size:15px;">内部管理员查询看不到所有产品</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>管理员权限未正确配置，前端checkPermissions检查hzero.product_data.product_info.product_list.ps.admin_search权限未通过，range参数未设置为ALL<br><strong style="color:#7C3AED;">处理：</strong>检查用户角色是否分配了hzero.product_data.product_info.product_list.ps.admin_search权限
+  </div>
+</div>
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q4</span>
+    <span style="font-size:15px;">默认查询时间范围不符合预期</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>页面加载时默认创建时间为近1月，但如果用户先输入了产品编码/名称/型号，会自动清空默认时间范围<br><strong style="color:#7C3AED;">处理：</strong>这是正常的查询优化设计，输入精确条件后按精确条件查询，不再限制时间范围
+  </div>
+</div>
+</div>
 
 ```sql
 -- 检查产品是否有有效价格
@@ -712,8 +827,6 @@ SELECT '批量下载附件需先勾选附件记录' AS 提示 FROM DUAL;
       AND PL.DEPT_ID = :userDeptId
       AND PL.CURRENCY = :currency;
 ```
-<ul><li>问题3：内部管理员查询看不到所有产品</li><li>原因：管理员权限未正确配置，前端checkPermissions检查hzero.product_data.product_info.product_list.ps.admin_search权限未通过，range参数未设置为ALL</li><li>解决思路：检查用户角色是否分配了hzero.product_data.product_info.product_list.ps.admin_search权限</li></ul>
-<ul><li>问题4：默认查询时间范围不符合预期</li><li>原因：页面加载时默认创建时间为近1月，但如果用户先输入了产品编码/名称/型号，会自动清空默认时间范围</li><li>解决思路：这是正常的查询优化设计，输入精确条件后按精确条件查询，不再限制时间范围</li></ul>
 </KbCard>
 
 </div>

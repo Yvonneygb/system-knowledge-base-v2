@@ -302,15 +302,21 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>开始时间格式必须为YYYY-MM-DD</td><td>查询按钮点击时</td><td>开始时间格式不符合正则校验</td><td>中</td><td>[查看](#报错1开始时间格式必须为yyyy-mm-dd)</td></tr>
-<tr><td>结束时间格式必须为YYYY-MM-DD</td><td>查询按钮点击时</td><td>结束时间格式不符合正则校验</td><td>中</td><td>[查看](#报错2结束时间格式必须为yyyy-mm-dd)</td></tr>
-<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td>[查看](#报错3网络请求失败接口调用异常)</td></tr>
-<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td>[查看](#报错4权限不足未登录)</td></tr>
-<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td>[查看](#报错5导出失败网络异常)</td></tr>
+<tr><td>开始时间格式必须为YYYY-MM-DD</td><td>查询按钮点击时</td><td>开始时间格式不符合正则校验</td><td>中</td><td><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>结束时间格式必须为YYYY-MM-DD</td><td>查询按钮点击时</td><td>结束时间格式不符合正则校验</td><td>中</td><td><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败/接口调用异常</td><td>查询/导出</td><td>后端接口调用失败，检查网络连接或后端服务状态</td><td>阻断性报错</td><td><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足/未登录</td><td>页面加载/查询</td><td>当前用户无组织级权限或登录态失效，重新登录或联系管理员分配权限</td><td>阻断性报错</td><td><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>导出失败：网络异常</td><td>导出</td><td>导出接口调用过程中网络中断或后端响应超时，重试导出或缩小查询范围</td><td>阻断性报错</td><td><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
-<h4>报错1：开始时间格式必须为YYYY-MM-DD</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用余额表查询接口时，DTO中startTime字段值不符合正则 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code></li><li><strong>逻辑分析</strong>：报表通过三段子查询统计期初已兑现金额（ledger_date &lt; startTime）、本期兑现金额（startTime &lt;= ledger_date &lt;= endTime），需用TO_DATE转换字符串为日期。若前端日期选择器异常返回非标准格式（如YYYY/MM/DD或带时分秒）、或手工拼接参数格式错误，@Pattern注解校验失败抛出异常，查询无法执行。startTime用于界定期初统计的上界，格式错误会导致期初/本期金额计算错误或Oracle抛出ORA-01861。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>开始时间格式必须为YYYY-MM-DD</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，调用余额表查询接口时，DTO中startTime字段值不符合正则 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code><br><strong>逻辑分析：</strong>报表通过三段子查询统计期初已兑现金额（ledger_date &lt; startTime）、本期兑现金额（startTime &lt;= ledger_date &lt;= endTime），需用TO_DATE转换字符串为日期。若前端日期选择器异常返回非标准格式（如YYYY/MM/DD或带时分秒）、或手工拼接参数格式错误，@Pattern注解校验失败抛出异常，查询无法执行。startTime用于界定期初统计的上界，格式错误会导致期初/本期金额计算错误或Oracle抛出ORA-01861。</div>
+  </div>
+</div>
 
 ```sql
 SELECT check_bx_code        AS 验收报销单号,
@@ -322,8 +328,14 @@ SELECT check_bx_code        AS 验收报销单号,
   WHERE  ledger_date IS NOT NULL
   ORDER  BY ledger_date DESC;
 ```
-<h4>报错2：结束时间格式必须为YYYY-MM-DD</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"按钮，调用余额表查询接口时，DTO中endTime字段值不符合正则 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code></li><li><strong>逻辑分析</strong>：endTime用于限定本期兑现统计的下界（startTime &lt;= ledger_date &lt;= endTime）及期初统计的下界（ledger_date &lt; startTime的补集）。SQL中通过 <code>TO_DATE(#&#123;params.endTime&#125;, 'yyyy-MM-dd')</code> 转换。若endTime格式错误，@Pattern注解校验失败抛出异常。若绕过校验传入非法字符串，TO_DATE转换会抛出Oracle格式错误，故前置正则校验提前拦截。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>结束时间格式必须为YYYY-MM-DD</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"按钮，调用余额表查询接口时，DTO中endTime字段值不符合正则 <code>^\d&#123;4&#125;-\d&#123;2&#125;-\d&#123;2&#125;$</code><br><strong>逻辑分析：</strong>endTime用于限定本期兑现统计的下界（startTime &lt;= ledger_date &lt;= endTime）及期初统计的下界（ledger_date &lt; startTime的补集）。SQL中通过 <code>TO_DATE(#&#123;params.endTime&#125;, 'yyyy-MM-dd')</code> 转换。若endTime格式错误，@Pattern注解校验失败抛出异常。若绕过校验传入非法字符串，TO_DATE转换会抛出Oracle格式错误，故前置正则校验提前拦截。</div>
+  </div>
+</div>
 
 ```sql
 SELECT check_bx_code        AS 验收报销单号,
@@ -335,8 +347,14 @@ SELECT check_bx_code        AS 验收报销单号,
   WHERE  ledger_date >= SYSDATE - 30
   ORDER  BY ledger_date DESC;
 ```
-<h4>报错3：网络请求失败/接口调用异常</h4>
-<ul><li><strong>触发条件</strong>：点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-face-cashIn-list/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）</li><li><strong>逻辑分析</strong>：本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalFaceCashInListSearch接口分页查询FIN_FEE_TERMINAL_CASHOUT关联FIN_FEE_CHECK_BX_HEADER，通过三段子查询统计期初/本期/期末金额。若后端ae-report服务未启动、Oracle数据库连接异常、三段子查询关联条件不匹配导致慢SQL、TO_DATE转换失败抛出ORA-01861、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败/接口调用异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"查询"或"导出"按钮，调用POST /v1/&#123;organizationId&#125;/terminalReport/mkt-terminal-face-cashIn-list/search接口时，前端未收到响应或收到非2xx状态码（如500、502、504）<br><strong>逻辑分析：</strong>本页面为hlod低代码报表页面，查询依赖后端TerminalReportController.mktTerminalFaceCashInListSearch接口分页查询FIN_FEE_TERMINAL_CASHOUT关联FIN_FEE_CHECK_BX_HEADER，通过三段子查询统计期初/本期/期末金额。若后端ae-report服务未启动、Oracle数据库连接异常、三段子查询关联条件不匹配导致慢SQL、TO_DATE转换失败抛出ORA-01861、网络中断、或网关转发失败，均会导致接口调用异常。需检查后端服务健康状态、数据库连接、网络连通性。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(*)            AS 兑现单总数,
@@ -345,15 +363,27 @@ SELECT COUNT(*)            AS 兑现单总数,
   FROM   fin_fee_terminal_cashout
   WHERE  ledger_date IS NOT NULL;
 ```
-<h4>报错4：权限不足/未登录</h4>
-<ul><li><strong>触发条件</strong>：页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截</li><li><strong>逻辑分析</strong>：本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足/未登录</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或点击"查询"/"导出"按钮时，接口返回401未授权或403禁止访问，或前端路由守卫拦截<br><strong>逻辑分析：</strong>本报表接口声明@Permission(level = ResourceLevel.ORGANIZATION)，要求用户具备组织级权限。若用户未登录（token过期/丢失）、或当前角色未分配该报表菜单权限、或organizationId路径参数与用户所属组织不匹配，均会触发权限校验失败。hlod低代码页面通过路由配置和接口权限双重校验，任一环节失败均阻断访问。需重新登录或联系管理员分配报表查看权限。</div>
+  </div>
+</div>
 
 ```sql
 SELECT '权限校验为应用层逻辑，无对应数据表' AS 提示
   FROM   dual;
 ```
-<h4>报错5：导出失败：网络异常</h4>
-<ul><li><strong>触发条件</strong>：点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断</li><li><strong>逻辑分析</strong>：导出接口将当前查询条件下的额度内兑现余额数据全量查询后生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定台账日期范围、事业部）减少数据量。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导出失败：网络异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"导出"按钮，导出Excel过程中网络中断、后端响应超时或Excel文件流传输中断<br><strong>逻辑分析：</strong>导出接口将当前查询条件下的额度内兑现余额数据全量查询后生成Excel文件流返回。若查询数据量较大导致响应超时、或生成Excel过程中内存溢出、或网络不稳定导致文件流中断、或浏览器下载被拦截，均会触发导出失败。需重试导出或缩小查询条件（如限定台账日期范围、事业部）减少数据量。</div>
+  </div>
+</div>
 
 ```sql
 SELECT TO_CHAR(ledger_date, 'YYYY') AS 年度,

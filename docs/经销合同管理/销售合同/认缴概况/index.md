@@ -225,8 +225,14 @@
 <tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询无数据</h4>
-<ul><li><strong>触发条件</strong>：用户按经销商/合同/年度查询认缴概况，search接口返回空结果集</li><li><strong>逻辑分析</strong>：认缴概况基于CM_CONTRACT_PAYMENT_SUMMARY表，汇总展示保证金认缴金额（SUBSCRIPTION_AMT）、已缴金额（PAID_AMT）、未缴金额（UNPAID_AMT=认缴-已缴）。无数据根因有三类：(1)无认缴申请记录，认缴申请（CM_CONTRACT_PAYMENT_APPLY）未创建或未审批通过（HZ_APPROVE_STATUS != 'APPROVED'），概况表未汇总；(2)保证金到款（CM_DEPOSITS_PAYMENT）数据未同步到概况表；(3)查询条件（CONTRACT_NO+CUSTOMER_NAME）与概况记录不匹配。需先确认认缴申请审批状态及保证金到款情况</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户按经销商/合同/年度查询认缴概况，search接口返回空结果集<br><strong>逻辑分析：</strong>认缴概况基于CM_CONTRACT_PAYMENT_SUMMARY表，汇总展示保证金认缴金额（SUBSCRIPTION_AMT）、已缴金额（PAID_AMT）、未缴金额（UNPAID_AMT=认缴-已缴）。无数据根因有三类：(1)无认缴申请记录，认缴申请（CM_CONTRACT_PAYMENT_APPLY）未创建或未审批通过（HZ_APPROVE_STATUS != 'APPROVED'），概况表未汇总；(2)保证金到款（CM_DEPOSITS_PAYMENT）数据未同步到概况表；(3)查询条件（CONTRACT_NO+CUSTOMER_NAME）与概况记录不匹配。需先确认认缴申请审批状态及保证金到款情况</div>
+  </div>
+</div>
 
 ```sql
 SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, SUBSCRIPTION_AMT, PAID_AMT, UNPAID_AMT
@@ -238,8 +244,14 @@ SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, SUBSCRIPTION_AMT, PAID_AMT, UNPAI
   FROM CM_CONTRACT_PAYMENT_APPLY
   WHERE CONTRACT_NO = #{contractNo} AND HZ_APPROVE_STATUS = 'APPROVED';
 ```
-<h4>报错2：合同类型、事业部、经销商不能为空</h4>
-<ul><li><strong>触发条件</strong>：查询认缴概况或保存概况数据时，CONTRACT_TYPE、ENTID、CUSTOMER_ID任一参数为空</li><li><strong>逻辑分析</strong>：CmContractPaymentSummaryServiceImpl在search和save方法中校验CONTRACT_TYPE、ENTID、CUSTOMER_ID非空。这三个字段是认缴概况数据隔离和汇总的核心维度，缺失将导致查询无数据范围或汇总无归属。通常由前端未正确传入查询条件或保存参数导致</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>合同类型、事业部、经销商不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询认缴概况或保存概况数据时，CONTRACT_TYPE、ENTID、CUSTOMER_ID任一参数为空<br><strong>逻辑分析：</strong>CmContractPaymentSummaryServiceImpl在search和save方法中校验CONTRACT_TYPE、ENTID、CUSTOMER_ID非空。这三个字段是认缴概况数据隔离和汇总的核心维度，缺失将导致查询无数据范围或汇总无归属。通常由前端未正确传入查询条件或保存参数导致</div>
+  </div>
+</div>
 
 ```sql
 SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, ENTID,
@@ -247,8 +259,14 @@ SELECT SUMMARY_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, ENTID,
   FROM CM_CONTRACT_PAYMENT_SUMMARY
   WHERE CONTRACT_TYPE IS NULL OR ENTID IS NULL OR CUSTOMER_ID IS NULL;
 ```
-<h4>报错3：保证金标准设定未配置，请先配置</h4>
-<ul><li><strong>触发条件</strong>：保存认缴概况数据时，根据事业部和合同类型查询保证金标准（CM_DEPOSITS_PAY_STANDARD）返回空</li><li><strong>逻辑分析</strong>：CmContractPaymentSummaryServiceImpl在save方法中查询保证金标准，保证金标准是计算应缴保证金和判断缴清状态的依据。标准未配置将导致认缴概况数据无法正确计算缴清标识（PAY_COMPLETE）。需先在保证金标准配置中维护对应事业部和合同类型的标准</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保证金标准设定未配置，请先配置</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存认缴概况数据时，根据事业部和合同类型查询保证金标准（CM_DEPOSITS_PAY_STANDARD）返回空<br><strong>逻辑分析：</strong>CmContractPaymentSummaryServiceImpl在save方法中查询保证金标准，保证金标准是计算应缴保证金和判断缴清状态的依据。标准未配置将导致认缴概况数据无法正确计算缴清标识（PAY_COMPLETE）。需先在保证金标准配置中维护对应事业部和合同类型的标准</div>
+  </div>
+</div>
 
 ```sql
 SELECT S.SUMMARY_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.CONTRACT_TYPE, S.ENTID,
@@ -258,14 +276,26 @@ SELECT S.SUMMARY_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.CONTRACT_TYPE, S.ENTID,
     ON S.ENTID = P.ENTID AND S.CONTRACT_TYPE = P.CONTRACT_TYPE
   WHERE P.PAY_STANDARD_ID IS NULL;
 ```
-<h4>报错4：网络请求失败</h4>
-<ul><li><strong>触发条件</strong>：前端调用cm-contract-payment-summarys相关接口时，后端服务不可达或请求超时</li><li><strong>逻辑分析</strong>：前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用cm-contract-payment-summarys相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
+  </div>
+</div>
 
 ```sql
 SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
 ```
-<h4>报错5：权限不足，无法操作</h4>
-<ul><li><strong>触发条件</strong>：当前用户对认缴概况查询、导出等操作无对应功能权限或数据权限</li><li><strong>逻辑分析</strong>：后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对认缴概况查询、导出等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
+  </div>
+</div>
 
 ```sql
 SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
@@ -273,7 +303,18 @@ SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
 </KbCard>
 
 <KbCard title="常见问题">
-<ul><li>问题1：概况数据不正确</li><li>原因：保证金到款或认缴申请数据未及时同步</li><li>解决思路：检查SQL <code>SELECT * FROM CM_CONTRACT_PAYMENT_SUMMARY WHERE CONTRACT_NO = #&#123;contractNo&#125;</code></li></ul>
+
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q1</span>
+    <span style="font-size:15px;">概况数据不正确</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>保证金到款或认缴申请数据未及时同步<br><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT * FROM CM_CONTRACT_PAYMENT_SUMMARY WHERE CONTRACT_NO = #&#123;contractNo&#125;</code>
+  </div>
+</div>
+</div>
 </KbCard>
 
 </div>

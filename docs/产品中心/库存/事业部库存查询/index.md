@@ -294,8 +294,14 @@
 <tr><td>用户未登录或会话已过期</td><td>页面加载时</td><td>登录态失效，需重新登录</td><td>阻断性报错</td><td>[查看]</td></tr>
 </tbody>
 </table>
-<h4>报错1：查询失败，请稍后重试</h4>
-<ul><li><strong>触发条件</strong>：点击查询按钮时，前端调用后端接口失败（HTTP非200或网络超时）</li><li><strong>逻辑分析</strong>：前端通过低代码页面（hlod）发起查询请求，后端走selectList/selectListDMS接口查询LNK_INVENTORY表。若后端服务不可用、数据库连接超时、Oracle函数cux_inv_convert_ex_pub.inv_um_convert执行异常等，均会导致请求失败。前端捕获异常后toast提示。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询失败，请稍后重试</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击查询按钮时，前端调用后端接口失败（HTTP非200或网络超时）<br><strong>逻辑分析：</strong>前端通过低代码页面（hlod）发起查询请求，后端走selectList/selectListDMS接口查询LNK_INVENTORY表。若后端服务不可用、数据库连接超时、Oracle函数cux_inv_convert_ex_pub.inv_um_convert执行异常等，均会导致请求失败。前端捕获异常后toast提示。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查库存表是否有数据
@@ -303,16 +309,28 @@
   -- 检查产品主档是否存在
   SELECT COUNT(1) AS 产品数 FROM LNK_PROD WHERE ORG_ID = :organizationId;
 ```
-<h4>报错2：权限不足，无法查询库存数据</h4>
-<ul><li><strong>触发条件</strong>：页面加载时，当前用户无组织ID或事业部权限</li><li><strong>逻辑分析</strong>：后端自动注入当前用户的事业部ID（deptId）作为查询条件。DMS用户额外通过DEPT_STOCK_S和DEPT_STOCK_P值集过滤可见事业部。若用户未配置事业部权限或值集为空，则查询不到任何库存数据。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法查询库存数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载时，当前用户无组织ID或事业部权限<br><strong>逻辑分析：</strong>后端自动注入当前用户的事业部ID（deptId）作为查询条件。DMS用户额外通过DEPT_STOCK_S和DEPT_STOCK_P值集过滤可见事业部。若用户未配置事业部权限或值集为空，则查询不到任何库存数据。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查用户事业部权限值集
   SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_S' AND ORGANIZATION_ID = :organizationId;
   SELECT * FROM HPFM_LOV_VALUE WHERE LOV_CODE = 'DEPT_STOCK_P' AND ORGANIZATION_ID = :organizationId;
 ```
-<h4>报错3：暂无数据</h4>
-<ul><li><strong>触发条件</strong>：查询成功但结果集为空</li><li><strong>逻辑分析</strong>：查询条件无匹配结果，或LNK_INVENTORY表中无当前事业部/产品的库存数据。属正常提示，非异常。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询成功但结果集为空<br><strong>逻辑分析：</strong>查询条件无匹配结果，或LNK_INVENTORY表中无当前事业部/产品的库存数据。属正常提示，非异常。</div>
+  </div>
+</div>
 
 ```sql
 SELECT COUNT(1) AS 匹配数
@@ -320,8 +338,14 @@ SELECT COUNT(1) AS 匹配数
   WHERE I.DEPT_ID = :deptId
     AND I.LH_PROD_ID LIKE :prodCode;
 ```
-<h4>报错4：用户未登录或会话已过期</h4>
-<ul><li><strong>触发条件</strong>：页面加载或查询时，前端请求携带的token已失效</li><li><strong>逻辑分析</strong>：前端请求头中携带的Authorization token过期或无效，后端拦截器返回401状态码。前端跳转登录页。</li><li><strong>排查SQL</strong>：</li></ul>
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>用户未登录或会话已过期</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>页面加载或查询时，前端请求携带的token已失效<br><strong>逻辑分析：</strong>前端请求头中携带的Authorization token过期或无效，后端拦截器返回401状态码。前端跳转登录页。</div>
+  </div>
+</div>
 
 ```sql
 -- 检查用户是否存在且有效
