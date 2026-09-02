@@ -243,45 +243,30 @@
 <h4>按钮1：新增反馈单（列表工具栏）</h4>
 <p><strong>触发条件</strong>：点击"新增反馈单"按钮</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 调用 <code>openTab</code> 打开新标签页</p>
-<p>2. 路由：<code>/afterSales/dealer/feedback/add</code></p>
-<p>3. 在详情页填写反馈信息后保存提交</p>
+<ol><li>调用 <code>openTab</code> 打开新标签页</li><li>路由：<code>/afterSales/dealer/feedback/add</code></li><li>在详情页填写反馈信息后保存提交</li></ol>
 <h4>按钮2：导出（列表工具栏）</h4>
 <p><strong>触发条件</strong>：点击"导出"按钮</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 收集当前查询条件</p>
-<p>2. 调用 <code>POST feedback/distributor/export</code> 接口导出</p>
-<p>3. 浏览器下载 Excel 文件</p>
+<ol><li>收集当前查询条件</li><li>调用 <code>POST feedback/distributor/export</code> 接口导出</li><li>浏览器下载 Excel 文件</li></ol>
 <h4>按钮3：编辑（列表行操作）</h4>
 <p><strong>触发条件</strong>：选择 state=1（草稿）的反馈单点击"编辑"</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 调用 <code>openTab</code> 打开新标签页</p>
-<p>2. 路由：<code>/afterSales/dealer/feedback/edit/$&#123;id&#125;</code></p>
-<p>3. 调用 <code>GET feedback/detail/$&#123;id&#125;</code> 加载详情</p>
-<p>4. 修改后调用 <code>POST feedback/save</code> 保存</p>
+<ol><li>调用 <code>openTab</code> 打开新标签页</li><li>路由：<code>/afterSales/dealer/feedback/edit/$&#123;id&#125;</code></li><li>调用 <code>GET feedback/detail/$&#123;id&#125;</code> 加载详情</li><li>修改后调用 <code>POST feedback/save</code> 保存</li></ol>
 <h4>按钮4：删除（列表行操作）</h4>
 <p><strong>触发条件</strong>：选择 state=1（草稿）的反馈单点击"删除"</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 弹出确认框："确定删除该反馈单吗？"</p>
-<p>2. 确认后调用 <code>DELETE feedback/delete/$&#123;id&#125;</code> 接口</p>
-<p>3. 成功后刷新列表</p>
+<ol><li>弹出确认框："确定删除该反馈单吗？"</li><li>确认后调用 <code>DELETE feedback/delete/$&#123;id&#125;</code> 接口</li><li>成功后刷新列表</li></ol>
 <h4>按钮5：取消（列表行操作）</h4>
 <p><strong>触发条件</strong>：选择 state 不在 [6,7,8] 的反馈单点击"取消"</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 弹出确认框："确定取消该反馈单吗？"</p>
-<p>2. 确认后调用 <code>POST feedback/cancel/$&#123;id&#125;</code> 接口</p>
-<p>3. 成功后刷新列表</p>
+<ol><li>弹出确认框："确定取消该反馈单吗？"</li><li>确认后调用 <code>POST feedback/cancel/$&#123;id&#125;</code> 接口</li><li>成功后刷新列表</li></ol>
 <h4>按钮6：评价（列表行操作）</h4>
 <p><strong>触发条件</strong>：选择 state=6（已完成）的反馈单点击"评价"</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 弹出评价弹窗（Modal，size=large，closable，resizable，destroyOnClose）</p>
-<p>2. 星级评分（Rate 组件，1-5星，必填，allowHalf=false，allowClear）</p>
-<p>3. 评价内容（TextArea，name=evaluateContent，最多500字，showLengthInfo）</p>
-<p>4. 点击确认：</p>
-<p>- 校验表单 <code>evaluateFormDs.validate()</code></p>
-<p>- 调用 <code>POST feedback/evaluate</code> 接口提交评价</p>
-<p>- 成功后刷新列表 <code>tableDS.query()</code></p>
-<p>5. 点击取消：重置表单 <code>evaluateFormDs.reset()</code></p>
+<ol><li>弹出评价弹窗（Modal，size=large，closable，resizable，destroyOnClose）</li><li>星级评分（Rate 组件，1-5星，必填，allowHalf=false，allowClear）</li><li>评价内容（TextArea，name=evaluateContent，最多500字，showLengthInfo）</li></ol>
+<p><strong>4. 点击确认：</strong></p>
+<ul><li>校验表单 <code>evaluateFormDs.validate()</code></li><li>调用 <code>POST feedback/evaluate</code> 接口提交评价</li><li>成功后刷新列表 <code>tableDS.query()</code></li></ul>
+<ol><li>点击取消：重置表单 <code>evaluateFormDs.reset()</code></li></ol>
 </KbCard>
 
 <KbCard title="详情页">
@@ -326,29 +311,19 @@
 <h5>按钮1：暂存（详情页头部）</h5>
 <p><strong>触发条件</strong>：点击"暂存"按钮（isAdd/isEdit 且 state≠2）</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 调用 <code>POST feedback/save</code> 接口保存反馈单草稿</p>
-<p>2. 提交数据：<code>getFormData()</code>（包含表单数据和附件列表）</p>
-<p>3. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>调用 <code>POST feedback/save</code> 接口保存反馈单草稿</li><li>提交数据：<code>getFormData()</code>（包含表单数据和附件列表）</li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h5>按钮2：提交（详情页头部）</h5>
 <p><strong>触发条件</strong>：点击"提交"按钮（isAdd/isEdit 且 (!state \|\| state=1)）</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 先校验表单 <code>baseFormDS.validate()</code></p>
-<p>2. 校验通过后调用 <code>POST feedback/submit</code> 接口提交反馈单</p>
-<p>3. 提交数据：<code>getFormData()</code></p>
-<p>4. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>先校验表单 <code>baseFormDS.validate()</code></li><li>校验通过后调用 <code>POST feedback/submit</code> 接口提交反馈单</li><li>提交数据：<code>getFormData()</code></li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h5>按钮3：取消（详情页头部）</h5>
 <p><strong>触发条件</strong>：点击"取消"按钮（isEdit/isDetail 且 state 在 [1,3,4,5]）</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认取消该反馈？' &#125;)</code></p>
-<p>2. 确认后调用 <code>POST feedback/cancel/$&#123;id&#125;</code> 接口取消反馈单</p>
-<p>3. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认取消该反馈？' &#125;)</code></li><li>确认后调用 <code>POST feedback/cancel/$&#123;id&#125;</code> 接口取消反馈单</li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h5>按钮4：再反馈（详情页头部）</h5>
 <p><strong>触发条件</strong>：点击"再反馈"按钮（isDetail 且 state 在 [4,5]）</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 先校验表单 <code>baseFormDS.validate()</code></p>
-<p>2. 提取再反馈内容：<code>&#123; commentContent, id, fileDTOList: attachmentsRef.current &#125;</code></p>
-<p>3. 调用 <code>POST feedback/comment</code> 接口提交再反馈内容</p>
-<p>4. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>先校验表单 <code>baseFormDS.validate()</code></li><li>提取再反馈内容：<code>&#123; commentContent, id, fileDTOList: attachmentsRef.current &#125;</code></li><li>调用 <code>POST feedback/comment</code> 接口提交再反馈内容</li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h4>详情页组件</h4>
 <h5>反馈回复记录组件（FeedbackChat）</h5>
 <p>详情页底部展示反馈回复记录组件，以聊天气泡形式展示反馈和回复的历史记录：</p>
@@ -377,22 +352,23 @@
 </table>
 <p><strong>提交接口</strong>：<code>POST feedback/evaluate</code></p>
 <p><strong>提交逻辑</strong>：</p>
-<p>1. 点击确定（onOk）：</p>
-<p>- 校验表单 <code>evaluateFormDs.validate()</code></p>
-<p>- 校验失败返回 false，阻止弹窗关闭</p>
-<p>- 校验通过调用 <code>POST feedback/evaluate</code> 接口</p>
-<p>- 提交数据：<code>&#123; ...evaluateFormDs.current?.toData(), id: record?.get('id') &#125;</code></p>
-<p>- 成功后刷新列表 <code>tableDS.query()</code></p>
-<p>2. 点击取消（onCancel）：</p>
-<p>- 重置表单 <code>evaluateFormDs.reset()</code></p>
+<p><strong>1. 点击确定（onOk）：</strong></p>
+<ul><li>校验表单 <code>evaluateFormDs.validate()</code></li><li>校验失败返回 false，阻止弹窗关闭</li><li>校验通过调用 <code>POST feedback/evaluate</code> 接口</li><li>提交数据：<code>&#123; ...evaluateFormDs.current?.toData(), id: record?.get('id') &#125;</code></li><li>成功后刷新列表 <code>tableDS.query()</code></li></ul>
+<p><strong>2. 点击取消（onCancel）：</strong></p>
+<ul><li>重置表单 <code>evaluateFormDs.reset()</code></li></ul>
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：问题标题必填 —— 确保反馈单有明确的问题概述</li><li>校验2：问题类型必填 —— 确保问题分类清晰，便于分派处理</li><li>校验3：问题描述必填 —— 确保问题内容完整，便于处理人定位问题</li></ul>
+<p><strong>校验1：</strong>问题标题必填 —— 确保反馈单有明确的问题概述</p>
+<p><strong>校验2：</strong>问题类型必填 —— 确保问题分类清晰，便于分派处理</p>
+<p><strong>校验3：</strong>问题描述必填 —— 确保问题内容完整，便于处理人定位问题</p>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：问题标题必填 —— 确保反馈单有明确的问题概述</li><li>校验2：问题类型必填 —— 确保问题分类清晰</li><li>校验3：问题描述必填 —— 确保问题内容完整</li><li>校验4：草稿状态才能提交 —— 仅草稿状态反馈单可提交，提交后状态变为已提交</li></ul>
+<p><strong>校验1：</strong>问题标题必填 —— 确保反馈单有明确的问题概述</p>
+<p><strong>校验2：</strong>问题类型必填 —— 确保问题分类清晰</p>
+<p><strong>校验3：</strong>问题描述必填 —— 确保问题内容完整</p>
+<p><strong>校验4：</strong>草稿状态才能提交 —— 仅草稿状态反馈单可提交，提交后状态变为已提交</p>
 </KbCard>
 
 <KbCard title="状态机">

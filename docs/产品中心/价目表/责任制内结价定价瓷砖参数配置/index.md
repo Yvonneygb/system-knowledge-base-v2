@@ -309,39 +309,38 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：头表-瓷砖品类非空 —— 确保指定瓷砖品类</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端validateRequiredFields方法校验category非空</p>
-<ul><li>系统体现：后端阻断性报错"瓷砖品类不能为空"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>头表-瓷砖品类非空 —— 确保指定瓷砖品类</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端validateRequiredFields方法校验category非空</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错"瓷砖品类不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE CATEGORY IS NULL;
 ```
-<ul><li>校验2：头表-规格非空 —— 确保指定规格</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端validateRequiredFields方法校验standard非空</p>
-<ul><li>系统体现：后端阻断性报错"规格不能为空"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>头表-规格非空 —— 确保指定规格</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端validateRequiredFields方法校验standard非空</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错"规格不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE STANDARD IS NULL;
 ```
-<ul><li>校验3：头表-生产基地非空 —— 确保指定生产基地</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端validateRequiredFields方法校验productionBaseCode非空</p>
-<ul><li>系统体现：后端阻断性报错"生产基地不能为空"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>头表-生产基地非空 —— 确保指定生产基地</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端validateRequiredFields方法校验productionBaseCode非空</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错"生产基地不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_RSP_STM_PORC_CFG_HEAD WHERE PRODUCTION_BASE_CODE IS NULL;
 ```
-<ul><li>校验4：头表-重复规格校验 —— 避免重复配置</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端checkRepeatRecord方法查询相同standard+category+productionBaseCode的记录</p>
-<p>- 第2点：如果存在，抛出"该规格已存在，请核对数据！"</p>
-<ul><li>系统体现：后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验4：</strong>头表-重复规格校验 —— 避免重复配置</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端checkRepeatRecord方法查询相同standard+category+productionBaseCode的记录</li><li>第2点：如果存在，抛出"该规格已存在，请核对数据！"</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT STANDARD, CATEGORY, PRODUCTION_BASE_CODE, COUNT(*) AS cnt
@@ -349,24 +348,23 @@ SELECT STANDARD, CATEGORY, PRODUCTION_BASE_CODE, COUNT(*) AS cnt
     GROUP BY STANDARD, CATEGORY, PRODUCTION_BASE_CODE
     HAVING COUNT(*) > 1;
 ```
-<ul><li>校验5：行表-大类非空 —— 确保指定大类</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端saveData方法校验type1非空</p>
-<ul><li>系统体现：后端阻断性报错"大类不能为空"</li></ul>
-<ul><li>校验6：行表-中类非空 —— 确保指定中类</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端saveData方法校验type2非空</p>
-<ul><li>系统体现：后端阻断性报错"中类不能为空"</li></ul>
-<ul><li>校验7：行表-定价非空 —— 确保指定定价</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端saveData方法校验price非null</p>
-<ul><li>系统体现：后端阻断性报错"定价不能为空"</li></ul>
-<ul><li>校验8：行表-重复大类中类校验 —— 避免重复定价</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：新增时查询同一headId下相同type1+type2的记录</p>
-<p>- 第2点：如果存在，抛出"该头表下已存在相同大类和中类的配置，请勿重复新增"</p>
-<ul><li>系统体现：后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验5：</strong>行表-大类非空 —— 确保指定大类</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端saveData方法校验type1非空</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错"大类不能为空"</p>
+<p><strong>校验6：</strong>行表-中类非空 —— 确保指定中类</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端saveData方法校验type2非空</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错"中类不能为空"</p>
+<p><strong>校验7：</strong>行表-定价非空 —— 确保指定定价</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端saveData方法校验price非null</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错"定价不能为空"</p>
+<p><strong>校验8：</strong>行表-重复大类中类校验 —— 避免重复定价</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：新增时查询同一headId下相同type1+type2的记录</li><li>第2点：如果存在，抛出"该头表下已存在相同大类和中类的配置，请勿重复新增"</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT HEAD_ID, TYPE_1, TYPE_2, COUNT(*) AS cnt

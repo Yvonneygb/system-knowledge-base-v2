@@ -274,20 +274,20 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID IN (#{ids}) AND HZ_
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：交易公司不能为空 —— 确保调整关联明确交易公司</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验交易公司ID不为空</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>交易公司不能为空 —— 确保调整关联明确交易公司</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验交易公司ID不为空</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE TRADING_COMPANY_ID IS NULL;
 ```
-<ul><li>校验2：调整类型不能为空 —— 确保调整类型明确</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验调整类型不为空</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>调整类型不能为空 —— 确保调整类型明确</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验调整类型不为空</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_TYPE IS NULL;
@@ -295,11 +295,11 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_TYPE IS NULL;
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：保存校验全部通过 —— 确保提交前数据完整</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：提交前执行保存校验全部规则</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>保存校验全部通过 —— 确保提交前数据完整</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：提交前执行保存校验全部规则</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADING_COMPANY_ID IS NULL OR ADJUST_TYPE IS NULL);

@@ -190,7 +190,8 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：验收项目必填 —— 确保验收项目名称完整</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM ACCEPTANCE_INFO_SET_LINE WHERE ACCEPTANCE_ITEM IS NULL</code></li></ul>
+<p><strong>校验1：</strong>验收项目必填 —— 确保验收项目名称完整</p>
+<ul><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM ACCEPTANCE_INFO_SET_LINE WHERE ACCEPTANCE_ITEM IS NULL</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">

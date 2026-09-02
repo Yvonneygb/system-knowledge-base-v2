@@ -590,7 +590,21 @@ WHERE ta.APPLY_CODE = :applyCode
 
 <KbCard title="保存/提交校验">
 <blockquote>数据来源：<code>detail.tsx</code> 的 <code>handleSave</code> + <code>stores/detailConfig.tsx</code> 字段 required 配置。保存与保存并提交共用同一校验逻辑，依次校验 generalFormDS 和 singleStoreInfoFormDS。</blockquote>
-<ul><li>校验1：拟点将时间必填 —— generalFormDS.preDate（range），明确培训时间安排</li><li>校验2：所属运营中心必填 —— singleStoreInfoFormDS.opCenter，明确运营中心</li><li>校验3：交易公司必填 —— singleStoreInfoFormDS.tradingCompanyName，明确交易主体</li><li>校验4：开票账户必填 —— singleStoreInfoFormDS.legalEntityName（选交易公司自动带出）</li><li>校验5：培训类型必填 —— singleStoreInfoFormDS.trainType，值集MBO.SINGLE_STORE_TRAIN_TYPE</li><li>校验6：门店名称必填 —— singleStoreInfoFormDS.storeName，明确培训落地门店</li><li>校验7：培训地址必填 —— singleStoreInfoFormDS.trainArea（选门店自动带出）</li><li>校验8：课程类必填 —— singleStoreInfoFormDS.courseType，值集MBO.COURSE_TYPE</li><li>校验9：参与培训人数必填 —— singleStoreInfoFormDS.applyNumber（由参训岗位分布自动计算）</li><li>校验10：参训岗位分布必填 —— singleStoreInfoFormDS.jobDtoList，至少配置一个岗位人数&gt;0</li><li>校验11：培训需求必填 —— singleStoreInfoFormDS.trainingNeeds</li><li>校验12：取消申请时取消原因必填 —— cancelFormDS.cancelReason，留存取消依据</li><li>校验13：开始执行时实际开始时间必填 —— startExecuteFormDS.realStartDate</li><li>校验14：结束执行时实际开始/结束时间+备注必填 —— endExecuteFormDS.realStartDate/realEndDate/endExecuteRemark</li><li>校验15：讲师排期冲突校验（后端） —— 避免同一讲师同一时间段被重复点将</li></ul>
+<p><strong>校验1：</strong>拟点将时间必填 —— generalFormDS.preDate（range），明确培训时间安排</p>
+<p><strong>校验2：</strong>所属运营中心必填 —— singleStoreInfoFormDS.opCenter，明确运营中心</p>
+<p><strong>校验3：</strong>交易公司必填 —— singleStoreInfoFormDS.tradingCompanyName，明确交易主体</p>
+<p><strong>校验4：</strong>开票账户必填 —— singleStoreInfoFormDS.legalEntityName（选交易公司自动带出）</p>
+<p><strong>校验5：</strong>培训类型必填 —— singleStoreInfoFormDS.trainType，值集MBO.SINGLE_STORE_TRAIN_TYPE</p>
+<p><strong>校验6：</strong>门店名称必填 —— singleStoreInfoFormDS.storeName，明确培训落地门店</p>
+<p><strong>校验7：</strong>培训地址必填 —— singleStoreInfoFormDS.trainArea（选门店自动带出）</p>
+<p><strong>校验8：</strong>课程类必填 —— singleStoreInfoFormDS.courseType，值集MBO.COURSE_TYPE</p>
+<p><strong>校验9：</strong>参与培训人数必填 —— singleStoreInfoFormDS.applyNumber（由参训岗位分布自动计算）</p>
+<p><strong>校验10：</strong>参训岗位分布必填 —— singleStoreInfoFormDS.jobDtoList，至少配置一个岗位人数&gt;0</p>
+<p><strong>校验11：</strong>培训需求必填 —— singleStoreInfoFormDS.trainingNeeds</p>
+<p><strong>校验12：</strong>取消申请时取消原因必填 —— cancelFormDS.cancelReason，留存取消依据</p>
+<p><strong>校验13：</strong>开始执行时实际开始时间必填 —— startExecuteFormDS.realStartDate</p>
+<p><strong>校验14：</strong>结束执行时实际开始/结束时间+备注必填 —— endExecuteFormDS.realStartDate/realEndDate/endExecuteRemark</p>
+<p><strong>校验15：</strong>讲师排期冲突校验（后端） —— 避免同一讲师同一时间段被重复点将</p>
 </KbCard>
 
 <KbCard title="状态机">

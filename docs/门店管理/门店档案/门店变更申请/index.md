@@ -203,8 +203,7 @@
 
 <KbCard num="3" title="重点逻辑3：撤店前置校验">
 <ul><li><strong>业务意义</strong>：撤店前确保该门店下所有关联单据已处理完毕，避免遗留未审完单据</li><li><strong>具体逻辑描述</strong>：</li><li>当变更后terminalStat==2（撤店）时，validTerminalStat方法执行校验：</li></ul>
-<p>1. 校验FinFeeApplyFinishedHeader（门店装修申请与进度更新单）必须全部为APPROVED或INTERRUPT状态</p>
-<p>2. 校验FinFeeCheckBxHeader（门店验收与报销单）必须全部为APPROVED或INTERRUPT状态</p>
+<ol><li>校验FinFeeApplyFinishedHeader（门店装修申请与进度更新单）必须全部为APPROVED或INTERRUPT状态</li><li>校验FinFeeCheckBxHeader（门店验收与报销单）必须全部为APPROVED或INTERRUPT状态</li></ol>
 <ul><li>校验不通过抛异常："请先审批通过/作废未审完的门店装修申请与进度更新单"</li></ul>
 </KbCard>
 
@@ -214,12 +213,7 @@
 
 <KbCard num="5" title="重点逻辑5：审批通过写回门店档案">
 <ul><li><strong>业务意义</strong>：审批通过后将变更后数据同步到门店档案表</li><li><strong>具体逻辑描述</strong>：</li><li>onWfComplete方法：</li></ul>
-<p>1. 查询变更申请单</p>
-<p>2. 查询门店档案MktTerminal</p>
-<p>3. 通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到门店</p>
-<p>4. 回写terminalId、审计字段、checkTime、checkor</p>
-<p>5. 更新门店档案</p>
-<p>6. 单据状态置为APPROVED</p>
+<ol><li>查询变更申请单</li><li>查询门店档案MktTerminal</li><li>通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到门店</li><li>回写terminalId、审计字段、checkTime、checkor</li><li>更新门店档案</li><li>单据状态置为APPROVED</li></ol>
 </KbCard>
 
 </div>

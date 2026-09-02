@@ -277,12 +277,11 @@ DELETE FROM ITEM_CLASS WHERE ITEM_CLASS_ID = #{itemClassId};
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：分类编码+组织ID+父级ID不重复 —— 同一组织、同一父级下分类编码唯一</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：新增前按itemClassCode + organizationId + itemClassPid查询ITEM_CLASS表</p>
-<p>- 第2点：若查询结果不为空，则不执行新增（静默跳过）</p>
-<ul><li>系统体现：静默跳过（不报错，不插入）</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>分类编码+组织ID+父级ID不重复 —— 同一组织、同一父级下分类编码唯一</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：新增前按itemClassCode + organizationId + itemClassPid查询ITEM_CLASS表</li><li>第2点：若查询结果不为空，则不执行新增（静默跳过）</li></ul>
+<p><strong>系统体现：</strong>静默跳过（不报错，不插入）</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(*) FROM ITEM_CLASS

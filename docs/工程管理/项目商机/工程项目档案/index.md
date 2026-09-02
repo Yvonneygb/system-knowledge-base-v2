@@ -199,13 +199,17 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="3.1 报备审核写入档案 - 详细"><p><strong>入口</strong>：<code>EpmReportServiceImpl.doAudit()</code></p>
-<p><strong>步骤</strong>： 1. 查询报备主记录 <code>epmReportRepository.selectByPrimaryKey(reportId)</code> 2. 避免重复审核：若AUDITTIME不为空则直接返回 3. 判断首次/二次报备：<code>isUpdateProj = epmReport.getReportTimes() &gt; 1</code> 4. 检查EPM_PROJECT表字段完整性：<code>epmReportRepository.selectMissingProjectFields()</code> 5. 设置审核人和审核时间 6. 首次报备：</p>
+<p><strong>步骤</strong></p>
+<ol><li>查询报备主记录 <code>epmReportRepository.selectByPrimaryKey(reportId)</code></li><li>避免重复审核：若AUDITTIME不为空则直接返回</li><li>判断首次/二次报备：<code>isUpdateProj = epmReport.getReportTimes() &gt; 1</code></li><li>检查EPM_PROJECT表字段完整性：<code>epmReportRepository.selectMissingProjectFields()</code></li><li>设置审核人和审核时间</li></ol>
+<p><strong>6. 首次报备：</strong></p>
 <ul><li>将报备数据转换为EpmProject对象</li><li>设置HZ_APPROVE_STATUS=APPROVED</li><li>获取项目有效周期天数(系统参数Proj_Effective_Cycle)</li><li>设置VALID_START_DATE=当前时间，VALID_END_DATE=VALID_START_DATE+有效周期+1天</li><li>设置PROJECT_VALID=2(已生效)，FREEZE_TYPE=0</li><li>INSERT到EPM_PROJECT</li><li>回写projectId到报备记录</li></ul>
-<p>7. 二次报备：</p>
+<p><strong>7. 二次报备：</strong></p>
 <ul><li>根据projectId查询已有项目档案</li><li>逐字段更新：REPORT_TIME、STAGE_NAME、TRADING_COMPANY_ID/NAME、MANAGER、PDT_LINE、OPERATING_MODE、甲乙方信息、PROJECT_NAME、STRATEGIC_STAGE、PROJECT_TYPE、BACKGROUND、预测信息、INTENT_PRODUCT、COMPETITOR、REPORT_TIMES、REPORT_TYPE、STAGE_ID、STAGE_NOTE等</li><li>UPDATE EPM_PROJECT</li></ul>
-<p>8. 同步项目授权：先删除旧授权，再批量插入新授权 9. 同步乙方信息：先删除旧乙方，再批量插入新乙方</p></KbCard>
+<ol><li>同步项目授权：先删除旧授权，再批量插入新授权</li><li>同步乙方信息：先删除旧乙方，再批量插入新乙方</li></ol></KbCard>
 <KbCard title="3.2 进度更新写入档案 - 详细"><p><strong>入口</strong>：<code>EpmProjectStageServiceImpl.doUpdate()</code></p>
-<p><strong>步骤</strong>： 1. 查询更新前项目档案：<code>epmProjectRepository.selectByPrimaryKey(projectId)</code> 2. 判断阶段是否改变：<code>stageChanged = newStageId != oldStageId</code> 3. 判断阶段描述是否改变：<code>stageDescChanged = newStageDesc != oldStageDesc</code> 4. 若阶段或描述改变或强制更新：</p>
+<p><strong>步骤</strong></p>
+<ol><li>查询更新前项目档案：<code>epmProjectRepository.selectByPrimaryKey(projectId)</code></li><li>判断阶段是否改变：<code>stageChanged = newStageId != oldStageId</code></li><li>判断阶段描述是否改变：<code>stageDescChanged = newStageDesc != oldStageDesc</code></li></ol>
+<p><strong>4. 若阶段或描述改变或强制更新：</strong></p>
 <ul><li>并发校验：若stageValueBefore &gt; 档案中stageId，抛错"项目进度已变更，请驳回重审!"</li><li>查询旧阶段定义和新阶段定义</li><li>阶段前进校验：新阶段序号 &lt; 旧阶段序号时抛错"阶段更新，只能前进，不能后退"</li><li>更新项目档案：STAGE_DESC、STAGE_ID、STAGE_NAME、STAGE_NOTE</li><li>插入阶段历程记录EPM_PROJECT_STAGE</li></ul></KbCard>
 <KbCard title="3.3 项目档案查询 - 详细"><p><strong>API</strong>：<code>GET /v1/{organizationId}/epm-projects/{projectId}/detail</code></p>
 <p><strong>入口</strong>：<code>EpmProjectController.detail()</code></p>

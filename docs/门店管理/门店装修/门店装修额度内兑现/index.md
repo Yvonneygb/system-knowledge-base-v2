@@ -267,12 +267,15 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：验收报销单必填 —— 确保关联有效的验收报销单</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CASHOUT_ID FROM FIN_FEE_TERMINAL_CASHOUT WHERE CHECK_BX_ID IS NULL</code></li></ul>
-<ul><li>校验2：兑现金额≤剩余可兑额度 —— 防止超额兑现</li><li><strong>详细逻辑</strong>：inThisCashoutAmt ≤ inThisSurCashoutAmt</li><li><strong>系统体现</strong>：前端/后端校验</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CASHOUT_ID, IN_THIS_CASHOUT_AMT, IN_THIS_SUR_CASHOUT_AMT FROM FIN_FEE_TERMINAL_CASHOUT WHERE IN_THIS_CASHOUT_AMT &gt; IN_THIS_SUR_CASHOUT_AMT</code></li></ul>
+<p><strong>校验1：</strong>验收报销单必填 —— 确保关联有效的验收报销单</p>
+<ul><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CASHOUT_ID FROM FIN_FEE_TERMINAL_CASHOUT WHERE CHECK_BX_ID IS NULL</code></li></ul>
+<p><strong>校验2：</strong>兑现金额≤剩余可兑额度 —— 防止超额兑现</p>
+<ul><li><strong>详细逻辑</strong>：inThisCashoutAmt ≤ inThisSurCashoutAmt</li><li><strong>系统体现</strong>：前端/后端校验</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CASHOUT_ID, IN_THIS_CASHOUT_AMT, IN_THIS_SUR_CASHOUT_AMT FROM FIN_FEE_TERMINAL_CASHOUT WHERE IN_THIS_CASHOUT_AMT &gt; IN_THIS_SUR_CASHOUT_AMT</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：通过菜单88批量复核提交 —— 额度内兑现无独立提交入口</li><li><strong>详细逻辑</strong>：多张兑现单通过batchCashId关联到FIN_FEE_IN_CASH_HEAD，批量提交</li><li><strong>系统体现</strong>：菜单88批量复核工作流STORE_FIN_FEE_IN_CASH_HEAD</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_TERMINAL_CASHOUT WHERE BATCH_CASH_ID=&#123;cashId&#125;</code></li></ul>
+<p><strong>校验1：</strong>通过菜单88批量复核提交 —— 额度内兑现无独立提交入口</p>
+<ul><li><strong>详细逻辑</strong>：多张兑现单通过batchCashId关联到FIN_FEE_IN_CASH_HEAD，批量提交</li><li><strong>系统体现</strong>：菜单88批量复核工作流STORE_FIN_FEE_IN_CASH_HEAD</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_TERMINAL_CASHOUT WHERE BATCH_CASH_ID=&#123;cashId&#125;</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">

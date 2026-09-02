@@ -352,13 +352,11 @@ WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：撤销后可结算工程服务费校验 —— 确保撤销后已认领工程服务费足以覆盖已申请兑现金额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：按报销单（svcExpAccId）分组，计算每组撤销的工程服务费金额合计</p>
-<p>- 第2点：可结算兑现金额=已认领工程服务费-本次撤销工程服务费-已退货工程服务费-已申请兑现金额</p>
-<p>- 第3点：可结算兑现金额&lt;0时报错，提示报销单号</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>撤销后可结算工程服务费校验 —— 确保撤销后已认领工程服务费足以覆盖已申请兑现金额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：按报销单（svcExpAccId）分组，计算每组撤销的工程服务费金额合计</li><li>第2点：可结算兑现金额=已认领工程服务费-本次撤销工程服务费-已退货工程服务费-已申请兑现金额</li><li>第3点：可结算兑现金额&lt;0时报错，提示报销单号</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 -- 查询报销关联的认领信息
@@ -370,12 +368,11 @@ WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：撤销明细重复校验 —— 确保选中的认领明细未被其他撤销单撤销</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询撤销明细对应的认领明细，过滤cancelFlag=Y的</p>
-<p>- 第2点：存在已撤销明细时报错，列出认领单号、出库单号、产品编码</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>撤销明细重复校验 —— 确保选中的认领明细未被其他撤销单撤销</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询撤销明细对应的认领明细，过滤cancelFlag=Y的</li><li>第2点：存在已撤销明细时报错，列出认领单号、出库单号、产品编码</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT pa.payment_allot_code, d.inv_bill_no, d.item_code
@@ -385,23 +382,20 @@ SELECT pa.payment_allot_code, d.inv_bill_no, d.item_code
     JOIN epm_payment_allot pa ON l.payment_allot_id = pa.payment_allot_id
     WHERE pc.cancel_id = {cancelId} AND d.cancel_flag = 'Y';
 ```
-<ul><li>校验2：撤销明细非空校验 —— 确保撤销单有明细行</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询EPM_PAD_CANCEL表中cancelId对应的明细</p>
-<p>- 第2点：明细为空时报错"流程启动异常，撤销明细不存在"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>撤销明细非空校验 —— 确保撤销单有明细行</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询EPM_PAD_CANCEL表中cancelId对应的明细</li><li>第2点：明细为空时报错"流程启动异常，撤销明细不存在"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(*) FROM epm_pad_cancel WHERE cancel_id = {cancelId};
 ```
-<ul><li>校验3：ERP冲销推送校验 —— 推送ERP负数冲销并校验返回</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：按认领单分组组装冲销数据，所有金额取负</p>
-<p>- 第2点：推送ERP，actionStatus=APPROVE，sourceType=REVOKE_CLAIM</p>
-<p>- 第3点：ERP返回状态非S时报错</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>ERP冲销推送校验 —— 推送ERP负数冲销并校验返回</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：按认领单分组组装冲销数据，所有金额取负</li><li>第2点：推送ERP，actionStatus=APPROVE，sourceType=REVOKE_CLAIM</li><li>第3点：ERP返回状态非S时报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM sys_exception_msg WHERE objid = {cancelId} AND objtypename = '到款认领撤销';

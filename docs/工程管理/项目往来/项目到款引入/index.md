@@ -284,10 +284,7 @@
 </table>
 <h4>按钮1：兑现（列表页）</h4>
 <ul><li><strong>触发条件</strong>：票据类型为商业承兑/银行承兑且兑付状态为未兑付(isCashout=N)</li><li><strong>处理逻辑</strong>：</li></ul>
-<p>1. 校验票据类型必须为商票类型</p>
-<p>2. 校验兑付状态必须为未兑付</p>
-<p>3. 更新isCashout=Y(已兑付)</p>
-<p>4. 插入兑付记录到EPM_PAYMENT_IMPORT_RCD表</p>
+<ol><li>校验票据类型必须为商票类型</li><li>校验兑付状态必须为未兑付</li><li>更新isCashout=Y(已兑付)</li><li>插入兑付记录到EPM_PAYMENT_IMPORT_RCD表</li></ol>
 </KbCard>
 
 <KbCard title="保存校验">

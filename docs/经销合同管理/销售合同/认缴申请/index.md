@@ -265,20 +265,20 @@ FROM SA_SALE_CONTRACT_HEAD WHERE HZ_APPROVE_STATUS = 'APPROVED'
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：合同不能为空 —— 确保认缴关联明确合同</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验合同ID不为空</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>合同不能为空 —— 确保认缴关联明确合同</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验合同ID不为空</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM CM_CONTRACT_PAYMENT_APPLY WHERE CONTRACT_ID IS NULL;
 ```
-<ul><li>校验2：认缴金额必须大于0 —— 确保认缴金额有效</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验认缴金额大于0</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>认缴金额必须大于0 —— 确保认缴金额有效</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验认缴金额大于0</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM CM_CONTRACT_PAYMENT_APPLY WHERE APPLY_AMT <= 0;
@@ -286,11 +286,11 @@ SELECT * FROM CM_CONTRACT_PAYMENT_APPLY WHERE APPLY_AMT <= 0;
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：认缴金额不超过未缴余额 —— 确保认缴不超额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：提交时校验认缴金额不超过合同未缴保证金余额</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>认缴金额不超过未缴余额 —— 确保认缴不超额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：提交时校验认缴金额不超过合同未缴保证金余额</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_PAYMENT_SUMMARY S

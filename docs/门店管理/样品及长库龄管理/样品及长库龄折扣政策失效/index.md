@@ -245,12 +245,11 @@ SELECT discount_policy_disabled_id, hz_approve_status FROM epm_discount_policy_d
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：关联政策校验 —— 确保选择了要失效的政策</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：discountPolicyId不能为空</p>
-<p>- 第2点：原政策有效状态必须为valid=2</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>关联政策校验 —— 确保选择了要失效的政策</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：discountPolicyId不能为空</li><li>第2点：原政策有效状态必须为valid=2</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT valid FROM epm_discount_policy WHERE discount_policy_id = {discountPolicyId};

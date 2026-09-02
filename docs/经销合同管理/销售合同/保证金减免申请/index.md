@@ -236,11 +236,11 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：减免金额必须大于0 —— 确保减免金额有效</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验减免金额大于0</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>减免金额必须大于0 —— 确保减免金额有效</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验减免金额大于0</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM CM_DEPOSITS_REDUCTION_HEAD WHERE REDUCTION_AMT <= 0;
@@ -248,11 +248,11 @@ SELECT * FROM CM_DEPOSITS_REDUCTION_HEAD WHERE REDUCTION_AMT <= 0;
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：减免金额不超过保证金余额 —— 确保减免不超额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：提交时校验减免金额不超过已缴保证金余额</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>减免金额不超过保证金余额 —— 确保减免不超额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：提交时校验减免金额不超过已缴保证金余额</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT H.REDUCTION_AMT, P.PAYMENT_AMT FROM CM_DEPOSITS_REDUCTION_HEAD H, CM_DEPOSITS_PAYMENT P

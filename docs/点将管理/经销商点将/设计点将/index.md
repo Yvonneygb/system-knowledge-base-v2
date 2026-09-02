@@ -523,7 +523,19 @@ WHERE da.APPLY_CODE = :applyCode;
 
 <KbCard title="保存/提交校验">
 <blockquote>数据来源：<code>detail.tsx</code> 的 <code>handleSave</code> + <code>stores/detailConfig.tsx</code> 字段 required 配置。保存与保存并提交共用同一校验逻辑，依次校验 generalFormDS 和 designInfoFormDS。效果图增补模式使用 dealerSaveSupplement/dealerSaveAndSubmitSupplement 接口。</blockquote>
-<ul><li>校验1：效果图数量必填 —— generalFormDS.renderingNumber，precision=0</li><li>校验2：鸟瞰图必填 —— generalFormDS.airscapeNumber，precision=0</li><li>校验3：店面面积必填（非增补模式） —— generalFormDS.storeArea，min=0.0001，step=0.01，precision=2</li><li>校验4：复尺面积必填（isConfirmArea时） —— generalFormDS.scaleArea</li><li>校验5：签订人必填（haveSigner时） —— generalFormDS.signer</li><li>校验6：所属运营中心必填 —— designInfoFormDS.opCenter</li><li>校验7：交易公司必填 —— designInfoFormDS.tradingCompanyName</li><li>校验8：开票账户必填 —— designInfoFormDS.legalEntityName（选交易公司自动带出）</li><li>校验9：门店名称必填 —— designInfoFormDS.storeName</li><li>校验10：门店地址必填 —— designInfoFormDS.storeArea（选门店自动带出）</li><li>校验11：店面类型必填 —— designInfoFormDS.storeType，值集MBO.ORD_LECTURER_STORE_TYPE</li><li>校验12：取消申请时取消原因必填 —— cancelFormDS.cancelReason</li><li>校验13：图纸反馈时反馈意见必填 —— feedbackFormDS.feedbackComments</li></ul>
+<p><strong>校验1：</strong>效果图数量必填 —— generalFormDS.renderingNumber，precision=0</p>
+<p><strong>校验2：</strong>鸟瞰图必填 —— generalFormDS.airscapeNumber，precision=0</p>
+<p><strong>校验3：</strong>店面面积必填（非增补模式） —— generalFormDS.storeArea，min=0.0001，step=0.01，precision=2</p>
+<p><strong>校验4：</strong>复尺面积必填（isConfirmArea时） —— generalFormDS.scaleArea</p>
+<p><strong>校验5：</strong>签订人必填（haveSigner时） —— generalFormDS.signer</p>
+<p><strong>校验6：</strong>所属运营中心必填 —— designInfoFormDS.opCenter</p>
+<p><strong>校验7：</strong>交易公司必填 —— designInfoFormDS.tradingCompanyName</p>
+<p><strong>校验8：</strong>开票账户必填 —— designInfoFormDS.legalEntityName（选交易公司自动带出）</p>
+<p><strong>校验9：</strong>门店名称必填 —— designInfoFormDS.storeName</p>
+<p><strong>校验10：</strong>门店地址必填 —— designInfoFormDS.storeArea（选门店自动带出）</p>
+<p><strong>校验11：</strong>店面类型必填 —— designInfoFormDS.storeType，值集MBO.ORD_LECTURER_STORE_TYPE</p>
+<p><strong>校验12：</strong>取消申请时取消原因必填 —— cancelFormDS.cancelReason</p>
+<p><strong>校验13：</strong>图纸反馈时反馈意见必填 —— feedbackFormDS.feedbackComments</p>
 </KbCard>
 
 <KbCard title="状态机">

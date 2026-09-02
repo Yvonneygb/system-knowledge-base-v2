@@ -301,16 +301,10 @@
 </table>
 <h4>按钮1：确认（详情页头部按钮，新增/编辑模式）</h4>
 <p>新增/编辑模式显示"确认"按钮，调用 <code>handleSubmit</code>：</p>
-<p>1. <code>baseFormDS.validate()</code> 校验基础表单（模板名称、模板类型、模板子类型、授权单位等必填字段）</p>
-<p>2. <code>variableTableDS.validate()</code> 校验模板变量表格（每行变量名、变量名称非空）</p>
-<p>3. 校验 <code>templateFile?.fileUrl</code> 是否存在，若为空则提示"请上传合同模板文件"</p>
-<p>4. 组装数据：<code>&#123; ...baseFormDS.current.toData(), varReqDtoList: templateVariableList, fileDTO: templateFile &#125;</code></p>
-<p>5. 调用 <code>contractTemplateApi.add</code>（POST <code>ch/contract/template/add</code>）或 <code>contractTemplateApi.edit</code>（POST <code>ch/contract/template/edit</code>）接口</p>
-<p>6. 成功后关闭当前Tab</p>
+<ol><li><code>baseFormDS.validate()</code> 校验基础表单（模板名称、模板类型、模板子类型、授权单位等必填字段）</li><li><code>variableTableDS.validate()</code> 校验模板变量表格（每行变量名、变量名称非空）</li><li>校验 <code>templateFile?.fileUrl</code> 是否存在，若为空则提示"请上传合同模板文件"</li><li>组装数据：<code>&#123; ...baseFormDS.current.toData(), varReqDtoList: templateVariableList, fileDTO: templateFile &#125;</code></li><li>调用 <code>contractTemplateApi.add</code>（POST <code>ch/contract/template/add</code>）或 <code>contractTemplateApi.edit</code>（POST <code>ch/contract/template/edit</code>）接口</li><li>成功后关闭当前Tab</li></ol>
 <h4>按钮2：编辑（详情页头部按钮，详情模式）</h4>
 <p>详情模式显示"编辑"按钮，调用 <code>handleEdit</code>：</p>
-<p>1. <code>closeTab(getActiveTabKey())</code> 关闭当前Tab</p>
-<p>2. <code>openTab(&#123; title: '编辑合同模板', key: '/contract/template/edit/$&#123;id&#125;' &#125;)</code> 打开编辑页面</p>
+<ol><li><code>closeTab(getActiveTabKey())</code> 关闭当前Tab</li><li><code>openTab(&#123; title: '编辑合同模板', key: '/contract/template/edit/$&#123;id&#125;' &#125;)</code> 打开编辑页面</li></ol>
 <h4>按钮3：增加变量（详情页，变量表格上方）</h4>
 <p>非详情模式显示，调用 <code>handleAddVariable</code>：<code>variableTableDS.create(&#123;&#125;)</code> 在变量DataSet新建空行。</p>
 <h4>按钮4：删除变量（变量表格行操作）</h4>
@@ -322,7 +316,14 @@
 </KbCard>
 
 <KbCard title="保存/提交校验">
-<ul><li>校验1：模板名称非空 —— 确保模板有唯一标识名称</li><li>校验2：模板类型非空 —— 确保模板分类明确</li><li>校验3：模板子类型非空(经销合同/装修协议/广告协议时) —— 确保子分类与类型匹配</li><li>校验4：授权单位非空(更换授权单位=Y时) —— 确保授权主体明确</li><li>校验5：模板变量每行变量名/变量名称非空(变量表格显示时) —— 确保变量配置完整</li><li>校验6：模板文件 fileUrl 必须存在 —— 确保模板文件已上传</li><li>校验7：文件大小不超过30MB —— 确保文件大小合规</li><li>校验8：文件格式为 doc/docx —— 确保文件格式合规</li></ul>
+<p><strong>校验1：</strong>模板名称非空 —— 确保模板有唯一标识名称</p>
+<p><strong>校验2：</strong>模板类型非空 —— 确保模板分类明确</p>
+<p><strong>校验3：</strong>模板子类型非空(经销合同/装修协议/广告协议时) —— 确保子分类与类型匹配</p>
+<p><strong>校验4：</strong>授权单位非空(更换授权单位=Y时) —— 确保授权主体明确</p>
+<p><strong>校验5：</strong>模板变量每行变量名/变量名称非空(变量表格显示时) —— 确保变量配置完整</p>
+<p><strong>校验6：</strong>模板文件 fileUrl 必须存在 —— 确保模板文件已上传</p>
+<p><strong>校验7：</strong>文件大小不超过30MB —— 确保文件大小合规</p>
+<p><strong>校验8：</strong>文件格式为 doc/docx —— 确保文件格式合规</p>
 </KbCard>
 
 <KbCard title="状态机">

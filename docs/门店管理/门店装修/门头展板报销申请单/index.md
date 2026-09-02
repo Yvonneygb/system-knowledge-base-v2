@@ -192,11 +192,7 @@
 
 <KbCard num="4" title="重点逻辑4：提交时计算实际报销金额(computeAndUpdateBxAmt)">
 <ul><li><strong>业务意义</strong>：提交审批时根据是否限额计算实际报销金额，校验额度外预算充足</li><li><strong>具体逻辑描述</strong>：</li><li>限额模式(custLimitFlag=Y)：调用computeLimitBxAmt</li></ul>
-<p>- 获取经销商限额(getCustLimit)</p>
-<p>- 计算已报销金额(getOutBxUsedAmt，同一经销商+政策的RUN/RETURN/APPROVED状态报销单)</p>
-<p>- 额度外超限金额 = min(经销商限额 - 已报销金额 - 财务批准总额(额度外), 0)</p>
-<p>- 额度外实际报销金额 = 财务批准总额(额度外) + 超限金额</p>
-<p>- 超限处理策略(extraBudgetExcessStrategy)：1-超出不计(额度内实际报销=财务批准)、2-转额度内(额度内实际报销=财务批准-超限金额)</p>
+<ul><li>获取经销商限额(getCustLimit)</li><li>计算已报销金额(getOutBxUsedAmt，同一经销商+政策的RUN/RETURN/APPROVED状态报销单)</li><li>额度外超限金额 = min(经销商限额 - 已报销金额 - 财务批准总额(额度外), 0)</li><li>额度外实际报销金额 = 财务批准总额(额度外) + 超限金额</li><li>超限处理策略(extraBudgetExcessStrategy)：1-超出不计(额度内实际报销=财务批准)、2-转额度内(额度内实际报销=财务批准-超限金额)</li></ul>
 <ul><li>非限额模式(custLimitFlag!=Y)：调用computeNotLimitBxAmt，实际报销金额=财务批准金额</li><li>额度外预算校验(validBxAmt)：useExtraBudgetFlag=Y时，额度外实际报销金额≤剩余额度外可用预算(viewOverBudgetAmt)，否则报"X年的额度外预算不足"</li></ul>
 </KbCard>
 
@@ -383,22 +379,52 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：经销商必填 —— 确保报销单关联有效经销商</li><li>详细逻辑：前端DataSet required=true校验，后端checkParams校验customerId为空报"经销商法人不能为空"</li><li>系统体现：前端C7N必填提示，后端CommonException</li><li>排查SQL：<code>SELECT * FROM CUSTOMER WHERE CUSTOMER_ID = #&#123;customerId&#125;</code></li></ul>
-<ul><li>校验2：交易公司必填 —— 确保报销单关联有效交易公司</li><li>详细逻辑：前端DataSet required=true校验，后端getCustLegal查询法人信息失败报"获取法人信息失败"</li><li>系统体现：前端C7N必填提示，后端CommonException</li></ul>
-<ul><li>校验3：法人客户必填 —— 确保报销单关联有效法人</li><li>详细逻辑：前端DataSet required=true校验，后端checkParams校验customerLegalId为空报"经销商法人不能为空"</li><li>系统体现：前端C7N必填提示，后端CommonException</li></ul>
-<ul><li>校验4：补贴政策必填且有效 —— 确保报销基于有效政策</li><li>详细逻辑：后端checkParams校验policyStandardHead为空报"报销政策不能为空"，valid!=2报"报销政策已失效"，不在有效期内报"报销政策已过期"</li><li>系统体现：后端CommonException</li><li>排查SQL：<code>SELECT * FROM POLICY_STANDARD_HEAD WHERE POLICY_STANDARD_ID = #&#123;policyStandardId&#125; AND VALID = 2 AND START_DATE &lt;= SYSDATE AND END_DATE &gt;= SYSDATE</code></li></ul>
-<ul><li>校验5：报销类型必填 —— 确保选择额度内或额度外</li><li>详细逻辑：后端checkParams校验bxType为空报"请选择报销类型"</li><li>系统体现：后端CommonException</li></ul>
-<ul><li>校验6：行表不能为空 —— 确保有门店装修明细</li><li>详细逻辑：后端checkParams校验lines为空报"报销明细不能为空"</li><li>系统体现：后端CommonException</li><li>排查SQL：<code>SELECT COUNT(*) FROM CUST_DH_REIMBURSE_LINE WHERE HEAD_ID = #&#123;headId&#125;</code></li></ul>
-<ul><li>校验7：单独门店申请校验 —— 政策要求时只能一个门店</li><li>详细逻辑：后端checkParams当singleStoreApplyFlag=Y时校验行表门店ID去重数=1，否则报"单独门店申请，只能报销一个门店"</li><li>系统体现：后端CommonException</li></ul>
-<ul><li>校验8：申请数量范围校验 —— 确保数量在政策范围内</li><li>详细逻辑：前端validator校验applyNum &lt; minNum或&gt; maxNum报"装修项目数量限制范围为X-Y"；后端computeBxLine校验applyNum=0报"申请数量必须大于0"，不在范围报"报销申请数量必须在政策数量范围内"</li><li>系统体现：前端字段validator提示，后端CommonException</li></ul>
-<ul><li>校验9：装修前/后照片必传 —— 确保装修证据完整</li><li>详细逻辑：前端beforeDocName/afterDocName required=true；后端computeBxLine校验beforeDocId为空报"请上传装修前文件"，afterDocId为空报"请上传装修后文件"</li><li>系统体现：前端C7N必填提示，后端CommonException</li></ul>
-<ul><li>校验10：金额不超标准(非超额报销) —— 确保报销金额不超政策标准</li><li>详细逻辑：前端validator校验非超额时(excessFlag!=Y)申请/业务批准金额不超标准金额，报"输入的金额不能大于对应的额度(内/外)标准金额"；后端bizNodeUpdate校验非超额时业务批准金额不超标准，报"非超额报销，额度内/外金额不允许大于政策标准"</li><li>系统体现：前端字段validator提示，后端CommonException</li></ul>
+<p><strong>校验1：</strong>经销商必填 —— 确保报销单关联有效经销商</p>
+<p><strong>详细逻辑：</strong>前端DataSet required=true校验，后端checkParams校验customerId为空报"经销商法人不能为空"</p>
+<p><strong>系统体现：</strong>前端C7N必填提示，后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT * FROM CUSTOMER WHERE CUSTOMER_ID = #&#123;customerId&#125;</code></p>
+<p><strong>校验2：</strong>交易公司必填 —— 确保报销单关联有效交易公司</p>
+<p><strong>详细逻辑：</strong>前端DataSet required=true校验，后端getCustLegal查询法人信息失败报"获取法人信息失败"</p>
+<p><strong>系统体现：</strong>前端C7N必填提示，后端CommonException</p>
+<p><strong>校验3：</strong>法人客户必填 —— 确保报销单关联有效法人</p>
+<p><strong>详细逻辑：</strong>前端DataSet required=true校验，后端checkParams校验customerLegalId为空报"经销商法人不能为空"</p>
+<p><strong>系统体现：</strong>前端C7N必填提示，后端CommonException</p>
+<p><strong>校验4：</strong>补贴政策必填且有效 —— 确保报销基于有效政策</p>
+<p><strong>详细逻辑：</strong>后端checkParams校验policyStandardHead为空报"报销政策不能为空"，valid!=2报"报销政策已失效"，不在有效期内报"报销政策已过期"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT * FROM POLICY_STANDARD_HEAD WHERE POLICY_STANDARD_ID = #&#123;policyStandardId&#125; AND VALID = 2 AND START_DATE &lt;= SYSDATE AND END_DATE &gt;= SYSDATE</code></p>
+<p><strong>校验5：</strong>报销类型必填 —— 确保选择额度内或额度外</p>
+<p><strong>详细逻辑：</strong>后端checkParams校验bxType为空报"请选择报销类型"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>校验6：</strong>行表不能为空 —— 确保有门店装修明细</p>
+<p><strong>详细逻辑：</strong>后端checkParams校验lines为空报"报销明细不能为空"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT COUNT(*) FROM CUST_DH_REIMBURSE_LINE WHERE HEAD_ID = #&#123;headId&#125;</code></p>
+<p><strong>校验7：</strong>单独门店申请校验 —— 政策要求时只能一个门店</p>
+<p><strong>详细逻辑：</strong>后端checkParams当singleStoreApplyFlag=Y时校验行表门店ID去重数=1，否则报"单独门店申请，只能报销一个门店"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>校验8：</strong>申请数量范围校验 —— 确保数量在政策范围内</p>
+<p><strong>详细逻辑：</strong>前端validator校验applyNum &lt; minNum或&gt; maxNum报"装修项目数量限制范围为X-Y"；后端computeBxLine校验applyNum=0报"申请数量必须大于0"，不在范围报"报销申请数量必须在政策数量范围内"</p>
+<p><strong>系统体现：</strong>前端字段validator提示，后端CommonException</p>
+<p><strong>校验9：</strong>装修前/后照片必传 —— 确保装修证据完整</p>
+<p><strong>详细逻辑：</strong>前端beforeDocName/afterDocName required=true；后端computeBxLine校验beforeDocId为空报"请上传装修前文件"，afterDocId为空报"请上传装修后文件"</p>
+<p><strong>系统体现：</strong>前端C7N必填提示，后端CommonException</p>
+<p><strong>校验10：</strong>金额不超标准(非超额报销) —— 确保报销金额不超政策标准</p>
+<p><strong>详细逻辑：</strong>前端validator校验非超额时(excessFlag!=Y)申请/业务批准金额不超标准金额，报"输入的金额不能大于对应的额度(内/外)标准金额"；后端bizNodeUpdate校验非超额时业务批准金额不超标准，报"非超额报销，额度内/外金额不允许大于政策标准"</p>
+<p><strong>系统体现：</strong>前端字段validator提示，后端CommonException</p>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：额度外预算充足 —— 防止超额报销</li><li>详细逻辑：提交时validBxAmt，当useExtraBudgetFlag=Y且额度外实际报销金额&gt;0时，查询剩余额度外可用预算(viewOverBudgetAmt)，实际报销金额&gt;剩余预算报"X年的额度外预算不足，有疑问请联系财务"</li><li>系统体现：后端CommonException</li><li>排查SQL：<code>SELECT * FROM FIN_FEE_CHECK_BX_HEADER WHERE BUD_YEAR = #&#123;year&#125; AND FEE_TYPE_ID = 66014602 AND DIVISION_ID = #&#123;divisionId&#125;</code></li></ul>
-<ul><li>校验2：经销商限额校验(限额模式) —— 防止超过经销商限额</li><li>详细逻辑：提交时computeLimitBxAmt，当custLimitFlag=Y时计算超限金额=min(经销商限额-已报销金额-财务批准总额, 0)，根据超限处理策略处理</li><li>系统体现：后端CommonException</li></ul>
-<ul><li>校验3：超限处理策略校验 —— 确保超限处理配置正确</li><li>详细逻辑：computeLimitBxAmt当extraBudgetExcessStrategy非1非2时报"当前额度外超限处理不存在，请联系相关人员处理"</li><li>系统体现：后端CommonException</li></ul>
+<p><strong>校验1：</strong>额度外预算充足 —— 防止超额报销</p>
+<p><strong>详细逻辑：</strong>提交时validBxAmt，当useExtraBudgetFlag=Y且额度外实际报销金额&gt;0时，查询剩余额度外可用预算(viewOverBudgetAmt)，实际报销金额&gt;剩余预算报"X年的额度外预算不足，有疑问请联系财务"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT * FROM FIN_FEE_CHECK_BX_HEADER WHERE BUD_YEAR = #&#123;year&#125; AND FEE_TYPE_ID = 66014602 AND DIVISION_ID = #&#123;divisionId&#125;</code></p>
+<p><strong>校验2：</strong>经销商限额校验(限额模式) —— 防止超过经销商限额</p>
+<p><strong>详细逻辑：</strong>提交时computeLimitBxAmt，当custLimitFlag=Y时计算超限金额=min(经销商限额-已报销金额-财务批准总额, 0)，根据超限处理策略处理</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>校验3：</strong>超限处理策略校验 —— 确保超限处理配置正确</p>
+<p><strong>详细逻辑：</strong>computeLimitBxAmt当extraBudgetExcessStrategy非1非2时报"当前额度外超限处理不存在，请联系相关人员处理"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
 </KbCard>
 
 <KbCard title="明细字段列表">

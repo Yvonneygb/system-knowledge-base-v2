@@ -439,7 +439,9 @@ ORDER BY LA.CREATION_DATE DESC;
 </KbCard>
 
 <KbCard title="保存/提交校验">
-<ul><li>校验1：审批意见必填 —— applyApprovalFormDS.validate 校验 approvalComments 非空，确保审批决策有理由留痕</li><li>校验2：审批时需选择一条数据 —— getSelectedRow 校验 tableDS.selected.length===1，确保操作对象明确</li><li>校验3：设计改派时新设计师必填 —— newDesignerFormDS.validate 校验 lecturerName 非空，确保改派目标有效</li></ul>
+<p><strong>校验1：</strong>审批意见必填 —— applyApprovalFormDS.validate 校验 approvalComments 非空，确保审批决策有理由留痕</p>
+<p><strong>校验2：</strong>审批时需选择一条数据 —— getSelectedRow 校验 tableDS.selected.length===1，确保操作对象明确</p>
+<p><strong>校验3：</strong>设计改派时新设计师必填 —— newDesignerFormDS.validate 校验 lecturerName 非空，确保改派目标有效</p>
 </KbCard>
 
 <KbCard title="状态机">

@@ -292,12 +292,7 @@ ORDER BY EC.CREATE_TIME DESC;
 </tbody>
 </table>
 <h4>标签页切换逻辑</h4>
-<p>1. 点击标签页调用 <code>handleChangeTab(key)</code></p>
-<p>2. <code>setActiveTab(key)</code> 设置当前激活标签页</p>
-<p>3. <code>tableDS?.queryDataSet?.getField('initiateTime')?.set('disabled', isDJ)</code> 根据合同类型禁用/启用合同发起日期查询字段（DJ类型时禁用）</p>
-<p>4. <code>tableDS?.queryDataSet?.current?.set('initiateTime', isDJ ? undefined : initiateTimeDefaultValue)</code> 设置合同发起日期默认值（DJ类型时清空，其他类型设置为当月起止时间）</p>
-<p>5. <code>tableDS.setQueryParameter('contractType', key)</code> 设置查询参数 contractType</p>
-<p>6. <code>tableDS.query()</code> 重新查询列表</p>
+<ol><li>点击标签页调用 <code>handleChangeTab(key)</code></li><li><code>setActiveTab(key)</code> 设置当前激活标签页</li><li><code>tableDS?.queryDataSet?.getField('initiateTime')?.set('disabled', isDJ)</code> 根据合同类型禁用/启用合同发起日期查询字段（DJ类型时禁用）</li><li><code>tableDS?.queryDataSet?.current?.set('initiateTime', isDJ ? undefined : initiateTimeDefaultValue)</code> 设置合同发起日期默认值（DJ类型时清空，其他类型设置为当月起止时间）</li><li><code>tableDS.setQueryParameter('contractType', key)</code> 设置查询参数 contractType</li><li><code>tableDS.query()</code> 重新查询列表</li></ol>
 </KbCard>
 
 <KbCard title="行点击跳转详情页">
@@ -340,7 +335,9 @@ ORDER BY EC.CREATE_TIME DESC;
 </KbCard>
 
 <KbCard title="保存/提交校验">
-<ul><li>校验1：签署前需勾选同意合同条款 —— 确保经销商已确认合作条款</li><li>校验2：拒签时拒签原因必填 —— 确保拒签原因可追溯</li><li>校验3：签署时电子签章服务可用 —— 确保签署服务正常</li></ul>
+<p><strong>校验1：</strong>签署前需勾选同意合同条款 —— 确保经销商已确认合作条款</p>
+<p><strong>校验2：</strong>拒签时拒签原因必填 —— 确保拒签原因可追溯</p>
+<p><strong>校验3：</strong>签署时电子签章服务可用 —— 确保签署服务正常</p>
 </KbCard>
 
 <KbCard title="状态机">

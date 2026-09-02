@@ -299,7 +299,8 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：结束执行实际时间必填 —— 确保执行结果可留痕</li><li><strong>详细逻辑</strong>：<code>realStartDate</code>、<code>realEndDate</code>、<code>endExecuteRemark</code> 必填，任一为空提示对应报错信息。</li><li><strong>系统体现</strong>：前端 <code>endExecuteFormDS.validate()</code> 校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>结束执行实际时间必填 —— 确保执行结果可留痕</p>
+<ul><li><strong>详细逻辑</strong>：<code>realStartDate</code>、<code>realEndDate</code>、<code>endExecuteRemark</code> 必填，任一为空提示对应报错信息。</li><li><strong>系统体现</strong>：前端 <code>endExecuteFormDS.validate()</code> 校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT tca.APPLY_CODE AS 申请编码, tca.REAL_START_DATE AS 实际开始时间,
@@ -312,7 +313,8 @@ SELECT tca.APPLY_CODE AS 申请编码, tca.REAL_START_DATE AS 实际开始时间
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：特殊取消时机校验 —— 防止临近开课取消造成资源浪费</li><li><strong>详细逻辑</strong>：校验 <code>1 &lt;= timeDiff &lt;= 7</code> 且 <code>approvalState === 'fdd_sign'</code> 且未重复发起取消。</li><li><strong>系统体现</strong>：前端时间差值计算与状态校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>特殊取消时机校验 —— 防止临近开课取消造成资源浪费</p>
+<ul><li><strong>详细逻辑</strong>：校验 <code>1 &lt;= timeDiff &lt;= 7</code> 且 <code>approvalState === 'fdd_sign'</code> 且未重复发起取消。</li><li><strong>系统体现</strong>：前端时间差值计算与状态校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT tca.APPLY_CODE AS 申请编码, tca.CAMP_NAME AS 特训营名称,

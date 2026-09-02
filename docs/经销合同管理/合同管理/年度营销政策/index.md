@@ -211,11 +211,11 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：年度不能为空 —— 确保政策归属明确年度</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验年度不为空</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>年度不能为空 —— 确保政策归属明确年度</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验年度不为空</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;

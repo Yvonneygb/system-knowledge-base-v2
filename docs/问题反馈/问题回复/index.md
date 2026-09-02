@@ -239,31 +239,19 @@
 <h4>按钮1：导出（列表工具栏）</h4>
 <p><strong>触发条件</strong>：点击"导出"按钮</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 收集当前查询条件</p>
-<p>2. 调用 <code>POST feedback/division/export</code> 接口导出</p>
-<p>3. 浏览器下载 Excel 文件</p>
+<ol><li>收集当前查询条件</li><li>调用 <code>POST feedback/division/export</code> 接口导出</li><li>浏览器下载 Excel 文件</li></ol>
 <h4>按钮2：回复（列表行操作）</h4>
 <p><strong>触发条件</strong>：选择 state 在 [4,5] 且有编辑权限的反馈单点击"回复"</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 调用 <code>openTab</code> 打开新标签页</p>
-<p>2. 路由：<code>/afterSales/brand/feedback/detail/$&#123;id&#125;</code></p>
-<p>3. 调用 <code>GET feedback/detail/$&#123;id&#125;</code> 加载详情</p>
-<p>4. 在详情页填写回复内容（commentContent，必填）</p>
-<p>5. 调用 <code>POST feedback/answer</code> 接口提交回复</p>
-<p>6. 提交数据：<code>&#123; commentContent, id, fileDTOList: attachmentsRef.current &#125;</code></p>
-<p>7. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>调用 <code>openTab</code> 打开新标签页</li><li>路由：<code>/afterSales/brand/feedback/detail/$&#123;id&#125;</code></li><li>调用 <code>GET feedback/detail/$&#123;id&#125;</code> 加载详情</li><li>在详情页填写回复内容（commentContent，必填）</li><li>调用 <code>POST feedback/answer</code> 接口提交回复</li><li>提交数据：<code>&#123; commentContent, id, fileDTOList: attachmentsRef.current &#125;</code></li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h4>按钮3：完结（列表行操作）</h4>
 <p><strong>触发条件</strong>：选择 state 在 [4,5] 且有编辑权限的反馈单点击"完结"</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认完结该反馈吗？' &#125;)</code></p>
-<p>2. 确认后调用 <code>POST feedback/end/$&#123;id&#125;</code> 接口完结反馈单</p>
-<p>3. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认完结该反馈吗？' &#125;)</code></li><li>确认后调用 <code>POST feedback/end/$&#123;id&#125;</code> 接口完结反馈单</li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h4>按钮4：取消（列表行操作）</h4>
 <p><strong>触发条件</strong>：选择 state 不在 [6,7,8] 且有编辑权限的反馈单点击"取消"</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认取消该反馈吗？' &#125;)</code></p>
-<p>2. 确认后调用 <code>POST feedback/cancel/$&#123;id&#125;</code> 接口取消反馈单</p>
-<p>3. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认取消该反馈吗？' &#125;)</code></li><li>确认后调用 <code>POST feedback/cancel/$&#123;id&#125;</code> 接口取消反馈单</li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 </KbCard>
 
 <KbCard title="详情页">
@@ -308,22 +296,15 @@
 <h5>按钮1：取消（详情页头部）</h5>
 <p><strong>触发条件</strong>：点击"取消"按钮（isDetail 且 state 不在 [6,7,8]）</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认取消该反馈吗？' &#125;)</code></p>
-<p>2. 确认后调用 <code>POST feedback/cancel/$&#123;id&#125;</code> 接口取消反馈单</p>
-<p>3. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认取消该反馈吗？' &#125;)</code></li><li>确认后调用 <code>POST feedback/cancel/$&#123;id&#125;</code> 接口取消反馈单</li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h5>按钮2：完结（详情页头部）</h5>
 <p><strong>触发条件</strong>：点击"完结"按钮（isDetail 且 state 在 [4,5]）</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认完结该反馈吗？' &#125;)</code></p>
-<p>2. 确认后调用 <code>POST feedback/end/$&#123;id&#125;</code> 接口完结反馈单</p>
-<p>3. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>弹出确认框 <code>Modal.confirm(&#123; title: '提示', children: '确认完结该反馈吗？' &#125;)</code></li><li>确认后调用 <code>POST feedback/end/$&#123;id&#125;</code> 接口完结反馈单</li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h5>按钮3：回复（详情页头部）</h5>
 <p><strong>触发条件</strong>：点击"回复"按钮（isDetail 且 state 在 [4,5]）</p>
 <p><strong>执行逻辑</strong>：</p>
-<p>1. 先校验表单 <code>baseFormDS.validate()</code></p>
-<p>2. 提取回复内容：<code>&#123; commentContent, id, fileDTOList: attachmentsRef.current &#125;</code></p>
-<p>3. 调用 <code>POST feedback/answer</code> 接口提交回复</p>
-<p>4. 成功后关闭标签页 <code>handleCloseTab()</code></p>
+<ol><li>先校验表单 <code>baseFormDS.validate()</code></li><li>提取回复内容：<code>&#123; commentContent, id, fileDTOList: attachmentsRef.current &#125;</code></li><li>调用 <code>POST feedback/answer</code> 接口提交回复</li><li>成功后关闭标签页 <code>handleCloseTab()</code></li></ol>
 <h4>详情页组件</h4>
 <h5>反馈回复记录组件（FeedbackChat）</h5>
 <p>详情页底部展示反馈回复记录组件，以聊天气泡形式展示反馈和回复的历史记录：</p>
@@ -338,11 +319,12 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：回答内容必填 —— 确保回答内容完整，便于经销商理解处理结果</li></ul>
+<p><strong>校验1：</strong>回答内容必填 —— 确保回答内容完整，便于经销商理解处理结果</p>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：回答内容必填 —— 确保回答内容完整</li><li>校验2：反馈单状态校验 —— 仅已提交/处理中状态的反馈单可回答，已回答状态可追评</li></ul>
+<p><strong>校验1：</strong>回答内容必填 —— 确保回答内容完整</p>
+<p><strong>校验2：</strong>反馈单状态校验 —— 仅已提交/处理中状态的反馈单可回答，已回答状态可追评</p>
 </KbCard>
 
 <KbCard title="状态机">

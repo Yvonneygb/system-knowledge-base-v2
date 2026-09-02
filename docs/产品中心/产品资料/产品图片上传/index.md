@@ -234,20 +234,20 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：产品编码必填 —— 确保图片关联到有效产品</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：产品编码（busId）为必填字段，需关联LNK_PROD.PROD_CODE</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>产品编码必填 —— 确保图片关联到有效产品</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：产品编码（busId）为必填字段，需关联LNK_PROD.PROD_CODE</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(1) FROM LNK_PROD WHERE PROD_CODE = :busId;
 ```
-<ul><li>校验2：图片类型必填 —— 确保图片分类有效</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：图片类型需在OBJ_FILE_TYPE表中存在且busType=prodPhoto</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>图片类型必填 —— 确保图片分类有效</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：图片类型需在OBJ_FILE_TYPE表中存在且busType=prodPhoto</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(1) FROM OBJ_FILE_TYPE WHERE BUS_TYPE = 'prodPhoto' AND FILE_BUS_TYPE = :fileType;

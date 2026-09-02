@@ -340,27 +340,26 @@
 </table>
 <h4>按钮1：删除（列表页行操作）</h4>
 <ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为NEW</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 弹窗确认</p>
-<p>2. 调用do-delete接口，校验状态为NEW后删除</p>
+<ol><li>弹窗确认</li><li>调用do-delete接口，校验状态为NEW后删除</li></ol>
 <h4>按钮2：计算扣除金额（详情页自动触发）</h4>
 <ul><li><strong>触发条件</strong>：选择装修申请单后自动触发</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 调用do-cal-deduction-amt接口</p>
-<p>2. 查询广告费可用余额(queryResourceAmt)</p>
-<p>3. 读取公司参数Close_Amount</p>
-<p>4. 计算扣减总额 = (本次装修面积 + 本次门头面积) × Close_Amount</p>
-<p>5. 广告费扣减 = min(扣减总额, max(广告费余额, 0))</p>
-<p>6. 资金池扣减 = 扣减总额 - 广告费扣减</p>
+<ol><li>调用do-cal-deduction-amt接口</li><li>查询广告费可用余额(queryResourceAmt)</li><li>读取公司参数Close_Amount</li><li>计算扣减总额 = (本次装修面积 + 本次门头面积) × Close_Amount</li><li>广告费扣减 = min(扣减总额, max(广告费余额, 0))</li><li>资金池扣减 = 扣减总额 - 广告费扣减</li></ol>
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：装修申请单号必填 —— 确保关联有效的装修申请</li><li><strong>详细逻辑</strong>：前端DataSet字段terminalApplyNoLov required=true</li><li><strong>系统体现</strong>：C7N内置必填校验</li><li><strong>排查SQL</strong>：<code>SELECT APPLY_CLOSE_ID FROM FIN_FEE_APPLY_CLOSE WHERE TERMINAL_APPLY_ID IS NULL</code></li></ul>
-<ul><li>校验2：关闭申请理由必填 —— 记录关闭原因留痕</li><li><strong>详细逻辑</strong>：前端DataSet字段applyCause required=true</li><li><strong>系统体现</strong>：C7N内置必填校验</li><li><strong>排查SQL</strong>：<code>SELECT APPLY_CLOSE_ID FROM FIN_FEE_APPLY_CLOSE WHERE APPLY_CAUSE IS NULL OR APPLY_CAUSE = ''</code></li></ul>
-<ul><li>校验3：交易公司/开票单位必填 —— 确保财务关联完整</li><li><strong>详细逻辑</strong>：后端Entity字段@NotNull注解</li><li><strong>系统体现</strong>：后端Bean Validation校验</li><li><strong>排查SQL</strong>：<code>SELECT APPLY_CLOSE_ID FROM FIN_FEE_APPLY_CLOSE WHERE TRADING_COMPANY_ID IS NULL OR BILLING_UNIT_ID IS NULL</code></li></ul>
+<p><strong>校验1：</strong>装修申请单号必填 —— 确保关联有效的装修申请</p>
+<ul><li><strong>详细逻辑</strong>：前端DataSet字段terminalApplyNoLov required=true</li><li><strong>系统体现</strong>：C7N内置必填校验</li><li><strong>排查SQL</strong>：<code>SELECT APPLY_CLOSE_ID FROM FIN_FEE_APPLY_CLOSE WHERE TERMINAL_APPLY_ID IS NULL</code></li></ul>
+<p><strong>校验2：</strong>关闭申请理由必填 —— 记录关闭原因留痕</p>
+<ul><li><strong>详细逻辑</strong>：前端DataSet字段applyCause required=true</li><li><strong>系统体现</strong>：C7N内置必填校验</li><li><strong>排查SQL</strong>：<code>SELECT APPLY_CLOSE_ID FROM FIN_FEE_APPLY_CLOSE WHERE APPLY_CAUSE IS NULL OR APPLY_CAUSE = ''</code></li></ul>
+<p><strong>校验3：</strong>交易公司/开票单位必填 —— 确保财务关联完整</p>
+<ul><li><strong>详细逻辑</strong>：后端Entity字段@NotNull注解</li><li><strong>系统体现</strong>：后端Bean Validation校验</li><li><strong>排查SQL</strong>：<code>SELECT APPLY_CLOSE_ID FROM FIN_FEE_APPLY_CLOSE WHERE TRADING_COMPANY_ID IS NULL OR BILLING_UNIT_ID IS NULL</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：验收报销单状态校验 —— 防止已验收的申请单被关闭</li><li><strong>详细逻辑</strong>：onUserSubmit时查询FinFeeCheckBxHeader，若存在非INTERRUPT状态的记录则抛异常</li><li><strong>系统体现</strong>：后端抛异常"该门店申请单：【&#123;no&#125;】已发起门店验收流程，不允许发起门店申请关闭"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_CHECK_BX_HEADER WHERE TERMINAL_APPLY_ID=&#123;id&#125; AND HZ_APPROVE_STATUS != 'INTERRUPT'</code></li></ul>
-<ul><li>校验2：公司参数Close_Amount配置 —— 确保扣减单价已配置</li><li><strong>详细逻辑</strong>：doCalDeductionAmt时validSystemParam("Close_Amount")，空则抛异常</li><li><strong>系统体现</strong>：后端抛异常"公司参数：申请关闭扣减【Close_Amount】未找到，请联系管理员！"</li><li><strong>排查SQL</strong>：<code>SELECT PARAM_VALUE FROM SYS_PARAM WHERE PARAM_CODE='Close_Amount'</code></li></ul>
+<p><strong>校验1：</strong>验收报销单状态校验 —— 防止已验收的申请单被关闭</p>
+<ul><li><strong>详细逻辑</strong>：onUserSubmit时查询FinFeeCheckBxHeader，若存在非INTERRUPT状态的记录则抛异常</li><li><strong>系统体现</strong>：后端抛异常"该门店申请单：【&#123;no&#125;】已发起门店验收流程，不允许发起门店申请关闭"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_CHECK_BX_HEADER WHERE TERMINAL_APPLY_ID=&#123;id&#125; AND HZ_APPROVE_STATUS != 'INTERRUPT'</code></li></ul>
+<p><strong>校验2：</strong>公司参数Close_Amount配置 —— 确保扣减单价已配置</p>
+<ul><li><strong>详细逻辑</strong>：doCalDeductionAmt时validSystemParam("Close_Amount")，空则抛异常</li><li><strong>系统体现</strong>：后端抛异常"公司参数：申请关闭扣减【Close_Amount】未找到，请联系管理员！"</li><li><strong>排查SQL</strong>：<code>SELECT PARAM_VALUE FROM SYS_PARAM WHERE PARAM_CODE='Close_Amount'</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">

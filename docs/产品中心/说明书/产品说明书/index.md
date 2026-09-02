@@ -285,11 +285,10 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：说明书名称必填 —— 确保说明书有明确标识</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端DataSet字段spectitle配置required: true</p>
-<p>- 第2点：保存前前端校验说明书名称非空</p>
-<ul><li>系统体现：前端提示"说明书名称不能为空"</li></ul>
+<p><strong>校验1：</strong>说明书名称必填 —— 确保说明书有明确标识</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端DataSet字段spectitle配置required: true</li><li>第2点：保存前前端校验说明书名称非空</li></ul>
+<p><strong>系统体现：</strong>前端提示"说明书名称不能为空"</p>
 </KbCard>
 
 <KbCard title="状态机">

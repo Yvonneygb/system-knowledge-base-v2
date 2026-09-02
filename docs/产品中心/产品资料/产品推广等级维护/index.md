@@ -329,32 +329,29 @@ ORDER BY LPPG.Creation_Date DESC
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：产品编码非空 —— 确保关联到有效产品</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端弹窗产品编码字段required=true，commonFn_formValid校验</p>
-<p>- 第2点：后端Entity的prodCode字段标注@NotBlank</p>
-<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>产品编码非空 —— 确保关联到有效产品</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端弹窗产品编码字段required=true，commonFn_formValid校验</li><li>第2点：后端Entity的prodCode字段标注@NotBlank</li></ul>
+<p><strong>系统体现：</strong>前端弹窗必填提示+后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PROD_PROMOTE_GRADE WHERE PROD_CODE IS NULL;
 ```
-<ul><li>校验2：等级非空 —— 确保指定推广等级</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端弹窗等级字段required=true，commonFn_formValid校验</p>
-<p>- 第2点：后端Entity的grade字段标注@NotBlank</p>
-<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>等级非空 —— 确保指定推广等级</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端弹窗等级字段required=true，commonFn_formValid校验</li><li>第2点：后端Entity的grade字段标注@NotBlank</li></ul>
+<p><strong>系统体现：</strong>前端弹窗必填提示+后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PROD_PROMOTE_GRADE WHERE GRADE IS NULL;
 ```
-<ul><li>校验3：同一产品唯一有效等级 —— 避免等级冲突</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端saveData方法中，对每条status=valid的记录，查询该prodCode是否已存在valid记录</p>
-<p>- 第2点：如果存在，将旧记录status置为invalid后再插入/更新新记录</p>
-<ul><li>系统体现：后端自动处理，无前端提示</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>同一产品唯一有效等级 —— 避免等级冲突</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端saveData方法中，对每条status=valid的记录，查询该prodCode是否已存在valid记录</li><li>第2点：如果存在，将旧记录status置为invalid后再插入/更新新记录</li></ul>
+<p><strong>系统体现：</strong>后端自动处理，无前端提示</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT PROD_CODE, COUNT(*) AS cnt

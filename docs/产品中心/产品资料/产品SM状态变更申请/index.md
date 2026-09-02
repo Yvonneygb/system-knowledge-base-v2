@@ -572,13 +572,11 @@ WHERE i.item_code IN (#{itemCodes})
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：产品编码不重复 —— 同一申请单内产品编码不能重复</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：遍历前端传入的行列表，检测同一产品编码出现多次则记录为重复</p>
-<p>- 第2点：若productOverId不为空，查询数据库已存在的行，检测前端行与数据库行的产品编码重复（pkId为空或pkId不同则为重复）</p>
-<p>- 第3点：存在重复时抛出异常："以下产品编码重复，请检查！&#123;重复编码&#125;"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>产品编码不重复 —— 同一申请单内产品编码不能重复</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：遍历前端传入的行列表，检测同一产品编码出现多次则记录为重复</li><li>第2点：若productOverId不为空，查询数据库已存在的行，检测前端行与数据库行的产品编码重复（pkId为空或pkId不同则为重复）</li><li>第3点：存在重复时抛出异常："以下产品编码重复，请检查！&#123;重复编码&#125;"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 -- 检测同一申请单内产品编码重复
@@ -591,23 +589,20 @@ WHERE i.item_code IN (#{itemCodes})
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：明细行不为空 —— 提交时必须有至少一行产品</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：根据productOverId查询PRODUCT_OVER_LINE表</p>
-<p>- 第2点：行列表为空则抛出异常："产品SM状态变更申请明细行不存在！"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>明细行不为空 —— 提交时必须有至少一行产品</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：根据productOverId查询PRODUCT_OVER_LINE表</li><li>第2点：行列表为空则抛出异常："产品SM状态变更申请明细行不存在！"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(*) FROM PRODUCT_OVER_LINE WHERE PRODUCT_OVER_ID = #{productOverId};
 ```
-<ul><li>校验2：产品无在途申请 —— 同一产品不能有多个在途的SM状态变更申请</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：获取当前申请所有明细行的产品编码（去重）</p>
-<p>- 第2点：查询其他HZ_APPROVE_STATUS='RUN'的申请单中包含相同产品编码的记录</p>
-<p>- 第3点：存在在途申请时抛出异常，提示具体的申请单号、申请人和产品编码</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>产品无在途申请 —— 同一产品不能有多个在途的SM状态变更申请</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：获取当前申请所有明细行的产品编码（去重）</li><li>第2点：查询其他HZ_APPROVE_STATUS='RUN'的申请单中包含相同产品编码的记录</li><li>第3点：存在在途申请时抛出异常，提示具体的申请单号、申请人和产品编码</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,

@@ -724,12 +724,7 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 
 <KbCard title="导入">
 <h4>前置约定</h4>
-<p>1. 导入仅支持产品明细行导入，头信息需在页面上完整填写</p>
-<p>2. 导入文件格式为Excel(.xlsx)，首行为表头行</p>
-<p>3. 导入前需已选择折扣政策(priceType=2)或价目表(priceType=3)，确保产品价格可匹配</p>
-<p>4. 导入前需已选择经销商和门店，确保产品范围可限定</p>
-<p>5. 样品编码必须存在于折扣政策产品范围内或价目表产品范围内</p>
-<p>6. 同一要货单不允许导入重复样品编码</p>
+<ol><li>导入仅支持产品明细行导入，头信息需在页面上完整填写</li><li>导入文件格式为Excel(.xlsx)，首行为表头行</li><li>导入前需已选择折扣政策(priceType=2)或价目表(priceType=3)，确保产品价格可匹配</li><li>导入前需已选择经销商和门店，确保产品范围可限定</li><li>样品编码必须存在于折扣政策产品范围内或价目表产品范围内</li><li>同一要货单不允许导入重复样品编码</li></ol>
 <h4>字段映射</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -743,27 +738,11 @@ SELECT pl.PDT_LINE_ID   AS 产品线ID,
 </tbody>
 </table>
 <h4>处理逻辑</h4>
-<p>1. 解析Excel文件，逐行读取样品编码、本次下单数量、是否紧急、说明</p>
-<p>2. 根据样品编码查询产品主数据，校验产品是否存在、SM状态是否允许下单</p>
-<p>3. 根据折扣政策ID查询产品行，获取起订量、封顶量、可下单数量、标准单价、安装单价</p>
-<p>4. 校验本次下单数量≥起订量且≤封顶量且≤可下单数量</p>
-<p>5. 自动计算：标准单价不含安装=标准单价-安装单价、安装金额=本次下单数量×安装单价、折后金额=本次下单数量×折后单价不含</p>
-<p>6. 展厅产品(customerSubclass=5)强制安装金额=0、包安装否=0</p>
-<p>7. 累计申请数量合计=SUM(本次下单数量)、申请金额合计=SUM(折后金额)</p>
-<p>8. 全部行校验通过后写入行表格</p>
+<ol><li>解析Excel文件，逐行读取样品编码、本次下单数量、是否紧急、说明</li><li>根据样品编码查询产品主数据，校验产品是否存在、SM状态是否允许下单</li><li>根据折扣政策ID查询产品行，获取起订量、封顶量、可下单数量、标准单价、安装单价</li><li>校验本次下单数量≥起订量且≤封顶量且≤可下单数量</li><li>自动计算：标准单价不含安装=标准单价-安装单价、安装金额=本次下单数量×安装单价、折后金额=本次下单数量×折后单价不含</li><li>展厅产品(customerSubclass=5)强制安装金额=0、包安装否=0</li><li>累计申请数量合计=SUM(本次下单数量)、申请金额合计=SUM(折后金额)</li><li>全部行校验通过后写入行表格</li></ol>
 <h4>异常与结果约定</h4>
-<p>1. 样品编码不存在：跳过该行，记录错误"样品编码&#123;code&#125;不存在"</p>
-<p>2. 样品编码重复：跳过重复行，记录错误"样品编码&#123;code&#125;重复"</p>
-<p>3. SM状态='Z8'：跳过该行，记录错误"样品&#123;code&#125;已停产，禁止下单"</p>
-<p>4. 下单数量&lt;起订量：跳过该行，记录错误"样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;"</p>
-<p>5. 下单数量&gt;封顶量：跳过该行，记录错误"样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;"</p>
-<p>6. 下单数量&gt;可下单数量：跳过该行，记录错误"样品&#123;code&#125;下单数量&#123;qty&#125;超过可下单数量&#123;activeQty&#125;"</p>
-<p>7. 导入完成后弹出结果提示：成功行数、失败行数、失败详情</p>
+<ol><li>样品编码不存在：跳过该行，记录错误"样品编码&#123;code&#125;不存在"</li><li>样品编码重复：跳过重复行，记录错误"样品编码&#123;code&#125;重复"</li><li>SM状态='Z8'：跳过该行，记录错误"样品&#123;code&#125;已停产，禁止下单"</li><li>下单数量&lt;起订量：跳过该行，记录错误"样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;"</li><li>下单数量&gt;封顶量：跳过该行，记录错误"样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;"</li><li>下单数量&gt;可下单数量：跳过该行，记录错误"样品&#123;code&#125;下单数量&#123;qty&#125;超过可下单数量&#123;activeQty&#125;"</li><li>导入完成后弹出结果提示：成功行数、失败行数、失败详情</li></ol>
 <h4>运维保障</h4>
-<p>1. 导入文件大小限制10MB，超限拒绝上传</p>
-<p>2. 导入操作记录操作日志，包含操作人、操作时间、文件名、成功/失败行数</p>
-<p>3. 导入失败时可下载错误明细Excel，包含失败行号、样品编码、错误原因</p>
-<p>4. 导入过程事务性处理，任一行校验失败不影响其他行，最终统一写入</p>
+<ol><li>导入文件大小限制10MB，超限拒绝上传</li><li>导入操作记录操作日志，包含操作人、操作时间、文件名、成功/失败行数</li><li>导入失败时可下载错误明细Excel，包含失败行号、样品编码、错误原因</li><li>导入过程事务性处理，任一行校验失败不影响其他行，最终统一写入</li></ol>
 </KbCard>
 
 <KbCard title="其他按钮">
@@ -888,11 +867,11 @@ SELECT h.INTERIM_BIINO      AS 要货单号,
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：业务类型必填 —— isMakt=2时businessType不能为空</li><li>详细逻辑</li></ul>
-<p>- 第1点：当IS_MAKT=2时，头表单BUSINESS_TYPE字段不能为空</p>
-<p>- 第2点：priceType=3时businessType必填，priceType=2时非必填</p>
-<p>- 第3点：businessType取值范围：3=样品、12=家装样品、16=长库龄</p>
-<ul><li>系统体现：保存时preCheckData校验，businessType为空则提示"业务类型不能为空"</li><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>业务类型必填 —— isMakt=2时businessType不能为空</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：当IS_MAKT=2时，头表单BUSINESS_TYPE字段不能为空</li><li>第2点：priceType=3时businessType必填，priceType=2时非必填</li><li>第3点：businessType取值范围：3=样品、12=家装样品、16=长库龄</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData校验，businessType为空则提示"业务类型不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT h.HEAD_ID, h.IS_MAKT, h.PRICE_TYPE, h.BUSINESS_TYPE
@@ -901,11 +880,11 @@ SELECT h.HEAD_ID, h.IS_MAKT, h.PRICE_TYPE, h.BUSINESS_TYPE
    AND h.IS_MAKT = 2
    AND h.BUSINESS_TYPE IS NULL
 ```
-<ul><li>校验2：折扣政策一致性 —— businessType/channel/billType需与折扣政策一致</li><li>详细逻辑</li></ul>
-<p>- 第1点：头表单BUSINESS_TYPE需与折扣政策BUSINESS_TYPE一致</p>
-<p>- 第2点：头表单CHANNEL需与折扣政策CHANNEL一致</p>
-<p>- 第3点：头表单BILL_TYPE需与折扣政策BILL_TYPE一致</p>
-<ul><li>系统体现：保存时preCheckData校验，不一致则提示"折扣政策与单据信息不一致"</li><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>折扣政策一致性 —— businessType/channel/billType需与折扣政策一致</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：头表单BUSINESS_TYPE需与折扣政策BUSINESS_TYPE一致</li><li>第2点：头表单CHANNEL需与折扣政策CHANNEL一致</li><li>第3点：头表单BILL_TYPE需与折扣政策BILL_TYPE一致</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData校验，不一致则提示"折扣政策与单据信息不一致"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT h.HEAD_ID, h.BUSINESS_TYPE AS 单据业务类型, h.CHANNEL AS 单据渠道, h.BILL_TYPE AS 单据订单类型,
@@ -915,10 +894,11 @@ SELECT h.HEAD_ID, h.BUSINESS_TYPE AS 单据业务类型, h.CHANNEL AS 单据渠�
  WHERE h.HEAD_ID = :headId
    AND (h.BUSINESS_TYPE <> dp.BUSINESS_TYPE OR h.CHANNEL <> dp.CHANNEL OR h.BILL_TYPE <> dp.BILL_TYPE)
 ```
-<ul><li>校验3：起订量校验 —— 订单行数量≥折扣政策产品行起订量</li><li>详细逻辑</li></ul>
-<p>- 第1点：每行QTY_BILL≥折扣政策产品行MOQ</p>
-<p>- 第2点：低于起订量拦截，提示"样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;"</p>
-<ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>起订量校验 —— 订单行数量≥折扣政策产品行起订量</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：每行QTY_BILL≥折扣政策产品行MOQ</li><li>第2点：低于起订量拦截，提示"样品&#123;code&#125;下单数量&#123;qty&#125;低于起订量&#123;moq&#125;"</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData逐行校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.MOQ
@@ -928,10 +908,11 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.MOQ
  WHERE h.HEAD_ID = :headId
    AND l.QTY_BILL < dpl.MOQ
 ```
-<ul><li>校验4：封顶量校验 —— 订单行数量≤折扣政策坎级封顶量</li><li>详细逻辑</li></ul>
-<p>- 第1点：每行QTY_BILL≤折扣政策产品行CAP_QTY</p>
-<p>- 第2点：超过封顶量拦截，提示"样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;"</p>
-<ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul>
+<p><strong>校验4：</strong>封顶量校验 —— 订单行数量≤折扣政策坎级封顶量</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：每行QTY_BILL≤折扣政策产品行CAP_QTY</li><li>第2点：超过封顶量拦截，提示"样品&#123;code&#125;下单数量&#123;qty&#125;超过封顶量&#123;capQty&#125;"</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData逐行校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.CAP_QTY
@@ -941,10 +922,11 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.CAP_QTY
  WHERE h.HEAD_ID = :headId
    AND l.QTY_BILL > dpl.CAP_QTY
 ```
-<ul><li>校验5：期望有效期校验 —— 期望到达日期不能晚于政策有效期</li><li>详细逻辑</li></ul>
-<p>- 第1点：头表单IN_DATE≤折扣政策EFFECTIVE_DATE_END</p>
-<p>- 第2点：超过政策有效期拦截，提示"期望到达日期不能晚于政策有效期"</p>
-<ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul>
+<p><strong>校验5：</strong>期望有效期校验 —— 期望到达日期不能晚于政策有效期</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：头表单IN_DATE≤折扣政策EFFECTIVE_DATE_END</li><li>第2点：超过政策有效期拦截，提示"期望到达日期不能晚于政策有效期"</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT h.HEAD_ID, h.IN_DATE, dp.EFFECTIVE_DATE_END
@@ -953,11 +935,11 @@ SELECT h.HEAD_ID, h.IN_DATE, dp.EFFECTIVE_DATE_END
  WHERE h.HEAD_ID = :headId
    AND h.IN_DATE > dp.EFFECTIVE_DATE_END
 ```
-<ul><li>校验6：紧急行数校验 —— 仅计划订单可加急，上限=ceil(总行数/5)</li><li>详细逻辑</li></ul>
-<p>- 第1点：仅billType=2或14时可加急，常规订单(billType=1)不允许有紧急行</p>
-<p>- 第2点：紧急行数(urgency=2)≤ceil(总行数/5)</p>
-<p>- 第3点：超过上限拦截，提示"紧急行数超过上限&#123;maxQty&#125;"</p>
-<ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul>
+<p><strong>校验6：</strong>紧急行数校验 —— 仅计划订单可加急，上限=ceil(总行数/5)</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：仅billType=2或14时可加急，常规订单(billType=1)不允许有紧急行</li><li>第2点：紧急行数(urgency=2)≤ceil(总行数/5)</li><li>第3点：超过上限拦截，提示"紧急行数超过上限&#123;maxQty&#125;"</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT h.HEAD_ID,
@@ -970,11 +952,11 @@ SELECT h.HEAD_ID,
  GROUP BY h.HEAD_ID
 HAVING SUM(CASE WHEN l.URGENCY = 2 THEN 1 ELSE 0 END) > CEIL(COUNT(l.LINE_ID) / 5)
 ```
-<ul><li>校验7：期望到达日期范围校验 —— 根据订单类型和渠道限制日期范围</li><li>详细逻辑</li></ul>
-<p>- 第1点：常规订单(billType=1)每月25号前下单，期望到达日期需为当月</p>
-<p>- 第2点：25号后仅瓷砖产品线可下常规订单</p>
-<p>- 第3点：计划订单(billType=2)电商渠道可选当月往后6个月内，其他渠道3个月内</p>
-<ul><li>系统体现：保存时preCheckData校验</li><li>排查SQL：</li></ul>
+<p><strong>校验7：</strong>期望到达日期范围校验 —— 根据订单类型和渠道限制日期范围</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：常规订单(billType=1)每月25号前下单，期望到达日期需为当月</li><li>第2点：25号后仅瓷砖产品线可下常规订单</li><li>第3点：计划订单(billType=2)电商渠道可选当月往后6个月内，其他渠道3个月内</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT h.HEAD_ID, h.BILL_TYPE, h.CHANNEL, h.IN_DATE, h.ORDER_PDT_LINE_ID
@@ -985,10 +967,11 @@ SELECT h.HEAD_ID, h.BILL_TYPE, h.CHANNEL, h.IN_DATE, h.ORDER_PDT_LINE_ID
             WHEN h.BILL_TYPE = 2 THEN 3
             ELSE 0 END)
 ```
-<ul><li>校验8：价格校验 —— 明细行价格字段不能为空且不能≤0</li><li>详细逻辑</li></ul>
-<p>- 第1点：每行PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL不能为空</p>
-<p>- 第2点：每行PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL不能≤0</p>
-<ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul>
+<p><strong>校验8：</strong>价格校验 —— 明细行价格字段不能为空且不能≤0</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：每行PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL不能为空</li><li>第2点：每行PRICE_BILL、STANDARD_PRICE、DISCOUNT_RATE、DISCOUNT_INSTALLATION、DISCOUNTED_PRICE、WTAMOUNT_BILL不能≤0</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData逐行校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, l.PRICE_BILL, l.STANDARD_PRICE, l.DISCOUNT_RATE,
@@ -1002,12 +985,11 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, l.PRICE_BILL, l.STANDARD_PRICE, l.DISCOUNT_RA
      OR l.DISCOUNTED_PRICE IS NULL OR l.DISCOUNTED_PRICE <= 0
      OR l.WTAMOUNT_BILL IS NULL OR l.WTAMOUNT_BILL <= 0)
 ```
-<ul><li>校验9：产品SM状态校验 —— 根据产品生命周期状态控制下单</li><li>详细逻辑</li></ul>
-<p>- 第1点：smState='Z8'禁止下单，硬拦截</p>
-<p>- 第2点：smState='Z6'计划淘汰中，提示关注但允许下单</p>
-<p>- 第3点：smState='S6'进入售后阶段，提示关注但允许下单</p>
-<p>- 第4点：smState='Z7'有库存数量发完即止，限制下单数量不超过库存</p>
-<ul><li>系统体现：保存时preCheckData逐行校验</li><li>排查SQL：</li></ul>
+<p><strong>校验9：</strong>产品SM状态校验 —— 根据产品生命周期状态控制下单</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：smState='Z8'禁止下单，硬拦截</li><li>第2点：smState='Z6'计划淘汰中，提示关注但允许下单</li><li>第3点：smState='S6'进入售后阶段，提示关注但允许下单</li><li>第4点：smState='Z7'有库存数量发完即止，限制下单数量不超过库存</li></ul>
+<p><strong>系统体现：</strong>保存时preCheckData逐行校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, m.SM_STATE
@@ -1016,13 +998,11 @@ SELECT l.LINE_ID, l.MATERIAL_CODE, m.SM_STATE
  WHERE l.HEAD_ID = :headId
    AND m.SM_STATE = 'Z8'
 ```
-<ul><li>校验10：客户信息校验 —— 校验客户信息完整性</li><li>详细逻辑</li></ul>
-<p>- 第1点：经销商必填，CUSTOMER_OBJ不能为空</p>
-<p>- 第2点：门店必填，TERMINAL_OBJ不能为空</p>
-<p>- 第3点：收货人必填，TAKE_MAN_OBJ不能为空</p>
-<p>- 第4点：交易公司必填，TRADING_COMPANY_OBJ不能为空</p>
-<p>- 第5点：订单产品线必填，ORDER_PDT_LINE_OBJ不能为空</p>
-<ul><li>系统体现：保存时verifyCustomer校验</li><li>排查SQL：</li></ul>
+<p><strong>校验10：</strong>客户信息校验 —— 校验客户信息完整性</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：经销商必填，CUSTOMER_OBJ不能为空</li><li>第2点：门店必填，TERMINAL_OBJ不能为空</li><li>第3点：收货人必填，TAKE_MAN_OBJ不能为空</li><li>第4点：交易公司必填，TRADING_COMPANY_OBJ不能为空</li><li>第5点：订单产品线必填，ORDER_PDT_LINE_OBJ不能为空</li></ul>
+<p><strong>系统体现：</strong>保存时verifyCustomer校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
@@ -1035,13 +1015,11 @@ SELECT h.HEAD_ID, h.CUSTOMER_ID, h.TERMINAL_ID, h.TAKE_MAN_ID,
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：OA审批推送校验 —— priceType=2时推送OA审批流程</li><li>详细逻辑</li></ul>
-<p>- 第1点：priceType=2时设置hzApproveStatus=NEW</p>
-<p>- 第2点：OA单据名称YPYHDD</p>
-<p>- 第3点：流程编码根据渠道区分：渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT</p>
-<p>- 第4点：调用doOaRequestOrderAudit推送OA审批</p>
-<p>- 第5点：OA审批通过后生成CRM订单</p>
-<ul><li>系统体现：保存并提交按钮触发，priceType=3时跳过OA直接生成CRM</li><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>OA审批推送校验 —— priceType=2时推送OA审批流程</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：priceType=2时设置hzApproveStatus=NEW</li><li>第2点：OA单据名称YPYHDD</li><li>第3点：流程编码根据渠道区分：渠道4→SAMPLE_ORDER_REQUEST_PROJECT，其他→SAMPLE_ORDER_REQUEST_NO_ROJECT</li><li>第4点：调用doOaRequestOrderAudit推送OA审批</li><li>第5点：OA审批通过后生成CRM订单</li></ul>
+<p><strong>系统体现：</strong>保存并提交按钮触发，priceType=3时跳过OA直接生成CRM</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS,
@@ -1050,13 +1028,11 @@ SELECT h.HEAD_ID, h.PRICE_TYPE, h.CHANNEL, h.HZ_APPROVE_STATUS,
   FROM SA_OUT_BILL_HEAD h
  WHERE h.HEAD_ID = :headId
 ```
-<ul><li>校验2：CRM订单生成校验 —— 生成CRM订单前校验</li><li>详细逻辑</li></ul>
-<p>- 第1点：businessType映射：3→Sample、12→HomeDecorationSample、16→Long_Inv_Age</p>
-<p>- 第2点：校验头行信息完整性</p>
-<p>- 第3点：priceType=3时直接生成CRM，hzApproveStatus=NO_APPROVED</p>
-<p>- 第4点：priceType=2时OA审批通过后生成CRM</p>
-<p>- 第5点：CRM订单号回写至SA_SALEBILLNO</p>
-<ul><li>系统体现：保存并提交或生成CRM订单按钮触发</li><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>CRM订单生成校验 —— 生成CRM订单前校验</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：businessType映射：3→Sample、12→HomeDecorationSample、16→Long_Inv_Age</li><li>第2点：校验头行信息完整性</li><li>第3点：priceType=3时直接生成CRM，hzApproveStatus=NO_APPROVED</li><li>第4点：priceType=2时OA审批通过后生成CRM</li><li>第5点：CRM订单号回写至SA_SALEBILLNO</li></ul>
+<p><strong>系统体现：</strong>保存并提交或生成CRM订单按钮触发</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT h.HEAD_ID, h.BUSINESS_TYPE, h.PRICE_TYPE, h.HZ_APPROVE_STATUS, h.SA_SALEBILLNO,
@@ -1066,11 +1042,11 @@ SELECT h.HEAD_ID, h.BUSINESS_TYPE, h.PRICE_TYPE, h.HZ_APPROVE_STATUS, h.SA_SALEB
   FROM SA_OUT_BILL_HEAD h
  WHERE h.HEAD_ID = :headId
 ```
-<ul><li>校验3：可下单数量扣减校验 —— 提交前校验可下单数量充足</li><li>详细逻辑</li></ul>
-<p>- 第1点：每行QTY_BILL≤折扣政策产品行ACTIVE_QTY</p>
-<p>- 第2点：提交时调用updateActiveQty扣减可下单数量</p>
-<p>- 第3点：可下单数量不足拦截，提示"样品&#123;code&#125;可下单数量不足"</p>
-<ul><li>系统体现：保存并提交时updateActiveQty校验</li><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>可下单数量扣减校验 —— 提交前校验可下单数量充足</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：每行QTY_BILL≤折扣政策产品行ACTIVE_QTY</li><li>第2点：提交时调用updateActiveQty扣减可下单数量</li><li>第3点：可下单数量不足拦截，提示"样品&#123;code&#125;可下单数量不足"</li></ul>
+<p><strong>系统体现：</strong>保存并提交时updateActiveQty校验</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT l.LINE_ID, l.MATERIAL_CODE, l.QTY_BILL, dpl.ACTIVE_QTY

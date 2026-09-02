@@ -348,12 +348,11 @@ WHERE bud_year = #{budYear} AND entid = #{divisionId} AND fee_type_id = #{feeTyp
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：申请总金额校验 —— 确保申请金额大于0</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：OA提交前校验totalApplyAmtBx&gt;0</p>
-<p>- 第2点：金额&lt;=0时报错"申请总金额必须大于0！"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>申请总金额校验 —— 确保申请金额大于0</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：OA提交前校验totalApplyAmtBx&gt;0</li><li>第2点：金额&lt;=0时报错"申请总金额必须大于0！"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT total_apply_amt_bx FROM fin_fee_apply_header WHERE fee_apply_id = {id};
@@ -361,12 +360,11 @@ SELECT total_apply_amt_bx FROM fin_fee_apply_header WHERE fee_apply_id = {id};
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：申请总金额校验 —— 提交前再次校验金额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：调用doCheckAdvertiseAmt校验申请总金额&gt;0</p>
-<p>- 第2点：objid为0时报错"流程中objid为0，流程失败！"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>申请总金额校验 —— 提交前再次校验金额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：调用doCheckAdvertiseAmt校验申请总金额&gt;0</li><li>第2点：objid为0时报错"流程中objid为0，流程失败！"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT total_apply_amt_bx FROM fin_fee_apply_header WHERE fee_apply_id = {id};

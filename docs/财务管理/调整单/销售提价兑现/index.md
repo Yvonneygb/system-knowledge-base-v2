@@ -435,24 +435,22 @@ SELECT * FROM CASH_SUMMARY WHERE ID = #{id} AND PUSH_STATUS = 'PENDING';
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：限定日期开始和结束不能为空 —— 确保查询返利明细的时间范围有效</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：generateCashDetails方法校验dto.getStartTime().isEmpty() || dto.getEndTime().isEmpty()</p>
-<p>- 第2点：为空时抛出CommonException("开始时间或结束时间不能为空")</p>
-<ul><li>系统体现：toast提醒"开始时间或结束时间不能为空"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>限定日期开始和结束不能为空 —— 确保查询返利明细的时间范围有效</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：generateCashDetails方法校验dto.getStartTime().isEmpty() || dto.getEndTime().isEmpty()</li><li>第2点：为空时抛出CommonException("开始时间或结束时间不能为空")</li></ul>
+<p><strong>系统体现：</strong>toast提醒"开始时间或结束时间不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT ID, START_TIME, END_TIME, GL_DATE
     FROM CASH_SUMMARY
     WHERE START_TIME IS NULL OR END_TIME IS NULL;
 ```
-<ul><li>校验2：入账日期不能为空 —— 确保兑现单有有效的入账日期</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：generateCashDetails方法校验dto.getGlDate().isEmpty()</p>
-<p>- 第2点：为空时抛出CommonException("入账日期不能为空")</p>
-<ul><li>系统体现：toast提醒"入账日期不能为空"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>入账日期不能为空 —— 确保兑现单有有效的入账日期</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：generateCashDetails方法校验dto.getGlDate().isEmpty()</li><li>第2点：为空时抛出CommonException("入账日期不能为空")</li></ul>
+<p><strong>系统体现：</strong>toast提醒"入账日期不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT ID, GL_DATE

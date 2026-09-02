@@ -344,39 +344,38 @@ SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：报销金额校验 —— 确保报销金额大于0</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：额度内(bxType=1)且广告费报销(saveType=2)时校验</p>
-<p>- 第2点：本次报销金额&lt;=0时报错"本次报销金额必须大于0！"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>报销金额校验 —— 确保报销金额大于0</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：额度内(bxType=1)且广告费报销(saveType=2)时校验</li><li>第2点：本次报销金额&lt;=0时报错"本次报销金额必须大于0！"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT this_standard_amt FROM fin_fee_bx_header WHERE bx_id = {id};
 ```
-<ul><li>校验2：申请金额校验 —— 报销金额不超过申请总金额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：本次报销金额&gt;申请总金额时报错</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>申请金额校验 —— 报销金额不超过申请总金额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：本次报销金额&gt;申请总金额时报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT this_standard_amt, total_apply_amt_bx FROM fin_fee_bx_header WHERE bx_id = {id};
 ```
-<ul><li>校验3：额度内可用金额校验 —— 额度内报销不超可用</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：本次报销金额&gt;额度内可用金额时报错</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>额度内可用金额校验 —— 额度内报销不超可用</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：本次报销金额&gt;额度内可用金额时报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT this_standard_amt, in_can_use_amt FROM fin_fee_bx_header WHERE bx_id = {id} AND bx_type = 1;
 ```
-<ul><li>校验4：批准金额校验 —— 批准金额不超过报销金额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：本次批准金额&gt;本次报销金额时报错</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验4：</strong>批准金额校验 —— 批准金额不超过报销金额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：本次批准金额&gt;本次报销金额时报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT this_standard_amt, this_authorize_standard_amt FROM fin_fee_bx_header WHERE bx_id = {id};
@@ -384,22 +383,20 @@ SELECT this_standard_amt, this_authorize_standard_amt FROM fin_fee_bx_header WHE
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：在途单据校验 —— 防止重复提交</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询同一申请单号下审批状态为RUN的报销单数量</p>
-<p>- 第2点：存在在途单据时报错"已有在途的广告投放申请单"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>在途单据校验 —— 防止重复提交</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询同一申请单号下审批状态为RUN的报销单数量</li><li>第2点：存在在途单据时报错"已有在途的广告投放申请单"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(*) FROM fin_fee_bx_header WHERE fee_apply_no = #{feeApplyNo} AND hz_approve_status = 'RUN';
 ```
-<ul><li>校验2：费用项目校验 —— 确保费用项目存在</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：额度内且支付方式非3时，费用项目不能为空</p>
-<p>- 第2点：额度外时，费用项目不能为空</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>费用项目校验 —— 确保费用项目存在</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：额度内且支付方式非3时，费用项目不能为空</li><li>第2点：额度外时，费用项目不能为空</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT object_name, bx_type, pay_type FROM fin_fee_bx_header WHERE bx_id = {id};

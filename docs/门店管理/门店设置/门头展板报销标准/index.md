@@ -231,12 +231,15 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：补贴类型/装修等级必填 —— 确保政策标准基本配置完整</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD WHERE SUBSIDY_TYPE IS NULL OR FIXUP_GRADE IS NULL</code></li></ul>
-<ul><li>校验2：有效期范围合法 —— 开始日期≤结束日期</li><li><strong>详细逻辑</strong>：前端日期校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD WHERE START_DATE &gt; END_DATE</code></li></ul>
+<p><strong>校验1：</strong>补贴类型/装修等级必填 —— 确保政策标准基本配置完整</p>
+<ul><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD WHERE SUBSIDY_TYPE IS NULL OR FIXUP_GRADE IS NULL</code></li></ul>
+<p><strong>校验2：</strong>有效期范围合法 —— 开始日期≤结束日期</p>
+<ul><li><strong>详细逻辑</strong>：前端日期校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD WHERE START_DATE &gt; END_DATE</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：至少配置一行补贴标准 —— 确保政策标准有具体补贴项目</li><li><strong>详细逻辑</strong>：提交时校验行表非空</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT H.POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD H WHERE NOT EXISTS (SELECT 1 FROM POLICY_STANDARD_LINE L WHERE L.HEADER_ID=H.POLICY_STANDARD_ID)</code></li></ul>
+<p><strong>校验1：</strong>至少配置一行补贴标准 —— 确保政策标准有具体补贴项目</p>
+<ul><li><strong>详细逻辑</strong>：提交时校验行表非空</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT H.POLICY_STANDARD_ID FROM POLICY_STANDARD_HEAD H WHERE NOT EXISTS (SELECT 1 FROM POLICY_STANDARD_LINE L WHERE L.HEADER_ID=H.POLICY_STANDARD_ID)</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">

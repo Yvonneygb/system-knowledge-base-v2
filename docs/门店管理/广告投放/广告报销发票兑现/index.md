@@ -345,42 +345,38 @@ FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：发票金额校验 —— 确保发票金额大于0</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：支付方式非3（非虚拟收款）时，实际兑现金额(factInvoiceAmt)必须&gt;0</p>
-<p>- 第2点：金额&lt;=0时报错"发票金额异常，请检查！"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>发票金额校验 —— 确保发票金额大于0</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：支付方式非3（非虚拟收款）时，实际兑现金额(factInvoiceAmt)必须&gt;0</li><li>第2点：金额&lt;=0时报错"发票金额异常，请检查！"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT pay_type, fact_invoice_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};
 ```
-<ul><li>校验2：剩余可兑现金额校验 —— 确保兑现金额不超剩余</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：剩余可兑现金额=可兑现总额-已兑现总额</p>
-<p>- 第2点：本次兑现金额&gt;剩余可兑现金额时报错</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>剩余可兑现金额校验 —— 确保兑现金额不超剩余</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：剩余可兑现金额=可兑现总额-已兑现总额</li><li>第2点：本次兑现金额&gt;剩余可兑现金额时报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT total_can_cashout_amt, used_cashout_amt, this_cashout_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};
 ```
-<ul><li>校验3：额度内可用金额校验 —— 额度内核销金额不超可用</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：兑现类型=额度内时，本次核销金额&lt;=额度内可用金额</p>
-<p>- 第2点：超出时报错"本次核销金额不可超过额度内可用金额"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>额度内可用金额校验 —— 额度内核销金额不超可用</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：兑现类型=额度内时，本次核销金额&lt;=额度内可用金额</li><li>第2点：超出时报错"本次核销金额不可超过额度内可用金额"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT this_writeoff_amt, in_can_use_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id} AND cashout_type = 1;
 ```
-<ul><li>校验4：额度外可用金额校验 —— 额度外兑现金额不超可用</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：兑现类型=额度外时，本次兑现金额&lt;=额度外可用金额-已占用金额</p>
-<p>- 第2点：超出时报错"额度外金额已占用"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验4：</strong>额度外可用金额校验 —— 额度外兑现金额不超可用</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：兑现类型=额度外时，本次兑现金额&lt;=额度外可用金额-已占用金额</li><li>第2点：超出时报错"额度外金额已占用"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT this_cashout_amt, out_can_use_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id} AND cashout_type = 2;
@@ -388,12 +384,11 @@ SELECT this_cashout_amt, out_can_use_amt FROM fin_fee_cashout_header WHERE fee_c
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：剩余未兑现总额校验 —— 确保申请金额不超剩余</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询已使用兑现金额</p>
-<p>- 第2点：可兑现总额-已使用-本次兑现&lt;0时报错</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>剩余未兑现总额校验 —— 确保申请金额不超剩余</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询已使用兑现金额</li><li>第2点：可兑现总额-已使用-本次兑现&lt;0时报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT total_can_cashout_amt, this_cashout_amt FROM fin_fee_cashout_header WHERE fee_cashout_id = {id};

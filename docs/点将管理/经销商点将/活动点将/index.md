@@ -611,7 +611,24 @@ WHERE aa.APPLY_CODE = :applyCode
 
 <KbCard title="保存/提交校验">
 <blockquote>数据来源：<code>detail.tsx</code> 的 <code>handleSave</code> + <code>stores/detailConfig.tsx</code> 字段 required 配置。保存与保存并提交共用同一校验逻辑，依次校验 generalFormDS 和 activityInfoFormDS。</blockquote>
-<ul><li>校验1：拟点将时间必填 —— generalFormDS.preDate（range），明确点将时间安排</li><li>校验2：签订人必填 —— generalFormDS.signer（haveSigner=true时），明确合同签订人</li><li>校验3：所属运营中心必填 —— activityInfoFormDS.opCenter</li><li>校验4：交易公司必填 —— activityInfoFormDS.tradingCompanyName</li><li>校验5：开票账户必填 —— activityInfoFormDS.legalEntityName（选交易公司自动带出）</li><li>校验6：活动类型必填 —— activityInfoFormDS.activityType，值集MBO.ORD_ACTIVITY_TYPE</li><li>校验7：活动名称必填 —— activityInfoFormDS.activityName</li><li>校验8：门店名称必填 —— activityInfoFormDS.storeName</li><li>校验9：活动区域必填 —— activityInfoFormDS.activityArea</li><li>校验10：门店地址必填 —— activityInfoFormDS.storeArea（选门店自动带出）</li><li>校验11：活动时间必填 —— activityInfoFormDS.activityDate（range）</li><li>校验12：参与门店数必填 —— activityInfoFormDS.applyStoreNumber</li><li>校验13：投资预算金额必填 —— activityInfoFormDS.budgetAmount</li><li>校验14：活动简介必填 —— activityInfoFormDS.activityIntroduction</li><li>校验15：取消申请时取消原因必填 —— cancelFormDS.cancelReason</li><li>校验16：开始执行时实际开始时间必填 —— startExecuteFormDS.realStartDate</li><li>校验17：按计划结算时签订人必填 —— generalFormDS.signer</li><li>校验18：讲师排期冲突校验（后端） —— 避免同一讲师同一时间段被重复点将</li></ul>
+<p><strong>校验1：</strong>拟点将时间必填 —— generalFormDS.preDate（range），明确点将时间安排</p>
+<p><strong>校验2：</strong>签订人必填 —— generalFormDS.signer（haveSigner=true时），明确合同签订人</p>
+<p><strong>校验3：</strong>所属运营中心必填 —— activityInfoFormDS.opCenter</p>
+<p><strong>校验4：</strong>交易公司必填 —— activityInfoFormDS.tradingCompanyName</p>
+<p><strong>校验5：</strong>开票账户必填 —— activityInfoFormDS.legalEntityName（选交易公司自动带出）</p>
+<p><strong>校验6：</strong>活动类型必填 —— activityInfoFormDS.activityType，值集MBO.ORD_ACTIVITY_TYPE</p>
+<p><strong>校验7：</strong>活动名称必填 —— activityInfoFormDS.activityName</p>
+<p><strong>校验8：</strong>门店名称必填 —— activityInfoFormDS.storeName</p>
+<p><strong>校验9：</strong>活动区域必填 —— activityInfoFormDS.activityArea</p>
+<p><strong>校验10：</strong>门店地址必填 —— activityInfoFormDS.storeArea（选门店自动带出）</p>
+<p><strong>校验11：</strong>活动时间必填 —— activityInfoFormDS.activityDate（range）</p>
+<p><strong>校验12：</strong>参与门店数必填 —— activityInfoFormDS.applyStoreNumber</p>
+<p><strong>校验13：</strong>投资预算金额必填 —— activityInfoFormDS.budgetAmount</p>
+<p><strong>校验14：</strong>活动简介必填 —— activityInfoFormDS.activityIntroduction</p>
+<p><strong>校验15：</strong>取消申请时取消原因必填 —— cancelFormDS.cancelReason</p>
+<p><strong>校验16：</strong>开始执行时实际开始时间必填 —— startExecuteFormDS.realStartDate</p>
+<p><strong>校验17：</strong>按计划结算时签订人必填 —— generalFormDS.signer</p>
+<p><strong>校验18：</strong>讲师排期冲突校验（后端） —— 避免同一讲师同一时间段被重复点将</p>
 </KbCard>
 
 <KbCard title="状态机">

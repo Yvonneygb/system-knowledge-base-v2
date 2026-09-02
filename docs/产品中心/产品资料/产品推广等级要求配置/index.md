@@ -240,62 +240,56 @@ ORDER BY LPPGC.Creation_Date DESC, LPPGC.ID DESC
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：品牌事业部非空 —— 确保配置绑定到具体事业部</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端弹窗deptCode字段required=true，commonFn_formValid校验</p>
-<p>- 第2点：后端Entity的deptCode字段标注@NotBlank</p>
-<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>品牌事业部非空 —— 确保配置绑定到具体事业部</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端弹窗deptCode字段required=true，commonFn_formValid校验</li><li>第2点：后端Entity的deptCode字段标注@NotBlank</li></ul>
+<p><strong>系统体现：</strong>前端弹窗必填提示+后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE DEPT_CODE IS NULL;
 ```
-<ul><li>校验2：等级非空 —— 确保配置绑定到具体等级</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端弹窗grade字段required=true，commonFn_formValid校验</p>
-<p>- 第2点：后端Entity的grade字段标注@NotBlank</p>
-<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>等级非空 —— 确保配置绑定到具体等级</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端弹窗grade字段required=true，commonFn_formValid校验</li><li>第2点：后端Entity的grade字段标注@NotBlank</li></ul>
+<p><strong>系统体现：</strong>前端弹窗必填提示+后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE GRADE IS NULL;
 ```
-<ul><li>校验3：物料类型非空 —— 确保配置绑定到具体物料类型</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端弹窗prodSign字段required=true，commonFn_formValid校验</p>
-<p>- 第2点：后端Entity的prodSign字段标注@NotBlank</p>
-<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>物料类型非空 —— 确保配置绑定到具体物料类型</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端弹窗prodSign字段required=true，commonFn_formValid校验</li><li>第2点：后端Entity的prodSign字段标注@NotBlank</li></ul>
+<p><strong>系统体现：</strong>前端弹窗必填提示+后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE PROD_SIGN IS NULL;
 ```
-<ul><li>校验4：必填字段类型非空 —— 确保指定字段分类</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端弹窗reqColumnType字段required=true，commonFn_formValid校验</p>
-<p>- 第2点：后端Entity的reqColumnType字段标注@NotBlank</p>
-<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验4：</strong>必填字段类型非空 —— 确保指定字段分类</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端弹窗reqColumnType字段required=true，commonFn_formValid校验</li><li>第2点：后端Entity的reqColumnType字段标注@NotBlank</li></ul>
+<p><strong>系统体现：</strong>前端弹窗必填提示+后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE REQ_COLUMN_TYPE IS NULL;
 ```
-<ul><li>校验5：必填字段非空 —— 确保指定具体必填字段</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端弹窗reqColumn字段required=true，commonFn_formValid校验</p>
-<p>- 第2点：后端Entity的reqColumn字段标注@NotBlank</p>
-<ul><li>系统体现：前端弹窗必填提示+后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验5：</strong>必填字段非空 —— 确保指定具体必填字段</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端弹窗reqColumn字段required=true，commonFn_formValid校验</li><li>第2点：后端Entity的reqColumn字段标注@NotBlank</li></ul>
+<p><strong>系统体现：</strong>前端弹窗必填提示+后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE REQ_COLUMN IS NULL;
 ```
-<ul><li>校验6：重复配置校验 —— 避免重复添加</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端saveData方法中，对每条status=valid的记录，查询是否已存在相同deptCode+grade+prodSign+reqColumn+reqColumnType且status=valid的记录</p>
-<p>- 第2点：如果存在，抛出CommonException("产品已存在相同的产品推广等级字段要求配置,无需重复添加!")</p>
-<ul><li>系统体现：后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验6：</strong>重复配置校验 —— 避免重复添加</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端saveData方法中，对每条status=valid的记录，查询是否已存在相同deptCode+grade+prodSign+reqColumn+reqColumnType且status=valid的记录</li><li>第2点：如果存在，抛出CommonException("产品已存在相同的产品推广等级字段要求配置,无需重复添加!")</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL

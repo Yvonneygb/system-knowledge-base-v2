@@ -355,7 +355,9 @@ ORDER BY EC.CREATE_TIME DESC;
 </KbCard>
 
 <KbCard title="保存/提交校验">
-<ul><li>校验1：修改合同状态时目标状态必填 —— 确保状态变更目标明确</li><li>校验2：操作时需选择一条数据 —— 确保操作对象明确</li><li>校验3：合同存在性校验 —— 确保合同ID有效</li></ul>
+<p><strong>校验1：</strong>修改合同状态时目标状态必填 —— 确保状态变更目标明确</p>
+<p><strong>校验2：</strong>操作时需选择一条数据 —— 确保操作对象明确</p>
+<p><strong>校验3：</strong>合同存在性校验 —— 确保合同ID有效</p>
 </KbCard>
 
 <KbCard title="状态机">

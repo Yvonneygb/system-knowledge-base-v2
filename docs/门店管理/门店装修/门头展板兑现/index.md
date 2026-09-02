@@ -188,10 +188,7 @@
 
 <KbCard num="3" title="重点逻辑3：工作流多节点审批">
 <ul><li><strong>业务意义</strong>：门头展板兑现需经过区域经理、设计师、销售会计、运营专员多级审批，各节点可编辑不同字段</li><li><strong>具体逻辑描述</strong>：</li><li>工作流编码：SUB_STORE_MTZBBXDX(门头展板报销兑现)</li><li>提交时调用onUserSubmit，通过workflowClient.startInstanceByFlowKey启动工作流实例，设置HZ_INSTANCE_ID和HZ_APPROVE_STATUS=RUN</li><li>审批节点保存时调用nodeEditSave，根据taskName分发到不同节点更新方法：</li></ul>
-<p>- 区域经理审批(bizNodeUpdate)：更新验收方式bzsBizMethod、保证人bzsBizName、保证时间bzsBizTime(自动取当前时间)、提前兑现比例inEarlyCashoutRatio</p>
-<p>- 设计师审批(designerNodeUpdate)：更新验收方式bzsDesMethod、保证人bzsDesName、保证时间bzsDesTime</p>
-<p>- 销售会计审批(salesFinUpdate)：更新额度外兑现有效期outValidDate、备注remark，校验首次兑现才允许修改有效期</p>
-<p>- 运营专员审批(operatNodeUpdate)：仅更新附件</p>
+<ul><li>区域经理审批(bizNodeUpdate)：更新验收方式bzsBizMethod、保证人bzsBizName、保证时间bzsBizTime(自动取当前时间)、提前兑现比例inEarlyCashoutRatio</li><li>设计师审批(designerNodeUpdate)：更新验收方式bzsDesMethod、保证人bzsDesName、保证时间bzsDesTime</li><li>销售会计审批(salesFinUpdate)：更新额度外兑现有效期outValidDate、备注remark，校验首次兑现才允许修改有效期</li><li>运营专员审批(operatNodeUpdate)：仅更新附件</li></ul>
 <ul><li>前端通过window.addEventListener('message', handleEvent)监听工作流iframe的审批动作，匹配taskName为区域经理/设计师/销售会计/运营专员时执行saveValid校验</li></ul>
 </KbCard>
 
@@ -420,21 +417,51 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：报销申请单必填 —— 确保兑现单关联有效的报销申请单</li><li>详细逻辑：前端DataSet required=true校验，后端getReimburseHead查询报销单，不存在或非APPROVED报"报销单号不存在或未完成审核"</li><li>系统体现：前端C7N必填提示，后端CommonException</li><li>排查SQL：<code>SELECT * FROM CUST_DH_REIMBURSE_HEAD WHERE ID = #&#123;reimburseHeadId&#125; AND HZ_APPROVE_STATUS = 'APPROVED'</code></li></ul>
-<ul><li>校验2：额度外兑现比例范围0-1 —— 防止输入非法比例值</li><li>详细逻辑：前端validator校验value&lt;0报"申请兑现比例不能小于0"，value &gt; 1-sumOutCashoutRatio报"申请兑现比例需≤X"；后端checkParams校验outCashoutRatio &lt; 0或&gt; 1报"额度外兑现比例必须在0到1之间"</li><li>系统体现：前端字段validator提示，后端CommonException</li><li>排查SQL：<code>SELECT SUM(OUT_CASHOUT_RATIO) AS SUM_RATIO FROM CUST_DH_CASHOUT_HEAD WHERE REIMBURSE_HEAD_ID = #&#123;reimburseHeadId&#125; AND HZ_APPROVE_STATUS = 'APPROVED' AND ID != #&#123;currentId&#125;</code></li></ul>
-<ul><li>校验3：同一报销单不能有未审批完成的兑现单 —— 防止重复创建兑现单</li><li>详细逻辑：后端checkParams查询同一REIMBURSE_HEAD_ID下HZ_APPROVE_STATUS非APPROVED的兑现单，存在则报"该报销单存在未审批结束的兑现单X，请勿重复创建"</li><li>系统体现：后端CommonException</li><li>排查SQL：<code>SELECT * FROM CUST_DH_CASHOUT_HEAD WHERE REIMBURSE_HEAD_ID = #&#123;reimburseHeadId&#125; AND HZ_APPROVE_STATUS != 'APPROVED' AND ID != #&#123;currentId&#125;</code></li></ul>
-<ul><li>校验4：行表不能为空 —— 确保有门店装修信息</li><li>详细逻辑：后端checkParams校验lines为空报"行表不能为空"；前端校验terminalData为空报"请至少添加一条门店信息"</li><li>系统体现：前端message.error，后端CommonException</li><li>排查SQL：<code>SELECT COUNT(*) FROM CUST_DH_CASHOUT_LINE WHERE HEAD_ID = #&#123;headId&#125;</code></li></ul>
-<ul><li>校验5：兑现金额不能为0 —— 确保有实际兑现金额</li><li>详细逻辑：后端checkParams校验额度内和额度外申请兑现金额均为0时报"兑现金额为0，保存失败"</li><li>系统体现：后端CommonException</li><li>排查SQL：<code>SELECT IN_CASHOUT_APPLY_AMT, OUT_CASHOUT_APPLY_AMT FROM CUST_DH_CASHOUT_HEAD WHERE ID = #&#123;id&#125;</code></li></ul>
-<ul><li>校验6：区域经理审批时验收方式与保证人必填 —— 确保验收真实性</li><li>详细逻辑：前端saveValid校验taskName匹配"区域经理"时，bzsBizMethod为空或bzsBizName!=当前用户realName报"请填写【验收人员保证书】区域经理相关信息！"；后端bizNodeUpdate校验bzsBizMethod为空报"验收方式不能为空"，bzsBizName为空报"区域经理名字不能为空"</li><li>系统体现：前端notification.error，后端CommonException</li></ul>
-<ul><li>校验7：设计师审批时验收方式与保证人必填 —— 确保验收真实性</li><li>详细逻辑：前端saveValid校验taskName=="设计师审批"时，bzsDesMethod为空或bzsDesName!=当前用户realName报"请填写【验收人员保证书】展示设计师相关信息！"；后端designerNodeUpdate校验bzsDesMethod为空报"验收方式不能为空"，bzsDesName为空报"区域经理名字不能为空"</li><li>系统体现：前端notification.error，后端CommonException</li></ul>
-<ul><li>校验8：销售会计审批时额度外兑现有效期必填 —— 确保额度外兑现有有效期约束</li><li>详细逻辑：前端outValidDate在taskName=="销售会计审批"时required=true；后端salesFinUpdate校验outValidDate为空报"额度外兑现有效期不能为空"，非首次兑现修改报"报销单非首次兑现，不允许编辑额度外兑现有效期"</li><li>系统体现：前端C7N必填提示，后端CommonException</li></ul>
-<ul><li>校验9：附件校验 —— 确保必要附件已上传</li><li>详细逻辑：前端saveValid调用childRefUpload.current.validateUpload()校验附件；提交时(temp=1)还需otherValidate('验收时间及定位水印照片')和otherValidate('报销申请审批表')；运营专员审批时需otherValidate('兑现申请审批表')</li><li>系统体现：前端UploadTable组件校验</li></ul>
+<p><strong>校验1：</strong>报销申请单必填 —— 确保兑现单关联有效的报销申请单</p>
+<p><strong>详细逻辑：</strong>前端DataSet required=true校验，后端getReimburseHead查询报销单，不存在或非APPROVED报"报销单号不存在或未完成审核"</p>
+<p><strong>系统体现：</strong>前端C7N必填提示，后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT * FROM CUST_DH_REIMBURSE_HEAD WHERE ID = #&#123;reimburseHeadId&#125; AND HZ_APPROVE_STATUS = 'APPROVED'</code></p>
+<p><strong>校验2：</strong>额度外兑现比例范围0-1 —— 防止输入非法比例值</p>
+<p><strong>详细逻辑：</strong>前端validator校验value&lt;0报"申请兑现比例不能小于0"，value &gt; 1-sumOutCashoutRatio报"申请兑现比例需≤X"；后端checkParams校验outCashoutRatio &lt; 0或&gt; 1报"额度外兑现比例必须在0到1之间"</p>
+<p><strong>系统体现：</strong>前端字段validator提示，后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT SUM(OUT_CASHOUT_RATIO) AS SUM_RATIO FROM CUST_DH_CASHOUT_HEAD WHERE REIMBURSE_HEAD_ID = #&#123;reimburseHeadId&#125; AND HZ_APPROVE_STATUS = 'APPROVED' AND ID != #&#123;currentId&#125;</code></p>
+<p><strong>校验3：</strong>同一报销单不能有未审批完成的兑现单 —— 防止重复创建兑现单</p>
+<p><strong>详细逻辑：</strong>后端checkParams查询同一REIMBURSE_HEAD_ID下HZ_APPROVE_STATUS非APPROVED的兑现单，存在则报"该报销单存在未审批结束的兑现单X，请勿重复创建"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT * FROM CUST_DH_CASHOUT_HEAD WHERE REIMBURSE_HEAD_ID = #&#123;reimburseHeadId&#125; AND HZ_APPROVE_STATUS != 'APPROVED' AND ID != #&#123;currentId&#125;</code></p>
+<p><strong>校验4：</strong>行表不能为空 —— 确保有门店装修信息</p>
+<p><strong>详细逻辑：</strong>后端checkParams校验lines为空报"行表不能为空"；前端校验terminalData为空报"请至少添加一条门店信息"</p>
+<p><strong>系统体现：</strong>前端message.error，后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT COUNT(*) FROM CUST_DH_CASHOUT_LINE WHERE HEAD_ID = #&#123;headId&#125;</code></p>
+<p><strong>校验5：</strong>兑现金额不能为0 —— 确保有实际兑现金额</p>
+<p><strong>详细逻辑：</strong>后端checkParams校验额度内和额度外申请兑现金额均为0时报"兑现金额为0，保存失败"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT IN_CASHOUT_APPLY_AMT, OUT_CASHOUT_APPLY_AMT FROM CUST_DH_CASHOUT_HEAD WHERE ID = #&#123;id&#125;</code></p>
+<p><strong>校验6：</strong>区域经理审批时验收方式与保证人必填 —— 确保验收真实性</p>
+<p><strong>详细逻辑：</strong>前端saveValid校验taskName匹配"区域经理"时，bzsBizMethod为空或bzsBizName!=当前用户realName报"请填写【验收人员保证书】区域经理相关信息！"；后端bizNodeUpdate校验bzsBizMethod为空报"验收方式不能为空"，bzsBizName为空报"区域经理名字不能为空"</p>
+<p><strong>系统体现：</strong>前端notification.error，后端CommonException</p>
+<p><strong>校验7：</strong>设计师审批时验收方式与保证人必填 —— 确保验收真实性</p>
+<p><strong>详细逻辑：</strong>前端saveValid校验taskName=="设计师审批"时，bzsDesMethod为空或bzsDesName!=当前用户realName报"请填写【验收人员保证书】展示设计师相关信息！"；后端designerNodeUpdate校验bzsDesMethod为空报"验收方式不能为空"，bzsDesName为空报"区域经理名字不能为空"</p>
+<p><strong>系统体现：</strong>前端notification.error，后端CommonException</p>
+<p><strong>校验8：</strong>销售会计审批时额度外兑现有效期必填 —— 确保额度外兑现有有效期约束</p>
+<p><strong>详细逻辑：</strong>前端outValidDate在taskName=="销售会计审批"时required=true；后端salesFinUpdate校验outValidDate为空报"额度外兑现有效期不能为空"，非首次兑现修改报"报销单非首次兑现，不允许编辑额度外兑现有效期"</p>
+<p><strong>系统体现：</strong>前端C7N必填提示，后端CommonException</p>
+<p><strong>校验9：</strong>附件校验 —— 确保必要附件已上传</p>
+<p><strong>详细逻辑：</strong>前端saveValid调用childRefUpload.current.validateUpload()校验附件；提交时(temp=1)还需otherValidate('验收时间及定位水印照片')和otherValidate('报销申请审批表')；运营专员审批时需otherValidate('兑现申请审批表')</p>
+<p><strong>系统体现：</strong>前端UploadTable组件校验</p>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：额度外预算充足 —— 防止超额兑现</li><li>详细逻辑：首次提交时firstSubmitVerify，当额度外申请金额&gt;0且政策useExtraBudgetFlag=Y时，查询当前年份总预算(viewOverBudgetAmt)，校验已使用金额+本次兑现金额≤总预算，否则报"额度外预算不足，有疑问请联系财务"</li><li>系统体现：后端CommonException</li><li>排查SQL：<code>SELECT * FROM POLICY_STANDARD_HEAD WHERE POLICY_STANDARD_ID = #&#123;policyStandardId&#125; AND USE_EXTRA_BUDGET_FLAG = 'Y'</code></li></ul>
-<ul><li>校验2：经销商限额 —— 防止超过经销商限额</li><li>详细逻辑：当政策custLimitFlag=Y时，校验经销商限额-已报销金额+当前报销单实际额度外报销金额-当前申请金额≥0，否则报"额度外申请金额需≤剩余可报销限额"</li><li>系统体现：后端CommonException</li></ul>
-<ul><li>校验3：同一报销单剩余可申请金额 —— 防止超过报销单可兑现余额</li><li>详细逻辑：校验本次额度外申请金额≤报销单实际额度外报销金额-已提交或已审批的sum(各兑现单本次额度外申请金额)，否则报"申请金额需≤剩余未申请金额"</li><li>系统体现：后端CommonException</li></ul>
+<p><strong>校验1：</strong>额度外预算充足 —— 防止超额兑现</p>
+<p><strong>详细逻辑：</strong>首次提交时firstSubmitVerify，当额度外申请金额&gt;0且政策useExtraBudgetFlag=Y时，查询当前年份总预算(viewOverBudgetAmt)，校验已使用金额+本次兑现金额≤总预算，否则报"额度外预算不足，有疑问请联系财务"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>排查SQL：</strong><code>SELECT * FROM POLICY_STANDARD_HEAD WHERE POLICY_STANDARD_ID = #&#123;policyStandardId&#125; AND USE_EXTRA_BUDGET_FLAG = 'Y'</code></p>
+<p><strong>校验2：</strong>经销商限额 —— 防止超过经销商限额</p>
+<p><strong>详细逻辑：</strong>当政策custLimitFlag=Y时，校验经销商限额-已报销金额+当前报销单实际额度外报销金额-当前申请金额≥0，否则报"额度外申请金额需≤剩余可报销限额"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
+<p><strong>校验3：</strong>同一报销单剩余可申请金额 —— 防止超过报销单可兑现余额</p>
+<p><strong>详细逻辑：</strong>校验本次额度外申请金额≤报销单实际额度外报销金额-已提交或已审批的sum(各兑现单本次额度外申请金额)，否则报"申请金额需≤剩余未申请金额"</p>
+<p><strong>系统体现：</strong>后端CommonException</p>
 </KbCard>
 
 <KbCard title="明细字段列表">

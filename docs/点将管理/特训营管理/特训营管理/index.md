@@ -183,8 +183,7 @@
 
 <KbCard num="2" title="重点逻辑2：报名截止逻辑">
 <ul><li><strong>业务意义</strong>：控制报名截止时机，避免开课后仍可报名。</li><li><strong>具体逻辑描述</strong>：</li><li>报名截止为行操作按钮，显示条件：</li></ul>
-<p>1. <code>status === 'valid'</code>（特训营已生效）</p>
-<p>2. <code>new Date(planStartTime) &gt; new Date()</code>（计划开始时间晚于当前时间）</p>
+<ol><li><code>status === 'valid'</code>（特训营已生效）</li><li><code>new Date(planStartTime) &gt; new Date()</code>（计划开始时间晚于当前时间）</li></ol>
 <ul><li>点击后弹窗选择报名结束时间。</li><li>提交调用 <code>signEnd</code> 接口，参数 <code>campCode</code> 和 <code>campsignEndTimeCode</code>（格式 <code>YYYY-MM-DD</code>）。</li></ul>
 </KbCard>
 
@@ -372,18 +371,13 @@
 
 <KbCard title="详情页保存校验逻辑">
 <ul><li><strong>基础信息校验</strong>：baseFormDS.validate() 校验所有必填字段。</li><li><strong>讲师列表校验</strong>(validateLectorerList)：</li></ul>
-<p>1. 讲师列表不能为空。</p>
-<p>2. 每位讲师开始日期不能为空。</p>
-<p>3. 每位讲师结束日期不能为空。</p>
-<p>4. 讲师开始日期不能大于结束日期。</p>
-<p>5. 讲师开始日期不能小于特训营开始日期。</p>
-<p>6. 讲师结束日期不能大于特训营结束日期。</p>
-<p>7. 讲师介绍不能为空。</p>
+<ol><li>讲师列表不能为空。</li><li>每位讲师开始日期不能为空。</li><li>每位讲师结束日期不能为空。</li><li>讲师开始日期不能大于结束日期。</li><li>讲师开始日期不能小于特训营开始日期。</li><li>讲师结束日期不能大于特训营结束日期。</li><li>讲师介绍不能为空。</li></ol>
 <ul><li><strong>联动逻辑</strong>：</li><li>特训营类型(campType)或负责事业部(division)变更时，联动查询收费标准(priceDS)，参数 divisionCode + lecturerType(=campType)，并清空已选收费标准。</li><li>特训营类型为 region 时显示"所属运营中心"字段且必填。</li></ul>
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：编辑状态校验 —— 保证生效数据稳定性</li><li><strong>详细逻辑</strong>：编辑时校验状态必须为 <code>draft</code>，否则提示"当前状态数据无法编辑！"。</li><li><strong>系统体现</strong>：前端状态校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>编辑状态校验 —— 保证生效数据稳定性</p>
+<ul><li><strong>详细逻辑</strong>：编辑时校验状态必须为 <code>draft</code>，否则提示"当前状态数据无法编辑！"。</li><li><strong>系统体现</strong>：前端状态校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT tc.CAMP_CODE AS 特训营编码, tc.CAMP_NAME AS 特训营名称, tc.STATUS AS 状态
@@ -393,7 +387,8 @@ SELECT tc.CAMP_CODE AS 特训营编码, tc.CAMP_NAME AS 特训营名称, tc.STAT
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：报名结束时间必填 —— 确保报名截止时间有效</li><li><strong>详细逻辑</strong>：报名截止提交时校验 <code>campsignEndTimeCode</code> 必填。</li><li><strong>系统体现</strong>：前端弹窗校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>报名结束时间必填 —— 确保报名截止时间有效</p>
+<ul><li><strong>详细逻辑</strong>：报名截止提交时校验 <code>campsignEndTimeCode</code> 必填。</li><li><strong>系统体现</strong>：前端弹窗校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT tc.CAMP_CODE AS 特训营编码, tc.CAMPSIGN_END_TIME AS 报名结束时间

@@ -473,14 +473,11 @@ SELECT discount_policy_id, valid FROM epm_discount_policy WHERE discount_policy_
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：政策类型校验 —— 确保按政策类型填写对应适用对象</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：policyType=1时customerId不能为空</p>
-<p>- 第2点：policyType=2时saleAreaId不能为空</p>
-<p>- 第3点：policyType=3时customerClass不能为空</p>
-<p>- 第4点：policyType=4时provinceId不能为空</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>政策类型校验 —— 确保按政策类型填写对应适用对象</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：policyType=1时customerId不能为空</li><li>第2点：policyType=2时saleAreaId不能为空</li><li>第3点：policyType=3时customerClass不能为空</li><li>第4点：policyType=4时provinceId不能为空</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT policy_type, customer_id, sale_area_id, customer_class, province_id
@@ -489,21 +486,20 @@ SELECT policy_type, customer_id, sale_area_id, customer_class, province_id
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：产品明细非空校验 —— 确保政策有产品明细行</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询EPM_DISCOUNT_POLICY_ITEM表中该政策的明细行</p>
-<p>- 第2点：明细为空时不允许提交</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>产品明细非空校验 —— 确保政策有产品明细行</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询EPM_DISCOUNT_POLICY_ITEM表中该政策的明细行</li><li>第2点：明细为空时不允许提交</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(*) FROM epm_discount_policy_item WHERE discount_policy_id = {id};
 ```
-<ul><li>校验2：长库龄业务类型校验 —— 校验业务类型合法性</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：校验计划订单业务类型不能为长库龄</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>长库龄业务类型校验 —— 校验业务类型合法性</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：校验计划订单业务类型不能为长库龄</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT business_type FROM epm_discount_policy WHERE discount_policy_id = {id};

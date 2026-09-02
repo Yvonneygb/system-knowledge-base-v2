@@ -573,12 +573,15 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：装修申请单必填 —— 确保关联有效的装修申请</li><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT CHECK_BX_ID FROM FIN_FEE_CHECK_BX_HEADER WHERE TERMINAL_APPLY_ID IS NULL</code></li></ul>
-<ul><li>校验2：验收数据完整性 —— 确保验收面积/金额等关键字段完整</li><li><strong>详细逻辑</strong>：后端校验关键字段非空</li><li><strong>系统体现</strong>：后端抛异常</li><li><strong>排查SQL</strong>：<code>SELECT CHECK_BX_ID FROM FIN_FEE_CHECK_BX_HEADER WHERE THIS_TERMINAL_AREA IS NULL</code></li></ul>
+<p><strong>校验1：</strong>装修申请单必填 —— 确保关联有效的装修申请</p>
+<ul><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT CHECK_BX_ID FROM FIN_FEE_CHECK_BX_HEADER WHERE TERMINAL_APPLY_ID IS NULL</code></li></ul>
+<p><strong>校验2：</strong>验收数据完整性 —— 确保验收面积/金额等关键字段完整</p>
+<ul><li><strong>详细逻辑</strong>：后端校验关键字段非空</li><li><strong>系统体现</strong>：后端抛异常</li><li><strong>排查SQL</strong>：<code>SELECT CHECK_BX_ID FROM FIN_FEE_CHECK_BX_HEADER WHERE THIS_TERMINAL_AREA IS NULL</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：装修申请单已审批 —— 确保关联的装修申请单状态为APPROVED</li><li><strong>详细逻辑</strong>：提交时校验原申请单hzApproveStatus=APPROVED</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_APPLY_ID=&#123;id&#125; AND HZ_APPROVE_STATUS!='APPROVED'</code></li></ul>
+<p><strong>校验1：</strong>装修申请单已审批 —— 确保关联的装修申请单状态为APPROVED</p>
+<ul><li><strong>详细逻辑</strong>：提交时校验原申请单hzApproveStatus=APPROVED</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_APPLY_ID=&#123;id&#125; AND HZ_APPROVE_STATUS!='APPROVED'</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">

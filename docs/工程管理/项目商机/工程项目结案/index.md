@@ -201,17 +201,17 @@
 <div class="kl-wrap">
 <KbCard title="API接口"><table class="kl-table"><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td>GET</td><td><code>/v1/{organizationId}/epm-contract-completeds/detail</code></td><td>查询结案详情(关联合同列表+出库明细)</td></tr></tbody></table></KbCard>
 <KbCard title="detail接口逻辑"><p><strong>入参:</strong> <code>EpmContractCompletedDTO</code>，关键字段: <code>flag</code>、<code>actionType</code>、<code>contractId</code>、<code>projectId</code></p>
-<p>#### 场景1: flag=9 且 actionType=2 (合同结案查询)</p>
-<p>1. 根据 <code>contractId</code> 查询主合同下所有增补合同列表 2. 查询合同关联的出库明细(已审核且未发货数量&gt;0) 3. 返回合同列表 + 出库明细</p>
-<p>#### 场景2: flag=9 且 actionType=1 (项目结案查询)</p>
-<p>1. 根据 <code>projectId</code> 查询项目下所有合同列表 2. 关联主合同信息(主合同编码、名称) 3. 查询合同关联的出库明细 4. 返回合同列表 + 出库明细</p></KbCard>
+<p><strong>场景1: flag=9 且 actionType=2 (合同结案查询)</strong></p>
+<ol><li>根据 <code>contractId</code> 查询主合同下所有增补合同列表</li><li>查询合同关联的出库明细(已审核且未发货数量&gt;0)</li><li>返回合同列表 + 出库明细</li></ol>
+<p><strong>场景2: flag=9 且 actionType=1 (项目结案查询)</strong></p>
+<ol><li>根据 <code>projectId</code> 查询项目下所有合同列表</li><li>关联主合同信息(主合同编码、名称)</li><li>查询合同关联的出库明细</li><li>返回合同列表 + 出库明细</li></ol></KbCard>
 <KbCard title="doAudit审核逻辑(工作流审批通过回调)">
 
 ```
 wfComplete(dto) → 判断审批结果 == APPROVED → doAudit(epmContractCompleted)
 ```
 
-<p>#### 合同结案(actionType=2)</p>
+<p><strong>合同结案(actionType=2)</strong></p>
 
 ```
 1. 查询目标合同 → 设置 completedDate=now, completedType=提交值, valid=3
@@ -220,7 +220,7 @@ wfComplete(dto) → 判断审批结果 == APPROVED → doAudit(epmContractComple
 4. 批量更新增补合同(COMPLETED_DATE=now, COMPLETED_TYPE=提交值)
 ```
 
-<p>#### 项目结案(actionType=1)</p>
+<p><strong>项目结案(actionType=1)</strong></p>
 
 ```
 1. 查询项目下所有已审批通过的合同(HZ_APPROVE_STATUS=APPROVED)
@@ -228,7 +228,7 @@ wfComplete(dto) → 判断审批结果 == APPROVED → doAudit(epmContractComple
 3. 更新项目报备(PROJECT_VALID=3, PROJECT_STAGE_TYPE=2, CLOSE_PROJECT_TIME=now)
 ```
 
-<p>#### 公共逻辑</p>
+<p><strong>公共逻辑</strong></p>
 
 ```
 1. 查询阶段定义(STAGE_NAME='项目结案') → 获取STAGE_ID

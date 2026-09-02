@@ -505,7 +505,19 @@ WHERE tca.APPLY_CODE = :applyCode
 
 <KbCard title="保存/提交校验">
 <blockquote>数据来源：<code>list.tsx</code> 的 <code>submitApply</code> + <code>components/ApplyInfo/index.tsx</code> 的 <code>getApplyFormData</code>/<code>getUserList</code>。保存与保存并提交共用同一校验逻辑。</blockquote>
-<ul><li>校验1：交易公司必填 —— applyFormDS.tradingCompanyName，明确交易主体</li><li>校验2：开票账户必填 —— applyFormDS.legalEntityName（选交易公司自动带出）</li><li>校验3：参训人员列表不能为空 —— userListDS至少1行</li><li>校验4：参训人员姓名必填 —— 每行name不能为空</li><li>校验5：参训人员手机号必填 —— 每行phone不能为空，且校验正则/^1[3456789]\d&#123;9&#125;$/</li><li>校验6：参训人员性别必填 —— 每行gender不能为空，值集MBO.CAMP_USER_SEX</li><li>校验7：参训人员学历必填 —— 每行education不能为空</li><li>校验8：参训人员所属门店必填 —— 每行store不能为空</li><li>校验9：参训人员省市区必填 —— 每行province不能为空</li><li>校验10：参训人员岗位必填 —— 每行post不能为空</li><li>校验11：参训人员入职日期必填 —— 每行entryDate不能为空</li><li>校验12：取消申请时取消原因必填 —— cancelFormDS.cancelReason</li><li>校验13：讲师排期冲突校验（后端） —— 避免同一讲师同一时间段被重复点将</li></ul>
+<p><strong>校验1：</strong>交易公司必填 —— applyFormDS.tradingCompanyName，明确交易主体</p>
+<p><strong>校验2：</strong>开票账户必填 —— applyFormDS.legalEntityName（选交易公司自动带出）</p>
+<p><strong>校验3：</strong>参训人员列表不能为空 —— userListDS至少1行</p>
+<p><strong>校验4：</strong>参训人员姓名必填 —— 每行name不能为空</p>
+<p><strong>校验5：</strong>参训人员手机号必填 —— 每行phone不能为空，且校验正则/^1[3456789]\d&#123;9&#125;$/</p>
+<p><strong>校验6：</strong>参训人员性别必填 —— 每行gender不能为空，值集MBO.CAMP_USER_SEX</p>
+<p><strong>校验7：</strong>参训人员学历必填 —— 每行education不能为空</p>
+<p><strong>校验8：</strong>参训人员所属门店必填 —— 每行store不能为空</p>
+<p><strong>校验9：</strong>参训人员省市区必填 —— 每行province不能为空</p>
+<p><strong>校验10：</strong>参训人员岗位必填 —— 每行post不能为空</p>
+<p><strong>校验11：</strong>参训人员入职日期必填 —— 每行entryDate不能为空</p>
+<p><strong>校验12：</strong>取消申请时取消原因必填 —— cancelFormDS.cancelReason</p>
+<p><strong>校验13：</strong>讲师排期冲突校验（后端） —— 避免同一讲师同一时间段被重复点将</p>
 </KbCard>
 
 <KbCard title="状态机">

@@ -271,11 +271,11 @@ WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：原合同不能为空 —— 确保变更关联明确合同</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验原合同ID不为空</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>原合同不能为空 —— 确保变更关联明确合同</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验原合同ID不为空</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ORIGINAL_CONTRACT_ID IS NULL;
@@ -283,12 +283,11 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ORIGINAL_CONTRACT_ID IS NULL;
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：提交前校验 —— 确保变更数据完整</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：通过validBeforeSubmit方法进行提交前校验</p>
-<p>- 第2点：校验变更区域合法性(checkContract)</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>提交前校验 —— 确保变更数据完整</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：通过validBeforeSubmit方法进行提交前校验</li><li>第2点：校验变更区域合法性(checkContract)</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONTRACT_ID IS NULL;

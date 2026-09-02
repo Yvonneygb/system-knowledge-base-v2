@@ -374,12 +374,11 @@ WHERE ta.APPLY_CODE = :applyCode;
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：审批意见必填 —— 确保审批记录有完整的审批意见</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：提交审批前执行applyApprovalFormDS.validate()校验</p>
-<p>- 第2点：审批意见字段为必填，TextArea组件</p>
-<ul><li>系统体现：toast提醒"审批意见不能为空"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>审批意见必填 —— 确保审批记录有完整的审批意见</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：提交审批前执行applyApprovalFormDS.validate()校验</li><li>第2点：审批意见字段为必填，TextArea组件</li></ul>
+<p><strong>系统体现：</strong>toast提醒"审批意见不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT APPLY_CODE, APPROVAL_COMMENTS
@@ -387,12 +386,11 @@ SELECT APPLY_CODE, APPROVAL_COMMENTS
     WHERE APPLY_CODE = :applyCode
       AND (APPROVAL_COMMENTS IS NULL OR APPROVAL_COMMENTS = '');
 ```
-<ul><li>校验2：审批通过时签订人必填 —— 确保审批通过后有签订人用于后续合同签署</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：当approvalResult为approved时，签订人字段必填</p>
-<p>- 第2点：签订人通过signerDS根据法人主体动态查询</p>
-<ul><li>系统体现：toast提醒"签订人不能为空"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>审批通过时签订人必填 —— 确保审批通过后有签订人用于后续合同签署</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：当approvalResult为approved时，签订人字段必填</li><li>第2点：签订人通过signerDS根据法人主体动态查询</li></ul>
+<p><strong>系统体现：</strong>toast提醒"签订人不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME

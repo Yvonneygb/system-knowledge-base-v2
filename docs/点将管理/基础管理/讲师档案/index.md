@@ -167,17 +167,12 @@
 
 <KbCard num="3" title="重点逻辑3：牌价变更申请校验">
 <ul><li><strong>业务意义</strong>：仅对已生效且非特训营的档案允许发起牌价变更，保证变更对象合法</li><li><strong>具体逻辑描述</strong>：</li></ul>
-<p>1. 档案状态必须为 <code>valid</code>（生效）</p>
-<p>2. 培训类型不能为 <code>camp</code>（特训营）</p>
-<p>3. 校验不通过提示"只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！"</p>
-<p>4. 校验通过跳转 <code>/detail/&#123;id&#125;/priceChange</code></p>
+<ol><li>档案状态必须为 <code>valid</code>（生效）</li><li>培训类型不能为 <code>camp</code>（特训营）</li><li>校验不通过提示"只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！"</li><li>校验通过跳转 <code>/detail/&#123;id&#125;/priceChange</code></li></ol>
 </KbCard>
 
 <KbCard num="4" title="重点逻辑4：生效/失效操作校验">
 <ul><li><strong>业务意义</strong>：仅对审批通过的档案允许状态切换，保证状态变更合规</li><li><strong>具体逻辑描述</strong>：</li></ul>
-<p>1. 审批状态必须为 <code>approved</code>（审批通过）</p>
-<p>2. 校验不通过提示"只能对【审批通过】的档案进行操作！"</p>
-<p>3. 校验通过调用 <code>POST mlt/maLecturerArchive/updateArchivesStatus</code> 接口，参数 <code>ArchivesStatus=valid/invalid</code></p>
+<ol><li>审批状态必须为 <code>approved</code>（审批通过）</li><li>校验不通过提示"只能对【审批通过】的档案进行操作！"</li><li>校验通过调用 <code>POST mlt/maLecturerArchive/updateArchivesStatus</code> 接口，参数 <code>ArchivesStatus=valid/invalid</code></li></ol>
 </KbCard>
 
 <KbCard num="5" title="重点逻辑5：查看审批历史">
@@ -212,13 +207,9 @@
 </KbCard>
 
 <KbCard title="审批提交逻辑">
-<p>1. 校验档案信息完整性（必填字段、等级信息）</p>
-<p>2. 生成审批单，关联 <code>lecturerArchivesCode</code></p>
-<p>3. 调用 <code>POST mlt/maLecturerArchive/submitData</code> 提交</p>
-<p>4. 更新档案状态为"审批中"</p>
-<p>5. 审批结果回调后更新档案状态：</p>
-<p>- 通过 → 状态变为"生效"</p>
-<p>- 拒绝 → 状态变为"审批拒绝"，允许修改重新提交</p>
+<ol><li>校验档案信息完整性（必填字段、等级信息）</li><li>生成审批单，关联 <code>lecturerArchivesCode</code></li><li>调用 <code>POST mlt/maLecturerArchive/submitData</code> 提交</li><li>更新档案状态为"审批中"</li></ol>
+<p><strong>5. 审批结果回调后更新档案状态：</strong></p>
+<ul><li>通过 → 状态变为"生效"</li><li>拒绝 → 状态变为"审批拒绝"，允许修改重新提交</li></ul>
 </KbCard>
 
 <KbCard title="界面模块">
@@ -330,7 +321,8 @@ SELECT
 </KbCard>
 
 <KbCard title="保存/提交校验">
-<ul><li>校验1：baseFormDS.validate() 必填项校验 —— 保证档案基本信息完整</li><li><strong>详细逻辑</strong>：必填项包括讲师名称、讲师类型、所属部门、负责事业部、负责区域、讲师标签；培训类型在讲师类型为 train 时必填</li><li><strong>系统体现</strong>：前端表单校验，未通过阻止保存</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>baseFormDS.validate() 必填项校验 —— 保证档案基本信息完整</p>
+<ul><li><strong>详细逻辑</strong>：必填项包括讲师名称、讲师类型、所属部门、负责事业部、负责区域、讲师标签；培训类型在讲师类型为 train 时必填</li><li><strong>系统体现</strong>：前端表单校验，未通过阻止保存</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, LECTURER_TYPE, ORG_NAME,
@@ -340,35 +332,42 @@ SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, LECTURER_TYPE, ORG_NAME,
        OR RESPONSIBLE_DEPARTMENT_NAME IS NULL OR COVER_AREA IS NULL
        OR LECTURER_LABEL IS NULL;
 ```
-<ul><li>校验2：讲师简历非空 —— 保证讲师资质信息完整</li><li><strong>详细逻辑</strong>：保存时校验讲师简历字段非空</li><li><strong>系统体现</strong>：前端校验，提示补充简历</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验2：</strong>讲师简历非空 —— 保证讲师资质信息完整</p>
+<ul><li><strong>详细逻辑</strong>：保存时校验讲师简历字段非空</li><li><strong>系统体现</strong>：前端校验，提示补充简历</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
     FROM MA_LECTURER_ARCHIVE
     WHERE RESUME IS NULL OR RESUME = '';
 ```
-<ul><li>校验3：讲师案例资料非空 —— 保证讲师案例信息完整</li><li><strong>详细逻辑</strong>：保存时校验讲师案例资料字段非空</li><li><strong>系统体现</strong>：前端校验，提示补充案例资料</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验3：</strong>讲师案例资料非空 —— 保证讲师案例信息完整</p>
+<ul><li><strong>详细逻辑</strong>：保存时校验讲师案例资料字段非空</li><li><strong>系统体现</strong>：前端校验，提示补充案例资料</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
     FROM MA_LECTURER_ARCHIVE
     WHERE CASE_INFO IS NULL OR CASE_INFO = '';
 ```
-<ul><li>校验4：讲师照片非空 —— 保证讲师身份可视化</li><li><strong>详细逻辑</strong>：保存时校验讲师照片字段非空</li><li><strong>系统体现</strong>：前端校验，提示上传照片</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验4：</strong>讲师照片非空 —— 保证讲师身份可视化</p>
+<ul><li><strong>详细逻辑</strong>：保存时校验讲师照片字段非空</li><li><strong>系统体现</strong>：前端校验，提示上传照片</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME
     FROM MA_LECTURER_ARCHIVE
     WHERE PHOTO IS NULL OR PHOTO = '';
 ```
-<ul><li>校验5：牌价变更申请时档案状态必须为 valid —— 仅生效档案可发起变更</li><li><strong>详细逻辑</strong>：点击牌价变更申请按钮时校验 ARCHIVES_STATUS=valid</li><li><strong>系统体现</strong>：前端校验，提示"只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！"</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验5：</strong>牌价变更申请时档案状态必须为 valid —— 仅生效档案可发起变更</p>
+<ul><li><strong>详细逻辑</strong>：点击牌价变更申请按钮时校验 ARCHIVES_STATUS=valid</li><li><strong>系统体现</strong>：前端校验，提示"只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！"</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, ARCHIVES_STATUS, TRAIN_TYPE
     FROM MA_LECTURER_ARCHIVE
     WHERE ARCHIVES_STATUS <> 'valid' OR TRAIN_TYPE = 'camp';
 ```
-<ul><li>校验6：牌价变更申请时培训类型不能为 camp —— 特训营讲师不适用牌价变更</li><li><strong>详细逻辑</strong>：点击牌价变更申请按钮时校验 TRAIN_TYPE≠camp</li><li><strong>系统体现</strong>：前端校验，提示信息同上</li><li><strong>排查SQL</strong>：同校验5</li><li>校验7：生效/失效时审批状态必须为 approved —— 仅审批通过档案可切换状态</li><li><strong>详细逻辑</strong>：点击生效/失效按钮时校验 APPROVAL_STATUS=approved</li><li><strong>系统体现</strong>：前端校验，提示"只能对【审批通过】的档案进行操作！"</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验6：</strong>牌价变更申请时培训类型不能为 camp —— 特训营讲师不适用牌价变更</p>
+<ul><li><strong>详细逻辑</strong>：点击牌价变更申请按钮时校验 TRAIN_TYPE≠camp</li><li><strong>系统体现</strong>：前端校验，提示信息同上</li><li><strong>排查SQL</strong>：同校验5</li></ul>
+<p><strong>校验7：</strong>生效/失效时审批状态必须为 approved —— 仅审批通过档案可切换状态</p>
+<ul><li><strong>详细逻辑</strong>：点击生效/失效按钮时校验 APPROVAL_STATUS=approved</li><li><strong>系统体现</strong>：前端校验，提示"只能对【审批通过】的档案进行操作！"</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_ARCHIVES_CODE, LECTURER_NAME, APPROVAL_STATUS, ARCHIVES_STATUS

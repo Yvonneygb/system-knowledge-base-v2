@@ -256,11 +256,11 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：经销商不能为空 —— 确保合同关联明确经销商</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验经销商ID不为空</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>经销商不能为空 —— 确保合同关联明确经销商</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验经销商ID不为空</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE CUSTOMER_ID IS NULL;
@@ -268,12 +268,11 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE CUSTOMER_ID IS NULL;
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：流程启动校验 —— 确保合同数据完整</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：通过workFlowStartValid方法进行流程启动前校验</p>
-<p>- 第2点：校验区域合法性(doCheckArea)</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>流程启动校验 —— 确保合同数据完整</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：通过workFlowStartValid方法进行流程启动前校验</li><li>第2点：校验区域合法性(doCheckArea)</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUSTOMER_ID IS NULL OR CONTRACT_YEAR IS NULL);

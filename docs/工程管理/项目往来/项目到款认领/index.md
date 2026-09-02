@@ -434,36 +434,32 @@ SELECT contract_id, contract_code, contract_amount, contract_amt_received FROM e
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：到款单状态校验 —— 确保到款单处于可认领状态</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：调用verifyImportStat校验到款引入单状态</p>
-<p>- 第2点：到款单不存在时报错"未找到该到款单"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>到款单状态校验 —— 确保到款单处于可认领状态</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：调用verifyImportStat校验到款引入单状态</li><li>第2点：到款单不存在时报错"未找到该到款单"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT payment_import_id, payment_import_code, bill_type, unallot_amt, allot_status
     FROM epm_payment_import WHERE payment_import_id = {paymentImportId};
 ```
-<ul><li>校验2：可认领金额校验 —— 确保认领金额不超过剩余可认领金额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：虚拟到款单（VIRTUAL_RECEIPT）查数据库计算剩余可认领金额</p>
-<p>- 第2点：真实到款单实时调ERP接口查询最新剩余可认领金额</p>
-<p>- 第3点：本次认款金额合计&gt;剩余可认领金额时报错</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>可认领金额校验 —— 确保认领金额不超过剩余可认领金额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：虚拟到款单（VIRTUAL_RECEIPT）查数据库计算剩余可认领金额</li><li>第2点：真实到款单实时调ERP接口查询最新剩余可认领金额</li><li>第3点：本次认款金额合计&gt;剩余可认领金额时报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 -- 虚拟单查DB
     SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = {id};
     -- 真实单查ERP（通过ERP接口，无直接SQL）
 ```
-<ul><li>校验3：出库明细金额校验 —— 确保不超工程金额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：每行出库明细的已认领金额+本次认领金额不能超过工程方金额</p>
-<p>- 第2点：超出时报错"已认领金额+本次认领金额已超工程金额"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>出库明细金额校验 —— 确保不超工程金额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：每行出库明细的已认领金额+本次认领金额不能超过工程方金额</li><li>第2点：超出时报错"已认领金额+本次认领金额已超工程金额"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT d.claim_amt, d.contract_amount,
@@ -472,42 +468,37 @@ SELECT d.claim_amt, d.contract_amount,
       SELECT payment_allot_line_id FROM epm_payment_allot_line WHERE payment_allot_id = {id}
     );
 ```
-<ul><li>校验4：事业部信息校验 —— 确保用户有事业部信息</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：从用户附加信息中获取DEPT（事业部）</p>
-<p>- 第2点：事业部为空时报错"事业部信息为空"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：无（从用户上下文获取）</li></ul>
+<p><strong>校验4：</strong>事业部信息校验 —— 确保用户有事业部信息</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：从用户附加信息中获取DEPT（事业部）</li><li>第2点：事业部为空时报错"事业部信息为空"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL：</strong>无（从用户上下文获取）</p>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：到款单状态校验 —— 提交前再次校验到款单状态</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：调用paymentImportService.verifyImportStat校验</p>
-<p>- 第2点：到款单不存在时报错"流程发起异常，到款单不存在！"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>到款单状态校验 —— 提交前再次校验到款单状态</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：调用paymentImportService.verifyImportStat校验</li><li>第2点：到款单不存在时报错"流程发起异常，到款单不存在！"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT payment_import_id, allot_status FROM epm_payment_import WHERE payment_import_id = {id};
 ```
-<ul><li>校验2：可认领金额校验 —— 提交前再次校验金额</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：与保存校验2相同的validPaymentImportCanAllotAmt逻辑</p>
-<p>- 第2点：确保提交时金额仍可用（防止并发认领）</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>可认领金额校验 —— 提交前再次校验金额</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：与保存校验2相同的validPaymentImportCanAllotAmt逻辑</li><li>第2点：确保提交时金额仍可用（防止并发认领）</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT unallot_amt FROM epm_payment_import WHERE payment_import_id = {id};
 ```
-<ul><li>校验3：ERP推送校验 —— 推送ERP核销数据并校验返回</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：组装AR_APPLY、OM_CLAIM、OM_APPLY三组数据推送ERP</p>
-<p>- 第2点：ERP返回状态非S时报错"认领推送erp异常"</p>
-<p>- 第3点：ERP返回数据为空时报错"erp返回认领结果为空"</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>ERP推送校验 —— 推送ERP核销数据并校验返回</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：组装AR_APPLY、OM_CLAIM、OM_APPLY三组数据推送ERP</li><li>第2点：ERP返回状态非S时报错"认领推送erp异常"</li><li>第3点：ERP返回数据为空时报错"erp返回认领结果为空"</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM sys_exception_msg WHERE objid = {paymentAllotId} AND objtypename = '到款认领';

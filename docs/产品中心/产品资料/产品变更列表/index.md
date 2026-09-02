@@ -379,29 +379,28 @@ WHERE ID = :formId;
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：表单必填项校验 —— 确保必填字段已填写</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端DataSet.validate()校验所有必填字段</p>
-<ul><li>系统体现：toast提醒"请检查表单必填项!"</li></ul>
-<ul><li>排查SQL：无</li></ul>
+<p><strong>校验1：</strong>表单必填项校验 —— 确保必填字段已填写</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端DataSet.validate()校验所有必填字段</li></ul>
+<p><strong>系统体现：</strong>toast提醒"请检查表单必填项!"</p>
+<p><strong>排查SQL：</strong>无</p>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：申请单状态校验 —— 仅新建和审核拒绝状态可提交</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询申请单当前状态，若非NEW且非REJECTED则报错</p>
-<ul><li>系统体现：阻断性报错"申请单状态为不为新建或审核拒绝，不可提交！"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>申请单状态校验 —— 仅新建和审核拒绝状态可提交</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询申请单当前状态，若非NEW且非REJECTED则报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错"申请单状态为不为新建或审核拒绝，不可提交！"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT STATUS FROM LNK_PROD_CHANGE_FORM WHERE ID = :formId;
 ```
-<ul><li>校验2：在途单据校验 —— 变更产品不可在其他审批中的申请单内</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询当前申请单变更行涉及的产品编码，检查这些产品是否在其他状态为"审批中"的申请单中</p>
-<p>- 第2点：若存在在途单据，报错提示具体产品编码、申请单号和申请人</p>
-<ul><li>系统体现：阻断性报错"变更单涉及产品【xxx】所在申请单【xxx】申请人【xxx】正在审批中。请审完在途单据再提交新的申请..."</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>在途单据校验 —— 变更产品不可在其他审批中的申请单内</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询当前申请单变更行涉及的产品编码，检查这些产品是否在其他状态为"审批中"的申请单中</li><li>第2点：若存在在途单据，报错提示具体产品编码、申请单号和申请人</li></ul>
+<p><strong>系统体现：</strong>阻断性报错"变更单涉及产品【xxx】所在申请单【xxx】申请人【xxx】正在审批中。请审完在途单据再提交新的申请..."</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 -- 查询在途单据
@@ -414,36 +413,31 @@ SELECT STATUS FROM LNK_PROD_CHANGE_FORM WHERE ID = :formId;
         SELECT PROD_CODE FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :currentFormId
       );
 ```
-<ul><li>校验3：上下架产品状态校验 —— 产品生命状态允许上架</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：Z1、Z8状态产品不允许上架</p>
-<p>- 第2点：Z3、Z6、Z7、S6状态产品需确认上架（前端二次确认）</p>
-<p>- 第3点：Z5状态产品允许上架</p>
-<p>- 第4点：上架产品需校验关联老款产品是否有有效折扣政策</p>
-<ul><li>系统体现：阻断性报错/确认弹窗</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>上下架产品状态校验 —— 产品生命状态允许上架</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：Z1、Z8状态产品不允许上架</li><li>第2点：Z3、Z6、Z7、S6状态产品需确认上架（前端二次确认）</li><li>第3点：Z5状态产品允许上架</li><li>第4点：上架产品需校验关联老款产品是否有有效折扣政策</li></ul>
+<p><strong>系统体现：</strong>阻断性报错/确认弹窗</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 -- 查询产品生命状态
     SELECT PROD_CODE, SM_STATE FROM LNK_PROD WHERE PROD_CODE IN (:prodCodeList);
 ```
-<ul><li>校验4：上架必填项校验 —— 根据推广等级配置校验必填字段</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询产品推广等级配置表，获取上架产品需必填的字段列表</p>
-<p>- 第2点：检查产品基础信息、图册、附件等必填字段是否已填写</p>
-<p>- 第3点：若变更单中已包含该字段的变更，则视为已填写</p>
-<ul><li>系统体现：阻断性报错"产品&lt;xxx&gt;的xxx的值为空，不可上架"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验4：</strong>上架必填项校验 —— 根据推广等级配置校验必填字段</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询产品推广等级配置表，获取上架产品需必填的字段列表</li><li>第2点：检查产品基础信息、图册、附件等必填字段是否已填写</li><li>第3点：若变更单中已包含该字段的变更，则视为已填写</li></ul>
+<p><strong>系统体现：</strong>阻断性报错"产品&lt;xxx&gt;的xxx的值为空，不可上架"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 -- 查询产品推广等级配置
     SELECT * FROM LNK_PROD_PROMOTE_GRADE_CONTROL WHERE PROD_CODE IN (:prodCodeList);
 ```
 <ul><li>校验5：变更行非空校验</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：查询变更行数据，若为空则报错</p>
-<ul><li>系统体现：阻断性报错"变更单行为空，不允许提交"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：查询变更行数据，若为空则报错</li></ul>
+<p><strong>系统体现：</strong>阻断性报错"变更单行为空，不允许提交"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(1) FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :formId;

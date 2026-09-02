@@ -507,7 +507,10 @@ WHERE aa.APPLY_CODE = :applyCode
 </KbCard>
 
 <KbCard title="保存/提交校验">
-<ul><li>校验1：按计划结算时targetFormData、completeFormData、signerValid非空 —— 确保结算数据完整，签订人已选择</li><li>校验2：特殊取消时取消原因必填 —— 留存取消依据，便于追溯</li><li>校验3：审批时审批意见必填 —— 审批意见为审批留痕必要信息</li><li>校验4：审批通过时签订人必填 —— 签订人作为后续合同签订主体</li></ul>
+<p><strong>校验1：</strong>按计划结算时targetFormData、completeFormData、signerValid非空 —— 确保结算数据完整，签订人已选择</p>
+<p><strong>校验2：</strong>特殊取消时取消原因必填 —— 留存取消依据，便于追溯</p>
+<p><strong>校验3：</strong>审批时审批意见必填 —— 审批意见为审批留痕必要信息</p>
+<p><strong>校验4：</strong>审批通过时签订人必填 —— 签订人作为后续合同签订主体</p>
 </KbCard>
 
 <KbCard title="状态机">

@@ -414,13 +414,11 @@ SELECT APPLY_CODE, CRM_ORDER_CODE, CRM_ORDER_STATUS FROM TRAIN_APPLY WHERE APPLY
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：结束执行必填项校验 —— 确保结束执行记录完整</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：实际开始时间realStartDate必填</p>
-<p>- 第2点：实际结束时间realEndDate必填</p>
-<p>- 第3点：结束备注endExecuteRemark必填</p>
-<ul><li>系统体现：toast提醒对应字段不能为空</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>结束执行必填项校验 —— 确保结束执行记录完整</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：实际开始时间realStartDate必填</li><li>第2点：实际结束时间realEndDate必填</li><li>第3点：结束备注endExecuteRemark必填</li></ul>
+<p><strong>系统体现：</strong>toast提醒对应字段不能为空</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT APPLY_CODE
@@ -428,11 +426,11 @@ SELECT APPLY_CODE
     WHERE APPLY_CODE = :applyCode
       AND (REAL_START_DATE IS NULL OR REAL_END_DATE IS NULL OR END_REMARK IS NULL);
 ```
-<ul><li>校验2：特殊取消原因必填 —— 确保取消操作有明确原因记录</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：取消原因cancelReason必填</p>
-<ul><li>系统体现：toast提醒"取消原因不能为空"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>特殊取消原因必填 —— 确保取消操作有明确原因记录</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：取消原因cancelReason必填</li></ul>
+<p><strong>系统体现：</strong>toast提醒"取消原因不能为空"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT APPLY_CODE

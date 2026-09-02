@@ -387,47 +387,45 @@
 </table>
 <h4>按钮1：作废（列表页行操作）</h4>
 <ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为NEW或REJECTED</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 弹窗输入作废原因(applyCause)</p>
-<p>2. 调用operate接口，设置HZ_APPROveStatus=INTERRUPT</p>
-<p>3. 解绑已绑定的CRM软装采购订单(queryCrmSaleOrderV + unbindSoftOrder)</p>
-<p>4. 刷新列表</p>
+<ol><li>弹窗输入作废原因(applyCause)</li><li>调用operate接口，设置HZ_APPROveStatus=INTERRUPT</li><li>解绑已绑定的CRM软装采购订单(queryCrmSaleOrderV + unbindSoftOrder)</li><li>刷新列表</li></ol>
 <h4>按钮2：重新生成（列表页行操作）</h4>
 <ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为APPROVED</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 调用valid-regenerate接口校验</p>
-<p>2. 校验同一门店无其他非INTERRUPT状态的申请单</p>
-<p>3. 校验超期天数≤公司参数Over_Date_Limit且扣减比例&lt;1</p>
-<p>4. 清空terminalApplyId/terminalApplyNo/hzInstanceId，重置hzApproveStatus=NEW</p>
-<p>5. 返回重置后的数据用于新增</p>
+<ol><li>调用valid-regenerate接口校验</li><li>校验同一门店无其他非INTERRUPT状态的申请单</li><li>校验超期天数≤公司参数Over_Date_Limit且扣减比例&lt;1</li><li>清空terminalApplyId/terminalApplyNo/hzInstanceId，重置hzApproveStatus=NEW</li><li>返回重置后的数据用于新增</li></ol>
 <h4>按钮3：发起签呈（列表页行操作）</h4>
 <ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为APPROVED</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 调用do-search-modify查询可发起签呈的申请单列表(isModify=1)</p>
-<p>2. 选择目标申请单</p>
-<p>3. 调用do-update-second-change批量设置isSecondChange=2</p>
+<ol><li>调用do-search-modify查询可发起签呈的申请单列表(isModify=1)</li><li>选择目标申请单</li><li>调用do-update-second-change批量设置isSecondChange=2</li></ol>
 <h4>按钮4：删除（列表页行操作）</h4>
 <ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为NEW</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 弹窗确认</p>
-<p>2. 调用do-delete删除主表记录及关联照片明细</p>
+<ol><li>弹窗确认</li><li>调用do-delete删除主表记录及关联照片明细</li></ol>
 <h4>按钮5：打印（详情页）</h4>
 <ul><li><strong>触发条件</strong>：任意状态</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 调用do-select-print获取打印数据</p>
-<p>2. 数据含审批历史、补贴明细汇总(总额度内/外政策金额、申请金额、差异金额)</p>
-<p>3. 翻译值集含义(terminalType/fixupGrade/propertyType/locationType)</p>
+<ol><li>调用do-select-print获取打印数据</li><li>数据含审批历史、补贴明细汇总(总额度内/外政策金额、申请金额、差异金额)</li><li>翻译值集含义(terminalType/fixupGrade/propertyType/locationType)</li></ol>
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：门店编码/门店名称/经销商名称/简称必填 —— 确保关联门店信息完整</li><li><strong>详细逻辑</strong>：前端DataSet字段required=true，C7N内置校验</li><li><strong>系统体现</strong>：保存时后端校验terminalId和custId非空</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, TERMINAL_CODE, CUST_CODE FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_ID IS NULL OR CUST_ID IS NULL</code></li></ul>
-<ul><li>校验2：装修周期≤公司参数Decoration_Days —— 控制装修时效上限</li><li><strong>详细逻辑</strong>：doInsert/doUpdate时读取系统参数Decoration_Days，若decorationDays&gt;参数值抛异常</li><li><strong>系统体现</strong>：后端validSystemParam("Decoration_Days")校验</li><li><strong>排查SQL</strong>：<code>SELECT PARAM_VALUE FROM SYS_PARAM WHERE PARAM_CODE='Decoration_Days'</code></li></ul>
-<ul><li>校验3：本次装修面积≤门店面积 —— 防止面积超限</li><li><strong>详细逻辑</strong>：前端validateArea方法校验thistimeTerminalArea≤terminalArea</li><li><strong>系统体现</strong>：前端message.info提示并回填为门店面积</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, TERMINAL_AREA, THIS_TERMINAL_AREA FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE THIS_TERMINAL_AREA &gt; TERMINAL_AREA</code></li></ul>
-<ul><li>校验4：旧店上次装修时间(decorationType=2时必填) —— 旧店重装需记录上次装修时间</li><li><strong>详细逻辑</strong>：前端dynamicProps.required根据decorationType=2动态校验</li><li><strong>系统体现</strong>：前端DataSet字段dynamicProps配置</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE DECORATION_TYPE=2 AND LAST_DECORATION_DATE IS NULL</code></li></ul>
-<ul><li>校验5：单据不在变更中 —— 防止变更和提交冲突</li><li><strong>详细逻辑</strong>：onUserSubmit时校验isModify≠2</li><li><strong>系统体现</strong>：后端抛异常"单据正在申请变更中，不可提交！"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, IS_MODIFY FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE IS_MODIFY=2</code></li></ul>
+<p><strong>校验1：</strong>门店编码/门店名称/经销商名称/简称必填 —— 确保关联门店信息完整</p>
+<ul><li><strong>详细逻辑</strong>：前端DataSet字段required=true，C7N内置校验</li><li><strong>系统体现</strong>：保存时后端校验terminalId和custId非空</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, TERMINAL_CODE, CUST_CODE FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_ID IS NULL OR CUST_ID IS NULL</code></li></ul>
+<p><strong>校验2：</strong>装修周期≤公司参数Decoration_Days —— 控制装修时效上限</p>
+<ul><li><strong>详细逻辑</strong>：doInsert/doUpdate时读取系统参数Decoration_Days，若decorationDays&gt;参数值抛异常</li><li><strong>系统体现</strong>：后端validSystemParam("Decoration_Days")校验</li><li><strong>排查SQL</strong>：<code>SELECT PARAM_VALUE FROM SYS_PARAM WHERE PARAM_CODE='Decoration_Days'</code></li></ul>
+<p><strong>校验3：</strong>本次装修面积≤门店面积 —— 防止面积超限</p>
+<ul><li><strong>详细逻辑</strong>：前端validateArea方法校验thistimeTerminalArea≤terminalArea</li><li><strong>系统体现</strong>：前端message.info提示并回填为门店面积</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, TERMINAL_AREA, THIS_TERMINAL_AREA FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE THIS_TERMINAL_AREA &gt; TERMINAL_AREA</code></li></ul>
+<p><strong>校验4：</strong>旧店上次装修时间(decorationType=2时必填) —— 旧店重装需记录上次装修时间</p>
+<ul><li><strong>详细逻辑</strong>：前端dynamicProps.required根据decorationType=2动态校验</li><li><strong>系统体现</strong>：前端DataSet字段dynamicProps配置</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE DECORATION_TYPE=2 AND LAST_DECORATION_DATE IS NULL</code></li></ul>
+<p><strong>校验5：</strong>单据不在变更中 —— 防止变更和提交冲突</p>
+<ul><li><strong>详细逻辑</strong>：onUserSubmit时校验isModify≠2</li><li><strong>系统体现</strong>：后端抛异常"单据正在申请变更中，不可提交！"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, IS_MODIFY FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE IS_MODIFY=2</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：预算年度≤当前年份 —— 防止提前发起未来年度申请</li><li><strong>详细逻辑</strong>：onUserSubmit时校验budYear-LocalDate.now().getYear()≤0</li><li><strong>系统体现</strong>：后端抛异常"申请单的预算年度不可晚于当前年份，不可提前发起申请"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, BUD_YEAR FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE BUD_YEAR &gt; EXTRACT(YEAR FROM SYSDATE)</code></li></ul>
-<ul><li>校验2：预算额度充足 —— 确保额度外预算有剩余</li><li><strong>详细逻辑</strong>：onUserSubmit时若额度内申请金额&gt;0，查询viewOverBudgetAmt(feeTypeId=66014601)校验剩余额度≥0</li><li><strong>系统体现</strong>：后端抛异常"&#123;budYear&#125;的预算剩余可用额度不足"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_CHECK_BX_HEADER WHERE BUD_YEAR=&#123;year&#125; AND FEE_TYPE_ID='66014601'</code></li></ul>
-<ul><li>校验3：有政策标准 —— 确保装修等级有对应政策</li><li><strong>详细逻辑</strong>：onUserSubmit时校验fixupGrade非空非0，查询terminalDecorateStandardRepository.selectFixupGradeList非空</li><li><strong>系统体现</strong>：后端抛异常"无政策标准不能提交"/"店面装修等级没有对应的政策标准"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE FIXUP_GRADE=&#123;grade&#125; AND ORGANIZATION_ID=&#123;orgId&#125;</code></li></ul>
-<ul><li>校验4：有有效期内政策标准 —— 确保政策在当前时间有效</li><li><strong>详细逻辑</strong>：onUserSubmit时调用doSearchDecorate查询有效期内的装修标准，非空校验</li><li><strong>系统体现</strong>：后端抛异常"店面装修等级没有有效期内的政策标准"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE FIXUP_GRADE=&#123;grade&#125; AND START_DATE&lt;=SYSDATE AND END_DATE&gt;=SYSDATE</code></li></ul>
-<ul><li>校验5：单据不在变更中 —— 防止变更和提交冲突</li><li><strong>详细逻辑</strong>：onUserSubmit时校验isModify≠2</li><li><strong>系统体现</strong>：后端抛异常"单据正在申请变更中，不可提交！"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, IS_MODIFY FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE IS_MODIFY=2</code></li></ul>
+<p><strong>校验1：</strong>预算年度≤当前年份 —— 防止提前发起未来年度申请</p>
+<ul><li><strong>详细逻辑</strong>：onUserSubmit时校验budYear-LocalDate.now().getYear()≤0</li><li><strong>系统体现</strong>：后端抛异常"申请单的预算年度不可晚于当前年份，不可提前发起申请"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, BUD_YEAR FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE BUD_YEAR &gt; EXTRACT(YEAR FROM SYSDATE)</code></li></ul>
+<p><strong>校验2：</strong>预算额度充足 —— 确保额度外预算有剩余</p>
+<ul><li><strong>详细逻辑</strong>：onUserSubmit时若额度内申请金额&gt;0，查询viewOverBudgetAmt(feeTypeId=66014601)校验剩余额度≥0</li><li><strong>系统体现</strong>：后端抛异常"&#123;budYear&#125;的预算剩余可用额度不足"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_CHECK_BX_HEADER WHERE BUD_YEAR=&#123;year&#125; AND FEE_TYPE_ID='66014601'</code></li></ul>
+<p><strong>校验3：</strong>有政策标准 —— 确保装修等级有对应政策</p>
+<ul><li><strong>详细逻辑</strong>：onUserSubmit时校验fixupGrade非空非0，查询terminalDecorateStandardRepository.selectFixupGradeList非空</li><li><strong>系统体现</strong>：后端抛异常"无政策标准不能提交"/"店面装修等级没有对应的政策标准"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE FIXUP_GRADE=&#123;grade&#125; AND ORGANIZATION_ID=&#123;orgId&#125;</code></li></ul>
+<p><strong>校验4：</strong>有有效期内政策标准 —— 确保政策在当前时间有效</p>
+<ul><li><strong>详细逻辑</strong>：onUserSubmit时调用doSearchDecorate查询有效期内的装修标准，非空校验</li><li><strong>系统体现</strong>：后端抛异常"店面装修等级没有有效期内的政策标准"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM TERMINAL_DECORATE_LINE WHERE FIXUP_GRADE=&#123;grade&#125; AND START_DATE&lt;=SYSDATE AND END_DATE&gt;=SYSDATE</code></li></ul>
+<p><strong>校验5：</strong>单据不在变更中 —— 防止变更和提交冲突</p>
+<ul><li><strong>详细逻辑</strong>：onUserSubmit时校验isModify≠2</li><li><strong>系统体现</strong>：后端抛异常"单据正在申请变更中，不可提交！"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_APPLY_ID, IS_MODIFY FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE IS_MODIFY=2</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">

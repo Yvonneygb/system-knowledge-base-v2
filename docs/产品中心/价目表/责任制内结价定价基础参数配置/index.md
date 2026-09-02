@@ -303,65 +303,58 @@ FROM (
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：一级分类非空 —— 确保配置绑定到具体一级分类</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端表单topCategory字段required=true</p>
-<p>- 第2点：后端validateRequiredFields方法校验topCategory非空</p>
-<ul><li>系统体现：前端必填提示+后端阻断性报错"一级分类不能为空！"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>一级分类非空 —— 确保配置绑定到具体一级分类</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端表单topCategory字段required=true</li><li>第2点：后端validateRequiredFields方法校验topCategory非空</li></ul>
+<p><strong>系统体现：</strong>前端必填提示+后端阻断性报错"一级分类不能为空！"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PM_RSP_STM_CFG WHERE TOP_CATEGORY IS NULL;
 ```
-<ul><li>校验2：二级分类非空 —— 确保配置绑定到具体二级分类</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端表单secCategory字段required=true</p>
-<p>- 第2点：后端validateRequiredFields方法校验secCategory非空</p>
-<ul><li>系统体现：前端必填提示+后端阻断性报错"二级分类不能为空！"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>二级分类非空 —— 确保配置绑定到具体二级分类</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端表单secCategory字段required=true</li><li>第2点：后端validateRequiredFields方法校验secCategory非空</li></ul>
+<p><strong>系统体现：</strong>前端必填提示+后端阻断性报错"二级分类不能为空！"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PM_RSP_STM_CFG WHERE SEC_CATEGORY IS NULL;
 ```
-<ul><li>校验3：三级分类非空 —— 确保配置绑定到具体三级分类</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端表单thrCategory字段required=true</p>
-<p>- 第2点：后端validateRequiredFields方法校验thrCategory非空</p>
-<ul><li>系统体现：前端必填提示+后端阻断性报错"三级分类不能为空！"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>三级分类非空 —— 确保配置绑定到具体三级分类</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端表单thrCategory字段required=true</li><li>第2点：后端validateRequiredFields方法校验thrCategory非空</li></ul>
+<p><strong>系统体现：</strong>前端必填提示+后端阻断性报错"三级分类不能为空！"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PM_RSP_STM_CFG WHERE THR_CATEGORY IS NULL;
 ```
-<ul><li>校验4：定价类型非空 —— 确保指定定价类型</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端表单priceType字段required=true</p>
-<p>- 第2点：后端validateRequiredFields方法校验priceType非空</p>
-<ul><li>系统体现：前端必填提示+后端阻断性报错"定价类型不能为空！"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验4：</strong>定价类型非空 —— 确保指定定价类型</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端表单priceType字段required=true</li><li>第2点：后端validateRequiredFields方法校验priceType非空</li></ul>
+<p><strong>系统体现：</strong>前端必填提示+后端阻断性报错"定价类型不能为空！"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PM_RSP_STM_CFG WHERE PRICE_TYPE IS NULL;
 ```
-<ul><li>校验5：定价比例条件必填 —— 确保比例型定价类型有比例值</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端proportion字段dynamicProps根据priceType动态设置required</p>
-<p>- 第2点：后端validateProportion方法：当priceType为base_gross_margin或standard_price_ratio时，proportion不能为null</p>
-<ul><li>系统体现：前端条件必填提示+后端阻断性报错"当前定价类型下，定价比例不能为空！"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验5：</strong>定价比例条件必填 —— 确保比例型定价类型有比例值</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端proportion字段dynamicProps根据priceType动态设置required</li><li>第2点：后端validateProportion方法：当priceType为base_gross_margin或standard_price_ratio时，proportion不能为null</li></ul>
+<p><strong>系统体现：</strong>前端条件必填提示+后端阻断性报错"当前定价类型下，定价比例不能为空！"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM LNK_PM_RSP_STM_CFG
     WHERE PRICE_TYPE IN ('base_gross_margin', 'standard_price_ratio')
       AND PROPORTION IS NULL;
 ```
-<ul><li>校验6：分类唯一性校验 —— 避免重复配置</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端checkRepeatCategory方法，仅当status=valid时触发</p>
-<p>- 第2点：查询相同topCategory+secCategory+thrCategory+fourCategory且status=valid的记录（排除自身ID）</p>
-<p>- 第3点：如果存在，抛出"一二三级分类/一二三四级分类生效数据已存在，请核对数据！"</p>
-<ul><li>系统体现：后端阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验6：</strong>分类唯一性校验 —— 避免重复配置</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端checkRepeatCategory方法，仅当status=valid时触发</li><li>第2点：查询相同topCategory+secCategory+thrCategory+fourCategory且status=valid的记录（排除自身ID）</li><li>第3点：如果存在，抛出"一二三级分类/一二三四级分类生效数据已存在，请核对数据！"</li></ul>
+<p><strong>系统体现：</strong>后端阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT TOP_CATEGORY, SEC_CATEGORY, THR_CATEGORY, FOUR_CATEGORY, COUNT(*) AS cnt

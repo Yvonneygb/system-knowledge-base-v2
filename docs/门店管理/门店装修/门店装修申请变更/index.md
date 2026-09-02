@@ -366,29 +366,27 @@
 </table>
 <h4>按钮1：作废（列表页行操作）</h4>
 <ul><li><strong>触发条件</strong>：任意非APPROVED状态</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 弹窗输入作废原因(applyCause)</p>
-<p>2. 变更单设置hzApproveStatus=INTERRUPT</p>
-<p>3. 原申请单设置isModify=3(变更作废)，记录applyCause</p>
+<ol><li>弹窗输入作废原因(applyCause)</li><li>变更单设置hzApproveStatus=INTERRUPT</li><li>原申请单设置isModify=3(变更作废)，记录applyCause</li></ol>
 <h4>按钮2：删除（列表页行操作）</h4>
 <ul><li><strong>触发条件</strong>：HZ_APPROVE_STATUS为NEW</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 弹窗确认</p>
-<p>2. 删除变更单及关联照片明细</p>
-<p>3. 恢复原申请单isModify=0(未发起变更)</p>
+<ol><li>弹窗确认</li><li>删除变更单及关联照片明细</li><li>恢复原申请单isModify=0(未发起变更)</li></ol>
 <h4>按钮3：打印（详情页）</h4>
 <ul><li><strong>触发条件</strong>：任意状态</li><li><strong>执行逻辑</strong>：</li></ul>
-<p>1. 调用do-select-print获取打印数据</p>
-<p>2. 数据含审批历史、补贴明细汇总、原申请旧值</p>
-<p>3. 翻译值集含义(terminalType/fixupGrade/propertyType/locationType)</p>
+<ol><li>调用do-select-print获取打印数据</li><li>数据含审批历史、补贴明细汇总、原申请旧值</li><li>翻译值集含义(terminalType/fixupGrade/propertyType/locationType)</li></ol>
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：装修申请单号必填 —— 确保关联有效的装修申请</li><li><strong>详细逻辑</strong>：前端DataSet字段terminalApplyNoLov required=true</li><li><strong>系统体现</strong>：C7N内置必填校验</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CHANGE_ID FROM FIN_FEE_APPLY_CHANGE_HEADER WHERE TERMINAL_APPLY_ID IS NULL</code></li></ul>
-<ul><li>校验2：原申请单存在 —— 确保关联的装修申请单有效</li><li><strong>详细逻辑</strong>：doInsert时查询FinFeeApplyFinishedHeader，null则抛异常</li><li><strong>系统体现</strong>：后端抛异常"未获取到门店申请信息"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_APPLY_ID=&#123;id&#125;</code></li></ul>
-<ul><li>校验3：装修周期≤公司参数 —— 控制装修时效上限</li><li><strong>详细逻辑</strong>：doUpdate时validDecorationDays校验</li><li><strong>系统体现</strong>：后端validSystemParam校验</li><li><strong>排查SQL</strong>：<code>SELECT PARAM_VALUE FROM SYS_PARAM WHERE PARAM_CODE='Decoration_Days'</code></li></ul>
+<p><strong>校验1：</strong>装修申请单号必填 —— 确保关联有效的装修申请</p>
+<ul><li><strong>详细逻辑</strong>：前端DataSet字段terminalApplyNoLov required=true</li><li><strong>系统体现</strong>：C7N内置必填校验</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CHANGE_ID FROM FIN_FEE_APPLY_CHANGE_HEADER WHERE TERMINAL_APPLY_ID IS NULL</code></li></ul>
+<p><strong>校验2：</strong>原申请单存在 —— 确保关联的装修申请单有效</p>
+<ul><li><strong>详细逻辑</strong>：doInsert时查询FinFeeApplyFinishedHeader，null则抛异常</li><li><strong>系统体现</strong>：后端抛异常"未获取到门店申请信息"</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_APPLY_ID=&#123;id&#125;</code></li></ul>
+<p><strong>校验3：</strong>装修周期≤公司参数 —— 控制装修时效上限</p>
+<ul><li><strong>详细逻辑</strong>：doUpdate时validDecorationDays校验</li><li><strong>系统体现</strong>：后端validSystemParam校验</li><li><strong>排查SQL</strong>：<code>SELECT PARAM_VALUE FROM SYS_PARAM WHERE PARAM_CODE='Decoration_Days'</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：预算年度≤当前年份 —— 防止提前发起未来年度变更</li><li><strong>详细逻辑</strong>：wfProcSubmit时校验budYear-LocalDate.now().getYear()≤0</li><li><strong>系统体现</strong>：后端抛异常"门店装修申请与进度更新单据预算年度大于当前年度，无法发起验收"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CHANGE_ID, BUD_YEAR FROM FIN_FEE_APPLY_CHANGE_HEADER WHERE BUD_YEAR &gt; EXTRACT(YEAR FROM SYSDATE)</code></li></ul>
+<p><strong>校验1：</strong>预算年度≤当前年份 —— 防止提前发起未来年度变更</p>
+<ul><li><strong>详细逻辑</strong>：wfProcSubmit时校验budYear-LocalDate.now().getYear()≤0</li><li><strong>系统体现</strong>：后端抛异常"门店装修申请与进度更新单据预算年度大于当前年度，无法发起验收"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CHANGE_ID, BUD_YEAR FROM FIN_FEE_APPLY_CHANGE_HEADER WHERE BUD_YEAR &gt; EXTRACT(YEAR FROM SYSDATE)</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">

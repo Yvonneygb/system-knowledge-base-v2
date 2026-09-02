@@ -550,7 +550,8 @@ SELECT tca.APPLY_CODE AS 申请编码, tca.CAMP_NAME AS 特训营名称,
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：特殊取消原因必填 —— 确保取消留痕可追溯</li><li><strong>详细逻辑</strong>：<code>cancelApplyFormDS.validate()</code> 校验取消原因必填。</li><li><strong>系统体现</strong>：前端表单校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>特殊取消原因必填 —— 确保取消留痕可追溯</p>
+<ul><li><strong>详细逻辑</strong>：<code>cancelApplyFormDS.validate()</code> 校验取消原因必填。</li><li><strong>系统体现</strong>：前端表单校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT tca.APPLY_CODE AS 申请编码, tca.CANCEL_REASON AS 取消原因
@@ -561,7 +562,8 @@ SELECT tca.APPLY_CODE AS 申请编码, tca.CANCEL_REASON AS 取消原因
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：审批意见必填 —— 确保审批留痕完整</li><li><strong>详细逻辑</strong>：<code>applyApprovalFormDS.validate()</code> 校验审批意见必填，通过时签订人必填。</li><li><strong>系统体现</strong>：前端表单校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>审批意见必填 —— 确保审批留痕完整</p>
+<ul><li><strong>详细逻辑</strong>：<code>applyApprovalFormDS.validate()</code> 校验审批意见必填，通过时签订人必填。</li><li><strong>系统体现</strong>：前端表单校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT tca.APPLY_CODE AS 申请编码, tca.APPROVAL_COMMENTS AS 审批意见,
@@ -570,7 +572,8 @@ SELECT tca.APPLY_CODE AS 申请编码, tca.APPROVAL_COMMENTS AS 审批意见,
     WHERE tca.APPROVAL_STATE = 'approved'
       AND (tca.APPROVAL_COMMENTS IS NULL OR tca.SIGNER_NAME IS NULL);
 ```
-<ul><li>校验2：特殊取消时机校验 —— 防止临近开课取消造成资源浪费</li><li><strong>详细逻辑</strong>：校验 <code>1 &lt;= timeDiff &lt;= 7</code> 且 <code>approvalState === 'fdd_sign'</code> 且未重复发起取消。</li><li><strong>系统体现</strong>：前端时间差值计算与状态校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验2：</strong>特殊取消时机校验 —— 防止临近开课取消造成资源浪费</p>
+<ul><li><strong>详细逻辑</strong>：校验 <code>1 &lt;= timeDiff &lt;= 7</code> 且 <code>approvalState === 'fdd_sign'</code> 且未重复发起取消。</li><li><strong>系统体现</strong>：前端时间差值计算与状态校验，后端二次校验。</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT tca.APPLY_CODE AS 申请编码, tca.CAMP_NAME AS 特训营名称,

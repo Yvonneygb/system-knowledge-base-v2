@@ -365,17 +365,15 @@ WHERE p.DEPT_ID IS NOT NULL          -- deptIdEmpty = 'N'
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：申请说明必填 —— 确保申请有明确的事由说明</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端提交保存前校验申请说明非空（trim后）</p>
-<p>- 第2点：后端实体注解@NotBlank校验</p>
-<ul><li>系统体现：前端notification.error提示"请填写申请说明"</li></ul>
-<ul><li>校验2：申请说明长度不超过500字 —— 防止超长文本</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：前端校验remark.length &gt; 500时提示</p>
-<p>- 第2点：后端实体注解@Size(max=500)校验</p>
-<ul><li>系统体现：前端notification.warning提示"申请说明已超过500字"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>申请说明必填 —— 确保申请有明确的事由说明</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端提交保存前校验申请说明非空（trim后）</li><li>第2点：后端实体注解@NotBlank校验</li></ul>
+<p><strong>系统体现：</strong>前端notification.error提示"请填写申请说明"</p>
+<p><strong>校验2：</strong>申请说明长度不超过500字 —— 防止超长文本</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：前端校验remark.length &gt; 500时提示</li><li>第2点：后端实体注解@Size(max=500)校验</li></ul>
+<p><strong>系统体现：</strong>前端notification.warning提示"申请说明已超过500字"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT FORM_CODE, REMARK, LENGTH(REMARK) AS remark_len
@@ -385,38 +383,33 @@ SELECT FORM_CODE, REMARK, LENGTH(REMARK) AS remark_len
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：申请单状态必须为新建或审核拒绝 —— 仅特定状态可提交</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端查询申请单当前状态</p>
-<p>- 第2点：状态不为NEW且不为REJECTED时抛出异常</p>
-<ul><li>系统体现：后端抛出CommonException"申请单状态不为新建或审核拒绝，不可提交！"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>申请单状态必须为新建或审核拒绝 —— 仅特定状态可提交</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端查询申请单当前状态</li><li>第2点：状态不为NEW且不为REJECTED时抛出异常</li></ul>
+<p><strong>系统体现：</strong>后端抛出CommonException"申请单状态不为新建或审核拒绝，不可提交！"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT FORM_CODE, STATUS
     FROM LNK_CROSS_BU_APP_FORM
     WHERE ID = #{id};
 ```
-<ul><li>校验2：明细行不为空 —— 确保申请有具体内容</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：后端查询申请单所有明细行</p>
-<p>- 第2点：明细行列表为空时抛出异常</p>
-<ul><li>系统体现：后端抛出CommonException"申请单明细为空，不允许提交！"</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>明细行不为空 —— 确保申请有具体内容</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：后端查询申请单所有明细行</li><li>第2点：明细行列表为空时抛出异常</li></ul>
+<p><strong>系统体现：</strong>后端抛出CommonException"申请单明细为空，不允许提交！"</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT COUNT(1) AS item_count
     FROM LNK_CROSS_BU_APP_FORM_ITEM
     WHERE HEAD_ID = #{id};
 ```
-<ul><li>校验3：类型=新增时有效时间必填且合法 —— 确保新增产品的有效期完整有效</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：遍历所有明细行，类型=add时校验有效开始时间非空</p>
-<p>- 第2点：类型=add时校验有效结束时间非空</p>
-<p>- 第3点：有效开始时间须大于等于今天</p>
-<p>- 第4点：有效结束时间须大于等于有效开始时间</p>
-<ul><li>系统体现：后端抛出CommonException，提示具体产品编码及缺失字段</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>类型=新增时有效时间必填且合法 —— 确保新增产品的有效期完整有效</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：遍历所有明细行，类型=add时校验有效开始时间非空</li><li>第2点：类型=add时校验有效结束时间非空</li><li>第3点：有效开始时间须大于等于今天</li><li>第4点：有效结束时间须大于等于有效开始时间</li></ul>
+<p><strong>系统体现：</strong>后端抛出CommonException，提示具体产品编码及缺失字段</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT PROD_CODE, ITEM_TYPE, EFF_START_DATE, EFF_END_DATE

@@ -381,23 +381,13 @@
 </table>
 <h4>按钮1：保存（详情页）</h4>
 <ul><li><strong>触发条件</strong>：新建或编辑状态</li><li><strong>处理逻辑</strong>：</li></ul>
-<p>1. 校验本次核销数量&gt;0且≤剩余可核销数量，小数位≤3</p>
-<p>2. 校验发货日期和产品编码匹配</p>
-<p>3. 新增时生成核销单号(编码规则AE.INVOICE_AUTHENTICITY_VERIFI/AE.JZ_INVOICE_AUTHENTICITY_VER)</p>
-<p>4. 保存核销行(EPM_INVOICE_TRUTH_LINE)和核销发票明细(EPM_VERIFER_INVOICE_DETAILS)</p>
+<ol><li>校验本次核销数量&gt;0且≤剩余可核销数量，小数位≤3</li><li>校验发货日期和产品编码匹配</li><li>新增时生成核销单号(编码规则AE.INVOICE_AUTHENTICITY_VERIFI/AE.JZ_INVOICE_AUTHENTICITY_VER)</li><li>保存核销行(EPM_INVOICE_TRUTH_LINE)和核销发票明细(EPM_VERIFER_INVOICE_DETAILS)</li></ol>
 <h4>按钮2：提交审批（详情页）</h4>
 <ul><li><strong>触发条件</strong>：核销单已保存且存在本次核销数量&gt;0的行</li><li><strong>处理逻辑</strong>：</li></ul>
-<p>1. 校验核销单下存在核销行数据且存在本次核销数量&gt;0的记录</p>
-<p>2. 按isHome选择工作流编码(工程PROJECT_XMZSXHX_AW/家装PROJECT_JZXMZSXHX_AW)</p>
-<p>3. 启动工作流实例，更新hzInstanceId和hzApproveStatus=RUN</p>
+<ol><li>校验核销单下存在核销行数据且存在本次核销数量&gt;0的记录</li><li>按isHome选择工作流编码(工程PROJECT_XMZSXHX_AW/家装PROJECT_JZXMZSXHX_AW)</li><li>启动工作流实例，更新hzInstanceId和hzApproveStatus=RUN</li></ol>
 <h4>按钮3：取消核销（详情页）</h4>
 <ul><li><strong>触发条件</strong>：存在有效核销明细</li><li><strong>处理逻辑</strong>：</li></ul>
-<p>1. 校验actionType非空且在5种合法值范围内(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)</p>
-<p>2. 校验idList非空</p>
-<p>3. 查询受影响的核销明细，更新有效状态为canceled，记录取消操作人和时间</p>
-<p>4. 若受影响核销单处于审批中，中断审批重置为新建</p>
-<p>5. 更新出库单行：可核销数量回加，已核销数量减少</p>
-<p>6. 作废发票时更新发票主要信息状态为obsolete</p>
+<ol><li>校验actionType非空且在5种合法值范围内(invoice/invoiceDetail/invLine/veriferDetail/obsInvoice)</li><li>校验idList非空</li><li>查询受影响的核销明细，更新有效状态为canceled，记录取消操作人和时间</li><li>若受影响核销单处于审批中，中断审批重置为新建</li><li>更新出库单行：可核销数量回加，已核销数量减少</li><li>作废发票时更新发票主要信息状态为obsolete</li></ol>
 </KbCard>
 
 <KbCard title="保存校验">

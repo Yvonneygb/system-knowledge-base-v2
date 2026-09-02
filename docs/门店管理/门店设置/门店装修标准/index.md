@@ -312,48 +312,48 @@ SELECT * FROM TERMINAL_DECORATE_LINE WHERE DECORATE_STANDARD_ID = #{id};
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：事业部不能为空 —— 确保装修标准归属明确事业部</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校验头信息中事业部ID不为空</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>事业部不能为空 —— 确保装修标准归属明确事业部</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校验头信息中事业部ID不为空</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM TERMINAL_DECORATE_STANDARD WHERE ENTID IS NULL;
 ```
-<ul><li>校验2：行信息不能为空 —— 确保至少配置一行明细</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：保存时校明明细行列表不为空且至少一行</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验2：</strong>行信息不能为空 —— 确保至少配置一行明细</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：保存时校明明细行列表不为空且至少一行</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT TDS.DECORATE_STANDARD_ID FROM TERMINAL_DECORATE_STANDARD TDS
     WHERE NOT EXISTS (SELECT 1 FROM TERMINAL_DECORATE_LINE TDL WHERE TDL.DECORATE_STANDARD_ID = TDS.DECORATE_STANDARD_ID);
 ```
-<ul><li>校验3：面积范围合法性 —— 确保面积区间下限小于上限</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：校验每行面积范围小于等于(LOWER_AREA)需大于面积范围大于(UPER_AREA)</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验3：</strong>面积范围合法性 —— 确保面积区间下限小于上限</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：校验每行面积范围小于等于(LOWER_AREA)需大于面积范围大于(UPER_AREA)</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM TERMINAL_DECORATE_LINE WHERE LOWER_AREA <= UPER_AREA;
 ```
-<ul><li>校验4：有效日期合法性 —— 确保结束日期不早于开始日期</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：校验每行有效结束日期(END_DATE)需大于等于有效开始日期(START_DATE)</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验4：</strong>有效日期合法性 —— 确保结束日期不早于开始日期</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：校验每行有效结束日期(END_DATE)需大于等于有效开始日期(START_DATE)</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM TERMINAL_DECORATE_LINE WHERE END_DATE < START_DATE;
 ```
-<ul><li>校验5：金额标准必须大于0 —— 确保补贴单价有效</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：校验每行额度内标准(IN_STANDARD)和额度外标准(OUT_STANDARD)均大于0</p>
-<ul><li>系统体现：toast提醒</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验5：</strong>金额标准必须大于0 —— 确保补贴单价有效</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：校验每行额度内标准(IN_STANDARD)和额度外标准(OUT_STANDARD)均大于0</li></ul>
+<p><strong>系统体现：</strong>toast提醒</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM TERMINAL_DECORATE_LINE WHERE IN_STANDARD <= 0 OR OUT_STANDARD <= 0;
@@ -361,12 +361,11 @@ SELECT * FROM TERMINAL_DECORATE_LINE WHERE IN_STANDARD <= 0 OR OUT_STANDARD <= 0
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：保存校验全部通过 —— 确保提交前数据完整有效</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：提交前先执行保存校验全部规则</p>
-<p>- 第2点：校验头信息和所有行信息完整无空值</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>保存校验全部通过 —— 确保提交前数据完整有效</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：提交前先执行保存校验全部规则</li><li>第2点：校验头信息和所有行信息完整无空值</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT * FROM TERMINAL_DECORATE_LINE 

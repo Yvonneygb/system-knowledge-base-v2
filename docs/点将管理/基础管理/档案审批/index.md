@@ -204,11 +204,7 @@
 
 <KbCard num="4" title="重点逻辑4：初始化讲师类型加载">
 <ul><li><strong>业务意义</strong>：仅展示有审批数据的讲师类型，避免空查询</li><li><strong>具体逻辑描述</strong>：</li></ul>
-<p>1. 调用 <code>lecturerProfileApi.getLecturerTypeList</code> 获取类型列表 <code>typeList</code></p>
-<p>2. 查询值集 <code>MBO.LECTURER_TYPE</code> 获取全部类型 <code>lovData</code></p>
-<p>3. 过滤 <code>lovData</code> 中 <code>value</code> 在 <code>typeList</code> 中的项</p>
-<p>4. 加载到查询栏讲师类型下拉，自动设置默认值 <code>newTypeList[0]?.value</code></p>
-<p>5. 触发列表查询</p>
+<ol><li>调用 <code>lecturerProfileApi.getLecturerTypeList</code> 获取类型列表 <code>typeList</code></li><li>查询值集 <code>MBO.LECTURER_TYPE</code> 获取全部类型 <code>lovData</code></li><li>过滤 <code>lovData</code> 中 <code>value</code> 在 <code>typeList</code> 中的项</li><li>加载到查询栏讲师类型下拉，自动设置默认值 <code>newTypeList[0]?.value</code></li><li>触发列表查询</li></ol>
 </KbCard>
 
 <KbCard num="5" title="重点逻辑5：审批状态值集过滤">
@@ -261,32 +257,23 @@
 
 <KbCard title="审批操作逻辑">
 <h4>档案审批（archivesAudit）</h4>
-<p>1. 查看待审批讲师档案的详细信息（个人档案 + 讲师档案）</p>
-<p>2. 审批人审核档案信息的完整性和合理性</p>
-<p>3. 执行审批：</p>
-<p>- 通过 → 调用 <code>POST mlt/maLecturerApproval/archivesAudit</code>，传入审批结果=通过</p>
-<p>- 拒绝 → 调用 <code>POST mlt/maLecturerApproval/archivesAudit</code>，传入审批结果=拒绝 + 审批意见</p>
-<p>4. 审批结果回写：</p>
-<p>- 通过 → 讲师档案状态更新为"生效"</p>
-<p>- 拒绝 → 讲师档案状态更新为"审批拒绝"</p>
+<ol><li>查看待审批讲师档案的详细信息（个人档案 + 讲师档案）</li><li>审批人审核档案信息的完整性和合理性</li></ol>
+<p><strong>3. 执行审批：</strong></p>
+<ul><li>通过 → 调用 <code>POST mlt/maLecturerApproval/archivesAudit</code>，传入审批结果=通过</li><li>拒绝 → 调用 <code>POST mlt/maLecturerApproval/archivesAudit</code>，传入审批结果=拒绝 + 审批意见</li></ul>
+<p><strong>4. 审批结果回写：</strong></p>
+<ul><li>通过 → 讲师档案状态更新为"生效"</li><li>拒绝 → 讲师档案状态更新为"审批拒绝"</li></ul>
 <h4>价格审批（priceAudit）</h4>
-<p>1. 查看待审批讲师的价格信息（通过 <code>GET mlt/maLecturerApproval/queryCrmLecturerPriceList</code> 获取价格列表）</p>
-<p>2. 审批人审核价格的合理性</p>
-<p>3. 执行审批：</p>
-<p>- 通过 → 调用 <code>POST mlt/maLecturerApproval/priceAudit</code>，传入审批结果=通过</p>
-<p>- 拒绝 → 调用 <code>POST mlt/maLecturerApproval/priceAudit</code>，传入审批结果=拒绝 + 审批意见</p>
-<p>4. 审批结果回写：</p>
-<p>- 通过 → 讲师价格生效</p>
-<p>- 拒绝 → 价格维持原值</p>
+<ol><li>查看待审批讲师的价格信息（通过 <code>GET mlt/maLecturerApproval/queryCrmLecturerPriceList</code> 获取价格列表）</li><li>审批人审核价格的合理性</li></ol>
+<p><strong>3. 执行审批：</strong></p>
+<ul><li>通过 → 调用 <code>POST mlt/maLecturerApproval/priceAudit</code>，传入审批结果=通过</li><li>拒绝 → 调用 <code>POST mlt/maLecturerApproval/priceAudit</code>，传入审批结果=拒绝 + 审批意见</li></ul>
+<p><strong>4. 审批结果回写：</strong></p>
+<ul><li>通过 → 讲师价格生效</li><li>拒绝 → 价格维持原值</li></ul>
 <h4>价格变更审批（priceChangeApproval）</h4>
-<p>1. 查看待审批讲师的价格变更信息（原价格、新价格、变更原因）</p>
-<p>2. 审批人审核价格变更的合理性</p>
-<p>3. 执行审批：</p>
-<p>- 通过 → 调用 <code>POST mlt/maLecturerApproval/priceChangeApproval</code>，传入审批结果=通过</p>
-<p>- 拒绝 → 调用 <code>POST mlt/maLecturerApproval/priceChangeApproval</code>，传入审批结果=拒绝 + 审批意见</p>
-<p>4. 审批结果回写：</p>
-<p>- 通过 → 讲师价格更新为新价格</p>
-<p>- 拒绝 → 价格维持原值不变</p>
+<ol><li>查看待审批讲师的价格变更信息（原价格、新价格、变更原因）</li><li>审批人审核价格变更的合理性</li></ol>
+<p><strong>3. 执行审批：</strong></p>
+<ul><li>通过 → 调用 <code>POST mlt/maLecturerApproval/priceChangeApproval</code>，传入审批结果=通过</li><li>拒绝 → 调用 <code>POST mlt/maLecturerApproval/priceChangeApproval</code>，传入审批结果=拒绝 + 审批意见</li></ul>
+<p><strong>4. 审批结果回写：</strong></p>
+<ul><li>通过 → 讲师价格更新为新价格</li><li>拒绝 → 价格维持原值不变</li></ul>
 </KbCard>
 
 <KbCard title="界面模块">
@@ -344,14 +331,16 @@
 </KbCard>
 
 <KbCard title="保存/提交校验">
-<ul><li>校验1：审批意见 approvalComments 必填 —— 保证审批拒绝时有可追溯的拒绝理由</li><li><strong>详细逻辑</strong>：审批结果为"拒绝"时，approvalComments 必填；通过时可选</li><li><strong>系统体现</strong>：前端表单校验，未填写时阻止提交</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>审批意见 approvalComments 必填 —— 保证审批拒绝时有可追溯的拒绝理由</p>
+<ul><li><strong>详细逻辑</strong>：审批结果为"拒绝"时，approvalComments 必填；通过时可选</li><li><strong>系统体现</strong>：前端表单校验，未填写时阻止提交</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_APPROVAL_ID, LECTURER_APPROVAL_CODE, APPROVAL_RESULT, APPROVAL_REMARK
     FROM MA_LECTURER_APPROVAL
     WHERE APPROVAL_RESULT = 'reject' AND (APPROVAL_REMARK IS NULL OR APPROVAL_REMARK = '');
 ```
-<ul><li>校验2：档案审批通过时讲师级别 lecturerLevel 必填 —— 保证生效档案具备完整等级信息</li><li><strong>详细逻辑</strong>：approvalType=archives 且结果=通过时，校验关联档案的 lecturerLevel 非空</li><li><strong>系统体现</strong>：后端 archivesAudit 接口校验，不通过返回业务异常</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验2：</strong>档案审批通过时讲师级别 lecturerLevel 必填 —— 保证生效档案具备完整等级信息</p>
+<ul><li><strong>详细逻辑</strong>：approvalType=archives 且结果=通过时，校验关联档案的 lecturerLevel 非空</li><li><strong>系统体现</strong>：后端 archivesAudit 接口校验，不通过返回业务异常</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT la.LECTURER_APPROVAL_CODE, la.LECTURER_ARCHIVES_CODE
@@ -360,7 +349,8 @@ SELECT la.LECTURER_APPROVAL_CODE, la.LECTURER_ARCHIVES_CODE
     WHERE la.APPROVAL_TYPE = 'archives' AND la.APPROVAL_RESULT = 'pass'
       AND (ar.LECTURER_LEVEL IS NULL OR ar.LECTURER_LEVEL = '');
 ```
-<ul><li>校验3：档案审批通过时牌价 priceInfo 必填 —— 保证生效档案可参与点将计价</li><li><strong>详细逻辑</strong>：approvalType=archives 且结果=通过时，校验关联档案的 priceInfo 非空</li><li><strong>系统体现</strong>：后端 archivesAudit 接口校验</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验3：</strong>档案审批通过时牌价 priceInfo 必填 —— 保证生效档案可参与点将计价</p>
+<ul><li><strong>详细逻辑</strong>：approvalType=archives 且结果=通过时，校验关联档案的 priceInfo 非空</li><li><strong>系统体现</strong>：后端 archivesAudit 接口校验</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT la.LECTURER_APPROVAL_CODE, la.LECTURER_ARCHIVES_CODE

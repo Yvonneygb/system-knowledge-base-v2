@@ -205,20 +205,12 @@
 
 <KbCard num="3" title="重点逻辑3：审批通过同步门店档案">
 <ul><li><strong>业务意义</strong>：审批通过后将申请数据同步到门店档案表（MKT_TERMINAL），正式建立门店档案</li><li><strong>具体逻辑描述</strong>：</li><li>syncMktTerminal方法：</li></ul>
-<p>1. 查询申请单，不存在抛CommonException("单据信息不匹配")</p>
-<p>2. 根据城市ID查询SCPAREA区域表，生成门店编码</p>
-<p>3. 更新申请单：hzApproveStatus=APPROVED、checkTime=now、checkor=当前用户</p>
-<p>4. 通过MktTerminalConvert转换为MktTerminal实体，设置usable=2、objectVersionNumber=1</p>
-<p>5. insertSelective插入门店档案表</p>
+<ol><li>查询申请单，不存在抛CommonException("单据信息不匹配")</li><li>根据城市ID查询SCPAREA区域表，生成门店编码</li><li>更新申请单：hzApproveStatus=APPROVED、checkTime=now、checkor=当前用户</li><li>通过MktTerminalConvert转换为MktTerminal实体，设置usable=2、objectVersionNumber=1</li><li>insertSelective插入门店档案表</li></ol>
 </KbCard>
 
 <KbCard num="4" title="重点逻辑4：附件迁移">
 <ul><li><strong>业务意义</strong>：审批通过后将申请阶段的附件迁移到新门店档案下</li><li><strong>具体逻辑描述</strong>：</li><li>onWfComplete方法中：</li></ul>
-<p>1. 查询附件关系ObjAttachRel（attachConfId=8122）</p>
-<p>2. 查询附件类型ObjAttachType（attachConfId=8123）</p>
-<p>3. 将附件attachConfId改为8123、objId改为新门店terminalId</p>
-<p>4. attachTypeId按组织匹配</p>
-<p>5. batchInsert批量插入附件关系到新门店</p>
+<ol><li>查询附件关系ObjAttachRel（attachConfId=8122）</li><li>查询附件类型ObjAttachType（attachConfId=8123）</li><li>将附件attachConfId改为8123、objId改为新门店terminalId</li><li>attachTypeId按组织匹配</li><li>batchInsert批量插入附件关系到新门店</li></ol>
 </KbCard>
 
 <KbCard num="5" title="重点逻辑5：门店名称标识计算">
@@ -337,9 +329,7 @@
 <ul><li><strong>业务意义</strong>：提交门店申请进入OA审批流程</li><li><strong>具体逻辑描述</strong>：</li><li>调用wfProcSubmit方法</li><li>组装流程参数：applyId、terminalApplyId、startRealName、custId、terminalType、terminalNameFlag、terminalStat、tradeYears</li><li>OA链接标题："新建门店申请_门店名称_申请单号_更新时间"</li><li>调用workflowClient.startInstanceByFlowKey发起流程（FlowKey=NEW_STORE_APPLY）</li><li>回写hzInstanceId和hzApproveStatus=RUN</li></ul>
 <h4>按钮3：同步门店档案（后端回调）</h4>
 <ul><li><strong>业务意义</strong>：审批通过后自动同步门店档案</li><li><strong>具体逻辑描述</strong>：</li><li>OA审批通过后回调onWfComplete</li><li>调用syncMktTerminal：</li></ul>
-<p>1. 生成门店编码（barCode + divisionCode + 5位Redis流水号）</p>
-<p>2. 更新申请单hzApproveStatus=APPROVED</p>
-<p>3. 转换为MktTerminal实体，insertSelective插入门店档案表</p>
+<ol><li>生成门店编码（barCode + divisionCode + 5位Redis流水号）</li><li>更新申请单hzApproveStatus=APPROVED</li><li>转换为MktTerminal实体，insertSelective插入门店档案表</li></ol>
 <ul><li>迁移附件到新门店</li></ul>
 </KbCard>
 

@@ -190,22 +190,12 @@
 
 <KbCard num="4" title="重点逻辑4：新建排期">
 <ul><li><strong>业务意义</strong>：登记讲师时间占用，标记不可用时段</li><li><strong>具体逻辑描述</strong>：</li></ul>
-<p>1. 点击"新建排期"按钮，打开 Modal 弹窗</p>
-<p>2. 填写日期类型（dateType，Select 必填，值集 MBO.DATE_TYPE）</p>
-<p>3. 填写日期（date，DatePicker 范围必填，转换为 startDate 和 endDate）</p>
-<p>4. 填写原因（reason，TextField 选填）</p>
-<p>5. 提交时将日期数组转换为 startDate 和 endDate（格式 YYYY-MM-DD）</p>
-<p>6. 调用 <code>POST mlt/maLecturerSchedule/save</code> 接口</p>
-<p>7. 成功后通过 <code>setToggleTag(!toggleTag)</code> 刷新日历组件</p>
+<ol><li>点击"新建排期"按钮，打开 Modal 弹窗</li><li>填写日期类型（dateType，Select 必填，值集 MBO.DATE_TYPE）</li><li>填写日期（date，DatePicker 范围必填，转换为 startDate 和 endDate）</li><li>填写原因（reason，TextField 选填）</li><li>提交时将日期数组转换为 startDate 和 endDate（格式 YYYY-MM-DD）</li><li>调用 <code>POST mlt/maLecturerSchedule/save</code> 接口</li><li>成功后通过 <code>setToggleTag(!toggleTag)</code> 刷新日历组件</li></ol>
 </KbCard>
 
 <KbCard num="5" title="重点逻辑5：取消排期">
 <ul><li><strong>业务意义</strong>：释放讲师时间占用，恢复可用状态</li><li><strong>具体逻辑描述</strong>：</li></ul>
-<p>1. 点击"取消排期"按钮，打开 Modal 弹窗</p>
-<p>2. 填写日期（date，DatePicker 范围必填）</p>
-<p>3. 提交时转换为 startDate 和 endDate，通过 params 参数传递</p>
-<p>4. 调用 <code>POST mlt/maLecturerSchedule/cancel</code> 接口</p>
-<p>5. 成功后刷新日历</p>
+<ol><li>点击"取消排期"按钮，打开 Modal 弹窗</li><li>填写日期（date，DatePicker 范围必填）</li><li>提交时转换为 startDate 和 endDate，通过 params 参数传递</li><li>调用 <code>POST mlt/maLecturerSchedule/cancel</code> 接口</li><li>成功后刷新日历</li></ol>
 </KbCard>
 
 <KbCard num="6" title="重点逻辑6：日历刷新机制">
@@ -271,28 +261,32 @@
 </KbCard>
 
 <KbCard title="保存/提交校验">
-<ul><li>校验1：新建排期时 dateType（日期类型）必填 —— 区分排期类型便于统计</li><li><strong>详细逻辑</strong>：dateType 字段为空时阻止提交</li><li><strong>系统体现</strong>：前端表单校验，提示"日期类型不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验1：</strong>新建排期时 dateType（日期类型）必填 —— 区分排期类型便于统计</p>
+<ul><li><strong>详细逻辑</strong>：dateType 字段为空时阻止提交</li><li><strong>系统体现</strong>：前端表单校验，提示"日期类型不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE, START_DATE, END_DATE
     FROM MA_LECTURER_SCHEDULE
     WHERE DATE_TYPE IS NULL OR DATE_TYPE = '';
 ```
-<ul><li>校验2：新建排期时 date（日期范围）必填 —— 排期时间区间是排期的核心数据</li><li><strong>详细逻辑</strong>：date 字段为空时阻止提交，提交时转换为 startDate/endDate</li><li><strong>系统体现</strong>：前端表单校验，提示"日期不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验2：</strong>新建排期时 date（日期范围）必填 —— 排期时间区间是排期的核心数据</p>
+<ul><li><strong>详细逻辑</strong>：date 字段为空时阻止提交，提交时转换为 startDate/endDate</li><li><strong>系统体现</strong>：前端表单校验，提示"日期不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE
     FROM MA_LECTURER_SCHEDULE
     WHERE START_DATE IS NULL OR END_DATE IS NULL;
 ```
-<ul><li>校验3：取消排期时 date（日期范围）必填 —— 明确取消的时间区间</li><li><strong>详细逻辑</strong>：date 字段为空时阻止提交</li><li><strong>系统体现</strong>：前端表单校验，提示"日期不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验3：</strong>取消排期时 date（日期范围）必填 —— 明确取消的时间区间</p>
+<ul><li><strong>详细逻辑</strong>：date 字段为空时阻止提交</li><li><strong>系统体现</strong>：前端表单校验，提示"日期不能为空"</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT LECTURER_SCHEDULE_ID, LECTURER_ARCHIVES_CODE, STATUS
     FROM MA_LECTURER_SCHEDULE
     WHERE STATUS = 'cancelled' AND (START_DATE IS NULL OR END_DATE IS NULL);
 ```
-<ul><li>校验4：排期时间段不可与该讲师已有排期冲突 —— 避免讲师被重复点用</li><li><strong>详细逻辑</strong>：新排期时间段与已有有效排期时间段存在交集即冲突</li><li><strong>系统体现</strong>：后端 save 接口校验，冲突时返回业务异常</li><li><strong>排查SQL</strong>：</li></ul>
+<p><strong>校验4：</strong>排期时间段不可与该讲师已有排期冲突 —— 避免讲师被重复点用</p>
+<ul><li><strong>详细逻辑</strong>：新排期时间段与已有有效排期时间段存在交集即冲突</li><li><strong>系统体现</strong>：后端 save 接口校验，冲突时返回业务异常</li><li><strong>排查SQL</strong>：</li></ul>
 
 ```sql
 SELECT a.LECTURER_SCHEDULE_ID AS 排期1, b.LECTURER_SCHEDULE_ID AS 排期2,

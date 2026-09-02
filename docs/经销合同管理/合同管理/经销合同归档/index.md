@@ -228,12 +228,11 @@
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：归档条件校验 —— 确保合同满足归档条件</li></ul>
-<ul><li>详细逻辑</li></ul>
-<p>- 第1点：通过judgeContractArchive判断合同是否满足归档条件</p>
-<p>- 第2点：校验合同已审批通过、任务完成情况等</p>
-<ul><li>系统体现：阻断性报错</li></ul>
-<ul><li>排查SQL：</li></ul>
+<p><strong>校验1：</strong>归档条件校验 —— 确保合同满足归档条件</p>
+<p><strong>详细逻辑</strong></p>
+<ul><li>第1点：通过judgeContractArchive判断合同是否满足归档条件</li><li>第2点：校验合同已审批通过、任务完成情况等</li></ul>
+<p><strong>系统体现：</strong>阻断性报错</p>
+<p><strong>排查SQL</strong></p>
 
 ```sql
 SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD 

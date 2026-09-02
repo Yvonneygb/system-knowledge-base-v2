@@ -249,11 +249,13 @@
 </KbCard>
 
 <KbCard title="保存校验">
-<ul><li>校验1：至少选择一张兑现单 —— 确保批量复核有关联数据</li><li><strong>详细逻辑</strong>：前端校验已选择兑现单数量&gt;0</li><li><strong>系统体现</strong>：前端校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(*) FROM FIN_FEE_TERMINAL_CASHOUT WHERE BATCH_CASH_ID=&#123;cashId&#125;</code></li></ul>
+<p><strong>校验1：</strong>至少选择一张兑现单 —— 确保批量复核有关联数据</p>
+<ul><li><strong>详细逻辑</strong>：前端校验已选择兑现单数量&gt;0</li><li><strong>系统体现</strong>：前端校验</li><li><strong>排查SQL</strong>：<code>SELECT COUNT(*) FROM FIN_FEE_TERMINAL_CASHOUT WHERE BATCH_CASH_ID=&#123;cashId&#125;</code></li></ul>
 </KbCard>
 
 <KbCard title="提交校验">
-<ul><li>校验1：关联兑现单状态校验 —— 确保所有关联兑现单为NEW状态</li><li><strong>详细逻辑</strong>：提交时校验所有关联兑现单hzApproveStatus=NEW</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_TERMINAL_CASHOUT WHERE BATCH_CASH_ID=&#123;cashId&#125; AND HZ_APPROVE_STATUS!='NEW'</code></li></ul>
+<p><strong>校验1：</strong>关联兑现单状态校验 —— 确保所有关联兑现单为NEW状态</p>
+<ul><li><strong>详细逻辑</strong>：提交时校验所有关联兑现单hzApproveStatus=NEW</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_TERMINAL_CASHOUT WHERE BATCH_CASH_ID=&#123;cashId&#125; AND HZ_APPROVE_STATUS!='NEW'</code></li></ul>
 </KbCard>
 
 <KbCard title="状态机">
