@@ -90,8 +90,9 @@ export default {
           }, 50)
         })
 
-        // 绑定查看按钮 → 显示对应弹层
-        document.querySelectorAll('.view-btn').forEach(function(btn) {
+        // 绑定查看按钮 → 显示对应弹层（防止重复绑定）
+        document.querySelectorAll('.view-btn:not([data-modal-bound])').forEach(function(btn) {
+          btn.dataset.modalBound = 'true'
           btn.addEventListener('click', function(e) {
             e.preventDefault()
             var targetId = this.getAttribute('href').replace('#', '')
@@ -111,8 +112,9 @@ export default {
           })
         })
 
-        // 绑定关闭按钮 → 隐藏弹层
-        document.querySelectorAll('.error-detail-overlay .close-btn').forEach(function(btn) {
+        // 绑定关闭按钮 → 隐藏弹层（防止重复绑定）
+        document.querySelectorAll('.error-detail-overlay .close-btn:not([data-modal-bound])').forEach(function(btn) {
+          btn.dataset.modalBound = 'true'
           btn.addEventListener('click', function(e) {
             e.preventDefault()
             var overlay = this.closest('.error-detail-overlay')
@@ -123,8 +125,9 @@ export default {
           })
         })
 
-        // 点击遮罩层背景 → 关闭弹层
-        document.querySelectorAll('.error-detail-overlay').forEach(function(overlay) {
+        // 点击遮罩层背景 → 关闭弹层（防止重复绑定）
+        document.querySelectorAll('.error-detail-overlay:not([data-modal-bound])').forEach(function(overlay) {
+          overlay.dataset.modalBound = 'true'
           overlay.addEventListener('click', function(e) {
             if (e.target === overlay) {
               overlay.classList.remove('active-overlay')
@@ -152,8 +155,11 @@ export default {
         window.setupModalHandlers()
       }
 
-      // 路由变化后重新执行（处理SPA导航）
+      // 路由变化后重新执行（处理SPA导航）+ 根路径重定向
       router.onAfterRouteChanged = (to) => {
+        if (to.path === '/' || to.path === '') {
+          window.location.replace('/家装管理/项目往来/家装真实性核销/')
+        }
         setTimeout(window.setupModalHandlers, 100)
       }
     }
