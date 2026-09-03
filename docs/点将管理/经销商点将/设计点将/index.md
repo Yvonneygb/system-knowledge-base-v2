@@ -709,27 +709,27 @@ GROUP BY da.LECTURER_NAME;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择一条数据</td><td>操作按钮前置校验</td><td>未选择或选择多行；选择一条数据后重试</td><td>提示</td><td>通用单选校验</td></tr>
-<tr><td>只有FDD签署中的申请单才可以签合同</td><td>面积确认按钮</td><td>审批状态非fdd_in_approval；确认审批状态</td><td>提示</td><td>approvalState='fdd_in_approval'</td></tr>
-<tr><td>只有待确认的申请单才可以签结算合同</td><td>图纸确认按钮</td><td>结算确认状态非to_be_confirm；确认结算确认状态</td><td>提示</td><td>settlementConfirmState='to_be_confirm'</td></tr>
-<tr><td>文件url不存在！</td><td>下载图纸点击文件</td><td>文件URL为空；检查文件上传状态</td><td>提示</td><td>fileUrl为空</td></tr>
-<tr><td>反馈意见不能为空</td><td>图纸反馈提交</td><td>未填写反馈意见；填写后提交</td><td>提示</td><td>feedbackComments必填</td></tr>
-<tr><td>经销商不能为空</td><td>保存提交</td><td>未选择经销商；选择经销商后保存</td><td>提示</td><td>dealerName必填</td></tr>
-<tr><td>门店不能为空</td><td>保存提交</td><td>未选择门店；选择门店后保存</td><td>提示</td><td>terminalName必填</td></tr>
-<tr><td>设计师不能为空</td><td>保存提交</td><td>未选择设计师；选择设计师后保存</td><td>提示</td><td>lecturerName必填</td></tr>
-<tr><td>设计名称不能为空</td><td>保存提交</td><td>未填写设计名称；填写后保存</td><td>提示</td><td>designName必填</td></tr>
-<tr><td>拟点将天数不能为空</td><td>保存提交</td><td>未填写拟点将天数；填写后保存</td><td>提示</td><td>preOrdLecturerDays必填</td></tr>
-<tr><td>当前状态数据无法编辑！</td><td>编辑按钮</td><td>状态非草稿且非驳回；确认申请状态</td><td>提示</td><td>orderLectureState非draft且approvalState非驳回</td></tr>
-<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>错误</td><td>接口返回非成功状态</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>查看/编辑/删除</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>取消申请/终止/改派</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>单个文件不能大于30MB</td><td>上传图纸</td><td>文件超过30MB限制，压缩或拆分后重传</td><td>error</td><td>前端 beforeUpload 校验 file.size</td></tr>
-<tr><td>上传失败</td><td>上传图纸</td><td>OSS 上传异常，检查存储服务及文件格式</td><td>error</td><td>onUploadError 或无 fileUrl</td></tr>
-<tr><td>同步外部系统失败</td><td>同步CRM/OA/FDD</td><td>外部系统异常或数据不符合接口要求，检查 errorInfo 字段</td><td>error</td><td>pushCrm/pushOa/pushFdd 接口返回失败</td></tr>
-<tr><td>讲师排期冲突</td><td>保存提交</td><td>设计师在所选时间范围内已有其他排期，检查讲师档案排期</td><td>error</td><td>后端校验排期冲突</td></tr>
-<tr><td>面积必须大于0</td><td>面积确认</td><td>确认面积非正数，检查 SCALE_AREA 字段</td><td>error</td><td>后端校验 SCALE_AREA &gt; 0</td></tr>
+<tr><td>请选择一条数据</td><td>操作按钮前置校验</td><td>未选择或选择多行；选择一条数据后重试</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>只有FDD签署中的申请单才可以签合同</td><td>面积确认按钮</td><td>审批状态非fdd_in_approval；确认审批状态</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>只有待确认的申请单才可以签结算合同</td><td>图纸确认按钮</td><td>结算确认状态非to_be_confirm；确认结算确认状态</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>文件url不存在！</td><td>下载图纸点击文件</td><td>文件URL为空；检查文件上传状态</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>反馈意见不能为空</td><td>图纸反馈提交</td><td>未填写反馈意见；填写后提交</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>经销商不能为空</td><td>保存提交</td><td>未选择经销商；选择经销商后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>门店不能为空</td><td>保存提交</td><td>未选择门店；选择门店后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>设计师不能为空</td><td>保存提交</td><td>未选择设计师；选择设计师后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>设计名称不能为空</td><td>保存提交</td><td>未填写设计名称；填写后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>拟点将天数不能为空</td><td>保存提交</td><td>未填写拟点将天数；填写后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>当前状态数据无法编辑！</td><td>编辑按钮</td><td>状态非草稿且非驳回；确认申请状态</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>查看/编辑/删除</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>取消申请/终止/改派</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>单个文件不能大于30MB</td><td>上传图纸</td><td>文件超过30MB限制，压缩或拆分后重传</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>上传失败</td><td>上传图纸</td><td>OSS 上传异常，检查存储服务及文件格式</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>同步外部系统失败</td><td>同步CRM/OA/FDD</td><td>外部系统异常或数据不符合接口要求，检查 errorInfo 字段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>讲师排期冲突</td><td>保存提交</td><td>设计师在所选时间范围内已有其他排期，检查讲师档案排期</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
+<tr><td>面积必须大于0</td><td>面积确认</td><td>确认面积非正数，检查 SCALE_AREA 字段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-21" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

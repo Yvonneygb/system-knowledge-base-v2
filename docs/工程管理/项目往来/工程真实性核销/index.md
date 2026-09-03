@@ -610,24 +610,24 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>本次核销数量的小数位不能超过3位</td><td>保存</td><td>核销数量精度超限。调整小数位至≤3位</td><td>高</td><td>保存时校验THIS_VERIFER_NUMBER小数位</td></tr>
-<tr><td>参数不能为空</td><td>保存</td><td>核销参数未填写。补全核销参数后保存</td><td>高</td><td>保存时参数非空校验</td></tr>
-<tr><td>核销数量必须大于0</td><td>保存</td><td>核销数量≤0。调整核销数量大于0</td><td>高</td><td>保存时校验THIS_VERIFER_NUMBER&gt;0</td></tr>
-<tr><td>核销数量超过剩余可核销数量</td><td>保存</td><td>本次核销数量超过剩余可核销数量。调整至剩余可核销范围内</td><td>高</td><td>保存时校验THIS_VERIFER_NUMBER≤SURPLUS_CAN_VERIFER_NUMBER</td></tr>
-<tr><td>发票必须上传</td><td>保存</td><td>未上传核销发票。先上传核销发票再保存</td><td>高</td><td>保存时校验发票关联</td></tr>
-<tr><td>核销行不存在</td><td>保存</td><td>INVOICE_TRUTH_LINE_ID对应核销行不存在。确认核销行有效性</td><td>高</td><td>保存时校验核销行存在</td></tr>
-<tr><td>操作类型不能为空</td><td>取消核销</td><td>actionType参数为空。传入合法actionType</td><td>高</td><td>cancel方法中actionType非空校验</td></tr>
-<tr><td>对应列表id数组不能为空</td><td>取消核销</td><td>idList参数为空。传入需取消的ID列表</td><td>高</td><td>cancel方法中idList非空校验</td></tr>
-<tr><td>不支持xxx操作</td><td>取消核销</td><td>actionType不在5种合法值范围内。传入合法actionType</td><td>高</td><td>cancel方法中actionType合法性校验</td></tr>
-<tr><td>核销取消数据为空</td><td>取消核销</td><td>按条件查询不到可取消的核销明细。确认数据状态</td><td>高</td><td>查询受影响核销明细为空时抛出</td></tr>
-<tr><td>核销明细状态异常,请刷新数据后重试</td><td>取消核销</td><td>更新canceled状态时影响行数与预期不一致。刷新数据后重试</td><td>高</td><td>更新影响行数校验</td></tr>
-<tr><td>更新失败,取消后出库单行已核销数量小于0</td><td>取消核销</td><td>取消数量大于出库单行已核销数量。检查数据一致性</td><td>高</td><td>出库单行已核销数量校验</td></tr>
-<tr><td>请选择核销类型</td><td>查询出库单/发票</td><td>未选择核销类型(veriferType)。先选择核销类型再查询</td><td>高</td><td>doSearchOutbillReport/doGetInvoiceInfo中veriferType非空校验</td></tr>
-<tr><td>核销出库单明细不可为空</td><td>提交审批</td><td>核销单下无核销行数据。先添加核销行再提交</td><td>高</td><td>checkWorkFlowData中核销行列表为空校验</td></tr>
-<tr><td>本次核销数量不能大于可核销数量</td><td>保存</td><td>核销行本次核销数量合计超过出库单行可核销数量。调整核销数量</td><td>高</td><td>checkVeriferInvoice中sumThisVeriferNumber&gt;canVerifyNum校验</td></tr>
-<tr><td>对应的出库单明细不存在</td><td>提交审批</td><td>核销行关联的出库单行(INV_OUT_BILL_LINE_ID)不存在。确认出库单行有效性</td><td>高</td><td>checkWorkFlowData中invOutBillLineId为空校验</td></tr>
-<tr><td>对应的出库单明细可核销数量不足</td><td>提交审批</td><td>出库单行可核销数量&lt;0。检查出库单行可核销数量</td><td>高</td><td>checkWorkFlowData中selectCanVerifyNumOfLine&lt;0校验</td></tr>
-<tr><td>发票核销数量超过剩余可核销数量</td><td>提交审批</td><td>发票明细本次核销数量超过剩余可核销数量。调整核销数量</td><td>高</td><td>checkWorkFlowData中surplusCanVeriferNumber&lt;0校验</td></tr>
+<tr><td>本次核销数量的小数位不能超过3位</td><td>保存</td><td>核销数量精度超限。调整小数位至≤3位</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>参数不能为空</td><td>保存</td><td>核销参数未填写。补全核销参数后保存</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>核销数量必须大于0</td><td>保存</td><td>核销数量≤0。调整核销数量大于0</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>核销数量超过剩余可核销数量</td><td>保存</td><td>本次核销数量超过剩余可核销数量。调整至剩余可核销范围内</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>发票必须上传</td><td>保存</td><td>未上传核销发票。先上传核销发票再保存</td><td>高</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>核销行不存在</td><td>保存</td><td>INVOICE_TRUTH_LINE_ID对应核销行不存在。确认核销行有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>操作类型不能为空</td><td>取消核销</td><td>actionType参数为空。传入合法actionType</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>对应列表id数组不能为空</td><td>取消核销</td><td>idList参数为空。传入需取消的ID列表</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>不支持xxx操作</td><td>取消核销</td><td>actionType不在5种合法值范围内。传入合法actionType</td><td>高</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>核销取消数据为空</td><td>取消核销</td><td>按条件查询不到可取消的核销明细。确认数据状态</td><td>高</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>核销明细状态异常,请刷新数据后重试</td><td>取消核销</td><td>更新canceled状态时影响行数与预期不一致。刷新数据后重试</td><td>高</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>更新失败,取消后出库单行已核销数量小于0</td><td>取消核销</td><td>取消数量大于出库单行已核销数量。检查数据一致性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>请选择核销类型</td><td>查询出库单/发票</td><td>未选择核销类型(veriferType)。先选择核销类型再查询</td><td>高</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>核销出库单明细不可为空</td><td>提交审批</td><td>核销单下无核销行数据。先添加核销行再提交</td><td>高</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>本次核销数量不能大于可核销数量</td><td>保存</td><td>核销行本次核销数量合计超过出库单行可核销数量。调整核销数量</td><td>高</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>对应的出库单明细不存在</td><td>提交审批</td><td>核销行关联的出库单行(INV_OUT_BILL_LINE_ID)不存在。确认出库单行有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>对应的出库单明细可核销数量不足</td><td>提交审批</td><td>出库单行可核销数量&lt;0。检查出库单行可核销数量</td><td>高</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>发票核销数量超过剩余可核销数量</td><td>提交审批</td><td>发票明细本次核销数量超过剩余可核销数量。调整核销数量</td><td>高</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

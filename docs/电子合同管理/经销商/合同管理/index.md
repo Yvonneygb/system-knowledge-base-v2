@@ -439,17 +439,17 @@ ORDER BY EC.CREATE_TIME DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请先阅读并同意合同条款</td><td>签署前未勾选同意条款</td><td>勾选同意条款复选框后签署</td><td>warning</td><td>前端校验同意条款复选框</td></tr>
-<tr><td>请填写拒签原因</td><td>拒签时拒签原因为空</td><td>填写拒签原因后提交</td><td>error</td><td>前端校验 REFUSE_REASON 非空</td></tr>
-<tr><td>合同PDF生成中，请稍后</td><td>合同完成但PDF未生成</td><td>稍后刷新页面重试下载</td><td>warning</td><td>PDF异步生成未完成</td></tr>
-<tr><td>签署服务不可用</td><td>电子签章系统异常</td><td>联系运维检查签章系统</td><td>error</td><td>签章服务接口返回失败</td></tr>
-<tr><td>签署异常</td><td>签署时</td><td>电子签署失败，检查签署服务</td><td>error</td><td>签章接口返回非成功状态</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>签署/拒签</td><td>当前用户无对应操作权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>合同不存在</td><td>查看/签署</td><td>合同编码不存在或已删除，检查 ELECTRONIC_CONTRACT_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>签署/拒签</td><td>合同状态不允许该操作，如已签署不可重复签署，检查 CONTRACT_STATUS</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.CONTRACT_STATUS 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>短信验证码错误</td><td>签署验证</td><td>短信验证码输入错误或已过期，重新获取验证码</td><td>error</td><td>后端校验验证码失败</td></tr>
+<tr><td>请先阅读并同意合同条款</td><td>签署前未勾选同意条款</td><td>勾选同意条款复选框后签署</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请填写拒签原因</td><td>拒签时拒签原因为空</td><td>填写拒签原因后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>合同PDF生成中，请稍后</td><td>合同完成但PDF未生成</td><td>稍后刷新页面重试下载</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>签署服务不可用</td><td>电子签章系统异常</td><td>联系运维检查签章系统</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>签署异常</td><td>签署时</td><td>电子签署失败，检查签署服务</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>签署/拒签</td><td>当前用户无对应操作权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>合同不存在</td><td>查看/签署</td><td>合同编码不存在或已删除，检查 ELECTRONIC_CONTRACT_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>签署/拒签</td><td>合同状态不允许该操作，如已签署不可重复签署，检查 CONTRACT_STATUS</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.CONTRACT_STATUS 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>短信验证码错误</td><td>签署验证</td><td>短信验证码输入错误或已过期，重新获取验证码</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

@@ -379,19 +379,19 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>等级编码已存在</td><td>新增/编辑保存时</td><td>同一 LOV 下 `VALUE` 重复；使用不同的编码</td><td>错误</td><td>保存前查询 `HPFM_LOV_VALUE` 校验 `VALUE` 唯一性</td></tr>
-<tr><td>值编码不能为空</td><td>新增/编辑保存时</td><td>`VALUE` 字段未填写；填写值编码</td><td>错误</td><td>必填校验</td></tr>
-<tr><td>值名称不能为空</td><td>新增/编辑保存时</td><td>`MEANING` 字段未填写；填写值名称</td><td>错误</td><td>必填校验</td></tr>
-<tr><td>店面装修等级没有对应的政策标准</td><td>门店装修申请提交时</td><td>装修等级未配置对应的报销政策标准；在装修标准配置中补充该等级的报销标准</td><td>错误</td><td>提交校验查询 `TERMINAL_DECORATE_LINE` 无对应标准行</td></tr>
-<tr><td>无政策标准不能提交！</td><td>门店装修申请提交时</td><td>`FIXUP_GRADE` 为空或 0；选择有效的装修等级</td><td>错误</td><td>提交校验 `FIXUP_GRADE` 非空非 0</td></tr>
-<tr><td>店面装修等级没有有效期内的政策标准！</td><td>门店装修申请提交时</td><td>装修等级在有效期内无对应标准；检查 `TERMINAL_DECORATE_LINE` 配置</td><td>错误</td><td>提交校验精确匹配有效期内标准行无结果</td></tr>
-<tr><td>值集编码不存在</td><td>查询时</td><td>值集 `AE.FIXUP_GRADE` 未创建；先在 HZERO 值集管理中创建值集</td><td>错误</td><td>查询 `HPFM_LOV` 无对应 `LOV_CODE`</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>编辑/删除</td><td>值项ID不存在或已删除，检查 LOV_VALUE_ID 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>启用/禁用</td><td>值项状态不允许该操作，如已启用不可重复启用，检查 ENABLE_FLAG</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>描述不能为空</td><td>保存提交</td><td>未填写描述，填写后保存</td><td>error</td><td>前端校验 DESCRIPTION 非空</td></tr>
-<tr><td>排序号不能为空</td><td>保存提交</td><td>未填写排序号，填写后保存</td><td>error</td><td>前端校验 ORDER_SEQ 非空</td></tr>
+<tr><td>等级编码已存在</td><td>新增/编辑保存时</td><td>同一 LOV 下 `VALUE` 重复；使用不同的编码</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>值编码不能为空</td><td>新增/编辑保存时</td><td>`VALUE` 字段未填写；填写值编码</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>值名称不能为空</td><td>新增/编辑保存时</td><td>`MEANING` 字段未填写；填写值名称</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>店面装修等级没有对应的政策标准</td><td>门店装修申请提交时</td><td>装修等级未配置对应的报销政策标准；在装修标准配置中补充该等级的报销标准</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>无政策标准不能提交！</td><td>门店装修申请提交时</td><td>`FIXUP_GRADE` 为空或 0；选择有效的装修等级</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>店面装修等级没有有效期内的政策标准！</td><td>门店装修申请提交时</td><td>装修等级在有效期内无对应标准；检查 `TERMINAL_DECORATE_LINE` 配置</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>值集编码不存在</td><td>查询时</td><td>值集 `AE.FIXUP_GRADE` 未创建；先在 HZERO 值集管理中创建值集</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>编辑/删除</td><td>值项ID不存在或已删除，检查 LOV_VALUE_ID 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>启用/禁用</td><td>值项状态不允许该操作，如已启用不可重复启用，检查 ENABLE_FLAG</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>描述不能为空</td><td>保存提交</td><td>未填写描述，填写后保存</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>排序号不能为空</td><td>保存提交</td><td>未填写排序号，填写后保存</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

@@ -541,16 +541,16 @@ ORDER BY LA.CREATION_DATE DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择一条数据</td><td>点击查看申请/审批/设计改派</td><td>未选择行或选择多行，选择一条数据后再操作</td><td>warning</td><td>前端校验选中行数量不等于1</td></tr>
-<tr><td>请求失败</td><td>列表查询</td><td>后端服务异常，检查后端服务状态及网络连接</td><td>error</td><td>后端接口返回非200状态码</td></tr>
-<tr><td>审批意见不能为空</td><td>提交审批</td><td>未填写审批意见，填写后提交</td><td>error</td><td>前端校验 APPROVAL_COMMENTS 字段非空</td></tr>
-<tr><td>新设计师不能为空</td><td>提交设计改派</td><td>未选择新设计师，点击搜索图标选择设计师</td><td>error</td><td>前端校验 LECTURER_NAME 字段非空</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>查看申请/审批/改派</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>审批/设计改派</td><td>申请状态不在允许操作的状态范围内，检查 APPROVAL_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>审批人不能为空</td><td>提交审批</td><td>未设置审批人，检查当前用户登录态</td><td>error</td><td>前端取 userInfo.realName 为空</td></tr>
-<tr><td>设计师列表为空</td><td>设计改派选择设计师</td><td>讲师档案无数据或查询条件过严，检查讲师档案配置</td><td>warning</td><td>applyTableDS 查询返回空</td></tr>
+<tr><td>请选择一条数据</td><td>点击查看申请/审批/设计改派</td><td>未选择行或选择多行，选择一条数据后再操作</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>列表查询</td><td>后端服务异常，检查后端服务状态及网络连接</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>审批意见不能为空</td><td>提交审批</td><td>未填写审批意见，填写后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>新设计师不能为空</td><td>提交设计改派</td><td>未选择新设计师，点击搜索图标选择设计师</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>查看申请/审批/改派</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>审批/设计改派</td><td>申请状态不在允许操作的状态范围内，检查 APPROVAL_STATE</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>审批人不能为空</td><td>提交审批</td><td>未设置审批人，检查当前用户登录态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>设计师列表为空</td><td>设计改派选择设计师</td><td>讲师档案无数据或查询条件过严，检查讲师档案配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

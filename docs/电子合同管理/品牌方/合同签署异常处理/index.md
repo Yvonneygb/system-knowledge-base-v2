@@ -435,17 +435,17 @@ ORDER BY EC.CREATE_TIME DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>合同状态不允许此操作</td><td>状态操作</td><td>当前状态不可执行该操作，确认合同当前状态是否正确</td><td>error</td><td>后端校验合同状态与操作匹配性</td></tr>
-<tr><td>重新归档失败</td><td>重新归档</td><td>法大大接口调用异常，检查法大大服务连通性后重试</td><td>error</td><td>fddContractFiling 接口返回失败</td></tr>
-<tr><td>重发短信失败</td><td>重发签署短信</td><td>短信平台接口异常，检查短信平台服务状态</td><td>error</td><td>noticeDistributor/rePush 接口返回失败</td></tr>
-<tr><td>合同同步失败</td><td>合同同步</td><td>回调接口异常，检查外部系统状态后重试</td><td>error</td><td>callback/retry/update-signature 接口返回失败</td></tr>
-<tr><td>合同不存在</td><td>处理时</td><td>合同ID无效，检查合同ID</td><td>error</td><td>后端校验合同存在性</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>法大大服务不可用</td><td>重新归档/合同同步</td><td>法大大服务异常，检查法大大服务状态</td><td>error</td><td>法大大接口返回失败</td></tr>
-<tr><td>短信平台不可用</td><td>重发短信</td><td>短信平台服务异常，检查短信平台状态</td><td>error</td><td>短信平台接口返回失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.CONTRACT_EXCEPTION_TYPE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>经销商手机号缺失</td><td>重发短信</td><td>经销商手机号为空或格式错误，检查经销商档案手机号</td><td>error</td><td>后端校验手机号非空</td></tr>
+<tr><td>合同状态不允许此操作</td><td>状态操作</td><td>当前状态不可执行该操作，确认合同当前状态是否正确</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>重新归档失败</td><td>重新归档</td><td>法大大接口调用异常，检查法大大服务连通性后重试</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>重发短信失败</td><td>重发签署短信</td><td>短信平台接口异常，检查短信平台服务状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>合同同步失败</td><td>合同同步</td><td>回调接口异常，检查外部系统状态后重试</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>合同不存在</td><td>处理时</td><td>合同ID无效，检查合同ID</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>法大大服务不可用</td><td>重新归档/合同同步</td><td>法大大服务异常，检查法大大服务状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>短信平台不可用</td><td>重发短信</td><td>短信平台服务异常，检查短信平台状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.CONTRACT_EXCEPTION_TYPE 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>经销商手机号缺失</td><td>重发短信</td><td>经销商手机号为空或格式错误，检查经销商档案手机号</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

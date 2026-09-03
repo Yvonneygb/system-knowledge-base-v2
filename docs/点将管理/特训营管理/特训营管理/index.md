@@ -489,18 +489,18 @@ ORDER BY tc.PLAN_START_TIME DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择一条数据</td><td>编辑按钮</td><td>未选择或选择多行；选择一条数据后操作</td><td>普通</td><td>前端选中行数校验</td></tr>
-<tr><td>请选择至少一条数据</td><td>删除/生效</td><td>未选择数据；选择至少一条数据后操作</td><td>普通</td><td>前端选中行数校验</td></tr>
-<tr><td>当前状态数据无法编辑！</td><td>编辑按钮</td><td>特训营状态非draft；仅草稿状态可编辑</td><td>普通</td><td>前端 STATUS 状态校验</td></tr>
-<tr><td>请选择报名结束时间</td><td>报名截止提交</td><td>未选择时间；选择报名结束时间后提交</td><td>普通</td><td>前端 campsignEndTimeCode 必填校验</td></tr>
-<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>严重</td><td>HTTP请求异常捕获</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>编辑/删除/生效失效</td><td>特训营编码不存在或已删除，检查 CAMP_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>生效/失效</td><td>特训营状态不允许该操作，如已生效不可再生效，检查 STATUS</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.TRAIN_CAMP_STATUS 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>特训营编码已存在</td><td>新建保存</td><td>特训营编码重复，更换编码后保存</td><td>error</td><td>后端校验 CAMP_CODE 唯一性</td></tr>
-<tr><td>报名结束时间必须晚于当前时间</td><td>报名截止提交</td><td>报名结束时间早于当前时间，重新选择时间</td><td>error</td><td>后端校验 CAMPSIGN_END_TIME &gt; SYSDATE</td></tr>
+<tr><td>请选择一条数据</td><td>编辑按钮</td><td>未选择或选择多行；选择一条数据后操作</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请选择至少一条数据</td><td>删除/生效</td><td>未选择数据；选择至少一条数据后操作</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>当前状态数据无法编辑！</td><td>编辑按钮</td><td>特训营状态非draft；仅草稿状态可编辑</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>请选择报名结束时间</td><td>报名截止提交</td><td>未选择时间；选择报名结束时间后提交</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>严重</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>编辑/删除/生效失效</td><td>特训营编码不存在或已删除，检查 CAMP_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>生效/失效</td><td>特训营状态不允许该操作，如已生效不可再生效，检查 STATUS</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.TRAIN_CAMP_STATUS 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>特训营编码已存在</td><td>新建保存</td><td>特训营编码重复，更换编码后保存</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>报名结束时间必须晚于当前时间</td><td>报名截止提交</td><td>报名结束时间早于当前时间，重新选择时间</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

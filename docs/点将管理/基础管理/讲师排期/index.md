@@ -444,16 +444,16 @@ JOIN MA_LECTURER_SCHEDULE b ON a.LECTURER_SCHEDULE_ID < b.LECTURER_SCHEDULE_ID
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>日期类型不能为空</td><td>新建排期提交</td><td>未选择日期类型；选择日期类型后提交</td><td>提示</td><td>前端校验 dateType 必填</td></tr>
-<tr><td>日期不能为空</td><td>新建/取消排期提交</td><td>未选择日期范围；选择日期范围后提交</td><td>提示</td><td>前端校验 date 必填</td></tr>
-<tr><td>该讲师在指定时间段已有排期，请重新选择</td><td>新建排期提交</td><td>排期时间段冲突；更换时间段或先取消已有排期</td><td>提示</td><td>后端冲突校验，时间段交集判断</td></tr>
-<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查 mbo-business 微服务状态</td><td>错误</td><td>HTTP 状态码非 2xx</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>取消排期</td><td>排期ID不存在或已删除，检查 LECTURER_SCHEDULE_ID 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>取消排期</td><td>排期状态不允许取消，如已取消不可重复取消，检查 STATUS</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.SCHEDULE_DATE_TYPE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>讲师不能为空</td><td>新建排期提交</td><td>未选择讲师，选择讲师后提交</td><td>error</td><td>前端校验 LECTURER_ARCHIVES_CODE 非空</td></tr>
+<tr><td>日期类型不能为空</td><td>新建排期提交</td><td>未选择日期类型；选择日期类型后提交</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>日期不能为空</td><td>新建/取消排期提交</td><td>未选择日期范围；选择日期范围后提交</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>该讲师在指定时间段已有排期，请重新选择</td><td>新建排期提交</td><td>排期时间段冲突；更换时间段或先取消已有排期</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查 mbo-business 微服务状态</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>取消排期</td><td>排期ID不存在或已删除，检查 LECTURER_SCHEDULE_ID 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>取消排期</td><td>排期状态不允许取消，如已取消不可重复取消，检查 STATUS</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.SCHEDULE_DATE_TYPE 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>讲师不能为空</td><td>新建排期提交</td><td>未选择讲师，选择讲师后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

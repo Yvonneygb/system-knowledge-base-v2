@@ -295,13 +295,13 @@ ORDER BY MLS.SATURATION_RATE DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请求失败</td><td>查询饱和度</td><td>后端服务异常，检查后端服务状态及网络连接</td><td>error</td><td>后端接口返回非200状态码</td></tr>
-<tr><td>数据为空</td><td>页面加载完成</td><td>当前用户未关联讲师档案或无饱和度数据，检查用户与讲师档案关联关系</td><td>warning</td><td>查询返回空列表</td></tr>
-<tr><td>网络异常/接口超时</td><td>查询饱和度</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>页面访问</td><td>当前用户无饱和度查询权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>导出失败</td><td>点击导出</td><td>导出接口异常或数据量超限，检查后端导出服务及数据量</td><td>error</td><td>导出接口返回失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.DESIGN_LECTURER_LEVEL 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>时间范围校验失败</td><td>查询条件</td><td>开始时间大于结束时间，检查时间范围选择</td><td>error</td><td>前端校验 startDate &lt;= endDate</td></tr>
+<tr><td>请求失败</td><td>查询饱和度</td><td>后端服务异常，检查后端服务状态及网络连接</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>数据为空</td><td>页面加载完成</td><td>当前用户未关联讲师档案或无饱和度数据，检查用户与讲师档案关联关系</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>查询饱和度</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>页面访问</td><td>当前用户无饱和度查询权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>导出失败</td><td>点击导出</td><td>导出接口异常或数据量超限，检查后端导出服务及数据量</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.DESIGN_LECTURER_LEVEL 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>时间范围校验失败</td><td>查询条件</td><td>开始时间大于结束时间，检查时间范围选择</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

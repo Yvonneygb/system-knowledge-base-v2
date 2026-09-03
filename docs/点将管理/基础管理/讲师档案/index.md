@@ -553,19 +553,19 @@ WHERE la.APPROVAL_STATUS IN ('to_be_submit', 'approving', 'reject');
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择一条数据</td><td>单选操作按钮</td><td>未选择或选择多行；选择一条数据后重试</td><td>提示</td><td>前端校验选中行数量=1</td></tr>
-<tr><td>请选择至少一条数据</td><td>删除按钮</td><td>未选择数据；选择至少一条数据后重试</td><td>提示</td><td>前端校验选中行数量&gt;=1</td></tr>
-<tr><td>请选择讲师类型</td><td>查询时</td><td>讲师档案 Tab 未选择类型；选择讲师类型后查询</td><td>提示</td><td>pageType 取自讲师类型，未选择阻止查询</td></tr>
-<tr><td>只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！</td><td>牌价变更</td><td>档案非生效或为特训营；确认档案状态=valid 且 TRAIN_TYPE≠camp</td><td>提示</td><td>前端双重校验</td></tr>
-<tr><td>只能对【审批通过】的档案进行操作！</td><td>生效/失效</td><td>档案未审批通过；确认 APPROVAL_STATUS=approved</td><td>提示</td><td>前端校验审批状态</td></tr>
-<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查 mbo-business 微服务状态</td><td>错误</td><td>HTTP 状态码非 2xx</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>编辑/生效/失效</td><td>档案编码不存在或已删除，检查 LECTURER_ARCHIVES_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>提交/编辑</td><td>档案状态不允许该操作，如审批中不可编辑，检查 ARCHIVES_STATUS</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.TRAIN_LECTURER_LEVEL 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>讲师姓名不能为空</td><td>保存提交</td><td>未填写讲师姓名，填写后保存</td><td>error</td><td>前端校验 LECTURER_NAME 非空</td></tr>
-<tr><td>档案编码已存在</td><td>新建保存</td><td>档案编码重复，更换编码后保存</td><td>error</td><td>后端校验 LECTURER_ARCHIVES_CODE 唯一性</td></tr>
+<tr><td>请选择一条数据</td><td>单选操作按钮</td><td>未选择或选择多行；选择一条数据后重试</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请选择至少一条数据</td><td>删除按钮</td><td>未选择数据；选择至少一条数据后重试</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>请选择讲师类型</td><td>查询时</td><td>讲师档案 Tab 未选择类型；选择讲师类型后查询</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>只有生效状态的档案且培训类型不是特训营的可以发起牌价变更申请！</td><td>牌价变更</td><td>档案非生效或为特训营；确认档案状态=valid 且 TRAIN_TYPE≠camp</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>只能对【审批通过】的档案进行操作！</td><td>生效/失效</td><td>档案未审批通过；确认 APPROVAL_STATUS=approved</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查 mbo-business 微服务状态</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>编辑/生效/失效</td><td>档案编码不存在或已删除，检查 LECTURER_ARCHIVES_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>提交/编辑</td><td>档案状态不允许该操作，如审批中不可编辑，检查 ARCHIVES_STATUS</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.TRAIN_LECTURER_LEVEL 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>讲师姓名不能为空</td><td>保存提交</td><td>未填写讲师姓名，填写后保存</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>档案编码已存在</td><td>新建保存</td><td>档案编码重复，更换编码后保存</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

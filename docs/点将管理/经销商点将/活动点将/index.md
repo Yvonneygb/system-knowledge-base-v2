@@ -778,24 +778,24 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择一条数据</td><td>操作按钮前置校验</td><td>未选择或选择多行；选择一条数据后重试</td><td>提示</td><td>通用单选校验</td></tr>
-<tr><td>需提前7天且已生效的单据才可以发起申请取消！</td><td>取消申请按钮</td><td>不满足提前7天；确认activityStartDate与当前时间差值&gt;=7</td><td>提示</td><td>timeDiff&gt;=7</td></tr>
-<tr><td>该状态单据无法发起取消申请！</td><td>取消申请按钮</td><td>状态校验不通过；确认审批状态和点将状态</td><td>提示</td><td>approvalState非fdd_sign或orderLectureState为end</td></tr>
-<tr><td>当前状态数据无法编辑！</td><td>编辑按钮</td><td>状态非草稿且非驳回；确认申请状态</td><td>提示</td><td>orderLectureState非draft且approvalState非驳回</td></tr>
-<tr><td>经销商不能为空</td><td>保存提交</td><td>未选择经销商；选择经销商后保存</td><td>提示</td><td>dealerName必填</td></tr>
-<tr><td>门店不能为空</td><td>保存提交</td><td>未选择门店；选择门店后保存</td><td>提示</td><td>terminalName必填</td></tr>
-<tr><td>讲师不能为空</td><td>保存提交</td><td>未选择讲师；选择讲师后保存</td><td>提示</td><td>lecturerName必填</td></tr>
-<tr><td>活动名称不能为空</td><td>保存提交</td><td>未填写活动名称；填写后保存</td><td>提示</td><td>activityName必填</td></tr>
-<tr><td>拟点将天数不能为空</td><td>保存提交</td><td>未填写拟点将天数；填写后保存</td><td>提示</td><td>preOrdLecturerDays必填</td></tr>
-<tr><td>讲师排期冲突</td><td>保存提交</td><td>所选讲师在时间段内已有生效点将；更换讲师或调整时间</td><td>提示</td><td>排期冲突校验</td></tr>
-<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>错误</td><td>接口返回非成功状态</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>查看/编辑/删除</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>取消申请/结束确认</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.ORDER_LECTURE_STATE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>活动时间范围校验失败</td><td>保存提交</td><td>开始时间大于结束时间，检查时间范围选择</td><td>error</td><td>前端校验 ACTIVITY_START_DATE &lt;= ACTIVITY_END_DATE</td></tr>
-<tr><td>拟点将天数必须大于0</td><td>保存提交</td><td>拟点将天数为0或负数，检查 PRE_ORD_LECTURER_DAYS</td><td>error</td><td>后端校验 PRE_ORD_LECTURER_DAYS &gt; 0</td></tr>
+<tr><td>请选择一条数据</td><td>操作按钮前置校验</td><td>未选择或选择多行；选择一条数据后重试</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>需提前7天且已生效的单据才可以发起申请取消！</td><td>取消申请按钮</td><td>不满足提前7天；确认activityStartDate与当前时间差值&gt;=7</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>该状态单据无法发起取消申请！</td><td>取消申请按钮</td><td>状态校验不通过；确认审批状态和点将状态</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>当前状态数据无法编辑！</td><td>编辑按钮</td><td>状态非草稿且非驳回；确认申请状态</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>经销商不能为空</td><td>保存提交</td><td>未选择经销商；选择经销商后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>门店不能为空</td><td>保存提交</td><td>未选择门店；选择门店后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>讲师不能为空</td><td>保存提交</td><td>未选择讲师；选择讲师后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>活动名称不能为空</td><td>保存提交</td><td>未填写活动名称；填写后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>拟点将天数不能为空</td><td>保存提交</td><td>未填写拟点将天数；填写后保存</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>讲师排期冲突</td><td>保存提交</td><td>所选讲师在时间段内已有生效点将；更换讲师或调整时间</td><td>提示</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>错误</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>查看/编辑/删除</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>取消申请/结束确认</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.ORDER_LECTURE_STATE 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>活动时间范围校验失败</td><td>保存提交</td><td>开始时间大于结束时间，检查时间范围选择</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>拟点将天数必须大于0</td><td>保存提交</td><td>拟点将天数为0或负数，检查 PRE_ORD_LECTURER_DAYS</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

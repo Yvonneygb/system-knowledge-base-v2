@@ -535,19 +535,19 @@ ORDER BY MDF.OPERATION_TIME DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择一条数据</td><td>点击头部操作按钮</td><td>未选择行或选择多行，选择一条数据后再操作</td><td>warning</td><td>前端校验选中行数量，不等于1时提示</td></tr>
-<tr><td>请求失败</td><td>列表查询或操作</td><td>后端服务异常，检查后端服务状态及网络连接</td><td>error</td><td>后端接口返回非200状态码</td></tr>
-<tr><td>当前进展不能为空</td><td>提交终止项目</td><td>未填写当前进展，填写后提交</td><td>error</td><td>前端校验 CURRENT_PROGRESS 字段非空</td></tr>
-<tr><td>终止原因不能为空</td><td>提交终止项目</td><td>未填写终止原因，填写后提交</td><td>error</td><td>前端校验 TERMINATION_REASON 字段非空</td></tr>
-<tr><td>签订人不能为空</td><td>提交图纸确认</td><td>未选择签订人，选择后提交</td><td>error</td><td>前端校验 SIGNER 字段非空</td></tr>
-<tr><td>面积确认校验失败</td><td>提交区域确认</td><td>generalFormDS 校验未通过，检查面积等必填字段</td><td>error</td><td>前端校验 SCALE_AREA 等字段完整性</td></tr>
-<tr><td>单个文件不能大于30MB</td><td>上传图纸</td><td>文件超过30MB限制，压缩或拆分后重传</td><td>error</td><td>前端 beforeUpload 校验 file.size</td></tr>
-<tr><td>上传失败</td><td>上传图纸</td><td>OSS 上传异常，检查存储服务及文件格式</td><td>error</td><td>onUploadError 或 onUploadSuccess 无 fileUrl</td></tr>
-<tr><td>同步外部系统失败</td><td>同步CRM/OA/FDD</td><td>外部系统异常或数据不符合接口要求，检查 errorInfo 字段</td><td>error</td><td>pushCrm/pushOa/pushFdd 接口返回失败</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>查看申请/查看反馈</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>开始接单/开始设计/图纸验收</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
+<tr><td>请选择一条数据</td><td>点击头部操作按钮</td><td>未选择行或选择多行，选择一条数据后再操作</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>列表查询或操作</td><td>后端服务异常，检查后端服务状态及网络连接</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>当前进展不能为空</td><td>提交终止项目</td><td>未填写当前进展，填写后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>终止原因不能为空</td><td>提交终止项目</td><td>未填写终止原因，填写后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>签订人不能为空</td><td>提交图纸确认</td><td>未选择签订人，选择后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>面积确认校验失败</td><td>提交区域确认</td><td>generalFormDS 校验未通过，检查面积等必填字段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>单个文件不能大于30MB</td><td>上传图纸</td><td>文件超过30MB限制，压缩或拆分后重传</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>上传失败</td><td>上传图纸</td><td>OSS 上传异常，检查存储服务及文件格式</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>同步外部系统失败</td><td>同步CRM/OA/FDD</td><td>外部系统异常或数据不符合接口要求，检查 errorInfo 字段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>查看申请/查看反馈</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>开始接单/开始设计/图纸验收</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

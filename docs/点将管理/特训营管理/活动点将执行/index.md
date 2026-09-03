@@ -467,19 +467,19 @@ WHERE ta.APPLY_TYPE_ONE = 'activity'
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择一条数据</td><td>操作按钮</td><td>未选择或选择多行；选择一条数据后操作</td><td>普通</td><td>前端选中行数校验</td></tr>
-<tr><td>只有在培训开始前七天内且已生效的单据才可以发起取消申请！</td><td>特殊取消</td><td>不满足7天内或未签约；确认时间和审批状态</td><td>普通</td><td>前端时间差值与状态校验</td></tr>
-<tr><td>该单据已发起取消申请，不可重复发起！</td><td>特殊取消</td><td>已有进行中的取消申请；等待当前取消审批完成</td><td>普通</td><td>前端 cancelApprovalState 校验</td></tr>
-<tr><td>实际开始时间不能为空</td><td>结束执行提交</td><td>未填写实际开始时间；填写后提交</td><td>普通</td><td>前端 realStartDate 必填校验</td></tr>
-<tr><td>实际结束时间不能为空</td><td>结束执行提交</td><td>未填写实际结束时间；填写后提交</td><td>普通</td><td>前端 realEndDate 必填校验</td></tr>
-<tr><td>结束备注不能为空</td><td>结束执行提交</td><td>未填写结束备注；填写后提交</td><td>普通</td><td>前端 endExecuteRemark 必填校验</td></tr>
-<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>严重</td><td>HTTP请求异常捕获</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>查看/结束执行</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>结束执行/特殊取消</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>同步外部系统失败</td><td>同步CRM/OA/FDD</td><td>外部系统异常或数据不符合接口要求，检查 errorInfo 字段</td><td>error</td><td>pushCrm/pushOa/pushFdd 接口返回失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.ORDER_LECTURE_STATE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
+<tr><td>请选择一条数据</td><td>操作按钮</td><td>未选择或选择多行；选择一条数据后操作</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>只有在培训开始前七天内且已生效的单据才可以发起取消申请！</td><td>特殊取消</td><td>不满足7天内或未签约；确认时间和审批状态</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>该单据已发起取消申请，不可重复发起！</td><td>特殊取消</td><td>已有进行中的取消申请；等待当前取消审批完成</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>实际开始时间不能为空</td><td>结束执行提交</td><td>未填写实际开始时间；填写后提交</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>实际结束时间不能为空</td><td>结束执行提交</td><td>未填写实际结束时间；填写后提交</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>结束备注不能为空</td><td>结束执行提交</td><td>未填写结束备注；填写后提交</td><td>普通</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常；检查后端服务状态</td><td>严重</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在</td><td>查看/结束执行</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>结束执行/特殊取消</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>同步外部系统失败</td><td>同步CRM/OA/FDD</td><td>外部系统异常或数据不符合接口要求，检查 errorInfo 字段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.ORDER_LECTURE_STATE 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

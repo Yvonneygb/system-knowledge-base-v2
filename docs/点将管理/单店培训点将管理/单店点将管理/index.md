@@ -487,12 +487,12 @@ SELECT APPLY_CODE, SIGNER_ID, SIGNER_NAME
 <tr><td>审批意见不能为空</td><td>提交审批时</td><td>未填写审批意见，填写审批意见后提交</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
 <tr><td>签订人不能为空</td><td>审批通过时</td><td>未选择签订人，选择签订人后提交</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
 <tr><td>数据校验失败</td><td>审批提交时</td><td>表单校验未通过，检查必填项是否完整</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>数据不存在</td><td>查看/审批</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>审批</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.APPLY_APPROVAL_STATE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>审批人不能为空</td><td>提交审批</td><td>未设置审批人，检查当前用户登录态</td><td>error</td><td>前端取 userInfo.realName 为空</td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td>axios catch 或 timeout</td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td>permissionList 校验未通过</td></tr>
+<tr><td>数据不存在</td><td>查看/审批</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>阻断性报错</td><td>接口返回数据为空</td></tr>
+<tr><td>状态不允许操作</td><td>审批</td><td>申请状态不在允许操作的状态范围内，检查 ORDER_LECTURE_STATE</td><td>阻断性报错</td><td>后端校验状态机失败</td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.APPLY_APPROVAL_STATE 等未配置，检查值集配置</td><td>toast提醒</td><td>lookupCode 查询返回空</td></tr>
+<tr><td>审批人不能为空</td><td>提交审批</td><td>未设置审批人，检查当前用户登录态</td><td>阻断性报错</td><td>前端取 userInfo.realName 为空</td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">
