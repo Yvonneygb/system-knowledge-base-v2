@@ -1,14 +1,7 @@
 ---
 ---
 
-<KbSectionTabs :tabs="[
-  { id: 'biz-flow', label: '业务流程图' },
-  { id: 'logic', label: '逻辑说明' },
-  { id: 'faq', label: '常见问题FAQ' },
-  { id: 'troubleshoot', label: '故障排查' },
-  { id: 'history', label: '历史记录' },
-  { id: 'related', label: '相关文档' },
-]" />
+<BreadcrumbTabs />
 <div id="biz-flow">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -87,7 +80,7 @@
 </div>
 </div>
 
-<div id="logic">
+<div id="key-logic">
 
 <div class="kb-module">
 
@@ -665,7 +658,7 @@ WHERE DPI.DISCOUNT_POLICY_ID = :policyId
 
 </div>
 
-<div id="troubleshoot" style="display:none;">
+<div id="detail-logic" style="display:none;">
 
 <div class="kb-module">
 
@@ -775,7 +768,7 @@ WHERE DPI.DISCOUNT_POLICY_ID = :policyId;
 
 </div>
 
-<div id="related" style="display:none;">
+<div id="manual" style="display:none;">
 
 <div class="kb-module">
 
