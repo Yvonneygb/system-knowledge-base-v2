@@ -973,20 +973,25 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
 <div class="kl-card alt" style="margin-bottom:20px;">
     <div class="kl-card-title" style="margin-bottom:16px;">
       <span class="kl-num">Q4</span>
-      <span style="font-size:15px;">取消核销后出库单行可核销数量未回加</strong></p>
-<ul><li><strong>原因</strong>：updateClData中invLine为空(无审批通过的核销明细)，或分布式锁获取失败</li><li><strong>处理</strong>：</li></ul>
-
-```sql
-SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, ith.HZ_APPROVE_STATUS
-FROM EPM_VERIFER_INVOICE_DETAILS vid
-JOIN EPM_INVOICE_TRUTH_LINE itl ON vid.INVOICE_TRUTH_LINE_ID = itl.INVOICE_TRUTH_LINE_ID
-JOIN EPM_INVOICE_TRUTH_HEADER ith ON ith.INVOICE_TRUTH_ID = itl.INVOICE_TRUTH_ID
-WHERE vid.EFFECT_STATUS IN ('invalid','valid')
-  AND ith.HZ_APPROVE_STATUS IN ('NEW','RUN','APPROVED');
-```
-<p><strong>Q5: 审批通过后出库单行核销数量未更新</strong></p>
-<ul><li><strong>原因</strong>：wfComplete回调未正确执行，或核销明细有效状态更新失败</li><li><strong>处理</strong>：检查EPM_VERIFER_INVOICE_DETAILS的EFFECT_STATUS是否为valid，检查INV_OUT_BILL_LINE的已核销数量/可核销数量</li></ul>
-<p><strong>Q6: 单位转换率的作用？</span>
+      <span style="font-size:15px;">取消核销后出库单行可核销数量未回加</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <ul><li><strong>原因</strong>：updateClData中invLine为空(无审批通过的核销明细)，或分布式锁获取失败</li><li><strong>处理</strong>：</li></ul>
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">审批通过后出库单行核销数量未更新</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <ul><li><strong>原因</strong>：wfComplete回调未正确执行，或核销明细有效状态更新失败</li><li><strong>处理</strong>：检查EPM_VERIFER_INVOICE_DETAILS的EFFECT_STATUS是否为valid，检查INV_OUT_BILL_LINE的已核销数量/可核销数量</li></ul>
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q6</span>
+      <span style="font-size:15px;">单位转换率的作用？</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
       UOM_RATE用于计量单位转换，当发票明细单位与核销单位不一致时，通过转换率计算转化后剩余可核销数量(CONVERT_SUR_VERIFER_NUMBER=剩余可核销数量×UOM_RATE)，保证核销数量准确。
