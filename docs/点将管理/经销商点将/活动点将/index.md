@@ -1136,16 +1136,53 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：经销商看不到自己发起的活动点将记录？</strong></p>
-<p>A：检查该经销商是否正确关联当前登录用户，确认DEALER_CODE与当前登录用户关联的经销商一致。</p>
-<p><strong>Q2：详情页type参数有什么作用？</strong></p>
-<p>A：<code>type</code>参数用于区分详情页的展示模式，不同模式可能展示不同的操作按钮和字段。</p>
-<p><strong>Q3：活动点将状态未更新？</strong></p>
-<p>A：状态由审批流程驱动，需联系审批人确认审批进度。</p>
-<p><strong>Q4：申请点将弹窗无讲师数据？</strong></p>
-<p>A：检查campApi.lecturerList接口，pageType=activity参数是否正确传递。</p>
-<p><strong>Q5：取消点将校验不通过？</strong></p>
-<p>A：检查activityStartDate时间差值、approvalState是否为fdd_sign、orderLectureState是否非end。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">经销商看不到自己发起的活动点将记录？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查该经销商是否正确关联当前登录用户，确认DEALER_CODE与当前登录用户关联的经销商一致。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">详情页type参数有什么作用？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <code>type</code>参数用于区分详情页的展示模式，不同模式可能展示不同的操作按钮和字段。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">活动点将状态未更新？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      状态由审批流程驱动，需联系审批人确认审批进度。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">申请点将弹窗无讲师数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查campApi.lecturerList接口，pageType=activity参数是否正确传递。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">取消点将校验不通过？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查activityStartDate时间差值、approvalState是否为fdd_sign、orderLectureState是否非end。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

@@ -810,18 +810,53 @@ ORDER BY MDF.OPERATION_TIME DESC;
 </KbCard>
 
 <KbCard title="常见问题">
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>上传图纸弹窗无回填数据</td><td>检查 getUploadDetail 接口是否正常返回 designList/renderingList/constructionList</td></tr>
-<tr><td>图纸确认签订人列表为空</td><td>检查 signerDS 查询条件 legalEntityName 是否正确，及法人主体下是否有签署人</td></tr>
-<tr><td>查看反馈弹窗无数据</td><td>检查 queryFeedback 接口是否正常返回，及经销商是否已反馈</td></tr>
-<tr><td>同步CRM/OA/FDD失败</td><td>检查对应推送接口返回的 errorInfo 字段，确认外部系统状态正常</td></tr>
-<tr><td>开始设计/下单无反应</td><td>检查对应接口 startDesign/startOrder 是否调用成功，查看网络请求</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">上传图纸弹窗无回填数据</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 getUploadDetail 接口是否正常返回 designList/renderingList/constructionList
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">图纸确认签订人列表为空</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 signerDS 查询条件 legalEntityName 是否正确，及法人主体下是否有签署人
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">查看反馈弹窗无数据</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 queryFeedback 接口是否正常返回，及经销商是否已反馈
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">同步CRM/OA/FDD失败</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查对应推送接口返回的 errorInfo 字段，确认外部系统状态正常
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">开始设计/下单无反应</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查对应接口 startDesign/startOrder 是否调用成功，查看网络请求
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

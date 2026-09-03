@@ -396,14 +396,44 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：门店档案如何创建？</strong></p>
-<p>A：由"新建门店申请"审批通过后自动生成（syncMktTerminal方法），不支持在本页面直接新增。</p>
-<p><strong>Q2：门店档案如何更新？</strong></p>
-<p>A：由"门店变更申请"审批通过后自动更新（onWfComplete方法）。本页面仅支持补充"其他情况说明"和"面积变动说明"。</p>
-<p><strong>Q3：查询时如何过滤数据？</strong></p>
-<p>A：自动按当前用户组织ID（entid）和经销商编码（custCode）过滤，确保数据隔离。</p>
-<p><strong>Q4：LOV接口有什么用？</strong></p>
-<p>A：finFeeApplyLov为门店装修申请提供门店选择（注入装修提前天数），custDhReimburseHead为门头展板报销提供门店选择。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">门店档案如何创建？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      由"新建门店申请"审批通过后自动生成（syncMktTerminal方法），不支持在本页面直接新增。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">门店档案如何更新？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      由"门店变更申请"审批通过后自动更新（onWfComplete方法）。本页面仅支持补充"其他情况说明"和"面积变动说明"。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">查询时如何过滤数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      自动按当前用户组织ID（entid）和经销商编码（custCode）过滤，确保数据隔离。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">LOV接口有什么用？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      finFeeApplyLov为门店装修申请提供门店选择（注入装修提前天数），custDhReimburseHead为门头展板报销提供门店选择。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

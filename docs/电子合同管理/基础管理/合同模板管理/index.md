@@ -707,21 +707,80 @@ ORDER BY T.CREATION_DATE DESC;
 </KbCard>
 
 <KbCard title="常见问题">
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>模板变量表格不显示</td><td>仅当模板类型为授权书或承诺函时显示变量表格，其他类型不显示</td></tr>
-<tr><td>模板无法被合同签署引用</td><td>检查模板状态是否为已生效，未生效模板不可引用</td></tr>
-<tr><td>更换授权单位勾选框不显示</td><td>仅当模板类型为授权书时显示该勾选框</td></tr>
-<tr><td>上传文件后附件表格未刷新</td><td>检查OSS返回的fileUrl是否存在，若为空会触发上传失败提示</td></tr>
-<tr><td>禁用模板后已引用合同受影响吗</td><td>不会，已创建的合同保留引用时的模板快照</td></tr>
-<tr><td>模板类型下拉为空</td><td>检查值集 MBO.CONTRACT_TEMPLATE 是否配置</td></tr>
-<tr><td>子类型下拉为空</td><td>检查对应子类型值集是否配置(MBO.CONTRACT_SUB_TEMPLATE等)</td></tr>
-<tr><td>授权单位下拉为空</td><td>检查 ch/contract/query-relation-company/list 接口返回数据</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">模板变量表格不显示</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      仅当模板类型为授权书或承诺函时显示变量表格，其他类型不显示
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">模板无法被合同签署引用</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查模板状态是否为已生效，未生效模板不可引用
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">更换授权单位勾选框不显示</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      仅当模板类型为授权书时显示该勾选框
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">上传文件后附件表格未刷新</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查OSS返回的fileUrl是否存在，若为空会触发上传失败提示
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">禁用模板后已引用合同受影响吗</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不会，已创建的合同保留引用时的模板快照
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q6</span>
+      <span style="font-size:15px;">模板类型下拉为空</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查值集 MBO.CONTRACT_TEMPLATE 是否配置
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q7</span>
+      <span style="font-size:15px;">子类型下拉为空</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查对应子类型值集是否配置(MBO.CONTRACT_SUB_TEMPLATE等)
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q8</span>
+      <span style="font-size:15px;">授权单位下拉为空</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 ch/contract/query-relation-company/list 接口返回数据
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

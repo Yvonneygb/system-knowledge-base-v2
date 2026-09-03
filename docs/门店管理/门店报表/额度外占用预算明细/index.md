@@ -519,16 +519,53 @@ WHERE bod.occupy_amt > 0                                       -- 只展示占�
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：报表数据来源是什么？</strong></p>
-<p>A：数据来源于4段UNION ALL查询：前3段查询<code>VIEW_OCCUPY_AMT</code>视图（终端费用申请/兑付/超额占用），第4段查询<code>CUST_DH_REIMBURSE_HEAD</code>和<code>CUST_DH_CASHOUT_HEAD</code>（大客户DH报销/兑付占用）。</p>
-<p><strong>Q2：4段UNION ALL分别对应什么业务？</strong></p>
-<p>A：第1段-终端费用申请占用(afh_stat=APPROVED/RUN且cbh_stat=NEW)，第2段-兑付占用(cbh_stat=RUN)，第3段-兑付超额占用(trc_stat=APPROVED)，第4段-大客户DH报销占用(HZ_APPROVE_STATUS=RUN/APPROVED/REBUT)。</p>
-<p><strong>Q3：为什么只展示占用金额>0的记录？</strong></p>
-<p>A：外层过滤条件<code>bod.occupy_amt &gt; 0</code>，确保报表只展示有实际预算占用的记录，排除占用金额为0或负数的记录。</p>
-<p><strong>Q4：导出Excel的标题是什么？</strong></p>
-<p>A：标题为"额度外占用预算明细"，超过1万条数据时异步导出。</p>
-<p><strong>Q5：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">报表数据来源是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      数据来源于4段UNION ALL查询：前3段查询<code>VIEW_OCCUPY_AMT</code>视图（终端费用申请/兑付/超额占用），第4段查询<code>CUST_DH_REIMBURSE_HEAD</code>和<code>CUST_DH_CASHOUT_HEAD</code>（大客户DH报销/兑付占用）。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">4段UNION ALL分别对应什么业务？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      第1段-终端费用申请占用(afh_stat=APPROVED/RUN且cbh_stat=NEW)，第2段-兑付占用(cbh_stat=RUN)，第3段-兑付超额占用(trc_stat=APPROVED)，第4段-大客户DH报销占用(HZ_APPROVE_STATUS=RUN/APPROVED/REBUT)。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">为什么只展示占用金额>0的记录？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      外层过滤条件<code>bod.occupy_amt &gt; 0</code>，确保报表只展示有实际预算占用的记录，排除占用金额为0或负数的记录。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">导出Excel的标题是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      标题为"额度外占用预算明细"，超过1万条数据时异步导出。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

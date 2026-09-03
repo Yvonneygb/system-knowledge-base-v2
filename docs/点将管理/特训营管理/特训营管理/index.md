@@ -706,22 +706,35 @@ ORDER BY tc.PLAN_START_TIME DESC;
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：报名截止按钮不显示？</strong></p>
-<p>A：检查特训营状态是否为 <code>valid</code>，计划开始时间是否晚于当前时间。</p>
-<p><strong>Q2：编辑按钮提示无法编辑？</strong></p>
-<p>A：确认特训营状态为 <code>draft</code>，非草稿状态不可编辑。</p>
-<p><strong>Q3：生效/失效返回错误信息？</strong></p>
-<p>A：检查接口返回 <code>res.data</code> 内容，可能有业务校验不通过。</p>
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>报名截止按钮不显示</td><td>检查 STATUS 是否为 valid，PLAN_START_TIME 是否晚于当前时间</td></tr>
-<tr><td>编辑按钮提示无法编辑</td><td>确认 STATUS 为 draft，非草稿状态不可编辑</td></tr>
-<tr><td>生效/失效返回错误信息</td><td>检查接口返回 res.data 内容，可能有业务校验不通过</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">报名截止按钮不显示？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查特训营状态是否为 <code>valid</code>，计划开始时间是否晚于当前时间。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">编辑按钮提示无法编辑？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      确认特训营状态为 <code>draft</code>，非草稿状态不可编辑。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">生效/失效返回错误信息？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查接口返回 <code>res.data</code> 内容，可能有业务校验不通过。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

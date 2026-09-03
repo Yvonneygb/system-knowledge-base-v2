@@ -626,16 +626,53 @@ WHERE 1 = 1
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：报表数据来源是什么？</strong></p>
-<p>A：数据来源于Oracle视图 <code>EPMS.MKT_TERMINAL_RE_CASHOUT_VIEW</code>，该视图整合了额度外兑现头表（FIN_FEE_TERMINAL_RE_CASHOUT）、验收报销单（FIN_FEE_CHECK_BX_HEADER）、门店信息、经销商信息等多表数据。</p>
-<p><strong>Q2：报表支持哪些查询条件？</strong></p>
-<p>A：支持门店编码、门店名称、经销商编码、经销商名称（模糊匹配）、创建时间范围、开票单位编码（精确匹配）、开票单位名称（模糊匹配）。</p>
-<p><strong>Q3：报表是否支持导出？</strong></p>
-<p>A：是，支持导出Excel，供内部管理决策与归档使用。</p>
-<p><strong>Q4：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。新增/修改/删除操作在"门店装修-门店装修额度外兑现"页面进行。</p>
-<p><strong>Q5：报表与额度外兑现管理页面的关系？</strong></p>
-<p>A：报表查询复用额度外兑现的查询逻辑，数据来源相同，但报表页面仅展示不可编辑。额度外兑现管理页面（ae-business模块）包含完整的CRUD+工作流+推送共享/资金池功能。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">报表数据来源是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      数据来源于Oracle视图 <code>EPMS.MKT_TERMINAL_RE_CASHOUT_VIEW</code>，该视图整合了额度外兑现头表（FIN_FEE_TERMINAL_RE_CASHOUT）、验收报销单（FIN_FEE_CHECK_BX_HEADER）、门店信息、经销商信息等多表数据。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">报表支持哪些查询条件？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      支持门店编码、门店名称、经销商编码、经销商名称（模糊匹配）、创建时间范围、开票单位编码（精确匹配）、开票单位名称（模糊匹配）。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">报表是否支持导出？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      是，支持导出Excel，供内部管理决策与归档使用。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。新增/修改/删除操作在"门店装修-门店装修额度外兑现"页面进行。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">报表与额度外兑现管理页面的关系？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      报表查询复用额度外兑现的查询逻辑，数据来源相同，但报表页面仅展示不可编辑。额度外兑现管理页面（ae-business模块）包含完整的CRUD+工作流+推送共享/资金池功能。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

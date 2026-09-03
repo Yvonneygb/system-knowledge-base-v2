@@ -755,18 +755,53 @@ ORDER BY LA.CREATION_DATE DESC;
 </KbCard>
 
 <KbCard title="常见问题">
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>审批按钮不显示</td><td>检查 pageType 是否为 manage 模式，审批按钮仅在非 manage 模式显示</td></tr>
-<tr><td>设计改派按钮不显示</td><td>检查 pageType 是否为 manage 模式，设计改派仅在 manage 模式显示</td></tr>
-<tr><td>项目终止审批弹窗标题异常</td><td>检查 applyType 是否为 termination 且 terminationApprovalState 为 to_be_approval</td></tr>
-<tr><td>设计师选择列表无数据</td><td>检查 applyTableDS 查询条件及讲师档案数据是否正常</td></tr>
-<tr><td>审批接口调用错误</td><td>检查 pageType 与 applyType 组合是否匹配对应审批接口</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">审批按钮不显示</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 pageType 是否为 manage 模式，审批按钮仅在非 manage 模式显示
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">设计改派按钮不显示</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 pageType 是否为 manage 模式，设计改派仅在 manage 模式显示
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">项目终止审批弹窗标题异常</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 applyType 是否为 termination 且 terminationApprovalState 为 to_be_approval
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">设计师选择列表无数据</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 applyTableDS 查询条件及讲师档案数据是否正常
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">审批接口调用错误</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查 pageType 与 applyType 组合是否匹配对应审批接口
+    </div>
+  </div>
+</div>
 </KbCard>
 
 <KbCard title="内置审批说明">

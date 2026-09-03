@@ -675,14 +675,44 @@ ORDER BY RECEIVE_DATE DESC;
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1: 到款数据从哪里来？</strong></p>
-<p>A: 来源于ERP系统，通过调度任务syncPaymentDataFromErpJob自动同步，或通过getErpPaymentData接口手动触发引入。编号(paymentImportCode)来自ERP的receiptNumber。</p>
-<p><strong>Q2: 商票兑付的作用？</strong></p>
-<p>A: 商业承兑/银行承兑类型到款单默认未兑付(isCashout=N)，需手动点击兑付按钮更新为已兑付(isCashout=Y)后才可认领。其他类型默认已兑付。</p>
-<p><strong>Q3: 剩余可认款金额如何获取？</strong></p>
-<p>A: 虚拟单(VIRTUAL_RECEIPT)查DB获取，实际单(RECEIPT)!实时查ERP获取最新金额，确保认领时不#时不超额。</p>
-<p><strong>Q4: 定时同步任务支持哪些模式？</strong></p>
-<p>A: syncPaymentDataFromErpJob支持指定编码或时间区间同步，批量处理ERP返回数据。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">到款数据从哪里来？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      来源于ERP系统，通过调度任务syncPaymentDataFromErpJob自动同步，或通过getErpPaymentData接口手动触发引入。编号(paymentImportCode)来自ERP的receiptNumber。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">商票兑付的作用？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      商业承兑/银行承兑类型到款单默认未兑付(isCashout=N)，需手动点击兑付按钮更新为已兑付(isCashout=Y)后才可认领。其他类型默认已兑付。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">剩余可认款金额如何获取？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      虚拟单(VIRTUAL_RECEIPT)查DB获取，实际单(RECEIPT)!实时查ERP获取最新金额，确保认领时不#时不超额。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">定时同步任务支持哪些模式？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      syncPaymentDataFromErpJob支持指定编码或时间区间同步，批量处理ERP返回数据。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

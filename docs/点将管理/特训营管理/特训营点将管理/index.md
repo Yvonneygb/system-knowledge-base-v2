@@ -950,26 +950,44 @@ WHERE tca.APPROVAL_STATE = 'approving';
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：点将申请被拒绝后能否重新提交？</strong></p>
-<p>A：可以，拒绝后可修改申请内容重新提交审批。</p>
-<p><strong>Q2：取消申请审批被拒绝后怎么办？</strong></p>
-<p>A：取消申请被拒绝后，原点将申请继续有效，可再次发起取消申请。</p>
-<p><strong>Q3：pageType如何区分页面模式？</strong></p>
-<p>A：通过 <code>useAuthPageOption</code> 切换：manage 为管理视图，approval 为审批视图。</p>
-<p><strong>Q4：点将申请与CRM订单如何关联？</strong></p>
-<p>A：点将申请审批通过后，系统自动创建CRM订单，通过 CRM_ORDER_STATUS 跟踪订单执行状态。</p>
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>特殊取消按钮校验不通过</td><td>检查 PLAN_START_TIME 与当前时间差值是否在1-7天，APPROVAL_STATE 是否为 fdd_sign</td></tr>
-<tr><td>审批按钮不显示</td><td>确认 pageType 为 approval</td></tr>
-<tr><td>同步FDD按钮不显示</td><td>确认 pageType 为 approval，仅审批视图显示</td></tr>
-<tr><td>查看协议书无PDF</td><td>检查 queryPDF 接口返回，法大大协议书是否已生成</td></tr>
-<tr><td>CRM同步失败</td><td>检查 pushCrm 接口，确认经销商CRM映射存在</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">点将申请被拒绝后能否重新提交？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      可以，拒绝后可修改申请内容重新提交审批。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">取消申请审批被拒绝后怎么办？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      取消申请被拒绝后，原点将申请继续有效，可再次发起取消申请。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">pageType如何区分页面模式？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过 <code>useAuthPageOption</code> 切换：manage 为管理视图，approval 为审批视图。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">点将申请与CRM订单如何关联？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      点将申请审批通过后，系统自动创建CRM订单，通过 CRM_ORDER_STATUS 跟踪订单执行状态。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

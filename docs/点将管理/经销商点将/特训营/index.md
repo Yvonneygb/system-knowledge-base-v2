@@ -1023,18 +1023,62 @@ WHERE tca.LECTURER_CODE = :lecturerCode
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：经销商看不到自己发起的特训营记录？</strong></p>
-<p>A：检查该经销商是否正确关联当前登录用户，确认DEALER_CODE与当前登录用户关联的经销商一致。</p>
-<p><strong>Q2：特训营状态未更新？</strong></p>
-<p>A：状态由审批流程驱动，需联系审批人确认审批进度。</p>
-<p><strong>Q3：pageForDealer接口返回数据为空？</strong></p>
-<p>A：确认当前登录用户已关联经销商角色，且该经销商存在发起记录。</p>
-<p><strong>Q4：申请点将弹窗无特训营数据？</strong></p>
-<p>A：检查campApplyApi.campSelectPage接口，确认有生效特训营。</p>
-<p><strong>Q5：报名保存失败？</strong></p>
-<p>A：检查ApplyInfo组件数据，法人主体和交易公司是否选择。</p>
-<p><strong>Q6：结算前确认按钮不显示？</strong></p>
-<p>A：检查beforeSettlementConfirmState是否为to_be_confirm。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">经销商看不到自己发起的特训营记录？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查该经销商是否正确关联当前登录用户，确认DEALER_CODE与当前登录用户关联的经销商一致。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">特训营状态未更新？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      状态由审批流程驱动，需联系审批人确认审批进度。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">pageForDealer接口返回数据为空？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      确认当前登录用户已关联经销商角色，且该经销商存在发起记录。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">申请点将弹窗无特训营数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查campApplyApi.campSelectPage接口，确认有生效特训营。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">报名保存失败？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查ApplyInfo组件数据，法人主体和交易公司是否选择。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q6</span>
+      <span style="font-size:15px;">结算前确认按钮不显示？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查beforeSettlementConfirmState是否为to_be_confirm。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

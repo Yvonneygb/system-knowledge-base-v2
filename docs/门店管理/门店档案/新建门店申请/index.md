@@ -644,16 +644,53 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：门店编码如何生成？</strong></p>
-<p>A：审批通过后自动生成，编码规则：barCode + divisionCode + 5位Redis流水号。流水号通过Redis自增生成，key = "ae:terminal:" + divisionCode + ":" + barCode。</p>
-<p><strong>Q2：审批流程是什么？</strong></p>
-<p>A：工作流编码NEW_STORE_APPLY（"新建门店"），提交后进入OA审批，审批通过回调onWfComplete同步门店档案，审批驳回回调onWfBreak更新状态。</p>
-<p><strong>Q3：审批通过后会做什么？</strong></p>
-<p>A：1)生成门店编码 2)更新申请单状态为APPROVED 3)同步数据到MKT_TERMINAL门店档案表 4)迁移附件到新门店。</p>
-<p><strong>Q4：门店名称标识有什么用？</strong></p>
-<p>A：terminalNameFlag用于工作流分支路由：terminalType==2→"1"，包含"五金店"/"优选店"→"2"，其他→"3"。</p>
-<p><strong>Q5：OA链接标题格式是什么？</strong></p>
-<p>A："新建门店申请_门店名称_申请单号_更新时间"。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">门店编码如何生成？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      审批通过后自动生成，编码规则：barCode + divisionCode + 5位Redis流水号。流水号通过Redis自增生成，key = "ae:terminal:" + divisionCode + ":" + barCode。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">审批流程是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      工作流编码NEW_STORE_APPLY（"新建门店"），提交后进入OA审批，审批通过回调onWfComplete同步门店档案，审批驳回回调onWfBreak更新状态。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">审批通过后会做什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      1)生成门店编码 2)更新申请单状态为APPROVED 3)同步数据到MKT_TERMINAL门店档案表 4)迁移附件到新门店。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">门店名称标识有什么用？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      terminalNameFlag用于工作流分支路由：terminalType==2→"1"，包含"五金店"/"优选店"→"2"，其他→"3"。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">OA链接标题格式是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      "新建门店申请_门店名称_申请单号_更新时间"。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

@@ -731,23 +731,35 @@ WHERE ta.APPLY_TYPE_ONE = 'activity'
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：执行跟踪页面能否修改数据？</strong></p>
-<p>A：不能，本页面为只读跟踪页面，仅提供查询查看和执行结果回写功能。</p>
-<p><strong>Q2：执行列表与活动点将管理列表有什么区别？</strong></p>
-<p>A：活动点将管理列表展示所有状态的申请，执行列表仅展示已审批通过进入执行阶段的申请（<code>pageType=activity</code>）。</p>
-<p><strong>Q3：特殊取消时机如何判断？</strong></p>
-<p>A：培训开始前1-7天内且已法大大签约（<code>approvalState=fdd_sign</code>）的申请可发起特殊取消。</p>
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>列表无数据</td><td>检查 pageType=activity 参数，确认有执行中的活动点将</td></tr>
-<tr><td>特殊取消按钮校验不通过</td><td>检查 ACTIVITY_START_DATE 与当前时间差值是否在1-7天，APPROVAL_STATE 是否为 fdd_sign</td></tr>
-<tr><td>结束执行失败</td><td>检查 realStartDate、realEndDate、endExecuteRemark 是否填写完整</td></tr>
-<tr><td>CRM同步失败</td><td>检查 sendCrmOrder 接口，确认经销商CRM映射存在</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">执行跟踪页面能否修改数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不能，本页面为只读跟踪页面，仅提供查询查看和执行结果回写功能。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">执行列表与活动点将管理列表有什么区别？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      活动点将管理列表展示所有状态的申请，执行列表仅展示已审批通过进入执行阶段的申请（<code>pageType=activity</code>）。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">特殊取消时机如何判断？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      培训开始前1-7天内且已法大大签约（<code>approvalState=fdd_sign</code>）的申请可发起特殊取消。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

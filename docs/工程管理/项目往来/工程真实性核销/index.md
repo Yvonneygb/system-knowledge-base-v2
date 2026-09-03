@@ -942,13 +942,38 @@ WHERE VERIFER_INVOICE_DETAILS_ID IN (#{detailIdList});
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1: 真实性核销凭证号如何生成？</strong></p>
-<p>A: 通过编码规则AE.INVOICE_CANCELLATION_UPLOAD自动生成(RuleCodeEnum.INVOICE_CANCELLATION_UPLOAD_NO)。核销单号通过AE.INVOICE_AUTHENTICITY_VERIFI(工程)/AE.JZ_INVOICE_AUTHENTICITY_VER(家装)生成。</p>
-<p><strong>Q2: 取消核销的五种类型区别？</strong></p>
-<p>A: invoice=取消整张发票，invoiceDetail=取消单条发票明细，invLine=取消出库单行核销，veriferDetail=取消核销明细行，obsInvoice=作废发票。不同类型影响的数据范围不同，取消时均更新EFFECT_STATUS为canceled并记录取消信息。</p>
-<p><strong>Q3: 三性校验是什么？</strong></p>
-<p>A: 发票购买方与工程采购单位名称一致性(UNIT_NAME_IS_AGREEMENT)、发票销售方与经销商法人名称一致性(BILLING_NAME_IS_AGREEMENT)、发票日期是否在发货日期之前(DATE_IS_AGREEMENT)，用于验证发票真实性。</p>
-<p><strong>Q4: 取消核销后出库单行可核销数量未回加</strong></p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">真实性核销凭证号如何生成？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过编码规则AE.INVOICE_CANCELLATION_UPLOAD自动生成(RuleCodeEnum.INVOICE_CANCELLATION_UPLOAD_NO)。核销单号通过AE.INVOICE_AUTHENTICITY_VERIFI(工程)/AE.JZ_INVOICE_AUTHENTICITY_VER(家装)生成。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">取消核销的五种类型区别？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      invoice=取消整张发票，invoiceDetail=取消单条发票明细，invLine=取消出库单行核销，veriferDetail=取消核销明细行，obsInvoice=作废发票。不同类型影响的数据范围不同，取消时均更新EFFECT_STATUS为canceled并记录取消信息。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">三性校验是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      发票购买方与工程采购单位名称一致性(UNIT_NAME_IS_AGREEMENT)、发票销售方与经销商法人名称一致性(BILLING_NAME_IS_AGREEMENT)、发票日期是否在发货日期之前(DATE_IS_AGREEMENT)，用于验证发票真实性。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">取消核销后出库单行可核销数量未回加</strong></p>
 <ul><li><strong>原因</strong>：updateClData中invLine为空(无审批通过的核销明细)，或分布式锁获取失败</li><li><strong>处理</strong>：</li></ul>
 
 ```sql
@@ -961,8 +986,13 @@ WHERE vid.EFFECT_STATUS IN ('invalid','valid')
 ```
 <p><strong>Q5: 审批通过后出库单行核销数量未更新</strong></p>
 <ul><li><strong>原因</strong>：wfComplete回调未正确执行，或核销明细有效状态更新失败</li><li><strong>处理</strong>：检查EPM_VERIFER_INVOICE_DETAILS的EFFECT_STATUS是否为valid，检查INV_OUT_BILL_LINE的已核销数量/可核销数量</li></ul>
-<p><strong>Q6: 单位转换率的作用？</strong></p>
-<p>A: UOM_RATE用于计量单位转换，当发票明细单位与核销单位不一致时，通过转换率计算转化后剩余可核销数量(CONVERT_SUR_VERIFER_NUMBER=剩余可核销数量×UOM_RATE)，保证核销数量准确。</p>
+<p><strong>Q6: 单位转换率的作用？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      UOM_RATE用于计量单位转换，当发票明细单位与核销单位不一致时，通过转换率计算转化后剩余可核销数量(CONVERT_SUR_VERIFER_NUMBER=剩余可核销数量×UOM_RATE)，保证核销数量准确。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

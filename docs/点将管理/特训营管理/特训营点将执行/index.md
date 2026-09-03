@@ -696,23 +696,35 @@ WHERE tca.APPROVAL_STATE = 'fdd_sign'
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：执行跟踪页面能否修改数据？</strong></p>
-<p>A：不能，本页面为只读跟踪页面，仅提供查询查看和执行结果回写功能。</p>
-<p><strong>Q2：执行列表与点将管理列表有什么区别？</strong></p>
-<p>A：点将管理列表展示所有状态的申请，执行列表仅展示已审批通过进入执行阶段的申请（<code>pageType=camp</code>）。</p>
-<p><strong>Q3：查看申请跳转的是哪个页面？</strong></p>
-<p>A：跳转特训营管理详情页 <code>/camp/detail/&#123;specialTrainCampId&#125;/view</code>，而非点将申请详情页。</p>
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>列表无数据</td><td>检查 pageByLecturerCode 接口，确认有执行中的特训营数据</td></tr>
-<tr><td>查看申请跳转失败</td><td>检查 specialTrainCampId 是否存在，特训营详情页路由配置</td></tr>
-<tr><td>特训营时间显示异常</td><td>检查 planStartTime 和 planEndTime 字段是否正确返回</td></tr>
-<tr><td>特殊取消按钮校验不通过</td><td>检查 PLAN_START_TIME 与当前时间差值是否在1-7天，APPROVAL_STATE 是否为 fdd_sign</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">执行跟踪页面能否修改数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不能，本页面为只读跟踪页面，仅提供查询查看和执行结果回写功能。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">执行列表与点将管理列表有什么区别？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      点将管理列表展示所有状态的申请，执行列表仅展示已审批通过进入执行阶段的申请（<code>pageType=camp</code>）。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">查看申请跳转的是哪个页面？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      跳转特训营管理详情页 <code>/camp/detail/&#123;specialTrainCampId&#125;/view</code>，而非点将申请详情页。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

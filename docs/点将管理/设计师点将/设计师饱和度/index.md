@@ -439,18 +439,53 @@ ORDER BY MLS.SATURATION_RATE DESC;
 </KbCard>
 
 <KbCard title="常见问题">
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>饱和度超过100%是什么意思</td><td>表示设计师已用天数超过总点将天数，处于超负荷状态，需调整排期</td></tr>
-<tr><td>饱和度数据什么时候更新</td><td>设计师点将执行完成时自动更新</td></tr>
-<tr><td>值集数据不显示</td><td>检查值集 MBO.DESIGN_APPLY_TYPE、MBO.DESIGN_STATE、MBO.DESIGN_LECTURER_LEVEL、MBO.APPLY_APPROVAL_STATE 是否已配置</td></tr>
-<tr><td>饱和度列表无数据</td><td>检查查询条件是否正确，确认设计师已有点将执行记录</td></tr>
-<tr><td>剩余天数为负数</td><td>表示设计师超负荷排期，需调整排期或增加可排期天数</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">饱和度超过100%是什么意思</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      表示设计师已用天数超过总点将天数，处于超负荷状态，需调整排期
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">饱和度数据什么时候更新</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      设计师点将执行完成时自动更新
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">值集数据不显示</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查值集 MBO.DESIGN_APPLY_TYPE、MBO.DESIGN_STATE、MBO.DESIGN_LECTURER_LEVEL、MBO.APPLY_APPROVAL_STATE 是否已配置
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">饱和度列表无数据</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查查询条件是否正确，确认设计师已有点将执行记录
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">剩余天数为负数</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      表示设计师超负荷排期，需调整排期或增加可排期天数
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

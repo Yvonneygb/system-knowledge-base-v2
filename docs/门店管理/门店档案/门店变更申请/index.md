@@ -605,16 +605,53 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：变更前和变更后数据如何保存？</strong></p>
-<p>A：采用双字段设计，变更后字段无后缀（如addr），变更前字段以H结尾（如addrH）。选择门店时自动带出变更前数据，用户修改变更后数据。</p>
-<p><strong>Q2：撤店有什么特殊校验？</strong></p>
-<p>A：当变更后terminalStat=2（撤店）时，系统校验该门店下所有装修申请单（FinFeeApplyFinishedHeader）和验收报销单（FinFeeCheckBxHeader）必须全部为APPROVED或INTERRUPT状态，否则不允许提交。</p>
-<p><strong>Q3：审批通过后会做什么？</strong></p>
-<p>A：通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到MktTerminal实体，更新门店档案表。</p>
-<p><strong>Q4：编码规则是什么？</strong></p>
-<p>A：AE.TERMINAL_MODIFY_CODE，通过codeRuleBuilder生成，参数含divisionCode。</p>
-<p><strong>Q5：工作流编码是什么？</strong></p>
-<p>A：SUB_STORE_UPDATE_APPLY（"门店变更申请"）。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">变更前和变更后数据如何保存？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      采用双字段设计，变更后字段无后缀（如addr），变更前字段以H结尾（如addrH）。选择门店时自动带出变更前数据，用户修改变更后数据。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">撤店有什么特殊校验？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      当变更后terminalStat=2（撤店）时，系统校验该门店下所有装修申请单（FinFeeApplyFinishedHeader）和验收报销单（FinFeeCheckBxHeader）必须全部为APPROVED或INTERRUPT状态，否则不允许提交。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">审批通过后会做什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过MktTerminalConvert.INSTANCE.toMktTerminalByModify将变更后字段映射到MktTerminal实体，更新门店档案表。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">编码规则是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      AE.TERMINAL_MODIFY_CODE，通过codeRuleBuilder生成，参数含divisionCode。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">工作流编码是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      SUB_STORE_UPDATE_APPLY（"门店变更申请"）。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

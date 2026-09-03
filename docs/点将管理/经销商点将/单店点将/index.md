@@ -1127,16 +1127,53 @@ WHERE ta.APPLY_TYPE_ONE = 'train'
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：经销商看不到自己发起的单店培训记录？</strong></p>
-<p>A：检查该经销商是否正确关联当前登录用户，确认DEALER_CODE与当前登录用户关联的经销商一致。</p>
-<p><strong>Q2：单店点将和特训营点将的区别？</strong></p>
-<p>A：单店点将以门店为维度，一条记录关联一个门店；特训营点将以培训活动为维度，可能关联多个门店。</p>
-<p><strong>Q3：详情页type参数有什么作用？</strong></p>
-<p>A：<code>type</code>参数用于区分详情页的展示模式，不同模式可能展示不同的操作按钮和字段。</p>
-<p><strong>Q4：申请点将弹窗无讲师数据？</strong></p>
-<p>A：检查campApi.lecturerList接口，pageType=train参数是否正确传递。</p>
-<p><strong>Q5：取消点将校验不通过？</strong></p>
-<p>A：检查preStartDate与当前时间差值是否&gt;=7天，orderLectureState是否为valid。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">经销商看不到自己发起的单店培训记录？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查该经销商是否正确关联当前登录用户，确认DEALER_CODE与当前登录用户关联的经销商一致。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">单店点将和特训营点将的区别？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      单店点将以门店为维度，一条记录关联一个门店；特训营点将以培训活动为维度，可能关联多个门店。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">详情页type参数有什么作用？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <code>type</code>参数用于区分详情页的展示模式，不同模式可能展示不同的操作按钮和字段。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">申请点将弹窗无讲师数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查campApi.lecturerList接口，pageType=train参数是否正确传递。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">取消点将校验不通过？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查preStartDate与当前时间差值是否&gt;=7天，orderLectureState是否为valid。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

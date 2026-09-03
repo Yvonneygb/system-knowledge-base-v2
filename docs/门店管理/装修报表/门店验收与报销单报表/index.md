@@ -587,18 +587,62 @@ WHERE 1 = 1
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：报表数据来源是什么？</strong></p>
-<p>A：数据来源于验收报销单头表 <code>FIN_FEE_CHECK_BX_HEADER</code>，关联工作流任务历史表（HWKF_RUN_TASK_HISTORY）、交易公司表（EPM_TRADING_COMPANY）、事业部基础设置表（DIVISION_BASE_SET）获取补充信息。</p>
-<p><strong>Q2：审批节点名称如何展示？</strong></p>
-<p>A：通过CASE语句处理：HZ_APPROVE_STATUS='NEW'显示"新建"，='APPROVED'显示"已审核"，其他状态取工作流运行中任务节点名称（HWKF_RUN_TASK_HISTORY.NODE_NAME）。</p>
-<p><strong>Q3：报表是否支持导出？</strong></p>
-<p>A：是，支持导出Excel，供内部管理决策与归档使用。</p>
-<p><strong>Q4：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。相关写操作在"门店装修-门店验收与报销单"页面进行。</p>
-<p><strong>Q5：免扣比例如何计算？</strong></p>
-<p>A：<code>check_free_proportion = NVL(check_overtime_free, 0) + NVL(decoration_overtime_free, 0)</code>，即验收提单超期减免(%) + 装修超期减免(%)。</p>
-<p><strong>Q6：结束时间查询是否包含当天？</strong></p>
-<p>A：是，SQL中结束日期加1天（<code>+ 1</code>）实现包含当天：<code>create_time &lt;= to_date(#&#123;endTime&#125;, 'yyyy-mm-dd') + 1</code>。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">报表数据来源是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      数据来源于验收报销单头表 <code>FIN_FEE_CHECK_BX_HEADER</code>，关联工作流任务历史表（HWKF_RUN_TASK_HISTORY）、交易公司表（EPM_TRADING_COMPANY）、事业部基础设置表（DIVISION_BASE_SET）获取补充信息。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">审批节点名称如何展示？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过CASE语句处理：HZ_APPROVE_STATUS='NEW'显示"新建"，='APPROVED'显示"已审核"，其他状态取工作流运行中任务节点名称（HWKF_RUN_TASK_HISTORY.NODE_NAME）。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">报表是否支持导出？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      是，支持导出Excel，供内部管理决策与归档使用。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。相关写操作在"门店装修-门店验收与报销单"页面进行。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">免扣比例如何计算？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <code>check_free_proportion = NVL(check_overtime_free, 0) + NVL(decoration_overtime_free, 0)</code>，即验收提单超期减免(%) + 装修超期减免(%)。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q6</span>
+      <span style="font-size:15px;">结束时间查询是否包含当天？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      是，SQL中结束日期加1天（<code>+ 1</code>）实现包含当天：<code>create_time &lt;= to_date(#&#123;endTime&#125;, 'yyyy-mm-dd') + 1</code>。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

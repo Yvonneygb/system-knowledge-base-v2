@@ -426,14 +426,44 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：报表统计哪些维度？</strong></p>
-<p>A：统计运营状态（运营/撤店）、经营属性（直营/经销/分销）、门店等级（一线/地级/县级）、门店类型（专卖/商超/家装/社区/乡镇）、门店面积（4段）、装修风格（按事业部区分）、连锁属性、系统归属（8类）等维度。</p>
-<p><strong>Q2：装修风格为什么按entid区分？</strong></p>
-<p>A：不同事业部（entid=101~109）的装修风格编码含义不同。例如entid=101时decoration_style=1表示A6风格，entid=102时decoration_style=1表示V9风格。</p>
-<p><strong>Q3：导出Excel的标题是什么？</strong></p>
-<p>A：标题为"终端分布报表"，超过1万条数据时异步导出。</p>
-<p><strong>Q4：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">报表统计哪些维度？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      统计运营状态（运营/撤店）、经营属性（直营/经销/分销）、门店等级（一线/地级/县级）、门店类型（专卖/商超/家装/社区/乡镇）、门店面积（4段）、装修风格（按事业部区分）、连锁属性、系统归属（8类）等维度。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">装修风格为什么按entid区分？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不同事业部（entid=101~109）的装修风格编码含义不同。例如entid=101时decoration_style=1表示A6风格，entid=102时decoration_style=1表示V9风格。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">导出Excel的标题是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      标题为"终端分布报表"，超过1万条数据时异步导出。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

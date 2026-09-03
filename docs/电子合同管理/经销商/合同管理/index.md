@@ -649,18 +649,53 @@ ORDER BY EC.CREATE_TIME DESC;
 </KbCard>
 
 <KbCard title="常见问题">
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>经销商能修改合同内容吗</td><td>不能，经销商仅能查看合同内容并进行签署或拒签，合同内容由品牌方维护</td></tr>
-<tr><td>拒签后还能重新签署吗</td><td>不能，拒签后合同进入拒签状态，需品牌方重新发起签署流程</td></tr>
-<tr><td>合同列表为什么看不到某些合同</td><td>经销商仅能看到自己作为签署方的合同，数据通过 pageForAgent 接口隔离</td></tr>
-<tr><td>下载合同PDF提示生成中怎么办</td><td>合同完成后PDF异步生成，通常几秒内完成，刷新页面后重试即可</td></tr>
-<tr><td>不同合同类型查看详情跳转不同页面</td><td>活动点将调用 activityApply/detail，特训营点将调用 trainCampApply/detail，设计点将调用 designApply/detail</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">经销商能修改合同内容吗</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不能，经销商仅能查看合同内容并进行签署或拒签，合同内容由品牌方维护
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">拒签后还能重新签署吗</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不能，拒签后合同进入拒签状态，需品牌方重新发起签署流程
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">合同列表为什么看不到某些合同</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      经销商仅能看到自己作为签署方的合同，数据通过 pageForAgent 接口隔离
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">下载合同PDF提示生成中怎么办</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      合同完成后PDF异步生成，通常几秒内完成，刷新页面后重试即可
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">不同合同类型查看详情跳转不同页面</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      活动点将调用 activityApply/detail，特训营点将调用 trainCampApply/detail，设计点将调用 designApply/detail
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

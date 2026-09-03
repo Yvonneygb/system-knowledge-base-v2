@@ -657,18 +657,53 @@ ORDER BY EC.CREATE_TIME DESC;
 </KbCard>
 
 <KbCard title="常见问题">
-<table class="kb-field-tbl">
-<thead>
-<tr><th>问题</th><th>排查方式</th></tr>
-</thead>
-<tbody>
-<tr><td>异常类型有哪些</td><td>签署超时、签署失败、归档失败、回调失败等，查看值集 MBO.CONTRACT_EXCEPTION_TYPE</td></tr>
-<tr><td>重新归档后合同状态未更新</td><td>检查法大大归档接口返回结果，确认归档是否成功</td></tr>
-<tr><td>重发短信后经销商未收到</td><td>检查短信平台发送记录，确认经销商手机号是否正确</td></tr>
-<tr><td>合同同步后状态仍不一致</td><td>检查外部系统签署状态，确认 unifyContractCode 是否正确</td></tr>
-<tr><td>修改合同状态后流程未继续</td><td>检查目标状态是否合法，确认状态流转规则</td></tr>
-</tbody>
-</table>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">异常类型有哪些</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      签署超时、签署失败、归档失败、回调失败等，查看值集 MBO.CONTRACT_EXCEPTION_TYPE
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">重新归档后合同状态未更新</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查法大大归档接口返回结果，确认归档是否成功
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">重发短信后经销商未收到</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查短信平台发送记录，确认经销商手机号是否正确
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">合同同步后状态仍不一致</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查外部系统签署状态，确认 unifyContractCode 是否正确
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">修改合同状态后流程未继续</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查目标状态是否合法，确认状态流转规则
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

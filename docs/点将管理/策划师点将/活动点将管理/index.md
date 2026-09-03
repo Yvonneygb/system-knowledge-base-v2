@@ -900,16 +900,53 @@ WHERE aa.APPLY_TYPE_ONE = 'activity'
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：活动点将与特训营点将有什么区别？</strong></p>
-<p>A：活动点将由策划师发起，审批流为activityApplyApproval；特训营点将由经销商/业务员发起，审批流为campApplyApproval。</p>
-<p><strong>Q2：取消审批为什么是组织级审批？</strong></p>
-<p>A：活动取消影响范围较大，需组织级管理层审批确认，因此取消审批流为activityCancelApplyOrgApproval。</p>
-<p><strong>Q3：活动点将申请被拒绝后能否重新提交？</strong></p>
-<p>A：可以，拒绝后可修改申请内容重新提交审批。</p>
-<p><strong>Q4：按计划结算按钮不显示？</strong></p>
-<p>A：确认pageType为manage，按计划结算仅在管理视图显示。</p>
-<p><strong>Q5：同步FDD按钮不显示？</strong></p>
-<p>A：确认pageType为approval，同步FDD仅在审批视图显示。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">活动点将与特训营点将有什么区别？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      活动点将由策划师发起，审批流为activityApplyApproval；特训营点将由经销商/业务员发起，审批流为campApplyApproval。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">取消审批为什么是组织级审批？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      活动取消影响范围较大，需组织级管理层审批确认，因此取消审批流为activityCancelApplyOrgApproval。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">活动点将申请被拒绝后能否重新提交？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      可以，拒绝后可修改申请内容重新提交审批。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">按计划结算按钮不显示？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      确认pageType为manage，按计划结算仅在管理视图显示。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">同步FDD按钮不显示？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      确认pageType为approval，同步FDD仅在审批视图显示。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

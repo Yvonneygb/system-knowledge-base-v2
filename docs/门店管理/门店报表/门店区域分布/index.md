@@ -393,16 +393,53 @@ WHERE 1 = 1
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：门店数量如何统计？</strong></p>
-<p>A：通过子查询 <code>SELECT county_areaid, COUNT(county_areaid) AS terminal_num FROM epms.mkt_terminal WHERE entid = #&#123;orgId&#125; GROUP BY county_areaid</code> 统计每个区县的门店数量，无门店的区域显示0。</p>
-<p><strong>Q2：省市区三级如何关联？</strong></p>
-<p>A：通过SCPAREA表的areatype和superid关联：省(areatype=4) → 市(areatype=5, superid=省areaid) → 区县(areatype=6, superid=市areaid)。</p>
-<p><strong>Q3：门店数量下限筛选的作用？</strong></p>
-<p>A：筛选门店数量低于指定值的区域，用于查找门店覆盖不足的区域，辅助门店拓展决策。</p>
-<p><strong>Q4：报表是否支持导出？</strong></p>
-<p>A：是，支持导出Excel。</p>
-<p><strong>Q5：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">门店数量如何统计？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过子查询 <code>SELECT county_areaid, COUNT(county_areaid) AS terminal_num FROM epms.mkt_terminal WHERE entid = #&#123;orgId&#125; GROUP BY county_areaid</code> 统计每个区县的门店数量，无门店的区域显示0。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">省市区三级如何关联？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过SCPAREA表的areatype和superid关联：省(areatype=4) → 市(areatype=5, superid=省areaid) → 区县(areatype=6, superid=市areaid)。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">门店数量下限筛选的作用？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      筛选门店数量低于指定值的区域，用于查找门店覆盖不足的区域，辅助门店拓展决策。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">报表是否支持导出？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      是，支持导出Excel。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

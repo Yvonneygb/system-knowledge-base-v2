@@ -442,16 +442,53 @@ WHERE 1 = 1
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：报表只展示哪些数据？</strong></p>
-<p>A：只展示Apply_Type=2（广告投放申请）且HZ_APPROVE_STATUS='APPROVED'（已审批通过）的单据。</p>
-<p><strong>Q2：广告媒介项目如何展示？</strong></p>
-<p>A：通过子查询HPFM_LOV_VALUE（LOV_CODE='AE.ASVERT_MEDIUM_ITEM'）将编码翻译为可读含义。</p>
-<p><strong>Q3：详细地址如何拼接？</strong></p>
-<p>A：通过concat嵌套拼接：concat(concat(concat(省名, 市名), 区名), 详细地址)。</p>
-<p><strong>Q4：报表是否支持导出？</strong></p>
-<p>A：是，支持导出Excel。</p>
-<p><strong>Q5：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">报表只展示哪些数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      只展示Apply_Type=2（广告投放申请）且HZ_APPROVE_STATUS='APPROVED'（已审批通过）的单据。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">广告媒介项目如何展示？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过子查询HPFM_LOV_VALUE（LOV_CODE='AE.ASVERT_MEDIUM_ITEM'）将编码翻译为可读含义。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">详细地址如何拼接？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过concat嵌套拼接：concat(concat(concat(省名, 市名), 区名), 详细地址)。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">报表是否支持导出？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      是，支持导出Excel。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

@@ -519,16 +519,53 @@ WHERE 1 = 1
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：广告金额如何计算？</strong></p>
-<p>A：当ADVERTISING_FLAG='Y'时，广告金额 = (开票金额 + 扣除广告费金额) × 广告费计提比例；当ADVERTISING_FLAG='N'时，广告金额=0。其中开票金额 = ROUND(折后单价 × 实发数量, 2)。</p>
-<p><strong>Q2：报表排除了哪些物料？</strong></p>
-<p>A：排除了物料编码为'CUX_OM_CASH_POOL'（资金池）和'CUX_OM_PRICE_RAISE'（提价）的特殊物料。</p>
-<p><strong>Q3：报表数据来源是什么？</strong></p>
-<p>A：数据来源于7张表关联查询：INV_OUT_BILL_INTF_HEAD（出库头）、INV_OUT_BILL_INTF_CONFIRM（出库确认）、LNK_OB_ORDER_RECEIVABLE（订单应收）、CUSTOMER（客户）、DIVISION_BASE_SET（事业部）、ITEM（物料）、ITEM_ORG（物料组织）。</p>
-<p><strong>Q4：报表是否支持导出？</strong></p>
-<p>A：是，支持导出Excel，标题为"出库单计算广告费明细报表"，导出时是否计广告费字段通过LOV(AE.YESNO)翻译。</p>
-<p><strong>Q5：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">广告金额如何计算？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      当ADVERTISING_FLAG='Y'时，广告金额 = (开票金额 + 扣除广告费金额) × 广告费计提比例；当ADVERTISING_FLAG='N'时，广告金额=0。其中开票金额 = ROUND(折后单价 × 实发数量, 2)。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">报表排除了哪些物料？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      排除了物料编码为'CUX_OM_CASH_POOL'（资金池）和'CUX_OM_PRICE_RAISE'（提价）的特殊物料。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">报表数据来源是什么？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      数据来源于7张表关联查询：INV_OUT_BILL_INTF_HEAD（出库头）、INV_OUT_BILL_INTF_CONFIRM（出库确认）、LNK_OB_ORDER_RECEIVABLE（订单应收）、CUSTOMER（客户）、DIVISION_BASE_SET（事业部）、ITEM（物料）、ITEM_ORG（物料组织）。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">报表是否支持导出？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      是，支持导出Excel，标题为"出库单计算广告费明细报表"，导出时是否计广告费字段通过LOV(AE.YESNO)翻译。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

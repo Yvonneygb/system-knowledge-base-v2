@@ -635,16 +635,53 @@ WHERE 1 = 1
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：主查询和明细查询的区别？</strong></p>
-<p>A：主查询（finFeeTerminalCashoutListSearch）查询 <code>EPMS.FIN_FEE_TERMINAL_CASHOUT_VIEW</code> 视图，返回按验收报销单汇总的统计数据；明细查询（finFeeTerminalCashoutListGetCashoutLine）查询 <code>FIN_FEE_TERMINAL_CASHOUT</code> 表，返回每笔兑现单的详细信息。</p>
-<p><strong>Q2：明细查询排除了哪些数据？</strong></p>
-<p>A：排除了审核状态为"超额作废"的记录：<code>h.audit_stat != '超额作废'</code>。</p>
-<p><strong>Q3：金额字段格式化方式？</strong></p>
-<p>A：主查询使用 <code>TO_CHAR(..., '999999999990.99')</code>（无FM前缀），明细查询使用 <code>TO_CHAR(..., 'FM999999999990.00')</code>（带FM前缀，无前导空格）。</p>
-<p><strong>Q4：支付方式如何展示？</strong></p>
-<p>A：通过子查询 <code>HZERO.HPFM_LOV_VALUE</code>（LOV_CODE = 'AE.PAY_TYPE'）将编码翻译为可读含义。</p>
-<p><strong>Q5：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">主查询和明细查询的区别？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      主查询（finFeeTerminalCashoutListSearch）查询 <code>EPMS.FIN_FEE_TERMINAL_CASHOUT_VIEW</code> 视图，返回按验收报销单汇总的统计数据；明细查询（finFeeTerminalCashoutListGetCashoutLine）查询 <code>FIN_FEE_TERMINAL_CASHOUT</code> 表，返回每笔兑现单的详细信息。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">明细查询排除了哪些数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      排除了审核状态为"超额作废"的记录：<code>h.audit_stat != '超额作废'</code>。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">金额字段格式化方式？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      主查询使用 <code>TO_CHAR(..., '999999999990.99')</code>（无FM前缀），明细查询使用 <code>TO_CHAR(..., 'FM999999999990.00')</code>（带FM前缀，无前导空格）。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">支付方式如何展示？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      通过子查询 <code>HZERO.HPFM_LOV_VALUE</code>（LOV_CODE = 'AE.PAY_TYPE'）将编码翻译为可读含义。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

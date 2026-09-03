@@ -1121,22 +1121,80 @@ GROUP BY da.LECTURER_NAME;
 </KbCard>
 
 <KbCard title="常见问题">
-<p><strong>Q1：经销商看不到自己发起的设计点将记录？</strong></p>
-<p>A：检查该经销商是否正确关联当前登录用户，确认DEALER_CODE与当前登录用户关联的经销商一致。</p>
-<p><strong>Q2：设计师点将的审批状态如何查看？</strong></p>
-<p>A：在详情页中可查看完整审批链路，包括讲师审批、门店审批等各环节状态。</p>
-<p><strong>Q3：详情页type参数有什么作用？</strong></p>
-<p>A：<code>type</code>参数用于区分详情页的展示模式，不同模式可能展示不同的操作按钮和字段。</p>
-<p><strong>Q4：申请点将弹窗无设计师数据？</strong></p>
-<p>A：检查campApi.lecturerList接口，pageType=design参数是否正确传递。</p>
-<p><strong>Q5：下载图纸弹窗无图纸数据？</strong></p>
-<p>A：检查downloadDrawing接口返回，确认设计图已上传。</p>
-<p><strong>Q6：图纸反馈失败？</strong></p>
-<p>A：检查feedback接口，确认feedbackComments填写。</p>
-<p><strong>Q7：面积确认无法签合同？</strong></p>
-<p>A：检查approvalState是否为fdd_in_approval。</p>
-<p><strong>Q8：效果图补申跳转失败？</strong></p>
-<p>A：检查applyCode是否存在，详情页supplement路由配置。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">经销商看不到自己发起的设计点将记录？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查该经销商是否正确关联当前登录用户，确认DEALER_CODE与当前登录用户关联的经销商一致。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">设计师点将的审批状态如何查看？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      在详情页中可查看完整审批链路，包括讲师审批、门店审批等各环节状态。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">详情页type参数有什么作用？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <code>type</code>参数用于区分详情页的展示模式，不同模式可能展示不同的操作按钮和字段。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">申请点将弹窗无设计师数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查campApi.lecturerList接口，pageType=design参数是否正确传递。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">下载图纸弹窗无图纸数据？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查downloadDrawing接口返回，确认设计图已上传。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q6</span>
+      <span style="font-size:15px;">图纸反馈失败？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查feedback接口，确认feedbackComments填写。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q7</span>
+      <span style="font-size:15px;">面积确认无法签合同？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查approvalState是否为fdd_in_approval。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q8</span>
+      <span style="font-size:15px;">效果图补申跳转失败？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      检查applyCode是否存在，详情页supplement路由配置。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>

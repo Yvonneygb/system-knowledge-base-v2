@@ -403,14 +403,44 @@
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="常见问题">
-<p><strong>Q1：期初可兑现金额如何计算？</strong></p>
-<p>A：期初可兑现金额 = 可报销金额(不含税) - 期初已兑现金额。期初已兑现金额统计ledger_date &lt; startTime的兑现金额合计。</p>
-<p><strong>Q2：期末未兑现金额如何计算？</strong></p>
-<p>A：期末未兑现金额 = 期初可兑现金额 - 本期兑现金额。本期兑现金额统计startTime &lt;= ledger_date &lt;= endTime的兑现金额合计。</p>
-<p><strong>Q3：报表是否支持导出？</strong></p>
-<p>A：是，支持导出Excel。</p>
-<p><strong>Q4：报表是否支持新增/修改/删除？</strong></p>
-<p>A：不支持，本页面为纯查询报表，仅支持查看和导出。</p>
+<div class="faq-qa-wrap">
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">期初可兑现金额如何计算？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      期初可兑现金额 = 可报销金额(不含税) - 期初已兑现金额。期初已兑现金额统计ledger_date &lt; startTime的兑现金额合计。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">期末未兑现金额如何计算？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      期末未兑现金额 = 期初可兑现金额 - 本期兑现金额。本期兑现金额统计startTime &lt;= ledger_date &lt;= endTime的兑现金额合计。
+    </div>
+  </div>
+<div class="kl-card" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">报表是否支持导出？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      是，支持导出Excel。
+    </div>
+  </div>
+<div class="kl-card alt" style="margin-bottom:20px;">
+    <div class="kl-card-title" style="margin-bottom:16px;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">报表是否支持新增/修改/删除？</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      不支持，本页面为纯查询报表，仅支持查看和导出。
+    </div>
+  </div>
+</div>
 </KbCard>
 
 </div>
