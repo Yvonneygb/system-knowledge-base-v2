@@ -201,150 +201,7 @@
 </KbCard>
 
 <KbCard num="3" title="重点逻辑3：审批通过后处理">
-<ul><li><strong>业务意义</strong>：审批通过后更新出库单行核销数量，触发返利计算</li><li><strong>入口方法</strong>：<code>WorkflowServiceImpl.wfComplete(WfApproveDTO dto)</code> — 根据 <code>dto.getSubject()</code> 从 <code>completeHandlerMap</code> 查找回调处理器，工程真实性核销注册了两个工作流编码：<code>INVOICE_TRUTH_VERIFY</code> 和 <code>INVOICE_TRUTH_VERIFY_IS_HOME</code>，均映射到 <code>epmInvoiceTruthHeaderService::wfComplete</code></li><li><strong>核心回调</strong>：<code>EpmInvoiceTruthHeaderServiceImpl.wfComplete(WfApproveDTO dto)</code>（第1224行）</li></ul>
-
-<KbSubTitle>步骤1：判断审批结果</KbSubTitle>
-
-查询核销单头 <code>EpmInvoiceTruthHeader</code>，若 <code>dto.getApproveResult() == REJECTED</code>（审批拒绝），设置审核状态为"审批拒绝"并返回；否则设置"审批通过"。
-
-<KbSubTitle>步骤2：查询核销行列表</KbSubTitle>
-
-<code>epmInvoiceTruthLineService.select(epmInvoiceTruthLineDTO, dto.getObjId())</code> — 查询该核销单头下的所有核销行。
-
-<KbSubTitle>步骤3：遍历每行核销明细</KbSubTitle>
-
-<table class="kb-field-tbl">
-<thead><tr><th>子步骤</th><th>操作</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>3a</td><td>校验出库单行ID</td><td><code>invOutBillLineId</code> 必须 &gt; 0，否则记录错误</td></tr>
-<tr><td>3b</td><td>查询出库单行</td><td><code>invOutBillLineRepository.selectByPrimary(invOutBillLineId)</code></td></tr>
-<tr><td>3c</td><td>遍历核销明细</td><td>对每个 <code>EpmVeriferInvoiceDetailsDTO</code>，创建 <code>EpmVeriferInvoiceDetails</code> 对象</td></tr>
-<tr><td>3d</td><td><strong>核销明细有效状态更新为 valid</strong></td><td><code>detail.setEffectStatus(AeBaseConstants.VALID)</code></td></tr>
-<tr><td>3e</td><td>累加本次核销数量</td><td>若 <code>thisVeriferNumber != null</code> 且 <code>effectStatus != "canceled"</code>，则 <code>num += thisVeriferNumber</code></td></tr>
-<tr><td>3f</td><td>校验可核销数量</td><td><code>canVerifyNum &lt; num</code> 则记录错误</td></tr>
-<tr><td>3g</td><td><strong>更新出库单行核销数量</strong></td><td><code>canVerifyNum -= num</code>，<code>usedVerifyNum += num</code>，持久化</td></tr>
-<tr><td>3h</td><td><strong>收集返利计算数据</strong></td><td>若 <code>channelUpPrice &gt; 0</code>，创建 <code>RebateCommonDTO</code>，加入 <code>invoiceTruthList</code></td></tr>
-</tbody>
-</table>
-
-<KbSubTitle>步骤4：错误汇总</KbSubTitle>
-
-若有错误（<code>errors</code> 列表非空），抛出 <code>CommonException</code>，审批通过流程中断。
-
-<KbSubTitle>步骤5：触发返利计算</KbSubTitle>
-
-若 <code>invoiceTruthList</code> 非空，调用 <code>this.rebateCalculation(invoiceTruthList)</code>：
-<ul><li><code>rebateCalculation</code> 委托给 <code>commonCalculateService.operationRebateBiz(invoiceTruthList, AeBaseConstants.VERIFIER)</code></li><li>操作类型为 <code>VERIFIER</code>（核销）</li></ul>
-
-返利计算核心逻辑（<code>CommonCalculateServiceImpl.operationRebateBiz</code>，第50行）：
-
-<table class="kb-field-tbl">
-<thead><tr><th>子步骤</th><th>操作</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>1</td><td>查询出库单行信息</td><td>获取 <code>deliveryLineId</code>、<code>conversionRate</code>、<code>channelUpPrice</code></td></tr>
-<tr><td>2</td><td>查询退货数量</td><td><code>salesReturnOrderRepository.totalQtyByDeliveryLineIds(...)</code></td></tr>
-<tr><td>3</td><td>查询签收状态</td><td><code>invOutBillLineRepository.signedStatus(...)</code></td></tr>
-<tr><td>4</td><td>查询已有返点汇总</td><td><code>rebateSummaryRepository.selectByCondition(...)</code></td></tr>
-<tr><td>5</td><td>遍历每条返利数据</td><td>检查 <code>channelUpPrice &gt; 0</code>，计算 <code>realVerifierQty</code>（实际核销数量，含单位转换）、<code>realSalesQty</code>（实际出库数量=出库数量-退库数量）、<code>shouldReturnNum = min(实际出库数量, 实际核销数量)</code></td></tr>
-<tr><td>6</td><td>创建/更新 RebateSummary</td><td>返点汇总记录</td></tr>
-<tr><td>7</td><td>创建 RebateDetails</td><td>返点明细记录</td></tr>
-<tr><td>8</td><td>处理尾差</td><td><code>VERIFIER</code>/<code>UNVERIFIER</code>/<code>RETURN</code> 三种场景的尾差修正</td></tr>
-<tr><td>9</td><td>批量持久化</td><td><code>rebateSummaryRepository.batchUpdateOptional(...)</code>，<code>rebateDetailsRepository.batchInsert(...)</code></td></tr>
-</tbody>
-</table>
-
-<KbSubTitle>步骤6：批量持久化核销明细</KbSubTitle>
-
-<code>epmVeriferInvoiceDetailsRepository.batchUpdateByPrimaryKeySelective(details)</code> — 将 <code>effectStatus=valid</code> 批量写入数据库。
-
-<KbSubTitle>完整调用链</KbSubTitle>
-
-<pre v-pre><code>WorkflowServiceImpl.wfComplete(dto)
-  │  根据 subject 从 completeHandlerMap 查找 handler
-  └─▶ EpmInvoiceTruthHeaderServiceImpl.wfComplete(dto)
-        │
-        ├─ [1] 查询核销单头，判断审批结果
-        │       REJECTED → 设置"审批拒绝", return
-        │       否则     → 设置"审批通过"
-        │
-        ├─ [2] 查询核销行列表
-        │       epmInvoiceTruthLineService.select(dto, dto.getObjId())
-        │
-        ├─ [3] 遍历每行核销明细：
-        │       ├─ 校验 invOutBillLineId &gt; 0
-        │       ├─ 查询出库单行 InvOutBillLine
-        │       ├─ 遍历核销明细 EpmVeriferInvoiceDetailsDTO:
-        │       │     detail.setEffectStatus(VALID)  // 更新为 valid
-        │       │     累加 num (本次核销数量)
-        │       ├─ 校验 canVerifyNum ≥ num
-        │       ├─ 更新出库单行:
-        │       │     canVerifyNum -= num  (减少可核销数量)
-        │       │     usedVerifyNum += num (增加已核销数量)
-        │       │     invOutBillLineRepository.updateByPrimaryKeySelective(invOutBillLine)
-        │       └─ 若 channelUpPrice &gt; 0，收集 RebateCommonDTO → invoiceTruthList
-        │
-        ├─ [4] 若有 errors → throw CommonException
-        │
-        ├─ [5] 若 invoiceTruthList 非空:
-        │       this.rebateCalculation(invoiceTruthList)
-        │         → commonCalculateService.operationRebateBiz(list, VERIFIER)
-        │              → 查询出库单行/退货/签收信息
-        │              → 计算 realVerifierQty, realSalesQty, shouldReturnNum
-        │              → 创建/更新 RebateSummary (返点汇总)
-        │              → 创建 RebateDetails (返点明细)
-        │              → 处理尾差
-        │              → 批量持久化
-        │
-        └─ [6] 批量持久化核销明细 (effectStatus=valid)
-                epmVeriferInvoiceDetailsRepository.batchUpdateByPrimaryKeySelective(details)</code></pre>
-
-<KbSubTitle>关键源码文件</KbSubTitle>
-
-<table class="kb-field-tbl">
-<thead><tr><th>文件</th><th>路径</th><th>作用</th></tr></thead>
-<tbody>
-<tr><td><code>WorkflowServiceImpl.java</code></td><td><code>ae-business/.../workflow/app/service/impl/</code></td><td>工作流审批完成总入口，<code>completeHandlerMap</code> 分发回调</td></tr>
-<tr><td><code>EpmInvoiceTruthHeaderServiceImpl.java</code></td><td><code>ae-business/.../invoice/app/service/impl/</code></td><td>核销单核心服务，<code>wfComplete</code>（第1224行）、<code>rebateCalculation</code>（第771行）</td></tr>
-<tr><td><code>CommonCalculateServiceImpl.java</code></td><td><code>ae-business/.../invoice/app/service/impl/</code></td><td>返利计算通用服务，<code>operationRebateBiz</code>（第50行）</td></tr>
-</tbody>
-</table>
-
-<KbSubTitle>排查SQL</KbSubTitle>
-
-<pre class="detail-sql language-sql" v-pre><code>-- 1. 检查核销明细有效状态是否更新为 valid
-SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.INVOICE_TRUTH_LINE_ID
-FROM EPM_VERIFER_INVOICE_DETAILS vid
-WHERE vid.EFFECT_STATUS != 'valid'
-  AND vid.INVOICE_TRUTH_LINE_ID IN (
-    SELECT itl.INVOICE_TRUTH_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
-    WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
-  );
-
--- 2. 检查出库单行核销数量是否更新
-SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.INV_BILL_NO, iobl.ITEM_CODE,
-       iobl.CAN_VERIFY_NUM, iobl.USED_VERIFY_NUM
-FROM INV_OUT_BILL_LINE iobl
-WHERE iobl.INV_OUT_BILL_LINE_ID IN (
-    SELECT itl.INV_OUT_BILL_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
-    WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
-  );
-
--- 3. 检查返利汇总记录是否创建
-SELECT rs.* FROM REBATE_SUMMARY rs
-WHERE rs.INV_OUT_BILL_LINE_ID IN (
-    SELECT itl.INV_OUT_BILL_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
-    WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
-  );
-
--- 4. 检查返利明细记录是否创建
-SELECT rd.* FROM REBATE_DETAILS rd
-WHERE rd.SUMMARY_ID IN (
-    SELECT rs.SUMMARY_ID FROM REBATE_SUMMARY rs
-    WHERE rs.INV_OUT_BILL_LINE_ID IN (
-        SELECT itl.INV_OUT_BILL_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
-        WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
-      )
-  );</code></pre>
+<ul><li><strong>业务意义</strong>：审批通过后更新出库单行核销数量，触发返利计算</li><li><strong>具体逻辑描述</strong>：</li><li>更新出库单行的已核销数量增加本次核销数量，可核销数量减少本次核销数量</li><li>更新核销发票明细有效状态为valid</li><li>若出库单行渠道上调价&gt;0，触发返利计算(operationRebateBiz)</li></ul>
 </KbCard>
 
 <KbCard num="4" title="重点逻辑4：取消核销/作废发票">
@@ -563,6 +420,141 @@ SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE
 WHERE INVOICE_TRUTH_ID = #{invoiceTruthId}
   AND THIS_VERIFER_NUMBER > 0;
 ```
+</KbCard>
+
+<KbCard title="审批通过后逻辑">
+
+<KbSubTitle>入口方法</KbSubTitle>
+
+<code>WorkflowServiceImpl.wfComplete(WfApproveDTO dto)</code> — 根据 <code>dto.getSubject()</code> 从 <code>completeHandlerMap</code> 查找回调处理器。工程真实性核销注册了两个工作流编码：<code>INVOICE_TRUTH_VERIFY</code> 和 <code>INVOICE_TRUTH_VERIFY_IS_HOME</code>，均映射到 <code>epmInvoiceTruthHeaderService::wfComplete</code>。
+
+<KbSubTitle>核心回调：EpmInvoiceTruthHeaderServiceImpl.wfComplete(dto)（第1224行）</KbSubTitle>
+
+<table class="kb-field-tbl">
+<thead><tr><th>步骤</th><th>操作</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>判断审批结果</td><td>查询核销单头 <code>EpmInvoiceTruthHeader</code>，若 <code>REJECTED</code> 则设置"审批拒绝"并返回；否则设置"审批通过"</td></tr>
+<tr><td>2</td><td>查询核销行列表</td><td><code>epmInvoiceTruthLineService.select(dto, dto.getObjId())</code></td></tr>
+<tr><td>3</td><td>遍历每行核销明细</td><td>对每行执行以下子步骤：</td></tr>
+<tr><td>3a</td><td>校验出库单行ID</td><td><code>invOutBillLineId</code> 必须 &gt; 0，否则记录错误</td></tr>
+<tr><td>3b</td><td>查询出库单行</td><td><code>invOutBillLineRepository.selectByPrimary(invOutBillLineId)</code></td></tr>
+<tr><td>3c</td><td>遍历核销明细</td><td>对每个 <code>EpmVeriferInvoiceDetailsDTO</code>，创建 <code>EpmVeriferInvoiceDetails</code> 对象</td></tr>
+<tr><td>3d</td><td><strong>核销明细有效状态更新为 valid</strong></td><td><code>detail.setEffectStatus(AeBaseConstants.VALID)</code></td></tr>
+<tr><td>3e</td><td>累加本次核销数量</td><td>若 <code>thisVeriferNumber != null</code> 且 <code>effectStatus != "canceled"</code>，则 <code>num += thisVeriferNumber</code></td></tr>
+<tr><td>3f</td><td>校验可核销数量</td><td><code>canVerifyNum &lt; num</code> 则记录错误</td></tr>
+<tr><td>3g</td><td><strong>更新出库单行核销数量</strong></td><td><code>canVerifyNum -= num</code>，<code>usedVerifyNum += num</code>，持久化</td></tr>
+<tr><td>3h</td><td><strong>收集返利计算数据</strong></td><td>若 <code>channelUpPrice &gt; 0</code>，创建 <code>RebateCommonDTO</code>，加入 <code>invoiceTruthList</code></td></tr>
+<tr><td>4</td><td>错误汇总</td><td>若有错误（<code>errors</code> 列表非空），抛出 <code>CommonException</code>，审批通过流程中断</td></tr>
+<tr><td>5</td><td><strong>触发返利计算</strong></td><td>若 <code>invoiceTruthList</code> 非空，调用 <code>this.rebateCalculation(invoiceTruthList)</code></td></tr>
+<tr><td>6</td><td><strong>批量持久化核销明细</strong></td><td><code>epmVeriferInvoiceDetailsRepository.batchUpdateByPrimaryKeySelective(details)</code> — 将 <code>effectStatus=valid</code> 批量写入数据库</td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>返利计算：CommonCalculateServiceImpl.operationRebateBiz(list, VERIFIER)（第50行）</KbSubTitle>
+
+<table class="kb-field-tbl">
+<thead><tr><th>子步骤</th><th>操作</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>查询出库单行信息</td><td>获取 <code>deliveryLineId</code>、<code>conversionRate</code>、<code>channelUpPrice</code></td></tr>
+<tr><td>2</td><td>查询退货数量</td><td><code>salesReturnOrderRepository.totalQtyByDeliveryLineIds(...)</code></td></tr>
+<tr><td>3</td><td>查询签收状态</td><td><code>invOutBillLineRepository.signedStatus(...)</code></td></tr>
+<tr><td>4</td><td>查询已有返点汇总</td><td><code>rebateSummaryRepository.selectByCondition(...)</code></td></tr>
+<tr><td>5</td><td>遍历每条返利数据</td><td>检查 <code>channelUpPrice &gt; 0</code>，计算 <code>realVerifierQty</code>（实际核销数量，含单位转换）、<code>realSalesQty</code>（实际出库数量=出库数量-退库数量）、<code>shouldReturnNum = min(实际出库数量, 实际核销数量)</code></td></tr>
+<tr><td>6</td><td>创建/更新 RebateSummary</td><td>返点汇总记录</td></tr>
+<tr><td>7</td><td>创建 RebateDetails</td><td>返点明细记录</td></tr>
+<tr><td>8</td><td>处理尾差</td><td><code>VERIFIER</code>/<code>UNVERIFIER</code>/<code>RETURN</code> 三种场景的尾差修正</td></tr>
+<tr><td>9</td><td>批量持久化</td><td><code>rebateSummaryRepository.batchUpdateOptional(...)</code>，<code>rebateDetailsRepository.batchInsert(...)</code></td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>完整调用链</KbSubTitle>
+
+<pre v-pre><code>WorkflowServiceImpl.wfComplete(dto)
+  │  根据 subject 从 completeHandlerMap 查找 handler
+  └─▶ EpmInvoiceTruthHeaderServiceImpl.wfComplete(dto)
+        │
+        ├─ [1] 查询核销单头，判断审批结果
+        │       REJECTED → 设置"审批拒绝", return
+        │       否则     → 设置"审批通过"
+        │
+        ├─ [2] 查询核销行列表
+        │       epmInvoiceTruthLineService.select(dto, dto.getObjId())
+        │
+        ├─ [3] 遍历每行核销明细：
+        │       ├─ 校验 invOutBillLineId &gt; 0
+        │       ├─ 查询出库单行 InvOutBillLine
+        │       ├─ 遍历核销明细 EpmVeriferInvoiceDetailsDTO:
+        │       │     detail.setEffectStatus(VALID)  // 更新为 valid
+        │       │     累加 num (本次核销数量)
+        │       ├─ 校验 canVerifyNum ≥ num
+        │       ├─ 更新出库单行:
+        │       │     canVerifyNum -= num  (减少可核销数量)
+        │       │     usedVerifyNum += num (增加已核销数量)
+        │       │     invOutBillLineRepository.updateByPrimaryKeySelective(invOutBillLine)
+        │       └─ 若 channelUpPrice &gt; 0，收集 RebateCommonDTO → invoiceTruthList
+        │
+        ├─ [4] 若有 errors → throw CommonException
+        │
+        ├─ [5] 若 invoiceTruthList 非空:
+        │       this.rebateCalculation(invoiceTruthList)
+        │         → commonCalculateService.operationRebateBiz(list, VERIFIER)
+        │              → 查询出库单行/退货/签收信息
+        │              → 计算 realVerifierQty, realSalesQty, shouldReturnNum
+        │              → 创建/更新 RebateSummary (返点汇总)
+        │              → 创建 RebateDetails (返点明细)
+        │              → 处理尾差
+        │              → 批量持久化
+        │
+        └─ [6] 批量持久化核销明细 (effectStatus=valid)
+                epmVeriferInvoiceDetailsRepository.batchUpdateByPrimaryKeySelective(details)</code></pre>
+
+<KbSubTitle>关键源码文件</KbSubTitle>
+
+<table class="kb-field-tbl">
+<thead><tr><th>文件</th><th>路径</th><th>作用</th></tr></thead>
+<tbody>
+<tr><td><code>WorkflowServiceImpl.java</code></td><td><code>ae-business/.../workflow/app/service/impl/</code></td><td>工作流审批完成总入口，<code>completeHandlerMap</code> 分发回调</td></tr>
+<tr><td><code>EpmInvoiceTruthHeaderServiceImpl.java</code></td><td><code>ae-business/.../invoice/app/service/impl/</code></td><td>核销单核心服务，<code>wfComplete</code>（第1224行）、<code>rebateCalculation</code>（第771行）</td></tr>
+<tr><td><code>CommonCalculateServiceImpl.java</code></td><td><code>ae-business/.../invoice/app/service/impl/</code></td><td>返利计算通用服务，<code>operationRebateBiz</code>（第50行）</td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>排查SQL</KbSubTitle>
+
+<pre class="detail-sql language-sql" v-pre><code>-- 1. 检查核销明细有效状态是否更新为 valid
+SELECT vid.VERIFER_INVOICE_DETAILS_ID, vid.EFFECT_STATUS, vid.INVOICE_TRUTH_LINE_ID
+FROM EPM_VERIFER_INVOICE_DETAILS vid
+WHERE vid.EFFECT_STATUS != 'valid'
+  AND vid.INVOICE_TRUTH_LINE_ID IN (
+    SELECT itl.INVOICE_TRUTH_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
+    WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
+  );
+
+-- 2. 检查出库单行核销数量是否更新
+SELECT iobl.INV_OUT_BILL_LINE_ID, iobl.INV_BILL_NO, iobl.ITEM_CODE,
+       iobl.CAN_VERIFY_NUM, iobl.USED_VERIFY_NUM
+FROM INV_OUT_BILL_LINE iobl
+WHERE iobl.INV_OUT_BILL_LINE_ID IN (
+    SELECT itl.INV_OUT_BILL_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
+    WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
+  );
+
+-- 3. 检查返利汇总记录是否创建
+SELECT rs.* FROM REBATE_SUMMARY rs
+WHERE rs.INV_OUT_BILL_LINE_ID IN (
+    SELECT itl.INV_OUT_BILL_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
+    WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
+  );
+
+-- 4. 检查返利明细记录是否创建
+SELECT rd.* FROM REBATE_DETAILS rd
+WHERE rd.SUMMARY_ID IN (
+    SELECT rs.SUMMARY_ID FROM REBATE_SUMMARY rs
+    WHERE rs.INV_OUT_BILL_LINE_ID IN (
+        SELECT itl.INV_OUT_BILL_LINE_ID FROM EPM_INVOICE_TRUTH_LINE itl
+        WHERE itl.INVOICE_TRUTH_ID = :invoiceTruthId
+      )
+  );</code></pre>
 </KbCard>
 
 <KbCard title="状态机">
