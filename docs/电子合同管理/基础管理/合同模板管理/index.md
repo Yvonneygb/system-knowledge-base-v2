@@ -433,20 +433,20 @@ ORDER BY T.CREATION_DATE DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>模板名称不能为空</td><td>保存时</td><td>未输入模板名称，输入模板名称</td><td>error</td><td>前端校验模板名称非空</td></tr>
-<tr><td>模板类型不能为空</td><td>保存时</td><td>未选择模板类型，选择模板类型</td><td>error</td><td>前端校验模板类型非空</td></tr>
-<tr><td>模板子类型不能为空</td><td>保存时</td><td>经销合同/装修协议/广告协议未选子类型，选择模板子类型</td><td>error</td><td>前端校验子类型非空</td></tr>
-<tr><td>授权单位不能为空</td><td>保存时</td><td>更换授权单位=Y但未选授权单位，选择授权单位</td><td>error</td><td>前端校验授权单位非空</td></tr>
-<tr><td>请上传合同模板文件</td><td>保存时</td><td>未上传模板文件，上传docx模板文件</td><td>error</td><td>前端校验fileUrl存在</td></tr>
-<tr><td>单个文件不能大于30MB</td><td>上传时</td><td>文件超过30MB，压缩或更换文件</td><td>error</td><td>前端校验文件大小</td></tr>
-<tr><td>上传失败</td><td>上传时</td><td>OSS服务异常或文件格式不支持，检查网络与文件格式</td><td>error</td><td>OSS上传接口返回失败</td></tr>
-<tr><td>模板已被引用，不可删除</td><td>删除时</td><td>有合同引用了该模板，禁用而非删除</td><td>error</td><td>后端校验模板引用关系</td></tr>
-<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
-<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
-<tr><td>模板不存在</td><td>编辑/删除/生效</td><td>模板编码不存在或已删除，检查 TEMPLATE_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>
-<tr><td>状态不允许操作</td><td>生效/失效</td><td>模板状态不允许该操作，如已生效不可重复生效，检查 TEMPLATE_STATUS</td><td>error</td><td>后端校验状态机失败</td></tr>
-<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.CONTRACT_TEMPLATE 等未配置，检查值集配置</td><td>warning</td><td>lookupCode 查询返回空</td></tr>
-<tr><td>模板编码已存在</td><td>新建保存</td><td>模板编码重复，更换编码后保存</td><td>error</td><td>后端校验 TEMPLATE_CODE 唯一性</td></tr>
+<tr><td>模板名称不能为空</td><td>保存时</td><td>未输入模板名称，输入模板名称</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>模板类型不能为空</td><td>保存时</td><td>未选择模板类型，选择模板类型</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>模板子类型不能为空</td><td>保存时</td><td>经销合同/装修协议/广告协议未选子类型，选择模板子类型</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>授权单位不能为空</td><td>保存时</td><td>更换授权单位=Y但未选授权单位，选择授权单位</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>请上传合同模板文件</td><td>保存时</td><td>未上传模板文件，上传docx模板文件</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>单个文件不能大于30MB</td><td>上传时</td><td>文件超过30MB，压缩或更换文件</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>上传失败</td><td>上传时</td><td>OSS服务异常或文件格式不支持，检查网络与文件格式</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>模板已被引用，不可删除</td><td>删除时</td><td>有合同引用了该模板，禁用而非删除</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>模板不存在</td><td>编辑/删除/生效</td><td>模板编码不存在或已删除，检查 TEMPLATE_CODE 有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>状态不允许操作</td><td>生效/失效</td><td>模板状态不允许该操作，如已生效不可重复生效，检查 TEMPLATE_STATUS</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>值集数据不显示</td><td>下拉选项</td><td>值集 MBO.CONTRACT_TEMPLATE 等未配置，检查值集配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>模板编码已存在</td><td>新建保存</td><td>模板编码重复，更换编码后保存</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">
