@@ -545,8 +545,6 @@ NEW ──删除──→ (删除) ──→ 原申请单isModify=0
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -833,6 +831,8 @@ NEW ──删除──→ (删除) ──→ 原申请单isModify=0
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：新增变更时报&quot;未获取到门店申请信息&quot;">
 <p><strong>根因</strong>：关联的装修申请单(terminalApplyId)不存在或已被删除</p>
 <p><strong>解决方案</strong>：重新选择有效的已审批装修申请单</p>

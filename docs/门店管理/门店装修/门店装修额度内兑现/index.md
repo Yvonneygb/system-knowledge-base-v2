@@ -355,8 +355,6 @@ APPROVED ──入账──→ (已入账)
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -471,6 +469,8 @@ APPROVED ──入账──→ (已入账)
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：兑现金额超过剩余可兑额度">
 <p><strong>根因</strong>：inThisCashoutAmt &gt; inThisSurCashoutAmt</p>
 <p><strong>解决方案</strong>：调整兑现金额不超过剩余可兑额度</p>

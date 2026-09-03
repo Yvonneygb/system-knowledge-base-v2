@@ -652,8 +652,6 @@ NEW ──删除──→ (删除)
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -1197,6 +1195,8 @@ NEW ──删除──→ (删除)
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：无法选择装修申请单">
 <p><strong>根因</strong>：没有APPROVED状态的装修申请单</p>
 <p><strong>解决方案</strong>：确认FIN_FEE_APPLY_FINISHED_HEADER中存在APPROVED状态的记录</p>

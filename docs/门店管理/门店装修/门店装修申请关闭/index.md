@@ -473,8 +473,6 @@ NEW ──删除──→ (删除)
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -685,6 +683,8 @@ NEW ──删除──→ (删除)
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：提交时报&quot;该门店申请单已发起门店验收流程，不允许发起门店申请关闭&quot;">
 <p><strong>根因</strong>：关联的装修申请单已存在非作废状态(INTERRUPT)的验收报销单</p>
 <p><strong>解决方案</strong>：先作废相关验收报销单，再发起关闭申请</p>

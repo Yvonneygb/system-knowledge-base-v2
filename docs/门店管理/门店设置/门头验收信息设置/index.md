@@ -229,8 +229,6 @@
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -262,6 +260,8 @@
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：验收时无验收信息">
 <p><strong>根因</strong>：未配置验收信息设置</p>
 <p><strong>解决方案</strong>：在本页面配置验收项目和拍摄要求</p>

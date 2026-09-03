@@ -243,7 +243,7 @@ EPM_DISCOUNT_POLICY (政策头)
 
 </div>
 
-<div id="faq"
+<div id="faq" style="display:none;">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -554,7 +554,7 @@ EPM_DISCOUNT_POLICY (政策头)
   -- 查出订单类型与业务类型冲突的异常数据</code></pre>
   </div>
 </div>
- style="display:none;">
+
 
 <div class="kb-module">
 

@@ -636,8 +636,6 @@ APPROVED ──发起签呈──→ isSecondChange=2
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -1199,6 +1197,8 @@ APPROVED ──发起签呈──→ isSecondChange=2
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：装修申请提交时报&quot;预算剩余可用额度不足&quot;">
 <p><strong>根因</strong>：该预算年度的额度外预算(feeTypeId=66014601)剩余可用额度&lt;0</p>
 <p><strong>解决方案</strong>：联系财务确认预算额度是否已用完，或调整申请金额</p>

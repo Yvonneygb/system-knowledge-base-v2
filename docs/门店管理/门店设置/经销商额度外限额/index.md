@@ -258,8 +258,6 @@
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -366,6 +364,8 @@
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：查询无数据">
 <p><strong>根因</strong>：经销商/事业部/交易公司组合无额度记录</p>
 <p><strong>解决方案</strong>：确认MKT_INLIMIT_BALANCE_HEADER中存在对应记录</p>

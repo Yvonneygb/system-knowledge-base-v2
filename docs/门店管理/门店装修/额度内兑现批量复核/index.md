@@ -324,8 +324,6 @@ NEW ──删除──→ (删除)
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -459,6 +457,8 @@ NEW ──删除──→ (删除)
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：提交时报关联兑现单状态异常">
 <p><strong>根因</strong>：关联的兑现单中存在非NEW状态的记录</p>
 <p><strong>解决方案</strong>：确保所有关联兑现单均为NEW状态后再提交</p>

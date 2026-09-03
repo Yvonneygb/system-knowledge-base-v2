@@ -241,8 +241,6 @@
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -277,6 +275,8 @@
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：装修申请时无照片项目">
 <p><strong>根因</strong>：未配置门店照片设置</p>
 <p><strong>解决方案</strong>：在本页面配置照片项目和拍摄要求</p>

@@ -297,8 +297,6 @@ NEW ──删除──→ (删除)
 </div>
 
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -445,6 +443,8 @@ NEW ──删除──→ (删除)
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="Q1：装修申请提交时报&quot;没有有效期内的政策标准&quot;">
 <p><strong>根因</strong>：当前日期不在任何政策标准的有效期内</p>
 <p><strong>解决方案</strong>：延长政策标准的有效期或新增覆盖当前日期的政策标准</p>

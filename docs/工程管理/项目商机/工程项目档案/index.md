@@ -242,8 +242,6 @@
 </div>
 </div>
 <div id="faq" style="display:none;">
-<div class="tab-pad">
-<div class="kl-wrap">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -407,6 +405,8 @@
   </div>
 </div>
 
+<div class="tab-pad">
+<div class="kl-wrap">
 <KbCard title="常见问题">
 <div class="faq-qa-wrap">
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">

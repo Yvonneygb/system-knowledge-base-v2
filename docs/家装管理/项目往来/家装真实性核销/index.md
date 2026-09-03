@@ -891,7 +891,7 @@
 </div>
 </div>
 <!-- 报错对照表 -->
-<div id="faq"
+<div id="faq">
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -1201,7 +1201,7 @@
   WHERE U.USER_ID = :userId;</code></pre>
   </div>
 </div>
->
+
 <div class="faq-pad">
 <div class="kl-card" style="background:#FFFFFF;border:none;margin-bottom:24px;box-shadow:none;">
     <h3 style="margin:0 0 16px 0;font-size:16px;font-weight:600;color:#374151;">报错对照表</h3>
