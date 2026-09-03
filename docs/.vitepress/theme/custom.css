@@ -409,13 +409,15 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
   width: 8px;
 }
 
-/* 简洁模式：隐藏所有 SQL 代码块 */
+/* 简洁模式：隐藏所有 SQL 代码块（含黑色容器） */
 body.kb-simple-mode .detail-sql,
 body.kb-simple-mode pre.detail-sql,
 body.kb-simple-mode .error-detail-box pre.language-sql,
-body.kb-simple-mode .error-detail-box pre code.language-sql,
-body.kb-simple-mode #key-logic pre code.language-sql,
-body.kb-simple-mode #detail-logic pre code.language-sql {
+body.kb-simple-mode .error-detail-box .language-sql,
+body.kb-simple-mode #key-logic pre.language-sql,
+body.kb-simple-mode #key-logic .language-sql,
+body.kb-simple-mode #detail-logic pre.language-sql,
+body.kb-simple-mode #detail-logic .language-sql {
   display: none !important;
 }
 /* 简洁模式：隐藏表结构 KbCard */
