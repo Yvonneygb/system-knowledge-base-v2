@@ -218,11 +218,11 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询无数据</td><td>查询时</td><td>无认缴记录，确认认缴申请已审批</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>合同类型、事业部、经销商不能为空</td><td>查询/保存时</td><td>必填参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>保证金标准设定未配置，请先配置</td><td>保存时</td><td>保证金标准未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>无认缴记录，确认认缴申请已审批</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>合同类型、事业部、经销商不能为空</td><td>查询/保存时</td><td>必填参数缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>保证金标准设定未配置，请先配置</td><td>保存时</td><td>保证金标准未配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

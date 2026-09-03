@@ -234,11 +234,11 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询失败，请稍后重试</td><td>列表查询</td><td>后端接口异常或数据库连接超时。检查后端服务状态及网络连接</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足，无法访问</td><td>页面加载</td><td>当前用户未分配hzero.c.crm.cross-bu-sales-list相关权限。联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>登录已过期，请重新登录</td><td>页面操作</td><td>用户会话过期或Token失效。重新登录系统</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>暂无数据</td><td>列表展示</td><td>查询条件无匹配数据或销售清单未同步写入。调整查询条件或检查上游申请单审批状态</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>导出失败，请稍后重试</td><td>导出按钮</td><td>导出接口异常或导出数据量超限。缩小查询范围后重试</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>查询失败，请稍后重试</td><td>列表查询</td><td>后端接口异常或数据库连接超时。检查后端服务状态及网络连接</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足，无法访问</td><td>页面加载</td><td>当前用户未分配hzero.c.crm.cross-bu-sales-list相关权限。联系管理员分配权限</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>登录已过期，请重新登录</td><td>页面操作</td><td>用户会话过期或Token失效。重新登录系统</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>暂无数据</td><td>列表展示</td><td>查询条件无匹配数据或销售清单未同步写入。调整查询条件或检查上游申请单审批状态</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>导出失败，请稍后重试</td><td>导出按钮</td><td>导出接口异常或导出数据量超限。缩小查询范围后重试</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

@@ -370,22 +370,22 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>原合同不能为空</td><td>保存时</td><td>未选择原合同</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>原合同未归档</td><td>选择原合同时</td><td>原合同未审批通过或未归档</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>未找到该记录</td><td>查询/编辑时</td><td>变更单据不存在或已被删除</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>合同信息不匹配</td><td>编辑时</td><td>变更单与原合同关联异常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>不能删除非制单状态的单据</td><td>删除时</td><td>仅未提交的单据可删除</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>电子合同签署中，不允许变更</td><td>提交时</td><td>原合同电子签章流程未完成</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>销售合同编码不能为空</td><td>校验时</td><td>原合同编码参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>该合同已有单据在走合同归档，请先归档完再变更</td><td>提交时</td><td>原合同存在未完成归档单据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>已经存在未审核完的合同变更单</td><td>提交时</td><td>同一原合同已有未审核变更单</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>经销商或者法人不存在</td><td>校验时</td><td>经销商或法人主数据缺失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>合同不存在</td><td>校验时</td><td>原合同或新合同不存在</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>单据信息不合法</td><td>提交时</td><td>变更单据状态或数据不合法</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>MBO作废原合同失败</td><td>审批回调时</td><td>MBO侧作废原合同异常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>原合同不能为空</td><td>保存时</td><td>未选择原合同</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>原合同未归档</td><td>选择原合同时</td><td>原合同未审批通过或未归档</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>未找到该记录</td><td>查询/编辑时</td><td>变更单据不存在或已被删除</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>合同信息不匹配</td><td>编辑时</td><td>变更单与原合同关联异常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>不能删除非制单状态的单据</td><td>删除时</td><td>仅未提交的单据可删除</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>电子合同签署中，不允许变更</td><td>提交时</td><td>原合同电子签章流程未完成</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>销售合同编码不能为空</td><td>校验时</td><td>原合同编码参数缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>该合同已有单据在走合同归档，请先归档完再变更</td><td>提交时</td><td>原合同存在未完成归档单据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>已经存在未审核完的合同变更单</td><td>提交时</td><td>同一原合同已有未审核变更单</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>经销商或者法人不存在</td><td>校验时</td><td>经销商或法人主数据缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>合同不存在</td><td>校验时</td><td>原合同或新合同不存在</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不合法</td><td>提交时</td><td>变更单据状态或数据不合法</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>MBO作废原合同失败</td><td>审批回调时</td><td>MBO侧作废原合同异常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

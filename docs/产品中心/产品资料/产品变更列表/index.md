@@ -532,22 +532,22 @@ SELECT COUNT(1) FROM LNK_PROD_CHANGE_FORM_ITEM WHERE HEAD_ID = :formId;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>申请单状态为不为新建或审核拒绝，不可提交！</td><td>提交时</td><td>申请单当前状态非NEW/REJECTED，不可重复提交。需检查状态是否已被他人修改</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>变更单涉及产品【xxx】所在申请单【xxx】申请人【xxx】正在审批中</td><td>提交时</td><td>变更产品已在其他审批中的申请单内，需等待在途单据审完或终止/撤回原申请</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>变更单行为空，不允许提交</td><td>提交时</td><td>申请单无变更行数据，需先添加变更行再提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品xxx的生命状态为Z1/Z8不允许上架!</td><td>提交时</td><td>Z1/Z8状态产品不允许上架，需先变更产品生命状态</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品xxx的生命状态为Z3/Z6/Z7/S6是否确认上架!</td><td>提交时</td><td>需用户二次确认是否上架该状态产品</td><td>确认弹窗</td><td>[查看]</td></tr>
-<tr><td>产品&lt;xxx&gt;的xxx的值为空，不可上架</td><td>提交时</td><td>上架产品必填字段未填写，需先补充必填信息或在变更单中添加该字段的变更</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品信息变更申请xxx不存在！</td><td>审批回调时</td><td>申请单已被删除，工作流回调找不到单据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请检查表单必填项!</td><td>保存时</td><td>前端表单必填校验未通过</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请传入需要上下架的产品！</td><td>提交时</td><td>变更行上下架产品编码集合为空，需检查变更行产品编码是否填写</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码【xxx】不存在！</td><td>提交时</td><td>变更行产品编码在LNK_PROD表中不存在或无权访问，需检查产品编码是否正确</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>申请产品上架数量不能超过1千！</td><td>提交时</td><td>单次上架产品数量超过1000条限制，需分批提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>物料编码xxx关联老款产品xxx没有找到当前有效的折扣政策，不允许产品上架！</td><td>提交时</td><td>上架产品关联的老款产品无有效折扣政策且可售月份大于1个月，需先配置折扣政策</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品xxx不存在！</td><td>提交时</td><td>上架必填项校验时产品在LNK_PROD表中不存在，需检查产品主数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>prodPhoto/prodFiles: xxx文件类型不存在！</td><td>审批回调时</td><td>图册/附件变更行的文件类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>保存失败</td><td>保存时</td><td>保存接口返回失败，检查网络或后端异常日志</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>提交失败</td><td>提交时</td><td>提交接口返回失败（非二次确认），检查后端异常日志</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>申请单状态为不为新建或审核拒绝，不可提交！</td><td>提交时</td><td>申请单当前状态非NEW/REJECTED，不可重复提交。需检查状态是否已被他人修改</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>变更单涉及产品【xxx】所在申请单【xxx】申请人【xxx】正在审批中</td><td>提交时</td><td>变更产品已在其他审批中的申请单内，需等待在途单据审完或终止/撤回原申请</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>变更单行为空，不允许提交</td><td>提交时</td><td>申请单无变更行数据，需先添加变更行再提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>产品xxx的生命状态为Z1/Z8不允许上架!</td><td>提交时</td><td>Z1/Z8状态产品不允许上架，需先变更产品生命状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>产品xxx的生命状态为Z3/Z6/Z7/S6是否确认上架!</td><td>提交时</td><td>需用户二次确认是否上架该状态产品</td><td>确认弹窗</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>产品&lt;xxx&gt;的xxx的值为空，不可上架</td><td>提交时</td><td>上架产品必填字段未填写，需先补充必填信息或在变更单中添加该字段的变更</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>产品信息变更申请xxx不存在！</td><td>审批回调时</td><td>申请单已被删除，工作流回调找不到单据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>请检查表单必填项!</td><td>保存时</td><td>前端表单必填校验未通过</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>请传入需要上下架的产品！</td><td>提交时</td><td>变更行上下架产品编码集合为空，需检查变更行产品编码是否填写</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码【xxx】不存在！</td><td>提交时</td><td>变更行产品编码在LNK_PROD表中不存在或无权访问，需检查产品编码是否正确</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>申请产品上架数量不能超过1千！</td><td>提交时</td><td>单次上架产品数量超过1000条限制，需分批提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>物料编码xxx关联老款产品xxx没有找到当前有效的折扣政策，不允许产品上架！</td><td>提交时</td><td>上架产品关联的老款产品无有效折扣政策且可售月份大于1个月，需先配置折扣政策</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>产品xxx不存在！</td><td>提交时</td><td>上架必填项校验时产品在LNK_PROD表中不存在，需检查产品主数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>prodPhoto/prodFiles: xxx文件类型不存在！</td><td>审批回调时</td><td>图册/附件变更行的文件类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>保存失败</td><td>保存时</td><td>保存接口返回失败，检查网络或后端异常日志</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>提交失败</td><td>提交时</td><td>提交接口返回失败（非二次确认），检查后端异常日志</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <blockquote><strong>"变更单涉及产品正在审批中"详细逻辑：</strong>

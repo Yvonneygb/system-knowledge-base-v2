@@ -472,21 +472,21 @@ SELECT H.POLICY_SPECIAL_ID, H.APPLY_AMT, C.CAPITAL_POOL
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>经销商不能为空</td><td>保存时</td><td>未选择经销商，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>申请金额必须大于0</td><td>保存时</td><td>申请金额填写了0或负数</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>申请金额超过资金池余额</td><td>提交时</td><td>申请金额大于资金池可用余额</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>资金池来源类型为空</td><td>导入明细前</td><td>未选择资金池来源类型，选择后导入</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>申请原因为空</td><td>保存时</td><td>未填写申请原因，填写后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>交易公司不能为空</td><td>保存时</td><td>未选择交易公司，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>法人不能为空</td><td>保存时</td><td>未选择法人，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>流程编码缺失，请选择流程！</td><td>保存并提交时</td><td>未选择审批流程，选择流程后提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请先选择经销商或交易公司</td><td>查询资金池时</td><td>经销商或交易公司未选择，先选择后再查询资金池</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>行数据重复</td><td>保存时</td><td>同一经销商+交易公司+法人组合重复，去重后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请选择需要删除的数据！</td><td>删除时</td><td>未选中任何记录，选中后删除</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>单据未在OA审核节点</td><td>OA审批回调时</td><td>单据审核状态非"已送签OA"，检查OA回调时序</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未查询到业务单据</td><td>OA审批回调时</td><td>OA回传ID在系统中找不到，检查OA单据映射</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>保存/提交/删除时</td><td>后端服务不可用或OA系统不可达，确认服务正常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无经销商数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>经销商不能为空</td><td>保存时</td><td>未选择经销商，选择后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>申请金额必须大于0</td><td>保存时</td><td>申请金额填写了0或负数</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>申请金额超过资金池余额</td><td>提交时</td><td>申请金额大于资金池可用余额</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>资金池来源类型为空</td><td>导入明细前</td><td>未选择资金池来源类型，选择后导入</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>申请原因为空</td><td>保存时</td><td>未填写申请原因，填写后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>交易公司不能为空</td><td>保存时</td><td>未选择交易公司，选择后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>法人不能为空</td><td>保存时</td><td>未选择法人，选择后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码缺失，请选择流程！</td><td>保存并提交时</td><td>未选择审批流程，选择流程后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择经销商或交易公司</td><td>查询资金池时</td><td>经销商或交易公司未选择，先选择后再查询资金池</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>行数据重复</td><td>保存时</td><td>同一经销商+交易公司+法人组合重复，去重后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>请选择需要删除的数据！</td><td>删除时</td><td>未选中任何记录，选中后删除</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>单据未在OA审核节点</td><td>OA审批回调时</td><td>单据审核状态非"已送签OA"，检查OA回调时序</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>未查询到业务单据</td><td>OA审批回调时</td><td>OA回传ID在系统中找不到，检查OA单据映射</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>保存/提交/删除时</td><td>后端服务不可用或OA系统不可达，确认服务正常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无经销商数据权限，联系管理员分配权限</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

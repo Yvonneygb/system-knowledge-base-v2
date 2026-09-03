@@ -348,11 +348,11 @@ SELECT * FROM EXPENSE_WRITEOFF_IN_QUOTA WHERE WRITEOFF_ID IN (#{ids}) AND BILL_S
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>推送共享财务失败</td><td>推送时</td><td>共享财务系统不可用或数据异常，检查GCCX系统状态</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>冲销数据未生成</td><td>查询时</td><td>定时任务未执行，确认ExpenseWriteoffInQuotaJob已运行</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请传入冲销单号</td><td>推送时</td><td>未传入冲销头单号，需选择有效冲销记录</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>推共享预提时间转换异常</td><td>推送时</td><td>冲销年月格式错误或为空，检查YEARMONTH字段</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>时间格式错误，请输入正确的时间格式：yyyy-MM</td><td>定时任务</td><td>定时任务参数startDate/endDate格式错误</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>推送共享财务失败</td><td>推送时</td><td>共享财务系统不可用或数据异常，检查GCCX系统状态</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>冲销数据未生成</td><td>查询时</td><td>定时任务未执行，确认ExpenseWriteoffInQuotaJob已运行</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>请传入冲销单号</td><td>推送时</td><td>未传入冲销头单号，需选择有效冲销记录</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>推共享预提时间转换异常</td><td>推送时</td><td>冲销年月格式错误或为空，检查YEARMONTH字段</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>时间格式错误，请输入正确的时间格式：yyyy-MM</td><td>定时任务</td><td>定时任务参数startDate/endDate格式错误</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

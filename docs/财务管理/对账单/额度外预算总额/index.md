@@ -327,12 +327,12 @@ WHERE CUSTOMER_CODE = #{customerCode}
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询无数据</td><td>查询时</td><td>预算未导入或年度选择错误，确认预算已导入</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>可用余额查询失败</td><td>查询可用余额时</td><td>费用申请单数据异常或接口超时，确认fin-fee-apply-headers服务正常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>预算剩余为负数</td><td>查询时</td><td>累计已用超过预算总额+调整，存在超支，核查兑现同步逻辑</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>年度查询条件为空</td><td>查询时</td><td>未选择预算年度，选择后查询</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>查询/查询可用余额时</td><td>后端服务不可用，确认ae-business服务正常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无经销商/事业部数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>预算未导入或年度选择错误，确认预算已导入</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>可用余额查询失败</td><td>查询可用余额时</td><td>费用申请单数据异常或接口超时，确认fin-fee-apply-headers服务正常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>预算剩余为负数</td><td>查询时</td><td>累计已用超过预算总额+调整，存在超支，核查兑现同步逻辑</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>年度查询条件为空</td><td>查询时</td><td>未选择预算年度，选择后查询</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>查询/查询可用余额时</td><td>后端服务不可用，确认ae-business服务正常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无经销商/事业部数据权限，联系管理员分配权限</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

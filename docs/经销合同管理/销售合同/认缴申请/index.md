@@ -374,23 +374,23 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>合同不能为空</td><td>保存时</td><td>未选择合同</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>认缴金额必须大于0</td><td>保存时</td><td>认缴金额填写了0或负数</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>认缴金额超过未缴余额</td><td>提交时</td><td>认缴金额大于合同未缴保证金</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>行明细不能为空</td><td>保存时</td><td>认缴明细行未填写</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>法人已有封顶认缴记录，无需再次认缴</td><td>保存时</td><td>法人已完成封顶认缴</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>法人已有封顶认缴流程在审批中</td><td>保存时</td><td>法人封顶认缴流程未完成</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>当前法人存在普通认缴，请先中断或撤销</td><td>保存时</td><td>普通认缴与封顶认缴互斥</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>认缴的金额与封顶的金额不一致</td><td>保存时</td><td>封顶认缴金额与封顶配置不一致</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>认款单剩余可认款金额不足</td><td>提交时</td><td>认款单可认款余额小于申请金额</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>认款单不存在，请重新选择</td><td>保存时</td><td>关联认款单已被删除或撤销</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>申请单已认缴，不能进行重复认缴</td><td>保存时</td><td>认缴申请已执行认缴操作</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请选择需要删除的数据</td><td>删除时</td><td>未选中删除数据</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>当前法人不存在</td><td>保存时</td><td>法人主数据缺失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>合同类型不能为空</td><td>保存时</td><td>合同类型参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>合同不能为空</td><td>保存时</td><td>未选择合同</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>认缴金额必须大于0</td><td>保存时</td><td>认缴金额填写了0或负数</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>认缴金额超过未缴余额</td><td>提交时</td><td>认缴金额大于合同未缴保证金</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>行明细不能为空</td><td>保存时</td><td>认缴明细行未填写</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>法人已有封顶认缴记录，无需再次认缴</td><td>保存时</td><td>法人已完成封顶认缴</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>法人已有封顶认缴流程在审批中</td><td>保存时</td><td>法人封顶认缴流程未完成</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>当前法人存在普通认缴，请先中断或撤销</td><td>保存时</td><td>普通认缴与封顶认缴互斥</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>认缴的金额与封顶的金额不一致</td><td>保存时</td><td>封顶认缴金额与封顶配置不一致</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>认款单剩余可认款金额不足</td><td>提交时</td><td>认款单可认款余额小于申请金额</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>认款单不存在，请重新选择</td><td>保存时</td><td>关联认款单已被删除或撤销</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>申请单已认缴，不能进行重复认缴</td><td>保存时</td><td>认缴申请已执行认缴操作</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>请选择需要删除的数据</td><td>删除时</td><td>未选中删除数据</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>当前法人不存在</td><td>保存时</td><td>法人主数据缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>合同类型不能为空</td><td>保存时</td><td>合同类型参数缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

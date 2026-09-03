@@ -412,31 +412,31 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>折扣单号不能为空</td><td>保存时</td><td>未选择折扣单。选择折扣单后保存</td><td>高</td><td>[查看]</td></tr>
-<tr><td>变更说明不能为空</td><td>保存时</td><td>变更说明(ECN_REASON)为空。填写变更说明后保存</td><td>高</td><td>[查看]</td></tr>
-<tr><td>变更单不存在</td><td>查询详情时</td><td>按ID查询EPM_DISCOUNT_ECN为空。检查变更单ID有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td>[查看]</td></tr>
-<tr><td>折扣单已存在变更中申请</td><td>提交时</td><td>该折扣单已存在审批中的变更单(HZ_APPROVE_STATUS='RUN')。等原变更审批完成</td><td>高</td><td>[查看]</td></tr>
-<tr><td>数据不存在或无该数据权限</td><td>查询详情时</td><td>变更单不存在或当前用户无该数据权限。检查单据ID和用户权限</td><td>高</td><td>[查看]</td></tr>
-<tr><td>折扣类型不能为空</td><td>保存/提交时</td><td>折扣类型(DISCOUNT_TYPE)为空。选择折扣类型后保存</td><td>高</td><td>[查看]</td></tr>
-<tr><td>折扣变更单明细数据为空</td><td>保存/提交时</td><td>变更单明细行(epmDiscountEcnLines)为空。添加变更产品明细行</td><td>高</td><td>[查看]</td></tr>
-<tr><td>产品不存在或已被删除</td><td>保存/取价时</td><td>明细行产品在产品主档中不存在或已删除。检查产品编码有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>折后单价不可少于0，不允许发起变更</td><td>保存/提交时</td><td>明细行折后单价(DISCOUNTED_PRICE)&lt;0。调整折后单价</td><td>高</td><td>[查看]</td></tr>
-<tr><td>一口价折扣率不能小于1</td><td>保存/提交时</td><td>一口价定位产品的折扣率&lt;1。调整折扣率≥1</td><td>高</td><td>[查看]</td></tr>
-<tr><td>存在合同数量为0的产品明细，提交流程失败</td><td>提交时</td><td>明细行CONTRACT_QTY=0。修改合同数量&gt;0后提交</td><td>高</td><td>[查看]</td></tr>
-<tr><td>当前报备下已有合同(或合同变更)在审批，请先将审核流程通过后再提交！</td><td>提交时</td><td>同一报备下已有合同/变更单在审批中。等原审批完成</td><td>高</td><td>[查看]</td></tr>
-<tr><td>工程方单价不能为空或0，产品编码：&#123;itemCode&#125;</td><td>保存/提交时</td><td>明细行工程方单价(CONTRACT_PRICE)为空或0。填写工程方单价</td><td>高</td><td>[查看]</td></tr>
-<tr><td>对应的合同已失效</td><td>保存/提交时</td><td>关联合同状态已失效。重新选择有效合同</td><td>高</td><td>[查看]</td></tr>
-<tr><td>该单据未存在有效的标准折扣设置，请联系管理员。</td><td>提交时</td><td>事业部未配置标准折扣设置。联系管理员配置</td><td>高</td><td>[查看]</td></tr>
-<tr><td>合同关联的单体报备未生效</td><td>保存/提交时</td><td>合同关联的报备单未生效。先生效报备单</td><td>高</td><td>[查看]</td></tr>
-<tr><td>当前事业部未设置主要销售主体，暂无法正常下单，请联系业务员处理。</td><td>提交时</td><td>事业部未配置主要销售主体。联系业务员配置</td><td>高</td><td>[查看]</td></tr>
-<tr><td>必输信息未填写完成！</td><td>保存/提交时</td><td>头表或明细行必填字段未填写。完善必填字段</td><td>中</td><td>[查看]</td></tr>
-<tr><td>申请数量必须大于0，以下行不合法：第X行</td><td>保存/提交时</td><td>明细行CONTRACT_QTY≤0。修改申请数量&gt;0</td><td>中</td><td>[查看]</td></tr>
-<tr><td>产品的预提货数量不能大于合同数量，以下行不合法：第X行</td><td>保存/提交时</td><td>提货计划数量&gt;合同数量。调整提货计划数量</td><td>中</td><td>[查看]</td></tr>
-<tr><td>请先选择折扣类型！</td><td>审批节点提交时</td><td>头表折扣类型(DISCOUNT_TYPE)为空。选择折扣类型</td><td>中</td><td>[查看]</td></tr>
-<tr><td>请先获取零售折扣底限！</td><td>审批节点提交时</td><td>未获取零售折扣底限(prodAttributionChannel为空)。先获取零售折扣底限</td><td>中</td><td>[查看]</td></tr>
-<tr><td>一口价定位的产品，通过折后单价反算的审批折扣率不能小于1</td><td>编辑折后单价时</td><td>一口价产品折后单价反算的审批折扣率&lt;1。调整折后单价</td><td>中</td><td>[查看]</td></tr>
-<tr><td>保存失败，请检查数据</td><td>保存时</td><td>后端校验失败或数据异常。检查数据后重试</td><td>中</td><td>[查看]</td></tr>
+<tr><td>折扣单号不能为空</td><td>保存时</td><td>未选择折扣单。选择折扣单后保存</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>变更说明不能为空</td><td>保存时</td><td>变更说明(ECN_REASON)为空。填写变更说明后保存</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>变更单不存在</td><td>查询详情时</td><td>按ID查询EPM_DISCOUNT_ECN为空。检查变更单ID有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>折扣单已存在变更中申请</td><td>提交时</td><td>该折扣单已存在审批中的变更单(HZ_APPROVE_STATUS='RUN')。等原变更审批完成</td><td>高</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>数据不存在或无该数据权限</td><td>查询详情时</td><td>变更单不存在或当前用户无该数据权限。检查单据ID和用户权限</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>折扣类型不能为空</td><td>保存/提交时</td><td>折扣类型(DISCOUNT_TYPE)为空。选择折扣类型后保存</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>折扣变更单明细数据为空</td><td>保存/提交时</td><td>变更单明细行(epmDiscountEcnLines)为空。添加变更产品明细行</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>产品不存在或已被删除</td><td>保存/取价时</td><td>明细行产品在产品主档中不存在或已删除。检查产品编码有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>折后单价不可少于0，不允许发起变更</td><td>保存/提交时</td><td>明细行折后单价(DISCOUNTED_PRICE)&lt;0。调整折后单价</td><td>高</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>一口价折扣率不能小于1</td><td>保存/提交时</td><td>一口价定位产品的折扣率&lt;1。调整折扣率≥1</td><td>高</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>存在合同数量为0的产品明细，提交流程失败</td><td>提交时</td><td>明细行CONTRACT_QTY=0。修改合同数量&gt;0后提交</td><td>高</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>当前报备下已有合同(或合同变更)在审批，请先将审核流程通过后再提交！</td><td>提交时</td><td>同一报备下已有合同/变更单在审批中。等原审批完成</td><td>高</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>工程方单价不能为空或0，产品编码：&#123;itemCode&#125;</td><td>保存/提交时</td><td>明细行工程方单价(CONTRACT_PRICE)为空或0。填写工程方单价</td><td>高</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>对应的合同已失效</td><td>保存/提交时</td><td>关联合同状态已失效。重新选择有效合同</td><td>高</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>该单据未存在有效的标准折扣设置，请联系管理员。</td><td>提交时</td><td>事业部未配置标准折扣设置。联系管理员配置</td><td>高</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>合同关联的单体报备未生效</td><td>保存/提交时</td><td>合同关联的报备单未生效。先生效报备单</td><td>高</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>当前事业部未设置主要销售主体，暂无法正常下单，请联系业务员处理。</td><td>提交时</td><td>事业部未配置主要销售主体。联系业务员配置</td><td>高</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>必输信息未填写完成！</td><td>保存/提交时</td><td>头表或明细行必填字段未填写。完善必填字段</td><td>中</td><td style="text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>申请数量必须大于0，以下行不合法：第X行</td><td>保存/提交时</td><td>明细行CONTRACT_QTY≤0。修改申请数量&gt;0</td><td>中</td><td style="text-align:center;"><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
+<tr><td>产品的预提货数量不能大于合同数量，以下行不合法：第X行</td><td>保存/提交时</td><td>提货计划数量&gt;合同数量。调整提货计划数量</td><td>中</td><td style="text-align:center;"><a href="#err-detail-21" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择折扣类型！</td><td>审批节点提交时</td><td>头表折扣类型(DISCOUNT_TYPE)为空。选择折扣类型</td><td>中</td><td style="text-align:center;"><a href="#err-detail-22" class="view-btn">查看</a></td></tr>
+<tr><td>请先获取零售折扣底限！</td><td>审批节点提交时</td><td>未获取零售折扣底限(prodAttributionChannel为空)。先获取零售折扣底限</td><td>中</td><td style="text-align:center;"><a href="#err-detail-23" class="view-btn">查看</a></td></tr>
+<tr><td>一口价定位的产品，通过折后单价反算的审批折扣率不能小于1</td><td>编辑折后单价时</td><td>一口价产品折后单价反算的审批折扣率&lt;1。调整折后单价</td><td>中</td><td style="text-align:center;"><a href="#err-detail-24" class="view-btn">查看</a></td></tr>
+<tr><td>保存失败，请检查数据</td><td>保存时</td><td>后端校验失败或数据异常。检查数据后重试</td><td>中</td><td style="text-align:center;"><a href="#err-detail-25" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

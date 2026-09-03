@@ -396,11 +396,11 @@ WHERE p.prod_code = #{prodCode}
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>未签合同，不允许查询该产品价目表明细</td><td>查询操作</td><td>经销商用户未签有效合同或查询的产品不在有效合同渠道内</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>导出权限不足</td><td>导出按钮</td><td>当前用户无导出权限hzero.crm.price.list.export</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>查询失败</td><td>列表页查询操作</td><td>列表查询接口返回失败</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>会话过期</td><td>任意操作</td><td>登录会话已失效</td><td>确认弹窗</td><td>[查看]</td></tr>
-<tr><td>暂无数据</td><td>列表页查询结果</td><td>查询结果为空</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>未签合同，不允许查询该产品价目表明细</td><td>查询操作</td><td>经销商用户未签有效合同或查询的产品不在有效合同渠道内</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>导出权限不足</td><td>导出按钮</td><td>当前用户无导出权限hzero.crm.price.list.export</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>查询失败</td><td>列表页查询操作</td><td>列表查询接口返回失败</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期</td><td>任意操作</td><td>登录会话已失效</td><td>确认弹窗</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>暂无数据</td><td>列表页查询结果</td><td>查询结果为空</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <blockquote><strong>"未签合同，不允许查询该产品价目表明细"详细逻辑</strong>：

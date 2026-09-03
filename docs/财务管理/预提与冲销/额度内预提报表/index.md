@@ -330,14 +330,14 @@ SELECT * FROM FIN_FEE_WITHHOLDING_IN_QUOTA WHERE YEARMONTH = #{yearmonth} AND SY
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>预提数据为空</td><td>查询时</td><td>预提数据未生成，先执行更新预提数据</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>推送共享财务失败</td><td>更新预提数据时</td><td>共享财务系统不可用，检查系统状态</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>预提视图数据为空</td><td>更新预提数据时</td><td>上游出库单预提数据未生成，预提视图无数据</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>找不到符合的预提/冲销单号信息</td><td>共享回调时</td><td>共享财务系统回调时预提单号不存在，检查单号有效性</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请确认该单据号是预提/冲销头单号</td><td>共享回调时</td><td>共享回调传入的单号类型不匹配，确认单号类型</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>未知的单据类型</td><td>共享回调时</td><td>共享回调传入的单据类型未配置，检查单据类型配置</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>更新预提数据时</td><td>网络中断或服务不可用，检查网络和服务状态</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>操作时</td><td>当前用户无操作权限，联系管理员授权</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>预提数据为空</td><td>查询时</td><td>预提数据未生成，先执行更新预提数据</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>推送共享财务失败</td><td>更新预提数据时</td><td>共享财务系统不可用，检查系统状态</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>预提视图数据为空</td><td>更新预提数据时</td><td>上游出库单预提数据未生成，预提视图无数据</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>找不到符合的预提/冲销单号信息</td><td>共享回调时</td><td>共享财务系统回调时预提单号不存在，检查单号有效性</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>请确认该单据号是预提/冲销头单号</td><td>共享回调时</td><td>共享回调传入的单号类型不匹配，确认单号类型</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>未知的单据类型</td><td>共享回调时</td><td>共享回调传入的单据类型未配置，检查单据类型配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>更新预提数据时</td><td>网络中断或服务不可用，检查网络和服务状态</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>操作时</td><td>当前用户无操作权限，联系管理员授权</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

@@ -225,25 +225,25 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>报销单不存在</td><td>查询详情时</td><td>按ACC_NO查询FIN_SVC_EXP_ACC_HEAD为空。检查报销单号有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>报销金额超过可报销金额</td><td>提交时</td><td>报销金额超过剩余可报销金额。调整报销金额</td><td>高</td><td>[查看]</td></tr>
-<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td>[查看]</td></tr>
-<tr><td>未查询到相关工程费报销单</td><td>查询详情时</td><td>按条件查询FIN_SVC_EXP_ACC_HEAD为空。检查查询条件</td><td>高</td><td>[查看]</td></tr>
-<tr><td>该报销单税率为空</td><td>保存校验</td><td>报销单TAX_RATE字段为空。需维护税率</td><td>高</td><td>[查看]</td></tr>
-<tr><td>未找到对应的费用报销单</td><td>查询关联单据时</td><td>关联费用报销单查询为空。检查关联单据有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>发票附件名称异常，请检查文件后缀名后再上传！</td><td>上传发票附件</td><td>发票附件文件名格式异常。检查文件后缀名</td><td>高</td><td>[查看]</td></tr>
-<tr><td>发票附件类型异常，请上传【jpg、jpeg、png、pdf】类型的附件！</td><td>上传发票附件</td><td>发票附件类型不在允许范围内。使用jpg/jpeg/png/pdf格式</td><td>高</td><td>[查看]</td></tr>
-<tr><td>上传的发票类型与报销类型不一致。正数报销时，需上传蓝字发票。负数报销时，需上传红字发票。</td><td>上传发票</td><td>发票类型与报销类型不匹配。按报销类型上传对应发票</td><td>高</td><td>[查看]</td></tr>
-<tr><td>税率不能为空</td><td>保存校验</td><td>税率字段为空。需维护税率</td><td>高</td><td>[查看]</td></tr>
-<tr><td>发票税率不存在</td><td>保存校验</td><td>发票税率在税率表不存在。检查税率配置</td><td>高</td><td>[查看]</td></tr>
-<tr><td>流程完结异常：缺失单据id</td><td>流程完结</td><td>未传入单据ID。检查前端传参完整性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>流程启动异常：缺失单据id</td><td>流程启动</td><td>未传入单据ID。检查前端传参完整性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>流程操作异常：实际报销金额必须大于0</td><td>流程操作</td><td>实际报销金额≤0。调整报销金额</td><td>高</td><td>[查看]</td></tr>
-<tr><td>流程操作异常：发票必须上传</td><td>流程操作</td><td>未上传发票。需上传发票附件</td><td>高</td><td>[查看]</td></tr>
-<tr><td>流程操作异常，以下发票明细异常：xxx</td><td>流程操作</td><td>发票明细数据校验未通过。检查发票明细数据</td><td>高</td><td>[查看]</td></tr>
-<tr><td>推送数据到共享异常：查找申请人OA信息未空</td><td>推送共享</td><td>申请人OA信息未配置。联系管理员维护申请人OA账号</td><td>高</td><td>[查看]</td></tr>
-<tr><td>推送数据到共享异常：单据查询数据为空</td><td>推送共享</td><td>按单据ID查询报销单为空。检查单据ID有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>附件ocr接口识别失败</td><td>发票OCR识别</td><td>OCR接口调用失败。检查OCR服务状态</td><td>高</td><td>[查看]</td></tr>
+<tr><td>报销单不存在</td><td>查询详情时</td><td>按ACC_NO查询FIN_SVC_EXP_ACC_HEAD为空。检查报销单号有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>报销金额超过可报销金额</td><td>提交时</td><td>报销金额超过剩余可报销金额。调整报销金额</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>未查询到相关工程费报销单</td><td>查询详情时</td><td>按条件查询FIN_SVC_EXP_ACC_HEAD为空。检查查询条件</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>该报销单税率为空</td><td>保存校验</td><td>报销单TAX_RATE字段为空。需维护税率</td><td>高</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>未找到对应的费用报销单</td><td>查询关联单据时</td><td>关联费用报销单查询为空。检查关联单据有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>发票附件名称异常，请检查文件后缀名后再上传！</td><td>上传发票附件</td><td>发票附件文件名格式异常。检查文件后缀名</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>发票附件类型异常，请上传【jpg、jpeg、png、pdf】类型的附件！</td><td>上传发票附件</td><td>发票附件类型不在允许范围内。使用jpg/jpeg/png/pdf格式</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>上传的发票类型与报销类型不一致。正数报销时，需上传蓝字发票。负数报销时，需上传红字发票。</td><td>上传发票</td><td>发票类型与报销类型不匹配。按报销类型上传对应发票</td><td>高</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>税率不能为空</td><td>保存校验</td><td>税率字段为空。需维护税率</td><td>高</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>发票税率不存在</td><td>保存校验</td><td>发票税率在税率表不存在。检查税率配置</td><td>高</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>流程完结异常：缺失单据id</td><td>流程完结</td><td>未传入单据ID。检查前端传参完整性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>流程启动异常：缺失单据id</td><td>流程启动</td><td>未传入单据ID。检查前端传参完整性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>流程操作异常：实际报销金额必须大于0</td><td>流程操作</td><td>实际报销金额≤0。调整报销金额</td><td>高</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>流程操作异常：发票必须上传</td><td>流程操作</td><td>未上传发票。需上传发票附件</td><td>高</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>流程操作异常，以下发票明细异常：xxx</td><td>流程操作</td><td>发票明细数据校验未通过。检查发票明细数据</td><td>高</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>推送数据到共享异常：查找申请人OA信息未空</td><td>推送共享</td><td>申请人OA信息未配置。联系管理员维护申请人OA账号</td><td>高</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>推送数据到共享异常：单据查询数据为空</td><td>推送共享</td><td>按单据ID查询报销单为空。检查单据ID有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>附件ocr接口识别失败</td><td>发票OCR识别</td><td>OCR接口调用失败。检查OCR服务状态</td><td>高</td><td style="text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

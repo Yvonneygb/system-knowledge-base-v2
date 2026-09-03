@@ -307,12 +307,12 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>EBS接口调用失败</td><td>查询时</td><td>EBS系统不可用或网络异常，检查EBS系统状态</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询无数据</td><td>查询时</td><td>查询条件不匹配或EBS中无对应期间数据，放宽条件</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请传入对账单类型</td><td>导出时</td><td>导出未传入stateType参数，前端补充对账单类型后重试</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>状态更新失败</td><td>状态更新时</td><td>EBS接口返回失败或对账单状态不允许更新，确认状态后重试</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>查询/导出/状态更新时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>EBS接口调用失败</td><td>查询时</td><td>EBS系统不可用或网络异常，检查EBS系统状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>查询条件不匹配或EBS中无对应期间数据，放宽条件</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>请传入对账单类型</td><td>导出时</td><td>导出未传入stateType参数，前端补充对账单类型后重试</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>状态更新失败</td><td>状态更新时</td><td>EBS接口返回失败或对账单状态不允许更新，确认状态后重试</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>查询/导出/状态更新时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

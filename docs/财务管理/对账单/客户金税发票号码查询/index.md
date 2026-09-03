@@ -330,12 +330,12 @@ SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = #{invoiceTruthId};
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询无数据</td><td>查询时</td><td>查询条件过窄或无审批通过的核销记录，放宽条件或确认上游核销已完成</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>项目不存在</td><td>选择项目时</td><td>项目编码/名称输入错误，重新选择项目</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>交易公司不存在</td><td>选择交易公司时</td><td>经销商未配置交易公司或关联关系缺失，先维护经销商与交易公司关联</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>发票明细不存在</td><td>查看明细时</td><td>选中的核销单行明细已被删除或核销单号无效，刷新列表后重试</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>查询/查看明细时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>查询条件过窄或无审批通过的核销记录，放宽条件或确认上游核销已完成</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>项目不存在</td><td>选择项目时</td><td>项目编码/名称输入错误，重新选择项目</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>交易公司不存在</td><td>选择交易公司时</td><td>经销商未配置交易公司或关联关系缺失，先维护经销商与交易公司关联</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>发票明细不存在</td><td>查看明细时</td><td>选中的核销单行明细已被删除或核销单号无效，刷新列表后重试</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>查询/查看明细时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

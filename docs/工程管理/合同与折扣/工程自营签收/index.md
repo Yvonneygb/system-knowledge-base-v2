@@ -358,16 +358,16 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>旧CRM网关调用失败</td><td>签收提交时</td><td>旧CRM服务不可用或网关配置错误。检查旧CRM服务连通性和网关配置</td><td>中</td><td>[查看]</td></tr>
-<tr><td>签收单不存在</td><td>查询详情时</td><td>按BILL_NO查询DRP_DIFFPROCBILL_HEADER为空。检查签收单号有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>加载签收单详情失败</td><td>加载详情时</td><td>后端接口异常或网络错误。检查网络连通性和后端服务状态</td><td>中</td><td>[查看]</td></tr>
-<tr><td>保存失败</td><td>保存时</td><td>后端校验未通过或接口异常。检查数据完整性和后端服务状态</td><td>中</td><td>[查看]</td></tr>
-<tr><td>提交失败</td><td>提交时</td><td>后端校验未通过或工作流启动异常。检查数据完整性和工作流配置</td><td>中</td><td>[查看]</td></tr>
-<tr><td>获取合同明细失败</td><td>选择合同时</td><td>合同明细接口异常或合同编码无效。检查合同编码有效性和后端服务状态</td><td>中</td><td>[查看]</td></tr>
-<tr><td>经销商编码不能为空</td><td>保存校验</td><td>头表CUST_CODE字段为空。需选择经销商客户</td><td>高</td><td>[查看]</td></tr>
-<tr><td>法人客户编码不能为空</td><td>保存校验</td><td>头表BILLING_UNIT_CODE字段为空。需选择法人客户</td><td>高</td><td>[查看]</td></tr>
-<tr><td>合同编码不能为空</td><td>保存校验</td><td>头表CONTRACT_CODE字段为空。需选择合同</td><td>高</td><td>[查看]</td></tr>
-<tr><td>批量设置签收时间不能为空</td><td>保存校验</td><td>头表MODEL_SIGN_DATE字段为空。需设置批量签收时间</td><td>高</td><td>[查看]</td></tr>
+<tr><td>旧CRM网关调用失败</td><td>签收提交时</td><td>旧CRM服务不可用或网关配置错误。检查旧CRM服务连通性和网关配置</td><td>中</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>签收单不存在</td><td>查询详情时</td><td>按BILL_NO查询DRP_DIFFPROCBILL_HEADER为空。检查签收单号有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>加载签收单详情失败</td><td>加载详情时</td><td>后端接口异常或网络错误。检查网络连通性和后端服务状态</td><td>中</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>保存失败</td><td>保存时</td><td>后端校验未通过或接口异常。检查数据完整性和后端服务状态</td><td>中</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>提交失败</td><td>提交时</td><td>后端校验未通过或工作流启动异常。检查数据完整性和工作流配置</td><td>中</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>获取合同明细失败</td><td>选择合同时</td><td>合同明细接口异常或合同编码无效。检查合同编码有效性和后端服务状态</td><td>中</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>经销商编码不能为空</td><td>保存校验</td><td>头表CUST_CODE字段为空。需选择经销商客户</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>法人客户编码不能为空</td><td>保存校验</td><td>头表BILLING_UNIT_CODE字段为空。需选择法人客户</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>合同编码不能为空</td><td>保存校验</td><td>头表CONTRACT_CODE字段为空。需选择合同</td><td>高</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>批量设置签收时间不能为空</td><td>保存校验</td><td>头表MODEL_SIGN_DATE字段为空。需设置批量签收时间</td><td>高</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

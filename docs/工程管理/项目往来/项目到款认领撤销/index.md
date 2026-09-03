@@ -491,13 +491,13 @@ NEW(新建) ──提交──→ RUN(审批中) ──审批通过──→ APP
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销</td><td>保存</td><td>撤销后已认领工程服务费不足以覆盖已申请兑现金额，减少撤销明细中工程服务费金额</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>明细中以下认领明细已被撤销，请剔除后再重新提交撤销</td><td>提交</td><td>选中的认领明细已被其他撤销单撤销，剔除已撤销明细</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程启动异常，单据id不能为空</td><td>提交/完结</td><td>工作流回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程启动异常，单据不存在</td><td>提交/完结</td><td>撤销单已被删除，刷新列表</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程启动异常，撤销明细不存在</td><td>提交/完结</td><td>撤销单缺少明细行，检查明细数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>erp返回认领结果为空</td><td>ERP推送</td><td>ERP接口异常，检查ERP服务状态</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>认领推送erp异常</td><td>ERP推送</td><td>ERP返回错误信息，查看具体错误内容</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>撤销明细中，含有已经报销的认领明细，且撤销后可结算工程服务费小于零，不允许撤销</td><td>保存</td><td>撤销后已认领工程服务费不足以覆盖已申请兑现金额，减少撤销明细中工程服务费金额</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>明细中以下认领明细已被撤销，请剔除后再重新提交撤销</td><td>提交</td><td>选中的认领明细已被其他撤销单撤销，剔除已撤销明细</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>流程启动异常，单据id不能为空</td><td>提交/完结</td><td>工作流回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>流程启动异常，单据不存在</td><td>提交/完结</td><td>撤销单已被删除，刷新列表</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>流程启动异常，撤销明细不存在</td><td>提交/完结</td><td>撤销单缺少明细行，检查明细数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>erp返回认领结果为空</td><td>ERP推送</td><td>ERP接口异常，检查ERP服务状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>认领推送erp异常</td><td>ERP推送</td><td>ERP返回错误信息，查看具体错误内容</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

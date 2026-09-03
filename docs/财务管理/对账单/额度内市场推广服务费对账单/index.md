@@ -323,12 +323,12 @@ WHERE INLIMIT_BALANCE_ACCOUNT_ID IN (#{ids});
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>重新生成失败</td><td>重新生成时</td><td>明细数据未就绪或汇总计算异常，确认明细数据已生成</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>查询无数据</td><td>查询时</td><td>对账单未生成，先执行重新生成</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>生成出库单的日期最迟为前一个月</td><td>重新生成时</td><td>查询年月超过当前年月，调整为前一个月或更早</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>推送状态更新失败</td><td>更新推送状态时</td><td>未选中记录或接口异常，选中记录后重试</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>查询/重新生成时</td><td>后端服务不可用，确认ae-business服务正常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无事业部数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>重新生成失败</td><td>重新生成时</td><td>明细数据未就绪或汇总计算异常，确认明细数据已生成</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>对账单未生成，先执行重新生成</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>生成出库单的日期最迟为前一个月</td><td>重新生成时</td><td>查询年月超过当前年月，调整为前一个月或更早</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>推送状态更新失败</td><td>更新推送状态时</td><td>未选中记录或接口异常，选中记录后重试</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>查询/重新生成时</td><td>后端服务不可用，确认ae-business服务正常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无事业部数据权限，联系管理员分配权限</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

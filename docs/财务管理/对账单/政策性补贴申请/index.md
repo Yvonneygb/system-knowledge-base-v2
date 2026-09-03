@@ -490,16 +490,16 @@ SELECT H.POLICY_SPECIAL_ID, H.APPLY_AMT, C.CAPITAL_POOL
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>经销商不能为空</td><td>保存时</td><td>未选择经销商，选择经销商后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>申请金额必须大于0</td><td>保存时</td><td>申请金额填写了0或负数，输入正确金额</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>交易公司不能为空</td><td>保存时</td><td>未选择交易公司，选择交易公司后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>申请金额超过资金池余额</td><td>提交时</td><td>申请金额大于资金池可用余额，调整申请金额</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程编码缺失，请选择流程</td><td>保存并提交时</td><td>未选择OA审批流程，选择流程后重新提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请选择需要删除的数据</td><td>删除时</td><td>未选中任何记录就点击删除，选中记录后重试</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>无法获事业部信息</td><td>保存/查询资金池时</td><td>当前用户未配置事业部，联系管理员配置事业部</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>无法获上线文信息</td><td>保存时</td><td>用户上下文获取失败，重新登录后重试</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>单据状态不允许删除</td><td>删除时</td><td>选中的单据已提交审批（AUDIT_STAT为RUN/APPROVED），不允许删除</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>经销商不能为空</td><td>保存时</td><td>未选择经销商，选择经销商后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>申请金额必须大于0</td><td>保存时</td><td>申请金额填写了0或负数，输入正确金额</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>交易公司不能为空</td><td>保存时</td><td>未选择交易公司，选择交易公司后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>申请金额超过资金池余额</td><td>提交时</td><td>申请金额大于资金池可用余额，调整申请金额</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码缺失，请选择流程</td><td>保存并提交时</td><td>未选择OA审批流程，选择流程后重新提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>请选择需要删除的数据</td><td>删除时</td><td>未选中任何记录就点击删除，选中记录后重试</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>无法获事业部信息</td><td>保存/查询资金池时</td><td>当前用户未配置事业部，联系管理员配置事业部</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>无法获上线文信息</td><td>保存时</td><td>用户上下文获取失败，重新登录后重试</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>单据状态不允许删除</td><td>删除时</td><td>选中的单据已提交审批（AUDIT_STAT为RUN/APPROVED），不允许删除</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

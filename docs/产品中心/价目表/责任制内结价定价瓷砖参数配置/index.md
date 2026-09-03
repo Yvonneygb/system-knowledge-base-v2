@@ -455,26 +455,26 @@ SELECT HEAD_ID, TYPE_1, TYPE_2, COUNT(*) AS cnt
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>瓷砖品类不能为空</td><td>头表保存</td><td>未填写瓷砖品类</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>规格不能为空</td><td>头表保存</td><td>未填写规格</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>生产基地不能为空</td><td>头表保存</td><td>未选择生产基地</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>该规格已存在，请核对数据！</td><td>头表保存</td><td>同一规格+品类+生产基地已存在</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>大类不能为空</td><td>行表保存</td><td>未选择大类</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>中类不能为空</td><td>行表保存</td><td>未选择中类</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>定价不能为空</td><td>行表保存</td><td>未填写定价</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>该头表下已存在相同大类和中类的配置，请勿重复新增</td><td>行表保存</td><td>同一头表下大类+中类已存在</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>保存明细行失败</td><td>行表保存弹窗确认</td><td>后端保存接口返回失败</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>头表ID不能为空</td><td>行表保存</td><td>新增明细行时headId为空</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>更新行ID不能为空</td><td>行表保存</td><td>更新明细行时id为空</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>大类和小类必须同时传入</td><td>行表保存</td><td>更新时type1与type2仅传其一</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>该头表下已存在相同大类和中类的配置，请勿重复设置</td><td>行表保存</td><td>更新行时大类中类变更后与其他行重复</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>保存失败</td><td>头表保存按钮</td><td>后端返回failed或业务校验异常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>保存异常，请稍后重试</td><td>头表保存按钮</td><td>网络异常或服务不可用</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>查询失败</td><td>列表查询/详情加载</td><td>接口请求异常或权限不足</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>页面访问/按钮操作</td><td>当前用户无对应权限编码</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>暂无数据</td><td>列表查询</td><td>查询结果为空集</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>会话过期</td><td>任意操作</td><td>登录态失效或Token过期</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>当前有未保存的更改，确定要离开吗？</td><td>返回按钮</td><td>编辑模式下点击返回，前端Modal.confirm确认</td><td>确认弹窗</td><td>[查看]</td></tr>
+<tr><td>瓷砖品类不能为空</td><td>头表保存</td><td>未填写瓷砖品类</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>规格不能为空</td><td>头表保存</td><td>未填写规格</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>生产基地不能为空</td><td>头表保存</td><td>未选择生产基地</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>该规格已存在，请核对数据！</td><td>头表保存</td><td>同一规格+品类+生产基地已存在</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>大类不能为空</td><td>行表保存</td><td>未选择大类</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>中类不能为空</td><td>行表保存</td><td>未选择中类</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>定价不能为空</td><td>行表保存</td><td>未填写定价</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>该头表下已存在相同大类和中类的配置，请勿重复新增</td><td>行表保存</td><td>同一头表下大类+中类已存在</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>保存明细行失败</td><td>行表保存弹窗确认</td><td>后端保存接口返回失败</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>头表ID不能为空</td><td>行表保存</td><td>新增明细行时headId为空</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>更新行ID不能为空</td><td>行表保存</td><td>更新明细行时id为空</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>大类和小类必须同时传入</td><td>行表保存</td><td>更新时type1与type2仅传其一</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>该头表下已存在相同大类和中类的配置，请勿重复设置</td><td>行表保存</td><td>更新行时大类中类变更后与其他行重复</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>保存失败</td><td>头表保存按钮</td><td>后端返回failed或业务校验异常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>保存异常，请稍后重试</td><td>头表保存按钮</td><td>网络异常或服务不可用</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>查询失败</td><td>列表查询/详情加载</td><td>接口请求异常或权限不足</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>页面访问/按钮操作</td><td>当前用户无对应权限编码</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>暂无数据</td><td>列表查询</td><td>查询结果为空集</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期</td><td>任意操作</td><td>登录态失效或Token过期</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>当前有未保存的更改，确定要离开吗？</td><td>返回按钮</td><td>编辑模式下点击返回，前端Modal.confirm确认</td><td>确认弹窗</td><td style="text-align:center;"><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <blockquote><strong>"该规格已存在，请核对数据！"详细逻辑</strong>：

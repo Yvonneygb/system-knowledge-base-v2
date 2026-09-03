@@ -441,19 +441,19 @@ WHERE T1.TOP_CATEGORY = #{topCategory}
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>一级分类不能为空！</td><td>保存按钮</td><td>未选择一级分类</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>二级分类不能为空！</td><td>保存按钮</td><td>未选择二级分类</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>三级分类不能为空！</td><td>保存按钮</td><td>未选择三级分类</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>定价类型不能为空！</td><td>保存按钮</td><td>未选择定价类型</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>当前定价类型下，定价比例不能为空！</td><td>保存按钮</td><td>定价类型为base_gross_margin或standard_price_ratio但未填定价比例</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>一二三级分类/一二三四级分类生效数据已存在，请核对数据！</td><td>保存按钮</td><td>同一分类组合已存在有效配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>保存失败</td><td>保存按钮</td><td>后端返回failed或业务校验异常，经commonFn_showErrMsg展示</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>保存异常，请稍后重试</td><td>保存按钮</td><td>网络异常或后端服务不可用，前端catch块提示</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>查询失败</td><td>列表查询/详情加载</td><td>接口请求异常或后端抛出CommonException</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>页面访问/按钮操作</td><td>当前用户未分配hzero.product_data.rsp_stm.cfg.ps.*权限编码</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>暂无数据</td><td>列表查询</td><td>查询结果为空集</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>会话过期</td><td>任意操作</td><td>登录态失效或Token过期</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>当前有未保存的更改，确定要离开吗？</td><td>返回按钮</td><td>编辑模式下点击返回，前端Modal.confirm确认</td><td>确认弹窗</td><td>[查看]</td></tr>
+<tr><td>一级分类不能为空！</td><td>保存按钮</td><td>未选择一级分类</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>二级分类不能为空！</td><td>保存按钮</td><td>未选择二级分类</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>三级分类不能为空！</td><td>保存按钮</td><td>未选择三级分类</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>定价类型不能为空！</td><td>保存按钮</td><td>未选择定价类型</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>当前定价类型下，定价比例不能为空！</td><td>保存按钮</td><td>定价类型为base_gross_margin或standard_price_ratio但未填定价比例</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>一二三级分类/一二三四级分类生效数据已存在，请核对数据！</td><td>保存按钮</td><td>同一分类组合已存在有效配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>保存失败</td><td>保存按钮</td><td>后端返回failed或业务校验异常，经commonFn_showErrMsg展示</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>保存异常，请稍后重试</td><td>保存按钮</td><td>网络异常或后端服务不可用，前端catch块提示</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>查询失败</td><td>列表查询/详情加载</td><td>接口请求异常或后端抛出CommonException</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>页面访问/按钮操作</td><td>当前用户未分配hzero.product_data.rsp_stm.cfg.ps.*权限编码</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>暂无数据</td><td>列表查询</td><td>查询结果为空集</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期</td><td>任意操作</td><td>登录态失效或Token过期</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>当前有未保存的更改，确定要离开吗？</td><td>返回按钮</td><td>编辑模式下点击返回，前端Modal.confirm确认</td><td>确认弹窗</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <blockquote><strong>分类非空校验详细逻辑</strong>：

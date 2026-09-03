@@ -301,14 +301,14 @@ WHERE F.REL_BUS_TYPE = 'prod'
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>获取产品图册失败</td><td>查询图册时</td><td>调用files接口失败，检查网络连接或后端服务状态</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>图片预览失败/空白</td><td>点击图片预览时</td><td>图片签名URL获取失败，检查OSS配置和文件是否存在</td><td>界面异常</td><td>[查看]</td></tr>
-<tr><td>暂无数据</td><td>查询图册时</td><td>产品无图册数据或PLM同步任务未执行，需先导入或同步图册</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>文件类型不存在:prodPhoto:xxx</td><td>导入图册时</td><td>导入的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>PLM同步图册失败</td><td>定时任务执行时</td><td>PLM接口异常或文件解压上传失败，检查PLM接口连通性和OSS配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>PLM同步文件类型xxx不存在</td><td>定时任务执行时</td><td>PLM返回的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>查询/导入时</td><td>当前用户无产品图册操作权限，需分配对应权限角色</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>会话过期</td><td>页面操作时</td><td>登录会话已过期，需重新登录</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>获取产品图册失败</td><td>查询图册时</td><td>调用files接口失败，检查网络连接或后端服务状态</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>图片预览失败/空白</td><td>点击图片预览时</td><td>图片签名URL获取失败，检查OSS配置和文件是否存在</td><td>界面异常</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>暂无数据</td><td>查询图册时</td><td>产品无图册数据或PLM同步任务未执行，需先导入或同步图册</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>文件类型不存在:prodPhoto:xxx</td><td>导入图册时</td><td>导入的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>PLM同步图册失败</td><td>定时任务执行时</td><td>PLM接口异常或文件解压上传失败，检查PLM接口连通性和OSS配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>PLM同步文件类型xxx不存在</td><td>定时任务执行时</td><td>PLM返回的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>查询/导入时</td><td>当前用户无产品图册操作权限，需分配对应权限角色</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期</td><td>页面操作时</td><td>登录会话已过期，需重新登录</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <blockquote><strong>"获取产品图册失败"详细逻辑：</strong>

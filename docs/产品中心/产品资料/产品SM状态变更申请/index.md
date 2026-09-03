@@ -794,24 +794,24 @@ SELECT pah.PRODUCT_OVER_NO, iu.REAL_NAME AS creatorName,
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择逆向变更</td><td>产品弹窗查询时</td><td>入参isEliminate为空，需先选择是否逆向变更</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>推送OA失败：产品SM状态变更申请不存在</td><td>OA推送时</td><td>头表记录不存在，检查PRODUCT_OVER_HEADER表是否有对应记录</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>OA回调失败：产品SM状态变更申请不存在！</td><td>OA回调时</td><td>OA回调时头表记录不存在，检查数据是否被删除</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>ID不能为空</td><td>OA回调时</td><td>OA回调入参productOverId为空或&lt;=0</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品SM状态变更申请明细行不存在！</td><td>提交校验时</td><td>PRODUCT_OVER_LINE表无对应头表ID的行记录，需先添加产品行</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>以下产品已有在途申请，无法重复提交...</td><td>提交校验时</td><td>同一产品存在HZ_APPROVE_STATUS='RUN'的其他申请单，需等待原申请流程完成</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>以下产品编码重复，请检查！</td><td>保存校验时</td><td>同一申请单内产品编码重复，需去重后保存</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未获取到用户信息</td><td>导入时</td><td>用户信息userType为空，检查登录状态</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未获取到事业部信息</td><td>导入时</td><td>用户事业部DEPT信息为空，检查用户配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>导入数据异常！</td><td>导入时</td><td>导入过程中发生异常，检查Excel格式和数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>值集配置AE.PRODUCT_OVER_SM_STATUS</td><td>导入校验时</td><td>值集AE.PRODUCT_OVER_SM_STATUS未配置或查询失败，检查HZERO.HPFM_LOV_VALUE表</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品信息不存在或者产品品牌事业部与当前登录事业部不一致，请检查</td><td>导入校验时</td><td>导入的产品编码在ITEM_ORG表不存在，或产品事业部与当前用户事业部不一致</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品状态变更申请状态有误</td><td>导入校验时</td><td>根据角色+是否逆向+当前SM状态在值集中未匹配到可变更状态配置，检查值集AE.PRODUCT_OVER_SM_STATUS</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品状态变更申请状态有误,产品当前状态:xxx,产品可变更状态:xxx</td><td>导入校验时</td><td>导入的目标SM状态不在值集配置的允许变更范围内</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品生命状态为空，不允许导入</td><td>导入校验时</td><td>产品在ITEM_ORG表的SM_STATE字段为空，需先维护产品SM状态</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码重复:xxx</td><td>导入校验时</td><td>导入的Excel中产品编码与已存在行表记录重复，需去重后重新导入</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>推送ERP失败</td><td>ERP推送时</td><td>ERP接口返回空或缺少OutputParameters节点，检查ERP接口可用性</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>ERP推送失败-钉钉通知</td><td>ERP推送时</td><td>ERP返回部分行失败，更新行表ERP_STAT为"推送失败"并发送钉钉异常通知</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>请选择逆向变更</td><td>产品弹窗查询时</td><td>入参isEliminate为空，需先选择是否逆向变更</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>推送OA失败：产品SM状态变更申请不存在</td><td>OA推送时</td><td>头表记录不存在，检查PRODUCT_OVER_HEADER表是否有对应记录</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>OA回调失败：产品SM状态变更申请不存在！</td><td>OA回调时</td><td>OA回调时头表记录不存在，检查数据是否被删除</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>ID不能为空</td><td>OA回调时</td><td>OA回调入参productOverId为空或&lt;=0</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>产品SM状态变更申请明细行不存在！</td><td>提交校验时</td><td>PRODUCT_OVER_LINE表无对应头表ID的行记录，需先添加产品行</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>以下产品已有在途申请，无法重复提交...</td><td>提交校验时</td><td>同一产品存在HZ_APPROVE_STATUS='RUN'的其他申请单，需等待原申请流程完成</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>以下产品编码重复，请检查！</td><td>保存校验时</td><td>同一申请单内产品编码重复，需去重后保存</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>未获取到用户信息</td><td>导入时</td><td>用户信息userType为空，检查登录状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>未获取到事业部信息</td><td>导入时</td><td>用户事业部DEPT信息为空，检查用户配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>导入数据异常！</td><td>导入时</td><td>导入过程中发生异常，检查Excel格式和数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>值集配置AE.PRODUCT_OVER_SM_STATUS</td><td>导入校验时</td><td>值集AE.PRODUCT_OVER_SM_STATUS未配置或查询失败，检查HZERO.HPFM_LOV_VALUE表</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>产品信息不存在或者产品品牌事业部与当前登录事业部不一致，请检查</td><td>导入校验时</td><td>导入的产品编码在ITEM_ORG表不存在，或产品事业部与当前用户事业部不一致</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>产品状态变更申请状态有误</td><td>导入校验时</td><td>根据角色+是否逆向+当前SM状态在值集中未匹配到可变更状态配置，检查值集AE.PRODUCT_OVER_SM_STATUS</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>产品状态变更申请状态有误,产品当前状态:xxx,产品可变更状态:xxx</td><td>导入校验时</td><td>导入的目标SM状态不在值集配置的允许变更范围内</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>产品生命状态为空，不允许导入</td><td>导入校验时</td><td>产品在ITEM_ORG表的SM_STATE字段为空，需先维护产品SM状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码重复:xxx</td><td>导入校验时</td><td>导入的Excel中产品编码与已存在行表记录重复，需去重后重新导入</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>推送ERP失败</td><td>ERP推送时</td><td>ERP接口返回空或缺少OutputParameters节点，检查ERP接口可用性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>ERP推送失败-钉钉通知</td><td>ERP推送时</td><td>ERP返回部分行失败，更新行表ERP_STAT为"推送失败"并发送钉钉异常通知</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

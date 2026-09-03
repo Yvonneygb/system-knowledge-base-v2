@@ -299,12 +299,12 @@ ORDER BY ENTNAME, TRADING_COMPANY_NAME
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询无数据</td><td>查询时</td><td>查询条件不匹配或余额数据未同步，放宽条件或确认数据已同步</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>必填查询条件为空</td><td>查询时</td><td>事业部/交易公司/年月未填写，补全必填条件后查询</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>时间区间无效</td><td>查询时</td><td>起始时间大于结束时间或时间格式错误，重新选择时间区间</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>查询/导出时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>余额数据不存在</td><td>查询时</td><td>营销中台或资金池未同步余额数据到MKT_INLIMIT_BALANCE_HEADER，先确认上游数据已同步</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>查询条件不匹配或余额数据未同步，放宽条件或确认数据已同步</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>必填查询条件为空</td><td>查询时</td><td>事业部/交易公司/年月未填写，补全必填条件后查询</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>时间区间无效</td><td>查询时</td><td>起始时间大于结束时间或时间格式错误，重新选择时间区间</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>查询/导出时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>余额数据不存在</td><td>查询时</td><td>营销中台或资金池未同步余额数据到MKT_INLIMIT_BALANCE_HEADER，先确认上游数据已同步</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

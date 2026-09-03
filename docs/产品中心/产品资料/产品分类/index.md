@@ -392,14 +392,14 @@ SELECT COUNT(*) FROM ITEM_CLASS
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>产品分类新增成功</td><td>新增成功</td><td>正常提示</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>产品分类删除成功</td><td>删除成功</td><td>正常提示</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>分类编码已存在，新增静默跳过</td><td>新增时</td><td>编码+组织ID+父级ID已存在，后端不报错不插入，前端显示成功但实际未新增</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>删除父分类产生孤儿节点</td><td>删除时</td><td>删除有子分类的父分类后，子分类ITEM_CLASS_PID指向不存在的记录</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>分类树查询失败</td><td>查询时</td><td>查询ITEM_CLASS表异常，检查组织ID参数和数据库连接</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>权限不足，无法操作分类</td><td>新增/删除时</td><td>用户未登录或无当前组织ID的访问权限</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>会话过期，请重新登录</td><td>任意操作时</td><td>登录态丢失，需重新登录获取token</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>暂无分类数据</td><td>查询时</td><td>当前组织下无分类数据，需先新增分类</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>产品分类新增成功</td><td>新增成功</td><td>正常提示</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>产品分类删除成功</td><td>删除成功</td><td>正常提示</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>分类编码已存在，新增静默跳过</td><td>新增时</td><td>编码+组织ID+父级ID已存在，后端不报错不插入，前端显示成功但实际未新增</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>删除父分类产生孤儿节点</td><td>删除时</td><td>删除有子分类的父分类后，子分类ITEM_CLASS_PID指向不存在的记录</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>分类树查询失败</td><td>查询时</td><td>查询ITEM_CLASS表异常，检查组织ID参数和数据库连接</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足，无法操作分类</td><td>新增/删除时</td><td>用户未登录或无当前组织ID的访问权限</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期，请重新登录</td><td>任意操作时</td><td>登录态丢失，需重新登录获取token</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>暂无分类数据</td><td>查询时</td><td>当前组织下无分类数据，需先新增分类</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

@@ -230,12 +230,12 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询无数据</td><td>查询时</td><td>年月选择错误或无合同数据，放宽条件</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>年月参数为空</td><td>查询时</td><td>未选择年月，需先选择统计年月</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>导出无数据</td><td>导出时</td><td>当前查询无数据，无法导出，先查询有效数据</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>查询/导出时</td><td>网络中断或报表服务不可用，检查网络和AE_REPORT服务</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>查询/导出时</td><td>当前用户无报表查询或导出权限，联系管理员授权</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>任务金额为0</td><td>查询时</td><td>合同任务金额为0，完成率无法计算，检查合同任务配置</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>年月选择错误或无合同数据，放宽条件</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>年月参数为空</td><td>查询时</td><td>未选择年月，需先选择统计年月</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>导出无数据</td><td>导出时</td><td>当前查询无数据，无法导出，先查询有效数据</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>查询/导出时</td><td>网络中断或报表服务不可用，检查网络和AE_REPORT服务</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>查询/导出时</td><td>当前用户无报表查询或导出权限，联系管理员授权</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>任务金额为0</td><td>查询时</td><td>合同任务金额为0，完成率无法计算，检查合同任务配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

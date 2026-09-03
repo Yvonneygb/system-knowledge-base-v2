@@ -525,44 +525,44 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过/结�
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>申请单不存在！</td><td>提交</td><td>申请单ID在数据库中不存在，可能已被删除。重新确认申请单是否存在</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>申请单状态不为新建或审核拒绝，不可提交！</td><td>提交</td><td>申请单当前状态非NEW或REJECTED。需等待审批完成或撤回后再提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>申请单明细为空，不允许提交！</td><td>提交</td><td>申请单未维护明细行。先新增明细行后再提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;类型为新增时，有效开始时间必填！</td><td>提交</td><td>明细行类型为新增但有效开始时间为空。补充有效开始时间</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;类型为新增时，有效结束时间必填！</td><td>提交</td><td>明细行类型为新增但有效结束时间为空。补充有效结束时间</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;的有效结束时间必须大于等于有效开始时间！</td><td>提交</td><td>有效结束时间早于有效开始时间。修正时间范围</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;类型为新增时，有效开始时间必须大于等于今天！</td><td>提交</td><td>有效开始时间早于当前日期。修改为今天或未来日期</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>跨事业部产品销售申请单&#123;formCode&#125;不存在！</td><td>OA审批回调</td><td>OA回调时申请单已被删除。检查数据一致性</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>申请单事业部为空，无法查询产品！</td><td>新增明细行</td><td>申请单头事业部为空。检查用户是否已关联事业部</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请至少输入"产品编码、产品名称、型号"中的一个条件再进行查询！</td><td>产品选择弹窗</td><td>未输入任何查询条件就点击查询。输入至少一个条件</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请填写申请说明！</td><td>保存按钮</td><td>申请说明为空或纯空格。填写申请说明</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>申请说明已超过500字</td><td>保存按钮</td><td>申请说明长度超过500。精简内容</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请检查表单必填项！</td><td>保存按钮</td><td>表单校验未通过（必填字段缺失）</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请先保存申请单头信息！</td><td>提交按钮</td><td>新建态下未保存头信息就点击提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请至少添加一条明细行！</td><td>提交按钮</td><td>明细行totalCount为0时提交</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;的类型不合法，仅支持新增/失效！</td><td>明细行保存</td><td>itemType既非add也非invalid</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码不能为空！</td><td>明细行保存</td><td>明细行prodCode为空</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;的申请单头ID不能为空！</td><td>明细行保存</td><td>明细行headId为空</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码【&#123;prodCode&#125;】在申请单明细中重复！</td><td>明细行保存</td><td>同一申请单内新增行产品编码重复</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码【&#123;prodCode&#125;】在当前申请单明细中已存在，不允许重复导入！</td><td>明细行保存</td><td>数据库中同一headId+prodCode已存在</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码"&#123;prodCode&#125;"不存在！</td><td>明细行保存</td><td>产品主档LNK_PROD中无此产品编码</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;品牌事业部为空，不允许导入！</td><td>明细行保存</td><td>产品的DEPT_ID为空</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>申请单头信息不存在！</td><td>明细行保存</td><td>按headId查不到申请单头</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未找到事业部编码[&#123;deptCode&#125;]对应的CRM事业部！</td><td>明细行保存</td><td>REL_CRM_AE_ORG中无对应映射</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;所属品牌事业部与申请单事业部相同，不允许导入！</td><td>明细行保存</td><td>产品事业部=申请单事业部</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品&#123;prodCode&#125;品牌事业部不匹配！</td><td>明细行保存</td><td>传入brandDeptId与产品实际DEPT_ID不一致</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>有效开始时间必须大于等于今天</td><td>明细行编辑弹窗</td><td>类型=新增时开始时间早于今天</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>有效结束时间必须大于等于有效开始时间</td><td>明细行编辑弹窗</td><td>结束时间早于开始时间</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>保存失败</td><td>保存按钮</td><td>后端返回failed或业务校验异常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>查询失败</td><td>详情加载</td><td>详情接口请求异常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>提交失败</td><td>提交按钮</td><td>后端submit接口返回failed</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>新增/编辑失败</td><td>明细行弹窗确认</td><td>明细行保存接口返回failed</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请选择要删除的明细</td><td>删除按钮</td><td>未选中任何明细行就点击删除</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>删除失败</td><td>删除按钮</td><td>明细行删除接口返回failed</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>是否移除当前明细？/是否删除选中明细？</td><td>删除/移除按钮</td><td>删除前确认弹窗</td><td>确认弹窗</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>页面访问/按钮操作</td><td>当前用户无对应权限编码</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>暂无数据</td><td>列表查询</td><td>查询结果为空集</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>会话过期</td><td>任意操作</td><td>登录态失效或Token过期</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>申请单不存在！</td><td>提交</td><td>申请单ID在数据库中不存在，可能已被删除。重新确认申请单是否存在</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>申请单状态不为新建或审核拒绝，不可提交！</td><td>提交</td><td>申请单当前状态非NEW或REJECTED。需等待审批完成或撤回后再提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>申请单明细为空，不允许提交！</td><td>提交</td><td>申请单未维护明细行。先新增明细行后再提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;类型为新增时，有效开始时间必填！</td><td>提交</td><td>明细行类型为新增但有效开始时间为空。补充有效开始时间</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;类型为新增时，有效结束时间必填！</td><td>提交</td><td>明细行类型为新增但有效结束时间为空。补充有效结束时间</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;的有效结束时间必须大于等于有效开始时间！</td><td>提交</td><td>有效结束时间早于有效开始时间。修正时间范围</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;类型为新增时，有效开始时间必须大于等于今天！</td><td>提交</td><td>有效开始时间早于当前日期。修改为今天或未来日期</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>跨事业部产品销售申请单&#123;formCode&#125;不存在！</td><td>OA审批回调</td><td>OA回调时申请单已被删除。检查数据一致性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>申请单事业部为空，无法查询产品！</td><td>新增明细行</td><td>申请单头事业部为空。检查用户是否已关联事业部</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>请至少输入"产品编码、产品名称、型号"中的一个条件再进行查询！</td><td>产品选择弹窗</td><td>未输入任何查询条件就点击查询。输入至少一个条件</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>请填写申请说明！</td><td>保存按钮</td><td>申请说明为空或纯空格。填写申请说明</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>申请说明已超过500字</td><td>保存按钮</td><td>申请说明长度超过500。精简内容</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>请检查表单必填项！</td><td>保存按钮</td><td>表单校验未通过（必填字段缺失）</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>请先保存申请单头信息！</td><td>提交按钮</td><td>新建态下未保存头信息就点击提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>请至少添加一条明细行！</td><td>提交按钮</td><td>明细行totalCount为0时提交</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;的类型不合法，仅支持新增/失效！</td><td>明细行保存</td><td>itemType既非add也非invalid</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码不能为空！</td><td>明细行保存</td><td>明细行prodCode为空</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;的申请单头ID不能为空！</td><td>明细行保存</td><td>明细行headId为空</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码【&#123;prodCode&#125;】在申请单明细中重复！</td><td>明细行保存</td><td>同一申请单内新增行产品编码重复</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码【&#123;prodCode&#125;】在当前申请单明细中已存在，不允许重复导入！</td><td>明细行保存</td><td>数据库中同一headId+prodCode已存在</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码"&#123;prodCode&#125;"不存在！</td><td>明细行保存</td><td>产品主档LNK_PROD中无此产品编码</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-21" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;品牌事业部为空，不允许导入！</td><td>明细行保存</td><td>产品的DEPT_ID为空</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-22" class="view-btn">查看</a></td></tr>
+<tr><td>申请单头信息不存在！</td><td>明细行保存</td><td>按headId查不到申请单头</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-23" class="view-btn">查看</a></td></tr>
+<tr><td>未找到事业部编码[&#123;deptCode&#125;]对应的CRM事业部！</td><td>明细行保存</td><td>REL_CRM_AE_ORG中无对应映射</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-24" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;所属品牌事业部与申请单事业部相同，不允许导入！</td><td>明细行保存</td><td>产品事业部=申请单事业部</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-25" class="view-btn">查看</a></td></tr>
+<tr><td>产品&#123;prodCode&#125;品牌事业部不匹配！</td><td>明细行保存</td><td>传入brandDeptId与产品实际DEPT_ID不一致</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-26" class="view-btn">查看</a></td></tr>
+<tr><td>有效开始时间必须大于等于今天</td><td>明细行编辑弹窗</td><td>类型=新增时开始时间早于今天</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-27" class="view-btn">查看</a></td></tr>
+<tr><td>有效结束时间必须大于等于有效开始时间</td><td>明细行编辑弹窗</td><td>结束时间早于开始时间</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-28" class="view-btn">查看</a></td></tr>
+<tr><td>保存失败</td><td>保存按钮</td><td>后端返回failed或业务校验异常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-29" class="view-btn">查看</a></td></tr>
+<tr><td>查询失败</td><td>详情加载</td><td>详情接口请求异常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-30" class="view-btn">查看</a></td></tr>
+<tr><td>提交失败</td><td>提交按钮</td><td>后端submit接口返回failed</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-31" class="view-btn">查看</a></td></tr>
+<tr><td>新增/编辑失败</td><td>明细行弹窗确认</td><td>明细行保存接口返回failed</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-32" class="view-btn">查看</a></td></tr>
+<tr><td>请选择要删除的明细</td><td>删除按钮</td><td>未选中任何明细行就点击删除</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-33" class="view-btn">查看</a></td></tr>
+<tr><td>删除失败</td><td>删除按钮</td><td>明细行删除接口返回failed</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-34" class="view-btn">查看</a></td></tr>
+<tr><td>是否移除当前明细？/是否删除选中明细？</td><td>删除/移除按钮</td><td>删除前确认弹窗</td><td>确认弹窗</td><td style="text-align:center;"><a href="#err-detail-35" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>页面访问/按钮操作</td><td>当前用户无对应权限编码</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-36" class="view-btn">查看</a></td></tr>
+<tr><td>暂无数据</td><td>列表查询</td><td>查询结果为空集</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-37" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期</td><td>任意操作</td><td>登录态失效或Token过期</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-38" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

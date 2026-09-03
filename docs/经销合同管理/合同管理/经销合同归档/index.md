@@ -293,12 +293,12 @@ SELECT STATE_PIGEONHOLE, PIGEONHOLE_DATE FROM SA_SALE_CONTRACT_HEAD
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>合同不满足归档条件</td><td>归档提交时</td><td>合同未审批通过或任务未完成，先完成前置条件</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未配置经销合同延期归档天数</td><td>归档推送时</td><td>系统参数CONTRACT_PIGEONHOLE_DATE未配置，联系管理员</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>该合同应归档日期为空</td><td>归档推送时</td><td>合同PIGEONHOLE_DATE为空，重新计算归档日期</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>添加合同归档推送任务异常</td><td>归档推送时</td><td>推送任务合同数据为空，重新发起归档</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程编码缺失</td><td>归档提交时</td><td>未选择归档审批流程，选择流程后提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询原合同归档时间失败</td><td>归档变更时</td><td>原合同应归档时间/实际归档时间查询失败，核对数据</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>合同不满足归档条件</td><td>归档提交时</td><td>合同未审批通过或任务未完成，先完成前置条件</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>未配置经销合同延期归档天数</td><td>归档推送时</td><td>系统参数CONTRACT_PIGEONHOLE_DATE未配置，联系管理员</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>该合同应归档日期为空</td><td>归档推送时</td><td>合同PIGEONHOLE_DATE为空，重新计算归档日期</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>添加合同归档推送任务异常</td><td>归档推送时</td><td>推送任务合同数据为空，重新发起归档</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码缺失</td><td>归档提交时</td><td>未选择归档审批流程，选择流程后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>查询原合同归档时间失败</td><td>归档变更时</td><td>原合同应归档时间/实际归档时间查询失败，核对数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

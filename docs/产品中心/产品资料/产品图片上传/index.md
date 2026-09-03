@@ -309,14 +309,14 @@ SELECT COUNT(1) FROM OBJ_FILE_TYPE WHERE BUS_TYPE = 'prodPhoto' AND FILE_BUS_TYP
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>文件上传失败</td><td>上传图片时</td><td>OSS配置错误或网络异常，检查storageCode和bucketName配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码不存在</td><td>保存时</td><td>输入的产品编码在LNK_PROD表中不存在</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>文件类型不存在:prodPhoto:xxx</td><td>导入时</td><td>导入的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码必填</td><td>保存时</td><td>未填写产品编码，需填写有效产品编码</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>图片类型必填</td><td>保存时</td><td>未选择图片类型，需选择有效的图片分类类型</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>导入失败</td><td>导入时</td><td>导入数据校验失败或批量写入异常，检查导入模板和数据格式</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>导入时</td><td>当前用户无产品图片导入权限，需分配对应权限角色</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>会话过期</td><td>页面操作时</td><td>登录会话已过期，需重新登录</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>文件上传失败</td><td>上传图片时</td><td>OSS配置错误或网络异常，检查storageCode和bucketName配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码不存在</td><td>保存时</td><td>输入的产品编码在LNK_PROD表中不存在</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>文件类型不存在:prodPhoto:xxx</td><td>导入时</td><td>导入的图片类型在OBJ_FILE_TYPE表中不存在，需先配置文件类型</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码必填</td><td>保存时</td><td>未填写产品编码，需填写有效产品编码</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>图片类型必填</td><td>保存时</td><td>未选择图片类型，需选择有效的图片分类类型</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>导入失败</td><td>导入时</td><td>导入数据校验失败或批量写入异常，检查导入模板和数据格式</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>导入时</td><td>当前用户无产品图片导入权限，需分配对应权限角色</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期</td><td>页面操作时</td><td>登录会话已过期，需重新登录</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <blockquote><strong>"文件上传失败"详细逻辑：</strong>

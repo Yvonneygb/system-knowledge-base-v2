@@ -391,21 +391,21 @@ NEW（新建） ──提交──→ RUN（审批中） ──审批通过─�
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>政策名称不能为空</td><td>保存</td><td>政策名称未填写</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请先维护OA系统信息</td><td>提交</td><td>OA系统信息未配置。联系管理员维护OA系统配置</td><td>高</td><td>[查看]</td></tr>
-<tr><td>产品行不能为空，请检查！</td><td>保存/提交</td><td>折扣单产品明细行EPM_DISCOUNT_POLICY_ITEM为空。需维护产品明细</td><td>高</td><td>[查看]</td></tr>
-<tr><td>申请类型："全产品类型" 与 ("型号"或"产品")类型 不能同时存在，请检查！</td><td>保存</td><td>产品明细中同时存在全产品类型(APPLICATION_TYPE=3)和型号/产品类型。需统一申请类型</td><td>高</td><td>[查看]</td></tr>
-<tr><td>折扣政策名称最大输入30个字符</td><td>保存</td><td>DISCOUNT_POLICY_NAME超过30字符。缩短政策名称</td><td>中</td><td>[查看]</td></tr>
-<tr><td>仅新建状态单据允许删除.</td><td>删除</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td>[查看]</td></tr>
-<tr><td>未找到该单据</td><td>查询详情</td><td>按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY为空。检查单据ID有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>物料明细不能为空</td><td>保存</td><td>产品明细行物料信息为空。需维护物料明细</td><td>高</td><td>[查看]</td></tr>
-<tr><td>请先选择销售渠道</td><td>新建产品明细</td><td>头表CHANNEL字段为空。先选择销售渠道再新增产品明细</td><td>中</td><td>[查看]</td></tr>
-<tr><td>请先选择政策类型</td><td>新建产品明细</td><td>头表POLICY_TYPE字段为空。先选择政策类型再新增产品明细</td><td>中</td><td>[查看]</td></tr>
-<tr><td>请先选择币种</td><td>新建产品明细</td><td>头表CURRENCY字段为空。先选择币种再新增产品明细</td><td>中</td><td>[查看]</td></tr>
-<tr><td>至少选择一条数据</td><td>选择产品LOV</td><td>产品LOV弹窗未选择任何记录。需至少选择一条产品</td><td>中</td><td>[查看]</td></tr>
-<tr><td>阶梯政策的封顶数量不能大于政策封顶总数量行</td><td>编辑封顶数量</td><td>阶梯政策CAPPING_QTY大于TOTAL_CAP_NUMBER。调整阶梯封顶数量</td><td>中</td><td>[查看]</td></tr>
-<tr><td>仅支持 .xlsx、.xls 格式文件</td><td>导入产品明细</td><td>导入文件格式非xlsx/xls。使用正确格式文件</td><td>中</td><td>[查看]</td></tr>
-<tr><td>请先保存单据</td><td>导入产品明细</td><td>单据未保存即导入产品。先保存单据再导入</td><td>中</td><td>[查看]</td></tr>
+<tr><td>政策名称不能为空</td><td>保存</td><td>政策名称未填写</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请先维护OA系统信息</td><td>提交</td><td>OA系统信息未配置。联系管理员维护OA系统配置</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>产品行不能为空，请检查！</td><td>保存/提交</td><td>折扣单产品明细行EPM_DISCOUNT_POLICY_ITEM为空。需维护产品明细</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>申请类型："全产品类型" 与 ("型号"或"产品")类型 不能同时存在，请检查！</td><td>保存</td><td>产品明细中同时存在全产品类型(APPLICATION_TYPE=3)和型号/产品类型。需统一申请类型</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>折扣政策名称最大输入30个字符</td><td>保存</td><td>DISCOUNT_POLICY_NAME超过30字符。缩短政策名称</td><td>中</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>仅新建状态单据允许删除.</td><td>删除</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>未找到该单据</td><td>查询详情</td><td>按DISCOUNT_POLICY_ID查询EPM_DISCOUNT_POLICY为空。检查单据ID有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>物料明细不能为空</td><td>保存</td><td>产品明细行物料信息为空。需维护物料明细</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择销售渠道</td><td>新建产品明细</td><td>头表CHANNEL字段为空。先选择销售渠道再新增产品明细</td><td>中</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择政策类型</td><td>新建产品明细</td><td>头表POLICY_TYPE字段为空。先选择政策类型再新增产品明细</td><td>中</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择币种</td><td>新建产品明细</td><td>头表CURRENCY字段为空。先选择币种再新增产品明细</td><td>中</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>至少选择一条数据</td><td>选择产品LOV</td><td>产品LOV弹窗未选择任何记录。需至少选择一条产品</td><td>中</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>阶梯政策的封顶数量不能大于政策封顶总数量行</td><td>编辑封顶数量</td><td>阶梯政策CAPPING_QTY大于TOTAL_CAP_NUMBER。调整阶梯封顶数量</td><td>中</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>仅支持 .xlsx、.xls 格式文件</td><td>导入产品明细</td><td>导入文件格式非xlsx/xls。使用正确格式文件</td><td>中</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>请先保存单据</td><td>导入产品明细</td><td>单据未保存即导入产品。先保存单据再导入</td><td>中</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

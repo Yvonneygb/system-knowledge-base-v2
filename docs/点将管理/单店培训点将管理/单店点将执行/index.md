@@ -513,13 +513,13 @@ SELECT APPLY_CODE
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择一条数据</td><td>点击操作按钮</td><td>未选择列表行，选择一条数据后再操作</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常，检查后端服务状态</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>实际开始时间不能为空</td><td>结束执行提交</td><td>未填写实际开始时间，填写后提交</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>实际结束时间不能为空</td><td>结束执行提交</td><td>未填写实际结束时间，填写后提交</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>结束备注不能为空</td><td>结束执行提交</td><td>未填写结束备注，填写后提交</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>取消原因不能为空</td><td>特殊取消提交</td><td>未填写取消原因，填写后提交</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>未查询到对应的确认书</td><td>查看确认书</td><td>法大大确认书未生成或PDF URL为空，检查FDD推送状态</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>请选择一条数据</td><td>点击操作按钮</td><td>未选择列表行，选择一条数据后再操作</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败</td><td>接口调用</td><td>后端服务异常，检查后端服务状态</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>实际开始时间不能为空</td><td>结束执行提交</td><td>未填写实际开始时间，填写后提交</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>实际结束时间不能为空</td><td>结束执行提交</td><td>未填写实际结束时间，填写后提交</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>结束备注不能为空</td><td>结束执行提交</td><td>未填写结束备注，填写后提交</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>取消原因不能为空</td><td>特殊取消提交</td><td>未填写取消原因，填写后提交</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>未查询到对应的确认书</td><td>查看确认书</td><td>法大大确认书未生成或PDF URL为空，检查FDD推送状态</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
 <tr><td>网络异常/接口超时</td><td>任意接口调用</td><td>网络中断或接口响应超时，检查网络及后端超时配置</td><td>error</td><td>axios catch 或 timeout</td></tr>
 <tr><td>权限不足</td><td>点击操作按钮</td><td>当前用户无对应按钮权限码，联系管理员授权</td><td>error</td><td>permissionList 校验未通过</td></tr>
 <tr><td>数据不存在</td><td>查看/结束执行</td><td>申请编码不存在或已删除，检查 APPLY_CODE 有效性</td><td>error</td><td>接口返回数据为空</td></tr>

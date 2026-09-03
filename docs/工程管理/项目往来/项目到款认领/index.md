@@ -632,35 +632,35 @@ APPROVED ──撤销──→ CANCEL(已撤销)
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>事业部信息为空</td><td>保存</td><td>用户上下文缺少事业部信息，联系管理员补充事业部配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未找到该到款单</td><td>保存/提交</td><td>到款引入单不存在或已删除，检查paymentImportId</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>本次认款金额合计大于到款接口剩余认款金额</td><td>保存/提交</td><td>并发认领或金额超限，刷新后重新认领</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>已认领金额+本次认领金额已超工程金额</td><td>保存</td><td>出库明细认领金额超限，减少本次认领金额</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>删除异常：新建状态下的认领才可删除</td><td>删除</td><td>认领单已提交或已审批，不可删除</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程发起异常，单据主键为空</td><td>提交</td><td>工作流回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程发起异常，单据不存在</td><td>提交</td><td>认领单已被删除，刷新列表</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程发起异常，到款单不存在</td><td>提交</td><td>到款引入单已被删除，检查数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询认领数据为空</td><td>推送ERP</td><td>认领单数据异常，检查头行数据完整性</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>erp返回认领结果为空</td><td>推送ERP</td><td>ERP接口异常，检查ERP服务状态</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>认领推送erp异常</td><td>推送ERP</td><td>ERP返回错误信息，查看具体错误内容</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询项目列表异常，未指定客户id</td><td>查询可认领项目</td><td>到款单缺少客户信息，检查到款引入数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>项目到款引入数据异常</td><td>查询出库明细</td><td>到款引入单不存在，检查paymentImportId</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>项目合同相关信息异常</td><td>查询出库明细</td><td>该项目下无已审批通过的合同，检查合同审批状态</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>单据id异常，核销接口返回信息</td><td>推送ERP</td><td>ERP核销接口返回非S状态，查看具体返回信息</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程完结异常，单据主键为空</td><td>审批完结</td><td>工作流回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程完结异常，单据不存在</td><td>审批完结</td><td>认领单已被删除，刷新列表</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程终止异常，单据主键为空</td><td>流程终止</td><td>工作流终止回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>到款认领异常，未指定到款单id</td><td>查询认领</td><td>到款单ID未指定，传入有效到款单ID</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询到款认领单数据为空</td><td>查询认领</td><td>认领单数据为空，检查认领单ID</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询项目列表异常，未指定交易公司id</td><td>查询可认领项目</td><td>到款单缺少交易公司信息，检查到款引入数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询项目列表异常，未指定收款公司id</td><td>查询可认领项目</td><td>到款单缺少收款公司信息，检查到款引入数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询合同列表异常，未指定项目id</td><td>查询可认领合同</td><td>未指定项目ID，先选择项目</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询可认领明细异常，未指定项目id</td><td>查询可认领明细</td><td>未指定项目ID，先选择项目</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未指定到款认领id</td><td>获取剩余金额</td><td>认领单ID未指定，传入有效认领单ID</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未找到该到款认领</td><td>获取剩余金额</td><td>认领单不存在或已删除，检查认领单ID</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>删除异常：未指定到款认领id</td><td>删除</td><td>认领单ID未指定，传入有效认领单ID</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>删除异常：未查询到该认领单</td><td>删除</td><td>认领单不存在，刷新列表</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>删除异常：未找到该到款单</td><td>删除</td><td>到款引入单不存在，检查到款引入数据</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>事业部信息为空</td><td>保存</td><td>用户上下文缺少事业部信息，联系管理员补充事业部配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>未找到该到款单</td><td>保存/提交</td><td>到款引入单不存在或已删除，检查paymentImportId</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>本次认款金额合计大于到款接口剩余认款金额</td><td>保存/提交</td><td>并发认领或金额超限，刷新后重新认领</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>已认领金额+本次认领金额已超工程金额</td><td>保存</td><td>出库明细认领金额超限，减少本次认领金额</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>删除异常：新建状态下的认领才可删除</td><td>删除</td><td>认领单已提交或已审批，不可删除</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>流程发起异常，单据主键为空</td><td>提交</td><td>工作流回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>流程发起异常，单据不存在</td><td>提交</td><td>认领单已被删除，刷新列表</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>流程发起异常，到款单不存在</td><td>提交</td><td>到款引入单已被删除，检查数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>查询认领数据为空</td><td>推送ERP</td><td>认领单数据异常，检查头行数据完整性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>erp返回认领结果为空</td><td>推送ERP</td><td>ERP接口异常，检查ERP服务状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>认领推送erp异常</td><td>推送ERP</td><td>ERP返回错误信息，查看具体错误内容</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>查询项目列表异常，未指定客户id</td><td>查询可认领项目</td><td>到款单缺少客户信息，检查到款引入数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>项目到款引入数据异常</td><td>查询出库明细</td><td>到款引入单不存在，检查paymentImportId</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>项目合同相关信息异常</td><td>查询出库明细</td><td>该项目下无已审批通过的合同，检查合同审批状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>单据id异常，核销接口返回信息</td><td>推送ERP</td><td>ERP核销接口返回非S状态，查看具体返回信息</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>流程完结异常，单据主键为空</td><td>审批完结</td><td>工作流回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>流程完结异常，单据不存在</td><td>审批完结</td><td>认领单已被删除，刷新列表</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>流程终止异常，单据主键为空</td><td>流程终止</td><td>工作流终止回调缺少单据ID，检查工作流配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>到款认领异常，未指定到款单id</td><td>查询认领</td><td>到款单ID未指定，传入有效到款单ID</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>查询到款认领单数据为空</td><td>查询认领</td><td>认领单数据为空，检查认领单ID</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
+<tr><td>查询项目列表异常，未指定交易公司id</td><td>查询可认领项目</td><td>到款单缺少交易公司信息，检查到款引入数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-21" class="view-btn">查看</a></td></tr>
+<tr><td>查询项目列表异常，未指定收款公司id</td><td>查询可认领项目</td><td>到款单缺少收款公司信息，检查到款引入数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-22" class="view-btn">查看</a></td></tr>
+<tr><td>查询合同列表异常，未指定项目id</td><td>查询可认领合同</td><td>未指定项目ID，先选择项目</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-23" class="view-btn">查看</a></td></tr>
+<tr><td>查询可认领明细异常，未指定项目id</td><td>查询可认领明细</td><td>未指定项目ID，先选择项目</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-24" class="view-btn">查看</a></td></tr>
+<tr><td>未指定到款认领id</td><td>获取剩余金额</td><td>认领单ID未指定，传入有效认领单ID</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-25" class="view-btn">查看</a></td></tr>
+<tr><td>未找到该到款认领</td><td>获取剩余金额</td><td>认领单不存在或已删除，检查认领单ID</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-26" class="view-btn">查看</a></td></tr>
+<tr><td>删除异常：未指定到款认领id</td><td>删除</td><td>认领单ID未指定，传入有效认领单ID</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-27" class="view-btn">查看</a></td></tr>
+<tr><td>删除异常：未查询到该认领单</td><td>删除</td><td>认领单不存在，刷新列表</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-28" class="view-btn">查看</a></td></tr>
+<tr><td>删除异常：未找到该到款单</td><td>删除</td><td>到款引入单不存在，检查到款引入数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-29" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

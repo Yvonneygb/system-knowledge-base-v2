@@ -253,10 +253,10 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>失效单不存在</td><td>查询详情时</td><td>按DISABLE_NO查询EPM_PROJECT_DISABLE为空。检查失效单号有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>合同已失效，不可重复失效</td><td>提交时</td><td>合同VALID=3(已失效)。无需重复操作</td><td>高</td><td>[查看]</td></tr>
-<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td>[查看]</td></tr>
-<tr><td>项目报备数据不存在</td><td>审批通过推送CRM时</td><td>按PROJECT_ID查询EPM_REPORT为空。检查项目报备数据完整性</td><td>高</td><td>[查看]</td></tr>
+<tr><td>失效单不存在</td><td>查询详情时</td><td>按DISABLE_NO查询EPM_PROJECT_DISABLE为空。检查失效单号有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>合同已失效，不可重复失效</td><td>提交时</td><td>合同VALID=3(已失效)。无需重复操作</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>项目报备数据不存在</td><td>审批通过推送CRM时</td><td>按PROJECT_ID查询EPM_REPORT为空。检查项目报备数据完整性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

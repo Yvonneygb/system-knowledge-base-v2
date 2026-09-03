@@ -555,19 +555,19 @@ ORDER BY T1.CREATED DESC, T1.ROW_ID DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>分配了管理员权限，不可查询，请联系管理员处理！</td><td>外部用户查询时</td><td>外部用户（userType=D）不可使用管理员全量查询权限（range=ALL），需联系管理员取消该权限分配</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>无有效合同渠道，不可查询</td><td>外部用户查询时</td><td>经销商无有效合同渠道，无法过滤产品。需检查经销商合同是否生效且包含渠道配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>查询类型错误！</td><td>查询产品列表时</td><td>selectType参数非general/other/all，属于程序异常，检查前端传参</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>用户类型错误</td><td>查询产品列表时</td><td>当前用户既非内部用户（E）也非外部用户（D），检查用户配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请至少输入一个查询条件！</td><td>跨事业部产品选择查询时</td><td>跨事业部产品选择接口要求至少一个查询条件（不含excludeDeptId），防止全表扫描</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请传入需要上下架的产品！</td><td>上下架校验时</td><td>传入的产品编码列表为空，需选择至少一个产品</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品编码【xxx】不存在！</td><td>上下架校验时</td><td>传入的产品编码在LNK_PROD表不存在，检查产品编码是否正确</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品xxx的生命状态为xxx不允许上架!</td><td>上架校验时</td><td>产品SM状态为Z1或Z8，不允许上架，需先变更SM状态</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>产品xxx的生命状态为xxx是否确认上架!</td><td>上架校验时</td><td>产品SM状态为Z3/Z6/Z7/S6，允许上架但需用户确认</td><td>确认弹窗</td><td>[查看]</td></tr>
-<tr><td>申请产品上架数量不能超过1千！</td><td>上架校验时</td><td>一次上架产品数量超过1000条，需分批上架</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>物料编码xxx关联老款产品xxx没有找到当前有效的折扣政策，不允许产品上架！</td><td>上架校验时</td><td>关联老款产品无有效折扣政策且可售月份大于1个月，需先配置有效政策</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未找到事业部编码[xxx]对应的CRM事业部！</td><td>跨事业部产品选择时</td><td>AE事业部编码在REL_CRM_AE_ORG表未映射到CRM事业部ID，检查事业部映射配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请选择附件！</td><td>批量下载附件时</td><td>未勾选附件记录就点击批量下载，需先选择附件</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>分配了管理员权限，不可查询，请联系管理员处理！</td><td>外部用户查询时</td><td>外部用户（userType=D）不可使用管理员全量查询权限（range=ALL），需联系管理员取消该权限分配</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>无有效合同渠道，不可查询</td><td>外部用户查询时</td><td>经销商无有效合同渠道，无法过滤产品。需检查经销商合同是否生效且包含渠道配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>查询类型错误！</td><td>查询产品列表时</td><td>selectType参数非general/other/all，属于程序异常，检查前端传参</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>用户类型错误</td><td>查询产品列表时</td><td>当前用户既非内部用户（E）也非外部用户（D），检查用户配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>请至少输入一个查询条件！</td><td>跨事业部产品选择查询时</td><td>跨事业部产品选择接口要求至少一个查询条件（不含excludeDeptId），防止全表扫描</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>请传入需要上下架的产品！</td><td>上下架校验时</td><td>传入的产品编码列表为空，需选择至少一个产品</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码【xxx】不存在！</td><td>上下架校验时</td><td>传入的产品编码在LNK_PROD表不存在，检查产品编码是否正确</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>产品xxx的生命状态为xxx不允许上架!</td><td>上架校验时</td><td>产品SM状态为Z1或Z8，不允许上架，需先变更SM状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>产品xxx的生命状态为xxx是否确认上架!</td><td>上架校验时</td><td>产品SM状态为Z3/Z6/Z7/S6，允许上架但需用户确认</td><td>确认弹窗</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>申请产品上架数量不能超过1千！</td><td>上架校验时</td><td>一次上架产品数量超过1000条，需分批上架</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>物料编码xxx关联老款产品xxx没有找到当前有效的折扣政策，不允许产品上架！</td><td>上架校验时</td><td>关联老款产品无有效折扣政策且可售月份大于1个月，需先配置有效政策</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>未找到事业部编码[xxx]对应的CRM事业部！</td><td>跨事业部产品选择时</td><td>AE事业部编码在REL_CRM_AE_ORG表未映射到CRM事业部ID，检查事业部映射配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>请选择附件！</td><td>批量下载附件时</td><td>未勾选附件记录就点击批量下载，需先选择附件</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

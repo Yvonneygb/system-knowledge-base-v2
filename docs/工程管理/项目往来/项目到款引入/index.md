@@ -407,22 +407,22 @@ ORDER BY RECEIVE_DATE DESC;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>客户不存在</td><td>引入时</td><td>ERP到款单对应的客户在系统中不存在。先同步客户数据</td><td>高</td><td>[查看]</td></tr>
-<tr><td>交易公司不存在</td><td>引入时</td><td>交易公司在系统中不存在。先同步交易公司数据</td><td>高</td><td>[查看]</td></tr>
-<tr><td>事业部不存在</td><td>引入时</td><td>事业部在系统中未配置。先配置事业部</td><td>高</td><td>[查看]</td></tr>
-<tr><td>到款单状态不允许认领</td><td>认领时</td><td>信用卡拖欠/暂停付款/冲销付款/资金不足状态。确认到款单状态</td><td>高</td><td>[查看]</td></tr>
-<tr><td>票据类型不支持兑付</td><td>兑现时</td><td>非商票类型不支持兑付。确认票据类型</td><td>高</td><td>[查看]</td></tr>
-<tr><td>已兑付不可重复兑付</td><td>兑现时</td><td>到款单已兑付。无需重复操作</td><td>高</td><td>[查看]</td></tr>
-<tr><td>对账单对应经销商信息查询异常</td><td>引入时</td><td>ERP到款单客户编码在系统客户档案中不存在。先同步客户数据</td><td>高</td><td>[查看]</td></tr>
-<tr><td>对账单对应法人信息查询异常</td><td>引入时</td><td>ERP到款单汇款法人编码在系统客户档案中不存在。先同步法人数据</td><td>高</td><td>[查看]</td></tr>
-<tr><td>未找到该erp的到款单</td><td>获取ERP到款</td><td>ERP接口未返回到款数据。确认ERP到款单存在</td><td>高</td><td>[查看]</td></tr>
-<tr><td>erp的到款单业务处理异常</td><td>获取ERP到款</td><td>ERP到款单处理返回null。检查ERP数据完整性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>请传入到款单id</td><td>认领校验</td><td>到款单ID为空。传入有效到款单ID</td><td>高</td><td>[查看]</td></tr>
-<tr><td>该到款单已撤销，不允许认领</td><td>认领校验</td><td>到款单已撤销。检查到款单状态</td><td>高</td><td>[查看]</td></tr>
-<tr><td>未指定到款单id</td><td>获取剩余金额</td><td>到款单ID未指定。传入有效到款单ID</td><td>高</td><td>[查看]</td></tr>
-<tr><td>已核销、未核销的到款单才能发起兑付</td><td>兑现时</td><td>到款单状态非已核销/未核销。确认到款单状态</td><td>高</td><td>[查看]</td></tr>
-<tr><td>编码最大支持100个</td><td>定时同步</td><td>批量同步编码超过100个限制。减少批量编码数量</td><td>高</td><td>[查看]</td></tr>
-<tr><td>开始时间-结束时间必须同时有值</td><td>定时同步</td><td>时间区间同步时起止时间未同时传入。补全时间区间</td><td>高</td><td>[查看]</td></tr>
+<tr><td>客户不存在</td><td>引入时</td><td>ERP到款单对应的客户在系统中不存在。先同步客户数据</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>交易公司不存在</td><td>引入时</td><td>交易公司在系统中不存在。先同步交易公司数据</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>事业部不存在</td><td>引入时</td><td>事业部在系统中未配置。先配置事业部</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>到款单状态不允许认领</td><td>认领时</td><td>信用卡拖欠/暂停付款/冲销付款/资金不足状态。确认到款单状态</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>票据类型不支持兑付</td><td>兑现时</td><td>非商票类型不支持兑付。确认票据类型</td><td>高</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>已兑付不可重复兑付</td><td>兑现时</td><td>到款单已兑付。无需重复操作</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>对账单对应经销商信息查询异常</td><td>引入时</td><td>ERP到款单客户编码在系统客户档案中不存在。先同步客户数据</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>对账单对应法人信息查询异常</td><td>引入时</td><td>ERP到款单汇款法人编码在系统客户档案中不存在。先同步法人数据</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>未找到该erp的到款单</td><td>获取ERP到款</td><td>ERP接口未返回到款数据。确认ERP到款单存在</td><td>高</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>erp的到款单业务处理异常</td><td>获取ERP到款</td><td>ERP到款单处理返回null。检查ERP数据完整性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>请传入到款单id</td><td>认领校验</td><td>到款单ID为空。传入有效到款单ID</td><td>高</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>该到款单已撤销，不允许认领</td><td>认领校验</td><td>到款单已撤销。检查到款单状态</td><td>高</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>未指定到款单id</td><td>获取剩余金额</td><td>到款单ID未指定。传入有效到款单ID</td><td>高</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>已核销、未核销的到款单才能发起兑付</td><td>兑现时</td><td>到款单状态非已核销/未核销。确认到款单状态</td><td>高</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>编码最大支持100个</td><td>定时同步</td><td>批量同步编码超过100个限制。减少批量编码数量</td><td>高</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>开始时间-结束时间必须同时有值</td><td>定时同步</td><td>时间区间同步时起止时间未同时传入。补全时间区间</td><td>高</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

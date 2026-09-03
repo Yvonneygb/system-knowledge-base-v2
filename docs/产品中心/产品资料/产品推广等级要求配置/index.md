@@ -388,18 +388,18 @@ WHERE LPPGC.STATUS = 'valid'
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>请选择需要失效的数据！</td><td>批量失效按钮</td><td>未选中任何数据就点击批量失效</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>产品已存在相同的产品推广等级字段要求配置,无需重复添加!</td><td>新增弹窗确认按钮</td><td>同一品牌事业部+等级+物料类型+必填字段类型+必填字段已存在有效配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>保存失败</td><td>新增弹窗确认按钮</td><td>后端保存接口返回失败</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>操作失败！</td><td>失效确认框</td><td>后端保存接口返回失败</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>品牌事业部不能为空</td><td>新增弹窗品牌事业部字段</td><td>未选择品牌事业部就点击确认</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>等级不能为空</td><td>新增弹窗等级字段</td><td>未选择等级就点击确认</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>物料类型不能为空</td><td>新增弹窗物料类型字段</td><td>未选择物料类型就点击确认</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>必填字段类型不能为空</td><td>新增弹窗必填字段类型字段</td><td>未选择必填字段类型就点击确认</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>必填字段不能为空</td><td>新增弹窗必填字段字段</td><td>未选择必填字段就点击确认</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>查询失败</td><td>列表页查询操作</td><td>列表查询接口返回失败</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>新增/失效按钮</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>会话过期</td><td>任意操作</td><td>登录会话已失效</td><td>确认弹窗</td><td>[查看]</td></tr>
+<tr><td>请选择需要失效的数据！</td><td>批量失效按钮</td><td>未选中任何数据就点击批量失效</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>产品已存在相同的产品推广等级字段要求配置,无需重复添加!</td><td>新增弹窗确认按钮</td><td>同一品牌事业部+等级+物料类型+必填字段类型+必填字段已存在有效配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>保存失败</td><td>新增弹窗确认按钮</td><td>后端保存接口返回失败</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>操作失败！</td><td>失效确认框</td><td>后端保存接口返回失败</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>品牌事业部不能为空</td><td>新增弹窗品牌事业部字段</td><td>未选择品牌事业部就点击确认</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>等级不能为空</td><td>新增弹窗等级字段</td><td>未选择等级就点击确认</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>物料类型不能为空</td><td>新增弹窗物料类型字段</td><td>未选择物料类型就点击确认</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>必填字段类型不能为空</td><td>新增弹窗必填字段类型字段</td><td>未选择必填字段类型就点击确认</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>必填字段不能为空</td><td>新增弹窗必填字段字段</td><td>未选择必填字段就点击确认</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>查询失败</td><td>列表页查询操作</td><td>列表查询接口返回失败</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>新增/失效按钮</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期</td><td>任意操作</td><td>登录会话已失效</td><td>确认弹窗</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <blockquote><strong>"请选择需要失效的数据！"详细逻辑</strong>：

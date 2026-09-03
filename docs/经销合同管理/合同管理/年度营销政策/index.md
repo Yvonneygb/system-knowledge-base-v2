@@ -296,19 +296,19 @@ SELECT * FROM ANNUAL_DEALER_POLICY_HEAD WHERE POLICY_YEAR IS NULL;
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>年度不能为空</td><td>保存时</td><td>未选择年度，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>ERP推送失败</td><td>推送ERP时</td><td>ERP系统不可用或数据异常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>参数id不能为空</td><td>查询详情时</td><td>未传入政策头ID，重新进入页面</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>配置类型行不能为空</td><td>保存时</td><td>未添加政策配置行，添加行后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>数据的审核状态异常</td><td>修改时</td><td>政策状态非"未生效"，需先失效再修改</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>数据的状态异常</td><td>生效时</td><td>政策状态非"未生效"，无法生效</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>执行值类型不能为空</td><td>保存时</td><td>违约金行未配置执行值类型，补全后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>经销商信息异常</td><td>推送ERP时</td><td>经销商编码在系统中无对应等级，核对经销商主数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>对应的出库总额未找到</td><td>推送ERP时</td><td>合同无出库总额记录，先确认出库数据</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>次年折扣分段区间未找到对应数值</td><td>推送ERP时</td><td>完成率未落入任何折扣区间，补全区间配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>返点政策行配置为空</td><td>推送ERP时</td><td>合同关联返点行已删除，重新关联合同</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>违约金政策行配置为空</td><td>推送ERP时</td><td>合同关联违约金行已删除，重新关联合同</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未找到对应的B/B1类系统参数值</td><td>推送ERP时</td><td>系统参数未配置B/B1类折扣比例，联系管理员</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>年度不能为空</td><td>保存时</td><td>未选择年度，选择后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>ERP推送失败</td><td>推送ERP时</td><td>ERP系统不可用或数据异常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>参数id不能为空</td><td>查询详情时</td><td>未传入政策头ID，重新进入页面</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>配置类型行不能为空</td><td>保存时</td><td>未添加政策配置行，添加行后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>数据的审核状态异常</td><td>修改时</td><td>政策状态非"未生效"，需先失效再修改</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>数据的状态异常</td><td>生效时</td><td>政策状态非"未生效"，无法生效</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>执行值类型不能为空</td><td>保存时</td><td>违约金行未配置执行值类型，补全后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>经销商信息异常</td><td>推送ERP时</td><td>经销商编码在系统中无对应等级，核对经销商主数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>对应的出库总额未找到</td><td>推送ERP时</td><td>合同无出库总额记录，先确认出库数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>次年折扣分段区间未找到对应数值</td><td>推送ERP时</td><td>完成率未落入任何折扣区间，补全区间配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>返点政策行配置为空</td><td>推送ERP时</td><td>合同关联返点行已删除，重新关联合同</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>违约金政策行配置为空</td><td>推送ERP时</td><td>合同关联违约金行已删除，重新关联合同</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>未找到对应的B/B1类系统参数值</td><td>推送ERP时</td><td>系统参数未配置B/B1类折扣比例，联系管理员</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

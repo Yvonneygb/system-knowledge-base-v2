@@ -327,13 +327,13 @@ SELECT * FROM FIN_FEE_WRITEOFF_IN_QUOTA WHERE IN_WRITEOFF_ID IN (#{ids}) AND BIL
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>冲销数据为空</td><td>查询时</td><td>冲销数据未生成，先执行更新冲销数据</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>推送共享财务失败</td><td>执行冲销时</td><td>共享财务系统不可用，检查ENCX系统状态</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>要执行的数据为空</td><td>执行冲销时</td><td>指定年月和交易公司无冲销数据，先执行更新冲销数据</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>共享接口返回null,执行共享接口失败</td><td>执行冲销时</td><td>共享财务接口无响应或网络中断，检查网络和ENCX系统</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>执行冲销数据接口异常</td><td>执行冲销时</td><td>冲销执行过程中发生未知异常，查看后端日志</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>年月必填</td><td>执行冲销弹窗</td><td>未填写年月，需在弹窗中填写年月</td><td>表单校验</td><td>[查看]</td></tr>
-<tr><td>交易公司编码必填</td><td>执行冲销弹窗</td><td>未填写交易公司编码，需在弹窗中填写交易公司编码</td><td>表单校验</td><td>[查看]</td></tr>
+<tr><td>冲销数据为空</td><td>查询时</td><td>冲销数据未生成，先执行更新冲销数据</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>推送共享财务失败</td><td>执行冲销时</td><td>共享财务系统不可用，检查ENCX系统状态</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>要执行的数据为空</td><td>执行冲销时</td><td>指定年月和交易公司无冲销数据，先执行更新冲销数据</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>共享接口返回null,执行共享接口失败</td><td>执行冲销时</td><td>共享财务接口无响应或网络中断，检查网络和ENCX系统</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>执行冲销数据接口异常</td><td>执行冲销时</td><td>冲销执行过程中发生未知异常，查看后端日志</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>年月必填</td><td>执行冲销弹窗</td><td>未填写年月，需在弹窗中填写年月</td><td>表单校验</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>交易公司编码必填</td><td>执行冲销弹窗</td><td>未填写交易公司编码，需在弹窗中填写交易公司编码</td><td>表单校验</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

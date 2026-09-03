@@ -377,14 +377,14 @@ SELECT * FROM ADS_FEE_ADJUST_IN_QUOTA WHERE ADJUST_HEADER_ID = #{id} AND (TRADIN
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>交易公司不能为空</td><td>保存时</td><td>未选择交易公司，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>调整类型不能为空</td><td>保存时</td><td>未选择调整类型，选择后保存</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>推送OA失败：广告费调整申请不存在</td><td>提交推送OA时</td><td>调整单已被删除或数据异常，刷新列表后重试</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>OA回传单号为空，请检查！</td><td>OA审批回调时</td><td>OA回传报文缺少单号字段，检查OA流程配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>OA回传单号不存在，请检查！</td><td>OA审批回调时</td><td>OA回传单号在系统中找不到对应记录，检查OA单据映射</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请选择要删除的记录！</td><td>删除时</td><td>未选中任何记录，选中后删除</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>保存/提交/删除时</td><td>后端服务不可用或OA系统不可达，确认服务正常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无交易公司数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
+<tr><td>交易公司不能为空</td><td>保存时</td><td>未选择交易公司，选择后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>调整类型不能为空</td><td>保存时</td><td>未选择调整类型，选择后保存</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>推送OA失败：广告费调整申请不存在</td><td>提交推送OA时</td><td>调整单已被删除或数据异常，刷新列表后重试</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>OA回传单号为空，请检查！</td><td>OA审批回调时</td><td>OA回传报文缺少单号字段，检查OA流程配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>OA回传单号不存在，请检查！</td><td>OA审批回调时</td><td>OA回传单号在系统中找不到对应记录，检查OA单据映射</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>请选择要删除的记录！</td><td>删除时</td><td>未选中任何记录，选中后删除</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>保存/提交/删除时</td><td>后端服务不可用或OA系统不可达，确认服务正常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无交易公司数据权限，联系管理员分配权限</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

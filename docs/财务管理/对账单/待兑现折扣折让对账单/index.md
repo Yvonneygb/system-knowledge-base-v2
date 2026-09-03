@@ -342,12 +342,12 @@ SELECT * FROM LNK_CASH_BILL_HEAD_NEW WHERE HEADER_ID = #{headerId} AND STATUS !=
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询无数据</td><td>查询时</td><td>查询条件不匹配或对账单未生成，放宽条件或确认数据已同步</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>请输入id</td><td>法人确认时</td><td>未传入对账单ID，选中一条记录后重试</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>确认对账单失败，请稍后重试</td><td>法人确认时</td><td>对账单状态非待确认或并发更新影响行数为0，刷新列表确认状态后重试</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>对账单明细不存在</td><td>查看明细时</td><td>对账单头表或行表数据缺失，刷新列表后重试</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>查询/确认/导出时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>查询条件不匹配或对账单未生成，放宽条件或确认数据已同步</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>请输入id</td><td>法人确认时</td><td>未传入对账单ID，选中一条记录后重试</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>确认对账单失败，请稍后重试</td><td>法人确认时</td><td>对账单状态非待确认或并发更新影响行数为0，刷新列表确认状态后重试</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>对账单明细不存在</td><td>查看明细时</td><td>对账单头表或行表数据缺失，刷新列表后重试</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>调用接口时</td><td>后端服务不可用或网络中断，稍后重试或联系运维</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>查询/确认/导出时</td><td>当前用户无该组织或菜单访问权限，联系管理员分配权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

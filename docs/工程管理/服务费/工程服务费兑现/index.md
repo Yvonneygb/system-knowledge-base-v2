@@ -227,24 +227,24 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>兑现单不存在</td><td>查询详情时</td><td>按CASH_NO查询EPM_SERVICE_FEE_CASH为空。检查兑现单号有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>兑现金额超过可兑现金额</td><td>提交时</td><td>兑现金额超过剩余可兑现金额。调整兑现金额</td><td>高</td><td>[查看]</td></tr>
-<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td>[查看]</td></tr>
-<tr><td>兑现类型无效，请重新选择报销单</td><td>保存校验</td><td>兑现类型字段值无效。重新选择报销单</td><td>高</td><td>[查看]</td></tr>
-<tr><td>本次兑现金额不能小于等于0，请确认出库明细是否认领</td><td>保存校验</td><td>兑现金额≤0且出库明细未认领。确认出库明细已认领</td><td>高</td><td>[查看]</td></tr>
-<tr><td>以下正数报销单明细兑现金额不足：xxx</td><td>保存校验</td><td>正数报销单明细剩余兑现金额不足。调整兑现金额或增加报销单明细</td><td>高</td><td>[查看]</td></tr>
-<tr><td>请联系管理员检查该事业部是否设置了主要的销售主体</td><td>保存校验</td><td>事业部未配置主要销售主体。联系管理员配置销售主体</td><td>高</td><td>[查看]</td></tr>
-<tr><td>流程启动异常：请传入单据id</td><td>提交审批</td><td>未传入单据ID。检查前端传参完整性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>流程启动异常：单据查询异常</td><td>提交审批</td><td>按单据ID查询兑现单为空。检查单据ID有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>流程启动异常：本次申请金额必须大于0</td><td>提交审批</td><td>申请金额≤0。调整申请金额</td><td>高</td><td>[查看]</td></tr>
-<tr><td>已结算工程服务费：xxx元加复核申请金额：xxx元，已超报销的核算金额：xxx元，请检查！</td><td>提交审批</td><td>已结算服务费+复核申请金额&gt;报销核算金额。调整复核申请金额</td><td>高</td><td>[查看]</td></tr>
-<tr><td>当前项目盈余：xxx元，小于复核申请金额：xxx元，无法兑现！</td><td>提交审批</td><td>项目盈余&lt;复核申请金额。调整复核申请金额</td><td>高</td><td>[查看]</td></tr>
-<tr><td>单据推送共享异常：请传入单据id</td><td>推送共享</td><td>未传入单据ID。检查前端传参完整性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>单据推送共享异常：单据查询异常</td><td>推送共享</td><td>按单据ID查询兑现单为空。检查单据ID有效性</td><td>高</td><td>[查看]</td></tr>
-<tr><td>单据推送共享异常：本次申请金额必须大于0</td><td>推送共享</td><td>申请金额≤0。调整申请金额</td><td>高</td><td>[查看]</td></tr>
-<tr><td>单据推送共享异常：请传入节点审批人信息</td><td>推送共享</td><td>未传入节点审批人信息。检查审批人配置</td><td>高</td><td>[查看]</td></tr>
-<tr><td>单据推送共享异常：共享接口返回数据为空</td><td>推送共享</td><td>共享中心接口返回空数据。检查共享中心服务状态</td><td>高</td><td>[查看]</td></tr>
-<tr><td>推送数据到共享异常：查找申请人OA信息未空</td><td>推送共享</td><td>申请人OA信息未配置。联系管理员维护申请人OA账号</td><td>高</td><td>[查看]</td></tr>
+<tr><td>兑现单不存在</td><td>查询详情时</td><td>按CASH_NO查询EPM_SERVICE_FEE_CASH为空。检查兑现单号有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>兑现金额超过可兑现金额</td><td>提交时</td><td>兑现金额超过剩余可兑现金额。调整兑现金额</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>仅新建状态单据允许删除</td><td>删除时</td><td>单据HZ_APPROVE_STATUS非NEW。仅新建状态可删除</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>兑现类型无效，请重新选择报销单</td><td>保存校验</td><td>兑现类型字段值无效。重新选择报销单</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>本次兑现金额不能小于等于0，请确认出库明细是否认领</td><td>保存校验</td><td>兑现金额≤0且出库明细未认领。确认出库明细已认领</td><td>高</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>以下正数报销单明细兑现金额不足：xxx</td><td>保存校验</td><td>正数报销单明细剩余兑现金额不足。调整兑现金额或增加报销单明细</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>请联系管理员检查该事业部是否设置了主要的销售主体</td><td>保存校验</td><td>事业部未配置主要销售主体。联系管理员配置销售主体</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>流程启动异常：请传入单据id</td><td>提交审批</td><td>未传入单据ID。检查前端传参完整性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>流程启动异常：单据查询异常</td><td>提交审批</td><td>按单据ID查询兑现单为空。检查单据ID有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>流程启动异常：本次申请金额必须大于0</td><td>提交审批</td><td>申请金额≤0。调整申请金额</td><td>高</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>已结算工程服务费：xxx元加复核申请金额：xxx元，已超报销的核算金额：xxx元，请检查！</td><td>提交审批</td><td>已结算服务费+复核申请金额&gt;报销核算金额。调整复核申请金额</td><td>高</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>当前项目盈余：xxx元，小于复核申请金额：xxx元，无法兑现！</td><td>提交审批</td><td>项目盈余&lt;复核申请金额。调整复核申请金额</td><td>高</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>单据推送共享异常：请传入单据id</td><td>推送共享</td><td>未传入单据ID。检查前端传参完整性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>单据推送共享异常：单据查询异常</td><td>推送共享</td><td>按单据ID查询兑现单为空。检查单据ID有效性</td><td>高</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>单据推送共享异常：本次申请金额必须大于0</td><td>推送共享</td><td>申请金额≤0。调整申请金额</td><td>高</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>单据推送共享异常：请传入节点审批人信息</td><td>推送共享</td><td>未传入节点审批人信息。检查审批人配置</td><td>高</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>单据推送共享异常：共享接口返回数据为空</td><td>推送共享</td><td>共享中心接口返回空数据。检查共享中心服务状态</td><td>高</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>推送数据到共享异常：查找申请人OA信息未空</td><td>推送共享</td><td>申请人OA信息未配置。联系管理员维护申请人OA账号</td><td>高</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

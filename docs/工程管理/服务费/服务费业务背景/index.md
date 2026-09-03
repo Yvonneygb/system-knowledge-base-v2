@@ -213,13 +213,13 @@
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>背景编码不能为空</td><td>保存时</td><td>背景编码未填写。填写背景编码后保存</td><td>高</td><td>[查看]</td></tr>
-<tr><td>背景名称不能为空</td><td>保存时</td><td>背景名称未填写。填写背景名称后保存</td><td>高</td><td>[查看]</td></tr>
-<tr><td>背景编码已存在</td><td>保存时</td><td>背景编码重复。修改为唯一编码</td><td>高</td><td>[查看]</td></tr>
-<tr><td>请选择一条数据</td><td>删除/编辑时</td><td>未选中列表行即点击操作按钮。先选中一条数据再操作</td><td>中</td><td>[查看]</td></tr>
-<tr><td>请求失败，请稍后重试</td><td>任意操作时</td><td>后端服务异常或网络中断。稍后重试，仍失败联系IT</td><td>中</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>访问页面/操作时</td><td>当前用户无该菜单或操作权限。联系管理员分配权限</td><td>高</td><td>[查看]</td></tr>
-<tr><td>操作失败，数据已被其他用户修改</td><td>编辑保存时</td><td>并发修改导致乐观锁失败。刷新数据后重新编辑</td><td>高</td><td>[查看]</td></tr>
+<tr><td>背景编码不能为空</td><td>保存时</td><td>背景编码未填写。填写背景编码后保存</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>背景名称不能为空</td><td>保存时</td><td>背景名称未填写。填写背景名称后保存</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>背景编码已存在</td><td>保存时</td><td>背景编码重复。修改为唯一编码</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>请选择一条数据</td><td>删除/编辑时</td><td>未选中列表行即点击操作按钮。先选中一条数据再操作</td><td>中</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>请求失败，请稍后重试</td><td>任意操作时</td><td>后端服务异常或网络中断。稍后重试，仍失败联系IT</td><td>中</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>访问页面/操作时</td><td>当前用户无该菜单或操作权限。联系管理员分配权限</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>操作失败，数据已被其他用户修改</td><td>编辑保存时</td><td>并发修改导致乐观锁失败。刷新数据后重新编辑</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

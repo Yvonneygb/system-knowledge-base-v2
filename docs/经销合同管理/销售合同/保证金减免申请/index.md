@@ -323,13 +323,13 @@ SELECT H.REDUCTION_AMT, P.PAYMENT_AMT FROM CM_DEPOSITS_REDUCTION_HEAD H, CM_DEPO
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>减免金额必须大于0</td><td>保存时</td><td>减免金额填写了0或负数</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>减免金额超过保证金余额</td><td>提交时</td><td>减免金额大于已缴保证金</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程编码缺失</td><td>保存并提交时</td><td>未选择OA审批流程，选择流程后提交</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请选择需要删除的数据</td><td>删除时</td><td>未选中任何减免申请记录，选中后删除</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>无法获取上下文信息</td><td>保存时</td><td>用户登录态失效，重新登录</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>无法获取事业部信息</td><td>保存时</td><td>用户未关联事业部，联系管理员配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>请先维护明细信息</td><td>提交时</td><td>减免申请未添加明细行，添加明细后提交</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>减免金额必须大于0</td><td>保存时</td><td>减免金额填写了0或负数</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>减免金额超过保证金余额</td><td>提交时</td><td>减免金额大于已缴保证金</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码缺失</td><td>保存并提交时</td><td>未选择OA审批流程，选择流程后提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>请选择需要删除的数据</td><td>删除时</td><td>未选中任何减免申请记录，选中后删除</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>无法获取上下文信息</td><td>保存时</td><td>用户登录态失效，重新登录</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>无法获取事业部信息</td><td>保存时</td><td>用户未关联事业部，联系管理员配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>请先维护明细信息</td><td>提交时</td><td>减免申请未添加明细行，添加明细后提交</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

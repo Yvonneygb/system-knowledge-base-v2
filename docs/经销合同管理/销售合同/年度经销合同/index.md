@@ -338,23 +338,23 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>经销商不能为空</td><td>保存时</td><td>未选择经销商</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>区域校验失败</td><td>提交时</td><td>经销商在选定区域不合法，重新选择区域</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>合同ID为空，请检查</td><td>保存/提交时</td><td>合同ID参数丢失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>当前合同有效结束时间小于当前时间，不允许新建</td><td>保存时</td><td>合同结束日期已过期</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>合同有效开始时间必须小于等于结束时间</td><td>保存时</td><td>开始日期大于结束日期</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>合同开始日期须为月度第一天</td><td>保存时</td><td>开始日期非月初</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>法人编码不存在</td><td>保存时</td><td>经销商法人编码主数据缺失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>关联合同不存在，请稍后再试</td><td>保存时</td><td>关联的母合同不存在</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>提前结束合同，必须为合同结束日期前至少一整月</td><td>保存时</td><td>提前结束日期不满足整月要求</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>当前已存在同类型经销合同，无法再签订</td><td>保存时</td><td>经销期限内已存在同类型合同</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未能获取合同保证金标准，不能创建合同</td><td>保存时</td><td>保证金标准未配置</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>未配置经销合同延期归档天数，请联系管理员</td><td>归档时</td><td>系统参数未配置</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>该合同应归档日期为空，请联系管理员</td><td>归档时</td><td>合同应归档日期缺失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>经销商编码不能为空</td><td>校验时</td><td>经销商编码参数缺失</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>经销商不能为空</td><td>保存时</td><td>未选择经销商</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>区域校验失败</td><td>提交时</td><td>经销商在选定区域不合法，重新选择区域</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>合同ID为空，请检查</td><td>保存/提交时</td><td>合同ID参数丢失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>当前合同有效结束时间小于当前时间，不允许新建</td><td>保存时</td><td>合同结束日期已过期</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>合同有效开始时间必须小于等于结束时间</td><td>保存时</td><td>开始日期大于结束日期</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>合同开始日期须为月度第一天</td><td>保存时</td><td>开始日期非月初</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>法人编码不存在</td><td>保存时</td><td>经销商法人编码主数据缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>关联合同不存在，请稍后再试</td><td>保存时</td><td>关联的母合同不存在</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>提前结束合同，必须为合同结束日期前至少一整月</td><td>保存时</td><td>提前结束日期不满足整月要求</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>当前已存在同类型经销合同，无法再签订</td><td>保存时</td><td>经销期限内已存在同类型合同</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>未能获取合同保证金标准，不能创建合同</td><td>保存时</td><td>保证金标准未配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>未配置经销合同延期归档天数，请联系管理员</td><td>归档时</td><td>系统参数未配置</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>该合同应归档日期为空，请联系管理员</td><td>归档时</td><td>合同应归档日期缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>经销商编码不能为空</td><td>校验时</td><td>经销商编码参数缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">

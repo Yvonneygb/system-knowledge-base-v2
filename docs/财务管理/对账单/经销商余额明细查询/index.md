@@ -266,11 +266,11 @@ ORDER BY CREATE_TIME DESC
 <tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
 </thead>
 <tbody>
-<tr><td>查询无数据</td><td>查询时</td><td>定时任务未执行或明细数据未生成，确认AdvertDetailJob已运行</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>网络请求失败</td><td>查询/导出时</td><td>后端服务不可用或接口超时，确认ae-business服务正常</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无该经销商/事业部数据权限，联系管理员分配权限</td><td>阻断性报错</td><td>[查看]</td></tr>
-<tr><td>年月查询条件为空</td><td>查询时</td><td>未选择年月区间，选择后查询</td><td>toast提醒</td><td>[查看]</td></tr>
-<tr><td>导出失败</td><td>导出时</td><td>查询结果集过大或服务异常，缩小查询范围后重试</td><td>toast提醒</td><td>[查看]</td></tr>
+<tr><td>查询无数据</td><td>查询时</td><td>定时任务未执行或明细数据未生成，确认AdvertDetailJob已运行</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>网络请求失败</td><td>查询/导出时</td><td>后端服务不可用或接口超时，确认ae-business服务正常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>权限不足</td><td>进入页面时</td><td>当前用户无该经销商/事业部数据权限，联系管理员分配权限</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>年月查询条件为空</td><td>查询时</td><td>未选择年月区间，选择后查询</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>导出失败</td><td>导出时</td><td>查询结果集过大或服务异常，缩小查询范围后重试</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">
