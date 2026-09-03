@@ -2,6 +2,32 @@
 ---
 
 <BreadcrumbTabs />
+<div id="biz-intro">
+<div class="tab-pad">
+<div class="kl-wrap">
+<div class="kl-card">
+  <div class="biz-kl-hdr">
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);"> 业务概述</span>
+    <h2>工程折扣政策</h2>
+    <p>定义客户/区域/省份/客户分类维度下产品折扣规则的核心模块。支持通用(normal)和专项(special)两种适用类型，折扣和特价两种优惠方式，坎级(阶梯)定价。经审批通过后生效，可供要货订单、折扣申请单等下游单据引用。</p>
+  </div>
+</div>
+<div class="kl-card alt">
+  <div class="biz-kl-hdr">
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);"> 政策匹配规则</span>
+    <h2>4种匹配方式</h2>
+  </div>
+  <ul>
+    <li><strong>policyType=1(客户)</strong> → 直接匹配customerId</li>
+    <li><strong>policyType=2(区域)</strong> → 匹配saleAreaId</li>
+    <li><strong>policyType=3(客户分类)</strong> → 匹配customerClass</li>
+    <li><strong>policyType=4(省份)</strong> → 匹配provinceId</li>
+  </ul>
+</div>
+</div>
+</div>
+</div>
+
 <div id="biz-flow">
 <div class="tab-pad">
 <div class="bf-truth-flow">
