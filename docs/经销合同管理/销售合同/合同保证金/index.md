@@ -208,14 +208,7 @@
 <tr><th>状态机名称</th><th>状态释义</th><th>可执行的操作</th></tr>
 </thead>
 <tbody>
-</tbody>
-</table>
-<p>&gt;|</p>
-<table class="kb-field-tbl">
-<thead>
-<tr><th>已到款</th><th>保证金已到款未认缴</th><th>查询、认缴申请</th></tr>
-</thead>
-<tbody>
+<tr><td>已到款</td><td>保证金已到款未认缴</td><td>查询、认缴申请</td></tr>
 <tr><td>已撤销</td><td>认款已撤销</td><td>查询</td></tr>
 </tbody>
 </table>
