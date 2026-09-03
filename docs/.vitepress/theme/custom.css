@@ -380,6 +380,45 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
   border-color: #7C3AED;
 }
 
+/* 简洁模式开关按钮 */
+.kb-simple-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #6B7280;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.kb-simple-toggle:hover {
+  background: #E5E7EB;
+}
+.kb-simple-toggle.on {
+  color: #fff;
+  background: #7C3AED;
+  border-color: #7C3AED;
+}
+
+/* 简洁模式：隐藏所有 SQL 代码块 */
+body.kb-simple-mode .detail-sql,
+body.kb-simple-mode pre.detail-sql,
+body.kb-simple-mode .error-detail-box pre.language-sql,
+body.kb-simple-mode .error-detail-box pre code.language-sql,
+body.kb-simple-mode #key-logic pre code.language-sql,
+body.kb-simple-mode #detail-logic pre code.language-sql {
+  display: none !important;
+}
+/* 简洁模式：隐藏表结构 KbCard */
+body.kb-simple-mode .is-table-structure {
+  display: none !important;
+}
+
 /* ===== 一级菜单栏 — 白底 ===== */
 .kb-primary-nav {
   position: fixed;

@@ -11,6 +11,10 @@
         <span class="kb-logo-title">新门户系统知识库</span>
       </div>
       <div class="kb-topbar-right">
+        <button class="kb-simple-toggle" :class="{ on: simpleMode }" @click="toggleSimpleMode" title="隐藏SQL和表结构">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+          简洁模式
+        </button>
         <a :href="withBase('/源MD管理/')" class="kb-md-entry" title="上传 AI 生成的最新 MD，自动更新知识库">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           源MD管理
@@ -223,7 +227,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter, withBase } from 'vitepress'
 import { Content } from 'vitepress'
 import FloatingQA from './FloatingQA.vue'
@@ -699,6 +703,28 @@ function resolveGroup(path) {
 const expandedPanel = ref(null)
 const expandedGroup = ref('项目往来')
 
+// ---- 简洁模式 ----
+const simpleMode = ref(false)
+const SIMPLE_KEY = 'kb_simple_mode'
+
+function applySimpleMode() {
+  const on = simpleMode.value
+  document.body.classList.toggle('kb-simple-mode', on)
+  // 标记表结构 KbCard（标题以"表"开头）
+  document.querySelectorAll('.kb-card').forEach(function(card) {
+    var title = card.querySelector('.kl-card-title')
+    if (title && /^表\d+[：:]/.test(title.textContent.trim())) {
+      card.classList.toggle('is-table-structure', on)
+    }
+  })
+}
+
+function toggleSimpleMode() {
+  simpleMode.value = !simpleMode.value
+  localStorage.setItem(SIMPLE_KEY, simpleMode.value ? '1' : '0')
+  applySimpleMode()
+}
+
 onMounted(() => {
   const p = currentPath.value
   const base = import.meta.env.BASE_URL || '/'
@@ -712,6 +738,19 @@ onMounted(() => {
   if (panel) expandedPanel.value = panel
   const group = resolveGroup(p)
   if (group) expandedGroup.value = group
+  // 恢复简洁模式
+  const saved = localStorage.getItem(SIMPLE_KEY)
+  if (saved === '1') {
+    simpleMode.value = true
+    applySimpleMode()
+  }
+})
+
+// 路由变化后重新应用简洁模式（SPA 导航后 DOM 重建）
+watch(() => router.route.path, () => {
+  if (simpleMode.value) {
+    nextTick(() => applySimpleMode())
+  }
 })
 </script>
 
