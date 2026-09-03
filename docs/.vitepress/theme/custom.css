@@ -1405,7 +1405,8 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
 /* 弹窗垂直+水平居中：flex 容器配合 align/justify center，超长内容可滚动 */
 .error-detail-overlay.active-overlay { display:flex; align-items:center; justify-content:center; overflow:auto; opacity:1; visibility:visible; pointer-events:auto; transition:opacity 0.2s ease; }
 /* 兜底：弹窗打开时阻断任何祖先的 hover/动画 transform,确保 position:fixed 相对视口全屏(否则遮罩只盖住包含块) */
-.kb-card:has(.error-detail-overlay.active-overlay) { transform:none !important; }
+.kb-card:has(.error-detail-overlay) { transform:none !important; transition:none !important; }
+.kb-card:has(.error-detail-overlay):hover { transform:none !important; }
 .error-detail-box { background:#fff; border-radius:12px; padding:28px 32px; max-width:720px; width:90%; max-height:80vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); position:relative; }
 .error-detail-box .close-btn { position:absolute; top:12px; right:16px; font-size:24px; color:#9CA3AF; text-decoration:none; line-height:1; }
 .error-detail-box .close-btn:hover { color:#374151; }
