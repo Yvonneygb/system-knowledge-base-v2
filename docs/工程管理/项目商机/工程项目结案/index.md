@@ -398,6 +398,205 @@ WHERE EPC.CONTRACT_ID = 合同ID;</code></pre>
 
 </div>
 </div>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>参数不能为空</td><td>提交结案时</td><td>必填参数缺失，补全必填参数后重新提交</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>项目状态不允许结案</td><td>提交结案时</td><td>项目未生效或已结案，确认项目状态为可结案状态</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>结案原因必填</td><td>提交结案时</td><td>结案原因为空，补填结案原因后重新提交</td><td>中</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>将报备状态推送到CRM推送失败</td><td>后端日志</td><td>CRM接口调用异常，检查CRM服务可用性，不影响结案主流程</td><td>低</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>NullPointerException: stageDefs.get(0)</td><td>后端日志</td><td>阶段定义表中缺少STAGE_NAME='项目结案'的记录，补充阶段定义数据</td><td>高</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>NullPointerException: epmReports.get(0)</td><td>审批通过回调</td><td>项目无关联报备记录(EPM_REPORT)，检查项目报备数据</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>NullPointerException: customer.getShortName()</td><td>审批通过回调</td><td>报备关联客户在CUSTOMER表中不存在，检查客户主数据</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>NullPointerException: epmProjectContract</td><td>审批通过回调(合同结案)</td><td>合同ID在EPM_PROJECT_CONTRACT中不存在，检查合同档案</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>NullPointerException: epmProject</td><td>审批通过回调(项目结案)</td><td>项目ID在EPM_PROJECT中不存在，检查项目档案</td><td>高</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>参数不能为空
+- **触发条件**：提交项目结案时，低代码表单必填参数(如项目ID、结案类型等)缺失
+- **逻辑分析**：低代码表单提交前执行必填校验，关键字段为空时阻断提交。需补全必填参数后重新提交
+- **排查SQL**：
+  ```sql
+  SELECT ecc.CONTRACT_COMPLETED_ID, ecc.COMPLETED_CODE, ecc.PROJECT_ID, ecc.ACTION_TYPE,
+         ecc.COMPLETED_TYPE, ecc.COMPLETED_DESC, ecc.HZ_APPROVE_STATUS
+  FROM EPM_CONTRACT_COMPLETED ecc
+  WHERE ecc.PROJECT_ID IS NULL
+     OR ecc.ACTION_TYPE IS NULL
+     OR ecc.COMPLETED_TYPE IS NULL
+  -- 查出关键字段为空的异常结案单
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交项目结案时，低代码表单必填参数(如项目ID、结案类型等)缺失<br><strong>逻辑分析：</strong>低代码表单提交前执行必填校验，关键字段为空时阻断提交。需补全必填参数后重新提交</div>
+  </div>
+</div>
+
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>项目状态不允许结案
+- **触发条件**：提交项目结案时，项目状态(PROJECT_VALID)非已生效(2)或已结案
+- **逻辑分析**：项目结案时校验EPM_PROJECT.PROJECT_VALID必须为2(已生效)，且未结案(CLOSE_PROJECT_TIME为空)。若项目未生效或已结案则阻断结案操作
+- **排查SQL**：
+  ```sql
+  SELECT ep.PROJECT_ID, ep.PROJECT_CODE, ep.PROJECT_VALID, ep.PROJECT_STAGE_TYPE,
+         ep.CLOSE_PROJECT_TIME, ep.VALID
+  FROM EPM_PROJECT ep
+  WHERE ep.PROJECT_ID = :projectId
+  -- 期望 PROJECT_VALID = 2 且 CLOSE_PROJECT_TIME IS NULL
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交项目结案时，项目状态(PROJECT_VALID)非已生效(2)或已结案<br><strong>逻辑分析：</strong>项目结案时校验EPM_PROJECT.PROJECT_VALID必须为2(已生效)，且未结案(CLOSE_PROJECT_TIME为空)。若项目未生效或已结案则阻断结案操作</div>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>结案原因必填
+- **触发条件**：提交项目结案时，结案原因(COMPLETED_DESC)为空
+- **逻辑分析**：COMPLETED_DESC字段为结案必填项，用于记录结案原因说明。提交校验该字段非空，为空时阻断提交
+- **排查SQL**：
+  ```sql
+  SELECT ecc.CONTRACT_COMPLETED_ID, ecc.COMPLETED_CODE, ecc.COMPLETED_DESC, ecc.HZ_APPROVE_STATUS
+  FROM EPM_CONTRACT_COMPLETED ecc
+  WHERE ecc.COMPLETED_DESC IS NULL OR TRIM(ecc.COMPLETED_DESC) = ''
+  -- 查出结案原因为空的异常数据
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交项目结案时，结案原因(COMPLETED_DESC)为空<br><strong>逻辑分析：</strong>COMPLETED_DESC字段为结案必填项，用于记录结案原因说明。提交校验该字段非空，为空时阻断提交</div>
+  </div>
+</div>
+
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>将报备状态推送到CRM推送失败
+- **触发条件**：结案审批通过后doAudit方法中调用CRM接口推送报备状态失败
+- **逻辑分析**：doAudit中通过try-catch捕获CRM推送异常，仅记录错误日志不阻断主流程。可能原因：CRM服务不可用、网络异常、客户信息缺失。检查后端日志关键字"将报备状态推送到CRM推送失败"
+- **排查SQL**：
+  ```sql
+  SELECT er.REPORT_ID, er.PROJECT_ID, er.CUSTOMER_ID, er.CUSTOMER_CODE, er.CUSTOMER_NAME,
+         er.DIVISION_NAME, er.HZ_APPROVE_STATUS
+  FROM EPM_REPORT er
+  WHERE er.PROJECT_ID = :projectId
+  -- 检查报备关联客户信息是否完整，作为CRM推送参数
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>结案审批通过后doAudit方法中调用CRM接口推送报备状态失败<br><strong>逻辑分析：</strong>doAudit中通过try-catch捕获CRM推送异常，仅记录错误日志不阻断主流程。可能原因：CRM服务不可用、网络异常、客户信息缺失。检查后端日志关键字"将报备状态推送到CRM推送失败"</div>
+  </div>
+</div>
+
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>NullPointerException: stageDefs.get(0)
+- **触发条件**：结案审批通过后doAudit方法中查询EPM_STAGE_DEF表STAGE_NAME='项目结案'的记录为空，stageDefs.get(0)数组越界
+- **逻辑分析**：doAudit中按ORGANIZATION_ID和STAGE_NAME='项目结案'查询阶段定义，若未配置该阶段则返回空列表，调用get(0)时抛出NullPointerException。需在EPM_STAGE_DEF表中补充对应组织的'项目结案'阶段定义
+- **排查SQL**：
+  ```sql
+  SELECT esd.STAGE_ID, esd.STAGE_NAME, esd.ORGANIZATION_ID, esd.STAGE_DESC
+  FROM EPM_STAGE_DEF esd
+  WHERE esd.STAGE_NAME = '项目结案'
+    AND esd.ORGANIZATION_ID = :organizationId
+  -- 若返回空，则需补充阶段定义数据
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>结案审批通过后doAudit方法中查询EPM_STAGE_DEF表STAGE_NAME='项目结案'的记录为空，stageDefs.get(0)数组越界<br><strong>逻辑分析：</strong>doAudit中按ORGANIZATION_ID和STAGE_NAME='项目结案'查询阶段定义，若未配置该阶段则返回空列表，调用get(0)时抛出NullPointerException。需在EPM_STAGE_DEF表中补充对应组织的'项目结案'阶段定义</div>
+  </div>
+</div>
+
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>NullPointerException: epmReports.get(0)
+- **触发条件**：结案审批通过后doAudit方法中查询项目关联报备(EPM_REPORT)为空，epmReports.get(0)数组越界
+- **逻辑分析**：doAudit中按PROJECT_ID查询EPM_REPORT获取报备数据用于CRM推送，若项目无关联报备记录则返回空列表，调用get(0)时抛出IndexOutOfBoundsException。可能原因：项目报备被删除、PROJECT_ID未关联报备。需检查项目报备数据完整性
+- **排查SQL**：
+  ```sql
+  SELECT ep.PROJECT_ID, ep.PROJECT_CODE, ep.PROJECT_NAME, ep.PROJECT_VALID,
+         er.REPORT_ID, er.REPORT_CODE, er.CUSTOMER_ID
+  FROM EPM_PROJECT ep
+  LEFT JOIN EPM_REPORT er ON ep.PROJECT_ID = er.PROJECT_ID
+  WHERE ep.PROJECT_ID = :projectId
+  -- 若REPORT_ID为空，说明项目无关联报备记录
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>结案审批通过后doAudit方法中查询项目关联报备(EPM_REPORT)为空，epmReports.get(0)数组越界<br><strong>逻辑分析：</strong>doAudit中按PROJECT_ID查询EPM_REPORT获取报备数据用于CRM推送，若项目无关联报备记录则返回空列表，调用get(0)时抛出IndexOutOfBoundsException。可能原因：项目报备被删除、PROJECT_ID未关联报备。需检查项目报备数据完整性</div>
+  </div>
+</div>
+
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>NullPointerException: customer.getShortName()
+- **触发条件**：结案审批通过后doAudit方法中查询报备关联客户(CUSTOMER)返回null，后续调用customer.getShortName()抛出NullPointerException
+- **逻辑分析**：doAudit中customerRepository.selectByPrimaryKey(epmReport.getCustomerId())按CUSTOMER_ID查询客户主文件，若客户被删除或报备CUSTOMER_ID指向不存在的客户，则返回null。需检查客户主数据是否完整
+- **排查SQL**：
+  ```sql
+  SELECT er.REPORT_ID, er.PROJECT_ID, er.CUSTOMER_ID, er.CUSTOMER_CODE,
+         c.CUSTOMER_ID AS 客户档案ID, c.SHORT_NAME AS 客户简称
+  FROM EPM_REPORT er
+  LEFT JOIN CUSTOMER c ON er.CUSTOMER_ID = c.CUSTOMER_ID
+  WHERE er.PROJECT_ID = :projectId
+    AND c.CUSTOMER_ID IS NULL
+  -- 查出客户档案不存在的报备记录
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>结案审批通过后doAudit方法中查询报备关联客户(CUSTOMER)返回null，后续调用customer.getShortName()抛出NullPointerException<br><strong>逻辑分析：</strong>doAudit中customerRepository.selectByPrimaryKey(epmReport.getCustomerId())按CUSTOMER_ID查询客户主文件，若客户被删除或报备CUSTOMER_ID指向不存在的客户，则返回null。需检查客户主数据是否完整</div>
+  </div>
+</div>
+
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>NullPointerException: epmProjectContract
+- **触发条件**：合同结案(actionType=2)审批通过后doAudit方法中查询合同(EPM_PROJECT_CONTRACT)返回null，后续调用epmProjectContract.setCompletedDate()抛出NullPointerException
+- **逻辑分析**：doAudit中epmProjectContractRepository.selectByPrimaryKey(epmContractCompleted.getContractId())按CONTRACT_ID查询合同，若合同被删除或CONTRACT_ID错误，则返回null。需检查合同档案是否存在
+- **排查SQL**：
+  ```sql
+  SELECT ecc.CONTRACT_COMPLETED_ID, ecc.COMPLETED_CODE, ecc.CONTRACT_ID, ecc.ACTION_TYPE,
+         epc.CONTRACT_ID AS 合同档案ID, epc.CONTRACT_CODE, epc.VALID
+  FROM EPM_CONTRACT_COMPLETED ecc
+  LEFT JOIN EPM_PROJECT_CONTRACT epc ON ecc.CONTRACT_ID = epc.CONTRACT_ID
+  WHERE ecc.CONTRACT_COMPLETED_ID = :contractCompletedId
+    AND ecc.ACTION_TYPE = 2
+    AND epc.CONTRACT_ID IS NULL
+  -- 查出合同档案不存在的结案单
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>合同结案(actionType=2)审批通过后doAudit方法中查询合同(EPM_PROJECT_CONTRACT)返回null，后续调用epmProjectContract.setCompletedDate()抛出NullPointerException<br><strong>逻辑分析：</strong>doAudit中epmProjectContractRepository.selectByPrimaryKey(epmContractCompleted.getContractId())按CONTRACT_ID查询合同，若合同被删除或CONTRACT_ID错误，则返回null。需检查合同档案是否存在</div>
+  </div>
+</div>
+
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>NullPointerException: epmProject
+- **触发条件**：项目结案(actionType=1)审批通过后doAudit方法中查询项目(EPM_PROJECT)返回null，后续调用epmProject.setProjectValid()抛出NullPointerException
+- **逻辑分析**：doAudit中epmProjectRepository.selectByPrimaryKey(epmContractCompleted.getProjectId())按PROJECT_ID查询项目档案，若项目被删除或PROJECT_ID错误，则返回null。需检查项目档案是否存在
+- **排查SQL**：
+  ```sql
+  SELECT ecc.CONTRACT_COMPLETED_ID, ecc.COMPLETED_CODE, ecc.PROJECT_ID, ecc.ACTION_TYPE,
+         ep.PROJECT_ID AS 项目档案ID, ep.PROJECT_CODE, ep.PROJECT_VALID
+  FROM EPM_CONTRACT_COMPLETED ecc
+  LEFT JOIN EPM_PROJECT ep ON ecc.PROJECT_ID = ep.PROJECT_ID
+  WHERE ecc.CONTRACT_COMPLETED_ID = :contractCompletedId
+    AND ecc.ACTION_TYPE = 1
+    AND ep.PROJECT_ID IS NULL
+  -- 查出项目档案不存在的结案单
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>项目结案(actionType=1)审批通过后doAudit方法中查询项目(EPM_PROJECT)返回null，后续调用epmProject.setProjectValid()抛出NullPointerException<br><strong>逻辑分析：</strong>doAudit中epmProjectRepository.selectByPrimaryKey(epmContractCompleted.getProjectId())按PROJECT_ID查询项目档案，若项目被删除或PROJECT_ID错误，则返回null。需检查项目档案是否存在</div>
+  </div>
+</div>
 </div>
 <div id="faq-qa" style="display:none;">
 <div class="tab-pad">

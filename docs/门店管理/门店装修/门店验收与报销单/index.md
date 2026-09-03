@@ -666,6 +666,664 @@ NEW ──删除──→ (删除)
 
 </div>
 </div>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>验收报销单不存在</td><td>doSelect/doDelete/cancel</td><td>checkBxId对应记录不存在</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>装修申请单不存在</td><td>save/submit</td><td>terminalApplyId对应的装修申请单不存在</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>不能删除非制单状态的单据</td><td>doDelete</td><td>hzApproveStatus≠NEW</td><td>中</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>装修申请单未审批</td><td>submit</td><td>原申请单hzApproveStatus≠APPROVED</td><td>中</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>单据id信息不存在</td><td>doSelect</td><td>checkBxId为null或&lt;=0</td><td>高</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>报销单【{checkBxCode}】的额度内有效期未找到</td><td>onWfComplete</td><td>验收报销单关联的额度内有效期IN_VALIDITY_DATE为空</td><td>高</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>未找到对应的事业部基础设置，请联系相关业务员处理</td><td>save</td><td>事业部基础设置DIVISION_BASE_SET未配置</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>作废失败，门店验收与报销单查询为空</td><td>cancel</td><td>按checkBxId查询FIN_FEE_CHECK_BX_HEADER返回null</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>支付方式为折扣折让时，才允许提前兑现</td><td>save/submit</td><td>payType≠3但earlyEncashmentFlag=提前兑现</td><td>中</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不合法</td><td>submit</td><td>单据关键字段缺失或格式4错误</td><td>中</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>事业部信息不合法</td><td>submit</td><td>事业部ID/编码为空或不匹配</td><td>中</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>门店装修申请与进度更新单据预算年度大于当前年度，无法发起验收</td><td>submit</td><td>budYear&gt;当前年份</td><td>中</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>当前单据事业部异常，请联系相关人员处理</td><td>submit</td><td>单据事业部与当前用户事业部不一致</td><td>高</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>{budYear}的预算剩余可用额度不足</td><td>submit</td><td>viewOverBudgetAmt返回null或&lt;0</td><td>高</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>以下所选设计师与保证书不一致：{errorList}</td><td>submit</td><td>设计师与保证书设计师不匹配</td><td>中</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>扣除比例不可小于0</td><td>保存</td><td>扣除比例字段&lt;0</td><td>中</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>扣除比例不可大于验收比例</td><td>保存</td><td>扣除比例&gt;验收比例</td><td>中</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>发票税点必须大于0小于等于13</td><td>保存</td><td>invoiceTaxRate&lt;=0或&gt;13</td><td>中</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+<tr><td>请在附件上传OA签呈减免申请附件</td><td>submit</td><td>OA签呈减免申请附件未上传</td><td>中</td><td style="text-align:center;"><a href="#err-detail-19" class="view-btn">查看</a></td></tr>
+<tr><td>财务复核结果:"补贴标准"大于0,"可报销金额-含税(元)"小于等于0，不能提交</td><td>submit</td><td>补贴标准&gt;0且可报销金额含税&lt;=0</td><td>中</td><td style="text-align:center;"><a href="#err-detail-20" class="view-btn">查看</a></td></tr>
+<tr><td>请核算验收面积</td><td>submit</td><td>验收面积未核算</td><td>中</td><td style="text-align:center;"><a href="#err-detail-21" class="view-btn">查看</a></td></tr>
+<tr><td>事业部名称获取失败，请检查</td><td>保存</td><td>事业部名称查询失败</td><td>中</td><td style="text-align:center;"><a href="#err-detail-22" class="view-btn">查看</a></td></tr>
+<tr><td>本次兑现比例不能小于0%或者大于100%</td><td>保存</td><td>兑现比例&lt;0或&gt;100%</td><td>中</td><td style="text-align:center;"><a href="#err-detail-23" class="view-btn">查看</a></td></tr>
+<tr><td>验收面积不可大于申请面积</td><td>保存</td><td>验收面积&gt;申请面积</td><td>中</td><td style="text-align:center;"><a href="#err-detail-24" class="view-btn">查看</a></td></tr>
+<tr><td>验收标准不能大于申请标准</td><td>保存</td><td>验收标准&gt;申请标准</td><td>中</td><td style="text-align:center;"><a href="#err-detail-25" class="view-btn">查看</a></td></tr>
+<tr><td>复核标准不能大于验收标准</td><td>保存</td><td>复核标准&gt;验收标准</td><td>中</td><td style="text-align:center;"><a href="#err-detail-26" class="view-btn">查看</a></td></tr>
+<tr><td>复核面积不能大于验收面积</td><td>保存</td><td>复核面积&gt;验收面积</td><td>中</td><td style="text-align:center;"><a href="#err-detail-27" class="view-btn">查看</a></td></tr>
+<tr><td>特殊扣点不能小于0大于100%</td><td>保存</td><td>特殊扣点&lt;0或&gt;100%</td><td>中</td><td style="text-align:center;"><a href="#err-detail-28" class="view-btn">查看</a></td></tr>
+<tr><td>请先填写装修金额信息栏中的发票税点</td><td>保存</td><td>发票信息未填写发票税点</td><td>中</td><td style="text-align:center;"><a href="#err-detail-29" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>验收报销单不存在
+- **触发条件**：执行doSelect(额度内兑现新增-详情)、doDelete(删除)、cancel(作废)接口时，按checkBxId调用selectByPrimaryKey查询FIN_FEE_CHECK_BX_HEADER返回null
+- **逻辑分析**：详情查询、删除、作废均需先按主键CHECK_BX_ID定位验收报销单。若单据在操作前被其他用户物理删除，或前端传入的checkBxId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"验收报销单不存在"阻断性异常，后续读取字段（如TERMINAL_APPLY_ID、HZ_APPROVE_STATUS）均无法进行。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.hz_approve_status  AS 审批状态,
+         h.create_time        AS 创建时间
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.check_bx_id = #{传入的checkBxId};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doSelect(额度内兑现新增-详情)、doDelete(删除)、cancel(作废)接口时，按checkBxId调用selectByPrimaryKey查询FIN_FEE_CHECK_BX_HEADER返回null<br><strong>逻辑分析：</strong>详情查询、删除、作废均需先按主键CHECK_BX_ID定位验收报销单。若单据在操作前被其他用户物理删除，或前端传入的checkBxId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"验收报销单不存在"阻断性异常，后续读取字段（如TERMINAL_APPLY_ID、HZ_APPROVE_STATUS）均无法进行。</div>
+  </div>
+</div>
+
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>装修申请单不存在
+- **触发条件**：执行save(保存)/submit(提交)接口时，按验收报销单的TERMINAL_APPLY_ID关联查询FIN_FEE_APPLY_FINISHED_HEADER返回null
+- **逻辑分析**：验收报销单必须关联已审批的装修申请单，保存和提交时需回查装修申请单以带入门店/经销商/装修面积/装修标准等信息并校验其状态。若装修申请单在验收报销单保存前被删除，或TERMINAL_APPLY_ID未正确赋值（如LOV选择失败但前端仍提交），关联查询返回null，无法组装保存/提交所需数据，抛出阻断性异常。
+- **排查SQL**：
+  ```sql
+  SELECT c.check_bx_id        AS 验收报销单ID,
+         c.check_bx_code      AS 验收报销单号,
+         c.terminal_apply_id  AS 装修申请单ID,
+         c.terminal_apply_no  AS 装修申请单号,
+         f.hz_approve_status  AS 申请单审批状态
+  FROM   fin_fee_check_bx_header c
+  LEFT JOIN fin_fee_apply_finished_header f
+  ON     c.terminal_apply_id = f.fee_apply_id
+  WHERE  c.terminal_apply_id IS NOT NULL
+  AND    f.fee_apply_id IS NULL
+  ORDER  BY c.create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行save(保存)/submit(提交)接口时，按验收报销单的TERMINAL_APPLY_ID关联查询FIN_FEE_APPLY_FINISHED_HEADER返回null<br><strong>逻辑分析：</strong>验收报销单必须关联已审批的装修申请单，保存和提交时需回查装修申请单以带入门店/经销商/装修面积/装修标准等信息并校验其状态。若装修申请单在验收报销单保存前被删除，或TERMINAL_APPLY_ID未正确赋值（如LOV选择失败但前端仍提交），关联查询返回null，无法组装保存/提交所需数据，抛出阻断性异常。</div>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>不能删除非制单状态的单据
+- **触发条件**：执行doDelete(删除)接口时，校验当前单据HZ_APPROVE_STATUS不等于WorkflowInstanceStatus.NEW.getCode()（即非"新建"状态）
+- **逻辑分析**：删除操作仅允许在NEW(新建)状态执行，避免删除已进入审批流程或已审批生效的单据造成数据不一致。后端通过WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验，若单据已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)、已退回(REBUT)或已作废(INTERRUPT)，校验不通过，抛出"不能删除非制单状态的单据"阻断性异常，删除操作被拒绝。
+- **排查SQL**：
+  ```sql
+  SELECT check_bx_id        AS 验收报销单ID,
+         check_bx_code      AS 验收报销单号,
+         hz_approve_status  AS 审批状态,
+         create_time        AS 创建时间
+  FROM   fin_fee_check_bx_header
+  WHERE  hz_approve_status &lt;&gt; 'NEW'
+  ORDER  BY create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doDelete(删除)接口时，校验当前单据HZ_APPROVE_STATUS不等于WorkflowInstanceStatus.NEW.getCode()（即非"新建"状态）<br><strong>逻辑分析：</strong>删除操作仅允许在NEW(新建)状态执行，避免删除已进入审批流程或已审批生效的单据造成数据不一致。后端通过WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验，若单据已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)、已退回(REBUT)或已作废(INTERRUPT)，校验不通过，抛出"不能删除非制单状态的单据"阻断性异常，删除操作被拒绝。</div>
+  </div>
+</div>
+
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>装修申请单未审批
+- **触发条件**：执行submit(提交)接口时，按TERMINAL_APPLY_ID查询FIN_FEE_APPLY_FINISHED_HEADER的HZ_APPROVE_STATUS不等于APPROVED
+- **逻辑分析**：验收报销单提交审批前，需确保关联的装修申请单已审批通过，因为验收报销依赖装修申请单审批通过后确定的装修面积、装修标准、政策补贴等结果。若装修申请单仍处于NEW/RUN/REJECTED/REBUT等状态（如装修申请单被驳回后未重新审批，用户即尝试提交验收报销），后端校验不通过，抛出"装修申请单未审批"阻断性异常，阻止验收报销单提交审批。
+- **排查SQL**：
+  ```sql
+  SELECT c.check_bx_id        AS 验收报销单ID,
+         c.check_bx_code      AS 验收报销单号,
+         c.terminal_apply_id  AS 装修申请单ID,
+         c.terminal_apply_no  AS 装修申请单号,
+         f.hz_approve_status  AS 申请单审批状态
+  FROM   fin_fee_check_bx_header c
+  INNER JOIN fin_fee_apply_finished_header f
+  ON     c.terminal_apply_id = f.fee_apply_id
+  WHERE  c.hz_approve_status = 'NEW'
+  AND    f.hz_approve_status &lt;&gt; 'APPROVED'
+  ORDER  BY c.create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行submit(提交)接口时，按TERMINAL_APPLY_ID查询FIN_FEE_APPLY_FINISHED_HEADER的HZ_APPROVE_STATUS不等于APPROVED<br><strong>逻辑分析：</strong>验收报销单提交审批前，需确保关联的装修申请单已审批通过，因为验收报销依赖装修申请单审批通过后确定的装修面积、装修标准、政策补贴等结果。若装修申请单仍处于NEW/RUN/REJECTED/REBUT等状态（如装修申请单被驳回后未重新审批，用户即尝试提交验收报销），后端校验不通过，抛出"装修申请单未审批"阻断性异常，阻止验收报销单提交审批。</div>
+  </div>
+</div>
+
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据id信息不存在
+- **触发条件**：执行doSelect(额度内兑现新增-详情)接口时，传入的checkBxId为null或&lt;=0
+- **逻辑分析**：详情查询需按主键CHECK_BX_ID定位验收报销单。若前端传入的checkBxId为null（如未选择记录即查询）、为0或负数（如ID未正确赋值），后端校验不通过抛异常。需核查前端传入的checkBxId是否有效。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.check_bx_id = #{传入的checkBxId};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doSelect(额度内兑现新增-详情)接口时，传入的checkBxId为null或&lt;=0<br><strong>逻辑分析：</strong>详情查询需按主键CHECK_BX_ID定位验收报销单。若前端传入的checkBxId为null（如未选择记录即查询）、为0或负数（如ID未正确赋值），后端校验不通过抛异常。需核查前端传入的checkBxId是否有效。</div>
+  </div>
+</div>
+
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>报销单【{checkBxCode}】的额度内有效期未找到
+- **触发条件**：onWfComplete审批通过回调时，验收报销单关联的装修申请单IN_VALIDITY_DATE(额度内有效期)为空
+- **逻辑分析**：审批通过后需生成额度内兑现记录，兑现记录需关联额度内有效期。若装修申请单未维护IN_VALIDITY_DATE（如装修标准未配置有效期、或有效期字段未回写），无法生成兑现记录，抛出阻断性异常。需在装修申请单或装修标准中维护额度内有效期。
+- **排查SQL**：
+  ```sql
+  SELECT c.check_bx_code      AS 验收报销单号,
+         c.terminal_apply_id  AS 装修申请ID,
+         f.in_validity_date   AS 额度内有效期,
+         c.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header c
+  INNER JOIN fin_fee_apply_finished_header f
+  ON     c.terminal_apply_id = f.terminal_apply_id
+  WHERE  c.hz_approve_status = 'RUN'
+  AND    f.in_validity_date IS NULL
+  ORDER  BY c.create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfComplete审批通过回调时，验收报销单关联的装修申请单IN_VALIDITY_DATE(额度内有效期)为空<br><strong>逻辑分析：</strong>审批通过后需生成额度内兑现记录，兑现记录需关联额度内有效期。若装修申请单未维护IN_VALIDITY_DATE（如装修标准未配置有效期、或有效期字段未回写），无法生成兑现记录，抛出阻断性异常。需在装修申请单或装修标准中维护额度内有效期。</div>
+  </div>
+</div>
+
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到对应的事业部基础设置，请联系相关业务员处理
+- **触发条件**：save保存操作时，按当前用户查询事业部基础设置DIVISION_BASE_SET返回null
+- **逻辑分析**：验收报销单需关联事业部用于生成单号、组织ID等。若当前用户未配置事业部基础设置、事业部被删除、或用户与事业部关联关系缺失，查询返回null抛异常。需联系业务员配置事业部基础设置。
+- **排查SQL**：
+  ```sql
+  SELECT d.division_id      AS 事业部ID,
+         d.division_code    AS 事业部编码,
+         d.division_name    AS 事业部名称,
+         d.organization_id  AS 组织ID
+  FROM   division_base_set d
+  WHERE  d.division_id = #{当前用户事业部ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>save保存操作时，按当前用户查询事业部基础设置DIVISION_BASE_SET返回null<br><strong>逻辑分析：</strong>验收报销单需关联事业部用于生成单号、组织ID等。若当前用户未配置事业部基础设置、事业部被删除、或用户与事业部关联关系缺失，查询返回null抛异常。需联系业务员配置事业部基础设置。</div>
+  </div>
+</div>
+
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>作废失败，门店验收与报销单查询为空
+- **触发条件**：cancel作废操作时，按checkBxId查询FIN_FEE_CHECK_BX_HEADER返回null
+- **逻辑分析**：作废需先校验验收报销单存在。若单据在作废期间被其他用户删除、checkBxId传值错误、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.hz_approve_status  AS 审批状态,
+         h.create_time        AS 创建时间
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.check_bx_id = #{传入的checkBxId};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>cancel作废操作时，按checkBxId查询FIN_FEE_CHECK_BX_HEADER返回null<br><strong>逻辑分析：</strong>作废需先校验验收报销单存在。若单据在作废期间被其他用户删除、checkBxId传值错误、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+  </div>
+</div>
+
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>支付方式为折扣折让时，才允许提前兑现
+- **触发条件**：save保存或submit提交时，payType(支付方式)≠3(折扣折让)但earlyEncashmentFlag(提前兑现标识)为提前兑现
+- **逻辑分析**：提前兑现仅限支付方式为折扣折让(payType=3)的单据。若非折扣折让支付方式设置了提前兑现标识（如用户误选提前兑现、或数据迁移异常），校验不通过抛异常。需修改支付方式为折扣折让或取消提前兑现标识。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id            AS 验收报销单ID,
+         h.check_bx_code          AS 验收报销单号,
+         h.pay_type               AS 支付方式,
+         h.early_encashment_flag  AS 提前兑现标识
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.pay_type &lt;&gt; 3
+  AND    h.early_encashment_flag IS NOT NULL
+  AND    h.early_encashment_flag &lt;&gt; '0';
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>save保存或submit提交时，payType(支付方式)≠3(折扣折让)但earlyEncashmentFlag(提前兑现标识)为提前兑现<br><strong>逻辑分析：</strong>提前兑现仅限支付方式为折扣折让(payType=3)的单据。若非折扣折让支付方式设置了提前兑现标识（如用户误选提前兑现、或数据迁移异常），校验不通过抛异常。需修改支付方式为折扣折让或取消提前兑现标识。</div>
+  </div>
+</div>
+
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不合法
+- **触发条件**：submit提交操作时，校验单据关键字段（如terminalApplyId/tradingCompanyId/billingUnitId等）缺失或格式错误
+- **逻辑分析**：提交审批需确保单据关键字段完整合法。若必填字段为null（如未选择装修申请单、未维护交易公司）、字段格式错误（如ID为0或负数）、或关联关系不完整，校验不通过抛异常。需检查单据填写完整性。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id           AS 验收报销单ID,
+         h.check_bx_code         AS 验收报销单号,
+         h.terminal_apply_id     AS 装修申请ID,
+         h.trading_company_id    AS 交易公司ID,
+         h.billing_unit_id       AS 开票单位ID,
+         h.hz_approve_status     AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'NEW'
+  AND    (h.terminal_apply_id IS NULL
+       OR h.trading_company_id IS NULL
+       OR h.billing_unit_id IS NULL);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，校验单据关键字段（如terminalApplyId/tradingCompanyId/billingUnitId等）缺失或格式错误<br><strong>逻辑分析：</strong>提交审批需确保单据关键字段完整合法。若必填字段为null（如未选择装修申请单、未维护交易公司）、字段格式错误（如ID为0或负数）、或关联关系不完整，校验不通过抛异常。需检查单据填写完整性。</div>
+  </div>
+</div>
+
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>事业部信息不合法
+- **触发条件**：submit提交操作时，事业部ID/编码为空或与当前用户事业部不匹配
+- **逻辑分析**：提交需确保事业部信息合法。若单据未关联事业部、事业部被删除、或当前用户事业部与单据事业部不一致（跨事业部操作），校验不通过抛异常。需核查事业部关联一致性。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.organization_id    AS 组织ID,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'NEW'
+  AND    h.organization_id IS NULL;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，事业部ID/编码为空或与当前用户事业部不匹配<br><strong>逻辑分析：</strong>提交需确保事业部信息合法。若单据未关联事业部、事业部被删除、或当前用户事业部与单据事业部不一致（跨事业部操作），校验不通过抛异常。需核查事业部关联一致性。</div>
+  </div>
+</div>
+
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门店装修申请与进度更新单据预算年度大于当前年度，无法发起验收
+- **触发条件**：submit提交操作时，budYear-LocalDate.now().getYear()&gt;0（预算年度大于当前年份）
+- **逻辑分析**：验收报销要求预算年度≤当前年份（预算需在已生效年度内）。若关联装修申请单的budYear大于当前年份（如装修申请单预算年度2027但当前2026年），无法发起验收，校验不通过抛异常。需核查装修申请单预算年度配置。
+- **排查SQL**：
+  ```sql
+  SELECT c.check_bx_id        AS 验收报销单ID,
+         c.check_bx_code      AS 验收报销单号,
+         c.bud_year           AS 预算年度,
+         TO_NUMBER(TO_CHAR(SYSDATE,'YYYY')) AS 当前年份
+  FROM   fin_fee_check_bx_header c
+  WHERE  c.hz_approve_status = 'NEW'
+  AND    c.bud_year &gt; TO_NUMBER(TO_CHAR(SYSDATE,'YYYY'))
+  ORDER  BY c.create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，budYear-LocalDate.now().getYear()&gt;0（预算年度大于当前年份）<br><strong>逻辑分析：</strong>验收报销要求预算年度≤当前年份（预算需在已生效年度内）。若关联装修申请单的budYear大于当前年份（如装修申请单预算年度2027但当前2026年），无法发起验收，校验不通过抛异常。需核查装修申请单预算年度配置。</div>
+  </div>
+</div>
+
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>当前单据事业部异常，请联系相关人员处理
+- **触发条件**：submit提交操作时，单据事业部与当前用户事业部不一致或单据事业部数据异常
+- **逻辑分析**：提交需确保单据事业部与操作用户事业部一致，防止跨事业部操作。若单据事业部被变更、用户切换事业部后操作旧单据、或事业部数据不一致，校验不通过抛异常。需联系相关人员核查事业部配置。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.organization_id    AS 单据组织ID,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'NEW'
+  AND    h.organization_id &lt;&gt; #{当前用户组织ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，单据事业部与当前用户事业部不一致或单据事业部数据异常<br><strong>逻辑分析：</strong>提交需确保单据事业部与操作用户事业部一致，防止跨事业部操作。若单据事业部被变更、用户切换事业部后操作旧单据、或事业部数据不一致，校验不通过抛异常。需联系相关人员核查事业部配置。</div>
+  </div>
+</div>
+
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>{budYear}的预算剩余可用额度不足
+- **触发条件**：submit提交操作时，viewOverBudgetAmt查询预算剩余可用额度返回null或&lt;0
+- **逻辑分析**：验收报销占用年度预算总额，需确保预算充足。校验逻辑查询budYear年份同事业部的剩余可用预算(viewOverBudgetAmt)，若返回null（预算未配置）或&lt;0（已超额）即抛异常。需联系财务确认预算或调整报销金额。
+- **排查SQL**：
+  ```sql
+  SELECT b.bud_year              AS 预算年度,
+         b.division_id           AS 事业部ID,
+         b.total_amt             AS 年度总预算,
+         NVL((SELECT SUM(h.in_bx_amt + h.out_bx_amt)
+              FROM   fin_fee_check_bx_header h
+              WHERE  h.bud_year = b.bud_year
+              AND    h.hz_approve_status IN ('RUN','APPROVED')), 0) AS 已占用金额,
+         b.total_amt - NVL((SELECT SUM(h.in_bx_amt + h.out_bx_amt)
+              FROM   fin_fee_check_bx_header h
+              WHERE  h.bud_year = b.bud_year
+              AND    h.hz_approve_status IN ('RUN','APPROVED')), 0) AS 剩余可用额度
+  FROM   fin_fee_check_bx_header b
+  ORDER  BY b.bud_year DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，viewOverBudgetAmt查询预算剩余可用额度返回null或&lt;0<br><strong>逻辑分析：</strong>验收报销占用年度预算总额，需确保预算充足。校验逻辑查询budYear年份同事业部的剩余可用预算(viewOverBudgetAmt)，若返回null（预算未配置）或&lt;0（已超额）即抛异常。需联系财务确认预算或调整报销金额。</div>
+  </div>
+</div>
+
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>以下所选设计师与保证书不一致：{errorList}
+- **触发条件**：submit提交操作时，校验所选设计师与保证书(GuaranteeBook)中设计师不一致，收集不一致设计师拼接为errorList
+- **逻辑分析**：验收报销需确保所选设计师与保证书设计师一致，保证责任对应。若用户选择了保证书未涉及的设计师、保证书设计师变更后未同步、或数据不一致，校验不通过抛异常。需核查设计师与保证书关联一致性。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id     AS 验收报销单ID,
+         h.check_bx_code   AS 验收报销单号,
+         h.designer         AS 展示设计师,
+         h.soft_designer    AS 软装设计师,
+         h.hz_approve_status AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'NEW'
+  ORDER  BY h.create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，校验所选设计师与保证书(GuaranteeBook)中设计师不一致，收集不一致设计师拼接为errorList<br><strong>逻辑分析：</strong>验收报销需确保所选设计师与保证书设计师一致，保证责任对应。若用户选择了保证书未涉及的设计师、保证书设计师变更后未同步、或数据不一致，校验不通过抛异常。需核查设计师与保证书关联一致性。</div>
+  </div>
+</div>
+
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>扣除比例不可小于0
+- **触发条件**：详情页保存时，前端校验扣除比例字段&lt;0
+- **逻辑分析**：扣除比例表示扣减百分比，不可为负数。若用户输入负值或计算异常导致扣除比例为负，前端notification.error提示并阻断保存。需修改扣除比例至≥0。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.deduct_proportion  AS 扣除比例
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.deduct_proportion &lt; 0;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验扣除比例字段&lt;0<br><strong>逻辑分析：</strong>扣除比例表示扣减百分比，不可为负数。若用户输入负值或计算异常导致扣除比例为负，前端notification.error提示并阻断保存。需修改扣除比例至≥0。</div>
+  </div>
+</div>
+
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>扣除比例不可大于验收比例
+- **触发条件**：详情页保存时，前端校验扣除比例&gt;验收比例
+- **逻辑分析**：扣除比例应≤验收比例，防止扣减金额超过验收金额。若用户输入的扣除比例超过验收比例，前端notification.error提示并阻断保存。需修改扣除比例至≤验收比例。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.deduct_proportion  AS 扣除比例
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.deduct_proportion &gt; h.check_over_day;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验扣除比例&gt;验收比例<br><strong>逻辑分析：</strong>扣除比例应≤验收比例，防止扣减金额超过验收金额。若用户输入的扣除比例超过验收比例，前端notification.error提示并阻断保存。需修改扣除比例至≤验收比例。</div>
+  </div>
+</div>
+
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>发票税点必须大于0小于等于13
+- **触发条件**：详情页保存时，前端校验invoiceTaxRate(发票税点)&lt;=0或&gt;13
+- **逻辑分析**：发票税点合法范围为(0, 13]，对应常见税率1%/3%/6%/9%/13%等。若用户输入0、负数或&gt;13的非法值，前端notification.error提示并阻断保存。需修改发票税点至合法范围。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.invoice_tax_rate   AS 发票税点
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.invoice_tax_rate &lt;= 0
+  OR     h.invoice_tax_rate &gt; 13;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验invoiceTaxRate(发票税点)&lt;=0或&gt;13<br><strong>逻辑分析：</strong>发票税点合法范围为(0, 13]，对应常见税率1%/3%/6%/9%/13%等。若用户输入0、负数或&gt;13的非法值，前端notification.error提示并阻断保存。需修改发票税点至合法范围。</div>
+  </div>
+</div>
+
+<div id="err-detail-19" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请在附件上传OA签呈减免申请附件
+- **触发条件**：submit提交操作时，前端校验OA签呈减免申请附件未上传
+- **逻辑分析**：涉及减免的验收报销需上传OA签呈减免申请附件作为凭证。若用户未上传附件即提交、或附件上传失败，前端notification.error提示并阻断提交。需先上传OA签呈减免申请附件再提交。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'NEW'
+  AND    NOT EXISTS (SELECT 1 FROM obj_attach_rel a
+                     WHERE a.obj_id = h.check_bx_id
+                     AND a.attach_conf_id = #{OA签呈减免附件配置ID});
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，前端校验OA签呈减免申请附件未上传<br><strong>逻辑分析：</strong>涉及减免的验收报销需上传OA签呈减免申请附件作为凭证。若用户未上传附件即提交、或附件上传失败，前端notification.error提示并阻断提交。需先上传OA签呈减免申请附件再提交。</div>
+  </div>
+</div>
+
+<div id="err-detail-20" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>财务复核结果:"补贴标准"大于0,"可报销金额-含税(元)"小于等于0，不能提交
+- **触发条件**：submit提交操作时，前端校验财务复核结果中补贴标准&gt;0且可报销金额含税&lt;=0
+- **逻辑分析**：补贴标准&gt;0时应有可报销金额，若可报销金额含税&lt;=0（如扣减后金额为0或负数），业务上无报销意义，校验不通过抛异常。需核查财务复核结果和扣减计算。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.soft_purchase_standard AS 补贴标准,
+         h.in_bx_amt         AS 额度内报销金额,
+         h.out_bx_amt        AS 额度外报销金额,
+         h.hz_approve_status AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'NEW'
+  AND    h.soft_purchase_standard &gt; 0
+  AND    NVL(h.in_bx_amt, 0) + NVL(h.out_bx_amt, 0) &lt;= 0;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，前端校验财务复核结果中补贴标准&gt;0且可报销金额含税&lt;=0<br><strong>逻辑分析：</strong>补贴标准&gt;0时应有可报销金额，若可报销金额含税&lt;=0（如扣减后金额为0或负数），业务上无报销意义，校验不通过抛异常。需核查财务复核结果和扣减计算。</div>
+  </div>
+</div>
+
+<div id="err-detail-21" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请核算验收面积
+- **触发条件**：submit提交操作时，前端校验验收面积未核算（如验收面积为空或为0）
+- **逻辑分析**：提交需确保验收面积已核算，验收面积是计算报销金额的基础。若用户未点击核算按钮、核算失败、或验收面积为空/0，前端notification.error提示并阻断提交。需先核算验收面积再提交。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.this_terminal_area AS 实际装修面积,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'NEW'
+  AND    (h.this_terminal_area IS NULL OR h.this_terminal_area = 0);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>submit提交操作时，前端校验验收面积未核算（如验收面积为空或为0）<br><strong>逻辑分析：</strong>提交需确保验收面积已核算，验收面积是计算报销金额的基础。若用户未点击核算按钮、核算失败、或验收面积为空/0，前端notification.error提示并阻断提交。需先核算验收面积再提交。</div>
+  </div>
+</div>
+
+<div id="err-detail-22" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>事业部名称获取失败，请检查
+- **触发条件**：详情页加载或保存时，前端查询事业部名称失败
+- **逻辑分析**：页面需显示事业部名称用于业务展示。若事业部基础设置查询接口异常、事业部被删除、或网络问题导致查询失败，前端notification.error提示。需检查事业部基础设置配置和网络连接。
+- **排查SQL**：
+  ```sql
+  SELECT d.division_id      AS 事业部ID,
+         d.division_code    AS 事业部编码,
+         d.division_name    AS 事业部名称
+  FROM   division_base_set d
+  WHERE  d.division_id = #{当前事业部ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页加载或保存时，前端查询事业部名称失败<br><strong>逻辑分析：</strong>页面需显示事业部名称用于业务展示。若事业部基础设置查询接口异常、事业部被删除、或网络问题导致查询失败，前端notification.error提示。需检查事业部基础设置配置和网络连接。</div>
+  </div>
+</div>
+
+<div id="err-detail-23" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次兑现比例不能小于0%或者大于100%
+- **触发条件**：详情页保存时，前端校验本次兑现比例&lt;0或&gt;100%
+- **逻辑分析**：兑现比例合法范围为[0%, 100%]，表示兑现进度。若用户输入负值或&gt;100%的非法值，前端notification.error提示并阻断保存。需修改兑现比例至合法范围。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'NEW';
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验本次兑现比例&lt;0或&gt;100%<br><strong>逻辑分析：</strong>兑现比例合法范围为[0%, 100%]，表示兑现进度。若用户输入负值或&gt;100%的非法值，前端notification.error提示并阻断保存。需修改兑现比例至合法范围。</div>
+  </div>
+</div>
+
+<div id="err-detail-24" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>验收面积不可大于申请面积
+- **触发条件**：详情页保存时，前端校验验收面积&gt;申请面积
+- **逻辑分析**：验收面积应≤申请面积，防止验收超过申请范围。若用户输入的验收面积超过装修申请单的申请面积，前端notification.error提示并阻断保存。需修改验收面积至≤申请面积。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id          AS 验收报销单ID,
+         h.check_bx_code        AS 验收报销单号,
+         h.this_terminal_area   AS 验收面积,
+         f.this_terminal_area   AS 申请面积
+  FROM   fin_fee_check_bx_header h
+  INNER JOIN fin_fee_apply_finished_header f
+  ON     h.terminal_apply_id = f.terminal_apply_id
+  WHERE  h.this_terminal_area &gt; f.this_terminal_area;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验验收面积&gt;申请面积<br><strong>逻辑分析：</strong>验收面积应≤申请面积，防止验收超过申请范围。若用户输入的验收面积超过装修申请单的申请面积，前端notification.error提示并阻断保存。需修改验收面积至≤申请面积。</div>
+  </div>
+</div>
+
+<div id="err-detail-25" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>验收标准不能大于申请标准
+- **触发条件**：详情页保存时，前端校验验收标准&gt;申请标准
+- **逻辑分析**：验收标准应≤申请标准，防止验收标准超过申请范围。若用户输入的验收标准超过装修申请单的申请标准，前端notification.error提示并阻断保存。需修改验收标准至≤申请标准。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id          AS 验收报销单ID,
+         h.check_bx_code        AS 验收报销单号,
+         f.in_apply_standard    AS 申请标准,
+         h.hz_approve_status    AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  INNER JOIN fin_fee_apply_finished_header f
+  ON     h.terminal_apply_id = f.terminal_apply_id
+  WHERE  h.hz_approve_status = 'NEW';
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验验收标准&gt;申请标准<br><strong>逻辑分析：</strong>验收标准应≤申请标准，防止验收标准超过申请范围。若用户输入的验收标准超过装修申请单的申请标准，前端notification.error提示并阻断保存。需修改验收标准至≤申请标准。</div>
+  </div>
+</div>
+
+<div id="err-detail-26" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>复核标准不能大于验收标准
+- **触发条件**：详情页保存时，前端校验复核标准&gt;验收标准
+- **逻辑分析**：财务复核标准应≤验收标准，防止复核超过验收范围。若财务复核节点输入的复核标准超过验收标准，前端notification.error提示并阻断保存。需修改复核标准至≤验收标准。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'RUN';
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验复核标准&gt;验收标准<br><strong>逻辑分析：</strong>财务复核标准应≤验收标准，防止复核超过验收范围。若财务复核节点输入的复核标准超过验收标准，前端notification.error提示并阻断保存。需修改复核标准至≤验收标准。</div>
+  </div>
+</div>
+
+<div id="err-detail-27" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>复核面积不能大于验收面积
+- **触发条件**：详情页保存时，前端校验复核面积&gt;验收面积
+- **逻辑分析**：财务复核面积应≤验收面积，防止复核超过验收范围。若财务复核节点输入的复核面积超过验收面积，前端notification.error提示并阻断保存。需修改复核面积至≤验收面积。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.this_terminal_area AS 验收面积,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status = 'RUN';
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验复核面积&gt;验收面积<br><strong>逻辑分析：</strong>财务复核面积应≤验收面积，防止复核超过验收范围。若财务复核节点输入的复核面积超过验收面积，前端notification.error提示并阻断保存。需修改复核面积至≤验收面积。</div>
+  </div>
+</div>
+
+<div id="err-detail-28" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>特殊扣点不能小于0大于100%
+- **触发条件**：详情页保存时，前端校验特殊扣点&lt;0或&gt;100%
+- **逻辑分析**：特殊扣点合法范围为[0%, 100%]，表示特殊扣减比例。若用户输入负值或&gt;100%的非法值，前端notification.error提示并阻断保存。需修改特殊扣点至合法范围。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.hz_approve_status IN ('NEW','RUN');
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验特殊扣点&lt;0或&gt;100%<br><strong>逻辑分析：</strong>特殊扣点合法范围为[0%, 100%]，表示特殊扣减比例。若用户输入负值或&gt;100%的非法值，前端notification.error提示并阻断保存。需修改特殊扣点至合法范围。</div>
+  </div>
+</div>
+
+<div id="err-detail-29" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先填写装修金额信息栏中的发票税点
+- **触发条件**：详情页保存发票信息时，前端校验装修金额信息栏中的发票税点未填写
+- **逻辑分析**：发票信息需关联装修金额信息栏的发票税点。若用户在发票信息栏操作但装修金额信息栏未填写发票税点，前端notification.error提示并阻断操作。需先在装修金额信息栏填写发票税点。
+- **排查SQL**：
+  ```sql
+  SELECT h.check_bx_id        AS 验收报销单ID,
+         h.check_bx_code      AS 验收报销单号,
+         h.invoice_tax_rate   AS 发票税点,
+         h.hz_approve_status  AS 审批状态
+  FROM   fin_fee_check_bx_header h
+  WHERE  h.invoice_tax_rate IS NULL
+  AND    h.hz_approve_status IN ('NEW','RUN');
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存发票信息时，前端校验装修金额信息栏中的发票税点未填写<br><strong>逻辑分析：</strong>发票信息需关联装修金额信息栏的发票税点。若用户在发票信息栏操作但装修金额信息栏未填写发票税点，前端notification.error提示并阻断操作。需先在装修金额信息栏填写发票税点。</div>
+  </div>
+</div>
 </div>
 
 <div id="changelog" style="display:none;">

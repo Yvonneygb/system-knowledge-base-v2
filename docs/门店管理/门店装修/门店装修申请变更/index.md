@@ -574,6 +574,351 @@ NEW ──删除──→ (删除) ──→ 原申请单isModify=0
 
 </div>
 </div>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>未获取到门店申请变更信息</td><td>doSelect/doDelete/operate/onWfComplete/onWfBreak/wfProcSubmit</td><td>变更单记录不存在</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>未获取到门店申请信息</td><td>doInsert/onWfComplete</td><td>原装修申请单不存在</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>门店装修变更信息不存在</td><td>doUpdate</td><td>变更单记录不存在</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>不能删除非制单状态的单据</td><td>doDelete</td><td>hzApproveStatus≠NEW</td><td>中</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>装修完成时间为空,请联系事业部负责人进行处理</td><td>onWfComplete</td><td>decorationFinishedTime为null</td><td>中</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>交付设计时间为空,请联系事业部负责人进行处理</td><td>onWfComplete</td><td>replyDesignDate为null</td><td>中</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>门店装修申请与进度更新单据预算年度大于当前年度，无法发起验收</td><td>wfProcSubmit</td><td>budYear&gt;当前年份</td><td>中</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>软装补贴标准不允许为空</td><td>保存/提交</td><td>softPurchaseStandard为空且taskName=软装设计师提交方案</td><td>中</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>灯具补贴标准不允许为空</td><td>保存/提交</td><td>lanternStandard为空且taskName=软装设计师提交方案</td><td>中</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>店面产权归属不允许为空</td><td>保存/提交</td><td>propertyType为空</td><td>中</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择门店编码</td><td>计算扣除金额</td><td>门店编码terminalCode为空</td><td>中</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>本次店面装修面积不能大于门店面积</td><td>面积校验</td><td>thistimeTerminalArea&gt;terminalArea</td><td>中</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>店面实际装修面积不能大于本次店面装修面积</td><td>面积校验</td><td>thisTerminalArea&gt;thistimeTerminalArea</td><td>中</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>数据格式错误</td><td>打印/导出</td><td>前端解析响应数据格式异常</td><td>中</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>参数格式错误</td><td>打印/导出</td><td>前端组装请求参数格式异常</td><td>中</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未获取到门店申请变更信息
+- **触发条件**：doSelect/doDelete/operate/onWfComplete/onWfBreak/wfProcSubmit等操作，selectByPrimaryKey按变更单ID查询FIN_FEE_APPLY_CHANGE_HEADER返回null
+- **逻辑分析**：变更单是各操作的主数据源，需先校验存在。若变更单在操作期间被其他用户删除、变更单ID传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需核查变更单数据是否仍存在。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.terminal_apply_no  AS 原装修申请单号,
+         c.hz_approve_status  AS 审批状态,
+         c.update_time        AS 最后更新时间
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.id = #{传入的变更单ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doSelect/doDelete/operate/onWfComplete/onWfBreak/wfProcSubmit等操作，selectByPrimaryKey按变更单ID查询FIN_FEE_APPLY_CHANGE_HEADER返回null<br><strong>逻辑分析：</strong>变更单是各操作的主数据源，需先校验存在。若变更单在操作期间被其他用户删除、变更单ID传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需核查变更单数据是否仍存在。</div>
+  </div>
+</div>
+
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未获取到门店申请信息
+- **触发条件**：doInsert新增/onWfComplete审批通过回调时，finFeeApplyFinishedHeaderRepository.selectByPrimaryKey按terminalApplyId查询原装修申请单返回null
+- **逻辑分析**：变更需基于已审批的原装修申请单，新增时带入装修信息，审批通过时回写变更后数据。若原申请单在操作期间被删除、terminalApplyId传值错误、或原申请单未审批通过即被选入变更，查询返回空抛异常。需核查原装修申请单数据是否存在且已APPROVED。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.terminal_apply_id  AS 原装修申请ID,
+         c.terminal_apply_no  AS 原装修申请单号,
+         f.hz_approve_status  AS 原单审批状态
+  FROM   fin_fee_apply_change_header c
+  LEFT   JOIN fin_fee_apply_finished_header f ON f.terminal_apply_id = c.terminal_apply_id
+  WHERE  c.hz_approve_status IN ('NEW','RUN')
+  AND    f.terminal_apply_id IS NULL
+  ORDER  BY c.update_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doInsert新增/onWfComplete审批通过回调时，finFeeApplyFinishedHeaderRepository.selectByPrimaryKey按terminalApplyId查询原装修申请单返回null<br><strong>逻辑分析：</strong>变更需基于已审批的原装修申请单，新增时带入装修信息，审批通过时回写变更后数据。若原申请单在操作期间被删除、terminalApplyId传值错误、或原申请单未审批通过即被选入变更，查询返回空抛异常。需核查原装修申请单数据是否存在且已APPROVED。</div>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门店装修变更信息不存在
+- **触发条件**：doUpdate更新操作，selectByPrimaryKey按变更单ID查询FIN_FEE_APPLY_CHANGE_HEADER返回null
+- **逻辑分析**：更新操作需先校验变更单存在。若变更单在更新期间被其他用户删除、变更单ID传值错误、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.hz_approve_status  AS 审批状态,
+         c.update_time        AS 最后更新时间
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.id = #{传入的变更单ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdate更新操作，selectByPrimaryKey按变更单ID查询FIN_FEE_APPLY_CHANGE_HEADER返回null<br><strong>逻辑分析：</strong>更新操作需先校验变更单存在。若变更单在更新期间被其他用户删除、变更单ID传值错误、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+  </div>
+</div>
+
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>不能删除非制单状态的单据
+- **触发条件**：doDelete删除操作，WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验不通过（hzApproveStatus≠NEW）
+- **逻辑分析**：仅NEW(制单)状态的变更单可删除，删除时恢复原申请单isModify=0。若变更单已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)等非NEW状态，校验不通过抛异常。需先通过审批流程或作废处理变更单。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.hz_approve_status  AS 审批状态
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.id = #{传入的变更单ID}
+  AND    c.hz_approve_status &lt;&gt; 'NEW';
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doDelete删除操作，WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验不通过（hzApproveStatus≠NEW）<br><strong>逻辑分析：</strong>仅NEW(制单)状态的变更单可删除，删除时恢复原申请单isModify=0。若变更单已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)等非NEW状态，校验不通过抛异常。需先通过审批流程或作废处理变更单。</div>
+  </div>
+</div>
+
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>装修完成时间为空,请联系事业部负责人进行处理
+- **触发条件**：onWfComplete审批通过回调时，getDecorationFinishedTime()==null（原装修申请单的装修完成时间为空）
+- **逻辑分析**：变更审批通过需重新计算超期天数和扣减比例，公式：超期天数=(装修完成时间-交付设计时间)-装修周期。若原装修申请单未维护decorationFinishedTime（装修未完成或字段未回写），无法计算超期天数，校验不通过抛异常。需联系事业部负责人补充装修完成时间。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                       AS 变更单ID,
+         c.terminal_change_no       AS 变更单号,
+         c.terminal_apply_id        AS 原装修申请ID,
+         f.decoration_finished_time AS 装修完成时间,
+         f.reply_design_date        AS 交付设计时间,
+         f.decoration_days          AS 装修周期
+  FROM   fin_fee_apply_change_header c
+  JOIN   fin_fee_apply_finished_header f ON f.terminal_apply_id = c.terminal_apply_id
+  WHERE  c.hz_approve_status = 'RUN'
+  AND    f.decoration_finished_time IS NULL
+  ORDER  BY c.update_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfComplete审批通过回调时，getDecorationFinishedTime()==null（原装修申请单的装修完成时间为空）<br><strong>逻辑分析：</strong>变更审批通过需重新计算超期天数和扣减比例，公式：超期天数=(装修完成时间-交付设计时间)-装修周期。若原装修申请单未维护decorationFinishedTime（装修未完成或字段未回写），无法计算超期天数，校验不通过抛异常。需联系事业部负责人补充装修完成时间。</div>
+  </div>
+</div>
+
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>交付设计时间为空,请联系事业部负责人进行处理
+- **触发条件**：onWfComplete审批通过回调时，getReplyDesignDate()==null（原装修申请单的交付设计时间为空）
+- **逻辑分析**：与报错5同理，超期天数计算依赖交付设计时间。若原装修申请单未维护replyDesignDate（设计师未交付方案或字段未回写），无法计算超期天数，校验不通过抛异常。需联系事业部负责人补充交付设计时间。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                       AS 变更单ID,
+         c.terminal_change_no       AS 变更单号,
+         c.terminal_apply_id        AS 原装修申请ID,
+         f.decoration_finished_time AS 装修完成时间,
+         f.reply_design_date        AS 交付设计时间,
+         f.decoration_days          AS 装修周期
+  FROM   fin_fee_apply_change_header c
+  JOIN   fin_fee_apply_finished_header f ON f.terminal_apply_id = c.terminal_apply_id
+  WHERE  c.hz_approve_status = 'RUN'
+  AND    f.reply_design_date IS NULL
+  ORDER  BY c.update_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfComplete审批通过回调时，getReplyDesignDate()==null（原装修申请单的交付设计时间为空）<br><strong>逻辑分析：</strong>与报错5同理，超期天数计算依赖交付设计时间。若原装修申请单未维护replyDesignDate（设计师未交付方案或字段未回写），无法计算超期天数，校验不通过抛异常。需联系事业部负责人补充交付设计时间。</div>
+  </div>
+</div>
+
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>门店装修申请与进度更新单据预算年度大于当前年度，无法发起验收
+- **触发条件**：wfProcSubmit提交审批操作，budYear-LocalDate.now().getYear()&gt;0（预算年度大于当前年份）
+- **逻辑分析**：变更审批通过后会触发验收流程，验收要求预算年度≤当前年份（预算需在已生效年度内）。若原装修申请单的budYear大于当前年份（如原单预算年度2027但当前2026年），无法发起验收，校验不通过抛异常。需核查原装修申请单预算年度配置。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.terminal_apply_id  AS 原装修申请ID,
+         c.bud_year           AS 预算年度,
+         TO_NUMBER(TO_CHAR(SYSDATE,'YYYY')) AS 当前年份
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.hz_approve_status = 'NEW'
+  AND    c.bud_year &gt; TO_NUMBER(TO_CHAR(SYSDATE,'YYYY'))
+  ORDER  BY c.creation_date DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>wfProcSubmit提交审批操作，budYear-LocalDate.now().getYear()&gt;0（预算年度大于当前年份）<br><strong>逻辑分析：</strong>变更审批通过后会触发验收流程，验收要求预算年度≤当前年份（预算需在已生效年度内）。若原装修申请单的budYear大于当前年份（如原单预算年度2027但当前2026年），无法发起验收，校验不通过抛异常。需核查原装修申请单预算年度配置。</div>
+  </div>
+</div>
+
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>软装补贴标准不允许为空
+- **触发条件**：详情页保存或提交时，前端校验softPurchaseStandard(软装补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"
+- **逻辑分析**：软装设计师提交方案节点需维护软装补贴标准，用于计算软装补贴金额。若该节点未选择softPurchaseStandard（值集AE.PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择软装补贴标准。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                       AS 变更单ID,
+         c.terminal_change_no       AS 变更单号,
+         c.soft_purchase_standard   AS 软装补贴标准,
+         c.hz_approve_status        AS 审批状态
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.soft_purchase_standard IS NULL
+  AND    c.hz_approve_status IN ('NEW','RUN');
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验softPurchaseStandard(软装补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"<br><strong>逻辑分析：</strong>软装设计师提交方案节点需维护软装补贴标准，用于计算软装补贴金额。若该节点未选择softPurchaseStandard（值集AE.PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择软装补贴标准。</div>
+  </div>
+</div>
+
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>灯具补贴标准不允许为空
+- **触发条件**：详情页保存或提交时，前端校验lanternStandard(灯具补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"
+- **逻辑分析**：软装设计师提交方案节点需维护灯具补贴标准，用于计算灯具补贴金额。若该节点未选择lanternStandard（值集AE.LANTERN_PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择灯具补贴标准。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.lantern_standard   AS 灯具补贴标准,
+         c.hz_approve_status  AS 审批状态
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.lantern_standard IS NULL
+  AND    c.hz_approve_status IN ('NEW','RUN');
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验lanternStandard(灯具补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"<br><strong>逻辑分析：</strong>软装设计师提交方案节点需维护灯具补贴标准，用于计算灯具补贴金额。若该节点未选择lanternStandard（值集AE.LANTERN_PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择灯具补贴标准。</div>
+  </div>
+</div>
+
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>店面产权归属不允许为空
+- **触发条件**：详情页保存或提交时，前端校验propertyType(店面产权归属)为空
+- **逻辑分析**：产权归属影响装修补贴的政策适用和财务处理，需必填。若原装修申请单未维护propertyType、或变更时未从原单带入，前端notification.error提示并阻断保存/提交。需在原装修申请单中维护产权归属后重新发起变更。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.property_type      AS 产权归属,
+         c.hz_approve_status  AS 审批状态
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.property_type IS NULL
+  AND    c.hz_approve_status IN ('NEW','RUN');
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验propertyType(店面产权归属)为空<br><strong>逻辑分析：</strong>产权归属影响装修补贴的政策适用和财务处理，需必填。若原装修申请单未维护propertyType、或变更时未从原单带入，前端notification.error提示并阻断保存/提交。需在原装修申请单中维护产权归属后重新发起变更。</div>
+  </div>
+</div>
+
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先选择门店编码
+- **触发条件**：详情页计算扣除金额或保存时，前端校验headDS中terminalCode(门店编码)为空
+- **逻辑分析**：变更操作依赖门店关联的装修信息，需先选择有效的装修申请单联动带出门店编码。若用户未选择装修申请单即操作、或LOV选择失败未回填terminalCode，前端message.info提示并阻断操作。需先选择装修申请单再操作。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.terminal_apply_id  AS 装修申请ID,
+         c.terminal_code      AS 门店编码
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.terminal_code IS NULL
+  OR     c.terminal_code = '';
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页计算扣除金额或保存时，前端校验headDS中terminalCode(门店编码)为空<br><strong>逻辑分析：</strong>变更操作依赖门店关联的装修信息，需先选择有效的装修申请单联动带出门店编码。若用户未选择装修申请单即操作、或LOV选择失败未回填terminalCode，前端message.info提示并阻断操作。需先选择装修申请单再操作。</div>
+  </div>
+</div>
+
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次店面装修面积不能大于门店面积
+- **触发条件**：详情页编辑面积字段时，前端校验thistimeTerminalArea(本次店面装修面积)&gt;terminalArea(门店面积)
+- **逻辑分析**：本次店面装修面积不应超过门店总面积，防止面积超限导致补贴金额计算异常。变更后面积用于重新计算政策补贴金额和申请补贴金额，若本次装修面积&gt;门店面积，金额计算将超出实际范围。前端message.info提示并回填为门店面积，需修改本次装修面积至≤门店面积。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                     AS 变更单ID,
+         c.terminal_change_no     AS 变更单号,
+         c.terminal_area          AS 门店面积,
+         c.thistime_terminal_area AS 本次店面装修面积
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.thistime_terminal_area &gt; c.terminal_area;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thistimeTerminalArea(本次店面装修面积)&gt;terminalArea(门店面积)<br><strong>逻辑分析：</strong>本次店面装修面积不应超过门店总面积，防止面积超限导致补贴金额计算异常。变更后面积用于重新计算政策补贴金额和申请补贴金额，若本次装修面积&gt;门店面积，金额计算将超出实际范围。前端message.info提示并回填为门店面积，需修改本次装修面积至≤门店面积。</div>
+  </div>
+</div>
+
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>店面实际装修面积不能大于本次店面装修面积
+- **触发条件**：详情页编辑面积字段时，前端校验thisTerminalArea(店面实际装修面积)&gt;thistimeTerminalArea(本次店面装修面积)
+- **逻辑分析**：店面实际装修面积应≤本次店面装修面积，防止面积数据逻辑矛盾。本次店面装修面积是本次装修的面积上限，实际装修面积是其中实际完成的部分。前端message.info提示并阻断保存，需修改店面实际装修面积至≤本次店面装修面积。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                     AS 变更单ID,
+         c.terminal_change_no     AS 变更单号,
+         c.this_terminal_area     AS 店面实际装修面积,
+         c.thistime_terminal_area AS 本次店面装修面积
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.this_terminal_area &gt; c.thistime_terminal_area;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thisTerminalArea(店面实际装修面积)&gt;thistimeTerminalArea(本次店面装修面积)<br><strong>逻辑分析：</strong>店面实际装修面积应≤本次店面装修面积，防止面积数据逻辑矛盾。本次店面装修面积是本次装修的面积上限，实际装修面积是其中实际完成的部分。前端message.info提示并阻断保存，需修改店面实际装修面积至≤本次店面装修面积。</div>
+  </div>
+</div>
+
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>数据格式错误
+- **触发条件**：详情页打印或导出操作时，前端解析后端响应数据格式异常（如响应非预期JSON结构）
+- **逻辑分析**：打印和导出需解析后端返回的数据组装打印模板或导出文件。若后端响应数据格式异常（如接口返回错误页面、数据字段缺失、或网络中间件篡改响应），前端JSON.parse或字段读取失败，notification.error提示"数据格式错误"。需检查后端接口响应是否正常。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.hz_approve_status  AS 审批状态,
+         c.update_time        AS 最后更新时间
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.id = #{传入的变更单ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页打印或导出操作时，前端解析后端响应数据格式异常（如响应非预期JSON结构）<br><strong>逻辑分析：</strong>打印和导出需解析后端返回的数据组装打印模板或导出文件。若后端响应数据格式异常（如接口返回错误页面、数据字段缺失、或网络中间件篡改响应），前端JSON.parse或字段读取失败，notification.error提示"数据格式错误"。需检查后端接口响应是否正常。</div>
+  </div>
+</div>
+
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>参数格式错误
+- **触发条件**：详情页打印或导出操作时，前端组装请求参数格式异常（如日期格式错误、数值字段为NaN）
+- **逻辑分析**：打印和导出需将页面数据组装为请求参数发送后端。若页面字段格式异常（如日期字段未格式化为YYYY-MM-DD、数值字段为NaN或null、或必填字段缺失），前端参数组装失败，notification.error提示"参数格式错误"。需检查页面字段填写是否完整正确。
+- **排查SQL**：
+  ```sql
+  SELECT c.id                 AS 变更单ID,
+         c.terminal_change_no AS 变更单号,
+         c.hz_approve_status  AS 审批状态
+  FROM   fin_fee_apply_change_header c
+  WHERE  c.id = #{传入的变更单ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页打印或导出操作时，前端组装请求参数格式异常（如日期格式错误、数值字段为NaN）<br><strong>逻辑分析：</strong>打印和导出需将页面数据组装为请求参数发送后端。若页面字段格式异常（如日期字段未格式化为YYYY-MM-DD、数值字段为NaN或null、或必填字段缺失），前端参数组装失败，notification.error提示"参数格式错误"。需检查页面字段填写是否完整正确。</div>
+  </div>
+</div>
 </div>
 
 <div id="changelog" style="display:none;">

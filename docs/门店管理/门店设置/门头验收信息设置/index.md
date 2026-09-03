@@ -238,6 +238,40 @@
 
 </div>
 </div>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>验收信息设置不存在</td><td>getAcceptanceInfo</td><td>未配置验收信息</td><td>中</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>验收信息设置不存在
+- **触发条件**：门店验收与报销单详情页加载时调用getAcceptanceInfo接口，查询ACCEPTANCE_INFO_SET_LINE返回空列表
+- **逻辑分析**：门店验收报销单详情页Tab页签需展示验收信息设置项，用于控制验收时需检查的验收项目、拍摄要求及是否必填。若管理员未在本设置页面配置任何验收信息行（ACCEPTANCE_INFO_SET_LINE无记录），或按ORGANIZATION_ID过滤后无匹配记录，查询返回空，验收报销单详情页的验收信息Tab无项目可展示，验收人员无法对照拍摄要求和验收项目执行验收，影响验收完整性。该异常为非阻断性提示，需管理员补全验收信息配置。
+- **排查SQL**：
+  ```sql
+  SELECT acceptance_item      AS 验收项目,
+         acceptance_note      AS 验收说明,
+         shoot_require        AS 拍摄要求,
+         is_ys_provide        AS 是否验收提供,
+         ys_provide_count     AS 验收提供数量,
+         is_zx_provide        AS 是否装修提供,
+         zx_provide_count     AS 装修提供数量,
+         organization_id      AS 组织ID
+  FROM   acceptance_info_set_line
+  WHERE  organization_id = #{当前组织ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>门店验收与报销单详情页加载时调用getAcceptanceInfo接口，查询ACCEPTANCE_INFO_SET_LINE返回空列表<br><strong>逻辑分析：</strong>门店验收报销单详情页Tab页签需展示验收信息设置项，用于控制验收时需检查的验收项目、拍摄要求及是否必填。若管理员未在本设置页面配置任何验收信息行（ACCEPTANCE_INFO_SET_LINE无记录），或按ORGANIZATION_ID过滤后无匹配记录，查询返回空，验收报销单详情页的验收信息Tab无项目可展示，验收人员无法对照拍摄要求和验收项目执行验收，影响验收完整性。该异常为非阻断性提示，需管理员补全验收信息配置。</div>
+  </div>
+</div>
 </div>
 
 <div id="changelog" style="display:none;">

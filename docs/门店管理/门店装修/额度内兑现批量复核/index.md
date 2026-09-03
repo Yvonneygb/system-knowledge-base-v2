@@ -338,6 +338,162 @@ NEW ──删除──→ (删除)
 
 </div>
 </div>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>不能删除非制单状态的单据</td><td>doDelete</td><td>hzApproveStatus≠NEW</td><td>中</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>关联兑现单状态异常</td><td>提交时</td><td>关联兑现单中存在非NEW状态</td><td>中</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>批量复核单不存在</td><td>doSelect/doDelete</td><td>cashId对应记录不存在</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>单据信息不存在</td><td>doSelect/doDelete/onWfComplete/onUserSubmit</td><td>cashId对应FIN_FEE_IN_CASH_HEAD记录不存在</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>验收报销单号和门头兑现单号为空</td><td>doSendShare</td><td>关联兑现单checkBxCode与dhCashoutNo均为空</td><td>中</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>验收单号：{bxCodes}，总账日期不能为空，请检查</td><td>onUserSubmit</td><td>关联兑现单存在ledgerDate为空的记录</td><td>中</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>不能删除非制单状态的单据
+- **触发条件**：执行doDelete(删除)接口时，校验批量复核单HZ_APPROVE_STATUS不等于WorkflowInstanceStatus.NEW.getCode()（即非"新建"状态）
+- **逻辑分析**：删除操作仅允许在NEW(新建)状态执行，避免删除已进入审批流程(RUN)或已审批生效(APPROVED/REJECTED)的批量复核单，防止关联的兑现单状态不一致及资金池/MBO推送数据错乱。后端通过WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验，若状态非NEW则抛出阻断性异常，删除被拒绝。
+- **排查SQL**：
+  ```sql
+  SELECT cash_id            AS 批量复核单ID,
+         cash_code          AS 批量复核单号,
+         hz_approve_status  AS 审批状态,
+         create_time        AS 创建时间
+  FROM   fin_fee_in_cash_head
+  WHERE  hz_approve_status &lt;&gt; 'NEW'
+  ORDER  BY create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doDelete(删除)接口时，校验批量复核单HZ_APPROVE_STATUS不等于WorkflowInstanceStatus.NEW.getCode()（即非"新建"状态）<br><strong>逻辑分析：</strong>删除操作仅允许在NEW(新建)状态执行，避免删除已进入审批流程(RUN)或已审批生效(APPROVED/REJECTED)的批量复核单，防止关联的兑现单状态不一致及资金池/MBO推送数据错乱。后端通过WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验，若状态非NEW则抛出阻断性异常，删除被拒绝。</div>
+  </div>
+</div>
+
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>关联兑现单状态异常
+- **触发条件**：执行submit(提交)接口时，按batchCashId批量查询FIN_FEE_TERMINAL_CASHOUT，发现存在HZ_APPROVE_STATUS不等于NEW的关联兑现单
+- **逻辑分析**：批量复核单提交审批前，需确保所有关联的额度内兑现单均为NEW(新建)状态，因为审批通过后会批量回写兑现单为APPROVED并同步资金池/MBO。若某张兑现单已被其他批量复核单关联并提交(RUN)、已审批(APPROVED)或已驳回(REJECTED)，再次纳入批量提交会造成同一兑现单被重复审批、重复推送资金池，导致资金双倍兑现。后端批量校验所有关联兑现单状态，存在非NEW即抛异常。
+- **排查SQL**：
+  ```sql
+  SELECT t.terminal_cashout_id   AS 兑现单ID,
+         t.terminal_cashout_code AS 兑现单号,
+         t.cash_id               AS 批量复核单ID,
+         t.hz_approve_status     AS 兑现单审批状态,
+         h.cash_code             AS 批量复核单号,
+         h.hz_approve_status     AS 批量复核单状态
+  FROM   fin_fee_terminal_cashout t
+  INNER JOIN fin_fee_in_cash_head h
+  ON     t.cash_id = h.cash_id
+  WHERE  h.hz_approve_status = 'NEW'
+  AND    t.hz_approve_status &lt;&gt; 'NEW'
+  ORDER  BY h.create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行submit(提交)接口时，按batchCashId批量查询FIN_FEE_TERMINAL_CASHOUT，发现存在HZ_APPROVE_STATUS不等于NEW的关联兑现单<br><strong>逻辑分析：</strong>批量复核单提交审批前，需确保所有关联的额度内兑现单均为NEW(新建)状态，因为审批通过后会批量回写兑现单为APPROVED并同步资金池/MBO。若某张兑现单已被其他批量复核单关联并提交(RUN)、已审批(APPROVED)或已驳回(REJECTED)，再次纳入批量提交会造成同一兑现单被重复审批、重复推送资金池，导致资金双倍兑现。后端批量校验所有关联兑现单状态，存在非NEW即抛异常。</div>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>批量复核单不存在
+- **触发条件**：执行doSelect(详情查询)/doDelete(删除)接口时，按cashId调用selectByPrimaryKey查询FIN_FEE_IN_CASH_HEAD返回null
+- **逻辑分析**：详情查询和删除均需先按主键CASH_ID定位批量复核单。若单据在操作前被其他用户物理删除，或前端传入的cashId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"批量复核单不存在"阻断性异常，后续读取HZ_APPROVE_STATUS、关联兑现单等逻辑均无法进行。
+- **排查SQL**：
+  ```sql
+  SELECT cash_id            AS 批量复核单ID,
+         cash_code          AS 批量复核单号,
+         hz_approve_status  AS 审批状态,
+         create_time        AS 创建时间
+  FROM   fin_fee_in_cash_head
+  WHERE  cash_id = #{传入的cashId};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doSelect(详情查询)/doDelete(删除)接口时，按cashId调用selectByPrimaryKey查询FIN_FEE_IN_CASH_HEAD返回null<br><strong>逻辑分析：</strong>详情查询和删除均需先按主键CASH_ID定位批量复核单。若单据在操作前被其他用户物理删除，或前端传入的cashId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"批量复核单不存在"阻断性异常，后续读取HZ_APPROVE_STATUS、关联兑现单等逻辑均无法进行。</div>
+  </div>
+</div>
+
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不存在
+- **触发条件**：执行doSelect(详情查询)/doDelete(删除)/onWfComplete(审批通过回调)/onUserSubmit(提交)接口时，finFeeInCashHeadRepository.selectByPrimaryKey按cashId查询FIN_FEE_IN_CASH_HEAD返回null
+- **逻辑分析**：详情查询、删除、审批通过回调和提交均需先按主键CASH_ID定位批量复核单。若单据在操作前被其他用户物理删除，或前端传入的cashId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"单据信息不存在"阻断性异常，后续读取HZ_APPROVE_STATUS、关联兑现单等逻辑均无法进行。
+- **排查SQL**：
+  ```sql
+  SELECT cash_id            AS 批量复核单ID,
+         cash_code          AS 批量复核单号,
+         hz_approve_status  AS 审批状态,
+         create_time        AS 创建时间
+  FROM   fin_fee_in_cash_head
+  WHERE  cash_id = #{传入的cashId};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doSelect(详情查询)/doDelete(删除)/onWfComplete(审批通过回调)/onUserSubmit(提交)接口时，finFeeInCashHeadRepository.selectByPrimaryKey按cashId查询FIN_FEE_IN_CASH_HEAD返回null<br><strong>逻辑分析：</strong>详情查询、删除、审批通过回调和提交均需先按主键CASH_ID定位批量复核单。若单据在操作前被其他用户物理删除，或前端传入的cashId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"单据信息不存在"阻断性异常，后续读取HZ_APPROVE_STATUS、关联兑现单等逻辑均无法进行。</div>
+  </div>
+</div>
+
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>验收报销单号和门头兑现单号为空
+- **触发条件**：执行doSendShare(推送共享)接口时，遍历关联兑现单FIN_FEE_TERMINAL_CASHOUT，某条记录的checkBxCode(验收报销单号)与dhCashoutNo(门头兑现单号)均为空字符串
+- **逻辑分析**：推送共享需根据验收报销单号或门头兑现单号查询对应的支付方式(payType)，决定推送资金池还是共享系统。若关联兑现单未维护checkBxCode和dhCashoutNo（如兑现单未关联验收报销单或门头兑现单即被纳入批量复核），无法定位支付方式，推送逻辑无法继续，抛出阻断性异常。需核查兑现单关联数据完整性。
+- **排查SQL**：
+  ```sql
+  SELECT t.terminal_cashout_id   AS 兑现单ID,
+         t.terminal_cashout_code AS 兑现单号,
+         t.cash_id               AS 批量复核单ID,
+         t.check_bx_code         AS 验收报销单号,
+         t.dh_cashout_no         AS 门头兑现单号,
+         h.cash_code             AS 批量复核单号
+  FROM   fin_fee_terminal_cashout t
+  INNER JOIN fin_fee_in_cash_head h
+  ON     t.cash_id = h.cash_id
+  WHERE  h.hz_approve_status IN ('RUN','APPROVED')
+  AND    NVL(t.check_bx_code, '') = ''
+  AND    NVL(t.dh_cashout_no, '') = ''
+  ORDER  BY h.create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doSendShare(推送共享)接口时，遍历关联兑现单FIN_FEE_TERMINAL_CASHOUT，某条记录的checkBxCode(验收报销单号)与dhCashoutNo(门头兑现单号)均为空字符串<br><strong>逻辑分析：</strong>推送共享需根据验收报销单号或门头兑现单号查询对应的支付方式(payType)，决定推送资金池还是共享系统。若关联兑现单未维护checkBxCode和dhCashoutNo（如兑现单未关联验收报销单或门头兑现单即被纳入批量复核），无法定位支付方式，推送逻辑无法继续，抛出阻断性异常。需核查兑现单关联数据完整性。</div>
+  </div>
+</div>
+
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>验收单号：{bxCodes}，总账日期不能为空，请检查
+- **触发条件**：执行onUserSubmit(提交)接口时，查询关联兑现单FIN_FEE_TERMINAL_CASHOUT，过滤出ledgerDate(总账日期)为空的记录，收集其checkBxCode拼接为bxCodes
+- **逻辑分析**：批量复核单提交审批前需确保所有关联兑现单已维护总账日期(ledgerDate)，因为审批通过后会推送共享/资金池，推送需以总账日期作为记账日期。若某张兑现单未维护ledgerDate（如验收报销单未完成财务核算即被纳入批量复核），推送时记账日期缺失，校验不通过抛异常。需先在验收报销单中维护总账日期再提交批量复核。
+- **排查SQL**：
+  ```sql
+  SELECT t.terminal_cashout_id   AS 兑现单ID,
+         t.terminal_cashout_code AS 兑现单号,
+         t.cash_id               AS 批量复核单ID,
+         t.check_bx_code         AS 验收报销单号,
+         t.ledger_date           AS 总账日期,
+         h.cash_code             AS 批量复核单号,
+         h.hz_approve_status     AS 批量复核单状态
+  FROM   fin_fee_terminal_cashout t
+  INNER JOIN fin_fee_in_cash_head h
+  ON     t.cash_id = h.cash_id
+  WHERE  h.hz_approve_status = 'NEW'
+  AND    t.ledger_date IS NULL
+  ORDER  BY h.create_time DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行onUserSubmit(提交)接口时，查询关联兑现单FIN_FEE_TERMINAL_CASHOUT，过滤出ledgerDate(总账日期)为空的记录，收集其checkBxCode拼接为bxCodes<br><strong>逻辑分析：</strong>批量复核单提交审批前需确保所有关联兑现单已维护总账日期(ledgerDate)，因为审批通过后会推送共享/资金池，推送需以总账日期作为记账日期。若某张兑现单未维护ledgerDate（如验收报销单未完成财务核算即被纳入批量复核），推送时记账日期缺失，校验不通过抛异常。需先在验收报销单中维护总账日期再提交批量复核。</div>
+  </div>
+</div>
 </div>
 
 <div id="changelog" style="display:none;">

@@ -250,6 +250,43 @@
 
 </div>
 </div>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>照片设置不存在</td><td>queryMktStorephotoSetLine</td><td>未配置照片设置</td><td>中</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>照片设置不存在
+- **触发条件**：门店装修申请或门店验收报销单加载照片Tab时调用queryMktStorephotoSetLine接口，查询MKT_STOREPHOTO_SET_LINE返回空列表
+- **逻辑分析**：门店装修申请需上传装修前后照片，门店验收报销单需上传验收照片，照片项目和拍摄要求由本设置页面配置。若管理员未配置任何照片设置行（MKT_STOREPHOTO_SET_LINE无记录），或按ORGANIZATION_ID关联MKT_STOREPHOTO_SET_HEAD过滤后无匹配明细，查询返回空，装修申请/验收报销单的照片上传区域无项目可展示，用户无法对照拍摄要求上传照片，影响装修进度和验收完整性。该异常为非阻断性提示，需管理员补全照片设置配置。
+- **排查SQL**：
+  ```sql
+  SELECT l.storephoto_set_id    AS 照片设置头ID,
+         l.photo_item           AS 照片项目,
+         l.photo_item_note      AS 照片说明,
+         l.shoot_require        AS 拍摄要求,
+         l.is_ys_provide        AS 是否验收提供,
+         l.ys_provide_count     AS 验收提供数量,
+         l.is_zx_provide        AS 是否装修提供,
+         l.zx_provide_count     AS 装修提供数量,
+         h.organization_id      AS 组织ID
+  FROM   mkt_storephoto_set_line l
+  INNER JOIN mkt_storephoto_set_head h
+  ON     l.storephoto_set_id = h.storephoto_set_id
+  WHERE  h.organization_id = #{当前组织ID};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>门店装修申请或门店验收报销单加载照片Tab时调用queryMktStorephotoSetLine接口，查询MKT_STOREPHOTO_SET_LINE返回空列表<br><strong>逻辑分析：</strong>门店装修申请需上传装修前后照片，门店验收报销单需上传验收照片，照片项目和拍摄要求由本设置页面配置。若管理员未配置任何照片设置行（MKT_STOREPHOTO_SET_LINE无记录），或按ORGANIZATION_ID关联MKT_STOREPHOTO_SET_HEAD过滤后无匹配明细，查询返回空，装修申请/验收报销单的照片上传区域无项目可展示，用户无法对照拍摄要求上传照片，影响装修进度和验收完整性。该异常为非阻断性提示，需管理员补全照片设置配置。</div>
+  </div>
+</div>
 </div>
 
 <div id="changelog" style="display:none;">

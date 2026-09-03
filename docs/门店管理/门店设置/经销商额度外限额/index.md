@@ -267,6 +267,131 @@
 
 </div>
 </div>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>查询参数不完整</td><td>queryResourceAmt</td><td>缺少必要的查询参数</td><td>中</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>页面单次查询最大1000条</td><td>query/getHeaderBalanceByTime</td><td>分页查询size超过1000，减小查询分页大小</td><td>中</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>广告费余额查询事业部信息异常</td><td>processAdvert</td><td>事业部基础设置不存在，确认事业部已建档</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>开始-结束时间不能为空</td><td>getDetailDate</td><td>明细查询未传入开始或结束时间，补全时间参数</td><td>中</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>开始时间需小于结束时间</td><td>getDetailDate</td><td>开始时间晚于结束时间，修正时间区间</td><td>中</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询参数不完整
+- **触发条件**：调用queryResourceAmt(广告费余额查询)接口时，传入的divisionId(事业部ID)、billingUnitCode(开票单位编码)、tradingCompanyCode(交易公司编码)等必要参数中存在null或空值
+- **逻辑分析**：广告费可用余额查询依赖事业部+开票单位+交易公司三要素定位MKT_INLIMIT_BALANCE_HEADER记录，三者构成余额定位的唯一业务键。若前端未选择事业部、开票单位或交易公司即点击查询，或LOV选择后未正确回传编码，后端校验参数为空即抛出"查询参数不完整"异常，无法执行余额计算逻辑。该异常为非阻断性提示，用户补全参数后可重新查询。
+- **排查SQL**：
+  ```sql
+  SELECT h.division_id            AS 事业部ID,
+         h.cust_code              AS 经销商编码,
+         h.cust_name              AS 经销商名称,
+         h.trading_company_code   AS 交易公司编码,
+         h.billing_unit_code      AS 开票单位编码,
+         h.can_use_amount         AS 可用余额
+  FROM   mkt_inlimit_balance_header h
+  WHERE  h.division_id IS NULL
+  OR     h.trading_company_code IS NULL
+  OR     h.billing_unit_code IS NULL
+  ORDER  BY h.cust_code;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用queryResourceAmt(广告费余额查询)接口时，传入的divisionId(事业部ID)、billingUnitCode(开票单位编码)、tradingCompanyCode(交易公司编码)等必要参数中存在null或空值<br><strong>逻辑分析：</strong>广告费可用余额查询依赖事业部+开票单位+交易公司三要素定位MKT_INLIMIT_BALANCE_HEADER记录，三者构成余额定位的唯一业务键。若前端未选择事业部、开票单位或交易公司即点击查询，或LOV选择后未正确回传编码，后端校验参数为空即抛出"查询参数不完整"异常，无法执行余额计算逻辑。该异常为非阻断性提示，用户补全参数后可重新查询。</div>
+  </div>
+</div>
+
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>页面单次查询最大1000条
+- **触发条件**：调用query(广告费余额列表查询)接口且传入时间区间（startTime和endTime均不为空）时，进入getHeaderBalanceByTime方法，校验pageRequest.getSize()超过AeBaseConstants.MAX_SEARCH_MUM(1000)
+- **逻辑分析**：广告费余额时间区间查询需联表计算期初/期末余额，单次查询数据量过大易导致数据库性能问题与内存溢出。后端在getHeaderBalanceByTime方法入口校验分页size，若前端传入的pageSize(如hlod低代码页面配置的pageSize)大于1000，即抛出"页面单次查询最大1000条"阻断性异常，阻止大范围余额查询。该异常为非阻断性提示，用户减小分页大小后可重新查询。
+- **排查SQL**：
+  ```sql
+  SELECT h.division_id            AS 事业部ID,
+         h.cust_code              AS 经销商编码,
+         h.cust_name              AS 经销商名称,
+         h.trading_company_code   AS 交易公司编码,
+         h.billing_unit_code      AS 开票单位编码,
+         COUNT(*)                 AS 余额记录数
+  FROM   mkt_inlimit_balance_header h
+  GROUP  BY h.division_id, h.cust_code, h.cust_name,
+            h.trading_company_code, h.billing_unit_code
+  HAVING COUNT(*) &gt; 1000
+  ORDER  BY COUNT(*) DESC;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用query(广告费余额列表查询)接口且传入时间区间（startTime和endTime均不为空）时，进入getHeaderBalanceByTime方法，校验pageRequest.getSize()超过AeBaseConstants.MAX_SEARCH_MUM(1000)<br><strong>逻辑分析：</strong>广告费余额时间区间查询需联表计算期初/期末余额，单次查询数据量过大易导致数据库性能问题与内存溢出。后端在getHeaderBalanceByTime方法入口校验分页size，若前端传入的pageSize(如hlod低代码页面配置的pageSize)大于1000，即抛出"页面单次查询最大1000条"阻断性异常，阻止大范围余额查询。该异常为非阻断性提示，用户减小分页大小后可重新查询。</div>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>广告费余额查询事业部信息异常
+- **触发条件**：调用processAdvert(处理执行日期法人广告费余额)接口时，按queryDTO.getDivisionId()调用divisionBaseSetService.selectByPrimaryKey查询DivisionBaseSet返回null
+- **逻辑分析**：processAdvert方法用于处理执行日期的法人广告费余额，需按事业部ID查询事业部基础设置(DivisionBaseSet)获取事业部名称、组织ID等信息写入MKT_INLIMIT_BALANCE_HEADER。若广告费余额查询传入的divisionId对应的事业部基础设置记录不存在（如事业部未建档、事业部已停用、divisionId为错误值），selectByPrimaryKey返回null，后端抛出"广告费余额查询事业部信息异常"阻断性异常，后续设置divisionId/entid/entname等字段均无法进行。该异常为阻断性错误，需确认事业部基础设置已正确建档。
+- **排查SQL**：
+  ```sql
+  SELECT d.division_id            AS 事业部ID,
+         d.division_name          AS 事业部名称,
+         d.organization_id        AS 组织ID,
+         d.enabled                AS 是否启用
+  FROM   division_base_set d
+  WHERE  d.division_id = #{传入的divisionId};
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用processAdvert(处理执行日期法人广告费余额)接口时，按queryDTO.getDivisionId()调用divisionBaseSetService.selectByPrimaryKey查询DivisionBaseSet返回null<br><strong>逻辑分析：</strong>processAdvert方法用于处理执行日期的法人广告费余额，需按事业部ID查询事业部基础设置(DivisionBaseSet)获取事业部名称、组织ID等信息写入MKT_INLIMIT_BALANCE_HEADER。若广告费余额查询传入的divisionId对应的事业部基础设置记录不存在（如事业部未建档、事业部已停用、divisionId为错误值），selectByPrimaryKey返回null，后端抛出"广告费余额查询事业部信息异常"阻断性异常，后续设置divisionId/entid/entname等字段均无法进行。该异常为阻断性错误，需确认事业部基础设置已正确建档。</div>
+  </div>
+</div>
+
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>开始-结束时间不能为空
+- **触发条件**：调用getDetailDate(广告费余额明细查询)接口时，传入的startTime或endTime为null或空字符串
+- **逻辑分析**：getDetailDate方法用于查询广告费余额往来明细，需按startTime至endTime时间区间过滤MKT_INLIMIT_BALANCE_DETAILS记录。若前端未选择时间区间即点击查询，或定时任务调用时未传入时间参数，StringUtil.isEmpty校验startTime或endTime为空即抛出"开始-结束时间不能为空"阻断性异常，后续DateUtil.startOfDay解析空字符串会抛空指针。该异常为非阻断性提示，用户补全时间区间后可重新查询。
+- **排查SQL**：
+  ```sql
+  SELECT d.header_id              AS 头表ID,
+         d.amt                    AS 金额,
+         d.start_time             AS 开始时间,
+         d.end_time               AS 结束时间
+  FROM   mkt_inlimit_balance_details d
+  WHERE  d.start_time IS NULL
+  OR     d.end_time IS NULL;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用getDetailDate(广告费余额明细查询)接口时，传入的startTime或endTime为null或空字符串<br><strong>逻辑分析：</strong>getDetailDate方法用于查询广告费余额往来明细，需按startTime至endTime时间区间过滤MKT_INLIMIT_BALANCE_DETAILS记录。若前端未选择时间区间即点击查询，或定时任务调用时未传入时间参数，StringUtil.isEmpty校验startTime或endTime为空即抛出"开始-结束时间不能为空"阻断性异常，后续DateUtil.startOfDay解析空字符串会抛空指针。该异常为非阻断性提示，用户补全时间区间后可重新查询。</div>
+  </div>
+</div>
+
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>开始时间需小于结束时间
+- **触发条件**：调用getDetailDate(广告费余额明细查询)接口时，传入的startTime经DateUtil.startOfDay解析后的startDate不早于endTime经DateUtil.endOfDay解析后的endDate（即startDate.isAfter(endDate)为true）
+- **逻辑分析**：getDetailDate方法按时间区间过滤MKT_INLIMIT_BALANCE_DETAILS记录，要求startTime &lt; endTime确保区间非空。若前端日期控件选择时误将开始时间晚于结束时间（如跨年查询时年份选错），或定时任务传入时间区间倒置，startDate.isAfter(endDate)为true即抛出"开始时间需小于结束时间"阻断性异常，查询结果为空集无业务意义。该异常为非阻断性提示，用户修正时间区间后可重新查询。
+- **排查SQL**：
+  ```sql
+  SELECT d.header_id              AS 头表ID,
+         d.amt                    AS 金额,
+         d.start_time             AS 开始时间,
+         d.end_time               AS 结束时间
+  FROM   mkt_inlimit_balance_details d
+  WHERE  d.start_time &gt; d.end_time;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用getDetailDate(广告费余额明细查询)接口时，传入的startTime经DateUtil.startOfDay解析后的startDate不早于endTime经DateUtil.endOfDay解析后的endDate（即startDate.isAfter(endDate)为true）<br><strong>逻辑分析：</strong>getDetailDate方法按时间区间过滤MKT_INLIMIT_BALANCE_DETAILS记录，要求startTime &lt; endTime确保区间非空。若前端日期控件选择时误将开始时间晚于结束时间（如跨年查询时年份选错），或定时任务传入时间区间倒置，startDate.isAfter(endDate)为true即抛出"开始时间需小于结束时间"阻断性异常，查询结果为空集无业务意义。该异常为非阻断性提示，用户修正时间区间后可重新查询。</div>
+  </div>
+</div>
 </div>
 
 <div id="changelog" style="display:none;">

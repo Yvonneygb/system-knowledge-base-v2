@@ -1223,6 +1223,395 @@ WHERE vr.truth_id = {当前核销单ID} AND vr.del_flag = 0;
   </div>
 </div>
 </div>
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>无出库单数据</td><td>查询出库单</td><td>项目/合同下无出库单。确认出库单已生成</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>无发票数据</td><td>查询发票</td><td>未找到关联发票。确认发票已开具</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>请选择项目</td><td>查询出库单/发票</td><td>核销类型为项目核销时未选择项目。先选择项目</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>请选择经销商</td><td>查询出库单/发票</td><td>未选择经销商。先选择经销商</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>请选择交易公司</td><td>查询出库单/发票</td><td>未选择交易公司。先选择交易公司</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>交易公司的法人为空</td><td>查询出库单/发票</td><td>交易公司未配置法人实体。重新选择交易公司</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择发票明细</td><td>查询出库单</td><td>发票优先模式下未选择发票行。先选择发票明细</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>请先选择出库单明细</td><td>查询发票</td><td>出库单优先模式下未选择出库单行。先选择出库单明细</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>表头必填字段未填写</td><td>自助查找</td><td>经销商/核销类型/交易公司/开票单位未填。先完善表头</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>本次核销数量必须大于0</td><td>保存</td><td>核销明细行本次核销数量为空或小于0。填写正数</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>请选择出库明细</td><td>确定核对</td><td>未选择出库单行。先选择出库明细行</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>请选择发票信息</td><td>确定核对</td><td>未选择发票行。先选择发票信息行</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>本次核销数量不能大于剩余可核销数量</td><td>保存/核销</td><td>本次核销数量超过剩余可核销数量。调整核销数量</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>核销出库单明细不可为空</td><td>提交</td><td>未维护核销出库单明细。先添加明细再提交</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>核销明细状态异常</td><td>取消核销</td><td>核销明细状态不一致。刷新数据后重试</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>不支持当前操作</td><td>终止/取消</td><td>单据状态不支持当前操作。确认单据状态</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>暂无数据</td><td>列表查询</td><td>查询条件无匹配数据。调整查询条件</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>会话过期</td><td>任意操作</td><td>登录态失效。重新登录</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无出库单数据
+- **触发条件**：详情页点击"自助查找出库单"或自动查询出库单时，所选项目/合同下无出库单记录
+- **逻辑分析**：后端self-search-out-bill接口根据项目编码（PROJECT_CODE）和合同编码（CONTRACT_CODE）查询工程出库单报表。若项目下无出库单、出库单未生成或出库单状态不符合查询条件，则返回空列表，前端提示"无出库单数据"。
+- **排查SQL**：
+  ```sql
+  SELECT H.PROJECT_CODE AS 项目编码, H.PROJECT_NAME AS 项目名称,
+         H.CONTRACT_CODE AS 合同编码, H.CONTRACT_NAME AS 合同名称
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId;
+  -- 关联查询出库单（具体表名依据工程出库单报表表）
+  -- SELECT * FROM 工程出库单表 WHERE PROJECT_CODE = :projectCode AND CONTRACT_CODE = :contractCode;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页点击"自助查找出库单"或自动查询出库单时，所选项目/合同下无出库单记录<br><strong>逻辑分析：</strong>后端self-search-out-bill接口根据项目编码（PROJECT_CODE）和合同编码（CONTRACT_CODE）查询工程出库单报表。若项目下无出库单、出库单未生成或出库单状态不符合查询条件，则返回空列表，前端提示"无出库单数据"。</div>
+  </div>
+</div>
+
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>无发票数据
+- **触发条件**：详情页点击"自助查找发票"或自动查询发票时，未找到关联发票记录
+- **逻辑分析**：后端self-search-invoice接口根据项目、合同、经销商等条件查询关联发票。若发票未开具、发票已作废或发票关联关系未建立，则返回空列表，前端提示"无发票数据"。
+- **排查SQL**：
+  ```sql
+  SELECT H.PROJECT_CODE AS 项目编码, H.CUSTOMER_CODE AS 经销商编码,
+         H.CONTRACT_CODE AS 合同编码, H.VERIFER_TYPE AS 核销类型
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId;
+  -- 关联查询发票（具体表名依据发票主表）
+  -- SELECT * FROM 发票主表 WHERE PROJECT_CODE = :projectCode AND CUSTOMER_CODE = :customerCode;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页点击"自助查找发票"或自动查询发票时，未找到关联发票记录<br><strong>逻辑分析：</strong>后端self-search-invoice接口根据项目、合同、经销商等条件查询关联发票。若发票未开具、发票已作废或发票关联关系未建立，则返回空列表，前端提示"无发票数据"。</div>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择项目
+- **触发条件**：核销类型为项目核销（veriferType=1）时，查询出库单或发票但未选择项目（projectId为空）
+- **逻辑分析**：前端outStockListLoad和invoiceListLoad校验veriferType==1时projectId非空。若为空则提示"请选择项目"并阻断查询。项目是项目核销类型的必要条件。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号, H.VERIFER_TYPE AS 核销类型,
+         H.PROJECT_CODE AS 项目编码, H.PROJECT_ID AS 项目ID
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId
+    AND H.VERIFER_TYPE = 1
+    AND H.PROJECT_ID IS NULL;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>核销类型为项目核销（veriferType=1）时，查询出库单或发票但未选择项目（projectId为空）<br><strong>逻辑分析：</strong>前端outStockListLoad和invoiceListLoad校验veriferType==1时projectId非空。若为空则提示"请选择项目"并阻断查询。项目是项目核销类型的必要条件。</div>
+  </div>
+</div>
+
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择经销商
+- **触发条件**：核销类型非项目核销（veriferType≠1）时，查询出库单或发票但未选择经销商（customerId为空或小于0）
+- **逻辑分析**：前端outStockListLoad和invoiceListLoad校验veriferType≠1时customerId非空且大于0。若为空则提示"请选择经销商"并阻断查询。经销商是非项目核销类型的必要条件。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号, H.VERIFER_TYPE AS 核销类型,
+         H.CUSTOMER_CODE AS 经销商编码, H.CUSTOMER_ID AS 经销商ID
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId
+    AND H.VERIFER_TYPE &lt;&gt; 1
+    AND (H.CUSTOMER_ID IS NULL OR H.CUSTOMER_ID &lt; 0);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>核销类型非项目核销（veriferType≠1）时，查询出库单或发票但未选择经销商（customerId为空或小于0）<br><strong>逻辑分析：</strong>前端outStockListLoad和invoiceListLoad校验veriferType≠1时customerId非空且大于0。若为空则提示"请选择经销商"并阻断查询。经销商是非项目核销类型的必要条件。</div>
+  </div>
+</div>
+
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择交易公司
+- **触发条件**：核销类型非项目核销（veriferType≠1）时，查询出库单或发票但未选择交易公司（tradingCompanyId为空或小于0）
+- **逻辑分析**：前端outStockListLoad和invoiceListLoad校验veriferType≠1时tradingCompanyId非空且大于0。若为空则提示"请选择交易公司"并阻断查询。交易公司是非项目核销类型的必要条件。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号, H.VERIFER_TYPE AS 核销类型,
+         H.TRADING_COMPANY_NAME AS 交易公司, H.TRADING_COMPANY_ID AS 交易公司ID
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId
+    AND H.VERIFER_TYPE &lt;&gt; 1
+    AND (H.TRADING_COMPANY_ID IS NULL OR H.TRADING_COMPANY_ID &lt; 0);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>核销类型非项目核销（veriferType≠1）时，查询出库单或发票但未选择交易公司（tradingCompanyId为空或小于0）<br><strong>逻辑分析：</strong>前端outStockListLoad和invoiceListLoad校验veriferType≠1时tradingCompanyId非空且大于0。若为空则提示"请选择交易公司"并阻断查询。交易公司是非项目核销类型的必要条件。</div>
+  </div>
+</div>
+
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>交易公司的法人为空
+- **触发条件**：核销类型非项目核销（veriferType≠1）时，已选择交易公司但开票单位（billingUnitId）为空或小于0
+- **逻辑分析**：前端outStockListLoad和invoiceListLoad校验billingUnitId非空且大于0。若为空则提示"交易公司的法人为空，重新选择交易公司"。交易公司未配置法人实体时开票单位无法带出。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号,
+         H.TRADING_COMPANY_NAME AS 交易公司, H.BILLING_UNIT_NAME AS 开票单位
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId
+    AND H.VERIFER_TYPE &lt;&gt; 1
+    AND (H.BILLING_UNIT_ID IS NULL OR H.BILLING_UNIT_ID &lt; 0);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>核销类型非项目核销（veriferType≠1）时，已选择交易公司但开票单位（billingUnitId）为空或小于0<br><strong>逻辑分析：</strong>前端outStockListLoad和invoiceListLoad校验billingUnitId非空且大于0。若为空则提示"交易公司的法人为空，重新选择交易公司"。交易公司未配置法人实体时开票单位无法带出。</div>
+  </div>
+</div>
+
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先选择发票明细
+- **触发条件**：发票优先模式（actionType为invoiceToOrder）下查询出库单时，未选择发票列表行（invoiceListTableDs.selected为空）
+- **逻辑分析**：前端outStockListLoad和handleOpenSelfSearchOutBill在发票优先模式下校验invoiceListTableDs.selected.length &gt; 0。若为空则提示"请先选择发票明细"。发票优先模式需先选定发票再查关联出库单。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号, H.VERIFER_TYPE AS 核销类型
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId;
+  -- 检查发票明细是否已选择
+  -- SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = :truthId AND INVOICE_DETAILS_ID IS NOT NULL;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>发票优先模式（actionType为invoiceToOrder）下查询出库单时，未选择发票列表行（invoiceListTableDs.selected为空）<br><strong>逻辑分析：</strong>前端outStockListLoad和handleOpenSelfSearchOutBill在发票优先模式下校验invoiceListTableDs.selected.length &gt; 0。若为空则提示"请先选择发票明细"。发票优先模式需先选定发票再查关联出库单。</div>
+  </div>
+</div>
+
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先选择出库单明细
+- **触发条件**：出库单优先模式（actionType为orderToInvoice）下查询发票时，未选择出库单列表行（outStockListTableDs.selected为空）
+- **逻辑分析**：前端invoiceListLoad和handleOpenSelfSearchInvoice在出库单优先模式下校验outStockListTableDs.selected或outStockDetailTableDs.selected非空。若为空则提示"请先在核销出库单明细中选择一行出库单"。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号, H.VERIFER_TYPE AS 核销类型
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId;
+  -- 检查出库单明细是否已选择
+  -- SELECT * FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = :truthId AND INV_OUT_BILL_LINE_ID IS NOT NULL;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>出库单优先模式（actionType为orderToInvoice）下查询发票时，未选择出库单列表行（outStockListTableDs.selected为空）<br><strong>逻辑分析：</strong>前端invoiceListLoad和handleOpenSelfSearchInvoice在出库单优先模式下校验outStockListTableDs.selected或outStockDetailTableDs.selected非空。若为空则提示"请先在核销出库单明细中选择一行出库单"。</div>
+  </div>
+</div>
+
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>表头必填字段未填写
+- **触发条件**：点击"自助查找出库单"或"自助查找发票"时，表头经销商编码、经销商名称、核销类型、交易公司、开票单位任一为空
+- **逻辑分析**：前端validateHeadFields校验customerCode、customerName、veriferType、tradingCompanyName、billingUnitName非空。若任一为空则提示"请先填写以下表头字段：X、Y"。这些字段是查询出库单和发票的前置条件。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号,
+         H.CUSTOMER_CODE AS 经销商编码, H.CUSTOMER_NAME AS 经销商名称,
+         H.VERIFER_TYPE AS 核销类型, H.TRADING_COMPANY_NAME AS 交易公司,
+         H.BILLING_UNIT_NAME AS 开票单位
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId
+    AND (H.CUSTOMER_CODE IS NULL OR H.CUSTOMER_NAME IS NULL
+         OR H.VERIFER_TYPE IS NULL OR H.TRADING_COMPANY_NAME IS NULL
+         OR H.BILLING_UNIT_NAME IS NULL);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"自助查找出库单"或"自助查找发票"时，表头经销商编码、经销商名称、核销类型、交易公司、开票单位任一为空<br><strong>逻辑分析：</strong>前端validateHeadFields校验customerCode、customerName、veriferType、tradingCompanyName、billingUnitName非空。若任一为空则提示"请先填写以下表头字段：X、Y"。这些字段是查询出库单和发票的前置条件。</div>
+  </div>
+</div>
+
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次核销数量必须大于0
+- **触发条件**：详情页保存时，核销明细行（outStockDetailTableDs）的本次核销数量（thisVeriferNumber）为空或小于0
+- **逻辑分析**：前端validCheck遍历outStockDetailTableDs.toData()，若任一行thisVeriferNumber为空或小于0则提示"第X行，本次核销数量必须大于0！"并阻断保存。
+- **排查SQL**：
+  ```sql
+  SELECT L.INVOICE_TRUTH_ID AS 核销ID, L.INV_OUT_BILL_LINE_ID AS 出库单行ID,
+         L.ITEM_CODE AS 产品编码, L.THIS_VERIFER_NUMBER AS 本次核销数量
+  FROM EPM_INVOICE_TRUTH_LINE L
+  WHERE L.INVOICE_TRUTH_ID = :truthId
+    AND (L.THIS_VERIFER_NUMBER IS NULL OR L.THIS_VERIFER_NUMBER &lt; 0);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，核销明细行（outStockDetailTableDs）的本次核销数量（thisVeriferNumber）为空或小于0<br><strong>逻辑分析：</strong>前端validCheck遍历outStockDetailTableDs.toData()，若任一行thisVeriferNumber为空或小于0则提示"第X行，本次核销数量必须大于0！"并阻断保存。</div>
+  </div>
+</div>
+
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择出库明细
+- **触发条件**：详情页核对出库单与发票时，未选择出库单列表行（outStockListTableDs.selected为空）
+- **逻辑分析**：前端getInvoiceList校验outStockListTableDs.selected.length &gt; 0。若为空则提示"请选择出库明细!"。核对前必须先选择出库单行。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId;
+  -- 检查出库单列表是否已选择
+  -- SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE WHERE INVOICE_TRUTH_ID = :truthId;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页核对出库单与发票时，未选择出库单列表行（outStockListTableDs.selected为空）<br><strong>逻辑分析：</strong>前端getInvoiceList校验outStockListTableDs.selected.length &gt; 0。若为空则提示"请选择出库明细!"。核对前必须先选择出库单行。</div>
+  </div>
+</div>
+
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请选择发票信息
+- **触发条件**：详情页核对出库单与发票时，未选择发票列表行（invoiceListTableDs.selected为空）
+- **逻辑分析**：前端getInvoiceList校验invoiceListTableDs.selected.length &gt; 0。若为空则提示"请选择发票信息!"。核对前必须先选择发票行。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId;
+  -- 检查发票列表是否已选择
+  -- SELECT COUNT(*) FROM EPM_VERIFER_INVOICE_DETAILS WHERE INVOICE_TRUTH_ID = :truthId;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页核对出库单与发票时，未选择发票列表行（invoiceListTableDs.selected为空）<br><strong>逻辑分析：</strong>前端getInvoiceList校验invoiceListTableDs.selected.length &gt; 0。若为空则提示"请选择发票信息!"。核对前必须先选择发票行。</div>
+  </div>
+</div>
+
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>本次核销数量不能大于剩余可核销数量
+- **触发条件**：保存或提交时，核销明细行的本次核销数量（thisVeriferNumber）超过剩余可核销数量（surplusCanVeriferNumber或convertSurVeriferNumber）
+- **逻辑分析**：前端handleVeriferChange校验value &gt; convertSurVeriferNumber时提示"本次核销数量超过了转化后剩余可核销数量"。后端EpmInvoiceTruthHeaderServiceImpl也校验"本次核销数量不能大于剩余可核销数量"和"本次核销数量不能大于可核销数量"。
+- **排查SQL**：
+  ```sql
+  SELECT L.INVOICE_TRUTH_ID AS 核销ID, L.ITEM_CODE AS 产品编码,
+         L.THIS_VERIFER_NUMBER AS 本次核销数量,
+         L.SURPLUS_CAN_VERIFER_NUMBER AS 剩余可核销数量,
+         L.CONVERT_SUR_VERIFER_NUMBER AS 转化后剩余可核销数量
+  FROM EPM_INVOICE_TRUTH_LINE L
+  WHERE L.INVOICE_TRUTH_ID = :truthId
+    AND L.THIS_VERIFER_NUMBER &gt; NVL(L.CONVERT_SUR_VERIFER_NUMBER, L.SURPLUS_CAN_VERIFER_NUMBER);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存或提交时，核销明细行的本次核销数量（thisVeriferNumber）超过剩余可核销数量（surplusCanVeriferNumber或convertSurVeriferNumber）<br><strong>逻辑分析：</strong>前端handleVeriferChange校验value &gt; convertSurVeriferNumber时提示"本次核销数量超过了转化后剩余可核销数量"。后端EpmInvoiceTruthHeaderServiceImpl也校验"本次核销数量不能大于剩余可核销数量"和"本次核销数量不能大于可核销数量"。</div>
+  </div>
+</div>
+
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>核销出库单明细不可为空
+- **触发条件**：详情页提交时，核销出库单明细（epmInvoiceTruthLines）为空
+- **逻辑分析**：后端EpmInvoiceTruthHeaderServiceImpl校验核销出库单明细非空，若为空则抛出"核销出库单明细不可为空"。提交前必须至少维护一条核销明细。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号, H.HZ_APPROVE_STATUS AS 审核状态,
+         (SELECT COUNT(*) FROM EPM_INVOICE_TRUTH_LINE L
+          WHERE L.INVOICE_TRUTH_ID = H.INVOICE_TRUTH_ID) AS 核销明细数量
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页提交时，核销出库单明细（epmInvoiceTruthLines）为空<br><strong>逻辑分析：</strong>后端EpmInvoiceTruthHeaderServiceImpl校验核销出库单明细非空，若为空则抛出"核销出库单明细不可为空"。提交前必须至少维护一条核销明细。</div>
+  </div>
+</div>
+
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>核销明细状态异常
+- **触发条件**：取消核销操作时，核销明细状态不一致或已变更
+- **逻辑分析**：后端EpmInvoiceTruthHeaderServiceImpl在取消核销时校验明细状态，若状态异常则抛出"核销明细状态异常,请刷新数据后重试"。通常由并发操作或页面缓存导致状态不同步。
+- **排查SQL**：
+  ```sql
+  SELECT L.INVOICE_TRUTH_ID AS 核销ID, L.INV_OUT_BILL_LINE_ID AS 出库单行ID,
+         L.ITEM_CODE AS 产品编码, L.EFFECT_STATUS AS 生效状态,
+         L.CANCEL_TYPE AS 取消类型, L.CANCEL_OPERATOR AS 取消人
+  FROM EPM_INVOICE_TRUTH_LINE L
+  WHERE L.INVOICE_TRUTH_ID = :truthId
+  ORDER BY L.INV_OUT_BILL_LINE_ID;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>取消核销操作时，核销明细状态不一致或已变更<br><strong>逻辑分析：</strong>后端EpmInvoiceTruthHeaderServiceImpl在取消核销时校验明细状态，若状态异常则抛出"核销明细状态异常,请刷新数据后重试"。通常由并发操作或页面缓存导致状态不同步。</div>
+  </div>
+</div>
+
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>不支持当前操作
+- **触发条件**：对单据执行终止、取消或作废操作时，单据当前状态不支持该操作
+- **逻辑分析**：后端EpmInvoiceTruthHeaderServiceImpl和InvoiceCancelServiceImpl校验单据状态与操作类型匹配。若不匹配则抛出"不支持X操作"或"当前单据不支持当前操作"。如已审核单据不允许终止。
+- **排查SQL**：
+  ```sql
+  SELECT H.INVOICE_TRUTH_NO AS 核销单号, H.HZ_APPROVE_STATUS AS 审核状态
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.INVOICE_TRUTH_ID = :truthId;
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>对单据执行终止、取消或作废操作时，单据当前状态不支持该操作<br><strong>逻辑分析：</strong>后端EpmInvoiceTruthHeaderServiceImpl和InvoiceCancelServiceImpl校验单据状态与操作类型匹配。若不匹配则抛出"不支持X操作"或"当前单据不支持当前操作"。如已审核单据不允许终止。</div>
+  </div>
+</div>
+
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>暂无数据
+- **触发条件**：列表页查询时，查询条件无匹配的真实性核销记录
+- **逻辑分析**：前端列表DataSet查询返回空集合时框架提示"暂无数据"。通常由查询条件过严、数据未生成或权限不足导致。
+- **排查SQL**：
+  ```sql
+  SELECT COUNT(*) AS 记录数
+  FROM EPM_INVOICE_TRUTH_HEADERS H
+  WHERE H.HZ_APPROVE_STATUS = NVL(:status, H.HZ_APPROVE_STATUS)
+    AND H.PROJECT_CODE LIKE NVL(:projectCode, '%')
+    AND H.CREATION_DATE BETWEEN NVL(:dateFrom, H.CREATION_DATE) AND NVL(:dateTo, H.CREATION_DATE);
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>列表页查询时，查询条件无匹配的真实性核销记录<br><strong>逻辑分析：</strong>前端列表DataSet查询返回空集合时框架提示"暂无数据"。通常由查询条件过严、数据未生成或权限不足导致。</div>
+  </div>
+</div>
+
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>会话过期
+- **触发条件**：任意操作时，用户登录态失效（token过期或被踢出）
+- **逻辑分析**：前端请求拦截器检测到响应401状态码时提示"会话过期"并跳转登录页。通常由长时间未操作、多端登录或服务端session过期导致。
+- **排查SQL**：
+  ```sql
+  -- 会话过期为前端拦截，无对应数据查询
+  -- 可检查用户最近登录时间
+  SELECT U.USER_ID AS 用户ID, U.LOGIN_NAME AS 登录名,
+         U.LAST_LOGIN_DATE AS 最近登录时间
+  FROM HPFM_USER U
+  WHERE U.USER_ID = :userId;
+  ```
+### 常见问题
+- 问题1：核对页面出库数量与发票数量不一致
+  - 原因：出库单和发票的明细不匹配
+  - 解决思路：检查出库单和发票明细，确认数据正确性
+- 问题2：取消/作废后能否恢复
+  - 原因：取消/作废操作不可逆
+  - 解决思路：作废后需重新新建核销单
+---</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>任意操作时，用户登录态失效（token过期或被踢出）<br><strong>逻辑分析：</strong>前端请求拦截器检测到响应401状态码时提示"会话过期"并跳转登录页。通常由长时间未操作、多端登录或服务端session过期导致。</div>
+  </div>
+</div>
 </div>
 <div id="changelog">
 <div class="tab-pad">

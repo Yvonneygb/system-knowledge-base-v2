@@ -345,6 +345,388 @@ WHERE DPI.DISCOUNT_POLICY_ID = :policyId
 
 </div>
 
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>折扣政策名称最大输入30个字符</td><td>保存时</td><td>政策名称超过30字符，缩短至30字符以内</td><td>高</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>产品行不能为空</td><td>保存时</td><td>未添加产品明细行，至少添加一条</td><td>高</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>物料明细不能为空</td><td>保存时</td><td>产品行下未配置物料明细，添加物料明细</td><td>高</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>申请类型冲突</td><td>保存时</td><td>全产品与型号/产品不能同时存在，调整申请类型</td><td>高</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>时间重叠冲突</td><td>保存时</td><td>通用类型同一产品在重叠时间段已有其他政策，调整有效日期</td><td>高</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>新品型号不允许</td><td>保存时</td><td>家装专项时型号涉及新品不允许，新品必须通过产品定义</td><td>中</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>一口价折扣率&lt;1</td><td>提交时</td><td>产品定位为"一口价"时折扣率必须≥1，修正折扣率</td><td>高</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>折扣政策id不能为空</td><td>导入产品时</td><td>discountPolicyId为空，先保存政策后再导入</td><td>高</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>适用类型为"通用"时，产品优惠方式只能为 "折扣"</td><td>保存时</td><td>通用类型政策产品行优惠方式选了特价，改为折扣</td><td>高</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+<tr><td>产品编码:xxx 单个经销商封顶数量为正整数</td><td>保存时</td><td>capping=2但customerCapsNumber非正整数，修正封顶数量</td><td>高</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>产品【xxx】本次下单数量【xxx】，超过政策该经销商剩余可下单数量【xxx】，请检查！</td><td>要货订单下单时</td><td>下单数量超过经销商剩余可下单数量，调整下单数量</td><td>高</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
+<tr><td>仅新建状态单据允许删除.</td><td>删除时</td><td>非NEW状态单据删除，仅新建状态可删除</td><td>高</td><td style="text-align:center;"><a href="#err-detail-12" class="view-btn">查看</a></td></tr>
+<tr><td>未找到该单据</td><td>删除/详情时</td><td>按ID查询不到折扣政策，确认数据未被删除</td><td>高</td><td style="text-align:center;"><a href="#err-detail-13" class="view-btn">查看</a></td></tr>
+<tr><td>流程编码不能为空。</td><td>提交时</td><td>工作流编码未配置，联系管理员配置工作流</td><td>高</td><td style="text-align:center;"><a href="#err-detail-14" class="view-btn">查看</a></td></tr>
+<tr><td>请先维护OA系统信息</td><td>提交时</td><td>OA系统信息未维护，先维护OA配置</td><td>高</td><td style="text-align:center;"><a href="#err-detail-15" class="view-btn">查看</a></td></tr>
+<tr><td>未找到客户id，请检查!</td><td>保存时</td><td>policyType=1但客户ID为空，选择客户后保存</td><td>高</td><td style="text-align:center;"><a href="#err-detail-16" class="view-btn">查看</a></td></tr>
+<tr><td>导入的产品编码查询不到对应的产品信息：xxx</td><td>导入产品时</td><td>Excel中产品编码在CRM中不存在，修正产品编码</td><td>高</td><td style="text-align:center;"><a href="#err-detail-17" class="view-btn">查看</a></td></tr>
+<tr><td>订单类型为【计划订单】,业务类型不能为【长库龄】</td><td>保存时</td><td>计划订单业务类型选了长库龄，调整业务类型</td><td>高</td><td style="text-align:center;"><a href="#err-detail-18" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策名称最大输入30个字符
+- **触发条件**：保存折扣政策时，DISCOUNT_POLICY_NAME长度超过30字符
+- **逻辑分析**：preCheckData方法中校验政策名称长度，EPM_DISCOUNT_POLICY.DISCOUNT_POLICY_NAME字段定义为VARCHAR(30)。超长则抛出阻断性报错，需缩短至30字符以内
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME,
+         LENGTH(edp.DISCOUNT_POLICY_NAME) AS 名称长度
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE LENGTH(edp.DISCOUNT_POLICY_NAME) &gt; 30
+  -- 查出名称超长的异常数据
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，DISCOUNT_POLICY_NAME长度超过30字符<br><strong>逻辑分析：</strong>preCheckData方法中校验政策名称长度，EPM_DISCOUNT_POLICY.DISCOUNT_POLICY_NAME字段定义为VARCHAR(30)。超长则抛出阻断性报错，需缩短至30字符以内</div>
+  </div>
+</div>
+
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品行不能为空
+- **触发条件**：保存折扣政策时，未添加产品明细行(EPM_DISCOUNT_POLICY_ITEM为空)
+- **逻辑分析**：preCheckData方法中校验产品行列表非空，因折扣政策必须包含至少一条产品明细。该报错为阻断性报错
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME,
+         (SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM edpi
+          WHERE edpi.DISCOUNT_POLICY_ID = edp.DISCOUNT_POLICY_ID) AS 产品行数
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.DISCOUNT_POLICY_ID = :discountPolicyId
+  -- 若产品行数为0，则触发该报错
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，未添加产品明细行(EPM_DISCOUNT_POLICY_ITEM为空)<br><strong>逻辑分析：</strong>preCheckData方法中校验产品行列表非空，因折扣政策必须包含至少一条产品明细。该报错为阻断性报错</div>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>物料明细不能为空
+- **触发条件**：保存折扣政策时，产品行下未配置物料明细(EPM_DISCOUNT_POLICY_ITEM_LINE为空)
+- **逻辑分析**：preCheckData方法中遍历产品行，校验每个产品行下至少有一条物料明细。该报错为阻断性报错
+- **排查SQL**：
+  ```sql
+  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME,
+         (SELECT COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM_LINE edpil
+          WHERE edpil.DISCOUNT_POLICY_ITEM_ID = edpi.DISCOUNT_POLICY_ITEM_ID) AS 物料行数
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  WHERE edpi.DISCOUNT_POLICY_ID = :discountPolicyId
+  -- 查出物料行数为0的产品行
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，产品行下未配置物料明细(EPM_DISCOUNT_POLICY_ITEM_LINE为空)<br><strong>逻辑分析：</strong>preCheckData方法中遍历产品行，校验每个产品行下至少有一条物料明细。该报错为阻断性报错</div>
+  </div>
+</div>
+
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>申请类型冲突
+- **触发条件**：保存折扣政策时，全产品与型号/产品同时存在
+- **逻辑分析**：preCheckData方法中校验申请类型互斥，全产品类型(包含所有产品)与按型号/产品指定类型不能同时存在。需调整申请类型
+- **排查SQL**：
+  ```sql
+  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME, edpi.APPLY_TYPE,
+         edpi.IS_ALL_PRODUCT
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  WHERE edpi.DISCOUNT_POLICY_ID = :discountPolicyId
+  -- 检查是否存在IS_ALL_PRODUCT=1与具体ITEM_CODE同时存在的情况
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，全产品与型号/产品同时存在<br><strong>逻辑分析：</strong>preCheckData方法中校验申请类型互斥，全产品类型(包含所有产品)与按型号/产品指定类型不能同时存在。需调整申请类型</div>
+  </div>
+</div>
+
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>时间重叠冲突
+- **触发条件**：保存折扣政策时，通用类型(suitableType=normal)同一产品在重叠时间段已有其他政策
+- **逻辑分析**：preCheckData方法中按ITEM_CODE和有效日期区间查询EPM_DISCOUNT_POLICY，若通用类型政策在重叠时间段已存在则抛出阻断性报错。需调整有效日期避免重叠
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME,
+         edp.SUITABLE_TYPE, edp.VALID, edp.EFFECTIVE_DATE_START, edp.EFFECTIVE_DATE_END,
+         edpi.ITEM_CODE
+  FROM EPM_DISCOUNT_POLICY edp
+  JOIN EPM_DISCOUNT_POLICY_ITEM edpi ON edp.DISCOUNT_POLICY_ID = edpi.DISCOUNT_POLICY_ID
+  WHERE edpi.ITEM_CODE = :itemCode
+    AND edp.SUITABLE_TYPE = 'normal'
+    AND edp.VALID IN (1, 2)
+    AND edp.EFFECTIVE_DATE_END &gt;= :newStartDate
+    AND edp.EFFECTIVE_DATE_START &lt;= :newEndDate
+  -- 查出时间重叠的通用政策
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，通用类型(suitableType=normal)同一产品在重叠时间段已有其他政策<br><strong>逻辑分析：</strong>preCheckData方法中按ITEM_CODE和有效日期区间查询EPM_DISCOUNT_POLICY，若通用类型政策在重叠时间段已存在则抛出阻断性报错。需调整有效日期避免重叠</div>
+  </div>
+</div>
+
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>新品型号不允许
+- **触发条件**：保存折扣政策时，家装专项(suitableType=special)且型号涉及新品
+- **逻辑分析**：preCheckData方法中校验家装专项折扣政策的型号不能涉及新品，新品必须通过产品定义。该报错为中等优先级
+- **排查SQL**：
+  ```sql
+  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME, edpi.MODEL,
+         edpi.IS_NEW_PRODUCT
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  JOIN EPM_DISCOUNT_POLICY edp ON edpi.DISCOUNT_POLICY_ID = edp.DISCOUNT_POLICY_ID
+  WHERE edp.SUITABLE_TYPE = 'special'
+    AND edpi.IS_NEW_PRODUCT = 1
+  -- 查出家装专项中涉及新品的型号
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，家装专项(suitableType=special)且型号涉及新品<br><strong>逻辑分析：</strong>preCheckData方法中校验家装专项折扣政策的型号不能涉及新品，新品必须通过产品定义。该报错为中等优先级</div>
+  </div>
+</div>
+
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>一口价折扣率&lt;1
+- **触发条件**：提交折扣政策时，产品定位为"一口价"但折扣率(DISCOUNT_RATE)&lt;1
+- **逻辑分析**：submitCheck方法中校验一口价产品的折扣率必须&gt;=1(一口价即折扣率&gt;=1的特殊定价)。若&lt;1则抛出阻断性报错，需修正折扣率
+- **排查SQL**：
+  ```sql
+  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME,
+         edpi.PRICE_POSITIONING, edpi.DISCOUNT_RATE
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  WHERE edpi.DISCOUNT_POLICY_ID = :discountPolicyId
+    AND edpi.PRICE_POSITIONING = '一口价'
+    AND edpi.DISCOUNT_RATE &lt; 1
+  -- 查出一口价但折扣率&lt;1的异常数据
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交折扣政策时，产品定位为"一口价"但折扣率(DISCOUNT_RATE)&lt;1<br><strong>逻辑分析：</strong>submitCheck方法中校验一口价产品的折扣率必须&gt;=1(一口价即折扣率&gt;=1的特殊定价)。若&lt;1则抛出阻断性报错，需修正折扣率</div>
+  </div>
+</div>
+
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>折扣政策id不能为空
+- **触发条件**：导入产品时，discountPolicyId参数为空
+- **逻辑分析**：importProduct方法中校验discountPolicyId非空，因导入产品需关联到已保存的折扣政策。需先保存政策后再导入产品
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.DISCOUNT_POLICY_NAME, edp.VALID
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.DISCOUNT_POLICY_ID = :discountPolicyId
+  -- 校验折扣政策ID是否存在
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入产品时，discountPolicyId参数为空<br><strong>逻辑分析：</strong>importProduct方法中校验discountPolicyId非空，因导入产品需关联到已保存的折扣政策。需先保存政策后再导入产品</div>
+  </div>
+</div>
+
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>适用类型为"通用"时，产品优惠方式只能为 "折扣"
+- **触发条件**：保存折扣政策时，适用类型为通用(normal)但产品行优惠方式选择了特价(2)
+- **逻辑分析**：preCheckData方法中校验通用类型政策的优惠方式必须为折扣(1)，不支持特价。因通用政策面向所有客户，特价会导致不同客户价格不一致。需将产品行优惠方式改为折扣
+- **排查SQL**：
+  ```sql
+  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME,
+         edpi.PREFERENTIAL_TYPE, edp.SUITABLE_TYPE
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  JOIN EPM_DISCOUNT_POLICY edp ON edpi.DISCOUNT_POLICY_ID = edp.DISCOUNT_POLICY_ID
+  WHERE edp.SUITABLE_TYPE = 'normal'
+    AND edpi.PREFERENTIAL_TYPE = 2
+  -- 查出通用类型但优惠方式为特价的异常数据
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，适用类型为通用(normal)但产品行优惠方式选择了特价(2)<br><strong>逻辑分析：</strong>preCheckData方法中校验通用类型政策的优惠方式必须为折扣(1)，不支持特价。因通用政策面向所有客户，特价会导致不同客户价格不一致。需将产品行优惠方式改为折扣</div>
+  </div>
+</div>
+
+<div id="err-detail-10" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品编码:xxx 单个经销商封顶数量为正整数
+- **触发条件**：保存折扣政策时，capping=2(需校验封顶量)但customerCapsNumber非正整数
+- **逻辑分析**：preCheckData方法中校验当产品行启用封顶量校验(capping=2)时，单个经销商封顶数量必须为正整数。需修正封顶数量
+- **排查SQL**：
+  ```sql
+  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.CAPPING,
+         edpi.CUSTOMER_CAPS_NUMBER
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  WHERE edpi.CAPPING = 2
+    AND (edpi.CUSTOMER_CAPS_NUMBER IS NULL
+         OR edpi.CUSTOMER_CAPS_NUMBER &lt;= 0
+         OR edpi.CUSTOMER_CAPS_NUMBER != FLOOR(edpi.CUSTOMER_CAPS_NUMBER))
+  -- 查出封顶量异常的产品行
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，capping=2(需校验封顶量)但customerCapsNumber非正整数<br><strong>逻辑分析：</strong>preCheckData方法中校验当产品行启用封顶量校验(capping=2)时，单个经销商封顶数量必须为正整数。需修正封顶数量</div>
+  </div>
+</div>
+
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>产品【xxx】本次下单数量【xxx】，超过政策该经销商剩余可下单数量【xxx】，请检查！
+- **触发条件**：要货订单下单时，下单数量+已下单数量超过折扣政策该经销商的封顶量
+- **逻辑分析**：checkPolicyItem方法中当capping=2时，统计当前经销商已下单数量(currentApplyNum)，若currentApplyNum+本次下单数量&gt;经销商封顶量(customerCapsNumber)则抛出阻断性报错。需调整下单数量或联系管理员调整封顶量
+- **排查SQL**：
+  ```sql
+  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.CUSTOMER_CAPS_NUMBER,
+         edpi.TOTAL_CAP_NUMBER
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  WHERE edpi.CAPPING = 2
+    AND edpi.DISCOUNT_POLICY_ID = :discountPolicyId
+  -- 对比经销商已下单数量与封顶量
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>要货订单下单时，下单数量+已下单数量超过折扣政策该经销商的封顶量<br><strong>逻辑分析：</strong>checkPolicyItem方法中当capping=2时，统计当前经销商已下单数量(currentApplyNum)，若currentApplyNum+本次下单数量&gt;经销商封顶量(customerCapsNumber)则抛出阻断性报错。需调整下单数量或联系管理员调整封顶量</div>
+  </div>
+</div>
+
+<div id="err-detail-12" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>仅新建状态单据允许删除.
+- **触发条件**：删除折扣政策时，单据状态非NEW(新建)
+- **逻辑分析**：delete方法中校验单据HZ_APPROVE_STATUS为NEW，非新建状态不允许删除以避免已提交/已审批数据被误删。需先驳回至新建状态后再删除
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS, edp.VALID
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.DISCOUNT_POLICY_ID = :discountPolicyId
+    AND edp.HZ_APPROVE_STATUS &lt;&gt; 'NEW'
+  -- 查出非新建状态的折扣政策
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除折扣政策时，单据状态非NEW(新建)<br><strong>逻辑分析：</strong>delete方法中校验单据HZ_APPROVE_STATUS为NEW，非新建状态不允许删除以避免已提交/已审批数据被误删。需先驳回至新建状态后再删除</div>
+  </div>
+</div>
+
+<div id="err-detail-13" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到该单据
+- **触发条件**：删除/查询折扣政策详情时，按ID查询不到折扣政策
+- **逻辑分析**：selectByPrimaryKey查询EPM_DISCOUNT_POLICY返回null时抛出阻断性报错。需确认数据未被删除或ID正确
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.VALID
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.DISCOUNT_POLICY_ID = :discountPolicyId
+  -- 若返回空，说明折扣政策不存在
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>删除/查询折扣政策详情时，按ID查询不到折扣政策<br><strong>逻辑分析：</strong>selectByPrimaryKey查询EPM_DISCOUNT_POLICY返回null时抛出阻断性报错。需确认数据未被删除或ID正确</div>
+  </div>
+</div>
+
+<div id="err-detail-14" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>流程编码不能为空。
+- **触发条件**：提交折扣政策审批时，工作流编码未配置
+- **逻辑分析**：submitCheck方法中校验工作流编码非空，若为空则抛出阻断性报错。需联系管理员配置工作流编码
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.HZ_APPROVE_STATUS
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.DISCOUNT_POLICY_ID = :discountPolicyId
+  -- 检查折扣政策提交状态
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交折扣政策审批时，工作流编码未配置<br><strong>逻辑分析：</strong>submitCheck方法中校验工作流编码非空，若为空则抛出阻断性报错。需联系管理员配置工作流编码</div>
+  </div>
+</div>
+
+<div id="err-detail-15" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请先维护OA系统信息
+- **触发条件**：提交折扣政策审批时，OA系统信息未维护
+- **逻辑分析**：wfProcSubmit方法中校验OA系统配置，若未维护则抛出阻断性报错。需先在系统配置中维护OA信息
+- **排查SQL**：
+  ```sql
+  SELECT * FROM SCPSYSCONF WHERE CONFNAME LIKE '%OA%'
+  -- 检查OA系统配置是否存在
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>提交折扣政策审批时，OA系统信息未维护<br><strong>逻辑分析：</strong>wfProcSubmit方法中校验OA系统配置，若未维护则抛出阻断性报错。需先在系统配置中维护OA信息</div>
+  </div>
+</div>
+
+<div id="err-detail-16" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>未找到客户id，请检查!
+- **触发条件**：保存折扣政策时，policyType=1(客户)但客户ID为空
+- **逻辑分析**：preCheckData方法中校验当政策类型为客户(1)时，客户ID必须非空。需选择客户后保存
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.POLICY_TYPE,
+         edp.CUSTOMER_ID, edp.CUSTOMER_CODE
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.POLICY_TYPE = 1
+    AND edp.CUSTOMER_ID IS NULL
+  -- 查出客户类型但客户ID为空的异常数据
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，policyType=1(客户)但客户ID为空<br><strong>逻辑分析：</strong>preCheckData方法中校验当政策类型为客户(1)时，客户ID必须非空。需选择客户后保存</div>
+  </div>
+</div>
+
+<div id="err-detail-17" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>导入的产品编码查询不到对应的产品信息：xxx
+- **触发条件**：导入产品时，Excel中产品编码在CRM中查询不到对应产品
+- **逻辑分析**：importProduct方法中按产品编码查询CRM产品信息，若查询不到则抛出阻断性报错。需修正Excel中产品编码
+- **排查SQL**：
+  ```sql
+  SELECT edpi.DISCOUNT_POLICY_ITEM_ID, edpi.ITEM_CODE, edpi.ITEM_NAME
+  FROM EPM_DISCOUNT_POLICY_ITEM edpi
+  WHERE edpi.DISCOUNT_POLICY_ID = :discountPolicyId
+    AND edpi.ITEM_CODE NOT IN (:importedItemCodes)
+  -- 查出导入但CRM不存在的产品编码
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>导入产品时，Excel中产品编码在CRM中查询不到对应产品<br><strong>逻辑分析：</strong>importProduct方法中按产品编码查询CRM产品信息，若查询不到则抛出阻断性报错。需修正Excel中产品编码</div>
+  </div>
+</div>
+
+<div id="err-detail-18" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>订单类型为【计划订单】,业务类型不能为【长库龄】
+- **触发条件**：保存折扣政策时，订单类型为计划订单但业务类型选了长库龄
+- **逻辑分析**：preCheckData方法中校验订单类型与业务类型组合，计划订单不允许长库龄业务类型。需调整业务类型
+- **排查SQL**：
+  ```sql
+  SELECT edp.DISCOUNT_POLICY_ID, edp.DISCOUNT_POLICY_CODE, edp.ORDER_TYPE, edp.BUSINESS_TYPE
+  FROM EPM_DISCOUNT_POLICY edp
+  WHERE edp.ORDER_TYPE = '计划订单'
+    AND edp.BUSINESS_TYPE = '长库龄'
+  -- 查出订单类型与业务类型冲突的异常数据
+  ```</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存折扣政策时，订单类型为计划订单但业务类型选了长库龄<br><strong>逻辑分析：</strong>preCheckData方法中校验订单类型与业务类型组合，计划订单不允许长库龄业务类型。需调整业务类型</div>
+  </div>
+</div>
 </div>
 
 <div id="troubleshoot" style="display:none;">
