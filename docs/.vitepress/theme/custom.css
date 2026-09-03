@@ -1448,6 +1448,16 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
   color:#BD93F9 !important;
 }
 
+/* FAQ卡片样式 - 透明无边框 */
+.faq-qa-wrap .kl-card,
+.faq-qa-wrap .kl-card.alt {
+  background: transparent !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+  padding: 0 12px !important;
+}
+
 /* SQL语法高亮 - 注释 */
 .error-detail-box .detail-sql .sql-comment,
 .error-detail-box .detail-sql span[style*="color:#6272A4"],

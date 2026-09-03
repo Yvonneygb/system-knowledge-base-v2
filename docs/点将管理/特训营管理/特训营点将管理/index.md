@@ -950,6 +950,7 @@ WHERE tca.APPROVAL_STATE = 'approving';
 </KbCard>
 
 <KbCard title="常见问题">
+<h3 style="margin:0 0 32px 0;font-size:16px;font-weight:600;color:#374151;">其他常见问题</h3>
 <div class="faq-qa-wrap">
 <div class="kl-card" style="margin-bottom:20px;">
     <div class="kl-card-title" style="margin-bottom:16px;">
