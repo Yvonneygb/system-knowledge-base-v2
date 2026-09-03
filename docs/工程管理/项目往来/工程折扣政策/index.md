@@ -620,38 +620,36 @@ GROUP BY DPI.DISCOUNT_POLICY_ITEM_ID;</code></pre>
 </div>
 
 
-<div class="kb-module">
-
-### Q1: 要货订单封顶量校验失败 🔴高频
-
-**现象**：要货订单提交时报错封顶量超限
-
-**根因**：下单数量超过折扣政策坎级行封顶量或经销商封顶量
-
-**排查SQL**：
-```sql
-SELECT EPIL.CAPPING_QTY, EPIC.CAPPING_QTY AS CUSTOMER_CAP,
+<KbCard title="常见问题">
+<div class="faq-qa-wrap">
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q1</span>
+      <span style="font-size:15px;">要货订单封顶量校验失败 🔴高频</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">现象：</strong>要货订单提交时报错封顶量超限<br>
+      <strong style="color:#7C3AED;">根因：</strong>下单数量超过折扣政策坎级行封顶量或经销商封顶量<br>
+      <strong style="color:#7C3AED;">排查SQL：</strong>
+      <pre class="detail-sql language-sql" v-pre><code>SELECT EPIL.CAPPING_QTY, EPIC.CAPPING_QTY AS CUSTOMER_CAP,
        EPIL.MINIMUM_QTY
 FROM EPM_DISCOUNT_POLICY_ITEM_LINE EPIL
-LEFT JOIN EPM_DISCOUNT_POLICY_ITEM_CUSTOMER EPIC 
+LEFT JOIN EPM_DISCOUNT_POLICY_ITEM_CUSTOMER EPIC
   ON EPIL.DISCOUNT_POLICY_ITEM_ID = EPIC.DISCOUNT_POLICY_ITEM_ID
   AND EPIC.CUSTOMER_ID = :customerId
-WHERE EPIL.DISCOUNT_POLICY_ITEM_ID = :policyItemId;
-```
-
-</div>
-
-<div class="kb-module-alt">
-
-### Q2: 通用政策时间重叠校验失败 🟡偶发
-
-**现象**：保存时报错同一产品/型号在重叠时间段已有其他政策
-
-**根因**：通用类型折扣政策不允许同一产品在重叠时间段存在多个已审批/有效政策
-
-**排查SQL**：
-```sql
-SELECT DP.DISCOUNT_POLICY_ID, DP.DISCOUNT_POLICY_CODE, DP.VALID,
+WHERE EPIL.DISCOUNT_POLICY_ITEM_ID = :policyItemId;</code></pre>
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">通用政策时间重叠校验失败 🟡偶发</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">现象：</strong>保存时报错同一产品/型号在重叠时间段已有其他政策<br>
+      <strong style="color:#7C3AED;">根因：</strong>通用类型折扣政策不允许同一产品在重叠时间段存在多个已审批/有效政策<br>
+      <strong style="color:#7C3AED;">排查SQL：</strong>
+      <pre class="detail-sql language-sql" v-pre><code>SELECT DP.DISCOUNT_POLICY_ID, DP.DISCOUNT_POLICY_CODE, DP.VALID,
        DP.EFFECTIVE_DATE_START, DP.EFFECTIVE_DATE_END
 FROM EPM_DISCOUNT_POLICY DP
 JOIN EPM_DISCOUNT_POLICY_ITEM DPI ON DP.DISCOUNT_POLICY_ID = DPI.DISCOUNT_POLICY_ID
@@ -659,66 +657,61 @@ WHERE DPI.ITEM_CODE = :itemCode
   AND DP.SUITABLE_TYPE = 'normal'
   AND DP.VALID IN (1, 2)
   AND DP.EFFECTIVE_DATE_END >= :startDate
-  AND DP.EFFECTIVE_DATE_START <= :endDate;
-```
-
-</div>
-
-<div class="kb-module">
-
-### Q3: 专项政策审批通过后CRM同步失败
-
-**现象**：专项折扣政策审批通过但CRM未同步
-
-**根因**：crmPolicySyncService.doCreatePolicy 或 doComplete 调用失败
-
-**排查**：检查 EPM_DISCOUNT_POLICY_GENERATE 是否有记录，CRMIC是否为空
-
-</div>
-
-<div class="kb-module-alt">
-
-### Q4: 一口价折扣率校验失败
-
-**现象**：提交时报错一口价折扣率<1
-
-**根因**：产品定位为"一口价"时坎级行的折扣率必须≥1
-
-**排查SQL**：
-```sql
-SELECT DPI.ITEM_CODE, DPIE.PROD_POSITIONING, EPIL.DISCOUNT_RATE
+  AND DP.EFFECTIVE_DATE_START <= :endDate;</code></pre>
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q3</span>
+      <span style="font-size:15px;">专项政策审批通过后CRM同步失败</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">现象：</strong>专项折扣政策审批通过但CRM未同步<br>
+      <strong style="color:#7C3AED;">根因：</strong>crmPolicySyncService.doCreatePolicy 或 doComplete 调用失败<br>
+      <strong style="color:#7C3AED;">排查：</strong>检查 EPM_DISCOUNT_POLICY_GENERATE 是否有记录，CRMID是否为空
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q4</span>
+      <span style="font-size:15px;">一口价折扣率校验失败</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">现象：</strong>提交时报错一口价折扣率&lt;1<br>
+      <strong style="color:#7C3AED;">根因：</strong>产品定位为"一口价"时坎级行的折扣率必须≥1<br>
+      <strong style="color:#7C3AED;">排查SQL：</strong>
+      <pre class="detail-sql language-sql" v-pre><code>SELECT DPI.ITEM_CODE, DPIE.PROD_POSITIONING, EPIL.DISCOUNT_RATE
 FROM EPM_DISCOUNT_POLICY_ITEM DPI
 JOIN EPM_DISCOUNT_POLICY_ITEM_EXT DPIE ON DPI.DISCOUNT_POLICY_ITEM_ID = DPIE.DISCOUNT_POLICY_ITEM_ID
 JOIN EPM_DISCOUNT_POLICY_ITEM_LINE EPIL ON DPI.DISCOUNT_POLICY_ITEM_ID = EPIL.DISCOUNT_POLICY_ITEM_ID
 WHERE DPI.DISCOUNT_POLICY_ID = :policyId
-  AND DPIE.PROD_POSITIONING = '一口价';
-```
-
+  AND DPIE.PROD_POSITIONING = '一口价';</code></pre>
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q5</span>
+      <span style="font-size:15px;">折扣政策失效后要货订单仍可下单</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">现象：</strong>折扣政策valid=3(失效)后，要货订单仍能使用该政策下单<br>
+      <strong style="color:#7C3AED;">根因：</strong>政策行validStat未全部更新为3，或政策LOV查询条件未过滤valid状态<br>
+      <strong style="color:#7C3AED;">排查：</strong>检查 EPM_DISCOUNT_POLICY_ITEM 的 VALID_STAT 字段是否全部为3
+    </div>
+  </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q6</span>
+      <span style="font-size:15px;">家装专项新品型号不允许 🔴设计规则</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">现象：</strong>家装专项折扣政策保存时报错新品型号不允许<br>
+      <strong style="color:#7C3AED;">根因：</strong>家装专项时型号涉及新品(EBS标记newProdFlag=Y)不允许通过型号定义<br>
+      <strong style="color:#7C3AED;">说明：</strong>这是设计规则，新品必须通过产品(applicationType=1)而非型号(applicationType=2)定义
+    </div>
+  </div>
 </div>
-
-<div class="kb-module">
-
-### Q5: 折扣政策失效后要货订单仍可下单
-
-**现象**：折扣政策valid=3(失效)后，要货订单仍能使用该政策下单
-
-**根因**：政策行validStat未全部更新为3，或政策LOV查询条件未过滤valid状态
-
-**排查**：检查 EPM_DISCOUNT_POLICY_ITEM 的 VALID_STAT 字段是否全部为3
-
-</div>
-
-<div class="kb-module-alt">
-
-### Q6: 家装专项新品型号不允许 🔴设计规则
-
-**现象**：家装专项折扣政策保存时报错新品型号不允许
-
-**根因**：家装专项时型号涉及新品(EBS标记newProdFlag=Y)不允许通过型号定义
-
-**说明**：这是设计规则，新品必须通过产品(applicationType=1)而非型号(applicationType=2)定义
-
-</div>
+</KbCard>
 
 </div>
 
