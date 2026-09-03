@@ -1,8 +1,15 @@
 ---
 ---
 
-<KbSectionTabs />
-<div id="biz-flow" style="display:none;">
+<KbSectionTabs :tabs="[
+  { id: 'biz-flow', label: '业务流程图' },
+  { id: 'logic', label: '逻辑说明' },
+  { id: 'faq', label: '常见问题FAQ' },
+  { id: 'troubleshoot', label: '故障排查' },
+  { id: 'history', label: '历史记录' },
+  { id: 'related', label: '相关文档' },
+]" />
+<div id="biz-flow">
 <div class="tab-pad">
 <div class="bf-truth-flow">
   <h4 class="bf-main-title">工程折扣政策 — 全链路流程图</h4>

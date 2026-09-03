@@ -404,6 +404,10 @@ body { background: var(--kb-bg-white) !important; color: var(--kb-text) !importa
   background: #7C3AED;
   border-color: #7C3AED;
 }
+.kb-topbar-sep {
+  display: inline-block;
+  width: 8px;
+}
 
 /* 简洁模式：隐藏所有 SQL 代码块 */
 body.kb-simple-mode .detail-sql,
