@@ -827,122 +827,282 @@ WHERE DPI.DISCOUNT_POLICY_ID = :policyId
 </KbCard>
 
 <KbCard title="选择弹窗">
-<table class="kb-field-tbl">
-<thead><tr><th>选择项</th><th>触发场景</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>CRM产品选择弹窗</td><td>添加产品明细时</td><td>调用F /get-crm-item从CRM查询产品，回写itemId/itemCode/itemName</td></tr>
-<tr><td>产品型号选择弹窗</td><td>选择产品型号时</td><td>调用GET /get-model获取产品型号</td></tr>
-<tr><td>客户选择弹窗</td><td>policyType=1时</td><td>选择客户，回写customerId/customerCode/customerName</td></tr>
-<tr><td>政策选择弹窗(LOV)</td><td>引用政策时</td><td>调用GET /get-policy-lov查询有效政策</td></tr>
-<tr><td>申请类型选择</td><td>选择申请类型时</td><td>调用POST /get-policy-line-type获取可用申请类型</td></tr>
-<tr><td>合同类型选择</td><td>选择合同类型时</td><td>调用POST /get-contract-type获取合同类型数据</td></tr>
-</tbody>
-</table>
-</KbCard>
+<KbSubTitle>弹窗1：CRM产品选择弹窗 <KbBadge type="purple">多选</KbBadge></KbSubTitle>
 
+**入参**
+
+| 字段名 | 中文名 | 释义 | 示例 |
+|-------|-------|------|------|
+| channel | 销售渠道 | 当前政策的销售渠道 | 3 |
+| currency | 币种 | 当前政策的币种 | CNY |
+| divisionId | 事业部ID | 当前用户所属事业部 | 101 |
+
+**数据范围**
+
+```sql
+CRM产品接口查询参数
+```
+
+<KbSubTitle>弹窗2：产品型号选择弹窗(LOV: AE.GET_MODEL) <KbBadge type="purple">多选</KbBadge></KbSubTitle>
+
+**入参**
+
+| 字段名 | 中文名 | 释义 | 示例 |
+|-------|-------|------|------|
+| itemModel | 产品型号 | 搜索关键字 | ASC-25 |
+
+**数据范围**
+
+```sql
+后端getModel方法查询
+```
+
+<KbSubTitle>弹窗3：客户选择弹窗 <KbBadge type="purple">多选</KbBadge></KbSubTitle>
+
+**入参**
+
+| 字段名 | 中文名 | 释义 | 示例 |
+|-------|-------|------|------|
+| policyType | 政策类型 | 1=客户时触发 | 1 |
+
+**数据范围**
+
+```sql
+客户主数据查询
+```
+
+</KbCard>
 <KbCard title="导入">
-支持产品明细和阶梯政策导入。调用POST /importProduct接口，上传Excel文件批量导入产品明细和坎级行数据。入参需包含discountPolicyId(折扣政策ID)，为空时抛出"折扣政策id不能为空"。
-</KbCard>
+<KbSubTitle>前置约定</KbSubTitle>
 
+
+- 文件样例：折扣政策导入模板.xlsx
+- 格式：.xlsx 或 .xls
+- 文件大小：无特殊限制
+
+
+<KbSubTitle>字段映射</KbSubTitle>
+
+
+| 字段含义 | 是否必输 | 字段格式 | 重复判定字段 |
+|---------|---------|---------|------------|
+| 产品编码 | 是 | 文本 | 是（与表格中已有产品编码重复则跳过） |
+| 产品型号 | 按申请类型 | 文本 | 是（申请类型=型号时） |
+| 申请类型 | 是 | 数值(1/2/3) | 否 |
+| 优惠方式 | 是 | 数值(1/2) | 否 |
+| 起订量 | 是 | 正整数 | 否 |
+| 封顶量 | 是 | 正整数 | 否 |
+| 折扣率 | 优惠方式=折扣时 | 小数(3位) | 否 |
+| 特价 | 优惠方式=特价时 | 小数(3位) | 否 |
+
+
+<KbSubTitle>处理逻辑</KbSubTitle>
+
+
+- **校验逻辑**：导入前如果单据未保存，先自动保存头信息再导入；校验文件格式必须为.xlsx/.xls
+- **导入逻辑**：调用后端 `/epm-discount-policy/importProduct` 接口，传入discountPolicyId、channel、currency、divisionId等参数；返回数据追加到产品明细表格，同时为每个产品创建对应的阶梯政策记录
+- **重复处理策略**：跳过（已存在的产品编码不覆盖，提示警告）
+- **性能方案**：同步导入
+
+
+<KbSubTitle>异常与结果约定</KbSubTitle>
+
+
+- 部分成功/失败时的处理：重复产品编码跳过并提示警告，新增成功数量提示成功
+- 结果反馈机制：成功提示"导入成功，新增N条数据"；重复提示"产品编码已存在表格中，不能覆盖"
+
+
+<KbSubTitle>运维保障</KbSubTitle>
+
+
+- 日志记录：后端LOGGER记录导入参数和结果
+- 断点续传/重试机制：不支持，需重新上传整个文件
+
+
+</KbCard>
 <KbCard title="其他按钮">
-<table class="kb-field-tbl">
-<thead><tr><th>序号</th><th>按钮名</th><th>显示条件</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td>1</td><td>新增</td><td>列表页</td><td>跳转新增页面，选择客户和产品后保存</td></tr>
-<tr><td>2</td><td>详情</td><td>选中某行</td><td>查看折扣政策完整信息</td></tr>
-<tr><td>3</td><td>保存并提交</td><td>编辑模式且新建状态</td><td>保存后直接提交审批</td></tr>
-<tr><td>4</td><td>失效</td><td>政策状态为已生效</td><td>发起折扣政策失效申请</td></tr>
-<tr><td>5</td><td>导出</td><td>列表页</td><td>导出折扣政策列表</td></tr>
-<tr><td>6</td><td>删除</td><td>仅NEW状态</td><td>级联删除所有子表</td></tr>
-<tr><td>7</td><td>导入产品</td><td>详情页</td><td>Excel批量导入产品明细和阶梯政策</td></tr>
-</tbody>
-</table>
+
+| 按钮名称 | 按钮作用 | 所在位置 | 显隐条件/可点击条件 | 影响 |
+|---------|---------|---------|-------------------|------|
+| 新建 | 新增一条产品明细行 | 详情页-产品明细 | 编辑模式 | 创建一行空数据，同时创建一条默认阶梯政策(起订量=1) |
+| 明细导入 | 批量导入产品明细 | 详情页-产品明细 | 编辑模式 | 调用importProduct接口导入产品数据 |
+| 模板下载 | 下载导入模板 | 详情页-产品明细 | 编辑模式 | 下载"折扣政策导入模板.xlsx" |
+| 删除 | 删除选中的产品明细行 | 详情页-产品明细 | 编辑模式，需选中行 | 从表格移除选中行 |
+| 新建 | 新增一条阶梯政策行 | 详情页-阶梯政策 | 编辑模式 | 创建一行空数据 |
+| 删除 | 删除选中的阶梯政策行 | 详情页-阶梯政策 | 编辑模式，需选中行且至少保留一行 | 从表格移除选中行 |
+| 保存 | 保存当前单据 | 详情页头部 | 编辑模式 | 调用保存接口，保存头+产品明细+阶梯政策+附件+经销商 |
+| 提交 | 提交审批 | 详情页头部 | 非编辑模式且状态非审批中/已审批/挂起/退回 | 弹出流程选择弹窗，选择后调用保存并提交接口 |
+| 编辑 | 进入编辑模式 | 详情页头部 | 非编辑模式且状态非审批中/已审批/挂起/退回 | 切换为编辑模式 |
+| 取消编辑 | 退出编辑模式 | 详情页头部 | 编辑模式 | 重置所有DataSet，重新查询数据 |
+| 获取零售折扣底限 | 从CRM获取产品零售折扣底限 | 详情页头部 | 非编辑模式 | 调用askCrmItem接口，更新产品的零售折扣底限和底限渠道 |
+
 </KbCard>
-
 <KbCard title="保存校验">
-<table class="kb-field-tbl">
-<thead><tr><th>校验点</th><th>规则</th></tr></thead>
-<tbody>
-<tr><td>必填字段非空</td><td>专项时订单类型+业务类型必填；通用必填政策类型/名称/有效日期/币种</td></tr>
-<tr><td>产品行非空</td><td>至少添加一条产品明细行</td></tr>
-<tr><td>申请类型互斥</td><td>全产品(3)与型号(2)/产品(1)不能同时存在</td></tr>
-<tr><td>政策名称长度</td><td>非空且长度≤30个字符</td></tr>
-<tr><td>时间重叠校验</td><td>通用类型同一产品/型号在重叠时间段不能存在其他已审批/有效政策</td></tr>
-<tr><td>新品校验</td><td>家装专项时型号涉及新品(EBS标记newProdFlag=Y)不允许型号定义</td></tr>
-<tr><td>重复行</td><td>产品编码不能重复，型号不能重复</td></tr>
-</tbody>
-</table>
+<KbSubTitle>校验1：必填字段非空 —— 确保政策基本信息完整</KbSubTitle>
 
-**排查SQL**：
+- 第1点：专项时订单类型+业务类型必填；通用必填政策类型/名称/有效日期/币种
 
-<pre class="detail-sql language-sql" v-pre><code>-- 校验1：必填字段
-SELECT * FROM EPM_DISCOUNT_POLICY WHERE POLICY_NAME IS NULL OR POLICY_TYPE IS NULL;
+<KbTip>阻断性报错</KbTip>
 
--- 校验2：产品行非空
+```sql
+SELECT * FROM EPM_DISCOUNT_POLICY WHERE POLICY_NAME IS NULL OR POLICY_TYPE IS NULL
+```
+
+<KbSubTitle>校验2：产品行非空 —— 确保政策至少有一条产品明细</KbSubTitle>
+
+- 第1点：新建时产品行列表为空则报错
+- 第2点：所有产品行都被删除（_status=delete）也报错
+
+<KbTip>阻断性报错</KbTip>
+
+```sql
 SELECT DP.DISCOUNT_POLICY_ID FROM EPM_DISCOUNT_POLICY DP
 LEFT JOIN EPM_DISCOUNT_POLICY_ITEM DPI ON DP.DISCOUNT_POLICY_ID = DPI.DISCOUNT_POLICY_ID
-WHERE DPI.DISCOUNT_POLICY_ITEM_ID IS NULL;
+WHERE DPI.DISCOUNT_POLICY_ITEM_ID IS NULL
+```
 
--- 校验3：申请类型互斥
-SELECT DISTINCT APPLICATION_TYPE FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = #{policyId};
+<KbSubTitle>校验3：申请类型互斥 —— 全产品类型与产品/型号类型不能同时存在</KbSubTitle>
 
--- 校验4：政策名称长度
-SELECT DISCOUNT_POLICY_ID, POLICY_NAME, LENGTH(POLICY_NAME) AS NAME_LEN FROM EPM_DISCOUNT_POLICY WHERE LENGTH(POLICY_NAME) &gt; 30;
+- 第1点：产品行中同时存在申请类型=3(全产品)和申请类型=1(产品)或2(型号)时报错
 
--- 校验5：时间重叠校验
-SELECT DP.DISCOUNT_POLICY_ID, DP.DISCOUNT_POLICY_CODE FROM EPM_DISCOUNT_POLICY DP
+<KbTip>阻断性报错</KbTip>
+
+```sql
+SELECT DISTINCT APPLICATION_TYPE FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discountPolicyId
+```
+
+<KbSubTitle>校验4：政策名称长度 —— 政策名称不超过30个字符</KbSubTitle>
+
+- 第1点：政策名称非空且长度不超过30个字符
+
+<KbTip>toast提醒</KbTip>
+
+```sql
+SELECT DISCOUNT_POLICY_ID, POLICY_NAME, LENGTH(POLICY_NAME) AS NAME_LEN FROM EPM_DISCOUNT_POLICY WHERE LENGTH(POLICY_NAME) > 30
+```
+
+<KbSubTitle>校验5：时间重叠校验 —— 通用类型同一产品/型号在重叠时间段不能存在其他已审批/有效政策</KbSubTitle>
+
+- 第1点：保存时校验通用类型(suitableType=normal)同一产品/型号的有效日期区间与其他已审批/有效政策不重叠
+
+<KbTip>阻断性报错</KbTip>
+
+```sql
+SELECT DP.DISCOUNT_POLICY_ID, DP.DISCOUNT_POLICY_CODE, DP.VALID,
+       DP.EFFECTIVE_DATE_START, DP.EFFECTIVE_DATE_END
+FROM EPM_DISCOUNT_POLICY DP
 JOIN EPM_DISCOUNT_POLICY_ITEM DPI ON DP.DISCOUNT_POLICY_ID = DPI.DISCOUNT_POLICY_ID
-WHERE DPI.ITEM_CODE = #{itemCode} AND DP.SUITABLE_TYPE = 'normal' AND DP.VALID IN (1,2)
-AND DP.EFFECTIVE_DATE_END &gt;= #{startDate} AND DP.EFFECTIVE_DATE_START &lt;= #{endDate};</code></pre>
+WHERE DPI.ITEM_CODE = :itemCode
+  AND DP.SUITABLE_TYPE = 'normal'
+  AND DP.VALID IN (1, 2)
+  AND DP.EFFECTIVE_DATE_END >= :startDate
+  AND DP.EFFECTIVE_DATE_START <= :endDate
+```
+
+<KbSubTitle>校验6：新品校验 —— 家装专项政策新增产品行需校验新品标记</KbSubTitle>
+
+- 第1点：家装(isMakt!=2且suitableType=special)时，对新增状态的产品行调用verifyNewProd校验新品
+
+<KbTip>阻断性报错</KbTip>
+
+```sql
+SELECT ITEM_CODE, NEW_PROD_FLAG FROM EPM_DISCOUNT_POLICY_ITEM_EXT WHERE DISCOUNT_POLICY_ID = :discountPolicyId
+```
+
+<KbSubTitle>校验7：重复行 —— 产品编码不能重复，型号不能重复</KbSubTitle>
+
+- 第1点：同一政策内产品编码不能重复
+- 第2点：同一政策内型号不能重复
+
+<KbTip>toast提醒</KbTip>
+
+```sql
+SELECT ITEM_CODE, COUNT(*) FROM EPM_DISCOUNT_POLICY_ITEM WHERE DISCOUNT_POLICY_ID = :discountPolicyId GROUP BY ITEM_CODE HAVING COUNT(*) > 1
+```
+
 </KbCard>
-
 <KbCard title="提交校验">
-<table class="kb-field-tbl">
-<thead><tr><th>校验点</th><th>规则</th></tr></thead>
-<tbody>
-<tr><td>一口价折扣率校验</td><td>产品定位为"一口价"时折扣率必须≥1</td></tr>
-<tr><td>坎级数量校验</td><td>max(坎级封顶量) ≤ 单个经销商封顶数量 ≤ 政策行总数量</td></tr>
-<tr><td>折扣管控CRM校验</td><td>非样品/长库龄业务类型时推送CRM校验</td></tr>
-</tbody>
-</table>
+<KbSubTitle>校验1：一口价折扣率校验 —— 产品定位为"一口价"时折扣率必须大于等于1</KbSubTitle>
 
-**排查SQL**：
+- 第1点：产品定位为"一口价"时折扣率必须大于等于1
 
-<pre class="detail-sql language-sql" v-pre><code>-- 校验1：一口价折扣率
+<KbTip>阻断性报错</KbTip>
+
+```sql
 SELECT DPI.ITEM_CODE, DPIE.PROD_POSITIONING, EPIL.DISCOUNT_RATE
 FROM EPM_DISCOUNT_POLICY_ITEM DPI
 JOIN EPM_DISCOUNT_POLICY_ITEM_EXT DPIE ON DPI.DISCOUNT_POLICY_ITEM_ID = DPIE.DISCOUNT_POLICY_ITEM_ID
 JOIN EPM_DISCOUNT_POLICY_ITEM_LINE EPIL ON DPI.DISCOUNT_POLICY_ITEM_ID = EPIL.DISCOUNT_POLICY_ITEM_ID
-WHERE DPI.DISCOUNT_POLICY_ID = #{policyId} AND DPIE.PROD_POSITIONING = '一口价' AND EPIL.DISCOUNT_RATE &lt; 1;
+WHERE DPI.DISCOUNT_POLICY_ID = :discountPolicyId AND DPIE.PROD_POSITIONING = '一口价' AND EPIL.DISCOUNT_RATE < 1
+```
 
--- 校验2：坎级数量
-SELECT MAX(EPIL.CAPPING_QTY) AS MAX_CAPPING, DPI.CUSTOMER_CAPS_NUMBER
+<KbSubTitle>校验2：坎级数量校验 —— max(坎级封顶量)小于等于单个经销商封顶数量，小于等于政策行总数量</KbSubTitle>
+
+- 第1点：max(坎级封顶量)小于等于单个经销商封顶数量
+- 第2点：单个经销商封顶数量小于等于政策行总数量
+
+<KbTip>阻断性报错</KbTip>
+
+```sql
+SELECT MAX(EPIL.CAPPING_QTY) AS MAX_CAPPING,
+       DPI.CUSTOMER_CAPS_NUMBER
 FROM EPM_DISCOUNT_POLICY_ITEM_LINE EPIL
 JOIN EPM_DISCOUNT_POLICY_ITEM DPI ON EPIL.DISCOUNT_POLICY_ITEM_ID = DPI.DISCOUNT_POLICY_ITEM_ID
-WHERE DPI.DISCOUNT_POLICY_ID = #{policyId} GROUP BY DPI.DISCOUNT_POLICY_ITEM_ID;
+WHERE DPI.DISCOUNT_POLICY_ID = :discountPolicyId
+GROUP BY DPI.DISCOUNT_POLICY_ITEM_ID
+```
 
--- 校验3：折扣管控CRM
-SELECT DISCOUNT_POLICY_ID, IS_MAKT, SOURCE_TYPE FROM EPM_DISCOUNT_POLICY WHERE DISCOUNT_POLICY_ID = #{policyId};</code></pre>
+<KbSubTitle>校验3：折扣管控CRM校验 —— 非样品/长库龄业务类型时推送CRM校验</KbSubTitle>
+
+- 第1点：非样品/长库龄业务类型时推送CRM校验
+
+<KbTip>阻断性报错</KbTip>
+
+```sql
+SELECT DISCOUNT_POLICY_ID, IS_MAKT, SOURCE_TYPE FROM EPM_DISCOUNT_POLICY WHERE DISCOUNT_POLICY_ID = :discountPolicyId
+```
+
 </KbCard>
-
 <KbCard title="状态机">
-<pre v-pre><code>┌──────────┐  提交   ┌──────────┐  审批通过  ┌──────────┐
-│  新建    │ ──────→ │ 审批中    │ ────────→ │ 已生效   │
-│ (valid=1)│         │ (RUN)   │           │ (valid=2)│
-└──────────┘         └────┬─────┘           └────┬─────┘
-      ↑                   │                      │
-      │              审批拒绝                 失效申请
-      │                   │                      │
-      └───────────────────┘                      ▼
-                                       ┌──────────┐  失效审批通过  ┌──────────┐
-                                       │ 失效申请  │ ──────────→ │ 已失效   │
-                                       │ (RUN)   │            │ (valid=3)│
-                                       └──────────┘           &lt;──────────┘</code></pre>
+### 状态机
 
-**审批通过后动作**：
+<KbSubTitle>状态机流转图</KbSubTitle>
+
+
+```text
+[NEW 新建] ──提交──→ [RUN 审批中] ──审批通过──→ [APPROVED 审批通过]
+     │                    │
+     │                    ├──审批拒绝──→ [REJECTED 审批拒绝]
+     │                    │
+     │                    └──撤回──→ [WITHDRAW 已撤回]
+     │
+     └──删除──→ (删除)
+
+[REJECTED 审批拒绝] ──重新编辑提交──→ [RUN 审批中]
+[WITHDRAW 已撤回] ──重新编辑提交──→ [RUN 审批中]
+[RUN 审批中] ──终止──→ [INTERRUPT 终止]
+```
+
+<KbSubTitle>状态机列表</KbSubTitle>
+
+
+| 状态机名称 | 状态释义 | 可执行的操作 |
+|-----------|---------|------------|
+| NEW | 新建 | 保存、编辑、提交、删除 |
+| RUN | 审批中 | 无（等待审批结果） |
+| APPROVED | 审批通过 | 查看、获取零售折扣底限 |
+| REJECTED | 审批拒绝 | 编辑、重新提交 |
+| WITHDRAW | 已撤回 | 编辑、重新提交 |
+| INTERRUPT | 终止 | 查看 |
+
+---
+
+<KbSubTitle>审批通过后动作</KbSubTitle>
+
 
 - 通用类型(normal)：直接设valid=2生效
 - 专项类型(special)：crmPolicySyncService同步CRM后设valid=2
+
 </KbCard>
 
 <KbCard title="上游依赖">
