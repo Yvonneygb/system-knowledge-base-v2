@@ -656,8 +656,8 @@ JOIN EPM_DISCOUNT_POLICY_ITEM DPI ON DP.DISCOUNT_POLICY_ID = DPI.DISCOUNT_POLICY
 WHERE DPI.ITEM_CODE = :itemCode
   AND DP.SUITABLE_TYPE = 'normal'
   AND DP.VALID IN (1, 2)
-  AND DP.EFFECTIVE_DATE_END >= :startDate
-  AND DP.EFFECTIVE_DATE_START <= :endDate;</code></pre>
+  AND DP.EFFECTIVE_DATE_END &gt;= :startDate
+  AND DP.EFFECTIVE_DATE_START &lt;= :endDate;</code></pre>
     </div>
   </div>
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
