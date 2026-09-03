@@ -638,43 +638,6 @@ APPROVED ──发起签呈──→ isSecondChange=2
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：装修申请提交时报&quot;预算剩余可用额度不足&quot;">
-<p><strong>根因</strong>：该预算年度的额度外预算(feeTypeId=66014601)剩余可用额度&lt;0</p>
-<p><strong>解决方案</strong>：联系财务确认预算额度是否已用完，或调整申请金额</p>
-</KbCard>
-
-<KbCard title="Q2：装修申请提交时报&quot;店面装修等级没有有效期内的政策标准&quot;">
-<p><strong>根因</strong>：该装修等级在当前时间范围内没有有效的装修标准政策(START_DATE~END_DATE未覆盖当前日期)</p>
-<p><strong>解决方案</strong>：在门店装修标准设置中新增或延长该等级的政策有效期</p>
-</KbCard>
-
-<KbCard title="Q3：作废时报&quot;新建、审核拒绝的单据才能作废&quot;">
-<p><strong>根因</strong>：单据状态非NEW或REJECTED，可能已在审批中(RUN)或已审批(APPROVED)</p>
-<p><strong>解决方案</strong>：已审批单据不可作废，如需关闭请走关闭申请流程</p>
-</KbCard>
-
-<KbCard title="Q4：重新生成时报&quot;该门店已有其它装修申请单&quot;">
-<p><strong>根因</strong>：同一门店存在其他非INTERRUPT状态的装修申请单</p>
-<p><strong>解决方案</strong>：先作废其他申请单，再重新生成</p>
-</KbCard>
-
-<KbCard title="Q5：重新生成时报&quot;超期天数大于限制或补贴金额为0&quot;">
-<p><strong>根因</strong>：超期天数&gt;公司参数Over_Date_Limit，或扣减比例≥1(补贴金额已全部扣减)</p>
-<p><strong>解决方案</strong>：超期严重的申请单不可重新生成，需新建申请</p>
-</KbCard>
-
-<KbCard title="Q6：审批通过后自动发起了关闭申请">
-<p><strong>根因</strong>：装修超期天数&gt;公司参数Over_Date_Limit，系统自动创建FinFeeApplyClose并启动FIN_FEE_APPLY_CLOSE工作流</p>
-<p><strong>解决方案</strong>：这是系统正常逻辑，需在关闭申请流程中处理扣减额度</p>
-</KbCard>
-
-<KbCard title="Q7：提交时报&quot;单据正在申请变更中，不可提交&quot;">
-<p><strong>根因</strong>：isModify=2，单据已发起变更申请</p>
-<p><strong>解决方案</strong>：先完成或撤销变更申请，再提交</p>
-</KbCard>
-
-</div>
-</div>
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -717,33 +680,28 @@ APPROVED ──发起签呈──→ isSecondChange=2
 <div id="err-detail-1" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>门店装修申请及完成信息不存在
-- **触发条件**：doSelect/doInsert/doUpdate/doDelete/operate/validRegenerate/onWfComplete/onUserSubmit等操作，finFeeApplyFinishedHeaderMapper.selectByPrimaryKey按TERMINAL_APPLY_ID查询返回null
-- **逻辑分析**：装修申请单是各操作的主数据源，需先校验存在。若申请单在操作期间被其他用户删除、TERMINAL_APPLY_ID传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需核查申请单数据是否仍存在。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>门店装修申请及完成信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doSelect/doInsert/doUpdate/doDelete/operate/validRegenerate/onWfComplete/onUserSubmit等操作，finFeeApplyFinishedHeaderMapper.selectByPrimaryKey按TERMINAL_APPLY_ID查询返回null<br><strong>逻辑分析：</strong>装修申请单是各操作的主数据源，需先校验存在。若申请单在操作期间被其他用户删除、TERMINAL_APPLY_ID传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需核查申请单数据是否仍存在。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.terminal_code       AS 门店编码,
          f.hz_approve_status   AS 审批状态,
          f.update_time         AS 最后更新时间
   FROM   fin_fee_apply_finished_header f
-  WHERE  f.terminal_apply_id = #{传入的terminalApplyId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doSelect/doInsert/doUpdate/doDelete/operate/validRegenerate/onWfComplete/onUserSubmit等操作，finFeeApplyFinishedHeaderMapper.selectByPrimaryKey按TERMINAL_APPLY_ID查询返回null<br><strong>逻辑分析：</strong>装修申请单是各操作的主数据源，需先校验存在。若申请单在操作期间被其他用户删除、TERMINAL_APPLY_ID传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需核查申请单数据是否仍存在。</div>
+  WHERE  f.terminal_apply_id = #{传入的terminalApplyId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>门店信息不存在
-- **触发条件**：onWfBreak/breakWF/onUserSubmit操作，mktTerminalRepository.selectByPrimaryKey按terminalId查询MKT_TERMINAL返回null或originalStat为空
-- **逻辑分析**：装修申请需联动更新门店状态(提交时置4-装修中、通过时置1-正常、驳回时恢复originalStat)。若门店档案被删除、terminalId传值错误、或originalStat未在提交时正确保存（导致驳回时无法恢复），查询返回空抛异常。需核查门店档案与申请单关联一致性。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>门店信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfBreak/breakWF/onUserSubmit操作，mktTerminalRepository.selectByPrimaryKey按terminalId查询MKT_TERMINAL返回null或originalStat为空<br><strong>逻辑分析：</strong>装修申请需联动更新门店状态(提交时置4-装修中、通过时置1-正常、驳回时恢复originalStat)。若门店档案被删除、terminalId传值错误、或originalStat未在提交时正确保存（导致驳回时无法恢复），查询返回空抛异常。需核查门店档案与申请单关联一致性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id AS 装修申请ID,
          f.terminal_apply_no AS 申请单号,
          f.terminal_id       AS 门店ID,
          f.terminal_code     AS 门店编码,
@@ -754,85 +712,69 @@ APPROVED ──发起签呈──→ isSecondChange=2
   LEFT   JOIN mkt_terminal m ON m.terminal_id = f.terminal_id
   WHERE  f.hz_approve_status IN ('RUN','REJECTED')
   AND    (m.terminal_id IS NULL OR f.original_stat IS NULL)
-  ORDER  BY f.update_time DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfBreak/breakWF/onUserSubmit操作，mktTerminalRepository.selectByPrimaryKey按terminalId查询MKT_TERMINAL返回null或originalStat为空<br><strong>逻辑分析：</strong>装修申请需联动更新门店状态(提交时置4-装修中、通过时置1-正常、驳回时恢复originalStat)。若门店档案被删除、terminalId传值错误、或originalStat未在提交时正确保存（导致驳回时无法恢复），查询返回空抛异常。需核查门店档案与申请单关联一致性。</div>
+  ORDER  BY f.update_time DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>装修周期只能小于等于:{v},请检查
-- **触发条件**：doInsert/doUpdate保存时，validSystemParam("Decoration_Days")校验decorationDays&gt;公司参数Decoration_Days的值
-- **逻辑分析**：装修周期受公司参数Decoration_Days上限约束，确保装修时效可控。若用户填写的decorationDays超过公司参数配置值（如参数30但填了45），校验不通过抛异常。需修改装修周期至≤Decoration_Days。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>装修周期只能小于等于:{v},请检查</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doInsert/doUpdate保存时，validSystemParam("Decoration_Days")校验decorationDays&gt;公司参数Decoration_Days的值<br><strong>逻辑分析：</strong>装修周期受公司参数Decoration_Days上限约束，确保装修时效可控。若用户填写的decorationDays超过公司参数配置值（如参数30但填了45），校验不通过抛异常。需修改装修周期至≤Decoration_Days。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.decoration_days     AS 装修周期,
          p.param_value         AS 公司参数值
   FROM   fin_fee_apply_finished_header f
   CROSS  JOIN (SELECT param_value FROM sys_param WHERE param_code = 'Decoration_Days') p
   WHERE  f.decoration_days &gt; TO_NUMBER(p.param_value)
-  ORDER  BY f.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doInsert/doUpdate保存时，validSystemParam("Decoration_Days")校验decorationDays&gt;公司参数Decoration_Days的值<br><strong>逻辑分析：</strong>装修周期受公司参数Decoration_Days上限约束，确保装修时效可控。若用户填写的decorationDays超过公司参数配置值（如参数30但填了45），校验不通过抛异常。需修改装修周期至≤Decoration_Days。</div>
+  ORDER  BY f.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未获取到公司参数【Decoration_Days】
-- **触发条件**：doUpdate更新时，validSystemParam("Decoration_Days")查询公司参数返回空或值≤0
-- **逻辑分析**：装修周期校验依赖公司参数Decoration_Days。若参数未在SYS_PARAM表配置、配置值为空、或配置为≤0的非法值，校验逻辑无法执行抛异常。需联系管理员在SYS_PARAM表配置有效的Decoration_Days参数。
-- **排查SQL**：
-  ```sql
-  SELECT p.param_code   AS 参数编码,
+    <h4><span style="color:#7C3AED;">报错：</span>未获取到公司参数【Decoration_Days】</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdate更新时，validSystemParam("Decoration_Days")查询公司参数返回空或值≤0<br><strong>逻辑分析：</strong>装修周期校验依赖公司参数Decoration_Days。若参数未在SYS_PARAM表配置、配置值为空、或配置为≤0的非法值，校验逻辑无法执行抛异常。需联系管理员在SYS_PARAM表配置有效的Decoration_Days参数。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT p.param_code   AS 参数编码,
          p.param_value  AS 参数值,
          p.description  AS 参数说明
   FROM   sys_param p
-  WHERE  p.param_code = 'Decoration_Days';
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdate更新时，validSystemParam("Decoration_Days")查询公司参数返回空或值≤0<br><strong>逻辑分析：</strong>装修周期校验依赖公司参数Decoration_Days。若参数未在SYS_PARAM表配置、配置值为空、或配置为≤0的非法值，校验逻辑无法执行抛异常。需联系管理员在SYS_PARAM表配置有效的Decoration_Days参数。</div>
+  WHERE  p.param_code = 'Decoration_Days';</code></pre>
   </div>
 </div>
 
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>该门店{code}已有其它装修申请单:{no}，禁止重新生成
-- **触发条件**：validRegenerate重新生成校验时，按terminalCode查询FIN_FEE_APPLY_FINISHED_HEADER，stream.anyMatch存在其他非INTERRUPT状态的申请单
-- **逻辑分析**：同一门店同一时间只允许存在一个有效装修申请单（非作废状态），避免并发装修申请造成额度重复占用。若该门店下已有NEW/RUN/APPROVED/REJECTED状态的申请单，校验不通过抛异常。需先作废其他申请单再重新生成。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>该门店{code}已有其它装修申请单:{no}，禁止重新生成</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>validRegenerate重新生成校验时，按terminalCode查询FIN_FEE_APPLY_FINISHED_HEADER，stream.anyMatch存在其他非INTERRUPT状态的申请单<br><strong>逻辑分析：</strong>同一门店同一时间只允许存在一个有效装修申请单（非作废状态），避免并发装修申请造成额度重复占用。若该门店下已有NEW/RUN/APPROVED/REJECTED状态的申请单，校验不通过抛异常。需先作废其他申请单再重新生成。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.terminal_code       AS 门店编码,
          f.hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_finished_header f
   WHERE  f.terminal_code = #{传入的terminalCode}
   AND    f.hz_approve_status &lt;&gt; 'INTERRUPT'
-  ORDER  BY f.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>validRegenerate重新生成校验时，按terminalCode查询FIN_FEE_APPLY_FINISHED_HEADER，stream.anyMatch存在其他非INTERRUPT状态的申请单<br><strong>逻辑分析：</strong>同一门店同一时间只允许存在一个有效装修申请单（非作废状态），避免并发装修申请造成额度重复占用。若该门店下已有NEW/RUN/APPROVED/REJECTED状态的申请单，校验不通过抛异常。需先作废其他申请单再重新生成。</div>
+  ORDER  BY f.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>超期天数大于{v}或补贴金额为0,禁止重新生成
-- **触发条件**：validRegenerate重新生成校验时，overDate&gt;公司参数Over_Date_Limit或deductProportion≥1（扣减比例已达100%）
-- **逻辑分析**：重新生成用于超期未严重时重置申请单。若超期天数超过Over_Date_Limit（严重超期）或扣减比例≥1（补贴金额已全部扣减为0），业务上无重新生成意义，校验不通过抛异常。需新建申请单而非重新生成。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>超期天数大于{v}或补贴金额为0,禁止重新生成</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>validRegenerate重新生成校验时，overDate&gt;公司参数Over_Date_Limit或deductProportion≥1（扣减比例已达100%）<br><strong>逻辑分析：</strong>重新生成用于超期未严重时重置申请单。若超期天数超过Over_Date_Limit（严重超期）或扣减比例≥1（补贴金额已全部扣减为0），业务上无重新生成意义，校验不通过抛异常。需新建申请单而非重新生成。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.over_date           AS 超期天数,
          f.deduct_proportion   AS 扣减比例,
@@ -841,84 +783,68 @@ APPROVED ──发起签呈──→ isSecondChange=2
   CROSS  JOIN (SELECT param_value FROM sys_param WHERE param_code = 'Over_Date_Limit') p
   WHERE  f.over_date &gt; TO_NUMBER(p.param_value)
   OR     NVL(f.deduct_proportion, 0) &gt;= 1
-  ORDER  BY f.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>validRegenerate重新生成校验时，overDate&gt;公司参数Over_Date_Limit或deductProportion≥1（扣减比例已达100%）<br><strong>逻辑分析：</strong>重新生成用于超期未严重时重置申请单。若超期天数超过Over_Date_Limit（严重超期）或扣减比例≥1（补贴金额已全部扣减为0），业务上无重新生成意义，校验不通过抛异常。需新建申请单而非重新生成。</div>
+  ORDER  BY f.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>不能删除非制单状态的单据
-- **触发条件**：doDelete删除操作，WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验不通过（hzApproveStatus≠NEW）
-- **逻辑分析**：仅NEW(制单)状态的单据可删除，避免删除已进入审批流程的单据造成流程悬挂。若单据已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)等非NEW状态，校验不通过抛异常。需先作废单据或走关闭流程。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>不能删除非制单状态的单据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doDelete删除操作，WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验不通过（hzApproveStatus≠NEW）<br><strong>逻辑分析：</strong>仅NEW(制单)状态的单据可删除，避免删除已进入审批流程的单据造成流程悬挂。若单据已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)等非NEW状态，校验不通过抛异常。需先作废单据或走关闭流程。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_finished_header f
   WHERE  f.terminal_apply_id = #{传入的terminalApplyId}
-  AND    f.hz_approve_status &lt;&gt; 'NEW';
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doDelete删除操作，WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验不通过（hzApproveStatus≠NEW）<br><strong>逻辑分析：</strong>仅NEW(制单)状态的单据可删除，避免删除已进入审批流程的单据造成流程悬挂。若单据已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)等非NEW状态，校验不通过抛异常。需先作废单据或走关闭流程。</div>
+  AND    f.hz_approve_status &lt;&gt; 'NEW';</code></pre>
   </div>
 </div>
 
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>新建、审核拒绝的单据才能作废
-- **触发条件**：operate作废操作，Arrays.asList(NEW,REJECTED).contains(hzApproveStatus)校验不通过（hzApproveStatus非NEW且非REJECTED）
-- **逻辑分析**：作废仅允许在NEW(新建)或REJECTED(审核拒绝)状态操作，避免作废审批中(RUN)或已审批(APPROVED)的单据造成流程异常。若单据处于RUN/APPROVED/INTERRUPT等状态，校验不通过抛异常。已审批单据如需关闭请走关闭申请流程。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>新建、审核拒绝的单据才能作废</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>operate作废操作，Arrays.asList(NEW,REJECTED).contains(hzApproveStatus)校验不通过（hzApproveStatus非NEW且非REJECTED）<br><strong>逻辑分析：</strong>作废仅允许在NEW(新建)或REJECTED(审核拒绝)状态操作，避免作废审批中(RUN)或已审批(APPROVED)的单据造成流程异常。若单据处于RUN/APPROVED/INTERRUPT等状态，校验不通过抛异常。已审批单据如需关闭请走关闭申请流程。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_finished_header f
   WHERE  f.terminal_apply_id = #{传入的terminalApplyId}
-  AND    f.hz_approve_status NOT IN ('NEW','REJECTED');
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>operate作废操作，Arrays.asList(NEW,REJECTED).contains(hzApproveStatus)校验不通过（hzApproveStatus非NEW且非REJECTED）<br><strong>逻辑分析：</strong>作废仅允许在NEW(新建)或REJECTED(审核拒绝)状态操作，避免作废审批中(RUN)或已审批(APPROVED)的单据造成流程异常。若单据处于RUN/APPROVED/INTERRUPT等状态，校验不通过抛异常。已审批单据如需关闭请走关闭申请流程。</div>
+  AND    f.hz_approve_status NOT IN ('NEW','REJECTED');</code></pre>
   </div>
 </div>
 
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据正在申请变更中，不可提交
-- **触发条件**：onUserSubmit提交操作，finFeeApplyFinished.getIsModify()==2L（单据已发起变更申请）
-- **逻辑分析**：单据发起变更申请(isModify=2)后进入变更流程，原单据锁定不可重复提交。若变更申请未完成或未撤销，校验不通过抛异常。需先完成或撤销变更申请再提交。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>单据正在申请变更中，不可提交</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，finFeeApplyFinished.getIsModify()==2L（单据已发起变更申请）<br><strong>逻辑分析：</strong>单据发起变更申请(isModify=2)后进入变更流程，原单据锁定不可重复提交。若变更申请未完成或未撤销，校验不通过抛异常。需先完成或撤销变更申请再提交。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.is_modify           AS 变更标识,
          f.hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_finished_header f
   WHERE  f.is_modify = 2
   AND    f.hz_approve_status IN ('NEW','REJECTED')
-  ORDER  BY f.update_time DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，finFeeApplyFinished.getIsModify()==2L（单据已发起变更申请）<br><strong>逻辑分析：</strong>单据发起变更申请(isModify=2)后进入变更流程，原单据锁定不可重复提交。若变更申请未完成或未撤销，校验不通过抛异常。需先完成或撤销变更申请再提交。</div>
+  ORDER  BY f.update_time DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据正在申请变更中，不可驳回流程
-- **触发条件**：onUserReject驳回操作，finFeeApplyFinished.getIsModify()==2（单据已发起变更申请）
-- **逻辑分析**：单据发起变更申请后，原单据审批流程已暂停，不可直接驳回。若变更申请未完成或未撤销，校验不通过抛异常。需先完成或撤销变更申请再操作驳回。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>单据正在申请变更中，不可驳回流程</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserReject驳回操作，finFeeApplyFinished.getIsModify()==2（单据已发起变更申请）<br><strong>逻辑分析：</strong>单据发起变更申请后，原单据审批流程已暂停，不可直接驳回。若变更申请未完成或未撤销，校验不通过抛异常。需先完成或撤销变更申请再操作驳回。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.is_modify           AS 变更标识,
          f.hz_approve_status   AS 审批状态,
@@ -926,43 +852,35 @@ APPROVED ──发起签呈──→ isSecondChange=2
   FROM   fin_fee_apply_finished_header f
   WHERE  f.is_modify = 2
   AND    f.hz_approve_status = 'RUN'
-  ORDER  BY f.update_time DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserReject驳回操作，finFeeApplyFinished.getIsModify()==2（单据已发起变更申请）<br><strong>逻辑分析：</strong>单据发起变更申请后，原单据审批流程已暂停，不可直接驳回。若变更申请未完成或未撤销，校验不通过抛异常。需先完成或撤销变更申请再操作驳回。</div>
+  ORDER  BY f.update_time DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>申请单的预算年度不可晚于当前年份
-- **触发条件**：onUserSubmit提交操作，budYear-LocalDate.now().getYear()&gt;0（预算年度大于当前年份）
-- **逻辑分析**：预算年度不可晚于当前年份，确保预算控制在已生效年度内。若用户填写了未来年份（如当前2026年但填2027年）、或budYear字段被误赋值，校验不通过抛异常。需修改预算年度至≤当前年份。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>申请单的预算年度不可晚于当前年份</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，budYear-LocalDate.now().getYear()&gt;0（预算年度大于当前年份）<br><strong>逻辑分析：</strong>预算年度不可晚于当前年份，确保预算控制在已生效年度内。若用户填写了未来年份（如当前2026年但填2027年）、或budYear字段被误赋值，校验不通过抛异常。需修改预算年度至≤当前年份。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.bud_year            AS 预算年度,
          TO_NUMBER(TO_CHAR(SYSDATE,'YYYY')) AS 当前年份
   FROM   fin_fee_apply_finished_header f
   WHERE  f.bud_year &gt; TO_NUMBER(TO_CHAR(SYSDATE,'YYYY'))
-  ORDER  BY f.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，budYear-LocalDate.now().getYear()&gt;0（预算年度大于当前年份）<br><strong>逻辑分析：</strong>预算年度不可晚于当前年份，确保预算控制在已生效年度内。若用户填写了未来年份（如当前2026年但填2027年）、或budYear字段被误赋值，校验不通过抛异常。需修改预算年度至≤当前年份。</div>
+  ORDER  BY f.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>{budYear}的预算剩余可用额度不足
-- **触发条件**：onUserSubmit提交操作，finFeeCheckBxHeaderRepository.viewOverBudgetAmt查询返回null或剩余可用额度&lt;0
-- **逻辑分析**：额度外报销占用年度预算总额，需确保预算充足。校验逻辑查询FIN_FEE_CHECK_BX_HEADER中budYear年份同事业部的剩余可用预算(viewOverBudgetAmt)，若返回null（预算未配置）或&lt;0（已超额）即抛异常。需联系财务确认预算或调整申请金额。
-- **排查SQL**：
-  ```sql
-  SELECT b.bud_year              AS 预算年度,
+    <h4><span style="color:#7C3AED;">报错：</span>{budYear}的预算剩余可用额度不足</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，finFeeCheckBxHeaderRepository.viewOverBudgetAmt查询返回null或剩余可用额度&lt;0<br><strong>逻辑分析：</strong>额度外报销占用年度预算总额，需确保预算充足。校验逻辑查询FIN_FEE_CHECK_BX_HEADER中budYear年份同事业部的剩余可用预算(viewOverBudgetAmt)，若返回null（预算未配置）或&lt;0（已超额）即抛异常。需联系财务确认预算或调整申请金额。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT b.bud_year              AS 预算年度,
          b.division_id           AS 事业部ID,
          b.total_amt             AS 年度总预算,
          NVL((SELECT SUM(f.apply_amt)
@@ -977,22 +895,18 @@ APPROVED ──发起签呈──→ isSecondChange=2
               AND    f.hz_approve_status IN ('RUN','APPROVED')), 0) AS 剩余可用额度
   FROM   fin_fee_check_bx_header b
   WHERE  b.fee_type_id = 66014601
-  ORDER  BY b.bud_year DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，finFeeCheckBxHeaderRepository.viewOverBudgetAmt查询返回null或剩余可用额度&lt;0<br><strong>逻辑分析：</strong>额度外报销占用年度预算总额，需确保预算充足。校验逻辑查询FIN_FEE_CHECK_BX_HEADER中budYear年份同事业部的剩余可用预算(viewOverBudgetAmt)，若返回null（预算未配置）或&lt;0（已超额）即抛异常。需联系财务确认预算或调整申请金额。</div>
+  ORDER  BY b.bud_year DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>无政策标准不能提交
-- **触发条件**：onUserSubmit提交操作，getFixupGrade()==null或getFixupGrade()==0（装修等级未配置）
-- **逻辑分析**：装修申请需按装修等级匹配政策标准计算补贴金额。若门店档案未维护装修等级(fixupGrade)、或fixupGrade=0（默认值未更新），无法匹配政策标准，校验不通过抛异常。需在门店档案中维护有效装修等级。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>无政策标准不能提交</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，getFixupGrade()==null或getFixupGrade()==0（装修等级未配置）<br><strong>逻辑分析：</strong>装修申请需按装修等级匹配政策标准计算补贴金额。若门店档案未维护装修等级(fixupGrade)、或fixupGrade=0（默认值未更新），无法匹配政策标准，校验不通过抛异常。需在门店档案中维护有效装修等级。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.terminal_code       AS 门店编码,
          f.fixup_grade         AS 装修等级,
@@ -1001,22 +915,18 @@ APPROVED ──发起签呈──→ isSecondChange=2
   LEFT   JOIN mkt_terminal m ON m.terminal_id = f.terminal_id
   WHERE  f.hz_approve_status = 'NEW'
   AND    (f.fixup_grade IS NULL OR f.fixup_grade = 0)
-  ORDER  BY f.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，getFixupGrade()==null或getFixupGrade()==0（装修等级未配置）<br><strong>逻辑分析：</strong>装修申请需按装修等级匹配政策标准计算补贴金额。若门店档案未维护装修等级(fixupGrade)、或fixupGrade=0（默认值未更新），无法匹配政策标准，校验不通过抛异常。需在门店档案中维护有效装修等级。</div>
+  ORDER  BY f.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-14" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>店面装修等级没有对应的政策标准
-- **触发条件**：onUserSubmit提交操作，terminalDecorateStandardRepository.selectFixupGradeList按装修等级查询政策标准返回空
-- **逻辑分析**：装修等级需在TERMINAL_DECORATE_STANDARD表中配置对应政策标准。若该装修等级未维护政策标准、政策标准被删除、或等级编码与政策标准不匹配，查询返回空抛异常。需在门店装修标准设置中为该等级配置政策标准。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>店面装修等级没有对应的政策标准</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，terminalDecorateStandardRepository.selectFixupGradeList按装修等级查询政策标准返回空<br><strong>逻辑分析：</strong>装修等级需在TERMINAL_DECORATE_STANDARD表中配置对应政策标准。若该装修等级未维护政策标准、政策标准被删除、或等级编码与政策标准不匹配，查询返回空抛异常。需在门店装修标准设置中为该等级配置政策标准。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.fixup_grade         AS 装修等级,
          f.terminal_type       AS 门店类型
@@ -1026,22 +936,18 @@ APPROVED ──发起签呈──→ isSecondChange=2
                      FROM   terminal_decorate_standard t
                      WHERE  t.fixup_grade = f.fixup_grade
                      AND    t.terminal_type = f.terminal_type)
-  ORDER  BY f.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，terminalDecorateStandardRepository.selectFixupGradeList按装修等级查询政策标准返回空<br><strong>逻辑分析：</strong>装修等级需在TERMINAL_DECORATE_STANDARD表中配置对应政策标准。若该装修等级未维护政策标准、政策标准被删除、或等级编码与政策标准不匹配，查询返回空抛异常。需在门店装修标准设置中为该等级配置政策标准。</div>
+  ORDER  BY f.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-15" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>店面装修等级没有有效期内的政策标准
-- **触发条件**：onUserSubmit提交操作，finFeeApplyFinishedHeaderRepository.doSearchDecorate查询当前日期在有效期内的政策标准返回空
-- **逻辑分析**：政策标准有有效期限制，需查询当前日期在[START_DATE, END_DATE]区间内的记录。若该装修等级的政策标准已过期(END_DATE&lt;当前日期)、未生效(START_DATE&gt;当前日期)、或有效期未覆盖当前日期，查询返回空抛异常。需在门店装修标准设置中延长该等级政策有效期。
-- **排查SQL**：
-  ```sql
-  SELECT t.fixup_grade   AS 装修等级,
+    <h4><span style="color:#7C3AED;">报错：</span>店面装修等级没有有效期内的政策标准</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，finFeeApplyFinishedHeaderRepository.doSearchDecorate查询当前日期在有效期内的政策标准返回空<br><strong>逻辑分析：</strong>政策标准有有效期限制，需查询当前日期在[START_DATE, END_DATE]区间内的记录。若该装修等级的政策标准已过期(END_DATE&lt;当前日期)、未生效(START_DATE&gt;当前日期)、或有效期未覆盖当前日期，查询返回空抛异常。需在门店装修标准设置中延长该等级政策有效期。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT t.fixup_grade   AS 装修等级,
          t.terminal_type AS 门店类型,
          t.start_date    AS 开始日期,
          t.end_date      AS 结束日期,
@@ -1050,44 +956,36 @@ APPROVED ──发起签呈──→ isSecondChange=2
   WHERE  t.fixup_grade = #{传入的fixupGrade}
   AND    t.terminal_type = #{传入的terminalType}
   AND    (t.start_date &gt; SYSDATE OR t.end_date &lt; SYSDATE)
-  ORDER  BY t.end_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，finFeeApplyFinishedHeaderRepository.doSearchDecorate查询当前日期在有效期内的政策标准返回空<br><strong>逻辑分析：</strong>政策标准有有效期限制，需查询当前日期在[START_DATE, END_DATE]区间内的记录。若该装修等级的政策标准已过期(END_DATE&lt;当前日期)、未生效(START_DATE&gt;当前日期)、或有效期未覆盖当前日期，查询返回空抛异常。需在门店装修标准设置中延长该等级政策有效期。</div>
+  ORDER  BY t.end_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-16" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>与该门店装修申请单相关的门店装修验收单尚未失效
-- **触发条件**：vaildStat状态校验时，finFeeCheckBxHeaderRepository.select查询该装修申请单关联的验收报销单存在非INTERRUPT状态记录
-- **逻辑分析**：作废或重新生成装修申请前需确保关联的验收报销单已全部失效(INTERRUPT)。若该装修申请单下存在NEW/RUN/APPROVED等状态的验收报销单，校验不通过抛异常。需先作废关联的验收报销单再操作。
-- **排查SQL**：
-  ```sql
-  SELECT c.check_bx_id        AS 验收报销ID,
+    <h4><span style="color:#7C3AED;">报错：</span>与该门店装修申请单相关的门店装修验收单尚未失效</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>vaildStat状态校验时，finFeeCheckBxHeaderRepository.select查询该装修申请单关联的验收报销单存在非INTERRUPT状态记录<br><strong>逻辑分析：</strong>作废或重新生成装修申请前需确保关联的验收报销单已全部失效(INTERRUPT)。若该装修申请单下存在NEW/RUN/APPROVED等状态的验收报销单，校验不通过抛异常。需先作废关联的验收报销单再操作。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.check_bx_id        AS 验收报销ID,
          c.check_bx_no        AS 验收报销号,
          c.terminal_apply_id  AS 装修申请ID,
          c.hz_approve_status  AS 审批状态
   FROM   fin_fee_check_bx_header c
   WHERE  c.terminal_apply_id = #{传入的terminalApplyId}
   AND    c.hz_approve_status &lt;&gt; 'INTERRUPT'
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>vaildStat状态校验时，finFeeCheckBxHeaderRepository.select查询该装修申请单关联的验收报销单存在非INTERRUPT状态记录<br><strong>逻辑分析：</strong>作废或重新生成装修申请前需确保关联的验收报销单已全部失效(INTERRUPT)。若该装修申请单下存在NEW/RUN/APPROVED等状态的验收报销单，校验不通过抛异常。需先作废关联的验收报销单再操作。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-17" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>申请单没有对应的门店或门店编码为空
-- **触发条件**：onUserReject/onUserSubmit操作，getTerminalId()==null或getTerminalId()&lt;=0
-- **逻辑分析**：装修申请需关联有效门店用于状态联动和额度扣减。若申请单未维护terminalId、terminalId被误置0或负数、或门店档案被删除后terminalId未清理，校验不通过抛异常。需核查申请单与门店档案关联完整性。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>申请单没有对应的门店或门店编码为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserReject/onUserSubmit操作，getTerminalId()==null或getTerminalId()&lt;=0<br><strong>逻辑分析：</strong>装修申请需关联有效门店用于状态联动和额度扣减。若申请单未维护terminalId、terminalId被误置0或负数、或门店档案被删除后terminalId未清理，校验不通过抛异常。需核查申请单与门店档案关联完整性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.terminal_id         AS 门店ID,
          f.terminal_code       AS 门店编码,
@@ -1097,22 +995,18 @@ APPROVED ──发起签呈──→ isSecondChange=2
   WHERE  f.terminal_id IS NULL
   OR     f.terminal_id &lt;= 0
   OR     f.terminal_code IS NULL
-  ORDER  BY f.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserReject/onUserSubmit操作，getTerminalId()==null或getTerminalId()&lt;=0<br><strong>逻辑分析：</strong>装修申请需关联有效门店用于状态联动和额度扣减。若申请单未维护terminalId、terminalId被误置0或负数、或门店档案被删除后terminalId未清理，校验不通过抛异常。需核查申请单与门店档案关联完整性。</div>
+  ORDER  BY f.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-18" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>该单据流程信息不存在
-- **触发条件**：signStateValidate签呈校验时，selectSignatureStateByCheckBxId按单据ID查询流程签章信息返回null（headerVO==null）
-- **逻辑分析**：发起签呈需查询单据流程签章信息。若签章服务未维护该单据的签章记录(SIGNATURE_STATE/SIGNATURE_URL为空)、单据ID传值错误、或签章数据被清理，headerVO为null抛异常。需核查签章服务与单据关联数据。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>该单据流程信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>signStateValidate签呈校验时，selectSignatureStateByCheckBxId按单据ID查询流程签章信息返回null（headerVO==null）<br><strong>逻辑分析：</strong>发起签呈需查询单据流程签章信息。若签章服务未维护该单据的签章记录(SIGNATURE_STATE/SIGNATURE_URL为空)、单据ID传值错误、或签章数据被清理，headerVO为null抛异常。需核查签章服务与单据关联数据。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.signature_state     AS 签章状态,
          f.signature_url       AS 签章地址,
@@ -1120,22 +1014,18 @@ APPROVED ──发起签呈──→ isSecondChange=2
   FROM   fin_fee_apply_finished_header f
   WHERE  f.signature_state IS NULL
   AND    f.hz_approve_status IN ('APPROVED','RUN')
-  ORDER  BY f.update_time DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>signStateValidate签呈校验时，selectSignatureStateByCheckBxId按单据ID查询流程签章信息返回null（headerVO==null）<br><strong>逻辑分析：</strong>发起签呈需查询单据流程签章信息。若签章服务未维护该单据的签章记录(SIGNATURE_STATE/SIGNATURE_URL为空)、单据ID传值错误、或签章数据被清理，headerVO为null抛异常。需核查签章服务与单据关联数据。</div>
+  ORDER  BY f.update_time DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-19" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>ID不能为空
-- **触发条件**：doProcessOA处理OA审批回传时，JSON报文中不包含id字段（json.containsKey("id")为false）
-- **逻辑分析**：OA审批回传报文需包含单据ID用于定位装修申请单。若OA系统配置异常未传id、报文被中间件截断、或OA与DMS接口协议不一致，id字段缺失无法定位单据，抛出阻断性异常。需核查OA回传报文与接口协议一致性。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>ID不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doProcessOA处理OA审批回传时，JSON报文中不包含id字段（json.containsKey("id")为false）<br><strong>逻辑分析：</strong>OA审批回传报文需包含单据ID用于定位装修申请单。若OA系统配置异常未传id、报文被中间件截断、或OA与DMS接口协议不一致，id字段缺失无法定位单据，抛出阻断性异常。需核查OA回传报文与接口协议一致性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.hz_instance_id      AS 工作流实例ID,
          f.hz_approve_status   AS 审批状态,
@@ -1143,213 +1033,208 @@ APPROVED ──发起签呈──→ isSecondChange=2
   FROM   fin_fee_apply_finished_header f
   WHERE  f.hz_approve_status = 'RUN'
   AND    f.update_time &lt; SYSDATE - 1
-  ORDER  BY f.update_time DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doProcessOA处理OA审批回传时，JSON报文中不包含id字段（json.containsKey("id")为false）<br><strong>逻辑分析：</strong>OA审批回传报文需包含单据ID用于定位装修申请单。若OA系统配置异常未传id、报文被中间件截断、或OA与DMS接口协议不一致，id字段缺失无法定位单据，抛出阻断性异常。需核查OA回传报文与接口协议一致性。</div>
+  ORDER  BY f.update_time DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-20" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>不是相关菜单不能推送MBO, objTypeId{v}
-- **触发条件**：pushTodoMBO推送MBO待办时，objTypeId非210723(额度内兑现)/210724(额度外兑现)/220212(验收报销单)
-- **逻辑分析**：MBO推送仅支持三类单据：额度内兑现(210723)、额度外兑现(210724)、验收报销单(220212)。若调用方传入其他objTypeId（如装修申请单、变更单等不支持MBO推送的单据类型），switch-case无匹配分支，抛出阻断性异常。需核查调用方传入的objTypeId是否正确。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id   AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>不是相关菜单不能推送MBO, objTypeId{v}</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>pushTodoMBO推送MBO待办时，objTypeId非210723(额度内兑现)/210724(额度外兑现)/220212(验收报销单)<br><strong>逻辑分析：</strong>MBO推送仅支持三类单据：额度内兑现(210723)、额度外兑现(210724)、验收报销单(220212)。若调用方传入其他objTypeId（如装修申请单、变更单等不支持MBO推送的单据类型），switch-case无匹配分支，抛出阻断性异常。需核查调用方传入的objTypeId是否正确。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
          f.terminal_apply_no   AS 申请单号,
          f.hz_approve_status   AS 审批状态
   FROM   fin_fee_apply_finished_header f
-  WHERE  f.terminal_apply_id = #{传入的terminalApplyId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>pushTodoMBO推送MBO待办时，objTypeId非210723(额度内兑现)/210724(额度外兑现)/220212(验收报销单)<br><strong>逻辑分析：</strong>MBO推送仅支持三类单据：额度内兑现(210723)、额度外兑现(210724)、验收报销单(220212)。若调用方传入其他objTypeId（如装修申请单、变更单等不支持MBO推送的单据类型），switch-case无匹配分支，抛出阻断性异常。需核查调用方传入的objTypeId是否正确。</div>
+  WHERE  f.terminal_apply_id = #{传入的terminalApplyId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-21" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>不存在相关单据, objTypeId{v1},objno为{v2}
-- **触发条件**：pushTodoMBO推送MBO待办时，按objno(单据号)查询对应单据ID返回null（如selectCheckBxIdByCheckBxCode返回null）
-- **逻辑分析**：MBO推送需按单据号查询单据ID作为objId。若单据号objno在对应表中不存在（如验收报销单号在FIN_FEE_CHECK_BX_HEADER中无记录、单据已删除、或objno传值错误），查询返回null，pushTodoDTO.objId为null，抛出阻断性异常。需核查objno对应单据是否存在。
-- **排查SQL**：
-  ```sql
-  SELECT h.check_bx_id     AS 验收报销单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>不存在相关单据, objTypeId{v1},objno为{v2}</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>pushTodoMBO推送MBO待办时，按objno(单据号)查询对应单据ID返回null（如selectCheckBxIdByCheckBxCode返回null）<br><strong>逻辑分析：</strong>MBO推送需按单据号查询单据ID作为objId。若单据号objno在对应表中不存在（如验收报销单号在FIN_FEE_CHECK_BX_HEADER中无记录、单据已删除、或objno传值错误），查询返回null，pushTodoDTO.objId为null，抛出阻断性异常。需核查objno对应单据是否存在。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT h.check_bx_id     AS 验收报销单ID,
          h.check_bx_code   AS 验收报销单号,
          h.hz_approve_status AS 审批状态
   FROM   fin_fee_check_bx_header h
-  WHERE  h.check_bx_code = #{传入的objno};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>pushTodoMBO推送MBO待办时，按objno(单据号)查询对应单据ID返回null（如selectCheckBxIdByCheckBxCode返回null）<br><strong>逻辑分析：</strong>MBO推送需按单据号查询单据ID作为objId。若单据号objno在对应表中不存在（如验收报销单号在FIN_FEE_CHECK_BX_HEADER中无记录、单据已删除、或objno传值错误），查询返回null，pushTodoDTO.objId为null，抛出阻断性异常。需核查objno对应单据是否存在。</div>
+  WHERE  h.check_bx_code = #{传入的objno};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-22" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>未配置系统参数：{paramCode}
-- **触发条件**：validSystemParam通用方法校验公司参数时，sysParamRepository.selectOne按paramCode查询SYS_PARAM返回null
-- **逻辑分析**：多个业务逻辑依赖公司参数（如Decoration_Days/Over_Date_Limit/Deduct_Pro/Waiting_Days/Advance_Permissible_Period/Close_Amount等）。若参数未在SYS_PARAM表配置、paramCode拼写错误、或enterpriseId不匹配，查询返回null，抛出阻断性异常。需联系管理员在SYS_PARAM表配置有效的参数。
-- **排查SQL**：
-  ```sql
-  SELECT p.param_code      AS 参数编码,
+    <h4><span style="color:#7C3AED;">报错：</span>未配置系统参数：{paramCode}</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>validSystemParam通用方法校验公司参数时，sysParamRepository.selectOne按paramCode查询SYS_PARAM返回null<br><strong>逻辑分析：</strong>多个业务逻辑依赖公司参数（如Decoration_Days/Over_Date_Limit/Deduct_Pro/Waiting_Days/Advance_Permissible_Period/Close_Amount等）。若参数未在SYS_PARAM表配置、paramCode拼写错误、或enterpriseId不匹配，查询返回null，抛出阻断性异常。需联系管理员在SYS_PARAM表配置有效的参数。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT p.param_code      AS 参数编码,
          p.param_value     AS 参数值,
          p.description     AS 参数说明,
          p.enterprise_id   AS 企业ID
   FROM   sys_param p
-  WHERE  p.param_code = #{传入的paramCode};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>validSystemParam通用方法校验公司参数时，sysParamRepository.selectOne按paramCode查询SYS_PARAM返回null<br><strong>逻辑分析：</strong>多个业务逻辑依赖公司参数（如Decoration_Days/Over_Date_Limit/Deduct_Pro/Waiting_Days/Advance_Permissible_Period/Close_Amount等）。若参数未在SYS_PARAM表配置、paramCode拼写错误、或enterpriseId不匹配，查询返回null，抛出阻断性异常。需联系管理员在SYS_PARAM表配置有效的参数。</div>
+  WHERE  p.param_code = #{传入的paramCode};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-23" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>软装补贴标准不允许为空
-- **触发条件**：详情页保存或提交时，前端校验softPurchaseStandard(软装补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"
-- **逻辑分析**：软装设计师提交方案节点需维护软装补贴标准，用于计算软装补贴金额。若该节点未选择softPurchaseStandard（值集AE.PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择软装补贴标准。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id     AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>软装补贴标准不允许为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验softPurchaseStandard(软装补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"<br><strong>逻辑分析：</strong>软装设计师提交方案节点需维护软装补贴标准，用于计算软装补贴金额。若该节点未选择softPurchaseStandard（值集AE.PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择软装补贴标准。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id     AS 装修申请ID,
          f.terminal_apply_no     AS 申请单号,
          f.soft_purchase_standard AS 软装补贴标准,
          f.hz_approve_status     AS 审批状态
   FROM   fin_fee_apply_finished_header f
   WHERE  f.soft_purchase_standard IS NULL
-  AND    f.hz_approve_status IN ('NEW','RUN');
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验softPurchaseStandard(软装补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"<br><strong>逻辑分析：</strong>软装设计师提交方案节点需维护软装补贴标准，用于计算软装补贴金额。若该节点未选择softPurchaseStandard（值集AE.PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择软装补贴标准。</div>
+  AND    f.hz_approve_status IN ('NEW','RUN');</code></pre>
   </div>
 </div>
 
 <div id="err-detail-24" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>灯具补贴标准不允许为空
-- **触发条件**：详情页保存或提交时，前端校验lanternStandard(灯具补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"
-- **逻辑分析**：软装设计师提交方案节点需维护灯具补贴标准，用于计算灯具补贴金额。若该节点未选择lanternStandard（值集AE.LANTERN_PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择灯具补贴标准。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>灯具补贴标准不允许为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验lanternStandard(灯具补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"<br><strong>逻辑分析：</strong>软装设计师提交方案节点需维护灯具补贴标准，用于计算灯具补贴金额。若该节点未选择lanternStandard（值集AE.LANTERN_PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择灯具补贴标准。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id AS 装修申请ID,
          f.terminal_apply_no AS 申请单号,
          f.lantern_standard  AS 灯具补贴标准,
          f.hz_approve_status AS 审批状态
   FROM   fin_fee_apply_finished_header f
   WHERE  f.lantern_standard IS NULL
-  AND    f.hz_approve_status IN ('NEW','RUN');
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验lanternStandard(灯具补贴标准)为空，且当前审批任务taskName为"软装设计师提交方案"<br><strong>逻辑分析：</strong>软装设计师提交方案节点需维护灯具补贴标准，用于计算灯具补贴金额。若该节点未选择lanternStandard（值集AE.LANTERN_PURCHASE_STANDARD），前端notification.error提示并阻断保存/提交。需在软装设计师提交方案节点选择灯具补贴标准。</div>
+  AND    f.hz_approve_status IN ('NEW','RUN');</code></pre>
   </div>
 </div>
 
 <div id="err-detail-25" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>店面产权归属不允许为空
-- **触发条件**：详情页保存或提交时，前端校验propertyType(店面产权归属)为空
-- **逻辑分析**：产权归属影响装修补贴的政策适用和财务处理，需必填。若门店档案未维护propertyType、或选择门店时未带入，前端notification.error提示并阻断保存/提交。需在门店档案中维护产权归属后重新发起申请。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>店面产权归属不允许为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验propertyType(店面产权归属)为空<br><strong>逻辑分析：</strong>产权归属影响装修补贴的政策适用和财务处理，需必填。若门店档案未维护propertyType、或选择门店时未带入，前端notification.error提示并阻断保存/提交。需在门店档案中维护产权归属后重新发起申请。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id AS 装修申请ID,
          f.terminal_apply_no AS 申请单号,
          f.property_type     AS 产权归属,
          f.hz_approve_status AS 审批状态
   FROM   fin_fee_apply_finished_header f
   WHERE  f.property_type IS NULL
-  AND    f.hz_approve_status IN ('NEW','RUN');
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存或提交时，前端校验propertyType(店面产权归属)为空<br><strong>逻辑分析：</strong>产权归属影响装修补贴的政策适用和财务处理，需必填。若门店档案未维护propertyType、或选择门店时未带入，前端notification.error提示并阻断保存/提交。需在门店档案中维护产权归属后重新发起申请。</div>
+  AND    f.hz_approve_status IN ('NEW','RUN');</code></pre>
   </div>
 </div>
 
 <div id="err-detail-26" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>备注不能超过80个字
-- **触发条件**：详情页保存时，前端校验note(备注)字段长度&gt;80
-- **逻辑分析**：备注字段限制80字符，防止过长文本影响数据库存储和界面展示。若用户输入超长备注，前端notification.error提示并阻断保存。需精简备注内容至≤80字符。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>备注不能超过80个字</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验note(备注)字段长度&gt;80<br><strong>逻辑分析：</strong>备注字段限制80字符，防止过长文本影响数据库存储和界面展示。若用户输入超长备注，前端notification.error提示并阻断保存。需精简备注内容至≤80字符。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id AS 装修申请ID,
          f.terminal_apply_no AS 申请单号,
          f.note              AS 备注,
          LENGTH(f.note)      AS 备注长度
   FROM   fin_fee_apply_finished_header f
-  WHERE  LENGTH(f.note) &gt; 80;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页保存时，前端校验note(备注)字段长度&gt;80<br><strong>逻辑分析：</strong>备注字段限制80字符，防止过长文本影响数据库存储和界面展示。若用户输入超长备注，前端notification.error提示并阻断保存。需精简备注内容至≤80字符。</div>
+  WHERE  LENGTH(f.note) &gt; 80;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-27" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请先选择门店编码
-- **触发条件**：详情页计算扣除金额或保存时，前端校验headDS中terminalCode(门店编码)为空
-- **逻辑分析**：装修申请依赖门店关联的装修信息，需先选择有效门店联动带出门店等级、面积、地址等。若用户未选择门店即操作、或LOV选择失败未回填terminalCode，前端message.info提示并阻断操作。需先选择门店再操作。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>请先选择门店编码</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页计算扣除金额或保存时，前端校验headDS中terminalCode(门店编码)为空<br><strong>逻辑分析：</strong>装修申请依赖门店关联的装修信息，需先选择有效门店联动带出门店等级、面积、地址等。若用户未选择门店即操作、或LOV选择失败未回填terminalCode，前端message.info提示并阻断操作。需先选择门店再操作。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id AS 装修申请ID,
          f.terminal_apply_no AS 申请单号,
          f.terminal_id       AS 门店ID,
          f.terminal_code     AS 门店编码
   FROM   fin_fee_apply_finished_header f
   WHERE  f.terminal_code IS NULL
-  OR     f.terminal_code = '';
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页计算扣除金额或保存时，前端校验headDS中terminalCode(门店编码)为空<br><strong>逻辑分析：</strong>装修申请依赖门店关联的装修信息，需先选择有效门店联动带出门店等级、面积、地址等。若用户未选择门店即操作、或LOV选择失败未回填terminalCode，前端message.info提示并阻断操作。需先选择门店再操作。</div>
+  OR     f.terminal_code = '';</code></pre>
   </div>
 </div>
 
 <div id="err-detail-28" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次店面装修面积不能大于门店面积
-- **触发条件**：详情页编辑面积字段时，前端校验thistimeTerminalArea(本次店面装修面积)&gt;terminalArea(门店面积)
-- **逻辑分析**：本次店面装修面积不应超过门店总面积，防止面积超限导致补贴金额计算异常。政策补贴金额=政策补贴标准×装修面积，若本次装修面积&gt;门店面积，金额计算将超出实际范围。前端message.info提示并回填为门店面积，需修改本次装修面积至≤门店面积。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id     AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>本次店面装修面积不能大于门店面积</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thistimeTerminalArea(本次店面装修面积)&gt;terminalArea(门店面积)<br><strong>逻辑分析：</strong>本次店面装修面积不应超过门店总面积，防止面积超限导致补贴金额计算异常。政策补贴金额=政策补贴标准×装修面积，若本次装修面积&gt;门店面积，金额计算将超出实际范围。前端message.info提示并回填为门店面积，需修改本次装修面积至≤门店面积。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id     AS 装修申请ID,
          f.terminal_apply_no     AS 申请单号,
          f.terminal_area         AS 门店面积,
          f.thistime_terminal_area AS 本次店面装修面积
   FROM   fin_fee_apply_finished_header f
-  WHERE  f.thistime_terminal_area &gt; f.terminal_area;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thistimeTerminalArea(本次店面装修面积)&gt;terminalArea(门店面积)<br><strong>逻辑分析：</strong>本次店面装修面积不应超过门店总面积，防止面积超限导致补贴金额计算异常。政策补贴金额=政策补贴标准×装修面积，若本次装修面积&gt;门店面积，金额计算将超出实际范围。前端message.info提示并回填为门店面积，需修改本次装修面积至≤门店面积。</div>
+  WHERE  f.thistime_terminal_area &gt; f.terminal_area;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-29" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>店面实际装修面积不能大于本次店面装修面积
-- **触发条件**：详情页编辑面积字段时，前端校验thisTerminalArea(店面实际装修面积)&gt;thistimeTerminalArea(本次店面装修面积)
-- **逻辑分析**：店面实际装修面积应≤本次店面装修面积，防止面积数据逻辑矛盾。本次店面装修面积是本次装修的面积上限，实际装修面积是其中实际完成的部分。前端message.info提示并阻断保存，需修改店面实际装修面积至≤本次店面装修面积。
-- **排查SQL**：
-  ```sql
-  SELECT f.terminal_apply_id     AS 装修申请ID,
+    <h4><span style="color:#7C3AED;">报错：</span>店面实际装修面积不能大于本次店面装修面积</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thisTerminalArea(店面实际装修面积)&gt;thistimeTerminalArea(本次店面装修面积)<br><strong>逻辑分析：</strong>店面实际装修面积应≤本次店面装修面积，防止面积数据逻辑矛盾。本次店面装修面积是本次装修的面积上限，实际装修面积是其中实际完成的部分。前端message.info提示并阻断保存，需修改店面实际装修面积至≤本次店面装修面积。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id     AS 装修申请ID,
          f.terminal_apply_no     AS 申请单号,
          f.this_terminal_area    AS 店面实际装修面积,
          f.thistime_terminal_area AS 本次店面装修面积
   FROM   fin_fee_apply_finished_header f
-  WHERE  f.this_terminal_area &gt; f.thistime_terminal_area;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thisTerminalArea(店面实际装修面积)&gt;thistimeTerminalArea(本次店面装修面积)<br><strong>逻辑分析：</strong>店面实际装修面积应≤本次店面装修面积，防止面积数据逻辑矛盾。本次店面装修面积是本次装修的面积上限，实际装修面积是其中实际完成的部分。前端message.info提示并阻断保存，需修改店面实际装修面积至≤本次店面装修面积。</div>
+  WHERE  f.this_terminal_area &gt; f.thistime_terminal_area;</code></pre>
   </div>
+</div>
+
+<KbCard title="Q1：装修申请提交时报&quot;预算剩余可用额度不足&quot;">
+<p><strong>根因</strong>：该预算年度的额度外预算(feeTypeId=66014601)剩余可用额度&lt;0</p>
+<p><strong>解决方案</strong>：联系财务确认预算额度是否已用完，或调整申请金额</p>
+</KbCard>
+
+<KbCard title="Q2：装修申请提交时报&quot;店面装修等级没有有效期内的政策标准&quot;">
+<p><strong>根因</strong>：该装修等级在当前时间范围内没有有效的装修标准政策(START_DATE~END_DATE未覆盖当前日期)</p>
+<p><strong>解决方案</strong>：在门店装修标准设置中新增或延长该等级的政策有效期</p>
+</KbCard>
+
+<KbCard title="Q3：作废时报&quot;新建、审核拒绝的单据才能作废&quot;">
+<p><strong>根因</strong>：单据状态非NEW或REJECTED，可能已在审批中(RUN)或已审批(APPROVED)</p>
+<p><strong>解决方案</strong>：已审批单据不可作废，如需关闭请走关闭申请流程</p>
+</KbCard>
+
+<KbCard title="Q4：重新生成时报&quot;该门店已有其它装修申请单&quot;">
+<p><strong>根因</strong>：同一门店存在其他非INTERRUPT状态的装修申请单</p>
+<p><strong>解决方案</strong>：先作废其他申请单，再重新生成</p>
+</KbCard>
+
+<KbCard title="Q5：重新生成时报&quot;超期天数大于限制或补贴金额为0&quot;">
+<p><strong>根因</strong>：超期天数&gt;公司参数Over_Date_Limit，或扣减比例≥1(补贴金额已全部扣减)</p>
+<p><strong>解决方案</strong>：超期严重的申请单不可重新生成，需新建申请</p>
+</KbCard>
+
+<KbCard title="Q6：审批通过后自动发起了关闭申请">
+<p><strong>根因</strong>：装修超期天数&gt;公司参数Over_Date_Limit，系统自动创建FinFeeApplyClose并启动FIN_FEE_APPLY_CLOSE工作流</p>
+<p><strong>解决方案</strong>：这是系统正常逻辑，需在关闭申请流程中处理扣减额度</p>
+</KbCard>
+
+<KbCard title="Q7：提交时报&quot;单据正在申请变更中，不可提交&quot;">
+<p><strong>根因</strong>：isModify=2，单据已发起变更申请</p>
+<p><strong>解决方案</strong>：先完成或撤销变更申请，再提交</p>
+</KbCard>
+
+</div>
 </div>
 </div>
 

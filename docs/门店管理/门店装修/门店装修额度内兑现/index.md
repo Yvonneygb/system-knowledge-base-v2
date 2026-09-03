@@ -357,18 +357,6 @@ APPROVED ──入账──→ (已入账)
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：兑现金额超过剩余可兑额度">
-<p><strong>根因</strong>：inThisCashoutAmt &gt; inThisSurCashoutAmt</p>
-<p><strong>解决方案</strong>：调整兑现金额不超过剩余可兑额度</p>
-</KbCard>
-
-<KbCard title="Q2：无法提交审批">
-<p><strong>根因</strong>：额度内兑现无独立提交入口，需通过菜单88批量复核提交</p>
-<p><strong>解决方案</strong>：在菜单88中创建批量复核单，关联多张兑现单后统一提交</p>
-</KbCard>
-
-</div>
-</div>
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -387,12 +375,11 @@ APPROVED ──入账──→ (已入账)
 <div id="err-detail-1" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>兑现金额超过剩余可兑额度
-- **触发条件**：点击"保存"按钮，前端/后端校验inThisCashoutAmt&gt;inThisSurCashoutAmt（本次兑现金额&gt;剩余可兑额度）
-- **逻辑分析**：额度内兑现金额计算规则：本次兑现金额≤剩余未兑现总额(inThisSurCashoutAmt)，剩余可兑额度=报销标准内可报销金额-已兑现金额。若用户填写的本次兑现金额超过剩余可兑额度（如已部分兑现后超额兑现、或剩余可兑额度被其他兑现单占用未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑额度。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id     AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>兑现金额超过剩余可兑额度</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，前端/后端校验inThisCashoutAmt&gt;inThisSurCashoutAmt（本次兑现金额&gt;剩余可兑额度）<br><strong>逻辑分析：</strong>额度内兑现金额计算规则：本次兑现金额≤剩余未兑现总额(inThisSurCashoutAmt)，剩余可兑额度=报销标准内可报销金额-已兑现金额。若用户填写的本次兑现金额超过剩余可兑额度（如已部分兑现后超额兑现、或剩余可兑额度被其他兑现单占用未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑额度。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id     AS 兑现单ID,
          c.terminal_cashout_code   AS 兑现单号,
          c.check_bx_id             AS 验收报销ID,
          c.check_bx_code           AS 验收报销单号,
@@ -402,22 +389,18 @@ APPROVED ──入账──→ (已入账)
   FROM   fin_fee_terminal_cashout c
   WHERE  c.hz_approve_status = 'NEW'
   AND    c.in_this_cashout_amt &gt; c.in_this_sur_cashout_amt
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，前端/后端校验inThisCashoutAmt&gt;inThisSurCashoutAmt（本次兑现金额&gt;剩余可兑额度）<br><strong>逻辑分析：</strong>额度内兑现金额计算规则：本次兑现金额≤剩余未兑现总额(inThisSurCashoutAmt)，剩余可兑额度=报销标准内可报销金额-已兑现金额。若用户填写的本次兑现金额超过剩余可兑额度（如已部分兑现后超额兑现、或剩余可兑额度被其他兑现单占用未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑额度。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>验收报销单不存在
-- **触发条件**：点击"保存"按钮，按checkBxId关联查询FIN_FEE_CHECK_BX_HEADER返回null
-- **逻辑分析**：额度内兑现需基于已审批的验收报销单发起，兑现单通过checkBxId关联报销单。若验收报销单在兑现前被删除、checkBxId传值错误（如LOV缓存失效ID）、或验收报销单未审批通过即被选入兑现，查询返回空抛异常。需核查验收报销单是否存在且已APPROVED。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id   AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>验收报销单不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，按checkBxId关联查询FIN_FEE_CHECK_BX_HEADER返回null<br><strong>逻辑分析：</strong>额度内兑现需基于已审批的验收报销单发起，兑现单通过checkBxId关联报销单。若验收报销单在兑现前被删除、checkBxId传值错误（如LOV缓存失效ID）、或验收报销单未审批通过即被选入兑现，查询返回空抛异常。需核查验收报销单是否存在且已APPROVED。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id   AS 兑现单ID,
          c.terminal_cashout_code AS 兑现单号,
          c.check_bx_id           AS 验收报销ID,
          c.check_bx_code         AS 验收报销单号,
@@ -426,42 +409,34 @@ APPROVED ──入账──→ (已入账)
   LEFT   JOIN fin_fee_check_bx_header ck ON ck.check_bx_id = c.check_bx_id
   WHERE  c.hz_approve_status = 'NEW'
   AND    ck.check_bx_id IS NULL
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，按checkBxId关联查询FIN_FEE_CHECK_BX_HEADER返回null<br><strong>逻辑分析：</strong>额度内兑现需基于已审批的验收报销单发起，兑现单通过checkBxId关联报销单。若验收报销单在兑现前被删除、checkBxId传值错误（如LOV缓存失效ID）、或验收报销单未审批通过即被选入兑现，查询返回空抛异常。需核查验收报销单是否存在且已APPROVED。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据信息不存在
-- **触发条件**：菜单88批量复核执行doSelect查询详情/doDelete删除/onWfComplete审批通过回调/onUserSubmit提交/onWfBreak审批驳回回调时，selectByPrimaryKey按cashId查询FIN_FEE_IN_CASH_HEAD返回null
-- **逻辑分析**：额度内兑现通过菜单88批量复核统一提交审批，批量复核单(FIN_FEE_IN_CASH_HEAD)通过cashId关联多张兑现单。若批量复核单在操作期间被其他用户删除、cashId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。
-- **排查SQL**：
-  ```sql
-  SELECT h.cash_id         AS 批量复核ID,
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>菜单88批量复核执行doSelect查询详情/doDelete删除/onWfComplete审批通过回调/onUserSubmit提交/onWfBreak审批驳回回调时，selectByPrimaryKey按cashId查询FIN_FEE_IN_CASH_HEAD返回null<br><strong>逻辑分析：</strong>额度内兑现通过菜单88批量复核统一提交审批，批量复核单(FIN_FEE_IN_CASH_HEAD)通过cashId关联多张兑现单。若批量复核单在操作期间被其他用户删除、cashId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT h.cash_id         AS 批量复核ID,
          h.cash_code       AS 批量复核单号,
          h.hz_approve_status AS 审批状态,
          h.creation_date   AS 创建时间
   FROM   fin_fee_in_cash_head h
-  WHERE  h.cash_id = #{传入的cashId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>菜单88批量复核执行doSelect查询详情/doDelete删除/onWfComplete审批通过回调/onUserSubmit提交/onWfBreak审批驳回回调时，selectByPrimaryKey按cashId查询FIN_FEE_IN_CASH_HEAD返回null<br><strong>逻辑分析：</strong>额度内兑现通过菜单88批量复核统一提交审批，批量复核单(FIN_FEE_IN_CASH_HEAD)通过cashId关联多张兑现单。若批量复核单在操作期间被其他用户删除、cashId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+  WHERE  h.cash_id = #{传入的cashId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>验收报销单号和门头兑现单号为空
-- **触发条件**：批量复核审批通过后doSendShare推送共享时，遍历关联的兑现单校验checkBxCode和dhCashoutNo均为空字符串
-- **逻辑分析**：额度内兑现单来源有两种：基于验收报销单发起(checkBxCode非空)和基于门头展板兑现发起(dhCashoutNo非空)。推送共享服务时需按来源单号定位数据，若兑现单两个来源单号均为空（数据迁移遗漏、手工修改数据库清空单号、或新建兑现单未正确关联来源），无法确定推送来源即抛异常。需核查兑现单来源单号完整性。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id     AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>验收报销单号和门头兑现单号为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>批量复核审批通过后doSendShare推送共享时，遍历关联的兑现单校验checkBxCode和dhCashoutNo均为空字符串<br><strong>逻辑分析：</strong>额度内兑现单来源有两种：基于验收报销单发起(checkBxCode非空)和基于门头展板兑现发起(dhCashoutNo非空)。推送共享服务时需按来源单号定位数据，若兑现单两个来源单号均为空（数据迁移遗漏、手工修改数据库清空单号、或新建兑现单未正确关联来源），无法确定推送来源即抛异常。需核查兑现单来源单号完整性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id     AS 兑现单ID,
          c.terminal_cashout_code   AS 兑现单号,
          c.check_bx_code           AS 验收报销单号,
          c.dh_cashout_no           AS 门头兑现单号,
@@ -471,22 +446,18 @@ APPROVED ──入账──→ (已入账)
   WHERE  c.cash_id IS NOT NULL
   AND    NVL(c.check_bx_code, '') = ''
   AND    NVL(c.dh_cashout_no, '') = ''
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>批量复核审批通过后doSendShare推送共享时，遍历关联的兑现单校验checkBxCode和dhCashoutNo均为空字符串<br><strong>逻辑分析：</strong>额度内兑现单来源有两种：基于验收报销单发起(checkBxCode非空)和基于门头展板兑现发起(dhCashoutNo非空)。推送共享服务时需按来源单号定位数据，若兑现单两个来源单号均为空（数据迁移遗漏、手工修改数据库清空单号、或新建兑现单未正确关联来源），无法确定推送来源即抛异常。需核查兑现单来源单号完整性。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>验收单号X，总账日期不能为空，请检查
-- **触发条件**：菜单88批量复核提交审批onUserSubmit时，遍历关联兑现单筛选ledgerDate为空的记录，收集其checkBxCode拼接成bxCodes
-- **逻辑分析**：批量复核提交审批需推送总账，要求每张兑现单已维护总账日期(ledgerDate)。若验收报销单未回写总账日期（总账同步失败、EBS接口异常）、或兑现单新建后未触发总账日期回写，ledgerDate为空抛异常。需核查对应验收报销单的总账日期是否已回写。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id   AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>验收单号X，总账日期不能为空，请检查</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>菜单88批量复核提交审批onUserSubmit时，遍历关联兑现单筛选ledgerDate为空的记录，收集其checkBxCode拼接成bxCodes<br><strong>逻辑分析：</strong>批量复核提交审批需推送总账，要求每张兑现单已维护总账日期(ledgerDate)。若验收报销单未回写总账日期（总账同步失败、EBS接口异常）、或兑现单新建后未触发总账日期回写，ledgerDate为空抛异常。需核查对应验收报销单的总账日期是否已回写。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id   AS 兑现单ID,
          c.terminal_cashout_code AS 兑现单号,
          c.check_bx_id           AS 验收报销ID,
          c.check_bx_code         AS 验收报销单号,
@@ -496,11 +467,21 @@ APPROVED ──入账──→ (已入账)
   WHERE  c.cash_id IS NOT NULL
   AND    c.ledger_date IS NULL
   AND    c.hz_approve_status = 'NEW'
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>菜单88批量复核提交审批onUserSubmit时，遍历关联兑现单筛选ledgerDate为空的记录，收集其checkBxCode拼接成bxCodes<br><strong>逻辑分析：</strong>批量复核提交审批需推送总账，要求每张兑现单已维护总账日期(ledgerDate)。若验收报销单未回写总账日期（总账同步失败、EBS接口异常）、或兑现单新建后未触发总账日期回写，ledgerDate为空抛异常。需核查对应验收报销单的总账日期是否已回写。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
+</div>
+
+<KbCard title="Q1：兑现金额超过剩余可兑额度">
+<p><strong>根因</strong>：inThisCashoutAmt &gt; inThisSurCashoutAmt</p>
+<p><strong>解决方案</strong>：调整兑现金额不超过剩余可兑额度</p>
+</KbCard>
+
+<KbCard title="Q2：无法提交审批">
+<p><strong>根因</strong>：额度内兑现无独立提交入口，需通过菜单88批量复核提交</p>
+<p><strong>解决方案</strong>：在菜单88中创建批量复核单，关联多张兑现单后统一提交</p>
+</KbCard>
+
+</div>
 </div>
 </div>
 

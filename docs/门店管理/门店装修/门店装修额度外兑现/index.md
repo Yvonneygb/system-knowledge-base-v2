@@ -418,18 +418,6 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：兑现金额超过剩余可兑额度">
-<p><strong>根因</strong>：thisApplyCashoutAmt &gt; thisSurCashoutAmt</p>
-<p><strong>解决方案</strong>：调整兑现金额不超过剩余可兑额度</p>
-</KbCard>
-
-<KbCard title="Q2：计提年份未带出">
-<p><strong>根因</strong>：验收报销单号格式不正确或数据库中无对应计提年份记录</p>
-<p><strong>解决方案</strong>：检查验收报销单号格式，确认withholdingTimeYear查询有数据</p>
-</KbCard>
-
-</div>
-</div>
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -460,33 +448,28 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
 <div id="err-detail-1" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据信息不存在
-- **触发条件**：doSelect查询详情/doDelete删除操作，selectByPrimaryKey按terminalCashoutId查询FIN_FEE_TERMINAL_RE_CASHOUT返回null
-- **逻辑分析**：查询和删除操作需先校验额度外兑现单存在。若兑现单在操作期间被其他用户删除、terminalCashoutId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id     AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doSelect查询详情/doDelete删除操作，selectByPrimaryKey按terminalCashoutId查询FIN_FEE_TERMINAL_RE_CASHOUT返回null<br><strong>逻辑分析：</strong>查询和删除操作需先校验额度外兑现单存在。若兑现单在操作期间被其他用户删除、terminalCashoutId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id     AS 兑现单ID,
          c.terminal_cashout_code   AS 兑现单号,
          c.check_bx_code           AS 验收报销单号,
          c.hz_approve_status       AS 审批状态,
          c.creation_date           AS 创建时间
   FROM   fin_fee_terminal_re_cashout c
-  WHERE  c.terminal_cashout_id = #{传入的terminalCashoutId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doSelect查询详情/doDelete删除操作，selectByPrimaryKey按terminalCashoutId查询FIN_FEE_TERMINAL_RE_CASHOUT返回null<br><strong>逻辑分析：</strong>查询和删除操作需先校验额度外兑现单存在。若兑现单在操作期间被其他用户删除、terminalCashoutId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+  WHERE  c.terminal_cashout_id = #{传入的terminalCashoutId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>兑现金额超过剩余可兑额度
-- **触发条件**：点击"保存"按钮，前端/后端校验thisApplyCashoutAmt&gt;thisSurCashoutAmt（本次申请兑现金额&gt;剩余可兑金额）
-- **逻辑分析**：额度外兑现金额计算规则：本次申请兑现金额≤剩余可兑金额(thisSurCashoutAmt)，剩余可兑金额=额度外可报销金额-已兑现金额。若用户填写的本次申请兑现金额超过剩余可兑金额（如已部分兑现后超额兑现、或剩余可兑金额被其他兑现单占用未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑金额。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id      AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>兑现金额超过剩余可兑额度</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，前端/后端校验thisApplyCashoutAmt&gt;thisSurCashoutAmt（本次申请兑现金额&gt;剩余可兑金额）<br><strong>逻辑分析：</strong>额度外兑现金额计算规则：本次申请兑现金额≤剩余可兑金额(thisSurCashoutAmt)，剩余可兑金额=额度外可报销金额-已兑现金额。若用户填写的本次申请兑现金额超过剩余可兑金额（如已部分兑现后超额兑现、或剩余可兑金额被其他兑现单占用未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑金额。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id      AS 兑现单ID,
          c.terminal_cashout_code    AS 兑现单号,
          c.check_bx_code            AS 验收报销单号,
          c.this_apply_cashout_amt   AS 本次申请兑现金额,
@@ -495,22 +478,18 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   FROM   fin_fee_terminal_re_cashout c
   WHERE  c.hz_approve_status = 'NEW'
   AND    c.this_apply_cashout_amt &gt; c.this_sur_cashout_amt
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>点击"保存"按钮，前端/后端校验thisApplyCashoutAmt&gt;thisSurCashoutAmt（本次申请兑现金额&gt;剩余可兑金额）<br><strong>逻辑分析：</strong>额度外兑现金额计算规则：本次申请兑现金额≤剩余可兑金额(thisSurCashoutAmt)，剩余可兑金额=额度外可报销金额-已兑现金额。若用户填写的本次申请兑现金额超过剩余可兑金额（如已部分兑现后超额兑现、或剩余可兑金额被其他兑现单占用未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑金额。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>接口推送失败
-- **触发条件**：审批通过后doSendToSie推送共享接口时，terminalReCashShareIntf.terminalCashShare返回null
-- **逻辑分析**：额度外兑现审批通过后需推送至共享系统(报销及映像导入)。调用terminalReCashShareIntf.terminalCashShare接口推送兑现数据，若共享系统服务不可用、接口超时、网络异常、或推送数据格式错误导致接口返回null，校验不通过抛异常。需检查共享系统服务状态和网络连通性。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id     AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>接口推送失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>审批通过后doSendToSie推送共享接口时，terminalReCashShareIntf.terminalCashShare返回null<br><strong>逻辑分析：</strong>额度外兑现审批通过后需推送至共享系统(报销及映像导入)。调用terminalReCashShareIntf.terminalCashShare接口推送兑现数据，若共享系统服务不可用、接口超时、网络异常、或推送数据格式错误导致接口返回null，校验不通过抛异常。需检查共享系统服务状态和网络连通性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id     AS 兑现单ID,
          c.terminal_cashout_code   AS 兑现单号,
          c.hz_approve_status       AS 审批状态,
          c.error_collection        AS 错误信息,
@@ -518,106 +497,86 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   FROM   fin_fee_terminal_re_cashout c
   WHERE  c.hz_approve_status = 'APPROVED'
   AND    c.error_collection IS NOT NULL
-  ORDER  BY c.last_update_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>审批通过后doSendToSie推送共享接口时，terminalReCashShareIntf.terminalCashShare返回null<br><strong>逻辑分析：</strong>额度外兑现审批通过后需推送至共享系统(报销及映像导入)。调用terminalReCashShareIntf.terminalCashShare接口推送兑现数据，若共享系统服务不可用、接口超时、网络异常、或推送数据格式错误导致接口返回null，校验不通过抛异常。需检查共享系统服务状态和网络连通性。</div>
+  ORDER  BY c.last_update_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>当前数据不存在
-- **触发条件**：工作流提交wfProcSubmit/审批驳回回调onWfBreak时，selectByPrimaryKey按dto.getObjId()查询FIN_FEE_TERMINAL_RE_CASHOUT返回null
-- **逻辑分析**：工作流提交和驳回回调需查询兑现单更新审批状态。若回调期间兑现单被删除、objId传值错误（如OA回调报文与DMS不一致）、或并发场景下被清理，查询返回空抛异常。需核查兑现单数据与工作流实例一致性。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id     AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>当前数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流提交wfProcSubmit/审批驳回回调onWfBreak时，selectByPrimaryKey按dto.getObjId()查询FIN_FEE_TERMINAL_RE_CASHOUT返回null<br><strong>逻辑分析：</strong>工作流提交和驳回回调需查询兑现单更新审批状态。若回调期间兑现单被删除、objId传值错误（如OA回调报文与DMS不一致）、或并发场景下被清理，查询返回空抛异常。需核查兑现单数据与工作流实例一致性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id     AS 兑现单ID,
          c.terminal_cashout_code   AS 兑现单号,
          c.hz_approve_status       AS 审批状态,
          c.hz_instance_id          AS 工作流实例ID,
          c.last_update_date        AS 最后更新时间
   FROM   fin_fee_terminal_re_cashout c
-  WHERE  c.terminal_cashout_id = #{传入的objId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>工作流提交wfProcSubmit/审批驳回回调onWfBreak时，selectByPrimaryKey按dto.getObjId()查询FIN_FEE_TERMINAL_RE_CASHOUT返回null<br><strong>逻辑分析：</strong>工作流提交和驳回回调需查询兑现单更新审批状态。若回调期间兑现单被删除、objId传值错误（如OA回调报文与DMS不一致）、或并发场景下被清理，查询返回空抛异常。需核查兑现单数据与工作流实例一致性。</div>
+  WHERE  c.terminal_cashout_id = #{传入的objId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>该单据流程信息不存在
-- **触发条件**：signStateValidate签章状态校验时，按feeCashoutId查询FinFeeCashoutHeaderVO返回null
-- **逻辑分析**：签章状态校验需查询兑现单流程信息判断是否需重签。若兑现单流程信息未生成、feeCashoutId传值错误、或流程信息被清理，查询返回空抛异常。需核查兑现单流程信息完整性。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_cashout_id     AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>该单据流程信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>signStateValidate签章状态校验时，按feeCashoutId查询FinFeeCashoutHeaderVO返回null<br><strong>逻辑分析：</strong>签章状态校验需查询兑现单流程信息判断是否需重签。若兑现单流程信息未生成、feeCashoutId传值错误、或流程信息被清理，查询返回空抛异常。需核查兑现单流程信息完整性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_cashout_id     AS 兑现单ID,
          c.terminal_cashout_code   AS 兑现单号,
          c.hz_approve_status       AS 审批状态,
          c.signature_state         AS 签章状态
   FROM   fin_fee_cashout_header c
-  WHERE  c.fee_cashout_id = #{传入的feeCashoutId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>signStateValidate签章状态校验时，按feeCashoutId查询FinFeeCashoutHeaderVO返回null<br><strong>逻辑分析：</strong>签章状态校验需查询兑现单流程信息判断是否需重签。若兑现单流程信息未生成、feeCashoutId传值错误、或流程信息被清理，查询返回空抛异常。需核查兑现单流程信息完整性。</div>
+  WHERE  c.fee_cashout_id = #{传入的feeCashoutId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>兑现类型异常
-- **触发条件**：同步资金池synAdjustCashPoolToEbs时，cashoutType非1(额度内)非2(额度外)
-- **逻辑分析**：同步资金池需按兑现类型设置sourceType：cashoutType=1为"广告费（额内）"，cashoutType=2为"广告费（额外）"。若cashoutType未配置、配置为非法值、或数据迁移错误，无法确定资金池来源类型即抛异常。需核查兑现单cashoutType字段值。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id    AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>兑现类型异常</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>同步资金池synAdjustCashPoolToEbs时，cashoutType非1(额度内)非2(额度外)<br><strong>逻辑分析：</strong>同步资金池需按兑现类型设置sourceType：cashoutType=1为"广告费（额内）"，cashoutType=2为"广告费（额外）"。若cashoutType未配置、配置为非法值、或数据迁移错误，无法确定资金池来源类型即抛异常。需核查兑现单cashoutType字段值。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id    AS 兑现单ID,
          c.fee_cashout_no    AS 兑现单号,
          c.cashout_type      AS 兑现类型,
          c.hz_approve_status AS 审批状态
   FROM   fin_fee_cashout_header c
   WHERE  c.cashout_type NOT IN (1, 2)
   OR    c.cashout_type IS NULL
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>同步资金池synAdjustCashPoolToEbs时，cashoutType非1(额度内)非2(额度外)<br><strong>逻辑分析：</strong>同步资金池需按兑现类型设置sourceType：cashoutType=1为"广告费（额内）"，cashoutType=2为"广告费（额外）"。若cashoutType未配置、配置为非法值、或数据迁移错误，无法确定资金池来源类型即抛异常。需核查兑现单cashoutType字段值。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>流程中objid为0，流程失败
-- **触发条件**：doCheckCashoutData兑现数据校验时，dto.getObjId()为0
-- **逻辑分析**：工作流回调doCheckCashoutData需按objId定位兑现单校验数据。若OA回调报文中objId为0（OA配置错误、流程变量未正确赋值、或回调报文解析异常），无法定位兑现单即抛异常。需核查工作流变量配置和回调报文。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id    AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>流程中objid为0，流程失败</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验时，dto.getObjId()为0<br><strong>逻辑分析：</strong>工作流回调doCheckCashoutData需按objId定位兑现单校验数据。若OA回调报文中objId为0（OA配置错误、流程变量未正确赋值、或回调报文解析异常），无法定位兑现单即抛异常。需核查工作流变量配置和回调报文。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id    AS 兑现单ID,
          c.fee_cashout_no    AS 兑现单号,
          c.hz_instance_id    AS 工作流实例ID,
          c.hz_approve_status AS 审批状态
   FROM   fin_fee_cashout_header c
   WHERE  c.hz_approve_status = 'RUN'
-  ORDER  BY c.last_update_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验时，dto.getObjId()为0<br><strong>逻辑分析：</strong>工作流回调doCheckCashoutData需按objId定位兑现单校验数据。若OA回调报文中objId为0（OA配置错误、流程变量未正确赋值、或回调报文解析异常），无法定位兑现单即抛异常。需核查工作流变量配置和回调报文。</div>
+  ORDER  BY c.last_update_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>发票金额异常，请检查
-- **触发条件**：doCheckCashoutData兑现数据校验时，payType≠3(非经销商承担)且factInvoiceAmt≤0
-- **逻辑分析**：非经销商承担(payType≠3)的兑现单需校验含税发票金额为正数，确保有实际发票金额可兑现。若用户未填写发票金额、金额被误置0或负数、或发票明细税额合计计算异常，factInvoiceAmt≤0抛异常。需检查发票明细金额完整性。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id    AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>发票金额异常，请检查</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验时，payType≠3(非经销商承担)且factInvoiceAmt≤0<br><strong>逻辑分析：</strong>非经销商承担(payType≠3)的兑现单需校验含税发票金额为正数，确保有实际发票金额可兑现。若用户未填写发票金额、金额被误置0或负数、或发票明细税额合计计算异常，factInvoiceAmt≤0抛异常。需检查发票明细金额完整性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id    AS 兑现单ID,
          c.fee_cashout_no    AS 兑现单号,
          c.pay_type          AS 付款方式,
          c.fact_invoice_amt  AS 含税发票金额,
@@ -626,22 +585,18 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   WHERE  c.pay_type &lt;&gt; 3
   AND    NVL(c.fact_invoice_amt, 0) &lt;= 0
   AND    c.hz_approve_status = 'RUN'
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验时，payType≠3(非经销商承担)且factInvoiceAmt≤0<br><strong>逻辑分析：</strong>非经销商承担(payType≠3)的兑现单需校验含税发票金额为正数，确保有实际发票金额可兑现。若用户未填写发票金额、金额被误置0或负数、或发票明细税额合计计算异常，factInvoiceAmt≤0抛异常。需检查发票明细金额完整性。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次申请兑现金额不可超过该报销单据剩余的可兑现金额
-- **触发条件**：doCheckCashoutData兑现数据校验时，thisCashoutAmt&gt;surCashoutAmt（剩余可兑现金额=totalCanCashoutAmt-已兑现金额sumCashoutAmt）
-- **逻辑分析**：兑现金额不得超过报销单剩余可兑现金额。剩余可兑现金额=可兑现总额(totalCanCashoutAmt)-已兑现金额(sumCashoutAmt)。若用户填写的本次兑现金额超过剩余可兑现金额（如已部分兑现后超额兑现、或已兑现金额未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑现金额。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id       AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>本次申请兑现金额不可超过该报销单据剩余的可兑现金额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验时，thisCashoutAmt&gt;surCashoutAmt（剩余可兑现金额=totalCanCashoutAmt-已兑现金额sumCashoutAmt）<br><strong>逻辑分析：</strong>兑现金额不得超过报销单剩余可兑现金额。剩余可兑现金额=可兑现总额(totalCanCashoutAmt)-已兑现金额(sumCashoutAmt)。若用户填写的本次兑现金额超过剩余可兑现金额（如已部分兑现后超额兑现、或已兑现金额未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑现金额。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id       AS 兑现单ID,
          c.fee_cashout_no       AS 兑现单号,
          c.this_cashout_amt     AS 本次兑现金额,
          c.total_can_cashout_amt AS 可兑现总额,
@@ -657,22 +612,18 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
               AND    t.fee_cashout_id &lt;&gt; c.fee_cashout_id), 0) AS 剩余可兑现金额
   FROM   fin_fee_cashout_header c
   WHERE  c.hz_approve_status = 'RUN'
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验时，thisCashoutAmt&gt;surCashoutAmt（剩余可兑现金额=totalCanCashoutAmt-已兑现金额sumCashoutAmt）<br><strong>逻辑分析：</strong>兑现金额不得超过报销单剩余可兑现金额。剩余可兑现金额=可兑现总额(totalCanCashoutAmt)-已兑现金额(sumCashoutAmt)。若用户填写的本次兑现金额超过剩余可兑现金额（如已部分兑现后超额兑现、或已兑现金额未同步更新），校验不通过抛异常。需修改兑现金额至≤剩余可兑现金额。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次核销金额不可超过额度内可用金额
-- **触发条件**：doCheckCashoutData兑现数据校验cashoutType=1(额度内)时，thisWriteoffAmt&gt;inCanUseAmt
-- **逻辑分析**：额度内兑现时核销金额不得超过额度内可用金额(inCanUseAmt，含已加回本次核销金额)。若核销金额超过可用金额（如额度内预算已被其他兑现单占用、或可用金额计算异常），校验不通过抛异常。需修改核销金额至≤额度内可用金额。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id     AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>本次核销金额不可超过额度内可用金额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验cashoutType=1(额度内)时，thisWriteoffAmt&gt;inCanUseAmt<br><strong>逻辑分析：</strong>额度内兑现时核销金额不得超过额度内可用金额(inCanUseAmt，含已加回本次核销金额)。若核销金额超过可用金额（如额度内预算已被其他兑现单占用、或可用金额计算异常），校验不通过抛异常。需修改核销金额至≤额度内可用金额。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id     AS 兑现单ID,
          c.fee_cashout_no     AS 兑现单号,
          c.cashout_type       AS 兑现类型,
          c.this_writeoff_amt  AS 本次核销金额,
@@ -682,22 +633,18 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   WHERE  c.cashout_type = 1
   AND    c.this_writeoff_amt &gt; c.in_can_use_amt
   AND    c.hz_approve_status = 'RUN'
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验cashoutType=1(额度内)时，thisWriteoffAmt&gt;inCanUseAmt<br><strong>逻辑分析：</strong>额度内兑现时核销金额不得超过额度内可用金额(inCanUseAmt，含已加回本次核销金额)。若核销金额超过可用金额（如额度内预算已被其他兑现单占用、或可用金额计算异常），校验不通过抛异常。需修改核销金额至≤额度内可用金额。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次申请兑现金额不可超过额度外可用金额
-- **触发条件**：doCheckCashoutData兑现数据校验cashoutType=2(额度外)时，thisCashoutAmt&gt;outCanUseAmt
-- **逻辑分析**：额度外兑现时申请兑现金额不得超过额度外可用金额(outCanUseAmt)。若申请金额超过可用金额（如额度外预算已被其他兑现单占用、或可用金额计算异常），校验不通过抛异常。需修改申请金额至≤额度外可用金额。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id    AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>本次申请兑现金额不可超过额度外可用金额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验cashoutType=2(额度外)时，thisCashoutAmt&gt;outCanUseAmt<br><strong>逻辑分析：</strong>额度外兑现时申请兑现金额不得超过额度外可用金额(outCanUseAmt)。若申请金额超过可用金额（如额度外预算已被其他兑现单占用、或可用金额计算异常），校验不通过抛异常。需修改申请金额至≤额度外可用金额。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id    AS 兑现单ID,
          c.fee_cashout_no    AS 兑现单号,
          c.cashout_type      AS 兑现类型,
          c.this_cashout_amt  AS 本次兑现金额,
@@ -707,22 +654,18 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   WHERE  c.cashout_type = 2
   AND    c.this_cashout_amt &gt; c.out_can_use_amt
   AND    c.hz_approve_status = 'RUN'
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验cashoutType=2(额度外)时，thisCashoutAmt&gt;outCanUseAmt<br><strong>逻辑分析：</strong>额度外兑现时申请兑现金额不得超过额度外可用金额(outCanUseAmt)。若申请金额超过可用金额（如额度外预算已被其他兑现单占用、或可用金额计算异常），校验不通过抛异常。需修改申请金额至≤额度外可用金额。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>额度外金额已占用
-- **触发条件**：doCheckCashoutData兑现数据校验cashoutType=2(额度外)时，thisCashoutAmt&gt;outCanUseAmt-occupiedAmt（已占用金额）
-- **逻辑分析**：额度外兑现需考虑已占用金额(occupiedAmt，其他兑现单已占用但未审批通过的金额)。若本次申请金额超过扣除已占用后的剩余可用金额(outCanUseAmt-occupiedAmt)，校验不通过抛异常。常见根因：多张兑现单并发占用额度外金额、或已占用金额未及时释放。需等待其他兑现单审批完成或减少申请金额。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id    AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>额度外金额已占用</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验cashoutType=2(额度外)时，thisCashoutAmt&gt;outCanUseAmt-occupiedAmt（已占用金额）<br><strong>逻辑分析：</strong>额度外兑现需考虑已占用金额(occupiedAmt，其他兑现单已占用但未审批通过的金额)。若本次申请金额超过扣除已占用后的剩余可用金额(outCanUseAmt-occupiedAmt)，校验不通过抛异常。常见根因：多张兑现单并发占用额度外金额、或已占用金额未及时释放。需等待其他兑现单审批完成或减少申请金额。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id    AS 兑现单ID,
          c.fee_cashout_no    AS 兑现单号,
          c.this_cashout_amt  AS 本次兑现金额,
          c.out_can_use_amt   AS 额度外可用金额,
@@ -736,22 +679,18 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   FROM   fin_fee_cashout_header c
   WHERE  c.cashout_type = 2
   AND    c.hz_approve_status = 'RUN'
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doCheckCashoutData兑现数据校验cashoutType=2(额度外)时，thisCashoutAmt&gt;outCanUseAmt-occupiedAmt（已占用金额）<br><strong>逻辑分析：</strong>额度外兑现需考虑已占用金额(occupiedAmt，其他兑现单已占用但未审批通过的金额)。若本次申请金额超过扣除已占用后的剩余可用金额(outCanUseAmt-occupiedAmt)，校验不通过抛异常。常见根因：多张兑现单并发占用额度外金额、或已占用金额未及时释放。需等待其他兑现单审批完成或减少申请金额。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>申请兑现金额超剩余未兑现总额
-- **触发条件**：wfProcSubmit提交审批时，totalCanCashoutAmt-(usedCashAmt+thisCashoutAmt)&lt;0（已使用金额+本次金额&gt;可兑现总额）
-- **逻辑分析**：提交审批时校验本次兑现金额不超过剩余未兑现总额。剩余未兑现总额=可兑现总额(totalCanCashoutAmt)-已使用金额(usedCashAmt)。若本次申请金额超过剩余未兑现总额（如已部分兑现后超额、或可兑现总额被调整减小），校验不通过抛异常。需修改兑现金额至≤剩余未兑现总额。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id       AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>申请兑现金额超剩余未兑现总额</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>wfProcSubmit提交审批时，totalCanCashoutAmt-(usedCashAmt+thisCashoutAmt)&lt;0（已使用金额+本次金额&gt;可兑现总额）<br><strong>逻辑分析：</strong>提交审批时校验本次兑现金额不超过剩余未兑现总额。剩余未兑现总额=可兑现总额(totalCanCashoutAmt)-已使用金额(usedCashAmt)。若本次申请金额超过剩余未兑现总额（如已部分兑现后超额、或可兑现总额被调整减小），校验不通过抛异常。需修改兑现金额至≤剩余未兑现总额。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id       AS 兑现单ID,
          c.fee_cashout_no       AS 兑现单号,
          c.this_cashout_amt     AS 本次兑现金额,
          c.total_can_cashout_amt AS 可兑现总额,
@@ -767,22 +706,18 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
               AND    t.fee_cashout_id &lt;&gt; c.fee_cashout_id), 0) AS 剩余未兑现总额
   FROM   fin_fee_cashout_header c
   WHERE  c.hz_approve_status = 'NEW'
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>wfProcSubmit提交审批时，totalCanCashoutAmt-(usedCashAmt+thisCashoutAmt)&lt;0（已使用金额+本次金额&gt;可兑现总额）<br><strong>逻辑分析：</strong>提交审批时校验本次兑现金额不超过剩余未兑现总额。剩余未兑现总额=可兑现总额(totalCanCashoutAmt)-已使用金额(usedCashAmt)。若本次申请金额超过剩余未兑现总额（如已部分兑现后超额、或可兑现总额被调整减小），校验不通过抛异常。需修改兑现金额至≤剩余未兑现总额。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-14" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>门店编码或预算年度不能为空
-- **触发条件**：doUpdateOutlimitAmt更新额度外预算时，cashoutType=2且saveType=1且thisApplyAmt&gt;0时，terminalCode或budYear为空
-- **逻辑分析**：更新额度外预算需按门店编码(terminalCode)和预算年度(budYear)定位预算记录。若兑现单未带入门店编码、预算年度未填写、或字段被误清空，无法定位预算记录即抛异常。需核查兑现单门店编码和预算年度完整性。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id   AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>门店编码或预算年度不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdateOutlimitAmt更新额度外预算时，cashoutType=2且saveType=1且thisApplyAmt&gt;0时，terminalCode或budYear为空<br><strong>逻辑分析：</strong>更新额度外预算需按门店编码(terminalCode)和预算年度(budYear)定位预算记录。若兑现单未带入门店编码、预算年度未填写、或字段被误清空，无法定位预算记录即抛异常。需核查兑现单门店编码和预算年度完整性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id   AS 兑现单ID,
          c.fee_cashout_no   AS 兑现单号,
          c.terminal_code    AS 门店编码,
          c.bud_year         AS 预算年度,
@@ -791,22 +726,18 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   FROM   fin_fee_cashout_header c
   WHERE  c.cashout_type = 2
   AND    (c.terminal_code IS NULL OR c.bud_year IS NULL)
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdateOutlimitAmt更新额度外预算时，cashoutType=2且saveType=1且thisApplyAmt&gt;0时，terminalCode或budYear为空<br><strong>逻辑分析：</strong>更新额度外预算需按门店编码(terminalCode)和预算年度(budYear)定位预算记录。若兑现单未带入门店编码、预算年度未填写、或字段被误清空，无法定位预算记录即抛异常。需核查兑现单门店编码和预算年度完整性。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-15" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>可兑现总额不能为零或负数
-- **触发条件**：doUpdateOutlimitAmt更新额度外预算时，totalCanCashoutAmt≤0
-- **逻辑分析**：计算兑现比例(thisCashoutAmt/totalCanCashoutAmt)需可兑现总额为正数。若可兑现总额为0或负数（报销单金额异常、数据迁移错误、或可兑现总额计算逻辑异常），除法运算无意义即抛异常。需核查报销单可兑现总额配置。
-- **排查SQL**：
-  ```sql
-  SELECT c.fee_cashout_id       AS 兑现单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>可兑现总额不能为零或负数</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdateOutlimitAmt更新额度外预算时，totalCanCashoutAmt≤0<br><strong>逻辑分析：</strong>计算兑现比例(thisCashoutAmt/totalCanCashoutAmt)需可兑现总额为正数。若可兑现总额为0或负数（报销单金额异常、数据迁移错误、或可兑现总额计算逻辑异常），除法运算无意义即抛异常。需核查报销单可兑现总额配置。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.fee_cashout_id       AS 兑现单ID,
          c.fee_cashout_no       AS 兑现单号,
          c.total_can_cashout_amt AS 可兑现总额,
          c.this_cashout_amt     AS 本次兑现金额,
@@ -814,41 +745,33 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   FROM   fin_fee_cashout_header c
   WHERE  c.cashout_type = 2
   AND    NVL(c.total_can_cashout_amt, 0) &lt;= 0
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdateOutlimitAmt更新额度外预算时，totalCanCashoutAmt≤0<br><strong>逻辑分析：</strong>计算兑现比例(thisCashoutAmt/totalCanCashoutAmt)需可兑现总额为正数。若可兑现总额为0或负数（报销单金额异常、数据迁移错误、或可兑现总额计算逻辑异常），除法运算无意义即抛异常。需核查报销单可兑现总额配置。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-16" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>税率配置格式错误
-- **触发条件**：doUpdateOutlimitAmt更新额度外预算时，系统参数Outlimit_Tax_Rate(或Outlimit_Tax_Rate_2019)值非数字格式，Long.parseLong抛NumberFormatException
-- **逻辑分析**：更新额度外预算需按税率(Outlimit_Tax_Rate)将含税金额转为不含税金额。若系统参数配置值非数字（如配置为空、含字母、或格式错误），Long.parseLong解析失败抛异常。需联系管理员修正系统参数配置。
-- **排查SQL**：
-  ```sql
-  SELECT s.confname  AS 参数名,
+    <h4><span style="color:#7C3AED;">报错：</span>税率配置格式错误</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdateOutlimitAmt更新额度外预算时，系统参数Outlimit_Tax_Rate(或Outlimit_Tax_Rate_2019)值非数字格式，Long.parseLong抛NumberFormatException<br><strong>逻辑分析：</strong>更新额度外预算需按税率(Outlimit_Tax_Rate)将含税金额转为不含税金额。若系统参数配置值非数字（如配置为空、含字母、或格式错误），Long.parseLong解析失败抛异常。需联系管理员修正系统参数配置。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT s.confname  AS 参数名,
          s.confvalue AS 参数值
   FROM   scpsysconf s
   WHERE  s.confname IN ('Outlimit_Tax_Rate', 'Outlimit_Tax_Rate_2019')
-  ORDER  BY s.confname;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdateOutlimitAmt更新额度外预算时，系统参数Outlimit_Tax_Rate(或Outlimit_Tax_Rate_2019)值非数字格式，Long.parseLong抛NumberFormatException<br><strong>逻辑分析：</strong>更新额度外预算需按税率(Outlimit_Tax_Rate)将含税金额转为不含税金额。若系统参数配置值非数字（如配置为空、含字母、或格式错误），Long.parseLong解析失败抛异常。需联系管理员修正系统参数配置。</div>
+  ORDER  BY s.confname;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-17" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>额度外预算数据不存在，请检查
-- **触发条件**：doUpdateOutlimitAmt更新额度外预算时，按budYear+terminalCode查询MKT_OUTLIMIT_BUD_HEADER的selectByBudYear返回空(isEnd≠2非最终兑现时)
-- **逻辑分析**：非最终兑现时需更新额度外预算剩余金额，需查询MKT_OUTLIMIT_BUD_HEADER获取预算信息。若预算数据未配置(门店+年度组合不存在)、预算数据被删除、或budYear/terminalCode不匹配，查询返回空抛异常。需核查额度外预算数据配置。
-- **排查SQL**：
-  ```sql
-  SELECT c.terminal_code    AS 门店编码,
+    <h4><span style="color:#7C3AED;">报错：</span>额度外预算数据不存在，请检查</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdateOutlimitAmt更新额度外预算时，按budYear+terminalCode查询MKT_OUTLIMIT_BUD_HEADER的selectByBudYear返回空(isEnd≠2非最终兑现时)<br><strong>逻辑分析：</strong>非最终兑现时需更新额度外预算剩余金额，需查询MKT_OUTLIMIT_BUD_HEADER获取预算信息。若预算数据未配置(门店+年度组合不存在)、预算数据被删除、或budYear/terminalCode不匹配，查询返回空抛异常。需核查额度外预算数据配置。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.terminal_code    AS 门店编码,
          c.bud_year         AS 预算年度,
          c.hz_approve_status AS 审批状态,
          NVL((SELECT COUNT(1)
@@ -863,11 +786,21 @@ NEW(新建) ──提交审批──→ RUN(审批中) ──┬──审批通�
   AND    NOT EXISTS (SELECT 1 FROM mkt_outlimit_bud_header m
                      WHERE  m.terminal_code = c.terminal_code
                      AND    m.bud_year = c.bud_year)
-  ORDER  BY c.creation_date DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doUpdateOutlimitAmt更新额度外预算时，按budYear+terminalCode查询MKT_OUTLIMIT_BUD_HEADER的selectByBudYear返回空(isEnd≠2非最终兑现时)<br><strong>逻辑分析：</strong>非最终兑现时需更新额度外预算剩余金额，需查询MKT_OUTLIMIT_BUD_HEADER获取预算信息。若预算数据未配置(门店+年度组合不存在)、预算数据被删除、或budYear/terminalCode不匹配，查询返回空抛异常。需核查额度外预算数据配置。</div>
+  ORDER  BY c.creation_date DESC;</code></pre>
   </div>
+</div>
+
+<KbCard title="Q1：兑现金额超过剩余可兑额度">
+<p><strong>根因</strong>：thisApplyCashoutAmt &gt; thisSurCashoutAmt</p>
+<p><strong>解决方案</strong>：调整兑现金额不超过剩余可兑额度</p>
+</KbCard>
+
+<KbCard title="Q2：计提年份未带出">
+<p><strong>根因</strong>：验收报销单号格式不正确或数据库中无对应计提年份记录</p>
+<p><strong>解决方案</strong>：检查验收报销单号格式，确认withholdingTimeYear查询有数据</p>
+</KbCard>
+
+</div>
 </div>
 </div>
 

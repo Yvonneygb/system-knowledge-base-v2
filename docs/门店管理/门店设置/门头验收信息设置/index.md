@@ -231,13 +231,6 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：验收时无验收信息">
-<p><strong>根因</strong>：未配置验收信息设置</p>
-<p><strong>解决方案</strong>：在本页面配置验收项目和拍摄要求</p>
-</KbCard>
-
-</div>
-</div>
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -252,12 +245,11 @@
 <div id="err-detail-1" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>验收信息设置不存在
-- **触发条件**：门店验收与报销单详情页加载时调用getAcceptanceInfo接口，查询ACCEPTANCE_INFO_SET_LINE返回空列表
-- **逻辑分析**：门店验收报销单详情页Tab页签需展示验收信息设置项，用于控制验收时需检查的验收项目、拍摄要求及是否必填。若管理员未在本设置页面配置任何验收信息行（ACCEPTANCE_INFO_SET_LINE无记录），或按ORGANIZATION_ID过滤后无匹配记录，查询返回空，验收报销单详情页的验收信息Tab无项目可展示，验收人员无法对照拍摄要求和验收项目执行验收，影响验收完整性。该异常为非阻断性提示，需管理员补全验收信息配置。
-- **排查SQL**：
-  ```sql
-  SELECT acceptance_item      AS 验收项目,
+    <h4><span style="color:#7C3AED;">报错：</span>验收信息设置不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>门店验收与报销单详情页加载时调用getAcceptanceInfo接口，查询ACCEPTANCE_INFO_SET_LINE返回空列表<br><strong>逻辑分析：</strong>门店验收报销单详情页Tab页签需展示验收信息设置项，用于控制验收时需检查的验收项目、拍摄要求及是否必填。若管理员未在本设置页面配置任何验收信息行（ACCEPTANCE_INFO_SET_LINE无记录），或按ORGANIZATION_ID过滤后无匹配记录，查询返回空，验收报销单详情页的验收信息Tab无项目可展示，验收人员无法对照拍摄要求和验收项目执行验收，影响验收完整性。该异常为非阻断性提示，需管理员补全验收信息配置。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT acceptance_item      AS 验收项目,
          acceptance_note      AS 验收说明,
          shoot_require        AS 拍摄要求,
          is_ys_provide        AS 是否验收提供,
@@ -266,11 +258,16 @@
          zx_provide_count     AS 装修提供数量,
          organization_id      AS 组织ID
   FROM   acceptance_info_set_line
-  WHERE  organization_id = #{当前组织ID};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>门店验收与报销单详情页加载时调用getAcceptanceInfo接口，查询ACCEPTANCE_INFO_SET_LINE返回空列表<br><strong>逻辑分析：</strong>门店验收报销单详情页Tab页签需展示验收信息设置项，用于控制验收时需检查的验收项目、拍摄要求及是否必填。若管理员未在本设置页面配置任何验收信息行（ACCEPTANCE_INFO_SET_LINE无记录），或按ORGANIZATION_ID过滤后无匹配记录，查询返回空，验收报销单详情页的验收信息Tab无项目可展示，验收人员无法对照拍摄要求和验收项目执行验收，影响验收完整性。该异常为非阻断性提示，需管理员补全验收信息配置。</div>
+  WHERE  organization_id = #{当前组织ID};</code></pre>
   </div>
+</div>
+
+<KbCard title="Q1：验收时无验收信息">
+<p><strong>根因</strong>：未配置验收信息设置</p>
+<p><strong>解决方案</strong>：在本页面配置验收项目和拍摄要求</p>
+</KbCard>
+
+</div>
 </div>
 </div>
 

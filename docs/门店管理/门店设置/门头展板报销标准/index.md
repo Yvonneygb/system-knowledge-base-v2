@@ -299,13 +299,6 @@ NEW ──删除──→ (删除)
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：装修申请提交时报&quot;没有有效期内的政策标准&quot;">
-<p><strong>根因</strong>：当前日期不在任何政策标准的有效期内</p>
-<p><strong>解决方案</strong>：延长政策标准的有效期或新增覆盖当前日期的政策标准</p>
-</KbCard>
-
-</div>
-</div>
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -326,99 +319,82 @@ NEW ──删除──→ (删除)
 <div id="err-detail-1" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>政策标准不存在
-- **触发条件**：执行doSelect(详情查询)/doDelete(删除)接口时，按policyStandardId调用selectByPrimaryKey查询POLICY_STANDARD_HEAD返回null
-- **逻辑分析**：详情查询和删除均需先按主键POLICY_STANDARD_ID定位政策标准头表记录。若政策标准在操作前被其他用户删除，或前端传入的policyStandardId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"政策标准不存在"阻断性异常，后续读取SUBSIDY_TYPE、FIXUP_GRADE、有效期等字段及关联行表均无法进行。
-- **排查SQL**：
-  ```sql
-  SELECT h.policy_standard_id   AS 政策标准ID,
+    <h4><span style="color:#7C3AED;">报错：</span>政策标准不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doSelect(详情查询)/doDelete(删除)接口时，按policyStandardId调用selectByPrimaryKey查询POLICY_STANDARD_HEAD返回null<br><strong>逻辑分析：</strong>详情查询和删除均需先按主键POLICY_STANDARD_ID定位政策标准头表记录。若政策标准在操作前被其他用户删除，或前端传入的policyStandardId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"政策标准不存在"阻断性异常，后续读取SUBSIDY_TYPE、FIXUP_GRADE、有效期等字段及关联行表均无法进行。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT h.policy_standard_id   AS 政策标准ID,
          h.policy_standard_no   AS 政策标准编号,
          h.subsidy_type         AS 补贴类型,
          h.fixup_grade          AS 装修等级,
          h.hz_approve_status    AS 审批状态
   FROM   policy_standard_head h
-  WHERE  h.policy_standard_id = #{传入的policyStandardId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>执行doSelect(详情查询)/doDelete(删除)接口时，按policyStandardId调用selectByPrimaryKey查询POLICY_STANDARD_HEAD返回null<br><strong>逻辑分析：</strong>详情查询和删除均需先按主键POLICY_STANDARD_ID定位政策标准头表记录。若政策标准在操作前被其他用户删除，或前端传入的policyStandardId为错误值/过期值（如列表缓存后他人已删除），selectByPrimaryKey返回null，后端抛出"政策标准不存在"阻断性异常，后续读取SUBSIDY_TYPE、FIXUP_GRADE、有效期等字段及关联行表均无法进行。</div>
+  WHERE  h.policy_standard_id = #{传入的policyStandardId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>有效期不合法
-- **触发条件**：执行保存接口时，校验START_DATE(开始日期)大于END_DATE(结束日期)
-- **逻辑分析**：政策标准有效期控制装修申请引用的合法性，要求START_DATE≤END_DATE，确保有效期内可被装修申请提交时引用。若用户在前端日期控件选择时误将开始日期晚于结束日期（如跨年配置时年份选错），前端C7N内置日期校验会拦截并提示"有效期不合法"。该异常为非阻断性提示，用户修正日期后可重新保存。若绕过前端直接调用后端，后端亦应做二次校验。
-- **排查SQL**：
-  ```sql
-  SELECT policy_standard_id   AS 政策标准ID,
+    <h4><span style="color:#7C3AED;">报错：</span>有效期不合法</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>执行保存接口时，校验START_DATE(开始日期)大于END_DATE(结束日期)<br><strong>逻辑分析：</strong>政策标准有效期控制装修申请引用的合法性，要求START_DATE≤END_DATE，确保有效期内可被装修申请提交时引用。若用户在前端日期控件选择时误将开始日期晚于结束日期（如跨年配置时年份选错），前端C7N内置日期校验会拦截并提示"有效期不合法"。该异常为非阻断性提示，用户修正日期后可重新保存。若绕过前端直接调用后端，后端亦应做二次校验。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT policy_standard_id   AS 政策标准ID,
          policy_standard_no   AS 政策标准编号,
          start_date           AS 开始日期,
          end_date             AS 结束日期,
          hz_approve_status    AS 审批状态
   FROM   policy_standard_head
   WHERE  start_date &gt; end_date
-  ORDER  BY policy_standard_no;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>执行保存接口时，校验START_DATE(开始日期)大于END_DATE(结束日期)<br><strong>逻辑分析：</strong>政策标准有效期控制装修申请引用的合法性，要求START_DATE≤END_DATE，确保有效期内可被装修申请提交时引用。若用户在前端日期控件选择时误将开始日期晚于结束日期（如跨年配置时年份选错），前端C7N内置日期校验会拦截并提示"有效期不合法"。该异常为非阻断性提示，用户修正日期后可重新保存。若绕过前端直接调用后端，后端亦应做二次校验。</div>
+  ORDER  BY policy_standard_no;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>年度不能为空
-- **触发条件**：调用saveData(新增/更新政策标准)接口时，headParamCheck校验useExtraBudgetFlag(启用额外预算标志)为"Y"且year(年度)为null
-- **逻辑分析**：政策标准支持启用额外预算(useExtraBudgetFlag=Y)，启用后需指定年度(year)用于关联预算额度控制。若前端勾选"启用额外预算"但未选择年度即点击保存，或LOV选择后未正确回传year，headParamCheck校验year为null即抛出"年度不能为空"阻断性异常，后续预算额度关联逻辑无法执行。该异常为非阻断性提示，用户补全年度后可重新保存。
-- **排查SQL**：
-  ```sql
-  SELECT h.policy_standard_id   AS 政策标准ID,
+    <h4><span style="color:#7C3AED;">报错：</span>年度不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用saveData(新增/更新政策标准)接口时，headParamCheck校验useExtraBudgetFlag(启用额外预算标志)为"Y"且year(年度)为null<br><strong>逻辑分析：</strong>政策标准支持启用额外预算(useExtraBudgetFlag=Y)，启用后需指定年度(year)用于关联预算额度控制。若前端勾选"启用额外预算"但未选择年度即点击保存，或LOV选择后未正确回传year，headParamCheck校验year为null即抛出"年度不能为空"阻断性异常，后续预算额度关联逻辑无法执行。该异常为非阻断性提示，用户补全年度后可重新保存。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT h.policy_standard_id   AS 政策标准ID,
          h.policy_standard_no   AS 政策标准编号,
          h.subsidy_type         AS 补贴类型,
          h.fixup_grade          AS 装修等级,
          h.hz_approve_status    AS 审批状态
   FROM   policy_standard_head h
   WHERE  h.use_extra_budget_flag = 'Y'
-  AND    h.year IS NULL;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>调用saveData(新增/更新政策标准)接口时，headParamCheck校验useExtraBudgetFlag(启用额外预算标志)为"Y"且year(年度)为null<br><strong>逻辑分析：</strong>政策标准支持启用额外预算(useExtraBudgetFlag=Y)，启用后需指定年度(year)用于关联预算额度控制。若前端勾选"启用额外预算"但未选择年度即点击保存，或LOV选择后未正确回传year，headParamCheck校验year为null即抛出"年度不能为空"阻断性异常，后续预算额度关联逻辑无法执行。该异常为非阻断性提示，用户补全年度后可重新保存。</div>
+  AND    h.year IS NULL;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>额度外超额处理策略不能为空
-- **触发条件**：调用saveData(新增/更新政策标准)接口时，headParamCheck校验custLimitFlag(启用客户限额标志)为"Y"且extraBudgetExcessStrategy(额度外超额处理策略)为null
-- **逻辑分析**：政策标准支持启用客户限额(custLimitFlag=Y)，启用后需配置额度外超额处理策略(extraBudgetExcessStrategy)定义超出额度时的处理方式(如阻断/提示/允许)。若前端勾选"启用客户限额"但未选择超额处理策略即点击保存，headParamCheck校验extraBudgetExcessStrategy为null即抛出"额度外超额处理策略不能为空"阻断性异常，后续超额处理逻辑无法确定执行策略。该异常为非阻断性提示，用户补全策略后可重新保存。
-- **排查SQL**：
-  ```sql
-  SELECT h.policy_standard_id            AS 政策标准ID,
+    <h4><span style="color:#7C3AED;">报错：</span>额度外超额处理策略不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用saveData(新增/更新政策标准)接口时，headParamCheck校验custLimitFlag(启用客户限额标志)为"Y"且extraBudgetExcessStrategy(额度外超额处理策略)为null<br><strong>逻辑分析：</strong>政策标准支持启用客户限额(custLimitFlag=Y)，启用后需配置额度外超额处理策略(extraBudgetExcessStrategy)定义超出额度时的处理方式(如阻断/提示/允许)。若前端勾选"启用客户限额"但未选择超额处理策略即点击保存，headParamCheck校验extraBudgetExcessStrategy为null即抛出"额度外超额处理策略不能为空"阻断性异常，后续超额处理逻辑无法确定执行策略。该异常为非阻断性提示，用户补全策略后可重新保存。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT h.policy_standard_id            AS 政策标准ID,
          h.policy_standard_no            AS 政策标准编号,
          h.cust_limit_flag               AS 启用客户限额,
          h.extra_budget_excess_strategy  AS 额度外超额处理策略,
          h.hz_approve_status             AS 审批状态
   FROM   policy_standard_head h
   WHERE  h.cust_limit_flag = 'Y'
-  AND    h.extra_budget_excess_strategy IS NULL;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>调用saveData(新增/更新政策标准)接口时，headParamCheck校验custLimitFlag(启用客户限额标志)为"Y"且extraBudgetExcessStrategy(额度外超额处理策略)为null<br><strong>逻辑分析：</strong>政策标准支持启用客户限额(custLimitFlag=Y)，启用后需配置额度外超额处理策略(extraBudgetExcessStrategy)定义超出额度时的处理方式(如阻断/提示/允许)。若前端勾选"启用客户限额"但未选择超额处理策略即点击保存，headParamCheck校验extraBudgetExcessStrategy为null即抛出"额度外超额处理策略不能为空"阻断性异常，后续超额处理逻辑无法确定执行策略。该异常为非阻断性提示，用户补全策略后可重新保存。</div>
+  AND    h.extra_budget_excess_strategy IS NULL;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>数量上限必须大于0且大于下限
-- **触发条件**：调用saveData(新增/更新政策标准)接口时，lineParamCheck校验某行明细的maxNum(数量上限)小于等于minNum(数量下限)，或maxNum小于等于0
-- **逻辑分析**：政策标准行明细通过minNum(数量下限)和maxNum(数量上限)定义数量区间，用于下游装修申请/验收报销按数量匹配补贴标准。要求maxNum &gt; minNum且maxNum &gt; 0，确保区间非空且上限为正数。若用户配置时误将上限填小于等于下限（如minNum=100、maxNum=50），或上限填0/负数，区间为空集，任何数量都无法匹配该行，下游匹配不到对应补贴标准。后端校验maxNum.compareTo(minNum) &lt;= 0 || maxNum.compareTo(BigDecimal.ZERO) &lt;= 0即抛出"数量上限必须大于0且大于下限"。
-- **排查SQL**：
-  ```sql
-  SELECT l.policy_line_id        AS 政策标准行ID,
+    <h4><span style="color:#7C3AED;">报错：</span>数量上限必须大于0且大于下限</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用saveData(新增/更新政策标准)接口时，lineParamCheck校验某行明细的maxNum(数量上限)小于等于minNum(数量下限)，或maxNum小于等于0<br><strong>逻辑分析：</strong>政策标准行明细通过minNum(数量下限)和maxNum(数量上限)定义数量区间，用于下游装修申请/验收报销按数量匹配补贴标准。要求maxNum &gt; minNum且maxNum &gt; 0，确保区间非空且上限为正数。若用户配置时误将上限填小于等于下限（如minNum=100、maxNum=50），或上限填0/负数，区间为空集，任何数量都无法匹配该行，下游匹配不到对应补贴标准。后端校验maxNum.compareTo(minNum) &lt;= 0 || maxNum.compareTo(BigDecimal.ZERO) &lt;= 0即抛出"数量上限必须大于0且大于下限"。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT l.policy_line_id        AS 政策标准行ID,
          l.head_id               AS 头表ID,
          l.decorate_project      AS 补贴项目,
          l.subsidy_mode          AS 补贴方式,
@@ -426,41 +402,33 @@ NEW ──删除──→ (删除)
          l.max_num               AS 数量上限
   FROM   policy_standard_line l
   WHERE  l.max_num &lt;= l.min_num
-  OR     l.max_num &lt;= 0;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>调用saveData(新增/更新政策标准)接口时，lineParamCheck校验某行明细的maxNum(数量上限)小于等于minNum(数量下限)，或maxNum小于等于0<br><strong>逻辑分析：</strong>政策标准行明细通过minNum(数量下限)和maxNum(数量上限)定义数量区间，用于下游装修申请/验收报销按数量匹配补贴标准。要求maxNum &gt; minNum且maxNum &gt; 0，确保区间非空且上限为正数。若用户配置时误将上限填小于等于下限（如minNum=100、maxNum=50），或上限填0/负数，区间为空集，任何数量都无法匹配该行，下游匹配不到对应补贴标准。后端校验maxNum.compareTo(minNum) &lt;= 0 || maxNum.compareTo(BigDecimal.ZERO) &lt;= 0即抛出"数量上限必须大于0且大于下限"。</div>
+  OR     l.max_num &lt;= 0;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据id 不能为空
-- **触发条件**：调用doUpdate(更新政策标准)或doDelete(删除政策标准)接口时，checkUpOrDelete校验传入的policyStandardId(单据ID)为null
-- **逻辑分析**：更新和删除操作均需按policyStandardId定位POLICY_STANDARD_HEAD记录，policyStandardId是操作的唯一标识。若前端未传入policyStandardId（如新增误调更新接口、或列表行ID未正确回传），checkUpOrDelete校验id为null即抛出"单据id 不能为空"阻断性异常，后续selectByPrimaryKey(null)会抛空指针。该异常为阻断性错误，需确认前端正确传入单据ID。
-- **排查SQL**：
-  ```sql
-  SELECT h.policy_standard_id   AS 政策标准ID,
+    <h4><span style="color:#7C3AED;">报错：</span>单据id 不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用doUpdate(更新政策标准)或doDelete(删除政策标准)接口时，checkUpOrDelete校验传入的policyStandardId(单据ID)为null<br><strong>逻辑分析：</strong>更新和删除操作均需按policyStandardId定位POLICY_STANDARD_HEAD记录，policyStandardId是操作的唯一标识。若前端未传入policyStandardId（如新增误调更新接口、或列表行ID未正确回传），checkUpOrDelete校验id为null即抛出"单据id 不能为空"阻断性异常，后续selectByPrimaryKey(null)会抛空指针。该异常为阻断性错误，需确认前端正确传入单据ID。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT h.policy_standard_id   AS 政策标准ID,
          h.policy_standard_no   AS 政策标准编号,
          h.hz_approve_status    AS 审批状态
   FROM   policy_standard_head h
-  WHERE  h.policy_standard_id IS NULL;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>调用doUpdate(更新政策标准)或doDelete(删除政策标准)接口时，checkUpOrDelete校验传入的policyStandardId(单据ID)为null<br><strong>逻辑分析：</strong>更新和删除操作均需按policyStandardId定位POLICY_STANDARD_HEAD记录，policyStandardId是操作的唯一标识。若前端未传入policyStandardId（如新增误调更新接口、或列表行ID未正确回传），checkUpOrDelete校验id为null即抛出"单据id 不能为空"阻断性异常，后续selectByPrimaryKey(null)会抛空指针。该异常为阻断性错误，需确认前端正确传入单据ID。</div>
+  WHERE  h.policy_standard_id IS NULL;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>当前数据不允许执行当前操作
-- **触发条件**：调用doUpdate(更新政策标准)或doDelete(删除政策标准)接口时，checkUpOrDelete校验单据的HZ_APPROVE_STATUS(审批状态)不在NEW(新建)/INTERRUPT(中断)/REBUT(驳回)范围内
-- **逻辑分析**：政策标准仅在NEW(新建)、INTERRUPT(中断)、REBUT(驳回)状态下允许更新或删除，其他状态(如RUN审批中、APPROVED已审批)下数据受流程保护不可修改。若前端在单据审批中或已审批后仍触发更新/删除操作（如用户重复点击、页面缓存未刷新状态），checkUpOrDelete校验状态不在允许范围内即抛出"当前数据不允许执行当前操作"阻断性异常，保护流程数据完整性。该异常为阻断性错误，需确认单据状态后再操作。
-- **排查SQL**：
-  ```sql
-  SELECT h.policy_standard_id   AS 政策标准ID,
+    <h4><span style="color:#7C3AED;">报错：</span>当前数据不允许执行当前操作</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>调用doUpdate(更新政策标准)或doDelete(删除政策标准)接口时，checkUpOrDelete校验单据的HZ_APPROVE_STATUS(审批状态)不在NEW(新建)/INTERRUPT(中断)/REBUT(驳回)范围内<br><strong>逻辑分析：</strong>政策标准仅在NEW(新建)、INTERRUPT(中断)、REBUT(驳回)状态下允许更新或删除，其他状态(如RUN审批中、APPROVED已审批)下数据受流程保护不可修改。若前端在单据审批中或已审批后仍触发更新/删除操作（如用户重复点击、页面缓存未刷新状态），checkUpOrDelete校验状态不在允许范围内即抛出"当前数据不允许执行当前操作"阻断性异常，保护流程数据完整性。该异常为阻断性错误，需确认单据状态后再操作。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT h.policy_standard_id   AS 政策标准ID,
          h.policy_standard_no   AS 政策标准编号,
          h.hz_approve_status    AS 审批状态,
          CASE h.hz_approve_status
@@ -473,11 +441,16 @@ NEW ──删除──→ (删除)
            ELSE h.hz_approve_status
          END                    AS 审批状态释义
   FROM   policy_standard_head h
-  WHERE  h.hz_approve_status NOT IN ('NEW', 'INTERRUPT', 'REBUT');
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>调用doUpdate(更新政策标准)或doDelete(删除政策标准)接口时，checkUpOrDelete校验单据的HZ_APPROVE_STATUS(审批状态)不在NEW(新建)/INTERRUPT(中断)/REBUT(驳回)范围内<br><strong>逻辑分析：</strong>政策标准仅在NEW(新建)、INTERRUPT(中断)、REBUT(驳回)状态下允许更新或删除，其他状态(如RUN审批中、APPROVED已审批)下数据受流程保护不可修改。若前端在单据审批中或已审批后仍触发更新/删除操作（如用户重复点击、页面缓存未刷新状态），checkUpOrDelete校验状态不在允许范围内即抛出"当前数据不允许执行当前操作"阻断性异常，保护流程数据完整性。该异常为阻断性错误，需确认单据状态后再操作。</div>
+  WHERE  h.hz_approve_status NOT IN ('NEW', 'INTERRUPT', 'REBUT');</code></pre>
   </div>
+</div>
+
+<KbCard title="Q1：装修申请提交时报&quot;没有有效期内的政策标准&quot;">
+<p><strong>根因</strong>：当前日期不在任何政策标准的有效期内</p>
+<p><strong>解决方案</strong>：延长政策标准的有效期或新增覆盖当前日期的政策标准</p>
+</KbCard>
+
+</div>
 </div>
 </div>
 

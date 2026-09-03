@@ -244,6 +244,169 @@
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
+<KbCard title="报错一览表">
+<table class="kb-field-tbl">
+<thead>
+<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>查询条件不能为空</td><td>查询</td><td>未输入查询条件，输入条件后重新查询</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
+<tr><td>项目数据不存在</td><td>查询详情</td><td>根据projectId未查到项目，确认项目ID有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
+<tr><td>项目档案表（epm_project）缺失以下字段：xxx</td><td>报备审核</td><td>EPM_PROJECT表结构与EPM_REPORT不一致，补齐缺失字段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
+<tr><td>项目进度已变更，请驳回重审!</td><td>进度更新</td><td>并发场景下其他单据已更新进度，驳回当前单据重新审核</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
+<tr><td>阶段更新，只能前进，不能后退</td><td>进度更新</td><td>新阶段序号小于当前阶段序号，选择序号更大的阶段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
+<tr><td>请配置{orgId}公司参数'Proj_Effective_Cycle'</td><td>报备审核</td><td>未配置项目有效周期天数，在SYS_PARAM中配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
+<tr><td>战略经理变更申请明细行不存在！</td><td>战略经理变更</td><td>变更申请明细行查询为空，检查明细数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>失效原因必填</td><td>项目失效</td><td>失效原因为空，填写失效原因</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
+<tr><td>计算报备延期开始日失败，30天内不够xxx天工作日</td><td>报备延期</td><td>30天内工作日不足，检查工作日历配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<div id="err-detail-1" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>查询条件不能为空</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询项目档案列表时，所有查询条件(项目编码/名称/客户/状态等)均为空<br><strong>逻辑分析：</strong>查询接口校验至少需输入一个查询条件，因项目档案数据量大，强制要求至少一个过滤条件以避免全表扫描。该报错为阻断性报错</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 项目档案总量
+  FROM EPM_PROJECT ep
+  WHERE ep.PROJECT_VALID IN (1, 2, 3, 4)
+  -- 评估全表数据量，确认需缩小查询范围</code></pre>
+  </div>
+</div>
+
+<div id="err-detail-2" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>项目数据不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>查询项目档案详情(detail接口)时，根据projectId未查到EPM_PROJECT记录<br><strong>逻辑分析：</strong>detail接口按PROJECT_ID查询EPM_PROJECT，若返回null则抛出阻断性报错。可能原因：项目ID不存在、项目已被物理删除、ID类型转换异常</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ep.PROJECT_ID, ep.PROJECT_CODE, ep.PROJECT_NAME, ep.PROJECT_VALID, ep.STAGE_ID
+  FROM EPM_PROJECT ep
+  WHERE ep.PROJECT_ID = :projectId
+  -- 若返回空，说明项目ID不存在</code></pre>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>项目档案表（epm_project）缺失以下字段：xxx</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>报备审核时，EPM_PROJECT表结构与EPM_REPORT不一致，存在EPM_REPORT有但EPM_PROJECT无的字段<br><strong>逻辑分析：</strong>报备审核时按字段名比对EPM_REPORT与EPM_PROJECT表结构，将EPM_REPORT独有的字段收集到缺失列表并抛出阻断性报错。需DBA补齐EPM_PROJECT表缺失字段</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT atc.COLUMN_NAME, atc.DATA_TYPE, atc.DATA_LENGTH
+  FROM ALL_TAB_COLUMNS atc
+  WHERE atc.TABLE_NAME = 'EPM_REPORT'
+    AND atc.OWNER = :schemaOwner
+    AND atc.COLUMN_NAME NOT IN (
+        SELECT atc2.COLUMN_NAME
+        FROM ALL_TAB_COLUMNS atc2
+        WHERE atc2.TABLE_NAME = 'EPM_PROJECT'
+          AND atc2.OWNER = :schemaOwner
+    )
+  ORDER BY atc.COLUMN_NAME</code></pre>
+  </div>
+</div>
+
+<div id="err-detail-4" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>项目进度已变更，请驳回重审!</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>项目进度更新时，单据进度stageValueBefore与项目档案当前STAGE_ID不一致(并发场景)<br><strong>逻辑分析：</strong>doUpdate方法中查询EPM_PROJECT获取当前STAGE_ID，若stageValueBefore &gt; 当前STAGE_ID说明项目进度已被其他单据变更，当前单据基于旧进度提交，需驳回重审</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT ep.PROJECT_ID, ep.PROJECT_CODE, ep.STAGE_ID AS 当前阶段ID, ep.STAGE_NAME,
+         ep.PROJECT_VALID, ep.LAST_UPDATE_DATE
+  FROM EPM_PROJECT ep
+  WHERE ep.PROJECT_ID = :projectId
+  -- 对比单据的stageValueBefore与项目当前STAGE_ID</code></pre>
+  </div>
+</div>
+
+<div id="err-detail-5" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>阶段更新，只能前进，不能后退</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>项目进度更新时，新选择阶段的SEQ小于当前阶段的SEQ<br><strong>逻辑分析：</strong>doUpdate方法中查询EPM_STAGE_DEF获取新旧阶段SEQ，若newStage.seq &lt; oldStage.seq则抛出阻断性报错。项目阶段代表里程碑，不允许倒退</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT esd.STAGE_ID, esd.STAGE_NAME, esd.SEQ, esd.ORGANIZATION_ID
+  FROM EPM_STAGE_DEF esd
+  WHERE esd.ORGANIZATION_ID = :organizationId
+  ORDER BY esd.SEQ
+  -- 对比新阶段与当前阶段的SEQ</code></pre>
+  </div>
+</div>
+
+<div id="err-detail-6" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>请配置{orgId}公司参数'Proj_Effective_Cycle'</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>报备审核时，SYS_PARAM表中未配置PARAM_CODE='Proj_Effective_Cycle'的系统参数<br><strong>逻辑分析：</strong>报备审核时按ORGANIZATION_ID和PARAM_CODE='Proj_Effective_Cycle'查询SYS_PARAM，若为空则抛出阻断性报错。该参数用于计算项目有效周期天数，缺失则无法确定项目过期时间</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT sp.PARAM_ID, sp.PARAM_CODE, sp.PARAM_NAME, sp.VALUE, sp.ORGANIZATION_ID
+  FROM SYS_PARAM sp
+  WHERE sp.PARAM_CODE = 'Proj_Effective_Cycle'
+    AND sp.ORGANIZATION_ID = :orgId
+  -- 若返回空，则需在SYS_PARAM表中补充配置</code></pre>
+  </div>
+</div>
+
+<div id="err-detail-7" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>战略经理变更申请明细行不存在！</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>战略经理变更申请时，变更申请明细行查询为空<br><strong>逻辑分析：</strong>在EpmProjectManagerServiceImpl方法中校验，战略经理变更申请需关联明细行数据，若明细行不存在则报错。需检查变更申请明细数据是否正确创建</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT epm.MANAGER_ID, epm.PROJECT_ID, epm.HZ_APPROVE_STATUS,
+         (SELECT COUNT(*) FROM EPM_PROJECT_MANAGER_LINE epml
+          WHERE epml.MANAGER_ID = epm.MANAGER_ID) AS 明细行数
+  FROM EPM_PROJECT_MANAGER epm
+  WHERE epm.MANAGER_ID = :managerId
+    AND NOT EXISTS (SELECT 1 FROM EPM_PROJECT_MANAGER_LINE epml
+                    WHERE epml.MANAGER_ID = epm.MANAGER_ID)</code></pre>
+  </div>
+</div>
+
+<div id="err-detail-8" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>失效原因必填</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>项目失效申请时，失效原因为空<br><strong>逻辑分析：</strong>在ProjectServiceImpl方法中校验，项目失效必须填写失效原因，用于记录失效依据。若失效原因为空则报错</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT epu.UNVALID_ID, epu.PROJECT_ID, epu.UNVALID_REASON, epu.HZ_APPROVE_STATUS
+  FROM EPM_PROJECT_UNVALID epu
+  WHERE epu.UNVALID_ID = :unvalidId
+    AND (epu.UNVALID_REASON IS NULL OR TRIM(epu.UNVALID_REASON) = '')</code></pre>
+  </div>
+</div>
+
+<div id="err-detail-9" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>计算报备延期开始日失败，30天内不够xxx天工作日</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>计算报备延期开始日时，30天内的工作日数量不足配置的maxCount<br><strong>逻辑分析：</strong>在ProjectServiceImpl方法中计算报备延期开始日，需从当前日期起30天内找到足够数量的工作日(排除节假日和周末)。若工作日数量不足maxCount则报错。需检查工作日历配置或调整maxCount参数</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT COUNT(*) AS 30天内工作日数
+  FROM (
+    SELECT TRUNC(SYSDATE) + LEVEL - 1 AS cal_date
+    FROM DUAL
+    CONNECT BY LEVEL &lt;= 30
+  ) d
+  WHERE TO_CHAR(d.cal_date, 'DY', 'NLS_DATE_LANGUAGE=AMERICAN') NOT IN ('SAT', 'SUN')
+    AND NOT EXISTS (SELECT 1 FROM SYS_HOLIDAY sh WHERE sh.HOLIDAY_DATE = d.cal_date)
+  -- 对比工作日数与配置的maxCount</code></pre>
+  </div>
+</div>
+
 <KbCard title="常见问题">
 <div class="faq-qa-wrap">
   <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
@@ -396,221 +559,6 @@ WHERE p.PROJECT_ID = :projectId;</code></pre>
 </KbCard>
 
 </div>
-</div>
-<KbCard title="报错一览表">
-<table class="kb-field-tbl">
-<thead>
-<tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr>
-</thead>
-<tbody>
-<tr><td>查询条件不能为空</td><td>查询</td><td>未输入查询条件，输入条件后重新查询</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-1" class="view-btn">查看</a></td></tr>
-<tr><td>项目数据不存在</td><td>查询详情</td><td>根据projectId未查到项目，确认项目ID有效性</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td></tr>
-<tr><td>项目档案表（epm_project）缺失以下字段：xxx</td><td>报备审核</td><td>EPM_PROJECT表结构与EPM_REPORT不一致，补齐缺失字段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td></tr>
-<tr><td>项目进度已变更，请驳回重审!</td><td>进度更新</td><td>并发场景下其他单据已更新进度，驳回当前单据重新审核</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
-<tr><td>阶段更新，只能前进，不能后退</td><td>进度更新</td><td>新阶段序号小于当前阶段序号，选择序号更大的阶段</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
-<tr><td>请配置{orgId}公司参数'Proj_Effective_Cycle'</td><td>报备审核</td><td>未配置项目有效周期天数，在SYS_PARAM中配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
-<tr><td>战略经理变更申请明细行不存在！</td><td>战略经理变更</td><td>变更申请明细行查询为空，检查明细数据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
-<tr><td>失效原因必填</td><td>项目失效</td><td>失效原因为空，填写失效原因</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
-<tr><td>计算报备延期开始日失败，30天内不够xxx天工作日</td><td>报备延期</td><td>30天内工作日不足，检查工作日历配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
-</tbody>
-</table>
-</KbCard>
-
-<div id="err-detail-1" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>查询条件不能为空
-- **触发条件**：查询项目档案列表时，所有查询条件(项目编码/名称/客户/状态等)均为空
-- **逻辑分析**：查询接口校验至少需输入一个查询条件，因项目档案数据量大，强制要求至少一个过滤条件以避免全表扫描。该报错为阻断性报错
-- **排查SQL**：
-  ```sql
-  SELECT COUNT(*) AS 项目档案总量
-  FROM EPM_PROJECT ep
-  WHERE ep.PROJECT_VALID IN (1, 2, 3, 4)
-  -- 评估全表数据量，确认需缩小查询范围
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>查询项目档案列表时，所有查询条件(项目编码/名称/客户/状态等)均为空<br><strong>逻辑分析：</strong>查询接口校验至少需输入一个查询条件，因项目档案数据量大，强制要求至少一个过滤条件以避免全表扫描。该报错为阻断性报错</div>
-  </div>
-</div>
-
-<div id="err-detail-2" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>项目数据不存在
-- **触发条件**：查询项目档案详情(detail接口)时，根据projectId未查到EPM_PROJECT记录
-- **逻辑分析**：detail接口按PROJECT_ID查询EPM_PROJECT，若返回null则抛出阻断性报错。可能原因：项目ID不存在、项目已被物理删除、ID类型转换异常
-- **排查SQL**：
-  ```sql
-  SELECT ep.PROJECT_ID, ep.PROJECT_CODE, ep.PROJECT_NAME, ep.PROJECT_VALID, ep.STAGE_ID
-  FROM EPM_PROJECT ep
-  WHERE ep.PROJECT_ID = :projectId
-  -- 若返回空，说明项目ID不存在
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>查询项目档案详情(detail接口)时，根据projectId未查到EPM_PROJECT记录<br><strong>逻辑分析：</strong>detail接口按PROJECT_ID查询EPM_PROJECT，若返回null则抛出阻断性报错。可能原因：项目ID不存在、项目已被物理删除、ID类型转换异常</div>
-  </div>
-</div>
-
-<div id="err-detail-3" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>项目档案表（epm_project）缺失以下字段：xxx
-- **触发条件**：报备审核时，EPM_PROJECT表结构与EPM_REPORT不一致，存在EPM_REPORT有但EPM_PROJECT无的字段
-- **逻辑分析**：报备审核时按字段名比对EPM_REPORT与EPM_PROJECT表结构，将EPM_REPORT独有的字段收集到缺失列表并抛出阻断性报错。需DBA补齐EPM_PROJECT表缺失字段
-- **排查SQL**：
-  ```sql
-  SELECT atc.COLUMN_NAME, atc.DATA_TYPE, atc.DATA_LENGTH
-  FROM ALL_TAB_COLUMNS atc
-  WHERE atc.TABLE_NAME = 'EPM_REPORT'
-    AND atc.OWNER = :schemaOwner
-    AND atc.COLUMN_NAME NOT IN (
-        SELECT atc2.COLUMN_NAME
-        FROM ALL_TAB_COLUMNS atc2
-        WHERE atc2.TABLE_NAME = 'EPM_PROJECT'
-          AND atc2.OWNER = :schemaOwner
-    )
-  ORDER BY atc.COLUMN_NAME
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>报备审核时，EPM_PROJECT表结构与EPM_REPORT不一致，存在EPM_REPORT有但EPM_PROJECT无的字段<br><strong>逻辑分析：</strong>报备审核时按字段名比对EPM_REPORT与EPM_PROJECT表结构，将EPM_REPORT独有的字段收集到缺失列表并抛出阻断性报错。需DBA补齐EPM_PROJECT表缺失字段</div>
-  </div>
-</div>
-
-<div id="err-detail-4" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>项目进度已变更，请驳回重审!
-- **触发条件**：项目进度更新时，单据进度stageValueBefore与项目档案当前STAGE_ID不一致(并发场景)
-- **逻辑分析**：doUpdate方法中查询EPM_PROJECT获取当前STAGE_ID，若stageValueBefore &gt; 当前STAGE_ID说明项目进度已被其他单据变更，当前单据基于旧进度提交，需驳回重审
-- **排查SQL**：
-  ```sql
-  SELECT ep.PROJECT_ID, ep.PROJECT_CODE, ep.STAGE_ID AS 当前阶段ID, ep.STAGE_NAME,
-         ep.PROJECT_VALID, ep.LAST_UPDATE_DATE
-  FROM EPM_PROJECT ep
-  WHERE ep.PROJECT_ID = :projectId
-  -- 对比单据的stageValueBefore与项目当前STAGE_ID
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>项目进度更新时，单据进度stageValueBefore与项目档案当前STAGE_ID不一致(并发场景)<br><strong>逻辑分析：</strong>doUpdate方法中查询EPM_PROJECT获取当前STAGE_ID，若stageValueBefore &gt; 当前STAGE_ID说明项目进度已被其他单据变更，当前单据基于旧进度提交，需驳回重审</div>
-  </div>
-</div>
-
-<div id="err-detail-5" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>阶段更新，只能前进，不能后退
-- **触发条件**：项目进度更新时，新选择阶段的SEQ小于当前阶段的SEQ
-- **逻辑分析**：doUpdate方法中查询EPM_STAGE_DEF获取新旧阶段SEQ，若newStage.seq &lt; oldStage.seq则抛出阻断性报错。项目阶段代表里程碑，不允许倒退
-- **排查SQL**：
-  ```sql
-  SELECT esd.STAGE_ID, esd.STAGE_NAME, esd.SEQ, esd.ORGANIZATION_ID
-  FROM EPM_STAGE_DEF esd
-  WHERE esd.ORGANIZATION_ID = :organizationId
-  ORDER BY esd.SEQ
-  -- 对比新阶段与当前阶段的SEQ
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>项目进度更新时，新选择阶段的SEQ小于当前阶段的SEQ<br><strong>逻辑分析：</strong>doUpdate方法中查询EPM_STAGE_DEF获取新旧阶段SEQ，若newStage.seq &lt; oldStage.seq则抛出阻断性报错。项目阶段代表里程碑，不允许倒退</div>
-  </div>
-</div>
-
-<div id="err-detail-6" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请配置{orgId}公司参数'Proj_Effective_Cycle'
-- **触发条件**：报备审核时，SYS_PARAM表中未配置PARAM_CODE='Proj_Effective_Cycle'的系统参数
-- **逻辑分析**：报备审核时按ORGANIZATION_ID和PARAM_CODE='Proj_Effective_Cycle'查询SYS_PARAM，若为空则抛出阻断性报错。该参数用于计算项目有效周期天数，缺失则无法确定项目过期时间
-- **排查SQL**：
-  ```sql
-  SELECT sp.PARAM_ID, sp.PARAM_CODE, sp.PARAM_NAME, sp.VALUE, sp.ORGANIZATION_ID
-  FROM SYS_PARAM sp
-  WHERE sp.PARAM_CODE = 'Proj_Effective_Cycle'
-    AND sp.ORGANIZATION_ID = :orgId
-  -- 若返回空，则需在SYS_PARAM表中补充配置
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>报备审核时，SYS_PARAM表中未配置PARAM_CODE='Proj_Effective_Cycle'的系统参数<br><strong>逻辑分析：</strong>报备审核时按ORGANIZATION_ID和PARAM_CODE='Proj_Effective_Cycle'查询SYS_PARAM，若为空则抛出阻断性报错。该参数用于计算项目有效周期天数，缺失则无法确定项目过期时间</div>
-  </div>
-</div>
-
-<div id="err-detail-7" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>战略经理变更申请明细行不存在！
-- **触发条件**：战略经理变更申请时，变更申请明细行查询为空
-- **逻辑分析**：在EpmProjectManagerServiceImpl方法中校验，战略经理变更申请需关联明细行数据，若明细行不存在则报错。需检查变更申请明细数据是否正确创建
-- **排查SQL**：
-  ```sql
-  SELECT epm.MANAGER_ID, epm.PROJECT_ID, epm.HZ_APPROVE_STATUS,
-         (SELECT COUNT(*) FROM EPM_PROJECT_MANAGER_LINE epml
-          WHERE epml.MANAGER_ID = epm.MANAGER_ID) AS 明细行数
-  FROM EPM_PROJECT_MANAGER epm
-  WHERE epm.MANAGER_ID = :managerId
-    AND NOT EXISTS (SELECT 1 FROM EPM_PROJECT_MANAGER_LINE epml
-                    WHERE epml.MANAGER_ID = epm.MANAGER_ID)
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>战略经理变更申请时，变更申请明细行查询为空<br><strong>逻辑分析：</strong>在EpmProjectManagerServiceImpl方法中校验，战略经理变更申请需关联明细行数据，若明细行不存在则报错。需检查变更申请明细数据是否正确创建</div>
-  </div>
-</div>
-
-<div id="err-detail-8" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>失效原因必填
-- **触发条件**：项目失效申请时，失效原因为空
-- **逻辑分析**：在ProjectServiceImpl方法中校验，项目失效必须填写失效原因，用于记录失效依据。若失效原因为空则报错
-- **排查SQL**：
-  ```sql
-  SELECT epu.UNVALID_ID, epu.PROJECT_ID, epu.UNVALID_REASON, epu.HZ_APPROVE_STATUS
-  FROM EPM_PROJECT_UNVALID epu
-  WHERE epu.UNVALID_ID = :unvalidId
-    AND (epu.UNVALID_REASON IS NULL OR TRIM(epu.UNVALID_REASON) = '')
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>项目失效申请时，失效原因为空<br><strong>逻辑分析：</strong>在ProjectServiceImpl方法中校验，项目失效必须填写失效原因，用于记录失效依据。若失效原因为空则报错</div>
-  </div>
-</div>
-
-<div id="err-detail-9" class="error-detail-overlay">
-  <div class="error-detail-box" v-pre>
-    <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>计算报备延期开始日失败，30天内不够xxx天工作日
-- **触发条件**：计算报备延期开始日时，30天内的工作日数量不足配置的maxCount
-- **逻辑分析**：在ProjectServiceImpl方法中计算报备延期开始日，需从当前日期起30天内找到足够数量的工作日(排除节假日和周末)。若工作日数量不足maxCount则报错。需检查工作日历配置或调整maxCount参数
-- **排查SQL**：
-  ```sql
-  SELECT COUNT(*) AS 30天内工作日数
-  FROM (
-    SELECT TRUNC(SYSDATE) + LEVEL - 1 AS cal_date
-    FROM DUAL
-    CONNECT BY LEVEL &lt;= 30
-  ) d
-  WHERE TO_CHAR(d.cal_date, 'DY', 'NLS_DATE_LANGUAGE=AMERICAN') NOT IN ('SAT', 'SUN')
-    AND NOT EXISTS (SELECT 1 FROM SYS_HOLIDAY sh WHERE sh.HOLIDAY_DATE = d.cal_date)
-  -- 对比工作日数与配置的maxCount
-  ```
-### 上游依赖
-| 上游模块 | 依赖类型 | 依赖说明 | 依赖成立条件 |
-|---------|---------|---------|-------------|
-| 项目报备 | 数据依赖 | 报备审批通过后生成/更新项目档案 | 报备审批通过时 |
-| 项目进度更新 | 数据依赖 | 阶段变更时更新档案进度 | 进度更新时 |
-| 项目冻结定时任务 | 数据依赖 | 超期项目自动冻结 | 定时任务执行时 |
-| 项目解冻申请 | 数据依赖 | 解冻审批通过后恢复生效 | 解冻审批通过时 |
-| 项目失效申请 | 数据依赖 | 失效/恢复审批通过后更新状态 | 失效/恢复审批通过时 |
-| 工程合同 | 数据依赖 | 合同签订确认时回写合同信息 | 合同签订确认时 |
-| 系统参数(Proj_Effective_Cycle) | 配置依赖 | 配置项目有效周期天数 | 报备审核时 |
-### 下游影响
-- **工程合同**：项目档案有效状态是创建合同的前提
-- **工程要货订单**：项目档案支撑要货订单创建
-- **工程折扣政策**：折扣校验依赖项目档案有效状态和进度
-- **项目透视**：项目档案数据用于工程项目透视看板
-- **项目结案**：项目档案支撑结案流程
-- **折扣校验配置**：PROJECT_ARCHIVE字段(取自IS_LOCAL)影响折扣校验逻辑</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>计算报备延期开始日时，30天内的工作日数量不足配置的maxCount<br><strong>逻辑分析：</strong>在ProjectServiceImpl方法中计算报备延期开始日，需从当前日期起30天内找到足够数量的工作日(排除节假日和周末)。若工作日数量不足maxCount则报错。需检查工作日历配置或调整maxCount参数</div>
-  </div>
 </div>
 </div>
 <div id="faq-qa" style="display:none;">

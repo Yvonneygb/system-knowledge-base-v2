@@ -475,28 +475,6 @@ NEW ──删除──→ (删除)
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
-<KbCard title="Q1：提交时报&quot;该门店申请单已发起门店验收流程，不允许发起门店申请关闭&quot;">
-<p><strong>根因</strong>：关联的装修申请单已存在非作废状态(INTERRUPT)的验收报销单</p>
-<p><strong>解决方案</strong>：先作废相关验收报销单，再发起关闭申请</p>
-</KbCard>
-
-<KbCard title="Q2：计算扣除金额时报&quot;公司参数Close_Amount未找到&quot;">
-<p><strong>根因</strong>：系统参数Close_Amount(申请关闭扣减单价)未配置</p>
-<p><strong>解决方案</strong>：在系统参数管理中配置Close_Amount</p>
-</KbCard>
-
-<KbCard title="Q3：删除时报&quot;不能删除非制单状态的单据&quot;">
-<p><strong>根因</strong>：单据状态非NEW，可能已提交审批</p>
-<p><strong>解决方案</strong>：仅NEW状态可删除，已提交的单据需通过审批驳回后才能删除</p>
-</KbCard>
-
-<KbCard title="Q4：装修申请单号LOV无数据">
-<p><strong>根因</strong>：没有APPROVED状态的装修申请单，或当前门店无符合条件的申请单</p>
-<p><strong>解决方案</strong>：确认FIN_FEE_APPLY_FINISHED_HEADER中存在APPROVED状态的记录</p>
-</KbCard>
-
-</div>
-</div>
 <KbCard title="报错一览表">
 <table class="kb-field-tbl">
 <thead>
@@ -521,53 +499,44 @@ NEW ──删除──→ (删除)
 <div id="err-detail-1" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>不能删除非制单状态的单据
-- **触发条件**：doDelete删除操作，WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验不通过（hzApproveStatus≠NEW）
-- **逻辑分析**：仅NEW(制单)状态的关闭申请单可删除，避免删除已进入审批流程的单据造成工作流悬挂。若单据已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)等非NEW状态，校验不通过抛异常。需先通过审批流程处理单据。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id    AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>不能删除非制单状态的单据</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doDelete删除操作，WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验不通过（hzApproveStatus≠NEW）<br><strong>逻辑分析：</strong>仅NEW(制单)状态的关闭申请单可删除，避免删除已进入审批流程的单据造成工作流悬挂。若单据已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)等非NEW状态，校验不通过抛异常。需先通过审批流程处理单据。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id    AS 关闭单ID,
          c.apply_close_no    AS 关闭单号,
          c.terminal_apply_no AS 装修申请单号,
          c.hz_approve_status AS 审批状态
   FROM   fin_fee_apply_close c
   WHERE  c.apply_close_id = #{传入的applyCloseId}
-  AND    c.hz_approve_status &lt;&gt; 'NEW';
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doDelete删除操作，WorkflowInstanceStatus.NEW.getCode().equals(hzApproveStatus)校验不通过（hzApproveStatus≠NEW）<br><strong>逻辑分析：</strong>仅NEW(制单)状态的关闭申请单可删除，避免删除已进入审批流程的单据造成工作流悬挂。若单据已提交审批(RUN)、已审批(APPROVED)、已驳回(REJECTED)等非NEW状态，校验不通过抛异常。需先通过审批流程处理单据。</div>
+  AND    c.hz_approve_status &lt;&gt; 'NEW';</code></pre>
   </div>
 </div>
 
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>单据信息不存在
-- **触发条件**：doSelect查询详情时，selectByPrimary按applyCloseId查询FIN_FEE_APPLY_CLOSE返回null
-- **逻辑分析**：查询详情需先校验关闭申请单存在。若关闭单在查询期间被其他用户删除、applyCloseId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id    AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>单据信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doSelect查询详情时，selectByPrimary按applyCloseId查询FIN_FEE_APPLY_CLOSE返回null<br><strong>逻辑分析：</strong>查询详情需先校验关闭申请单存在。若关闭单在查询期间被其他用户删除、applyCloseId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id    AS 关闭单ID,
          c.apply_close_no    AS 关闭单号,
          c.hz_approve_status AS 审批状态,
          c.create_time       AS 创建时间
   FROM   fin_fee_apply_close c
-  WHERE  c.apply_close_id = #{传入的applyCloseId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doSelect查询详情时，selectByPrimary按applyCloseId查询FIN_FEE_APPLY_CLOSE返回null<br><strong>逻辑分析：</strong>查询详情需先校验关闭申请单存在。若关闭单在查询期间被其他用户删除、applyCloseId传值错误（如前端缓存失效ID）、或并发场景下被清理，查询返回空抛异常。需刷新列表页重新获取有效数据。</div>
+  WHERE  c.apply_close_id = #{传入的applyCloseId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>申请关闭信息不存在
-- **触发条件**：onWfComplete/onUserSubmit/onWfBreak工作流回调时，selectByPrimary按applyCloseId查询FIN_FEE_APPLY_CLOSE返回null
-- **逻辑分析**：工作流回调需查询关闭申请单更新审批状态、扣减额度、标记原申请单等。若回调期间关闭单被删除、applyCloseId传值错误、或OA回调报文与DMS不一致，查询返回空抛异常。需核查关闭单数据与工作流实例一致性。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id    AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>申请关闭信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfComplete/onUserSubmit/onWfBreak工作流回调时，selectByPrimary按applyCloseId查询FIN_FEE_APPLY_CLOSE返回null<br><strong>逻辑分析：</strong>工作流回调需查询关闭申请单更新审批状态、扣减额度、标记原申请单等。若回调期间关闭单被删除、applyCloseId传值错误、或OA回调报文与DMS不一致，查询返回空抛异常。需核查关闭单数据与工作流实例一致性。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id    AS 关闭单ID,
          c.apply_close_no    AS 关闭单号,
          c.hz_approve_status AS 审批状态,
          c.hz_instance_id    AS 工作流实例ID,
@@ -575,22 +544,18 @@ NEW ──删除──→ (删除)
   FROM   fin_fee_apply_close c
   WHERE  c.hz_approve_status = 'RUN'
   AND    c.update_time &lt; SYSDATE - 1
-  ORDER  BY c.update_time DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfComplete/onUserSubmit/onWfBreak工作流回调时，selectByPrimary按applyCloseId查询FIN_FEE_APPLY_CLOSE返回null<br><strong>逻辑分析：</strong>工作流回调需查询关闭申请单更新审批状态、扣减额度、标记原申请单等。若回调期间关闭单被删除、applyCloseId传值错误、或OA回调报文与DMS不一致，查询返回空抛异常。需核查关闭单数据与工作流实例一致性。</div>
+  ORDER  BY c.update_time DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>申请单信息不存在
-- **触发条件**：onWfComplete审批通过回调时，finFeeApplyFinishedHeaderRepository.selectByPrimaryKey按terminalApplyId查询原装修申请单返回null
-- **逻辑分析**：关闭申请审批通过后需标记原装修申请单为已关闭(isClose=2, auditStat=已关闭, hzApproveStatus=INTERRUPT)。若原申请单在关闭审批期间被删除、terminalApplyId传值错误、或并发场景下被清理，查询返回空抛异常。需核查原装修申请单数据是否存在。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id       AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>申请单信息不存在</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfComplete审批通过回调时，finFeeApplyFinishedHeaderRepository.selectByPrimaryKey按terminalApplyId查询原装修申请单返回null<br><strong>逻辑分析：</strong>关闭申请审批通过后需标记原装修申请单为已关闭(isClose=2, auditStat=已关闭, hzApproveStatus=INTERRUPT)。若原申请单在关闭审批期间被删除、terminalApplyId传值错误、或并发场景下被清理，查询返回空抛异常。需核查原装修申请单数据是否存在。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id       AS 关闭单ID,
          c.apply_close_no       AS 关闭单号,
          c.terminal_apply_id    AS 装修申请ID,
          c.terminal_apply_no    AS 装修申请单号,
@@ -599,22 +564,18 @@ NEW ──删除──→ (删除)
   LEFT   JOIN fin_fee_apply_finished_header f ON f.terminal_apply_id = c.terminal_apply_id
   WHERE  c.hz_approve_status = 'RUN'
   AND    f.terminal_apply_id IS NULL
-  ORDER  BY c.update_time DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onWfComplete审批通过回调时，finFeeApplyFinishedHeaderRepository.selectByPrimaryKey按terminalApplyId查询原装修申请单返回null<br><strong>逻辑分析：</strong>关闭申请审批通过后需标记原装修申请单为已关闭(isClose=2, auditStat=已关闭, hzApproveStatus=INTERRUPT)。若原申请单在关闭审批期间被删除、terminalApplyId传值错误、或并发场景下被清理，查询返回空抛异常。需核查原装修申请单数据是否存在。</div>
+  ORDER  BY c.update_time DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>该门店申请单：【{no}】已发起门店验收流程，不允许发起门店申请关闭
-- **触发条件**：onUserSubmit提交操作，selectByCondition查询FinFeeCheckBxHeader存在该装修申请单关联的非INTERRUPT状态验收报销单
-- **逻辑分析**：已发起验收报销的装修申请单不允许关闭，防止业务冲突（验收报销依赖装修申请单据）。若该装修申请单下存在NEW/RUN/APPROVED等状态的验收报销单，校验不通过抛异常。需先作废关联的验收报销单再提交关闭申请。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id       AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>该门店申请单：【{no}】已发起门店验收流程，不允许发起门店申请关闭</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，selectByCondition查询FinFeeCheckBxHeader存在该装修申请单关联的非INTERRUPT状态验收报销单<br><strong>逻辑分析：</strong>已发起验收报销的装修申请单不允许关闭，防止业务冲突（验收报销依赖装修申请单据）。若该装修申请单下存在NEW/RUN/APPROVED等状态的验收报销单，校验不通过抛异常。需先作废关联的验收报销单再提交关闭申请。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id       AS 关闭单ID,
          c.apply_close_no       AS 关闭单号,
          c.terminal_apply_id    AS 装修申请ID,
          c.terminal_apply_no    AS 装修申请单号,
@@ -625,130 +586,126 @@ NEW ──删除──→ (删除)
   JOIN   fin_fee_check_bx_header ck ON ck.terminal_apply_id = c.terminal_apply_id
   WHERE  c.hz_approve_status = 'NEW'
   AND    ck.hz_approve_status &lt;&gt; 'INTERRUPT'
-  ORDER  BY c.create_time DESC;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>onUserSubmit提交操作，selectByCondition查询FinFeeCheckBxHeader存在该装修申请单关联的非INTERRUPT状态验收报销单<br><strong>逻辑分析：</strong>已发起验收报销的装修申请单不允许关闭，防止业务冲突（验收报销依赖装修申请单据）。若该装修申请单下存在NEW/RUN/APPROVED等状态的验收报销单，校验不通过抛异常。需先作废关联的验收报销单再提交关闭申请。</div>
+  ORDER  BY c.create_time DESC;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>公司参数：申请关闭扣减【Close_Amount】未找到，请联系管理员
-- **触发条件**：doCalDeductionAmt计算扣减金额时，validSystemParam("Close_Amount")查询公司参数返回空或为空值
-- **逻辑分析**：扣减金额计算依赖公司参数Close_Amount(申请关闭扣减单价)，扣减总额=(本次装修面积+本次门头面积)×Close_Amount。若参数未在SYS_PARAM表配置、配置值为空、或参数编码拼写错误，校验不通过抛异常。需联系管理员在SYS_PARAM表配置有效的Close_Amount参数。
-- **排查SQL**：
-  ```sql
-  SELECT p.param_code   AS 参数编码,
+    <h4><span style="color:#7C3AED;">报错：</span>公司参数：申请关闭扣减【Close_Amount】未找到，请联系管理员</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>doCalDeductionAmt计算扣减金额时，validSystemParam("Close_Amount")查询公司参数返回空或为空值<br><strong>逻辑分析：</strong>扣减金额计算依赖公司参数Close_Amount(申请关闭扣减单价)，扣减总额=(本次装修面积+本次门头面积)×Close_Amount。若参数未在SYS_PARAM表配置、配置值为空、或参数编码拼写错误，校验不通过抛异常。需联系管理员在SYS_PARAM表配置有效的Close_Amount参数。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT p.param_code   AS 参数编码,
          p.param_value  AS 参数值,
          p.description  AS 参数说明
   FROM   sys_param p
-  WHERE  p.param_code = 'Close_Amount';
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>doCalDeductionAmt计算扣减金额时，validSystemParam("Close_Amount")查询公司参数返回空或为空值<br><strong>逻辑分析：</strong>扣减金额计算依赖公司参数Close_Amount(申请关闭扣减单价)，扣减总额=(本次装修面积+本次门头面积)×Close_Amount。若参数未在SYS_PARAM表配置、配置值为空、或参数编码拼写错误，校验不通过抛异常。需联系管理员在SYS_PARAM表配置有效的Close_Amount参数。</div>
+  WHERE  p.param_code = 'Close_Amount';</code></pre>
   </div>
 </div>
 
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>请先选择门店编码
-- **触发条件**：详情页计算扣除金额或保存时，前端校验headDS中terminalCode(门店编码)为空
-- **逻辑分析**：扣除金额计算依赖门店关联的装修面积信息，需先选择有效的装修申请单联动带出门店编码。若用户未选择装修申请单即点击计算扣除金额、或LOV选择失败未回填terminalCode，前端message.info提示并阻断操作。需先选择装修申请单再操作。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id    AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>请先选择门店编码</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页计算扣除金额或保存时，前端校验headDS中terminalCode(门店编码)为空<br><strong>逻辑分析：</strong>扣除金额计算依赖门店关联的装修面积信息，需先选择有效的装修申请单联动带出门店编码。若用户未选择装修申请单即点击计算扣除金额、或LOV选择失败未回填terminalCode，前端message.info提示并阻断操作。需先选择装修申请单再操作。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id    AS 关闭单ID,
          c.apply_close_no    AS 关闭单号,
          c.terminal_apply_id AS 装修申请ID,
          c.terminal_code     AS 门店编码
   FROM   fin_fee_apply_close c
   WHERE  c.terminal_code IS NULL
-  OR     c.terminal_code = '';
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页计算扣除金额或保存时，前端校验headDS中terminalCode(门店编码)为空<br><strong>逻辑分析：</strong>扣除金额计算依赖门店关联的装修面积信息，需先选择有效的装修申请单联动带出门店编码。若用户未选择装修申请单即点击计算扣除金额、或LOV选择失败未回填terminalCode，前端message.info提示并阻断操作。需先选择装修申请单再操作。</div>
+  OR     c.terminal_code = '';</code></pre>
   </div>
 </div>
 
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>本次店面装修面积不能大于门店面积
-- **触发条件**：详情页编辑面积字段时，前端校验thistimeTerminalArea(本次店面装修面积)&gt;terminalArea(门店面积)
-- **逻辑分析**：本次店面装修面积不应超过门店总面积，防止面积超限导致扣减金额计算异常。扣减总额=(本次装修面积+本次门头面积)×Close_Amount，若本次装修面积&gt;门店面积，扣减金额将超出实际范围。前端message.info提示并回填为门店面积，需修改本次装修面积至≤门店面积。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id         AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>本次店面装修面积不能大于门店面积</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thistimeTerminalArea(本次店面装修面积)&gt;terminalArea(门店面积)<br><strong>逻辑分析：</strong>本次店面装修面积不应超过门店总面积，防止面积超限导致扣减金额计算异常。扣减总额=(本次装修面积+本次门头面积)×Close_Amount，若本次装修面积&gt;门店面积，扣减金额将超出实际范围。前端message.info提示并回填为门店面积，需修改本次装修面积至≤门店面积。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id         AS 关闭单ID,
          c.apply_close_no         AS 关闭单号,
          c.terminal_area          AS 门店面积,
          c.thistime_terminal_area AS 本次店面装修面积
   FROM   fin_fee_apply_close c
-  WHERE  c.thistime_terminal_area &gt; c.terminal_area;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thistimeTerminalArea(本次店面装修面积)&gt;terminalArea(门店面积)<br><strong>逻辑分析：</strong>本次店面装修面积不应超过门店总面积，防止面积超限导致扣减金额计算异常。扣减总额=(本次装修面积+本次门头面积)×Close_Amount，若本次装修面积&gt;门店面积，扣减金额将超出实际范围。前端message.info提示并回填为门店面积，需修改本次装修面积至≤门店面积。</div>
+  WHERE  c.thistime_terminal_area &gt; c.terminal_area;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>店面实际装修面积不能大于本次店面装修面积
-- **触发条件**：详情页编辑面积字段时，前端校验thisTerminalArea(店面实际装修面积)&gt;thistimeTerminalArea(本次店面装修面积)
-- **逻辑分析**：店面实际装修面积应≤本次店面装修面积，防止面积数据逻辑矛盾。本次店面装修面积是本次装修的面积上限，实际装修面积是其中实际完成的部分。前端message.info提示并阻断保存，需修改店面实际装修面积至≤本次店面装修面积。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id         AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>店面实际装修面积不能大于本次店面装修面积</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thisTerminalArea(店面实际装修面积)&gt;thistimeTerminalArea(本次店面装修面积)<br><strong>逻辑分析：</strong>店面实际装修面积应≤本次店面装修面积，防止面积数据逻辑矛盾。本次店面装修面积是本次装修的面积上限，实际装修面积是其中实际完成的部分。前端message.info提示并阻断保存，需修改店面实际装修面积至≤本次店面装修面积。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id         AS 关闭单ID,
          c.apply_close_no         AS 关闭单号,
          c.this_terminal_area     AS 店面实际装修面积,
          c.thistime_terminal_area AS 本次店面装修面积
   FROM   fin_fee_apply_close c
-  WHERE  c.this_terminal_area &gt; c.thistime_terminal_area;
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页编辑面积字段时，前端校验thisTerminalArea(店面实际装修面积)&gt;thistimeTerminalArea(本次店面装修面积)<br><strong>逻辑分析：</strong>店面实际装修面积应≤本次店面装修面积，防止面积数据逻辑矛盾。本次店面装修面积是本次装修的面积上限，实际装修面积是其中实际完成的部分。前端message.info提示并阻断保存，需修改店面实际装修面积至≤本次店面装修面积。</div>
+  WHERE  c.this_terminal_area &gt; c.thistime_terminal_area;</code></pre>
   </div>
 </div>
 
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>数据格式错误
-- **触发条件**：详情页打印或导出操作时，前端解析后端响应数据格式异常（如响应非预期JSON结构）
-- **逻辑分析**：打印和导出需解析后端返回的数据组装打印模板或导出文件。若后端响应数据格式异常（如接口返回错误页面、数据字段缺失、或网络中间件篡改响应），前端JSON.parse或字段读取失败，notification.error提示"数据格式错误"。需检查后端接口响应是否正常。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id    AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>数据格式错误</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页打印或导出操作时，前端解析后端响应数据格式异常（如响应非预期JSON结构）<br><strong>逻辑分析：</strong>打印和导出需解析后端返回的数据组装打印模板或导出文件。若后端响应数据格式异常（如接口返回错误页面、数据字段缺失、或网络中间件篡改响应），前端JSON.parse或字段读取失败，notification.error提示"数据格式错误"。需检查后端接口响应是否正常。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id    AS 关闭单ID,
          c.apply_close_no    AS 关闭单号,
          c.hz_approve_status AS 审批状态,
          c.update_time       AS 最后更新时间
   FROM   fin_fee_apply_close c
-  WHERE  c.apply_close_id = #{传入的applyCloseId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页打印或导出操作时，前端解析后端响应数据格式异常（如响应非预期JSON结构）<br><strong>逻辑分析：</strong>打印和导出需解析后端返回的数据组装打印模板或导出文件。若后端响应数据格式异常（如接口返回错误页面、数据字段缺失、或网络中间件篡改响应），前端JSON.parse或字段读取失败，notification.error提示"数据格式错误"。需检查后端接口响应是否正常。</div>
+  WHERE  c.apply_close_id = #{传入的applyCloseId};</code></pre>
   </div>
 </div>
 
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>参数格式错误
-- **触发条件**：详情页打印或导出操作时，前端组装请求参数格式异常（如日期格式错误、数值字段为NaN）
-- **逻辑分析**：打印和导出需将页面数据组装为请求参数发送后端。若页面字段格式异常（如日期字段未格式化为YYYY-MM-DD、数值字段为NaN或null、或必填字段缺失），前端参数组装失败，notification.error提示"参数格式错误"。需检查页面字段填写是否完整正确。
-- **排查SQL**：
-  ```sql
-  SELECT c.apply_close_id    AS 关闭单ID,
+    <h4><span style="color:#7C3AED;">报错：</span>参数格式错误</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页打印或导出操作时，前端组装请求参数格式异常（如日期格式错误、数值字段为NaN）<br><strong>逻辑分析：</strong>打印和导出需将页面数据组装为请求参数发送后端。若页面字段格式异常（如日期字段未格式化为YYYY-MM-DD、数值字段为NaN或null、或必填字段缺失），前端参数组装失败，notification.error提示"参数格式错误"。需检查页面字段填写是否完整正确。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT c.apply_close_id    AS 关闭单ID,
          c.apply_close_no    AS 关闭单号,
          c.hz_approve_status AS 审批状态
   FROM   fin_fee_apply_close c
-  WHERE  c.apply_close_id = #{传入的applyCloseId};
-  ```</h4>
-    <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>详情页打印或导出操作时，前端组装请求参数格式异常（如日期格式错误、数值字段为NaN）<br><strong>逻辑分析：</strong>打印和导出需将页面数据组装为请求参数发送后端。若页面字段格式异常（如日期字段未格式化为YYYY-MM-DD、数值字段为NaN或null、或必填字段缺失），前端参数组装失败，notification.error提示"参数格式错误"。需检查页面字段填写是否完整正确。</div>
+  WHERE  c.apply_close_id = #{传入的applyCloseId};</code></pre>
   </div>
+</div>
+
+<KbCard title="Q1：提交时报&quot;该门店申请单已发起门店验收流程，不允许发起门店申请关闭&quot;">
+<p><strong>根因</strong>：关联的装修申请单已存在非作废状态(INTERRUPT)的验收报销单</p>
+<p><strong>解决方案</strong>：先作废相关验收报销单，再发起关闭申请</p>
+</KbCard>
+
+<KbCard title="Q2：计算扣除金额时报&quot;公司参数Close_Amount未找到&quot;">
+<p><strong>根因</strong>：系统参数Close_Amount(申请关闭扣减单价)未配置</p>
+<p><strong>解决方案</strong>：在系统参数管理中配置Close_Amount</p>
+</KbCard>
+
+<KbCard title="Q3：删除时报&quot;不能删除非制单状态的单据&quot;">
+<p><strong>根因</strong>：单据状态非NEW，可能已提交审批</p>
+<p><strong>解决方案</strong>：仅NEW状态可删除，已提交的单据需通过审批驳回后才能删除</p>
+</KbCard>
+
+<KbCard title="Q4：装修申请单号LOV无数据">
+<p><strong>根因</strong>：没有APPROVED状态的装修申请单，或当前门店无符合条件的申请单</p>
+<p><strong>解决方案</strong>：确认FIN_FEE_APPLY_FINISHED_HEADER中存在APPROVED状态的记录</p>
+</KbCard>
+
+</div>
 </div>
 </div>
 
