@@ -384,6 +384,76 @@
 <ul><li><strong>详细逻辑</strong>：doUpdate时validDecorationDays校验</li><li><strong>系统体现</strong>：后端validSystemParam校验</li><li><strong>排查SQL</strong>：<code>SELECT PARAM_VALUE FROM SYS_PARAM WHERE PARAM_CODE='Decoration_Days'</code></li></ul>
 </KbCard>
 
+<KbCard title="附件上传校验">
+
+<KbSubTitle>门店设计师查询SQL</KbSubTitle>
+
+<pre class="detail-sql language-sql" v-pre><code>SELECT
+    DISTINCT iu.id,
+    iu.LOGIN_NAME,
+    iu.REAL_NAME
+FROM
+    HZERO.IAM_USER iu
+INNER JOIN HZERO.HPFM_EMPLOYEE_USER hu ON
+    hu.USER_ID = iu.id
+WHERE
+    iu.IS_ENABLED = 1
+    AND EXISTS (
+        SELECT 1
+        FROM HZERO.IAM_MEMBER_ROLE imr
+        INNER JOIN HZERO.IAM_ROLE ir ON
+            ir.id = imr.role_id
+        WHERE imr.member_id = iu.id
+            AND imr.member_type = 'user'
+            AND (ir.NAME LIKE '%设计师%')
+    )</code></pre>
+
+<KbSubTitle>附件上传位置</KbSubTitle>
+
+<p>门店平面图在详情页的<strong>「附件」标签页</strong>中上传。附件标签页使用 <code>UploadTable</code> 组件（<code>@/components/UploadTable</code>），附件配置ID为 <code>220608</code>。</p>
+<p>UploadTable 组件会根据 <code>attachConfId</code> 查询附件配置，渲染出需要上传的附件类型列表（如"门店平面图"、"房产证"、"店面租赁合同"、"设计平面图"、"平面布置图"、"灯具布置图"、"软装方案清单"等），每种类型对应一行，用户点击该行的"上传"按钮进行文件上传。</p>
+
+<KbSubTitle>otherValidate 校验方法</KbSubTitle>
+
+<p><code>UploadTable</code> 组件暴露了 <code>otherValidate(str)</code> 方法，用于校验指定附件类型是否已上传：</p>
+<ul>
+<li><strong>入参</strong>：接收一个字符串参数（如 <code>'门店平面图'</code>），支持逗号分隔多个类型名（如 <code>'设计平面图,平面布置图'</code>）</li>
+<li><strong>查找记录</strong>：在 <code>dataSet.records</code> 中查找 <code>attachTypeName</code> 字段等于传入类型名的记录</li>
+<li><strong>判断是否已上传</strong>：检查该记录的 <code>fileName</code> 字段是否有值
+<ul>
+<li><code>fileName</code> 为空/undefined → 未上传 → 弹出错误通知 <code>请上传{类型名}！</code>，返回 <code>false</code></li>
+<li><code>fileName</code> 有值 → 已上传 → 继续检查下一个类型</li>
+</ul>
+</li>
+<li><strong>返回值</strong>：全部通过返回 <code>true</code>，任一不通过返回 <code>false</code> 并中断</li>
+</ul>
+
+<KbSubTitle>校验执行顺序（saveValid 方法）</KbSubTitle>
+
+<table class="kb-field-tbl">
+<thead><tr><th>序号</th><th>校验条件</th><th>校验内容</th><th>提示信息</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>无条件</td><td>门店平面图是否已上传</td><td><code>请上传门店平面图！</code></td></tr>
+<tr><td>2</td><td>propertyType==1（自有店）</td><td>房产证是否已上传</td><td><code>请上传房产证！</code></td></tr>
+<tr><td>3</td><td>propertyType==2（他属店）</td><td>店面租赁合同是否已上传</td><td><code>请上传店面租赁合同！</code></td></tr>
+<tr><td>4</td><td>taskName=='门店设计师提交方案'</td><td>设计平面图、平面布置图是否已上传</td><td><code>请上传设计平面图！</code> / <code>请上传平面布置图！</code></td></tr>
+<tr><td>5</td><td>taskName=='软装设计师提交方案'</td><td>灯具布置图、软装方案清单是否已上传</td><td><code>请上传灯具布置图！</code> / <code>请上传软装方案清单！</code></td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>"请上传门店平面图"触发的具体逻辑</KbSubTitle>
+
+<p>当用户在门店装修申请变更详情页点击<strong>"保存"</strong>或<strong>"提交"</strong>按钮时，<code>saveValid</code> 方法会<strong>无条件</strong>调用 <code>childRefUpload.current.otherValidate('门店平面图')</code>：</p>
+<ul>
+<li>在 <code>dataSet.records</code> 中查找 <code>attachTypeName == '门店平面图'</code> 的记录</li>
+<li>如果该记录的 <code>fileName</code> 为空（即未上传文件），则弹出 <code>notification.error</code>：<code>请上传门店平面图！</code></li>
+<li>校验不通过，阻断保存/提交操作</li>
+</ul>
+
+<KbTip><strong>解决方法</strong>：在详情页切换到「附件」标签页，找到附件类型为"门店平面图"的行，点击"上传"按钮上传文件后，再点击保存/提交。</KbTip>
+
+</KbCard>
+
 <KbCard title="提交校验">
 <p><strong>校验1：</strong>预算年度≤当前年份 —— 防止提前发起未来年度变更</p>
 <ul><li><strong>详细逻辑</strong>：wfProcSubmit时校验budYear-LocalDate.now().getYear()≤0</li><li><strong>系统体现</strong>：后端抛异常"门店装修申请与进度更新单据预算年度大于当前年度，无法发起验收"</li><li><strong>排查SQL</strong>：<code>SELECT TERMINAL_CHANGE_ID, BUD_YEAR FROM FIN_FEE_APPLY_CHANGE_HEADER WHERE BUD_YEAR &gt; EXTRACT(YEAR FROM SYSDATE)</code></li></ul>
