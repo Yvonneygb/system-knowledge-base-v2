@@ -190,6 +190,46 @@
 <ul><li><strong>业务意义</strong>：装修严重超期时系统自动发起关闭申请，扣减经销商额度</li><li><strong>具体逻辑描述</strong>：</li><li>审批通过后若超期天数 &gt; 公司参数Over_Date_Limit</li><li>系统自动创建FinFeeApplyClose记录(关闭原因:申请单超过最大装修超期天数，系统自动发起装修申请关闭)</li><li>调用doCalDeductionAmt计算扣减金额</li><li>自动启动FIN_FEE_APPLY_CLOSE工作流</li></ul>
 </KbCard>
 
+<KbCard num="3-1" title="审批通过后逻辑详解（onWfComplete）">
+<p>审批通过后系统执行 <code>onWfComplete(terminalApplyId)</code>，按以下步骤处理：</p>
+<h4>1. 计算超期天数与扣减比例</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>步骤</th><th>公式/逻辑</th><th>涉及参数</th></tr></thead>
+<tbody>
+<tr><td>装修间隔期至</td><td>装修完成时间 + Waiting_Days - Advance_Permissible_Period</td><td><code>Waiting_Days</code>、<code>Advance_Permissible_Period</code></td></tr>
+<tr><td>超期天数</td><td>(装修完成时间 - 交付设计时间) - 装修周期</td><td><code>Decoration_Days</code></td></tr>
+<tr><td>扣减比例</td><td>超期天数 × Deduct_Pro / 100（封顶100%）</td><td><code>Deduct_Pro</code></td></tr>
+</tbody>
+</table>
+<ul>
+<li>若超期天数 ≤ 0，扣减比例 = 0，不扣减</li>
+<li>若超期天数 × Deduct_Pro &gt; 100，扣减比例 = 1（全额扣减）</li>
+</ul>
+<h4>2. 计算扣减后金额</h4>
+<pre v-pre><code>申请标准金额 = 申请标准 × 装修面积 × (1 - 扣减比例)
+差异标准金额 = 政策标准金额 - 申请标准金额</code></pre>
+<h4>3. 判断是否自动发起关闭申请</h4>
+<p><strong>核心条件</strong>：<code>超期天数 &gt; 公司参数 Over_Date_Limit</code></p>
+<p>满足时自动执行：</p>
+<ol>
+<li><code>finFeeApplyFinished.toFinFeeApplyClose()</code> — 转换为关闭单对象</li>
+<li><code>finFeeApplyCloseService.doCalDeductionAmt(close)</code> — 计算扣减金额</li>
+<li><code>finFeeApplyCloseService.doInsert(close)</code> — 创建关闭单（FIN_FEE_APPLY_CLOSE）</li>
+<li><code>finFeeApplyCloseService.wfProcSubmit(approveDTO)</code> — 自动发起关闭审批工作流</li>
+</ol>
+<h4>4. 涉及的公司参数汇总</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>参数Code</th><th>含义</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td><code>Decoration_Days</code></td><td>装修周期上限</td><td>校验输入装修周期，计算超期天数</td></tr>
+<tr><td><code>Waiting_Days</code></td><td>门店装修间隔期</td><td>计算装修间隔期至</td></tr>
+<tr><td><code>Advance_Permissible_Period</code></td><td>门店装修提前允许期</td><td>计算装修间隔期至</td></tr>
+<tr><td><code>Deduct_Pro</code></td><td>扣除比率</td><td>计算扣除比例</td></tr>
+<tr><td><code>Over_Date_Limit</code></td><td>超期天数限制</td><td><strong>判断是否自动发起关闭流程</strong></td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard num="4" title="重点逻辑4：门店状态联动">
 <ul><li><strong>业务意义</strong>：装修申请流程中锁定门店状态，防止并发操作</li><li><strong>具体逻辑描述</strong>：</li><li>提交审批时：保存门店原始状态到originalStat，设置terminalStat=4(装修中)</li><li>审批通过时：设置terminalStat=1(正常)</li><li>驳回/退回时：恢复terminalStat=originalStat</li></ul>
 </KbCard>
