@@ -879,11 +879,13 @@
 
 **数据范围**
 
-LOV编码：`BASIC_CUSTOM_ORG_LOV_2`
+LOV编码：`BASIC_CUSTOM_ORG_LOV_2`，根据 `searchFlag` 过滤客户主档，仅返回符合工程渠道条件的有效经销商。经销商登录时该字段禁用（自动带出当前客户）。
 
-<pre v-pre><code>SELECT *
+```sql
+SELECT *
   FROM CUSTOMER_ORG
- WHERE SEARCH_FLAG = :searchFlag</code></pre>
+ WHERE SEARCH_FLAG = :searchFlag
+```
 
 <KbSubTitle>弹窗2：交易公司选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
 
@@ -897,12 +899,14 @@ LOV编码：`BASIC_CUSTOM_ORG_LOV_2`
 
 **数据范围**
 
-LOV编码：`TRADING_LEGAL_SQL_V`
+LOV编码：`TRADING_LEGAL_SQL_V`，按客户ID和交易范围查询该客户关联的交易公司。选择客户后该弹窗才可用，选择后带出交易公司名称。
 
-<pre v-pre><code>SELECT *
+```sql
+SELECT *
   FROM EPM_TRADING_COMPANY
  WHERE CUSTOMER_ID = :customerId
-   AND TRADING_SCOPE = :tradingScope</code></pre>
+   AND TRADING_SCOPE = :tradingScope
+```
 
 <KbSubTitle>弹窗3：折扣单号选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
 
@@ -916,20 +920,22 @@ LOV编码：`TRADING_LEGAL_SQL_V`
 
 **数据范围**
 
-LOV编码：`AE.EPM_DISCOUNT_APPLYS`，后端接口：`GET /v1/{organizationId}/epm-discount-applys/get-lov-list`
+LOV编码：`AE.EPM_DISCOUNT_APPLYS`，后端接口：`GET /v1/{organizationId}/epm-discount-applys/get-lov-list`。查询当前事业部下、该客户关联的已生效折扣单，且折扣未过期、有可用数量。选择后带出折扣类型、折扣率、项目信息、合同信息，并自动加载折扣单产品明细到订单行。
 
-<pre v-pre><code>SELECT EDA.*
+```sql
+SELECT EDA.*
   FROM EPM_DISCOUNT_APPLY EDA
  WHERE (EDA.STAT = 5 OR EDA.HZ_APPROVE_STATUS = 'APPROVED')
    AND EDA.IS_HOME = 0
    AND EDA.ORGANIZATION_ID = :organizationId
    AND EDA.CUSTOMER_ID = :customerId
-   AND TRUNC(SYSDATE) &lt;= TRUNC(EDA.DISCOUNT_VALID_DATE)
+   AND TRUNC(SYSDATE) <= TRUNC(EDA.DISCOUNT_VALID_DATE)
    AND EDA.DISCOUNT_APPLY_ID IN (
        SELECT DISCOUNT_APPLY_ID
          FROM EPM_DISCOUNT_APPLY_LINE
-        WHERE ACTIVE_QTY &gt; 0
-   )</code></pre>
+        WHERE ACTIVE_QTY > 0
+   )
+```
 
 <KbSubTitle>弹窗4：合同选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
 
@@ -942,12 +948,14 @@ LOV编码：`AE.EPM_DISCOUNT_APPLYS`，后端接口：`GET /v1/{organizationId}/
 
 **数据范围**
 
-LOV编码：`AE.GET_PROJECT_INTENTION`
+LOV编码：`AE.GET_PROJECT_INTENTION`，按客户ID查询已生效（`CONTRACT_STAT = 2`）的工程合同。意向单模式时显示，选择后带出合同编码、合同名称、项目信息。
 
-<pre v-pre><code>SELECT *
+```sql
+SELECT *
   FROM EPM_PROJECT_CONTRACT
  WHERE CUSTOMER_ID = :customerId
-   AND CONTRACT_STAT = 2</code></pre>
+   AND CONTRACT_STAT = 2
+```
 
 <KbSubTitle>弹窗5：申请不扣订金弹窗</KbSubTitle>
 
