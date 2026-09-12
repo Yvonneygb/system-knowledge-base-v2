@@ -879,37 +879,81 @@
 
 **数据范围**
 
-```sql
-客户主档中符合工程条件的有效经销商
-```
+LOV编码：`BASIC_CUSTOM_ORG_LOV_2`
 
-<KbSubTitle>弹窗2：合同选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+<pre v-pre><code>SELECT *
+  FROM CUSTOMER_ORG
+ WHERE SEARCH_FLAG = :searchFlag</code></pre>
+
+<KbSubTitle>弹窗2：交易公司选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
 
 **入参**
 
 | 字段名 | 中文名 | 释义 | 示例 |
 |-------|-------|------|------|
-| customerId | 客户ID | 当前订单客户 | 1001 |
+| customerId | 客户ID | 关联客户 | 1001 |
+| searchFlag | 查询标识 | 查询标识 | 4 |
+| tradingScope | 交易范围 | 交易范围 | 2 |
 
 **数据范围**
 
-```sql
-EPM_PROJECT_CONTRACT中客户匹配且状态为已生效的合同
-```
+LOV编码：`TRADING_LEGAL_SQL_V`
 
-<KbSubTitle>弹窗3：折扣单选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+<pre v-pre><code>SELECT *
+  FROM EPM_TRADING_COMPANY
+ WHERE CUSTOMER_ID = :customerId
+   AND TRADING_SCOPE = :tradingScope</code></pre>
+
+<KbSubTitle>弹窗3：折扣单号选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
 
 **入参**
 
 | 字段名 | 中文名 | 释义 | 示例 |
 |-------|-------|------|------|
 | searchFlag | 搜索标识 | 区分工程 | 2 |
+| customerId | 客户ID | 关联客户 | 1001 |
+| saOutBillHeadId | 订单ID | 当前订单 | 2001 |
 
 **数据范围**
 
-```sql
-EPM_DISCOUNT_APPLY中已生效且适用工程的折扣单
-```
+LOV编码：`AE.EPM_DISCOUNT_APPLYS`，后端接口：`GET /v1/{organizationId}/epm-discount-applys/get-lov-list`
+
+<pre v-pre><code>SELECT EDA.*
+  FROM EPM_DISCOUNT_APPLY EDA
+ WHERE (EDA.STAT = 5 OR EDA.HZ_APPROVE_STATUS = 'APPROVED')
+   AND EDA.IS_HOME = 0
+   AND EDA.ORGANIZATION_ID = :organizationId
+   AND EDA.CUSTOMER_ID = :customerId
+   AND TRUNC(SYSDATE) &lt;= TRUNC(EDA.DISCOUNT_VALID_DATE)
+   AND EDA.DISCOUNT_APPLY_ID IN (
+       SELECT DISCOUNT_APPLY_ID
+         FROM EPM_DISCOUNT_APPLY_LINE
+        WHERE ACTIVE_QTY &gt; 0
+   )</code></pre>
+
+<KbSubTitle>弹窗4：合同选择弹窗 <KbBadge type="purple">单选</KbBadge></KbSubTitle>
+
+**入参**
+
+| 字段名 | 中文名 | 释义 | 示例 |
+|-------|-------|------|------|
+| customerId | 客户ID | 关联客户 | 1001 |
+| contractType | 签约方式 | 合同类型 | 1 |
+
+**数据范围**
+
+LOV编码：`AE.GET_PROJECT_INTENTION`
+
+<pre v-pre><code>SELECT *
+  FROM EPM_PROJECT_CONTRACT
+ WHERE CUSTOMER_ID = :customerId
+   AND CONTRACT_STAT = 2</code></pre>
+
+<KbSubTitle>弹窗5：申请不扣订金弹窗</KbSubTitle>
+
+| 字段名 | 数据库列名 | 组件 | 业务释义 | 显隐条件 | 取值/赋值逻辑 |
+|--------|-----------|------|---------|---------|-------------|
+| 申请原因 | SA_OUT_BILL_HEAD.NODEPOSIT_DESC | 文本域 | 不扣订金申请原因 | 常显 | 必填；用户输入 |
 
 </KbCard>
 <KbCard title="导入">
