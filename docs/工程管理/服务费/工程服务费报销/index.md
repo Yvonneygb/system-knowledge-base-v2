@@ -212,11 +212,27 @@
 </table>
 </KbCard>
 
-</div>
-</div>
-</div>
+<KbCard title="可选供应商">
+<p>工程服务费报销时，可选的供应商查询 SQL 如下：</p>
+<pre v-pre><code>SELECT v.vendor_id       AS "供应商ID",
+       v.vendor_code     AS "供应商编码",
+       v.vendor_name     AS "供应商名称",
+       vo.vendor_org_id  AS "供应商组织ID",
+       vol.vendor_site_id   AS "供应商地点ID",
+       vol.vendor_site_code AS "供应商地点编码"
+FROM   epms.vendor v
+JOIN   epms.vendor_org vo
+       ON vo.vendor_id = v.vendor_id
+LEFT JOIN epms.vendor_org_line vol
+       ON vol.vendor_org_id = vo.vendor_org_id
+WHERE  vo.usable = 2
+  AND  (vo.end_date_active IS NULL OR vo.end_date_active > SYSDATE)
+ORDER  BY v.vendor_code;</code></pre>
+</KbCard>
 
-<div id="faq" style="display:none;">
+</div>
+</div>
+</div>
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="报错一览表">
@@ -547,6 +563,19 @@
   </div>
   <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
     <strong style="color:#7C3AED;">原因：</strong>低代码平台配置未完成<br><strong style="color:#7C3AED;">处理：</strong>检查低代码平台配置
+  </div>
+</div>
+
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">选不到供应商？</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">排查步骤：</strong><br>
+    （1）首先供应商档案，从SRM系统 -&gt; ERP系统 -&gt; DMS系统<br>
+    （2）先复核供应商档案已存在DMS系统并且状态有效<br>
+    （3）另外，供应商档案需要关联当前报销单的法人，此动作由销售或运营专员，在【供应商档案】进行维护
   </div>
 </div>
 </div>
