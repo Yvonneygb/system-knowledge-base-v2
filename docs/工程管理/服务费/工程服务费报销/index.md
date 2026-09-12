@@ -226,13 +226,15 @@ JOIN   epms.vendor_org vo
 LEFT JOIN epms.vendor_org_line vol
        ON vol.vendor_org_id = vo.vendor_org_id
 WHERE  vo.usable = 2
-  AND  (vo.end_date_active IS NULL OR vo.end_date_active > SYSDATE)
+  AND  (vo.end_date_active IS NULL OR vo.end_date_active &gt; SYSDATE)
 ORDER  BY v.vendor_code;</code></pre>
 </KbCard>
 
 </div>
 </div>
 </div>
+
+<div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="报错一览表">
