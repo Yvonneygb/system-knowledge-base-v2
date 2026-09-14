@@ -671,6 +671,89 @@ APPROVED ──发起签呈──→ isSecondChange=2
 </table>
 </KbCard>
 
+<KbCard title="装修前照片必填校验逻辑">
+<KbTip>照片设置数据来源：【门店照片设置】菜单设置</KbTip>
+
+<KbSubTitle>触发时机</KbSubTitle>
+
+保存/提交门店装修申请时，前端校验装修照片对比表格中的必填项。
+
+<KbSubTitle>校验代码位置</KbSubTitle>
+
+`h0-front/.../storeManage/finFeeApplyClose/index.tsx:562-578`
+
+<KbSubTitle>校验逻辑</KbSubTitle>
+
+```javascript
+// 门店装修照片校验
+if (designImageTableDS.records.length) {
+  const msgList = [];
+  designImageTableDS.records.forEach((i, index) => {
+    if (i.get('isZxProvide') == 2 && !i.get('docname')) {
+      msgList.push(`第${index + 1}行`);
+    }
+  });
+  if (msgList.length) {
+    notification.error({
+      message: `请补充完成：装修前照片:${msgList.join('、')}`,
+    });
+    return; // 阻断保存
+  }
+}
+```
+
+**逐行解读**：
+
+| 步骤 | 代码 | 说明 |
+|------|------|------|
+| 1 | `designImageTableDS.records.length` | 装修照片对比表格有数据时才校验 |
+| 2 | `i.get('isZxProvide') == 2` | 该照片项目标记为「经销商提供」(=2) |
+| 3 | `!i.get('docname')` | 装修前照片文件名为空（即未上传） |
+| 4 | `msgList.push(...)` | 收集未上传的行号 |
+| 5 | `请补充完成：装修前照片:第X行` | 弹出错误提示，阻断保存 |
+
+<KbSubTitle>照片设置数据来源</KbSubTitle>
+
+**接口**：`GET /v1/{organizationId}/fin-fee-apply-finished-headers/storephoto-set-line`
+
+**参数**：
+
+| 参数 | 值 | 说明 |
+|------|------|------|
+| organizationId | 当前事业部 | 按事业部过滤照片设置 |
+| isZxProvide | 2 | 只查「经销商提供」的照片项 |
+| zxProvideCount | 1 | 经销商提供数量 > 0 |
+
+**后端执行流程**（`FinFeeApplyFinishedHeaderServiceImpl.java:321-327`）：
+
+1. 先按 `organizationId` 查 `MKT_STOREPHOTO_SET_HEAD`（照片设置头表），获取 `storephotoSetId`
+2. 再按 `storephotoSetId` 查 `MKT_STOREPHOTO_SET_LINE`（照片设置行表），返回需要经销商上传的照片项目列表
+
+**SQL**（`FinFeeApplyFinishedHeaderMapper.xml:1135-1144`）：
+
+```sql
+-- 第一步：查头表
+SELECT * FROM MKT_STOREPHOTO_SET_HEAD WHERE ORGANIZATION_ID = #{organizationId}
+
+-- 第二步：查行表
+SELECT * FROM MKT_STOREPHOTO_SET_LINE
+ WHERE STOREPHOTO_SET_ID = #{storephotoSetId}
+   AND IS_ZX_PROVIDE = #{isZxProvide}
+   AND ZX_PROVIDE_COUNT > 0
+ ORDER BY PK_ID DESC
+```
+
+<KbSubTitle>关键表/字段</KbSubTitle>
+
+| 表 | 字段 | 说明 |
+|------|------|------|
+| `MKT_STOREPHOTO_SET_HEAD` | `ORGANIZATION_ID` | 按事业部配置照片设置 |
+| `MKT_STOREPHOTO_SET_LINE` | `IS_ZX_PROVIDE` | 2=经销商必须提供 |
+| `MKT_STOREPHOTO_SET_LINE` | `ZX_PROVIDE_COUNT` | 经销商需上传的照片数量 |
+| `FIN_FEE_APPLY_FINISHED_PHOTO` | `BEFORE_DOC_ID` | 装修前照片文档ID |
+| `FIN_FEE_APPLY_FINISHED_PHOTO` | `BEFORE_DOC_NAME` | 装修前照片文件名 |
+</KbCard>
+
 </div>
 </div>
 </div>
