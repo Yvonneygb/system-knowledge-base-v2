@@ -584,6 +584,178 @@
 <ul><li><strong>详细逻辑</strong>：提交时校验原申请单hzApproveStatus=APPROVED</li><li><strong>系统体现</strong>：后端校验</li><li><strong>排查SQL</strong>：<code>SELECT * FROM FIN_FEE_APPLY_FINISHED_HEADER WHERE TERMINAL_APPLY_ID=&#123;id&#125; AND HZ_APPROVE_STATUS!='APPROVED'</code></li></ul>
 </KbCard>
 
+<KbCard title="得分率计算逻辑">
+<p><strong>代码位置</strong>：<code>h0-front/.../storeAcceptanceReimbursementInfo/views/DetailPage/index.tsx:856-891</code></p>
+<p><strong>业务意义</strong>：得分率是验收报销金额计算的核心系数，直接影响经销商可报销金额</p>
+
+<KbSubTitle>店面得分率（checkScoreRate）</KbSubTitle>
+
+<p><strong>公式</strong>：</p>
+
+```text
+checkScoreRate = 1 - otherRate - deductProportion - specialDeductionPoint - checkDeductProportion
+                 + decorationOvertimeFreeCopy × 0.01 + checkOvertimeFreeCopy × 0.01
+```
+
+<p>若结果 &lt; 0，则取 0。</p>
+
+<table>
+<thead><tr><th>字段</th><th>含义</th><th>来源/计算方式</th></tr></thead>
+<tbody>
+<tr><td>otherRate</td><td>验收质量扣点合计</td><td>验收质量行表中各行 deductionProportion 的累加值</td></tr>
+<tr><td>deductProportion</td><td>装修超期扣除比例</td><td>后端审批回调计算，详见下方</td></tr>
+<tr><td>specialDeductionPoint</td><td>店面特殊扣点</td><td>区域经理/设计师手动输入</td></tr>
+<tr><td>checkDeductProportion</td><td>验收超期提单扣除比例</td><td>前端计算：(超期天数 - 验收超期天数) × 0.01，上限为1</td></tr>
+<tr><td>decorationOvertimeFreeCopy</td><td>装修超期减免比例(%)</td><td>销售会计复核面积节点手动输入</td></tr>
+<tr><td>checkOvertimeFreeCopy</td><td>超期提单减免比例(%)</td><td>同上，手动输入</td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>门头得分率（fdCheckScoreRate）</KbSubTitle>
+
+<p><strong>公式</strong>：</p>
+
+```text
+score = 1 - fdCheckQualityDedPoint - fdSpecialDeductionPoint - checkDeductProportion - deductProportion
+score = score + checkFreeProportion（减免比例加回）
+fdCheckScoreRate = max(score × (1 - fdInvoiceTaxRateDeduction), 0)
+```
+
+<table>
+<thead><tr><th>字段</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td>fdCheckQualityDedPoint</td><td>门头验收质量扣点合计</td></tr>
+<tr><td>fdSpecialDeductionPoint</td><td>门头特殊扣点</td></tr>
+<tr><td>fdInvoiceTaxRateDeduction</td><td>门头发票税率扣点</td></tr>
+<tr><td>checkFreeProportion</td><td>减免比例 = decorationOvertimeFreeCopy + checkOvertimeFreeCopy（转换为小数）</td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>总得分率</KbSubTitle>
+
+<p>总得分率 = 得分率，即 <code>sumScoreRate = checkScoreRate</code>，<code>fdSumScoreRate = fdCheckScoreRate</code>。</p>
+
+<KbSubTitle>得分率的应用</KbSubTitle>
+
+<p>得分率用于计算验收金额：</p>
+
+```text
+验收金额 = 验收标准 × 验收面积 × 得分率
+```
+
+<ul>
+<li><strong>额度内</strong>：<code>inCheckStandardAmt = inCheckStandard × inCheckArea × checkScoreRate</code></li>
+<li><strong>额度外</strong>：<code>outCheckStandardAmt = outCheckStandard × outTrueCheckArea × checkScoreRate</code></li>
+<li><strong>门头</strong>：<code>fdCheckStandardAmt = fdCheckStandard × fdTrueCheckArea × fdCheckScoreRate</code></li>
+</ul>
+
+<KbSubTitle>计算触发时机</KbSubTitle>
+
+<table>
+<thead><tr><th>触发事件</th><th>调用</th></tr></thead>
+<tbody>
+<tr><td>验收质量行扣除比例变更</td><td>calScoreRate() + calFdScoreRate()</td></tr>
+<tr><td>面积复核完成</td><td>calScoreRate() + calFdScoreRate()</td></tr>
+<tr><td>超期减免比例变更</td><td>calScoreRate() + calFdScoreRate()</td></tr>
+<tr><td>装修完成时间变更</td><td>重新计算 checkDeductProportion，再调 calScoreRate()</td></tr>
+</tbody>
+</table>
+</KbCard>
+
+<KbCard title="装修超期扣除比例计算逻辑">
+<p><strong>代码位置</strong>：</p>
+<ul>
+<li>后端审批通过回调：<code>FinFeeApplyFinishedHeaderServiceImpl.java:493-510</code></li>
+<li>后端变更审批回调：<code>FinFeeApplyChangeHeaderServiceImpl.java:298-315</code></li>
+<li>前端验收报销页面：<code>index.tsx:2430-2440</code></li>
+</ul>
+<p><strong>业务意义</strong>：装修实际耗时超过约定装修周期时，按超期天数和扣除比率计算扣除比例，直接降低得分率</p>
+
+<KbSubTitle>后端计算（审批通过回调）</KbSubTitle>
+
+<p><strong>公式</strong>：</p>
+
+```text
+超期天数 = (装修完成时间 - 交付设计时间) - 装修周期
+
+if 超期天数 ≤ 0:
+    deductProportion = 0
+
+elif 超期天数 × 扣除比率(Deduct_Pro) > 100:
+    deductProportion = 1   (即100%)
+
+else:
+    deductProportion = (超期天数 × 扣除比率) ÷ 100
+```
+
+<p><strong>涉及的公司参数</strong>：</p>
+
+<table>
+<thead><tr><th>参数Code</th><th>含义</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>Deduct_Pro</td><td>扣除比率</td><td>每超期1天扣除的比例(%)</td></tr>
+<tr><td>Decoration_Days</td><td>装修周期</td><td>装修周期(天)，用于计算超期天数</td></tr>
+</tbody>
+</table>
+
+<p><strong>字段说明</strong>：</p>
+
+<table>
+<thead><tr><th>字段</th><th>含义</th><th>数据来源</th></tr></thead>
+<tbody>
+<tr><td>replyDesignDate</td><td>交付设计时间</td><td>装修申请单中填写</td></tr>
+<tr><td>decorationFinishedTime</td><td>装修完成时间</td><td>装修申请单中填写</td></tr>
+<tr><td>decorationDays</td><td>装修周期(天)</td><td>公司参数 Decoration_Days</td></tr>
+<tr><td>overDate</td><td>超期天数</td><td>daysBetween - decorationDays</td></tr>
+<tr><td>deductProportion</td><td>装修超期扣除比例</td><td>(超期天数 × Deduct_Pro) / 100，上限为1</td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>前端计算（验收超期提单扣除比例）</KbSubTitle>
+
+<p><strong>公式</strong>（<code>index.tsx:2430-2440</code>）：</p>
+
+```text
+本单超期天数 = 当前日期 - 装修完成时间
+dffCheckOverDate = 本单超期天数 - 系统参数[验收超期天数(Check_Over_Date)]
+
+if dffCheckOverDate > 0:
+    checkDeductProportion = dffCheckOverDate × 0.01
+    if checkDeductProportion > 1:
+        checkDeductProportion = 1
+else:
+    checkDeductProportion = 0
+```
+
+<p><strong>涉及的公司参数</strong>：</p>
+
+<table>
+<thead><tr><th>参数Code</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td>Check_Over_Date</td><td>验收超期天数</td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>两个扣除比例的区别</KbSubTitle>
+
+<table>
+<thead><tr><th>字段</th><th>含义</th><th>触发条件</th><th>计算方式</th></tr></thead>
+<tbody>
+<tr><td>deductProportion</td><td>装修超期扣除比例</td><td>装修实际耗时超过约定装修周期</td><td>(超期天数 × Deduct_Pro) / 100</td></tr>
+<tr><td>checkDeductProportion</td><td>验收超期提单扣除比例</td><td>从装修完成到现在的时间超过验收超期天数</td><td>超期天数 × 0.01</td></tr>
+</tbody>
+</table>
+
+<KbSubTitle>对得分率的影响</KbSubTitle>
+
+```text
+得分率 = 1 - 验收质量扣点合计 - 装修超期扣除比例 - 超期提单扣除比例
+         - 店面特殊扣点 + 装修超期减免 + 超期提单减免
+```
+
+<p>即两个扣除比例都会直接降低得分率，进而降低验收报销金额。</p>
+</KbCard>
+
 <KbCard title="状态机">
 
 ```text
