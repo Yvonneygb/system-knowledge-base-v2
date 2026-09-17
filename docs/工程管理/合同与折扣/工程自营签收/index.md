@@ -331,6 +331,96 @@
 </table>
 </KbCard>
 
+<KbCard title="审批通过后触发的动作">
+<KbSubTitle>核心机制：3 个回调方法依次执行</KbSubTitle>
+
+<KbSubTitle>① audit() 回调 — 审核过程中的状态更新</KbSubTitle>
+
+| 动作 | 说明 |
+|------|------|
+| 设置 `checkTime` = 当前时间 | 记录签收审核日期 |
+| 设置 `acceptTime` = 当前时间 | 记录验收审核日期 |
+| 设置 `checkStat` = "签收完成" | 更新签收状态 |
+| 重新计算 `contractAmount` | 汇总本次签收行的合同金额 |
+| 重新计算 `withholdingAmount` | serviceCharge≠"2" 时 = 合同金额 - 已签收金额，否则 = 0 |
+| 更新头表记录 | 将上述字段持久化 |
+
+<KbSubTitle>② eventExecute() 回调 — 推送签收数据到 ERP</KbSubTitle>
+
+| 动作 | 说明 |
+|------|------|
+| 获取流程节点名称 `nodeName` | 从 `dto.getExt()` 获取 |
+| 判断是否跳过推送 | 若 `nodeName="财务签收审核"` 且 `signWay=2`（签收+验收），则跳过，等验收审核后再推送 |
+| 构造推送数据集 | 调用 `getDrpLineDataToErp()` 查询本单签收行数据 |
+| 推送到 ERP | 调用 `erpSdkService.pushDrpDiffProcBillToErp()` 推送 |
+| 处理 ERP 返回结果 | 调用 `handleErpResultLine()` |
+| ├ 更新签收行 `accountStatus` = TRANSFER | 标记为已转账 |
+| ├ 更新签收行 `intfMsg` = "推送成功" | 或写入错误信息 |
+| └ 对于退货行：更新 `signDate` | 同步为对应出库签收的签收时间 |
+
+<KbSubTitle>③ wfComplete() 回调 — 流程结束时的最终状态更新</KbSubTitle>
+
+| 动作 | 说明 |
+|------|------|
+| 判断审批结果 | 若非 "Approved"，设置 `checkStat` = "驳回" 并返回 |
+| 查询签收行金额汇总 | 调用 `drpDiffprocbillLineRepository.queryDrpLineAmount()` |
+| 设置 `checkTime` = 当前时间 | 最终签收审核日期 |
+| 设置 `acceptTime` = 当前时间 | 最终验收审核日期 |
+| 设置 `checkStat` = "签收完成" | 最终签收状态 |
+| 设置 `acceptStat` = "验收完成" | 最终验收状态 |
+| 设置 `contractAmount` | 从行金额汇总取值 |
+| 设置 `withholdingAmount` | serviceCharge="1" 时取 WITHHOLDINGAMT，否则 = 0 |
+| 更新头表记录 | 将上述字段持久化 |
+
+<KbSubTitle>触发链路总结</KbSubTitle>
+
+```text
+审批通过
+  │
+  ├─→ ① audit() 回调
+  │     • 更新 checkTime / acceptTime / checkStat
+  │     • 重新计算 contractAmount / withholdingAmount
+  │
+  ├─→ ② eventExecute() 回调
+  │     • 构造推送数据集 → 推送 ERP
+  │     • 更新签收行 accountStatus = TRANSFER
+  │     • 更新 intfMsg = "推送成功"
+  │
+  └─→ ③ wfComplete() 回调
+        • 最终更新 checkTime / acceptTime / checkStat / acceptStat
+        • 最终计算 contractAmount / withholdingAmount
+```
+
+<KbSubTitle>排查SQL</KbSubTitle>
+
+```sql
+-- 查看签收单审批通过后的状态
+SELECT ddh.BILL_NO           AS 签收单号,
+       ddh.PROJECT_CODE      AS 项目编码,
+       ddh.CONTRACT_CODE     AS 合同编码,
+       ddh.HZ_APPROVE_STATUS AS 审批状态,
+       ddh.CHECK_TIME        AS 签收审核日期,
+       ddh.ACCEPT_TIME       AS 验收审核日期,
+       ddh.CHECK_STAT        AS 签收状态,
+       ddh.ACCEPT_STAT       AS 验收状态,
+       ddh.CONTRACT_AMOUNT   AS 合同金额,
+       ddh.WITHHOLDING_AMOUNT AS 预提金额,
+       ddh.SERVICE_CHARGE    AS 服务费标志
+FROM   DRP_DIFFPROCBILL_HEADER ddh
+WHERE  ddh.BILL_NO = #{billNo};
+
+-- 查看签收行 ERP 推送状态
+SELECT ddl.LINE_NUMBER    AS 行号,
+       ddl.ITEM_CODE      AS 产品编码,
+       ddl.ACCOUNT_STATUS AS ERP状态,
+       ddl.INTF_MSG       AS 推送信息,
+       ddl.SIGN_DATE      AS 签收时间
+FROM   DRP_DIFFPROCBILL_LINE ddl
+WHERE  ddl.BILL_NO = #{billNo}
+ORDER  BY ddl.LINE_NUMBER;
+```
+</KbCard>
+
 <KbCard title="表1：DRP_DIFFPROCBILL_HEADER（工程自营签收头表，旧CRM表）">
 <table class="kb-field-tbl">
 <thead>
