@@ -355,6 +355,123 @@
 </table>
 </KbCard>
 
+<KbCard title="选择弹窗">
+<h4>弹窗1：折扣单号选择弹窗（LOV）</h4>
+
+<p><strong>LOV信息</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>项目</th><th>值</th></tr>
+</thead>
+<tbody>
+<tr><td>LOV编码</td><td><code>AE.EPM_DISCOUNT_APPLYS</code></td></tr>
+<tr><td>后端接口</td><td><code>GET /v1/{organizationId}/epm-discount-applys/get-lov-list</code></td></tr>
+<tr><td>前端组件</td><td><code>&lt;Lov name="discountApplyObj" noCache ref={discountApplyRef} title="请选择要进行变更的折扣申请单" /&gt;</code></td></tr>
+<tr><td>searchFlag</td><td><code>3</code>（工程折扣单变更场景）</td></tr>
+</tbody>
+</table>
+
+<p><strong>入参</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段名</th><th>中文名</th><th>释义</th><th>示例</th></tr>
+</thead>
+<tbody>
+<tr><td>searchFlag</td><td>搜索标识</td><td>区分不同场景，工程合同产品变更为3</td><td>3</td></tr>
+<tr><td>organizationId</td><td>事业部ID</td><td>按事业部过滤</td><td>101</td></tr>
+<tr><td>discountApplyId</td><td>折扣单ID</td><td>选回填时用</td><td>1001</td></tr>
+</tbody>
+</table>
+
+<p><strong>数据范围（searchFlag=3 时的核心过滤条件）</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>EDA.stat = 5 OR EDA.hz_approve_status = 'APPROVED'</code></td><td>折扣单已生效或已审批</td></tr>
+<tr><td><code>EDA.is_home = 0</code></td><td>非家装折扣单</td></tr>
+<tr><td><code>EDA.organization_id = #{organizationId}</code></td><td>按事业部过滤</td></tr>
+<tr><td><code>c.valid = 2</code></td><td>关联合同已生效（isMakt为null时）</td></tr>
+<tr><td><code>trunc(sysdate) &lt;= trunc(EDA.discount_valid_date)</code></td><td>折扣在有效期内（未过期）</td></tr>
+<tr><td><code>active_qty &gt; 0</code></td><td>折扣单明细中存在可用数量</td></tr>
+</tbody>
+</table>
+
+<p><strong>查询SQL（searchFlag=3 时）</strong></p>
+
+```sql
+SELECT EDA.DISCOUNT_APPLY_ID,
+       EDA.DISCOUNT_APPLY_CODE,
+       EDA.ORGANIZATION_ID,
+       EDA.STAT,
+       EDA.HZ_APPROVE_STATUS,
+       EDA.CUSTOMER_ID,
+       EDA.CONTRACT_ID,
+       EDA.CONTRACT_CODE,
+       EDA.CONTRACT_NAME,
+       EDA.PROJECT_ID,
+       EDA.PROJECT_CODE,
+       EDA.PROJECT_NAME,
+       EDA.DISCOUNT_TYPE,
+       EDA.DISCOUNT_RATE,
+       EDA.DISCOUNT_VALID_DATE,
+       customer.customer_code,
+       customer.customer_name,
+       c.valid AS contract_valid,
+       c.contract_amt,
+       dbs.division_name
+  FROM EPM_DISCOUNT_APPLY EDA
+  LEFT JOIN EPM_PROJECT_CONTRACT c ON EDA.contract_id = c.contract_id
+  LEFT JOIN EPM_PROJECT_CONTRACT_ECN ecn
+    ON c.contract_id = ecn.contract_id
+   AND ecn.stat <> 5
+   AND ecn.hz_approve_status <> 'APPROVED'
+  LEFT JOIN EPM_PROJECT ep1 ON ep1.project_id = c.project_id
+  LEFT JOIN EPM_PROJECT ep2 ON ep2.project_id = ep1.rel_project_id
+  LEFT JOIN customer customer ON customer.customer_id = EDA.customer_id
+  LEFT JOIN customer_org customer_org ON EDA.customer_id = customer_org.customer_id
+  LEFT JOIN epm_report report ON EDA.project_id = report.project_id
+  LEFT JOIN cm_disc_preset_rate_dtl cd ON cd.project_id = c.project_id
+  LEFT JOIN DIVISION_BASE_SET dbs ON dbs.division_id = EDA.division_id
+  LEFT JOIN HZERO.HPFM_LOV_VALUE opl
+    ON opl.lov_code = 'AE.EPM.ORDER_PDT_LINT_OUTBILL'
+   AND opl.VALUE = TO_CHAR(EDA.order_pdt_line)
+ WHERE 1 = 1
+   AND (EDA.stat = 5 OR EDA.hz_approve_status = 'APPROVED')
+   AND EDA.is_home = 0
+   AND EDA.organization_id = #{organizationId}
+   AND c.valid = 2
+   AND trunc(sysdate) <= trunc(EDA.discount_valid_date)
+   AND EDA.discount_apply_id IN (
+       SELECT discount_apply_id
+         FROM epm_discount_apply_line
+        WHERE active_qty > 0
+   )
+```
+
+<p><strong>选择折扣单后自动带出的信息</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>带出字段</th><th>来源</th></tr>
+</thead>
+<tbody>
+<tr><td>折扣单号</td><td><code>EDA.DISCOUNT_APPLY_CODE</code></td></tr>
+<tr><td>原折扣单号</td><td><code>EDA.SOURCE_DISCOUNT_APPLY_CODE</code></td></tr>
+<tr><td>经销商编码</td><td><code>EDA.CUSTOMER_CODE</code></td></tr>
+<tr><td>经销商名称</td><td><code>EDA.CUSTOMER_NAME</code></td></tr>
+<tr><td>合同编码</td><td><code>EDA.CONTRACT_CODE</code></td></tr>
+<tr><td>合同名称</td><td><code>EDA.CONTRACT_NAME</code></td></tr>
+<tr><td>项目编码</td><td><code>EDA.PROJECT_CODE</code></td></tr>
+<tr><td>项目名称</td><td><code>EDA.PROJECT_NAME</code></td></tr>
+<tr><td>折扣类型</td><td><code>EDA.DISCOUNT_TYPE</code></td></tr>
+<tr><td>折扣率</td><td><code>EDA.DISCOUNT_RATE</code></td></tr>
+<tr><td>折扣有效期</td><td><code>EDA.DISCOUNT_VALID_DATE</code></td></tr>
+<tr><td>所属事业部</td><td><code>dbs.division_name</code></td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="其他按钮">
 <table class="kb-field-tbl">
 <thead>
