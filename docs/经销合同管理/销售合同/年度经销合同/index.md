@@ -279,6 +279,87 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
 ```
 </KbCard>
 
+<KbCard title="经销期间限制">
+<h4>1. 合同期间校验规则（verifyDate方法）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>校验项</th><th>规则</th><th>报错信息</th></tr>
+</thead>
+<tbody>
+<tr><td>开始日期</td><td>必须为月度第一天（1号）</td><td>合同开始日期须为月度第一天!</td></tr>
+<tr><td>结束日期</td><td>必须为月度最后一天</td><td>合同结束日期须为月度最后一天</td></tr>
+<tr><td>跨月数</td><td>开始月到结束月恰好12个月</td><td>总跨月度数只能为12个月</td></tr>
+<tr><td>开始≤结束</td><td>开始日期不能大于结束日期</td><td>开始时间不允许大于结束时间，请重新确认</td></tr>
+</tbody>
+</table>
+
+<p><strong>等价校验逻辑</strong>（<code>SaSaleContractHeadServiceImpl.java:2173</code>）：</p>
+
+```java
+// 1. 开始日期必须为1号
+if (startDate.getDayOfMonth() != 1) {
+    throw new CommonException("合同开始日期须为月度第一天!");
+}
+// 2. 结束日期必须为月末
+boolean isMonthEnd = endDate.getDayOfMonth() == YearMonth.of(endDate.getYear(), endDate.getMonth()).lengthOfMonth();
+if (!isMonthEnd) {
+    Error += "合同结束日期须为月度最后一天";
+}
+// 3. 跨月数必须恰好12个月
+int monthSpan = (endDate.getYear() - startDate.getYear()) * 12 + endDate.getMonthValue() - startDate.getMonthValue();
+if (monthSpan != 11) {
+    Error += "总跨月度数只能为12个月";
+}
+```
+
+<h4>2. 五金渠道特殊例外</h4>
+<p><strong>条件</strong>（<code>SaSaleContractHeadServiceImpl.java:724-727</code>）：</p>
+<ul>
+<li>事业部ID = 101（箭牌卫浴事业部）</li>
+<li>合同类型 = 8（五金渠道经销合同）</li>
+<li>存在主合同ID（<code>masterContractId != null</code>）</li>
+</ul>
+<p>满足时<strong>允许按非整年签订合同</strong>，但仍校验：开始时间不大于主合同结束时间</p>
+
+<h4>3. 合同提前结束校验（veifyAhead方法）</h4>
+<p>查询同一客户 + 同一法人编码下、已生效（<code>valid=2</code>）的同类合同，按结束日期倒序取最新一条。</p>
+<p><strong>校验逻辑</strong>：</p>
+<ol>
+<li>若该客户无已生效的同类合同 → 通过</li>
+<li>若有 → 新合同开始日期必须在旧合同结束日期之后</li>
+</ol>
+
+<h4>4. 延期发货日期计算</h4>
+
+```java
+delayDate = endDate + Contract_Delay_Date（公司参数）
+```
+
+<p>即合同结束后仍允许延期发货一段天数。</p>
+<p><strong>涉及的公司参数</strong>：</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>参数</th><th>含义</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Contract_Delay_Date</code></td><td>合同延期发货天数</td></tr>
+<tr><td><code>CONTRACT_ARCHIVE_DELAYDAY</code></td><td>合同延期归档天数</td></tr>
+</tbody>
+</table>
+
+<h4>5. 推送CRM期间处理（doCrm方法）</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>场景</th><th>处理方式</th></tr>
+</thead>
+<tbody>
+<tr><td>合同已归档</td><td>正常推送</td></tr>
+<tr><td>合同未归档 + 审批时间+延期天数 ≤ 合同开始日期</td><td><strong>不推送CRM</strong>（合同未开始且未到归档时间）</td></tr>
+<tr><td>合同未归档 + 审批时间+延期天数 > 合同开始日期</td><td>合同结束时间 = min(审批时间+延期天数, 合同结束日期)</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
 
