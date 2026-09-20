@@ -572,6 +572,84 @@
 </table>
 </KbCard>
 
+<KbCard title="字段取值/赋值逻辑">
+<h4>头部信息区 — 按字段来源分类</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>来源分类</th><th>字段</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>编码规则生成</td><td>验收报销单号(CHECK_BX_CODE)</td><td>系统自动生成，始终只读</td></tr>
+<tr><td>从装修申请单LOV带入</td><td>装修申请单号、门店编码/名称、经销商名称/简称、交易公司、法人客户、装修等级、门店面积、实际装修面积、经营属性、销售区域、运营中心、成本中心、项目编码/名称、预算年度、展示设计师、设计师用户名/手机号、软装设计师、位置类型、装修周期、门店类型、门店详细地址、装修性质、旧店上次装修时间、装修风格、本次装修风格、额度内有效期、额度外兑现结束时间、门头装修等级、门店所在地</td><td>选择装修申请单后联动带入，始终只读(disabled: true)</td></tr>
+<tr><td>系统计算</td><td>额度内/外报销金额、超期天数、验收超期天数、是否超标准、软装补贴金额、软装广告费采购金额、软装物品采购金额、软装采购标准金额、软装达成采购金额、软装采购百分比、软装扣减金额、灯具补贴金额、灯具广告费金额、灯具物品金额、灯具标准金额、灯具达成金额、灯具百分比、灯具扣减金额、软装灯具扣罚金额</td><td>由前端公式或后端计算，始终只读</td></tr>
+<tr><td>系统参数</td><td>装修超期免责份数、验收超期免责份数</td><td>从公司参数获取</td></tr>
+<tr><td>系统维护</td><td>审核状态(AUDIT_STAT)、任务名称(TASK_NAME)、提前兑现标识、是否重签</td><td>工作流或后端自动维护</td></tr>
+<tr><td>用户输入</td><td>验收日期(CHECK_DATE)、备注(NOTE)</td><td>用户手动输入</td></tr>
+<tr><td>审批节点可编辑</td><td>审核备注(REVIEW_NOTE)</td><td>审批节点可编辑</td></tr>
+</tbody>
+</table>
+
+<h4>装修金额信息表 — 各节点可编辑字段</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>字段</th><th>可编辑条件</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>验收面积(checkArea)</td><td>taskName ∈ ['区域经理审批', '设计师审批'] 且行≠'合计'</td><td>用户手动输入验收面积</td></tr>
+<tr><td>验收标准(checkStandard)</td><td>taskName ∈ ['区域经理审批', '设计师审批'] 且行≠'合计'</td><td>用户手动输入验收标准</td></tr>
+<tr><td>提前兑现比例(earlyEncashmentRatio)</td><td>taskName === '区域经理审批' 且行≠'合计'</td><td>仅区域经理审批节点可编辑</td></tr>
+</tbody>
+</table>
+<blockquote><strong>关键代码位置：</strong><code>storeAcceptanceReimbursement/index.tsx:1534,1580,1611</code></blockquote>
+
+<h4>财务复核表 — 各节点可编辑字段</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>字段</th><th>可编辑条件</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>复核面积(reviewArea)</td><td>taskName === '销售会计复核面积'</td><td>用户手动输入复核面积</td></tr>
+<tr><td>特殊扣点(specialDeductionPoint)</td><td>taskName === '销售会计复核面积'</td><td>用户手动输入特殊扣点</td></tr>
+<tr><td>提前兑现比例(earlyEncashmentRatio)</td><td>taskName === '销售会计复核面积'</td><td>用户手动输入提前兑现比例</td></tr>
+<tr><td>备注(note)</td><td>taskName === '销售会计复核面积'</td><td>用户手动输入备注</td></tr>
+</tbody>
+</table>
+<blockquote><strong>关键代码位置：</strong><code>storeAcceptanceReimbursement/index.tsx:1658,1663,1668,1672</code></blockquote>
+
+<h4>财务复核结果表 — 各节点可编辑字段</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>字段</th><th>可编辑条件</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>复核补贴标准(reviewSubsidyStandard)</td><td>taskName === '销售会计复核面积'</td><td>用户手动输入复核补贴标准</td></tr>
+</tbody>
+</table>
+<blockquote><strong>关键代码位置：</strong><code>storeAcceptanceReimbursement/index.tsx:1687</code></blockquote>
+
+<h4>资源按预算信息表 — 各节点可编辑字段</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>字段</th><th>可编辑条件</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>本次兑现比例(thisCashoutProportion)</td><td>taskName ∈ ['销售会计复核面积', '销财经理审批']</td><td>用户手动输入本次兑现比例</td></tr>
+</tbody>
+</table>
+<blockquote><strong>关键代码位置：</strong><code>storeAcceptanceReimbursement/index.tsx:1702</code></blockquote>
+
+<h4>店面验收质量信息表 — 各节点可编辑字段</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>字段</th><th>可编辑条件</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>验收备注(checkNote)</td><td>taskName ∈ ['区域经理审批', '设计师审批']</td><td>用户手动输入验收备注</td></tr>
+<tr><td>扣除比例(deductionProportion)</td><td>taskName ∈ ['区域经理审批', '设计师审批']</td><td>用户手动输入扣除比例(%)</td></tr>
+</tbody>
+</table>
+<blockquote><strong>关键代码位置：</strong><code>storeAcceptanceReimbursement/index.tsx:1746,1752</code></blockquote>
+
+<h4>各审批节点可编辑字段汇总</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>审批节点(taskName)</th><th>可编辑字段</th><th>所在表格</th></tr></thead>
+<tbody>
+<tr><td>区域经理审批</td><td>验收面积、验收标准、提前兑现比例、验收备注、扣除比例</td><td>装修金额信息表、店面验收质量信息表</td></tr>
+<tr><td>设计师审批</td><td>验收面积、验收标准、验收备注、扣除比例</td><td>装修金额信息表、店面验收质量信息表</td></tr>
+<tr><td>销售会计复核面积</td><td>复核面积、特殊扣点、提前兑现比例、备注、复核补贴标准、本次兑现比例</td><td>财务复核表、财务复核结果表、资源按预算信息表</td></tr>
+<tr><td>销财经理审批</td><td>本次兑现比例</td><td>资源按预算信息表</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="保存校验">
 <p><strong>校验1：</strong>装修申请单必填 —— 确保关联有效的装修申请</p>
 <ul><li><strong>详细逻辑</strong>：前端必填校验</li><li><strong>系统体现</strong>：C7N内置校验</li><li><strong>排查SQL</strong>：<code>SELECT CHECK_BX_ID FROM FIN_FEE_CHECK_BX_HEADER WHERE TERMINAL_APPLY_ID IS NULL</code></li></ul>
