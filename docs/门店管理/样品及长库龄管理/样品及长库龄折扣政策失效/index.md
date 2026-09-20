@@ -197,23 +197,64 @@
 </table>
 </KbCard>
 
-<KbCard title="选择弹窗">
-<h4>弹窗1：有效折扣政策选择弹窗（单选）</h4>
-<table class="kb-field-tbl">
-<thead>
-<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
-</thead>
-<tbody>
-<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
-<tr><td>sourceType</td><td>来源系统</td><td>样品及长库龄</td><td>YXCRM</td><td>valid=2且sourceType=YXCRM的折扣政策</td></tr>
-</tbody>
-</table>
-<blockquote>查询SQL（后端接口Mapper）：</blockquote>
+<KbCard title="选择弹窗：有效折扣政策选择弹窗（单选）">
+<h4>查询SQL</h4>
 
 ```sql
-SELECT discount_policy_id, discount_policy_code, discount_policy_name
-FROM epm_discount_policy WHERE valid = 2 AND source_type = 'YXCRM';
+SELECT
+    edp.DISCOUNT_POLICY_ID,
+    edp.DISCOUNT_POLICY_CODE,
+    edp.DISCOUNT_POLICY_NAME,
+    edp.POLICY_TYPE,
+    ptlv.MEANING AS POLICY_TYPE_LOV,
+    LISTAGG(edpc.CUSTOMER_CODE, ',') WITHIN GROUP (
+    ORDER BY edpc.CUSTOMER_CODE)
+        OVER (PARTITION BY edp.DISCOUNT_POLICY_ID) AS CUSTOMER_CODES,
+    edp.SALE_AREA_ID,
+    edp.SALE_AREA_CODE,
+    edp.SALE_AREA_NAME,
+    edp.PROVINCE_ID,
+    edp.PROVINCE_NAME,
+    edp.CUSTOMER_CLASS,
+    cclv.MEANING AS CUSTOMER_CLASS_LOV,
+    edp.EFFECTIVE_DATE_START,
+    edp.EFFECTIVE_DATE_END,
+    edp.IS_CAL_AD
+FROM
+    EPM_DISCOUNT_POLICY edp
+LEFT JOIN HZERO.HPFM_LOV_VALUE ptlv ON
+    ptlv.LOV_CODE = 'AE.EPM.POLICY_TYPE'
+    AND edp.POLICY_TYPE = ptlv.VALUE
+LEFT JOIN HZERO.HPFM_LOV_VALUE cclv ON
+    cclv.LOV_CODE = 'AE.EPM.CUSTOMER_CLASS'
+    AND edp.CUSTOMER_CLASS = cclv.VALUE
+LEFT JOIN EPM_DISCOUNT_POLICY_CUSTOMER edpc ON
+    edp.DISCOUNT_POLICY_ID = edpc.DISCOUNT_POLICY_ID
+WHERE
+    edp.VALID = 2
+    AND edp.EFFECTIVE_DATE_END >= SYSDATE
+    AND edp.EFFECTIVE_DATE_START <= SYSDATE
+    AND edp.IS_MAKT = '2'
+    AND edp.SUITABLE_TYPE = 'special'
+    AND edp.ORGANIZATION_ID = '102'
+ORDER BY
+    edpc.DISCOUNT_POLICY_ID DESC
 ```
+
+<h4>筛选条件说明</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>序号</th><th>条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><code>VALID = 2</code></td><td>政策状态=已生效</td></tr>
+<tr><td>2</td><td><code>EFFECTIVE_DATE_END &gt;= SYSDATE</code></td><td>政策有效结束日期≥当前日期</td></tr>
+<tr><td>3</td><td><code>EFFECTIVE_DATE_START &lt;= SYSDATE</code></td><td>政策有效开始日期≤当前日期</td></tr>
+<tr><td>4</td><td><code>IS_MAKT = '2'</code></td><td>是否样品及长库龄=是（样品政策）</td></tr>
+<tr><td>5</td><td><code>SUITABLE_TYPE = 'special'</code></td><td>适用类型=专项（样品/家装），工程为normal</td></tr>
+<tr><td>6</td><td><code>ORGANIZATION_ID = '102'</code></td><td>事业部ID=102</td></tr>
+</tbody>
+</table>
 </KbCard>
 
 <KbCard title="其他按钮">
