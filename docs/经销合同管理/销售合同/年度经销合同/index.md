@@ -279,6 +279,140 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
 ```
 </KbCard>
 
+<KbCard title="应缴纳合同保证金取值逻辑">
+<p><strong>代码位置</strong>：<code>SaSaleContractHeadServiceImpl.java:837-851</code></p>
+<p><strong>业务意义</strong>：合同保存时由后端自动设置应缴保证金金额，数据来源于保证金缴纳标准表</p>
+
+<h4>取值逻辑</h4>
+<p>保存合同（<code>saveHeadData</code>）时，后端调用 <code>getDepositAmt(entid, salesContractType)</code> 自动设置保证金金额：</p>
+<pre><code>public BigDecimal getDepositAmt(Long entId, Long contractType) {
+    if (entId == null || contractType == null) {
+        return BigDecimal.ZERO;
+    }
+    Map depositMap = saSaleContractHeadRepository.cmDepositsPayStandard(entId, contractType);
+    if (depositMap == null || depositMap.isEmpty()) {
+        throw new CommonException("未能获取合同保证金标准，不能创建合同");
+    }
+    BigDecimal standardAmount = depositMap.get("STANDARD_AMOUNT") == null
+        ? BigDecimal.ZERO : new BigDecimal(depositMap.get("STANDARD_AMOUNT").toString());
+    if (BigDecimal.ZERO.compareTo(standardAmount) == 0) {
+        return BigDecimal.ZERO;
+    }
+    return standardAmount.divide(new BigDecimal("10000"), 2, RoundingMode.HALF_UP);
+}</code></pre>
+
+<h4>数据来源</h4>
+<p><strong>数据库表</strong>：<code>CM_DEPOSITS_PAY_STANDARD</code>（保证金缴纳标准表）</p>
+<p><strong>查询 SQL</strong>（<code>SaSaleContractHeadMapper.xml:479-481</code>）：</p>
+<pre><code>SELECT *
+FROM   cm_deposits_pay_standard
+WHERE  entid = #{entId}
+       AND contract_type = #{contractType}
+       AND start_time &lt;= sysdate
+       AND end_time &gt;= sysdate</code></pre>
+
+<h4>查询条件</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>条件</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>entid</code></td><td>事业部ID</td></tr>
+<tr><td><code>contract_type</code></td><td>合同类型</td></tr>
+<tr><td><code>start_time &lt;= sysdate</code></td><td>标准在当前日期已生效</td></tr>
+<tr><td><code>end_time &gt;= sysdate</code></td><td>标准在当前日期未过期</td></tr>
+</tbody>
+</table>
+
+<h4>关键字段对照</h4>
+<table class="kb-field-tbl">
+<thead><tr><th><code>CM_DEPOSITS_PAY_STANDARD</code> 字段</th><th>含义</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td><code>STANDARD_AMOUNT</code></td><td>标准金额（元）</td><td>转换为万元后写入 <code>DEPOSIT_AMT</code></td></tr>
+<tr><td><code>ALLOW_CHANGES</code></td><td>可变更标识（Y/N）</td><td>Y 时允许用户修改保证金金额</td></tr>
+<tr><td><code>ENTID</code></td><td>事业部ID</td><td>查询条件</td></tr>
+<tr><td><code>CONTRACT_TYPE</code></td><td>合同类型</td><td>查询条件</td></tr>
+<tr><td><code>START_TIME</code></td><td>有效开始时间</td><td>有效期校验</td></tr>
+<tr><td><code>END_TIME</code></td><td>有效结束时间</td><td>有效期校验</td></tr>
+</tbody>
+</table>
+
+<h4>可编辑条件</h4>
+<p>通过 <code>allowChange</code> 接口（<code>POST /sa-sale-contract-heads/allow-change</code>）查询 <code>CM_DEPOSITS_PAY_STANDARD.ALLOW_CHANGES</code> 字段：</p>
+<pre><code>SELECT nvl(t.allow_changes,'N') allow_changes
+FROM   cm_deposits_pay_standard t
+WHERE  t.contract_type = #{salesContractType}
+       AND t.entid = #{entid}
+       AND t.start_time &lt;= trunc(sysdate)
+       AND t.end_time &gt;= trunc(sysdate)</code></pre>
+<ul>
+<li><code>ALLOW_CHANGES = 'Y'</code>：用户可编辑应缴纳合同保证金金额</li>
+<li><code>ALLOW_CHANGES = 'N'</code> 或为空：字段清空为 <code>null</code>，不可编辑</li>
+</ul>
+
+<h4>完整数据链路</h4>
+<pre><code>CM_DEPOSITS_PAY_STANDARD（保证金缴纳标准表）
+  ├── ENTID（事业部ID）
+  ├── CONTRACT_TYPE（合同类型）
+  ├── STANDARD_AMOUNT（标准金额，单位：元）
+  ├── ALLOW_CHANGES（可变更标识）
+  ├── START_TIME（生效开始时间）
+  └── END_TIME（生效结束时间）
+       │
+       ▼
+getDepositAmt() 方法
+  ├── 查询 CM_DEPOSITS_PAY_STANDARD
+  ├── 获取 STANDARD_AMOUNT
+  └── 转换：standardAmount ÷ 10000 = 万元
+       │
+       ▼
+SA_SALE_CONTRACT_HEAD.DEPOSIT_AMT（合同应缴保证金，单位：万元）</code></pre>
+
+<h4>排查 SQL</h4>
+<pre><code>-- 1. 查询合同的应缴纳保证金
+SELECT s.sale_contract_head_id,
+       s.contract_no,
+       s.entid,
+       s.contract_type,
+       s.deposit_amt
+FROM   sa_sale_contract_head s
+WHERE  s.hz_approve_status = 'NEW';
+
+-- 2. 查询保证金缴纳标准配置
+SELECT p.id,
+       p.entid,
+       p.contract_type,
+       p.standard_amount,
+       p.allow_changes,
+       p.start_time,
+       p.end_time,
+       CASE
+         WHEN p.start_time &lt;= sysdate AND p.end_time &gt;= sysdate THEN '有效'
+         ELSE '失效'
+       END AS 有效状态
+FROM   cm_deposits_pay_standard p
+ORDER  BY p.entid, p.contract_type;
+
+-- 3. 查询合同与保证金标准的关联
+SELECT s.sale_contract_head_id,
+       s.contract_no,
+       s.entid,
+       s.contract_type,
+       s.deposit_amt           AS 合同应缴保证金万元,
+       p.standard_amount       AS 标准金额元,
+       p.allow_changes         AS 可变更标识,
+       CASE
+         WHEN p.id IS NULL THEN '标准未配置'
+         WHEN p.start_time &gt; sysdate OR p.end_time &lt; sysdate THEN '标准已失效'
+         ELSE '正常'
+       END                     AS 配置状态
+FROM   sa_sale_contract_head s
+       LEFT JOIN cm_deposits_pay_standard p
+              ON s.entid = p.entid
+             AND s.contract_type = p.contract_type
+             AND p.start_time &lt;= sysdate
+             AND p.end_time &gt;= sysdate
+WHERE  s.hz_approve_status = 'NEW';</code></pre>
+</KbCard>
+
 <KbCard title="经销期间限制">
 <h4>1. 合同期间校验规则（verifyDate方法）</h4>
 <table class="kb-field-tbl">
