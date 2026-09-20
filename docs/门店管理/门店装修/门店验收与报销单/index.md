@@ -756,6 +756,67 @@ else:
 <p>即两个扣除比例都会直接降低得分率，进而降低验收报销金额。</p>
 </KbCard>
 
+<KbCard title="软装/灯具补贴计算逻辑">
+<p><strong>代码位置</strong>：<code>ae-business/src/main/java/com/arrow/dms/ae/biz/storeCheck/domain/vo/SubsidyAndPurchaseVO.java</code></p>
+<p><strong>业务意义</strong>：软装补贴标准和灯具补贴标准是补贴金额计算的基础参数，通过「补贴标准 × 复核面积」得到补贴标准金额，再结合审批标准计算达标金额，最终得出扣罚金额</p>
+
+<h4>计算链路</h4>
+<pre><code>软装补贴标准(softPurchaseStandard) ──┐
+                                     ├─× 复核面积(reviewArea) ─→ 软装补贴标准金额(softPurchaseStandardAmt)
+灯具补贴标准(lanternStandard) ───────┘                                    │
+                                                                         ├─× 审批标准(softApprovalStandard) ─→ 软装达标金额(softReachPurchaseAmt)
+                                                                         │                                         │
+软装采购金额(softPurchaseAmt) ────────────────────────────────────────────┤                                         │
+                                                                         │ ←── 相减 ────────────────────────────────┘
+                                                                         │      (若>0)
+                                                                         ↓
+                                                                  软装扣罚金额(softDeductAmt)
+</code></pre>
+
+<h4>软装补贴计算</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>计算项</th><th>字段</th><th>公式</th></tr></thead>
+<tbody>
+<tr><td>软装补贴标准金额</td><td><code>softPurchaseStandardAmt</code></td><td><code>softPurchaseStandard × reviewArea</code>（<code>SubsidyAndPurchaseVO.java:122</code>）</td></tr>
+<tr><td>软装达标金额</td><td><code>softReachPurchaseAmt</code></td><td><code>softPurchaseStandardAmt × softApprovalStandard</code>（<code>SubsidyAndPurchaseVO.java:178</code>）</td></tr>
+<tr><td>软装采购完成率</td><td><code>softPurchasePercent</code></td><td><code>softPurchaseAmt / softPurchaseStandardAmt</code>（<code>SubsidyAndPurchaseVO.java:193</code>）</td></tr>
+<tr><td>软装扣罚金额</td><td><code>softDeductAmt</code></td><td><code>softReachPurchaseAmt - softPurchaseAmt</code>（若 &gt; 0，否则为 0）（<code>SubsidyAndPurchaseVO.java:208</code>）</td></tr>
+</tbody>
+</table>
+
+<h4>灯具补贴计算</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>计算项</th><th>字段</th><th>公式</th></tr></thead>
+<tbody>
+<tr><td>灯具补贴标准金额</td><td><code>lanternStandardAmt</code></td><td><code>lanternStandard × reviewArea</code>（<code>SubsidyAndPurchaseVO.java:137</code>）</td></tr>
+<tr><td>灯具达标金额</td><td><code>lanternReachAmt</code></td><td><code>lanternStandardAmt × lanternApprovalStandard</code>（<code>SubsidyAndPurchaseVO.java:226</code>）</td></tr>
+<tr><td>灯具采购完成率</td><td><code>lanternPercent</code></td><td><code>lanternAmt / lanternStandardAmt</code>（<code>SubsidyAndPurchaseVO.java:241</code>）</td></tr>
+<tr><td>灯具扣罚金额</td><td><code>lanternDeductAmt</code></td><td><code>lanternReachAmt - lanternAmt</code>（若 &gt; 0，否则为 0）（<code>SubsidyAndPurchaseVO.java:256</code>）</td></tr>
+</tbody>
+</table>
+
+<h4>总扣罚金额</h4>
+<pre><code>totalDeductAmt = softDeductAmt + lanternDeductAmt</code></pre>
+<p>源码位置：<code>SubsidyAndPurchaseVO.java:272-280</code></p>
+
+<h4>字段来源</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>字段</th><th>含义</th><th>数据来源</th></tr></thead>
+<tbody>
+<tr><td><code>softPurchaseStandard</code></td><td>软装补贴标准</td><td>软装设计师在"软装设计师提交方案"节点从值集 <code>AE.PURCHASE_STANDARD</code> 选择</td></tr>
+<tr><td><code>lanternStandard</code></td><td>灯具补贴标准</td><td>软装设计师在"软装设计师提交方案"节点从值集 <code>AE.LANTERN_PURCHASE_STANDARD</code> 选择</td></tr>
+<tr><td><code>reviewArea</code></td><td>复核面积</td><td>验收报销单中财务复核确认的面积</td></tr>
+<tr><td><code>softApprovalStandard</code></td><td>软装审批标准</td><td>从 <code>FinFeeCheckBxHeader</code> 获取</td></tr>
+<tr><td><code>lanternApprovalStandard</code></td><td>灯具审批标准</td><td>从 <code>FinFeeCheckBxHeader</code> 获取</td></tr>
+<tr><td><code>softPurchaseAmt</code></td><td>软装采购金额</td><td>根据软装明细行总金额累加</td></tr>
+<tr><td><code>lanternAmt</code></td><td>灯具采购金额</td><td>根据灯具明细行总金额累加</td></tr>
+</tbody>
+</table>
+
+<h4>注意事项</h4>
+<p>在 <code>SubsidyAndPurchaseVO.java:87-89</code> 构造函数中，<code>softPurchaseStandard</code> 和 <code>lanternStandard</code> 被硬编码为 <code>100</code>（带 <code>//TODO</code> 标注），说明该类尚在开发中，实际值应从数据库 <code>FIN_FEE_APPLY_FINISHED_HEADER</code> 表的 <code>SOFT_PURCHASE_STANDARD</code> 和 <code>LANTERN_STANDARD</code> 字段获取。</p>
+</KbCard>
+
 <KbCard title="状态机">
 
 ```text
