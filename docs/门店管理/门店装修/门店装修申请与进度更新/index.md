@@ -238,6 +238,31 @@
 <ul><li><strong>业务意义</strong>：作废装修申请时解除已绑定的CRM软装采购订单关联</li><li><strong>具体逻辑描述</strong>：</li><li>作废后查询已绑定的CRM销售订单(queryCrmSaleOrderV)</li><li>调用unbindSoftOrder解绑软装订单</li></ul>
 </KbCard>
 
+<KbCard num="6" title="重点逻辑6：灯具/软装补贴标准各节点可编辑情况">
+<ul><li><strong>业务意义</strong>：明确灯具补贴标准和软装补贴标准在门店装修申请全流程中各节点的可编辑性，避免误操作</li></ul>
+<table class="kb-field-tbl">
+<thead><tr><th>页面</th><th>字段</th><th>可编辑条件</th><th>必填条件</th></tr></thead>
+<tbody>
+<tr><td>门店装修申请与进度更新</td><td>软装补贴标准</td><td>taskName ∈ ['软装设计师提交方案','软装及礼品经理审批','软装经理'] 且有 businessKey</td><td>taskName == '软装设计师提交方案'</td></tr>
+<tr><td>门店装修申请与进度更新</td><td>灯具补贴标准</td><td>同上</td><td>同上</td></tr>
+<tr><td>门店装修申请变更</td><td>软装补贴标准</td><td>taskName == '软装设计师提交方案'</td><td>同上</td></tr>
+<tr><td>门店装修申请变更</td><td>灯具补贴标准</td><td>taskName == '软装设计师提交方案'</td><td>同上</td></tr>
+<tr><td>门店验收与报销单</td><td>软装补贴标准</td><td>不可编辑（disabled={!isDocumentEditable()}，始终返回false）</td><td>—</td></tr>
+<tr><td>门店验收与报销单</td><td>灯具补贴标准</td><td>不可编辑（同上）</td><td>—</td></tr>
+<tr><td>门店装修申请关闭</td><td>软装补贴标准</td><td>不可编辑（disabled={true}）</td><td>—</td></tr>
+<tr><td>门店装修申请关闭</td><td>灯具补贴标准</td><td>不可编辑（同上）</td><td>—</td></tr>
+</tbody>
+</table>
+<h4>关键代码位置</h4>
+<ul>
+<li>门店装修申请与进度更新：<code>finFeeApplyClose/index.tsx:3081-3118</code></li>
+<li>门店装修申请变更：<code>finFeeApplyChange/index.tsx:2185-2198</code></li>
+<li>门店验收与报销单：<code>storeAcceptanceReimbursement/index.tsx:3253,3264</code></li>
+<li>门店装修申请关闭：<code>finFeeApplyChangeClose/index.tsx:1872-1880</code></li>
+</ul>
+<blockquote><strong>总结：</strong>灯具补贴标准和软装补贴标准仅在"软装设计师提交方案"节点可编辑（变更页面同样仅此节点可编辑），其余页面均为只读展示。</blockquote>
+</KbCard>
+
 </div>
 </div>
 </div>
