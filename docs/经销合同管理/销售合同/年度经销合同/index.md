@@ -413,6 +413,114 @@ FROM   sa_sale_contract_head s
 WHERE  s.hz_approve_status = 'NEW';</code></pre>
 </KbCard>
 
+<KbCard title="已缴清（payComplete）判定逻辑">
+<p><strong>代码位置</strong>：<code>CmContractPaymentApplyServiceImpl.java:701</code>（<code>normalCompletion()</code>方法）</p>
+<p><strong>业务意义</strong>：认缴申请（保证金缴纳申请）审批通过后，系统判断认缴总额是否达到保证金标准金额，达到则标记合同"已缴清"</p>
+
+<h4>判定条件</h4>
+<p><strong>认缴总额 ≥ 保证金标准金额（STANDARD_AMOUNT）</strong></p>
+<p>即：<code>CM_CONTRACT_PAYMENT_RECORD</code> 中该合同类型+事业部+经销商的已认缴金额之和 ≥ <code>CM_DEPOSITS_PAY_STANDARD.STANDARD_AMOUNT</code></p>
+
+<h4>完整流程</h4>
+<p><strong>步骤1</strong>：查询认缴概况（<code>CM_CONTRACT_PAYMENT_SUMMARY</code>）</p>
+<ul>
+<li>不存在：从 <code>CM_DEPOSITS_PAY_STANDARD</code> 取 <code>STANDARD_AMOUNT</code>，创建概况记录</li>
+<li>已存在：取概况记录的 <code>PAYMENT_AMOUNT</code></li>
+</ul>
+<p><strong>步骤2</strong>：新增认缴记录（<code>CM_CONTRACT_PAYMENT_RECORD</code>），记录本次认缴金额</p>
+<p><strong>步骤3</strong>：统计认缴总额（<code>CmContractPaymentRecordMapper.xml:134-144</code>）：</p>
+<pre><code>SELECT sum(t.amount) amount
+FROM   cm_contract_payment_record t
+WHERE  t.entid = #{entid}
+       AND t.contract_type = #{contractType}
+       AND t.customer_id = #{customerId}
+       AND t.payment_status = #{paymentStatus}</code></pre>
+
+<p><strong>步骤4</strong>：判断是否缴清（<code>CmContractPaymentRecordServiceImpl.paymentProcessing()</code>：:81-95）：</p>
+<pre><code>return !NumberUtils.isNullReturnZero(payStandardAmountRs).equals(BigDecimal.ZERO)
+        && NumberUtils.isNullReturnZero(totalPayAmount).compareTo(payStandardAmountRs) >= 0;</code></pre>
+
+<p><strong>步骤5</strong>：如果缴清（返回true）：</p>
+<ul>
+<li>更新 <code>CM_CONTRACT_PAYMENT_SUMMARY.PAY_COMPLETE = 'Y'</code></li>
+<li>更新 <code>SA_SALE_CONTRACT_HEAD.PAY_COMPLETE = 'Y'</code>（按 entId + salesContractType + custId 匹配）</li>
+<li>推送CRM</li>
+</ul>
+
+<h4>保证金减免申请的影响</h4>
+<p><strong>结论：保证金减免申请审批通过后，不影响"已缴清"判断。</strong></p>
+<p>减免申请审批通过后的处理（<code>CmDepositsReductionHeadServiceImpl.wfComplete()</code>：:226-242）：审批通过后<strong>只更新减免单自身的状态</strong>（status = APPLY_ENABLE），完全不触碰 <code>SaSaleContractHead.payComplete</code>。</p>
+
+<h4>示例场景</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>项目</th><th>金额</th></tr></thead>
+<tbody>
+<tr><td>保证金标准</td><td>5000</td></tr>
+<tr><td>已认缴</td><td>3000</td></tr>
+<tr><td>减免申请通过</td><td>2000</td></tr>
+</tbody>
+</table>
+<p><strong>"已缴清" = N</strong>，因为认缴总额(3000) < 标准金额(5000)。减免金额从未参与"已缴清"的计算。要达到"已缴清"=Y，仍需认缴满5000。</p>
+
+<h4>特殊场景：标准金额 = 0</h4>
+<p>合同创建时（<code>SaSaleContractHeadServiceImpl.createContractHandle()</code>：:630-636），如果标准金额为0，直接设置 <code>payComplete = 'Y'</code>，无需认缴。</p>
+
+<h4>关键字段对照</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>表</th><th>字段</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td><code>CM_DEPOSITS_PAY_STANDARD</code></td><td><code>STANDARD_AMOUNT</code></td><td>保证金标准金额（元），用于"已缴清"判断</td></tr>
+<tr><td><code>SA_SALE_CONTRACT_HEAD</code></td><td><code>DEPOSIT_AMT</code></td><td>合同应缴保证金（万元），仅展示/编辑，<strong>不参与"已缴清"判断</strong></td></tr>
+<tr><td><code>SA_SALE_CONTRACT_HEAD</code></td><td><code>PAY_COMPLETE</code></td><td>已缴清标识（Y/N）</td></tr>
+<tr><td><code>CM_CONTRACT_PAYMENT_SUMMARY</code></td><td><code>PAY_COMPLETE</code></td><td>认缴概况的已缴清标识（Y/N）</td></tr>
+<tr><td><code>CM_CONTRACT_PAYMENT_RECORD</code></td><td><code>AMOUNT</code></td><td>单次认缴金额</td></tr>
+</tbody>
+</table>
+
+<h4>排查 SQL</h4>
+<pre><code>-- 1. 查询合同已缴清状态
+SELECT s.sale_contract_head_id,
+       s.contract_no,
+       s.deposit_amt,
+       s.pay_complete
+FROM   sa_sale_contract_head s
+WHERE  s.sale_contract_head_id = #{id};
+
+-- 2. 查询认缴总额 vs 保证金标准
+SELECT s.sale_contract_head_id,
+       s.contract_no,
+       p.standard_amount       AS 标准金额,
+       nvl(sum(r.amount), 0)   AS 认缴总额,
+       s.pay_complete
+FROM   sa_sale_contract_head s
+       LEFT JOIN cm_deposits_pay_standard p
+              ON s.entid = p.entid
+             AND s.contract_type = p.contract_type
+             AND p.start_time &lt;= sysdate
+             AND p.end_time &gt;= sysdate
+       LEFT JOIN cm_contract_payment_record r
+              ON r.entid = s.entid
+             AND r.contract_type = s.contract_type
+             AND r.customer_id = s.customer_id
+             AND r.payment_status = 'PAY'
+WHERE  s.sale_contract_head_id = #{id}
+GROUP  BY s.sale_contract_head_id,
+          s.contract_no,
+          p.standard_amount,
+          s.pay_complete;
+
+-- 3. 查询保证金减免申请
+SELECT h.reduction_no,
+       h.customer_id,
+       h.customer_name,
+       h.reduction_amount,
+       h.status,
+       h.hz_approve_status
+FROM   cm_deposits_reduction_head h
+WHERE  h.customer_id = #{customerId}
+ORDER  BY h.creation_date DESC;</code></pre>
+</KbCard>
+
 <KbCard title="经销期间限制">
 <h4>1. 合同期间校验规则（verifyDate方法）</h4>
 <table class="kb-field-tbl">
