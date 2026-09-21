@@ -214,6 +214,106 @@
 </table>
 </KbCard>
 
+<KbCard title="认款状态（paymentStatus）完整逻辑">
+<h4>状态值定义</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>枚举 (<code>CmDepositsEnum</code>)</th><th>code</th><th>含义</th><th>前端值集</th></tr>
+</thead>
+<tbody>
+<tr><td><code>SHARE_COMPLETE_PAY</code></td><td><code>completepay</code></td><td>已认款</td><td><code>AE.CONTRACT_MARGIN_PAYMENT_STATUS</code></td></tr>
+<tr><td><code>SHARE_CANCEL_PAY</code></td><td><code>cancelpay</code></td><td>撤销认款</td><td>同上</td></tr>
+</tbody>
+</table>
+<h4>状态来源 — EBS共享平台同步</h4>
+<p><strong>代码位置</strong>：<code>CmDepositsPaymentServiceImpl.java:248-250</code> → <code>saveDataFromEbsNew()</code></p>
+<pre><code class="language-java">CmDepositsEnum cmDepositsE = CmDepositsEnum.COMMON_FLAG_Y.getCode()
+    .equals(arEarNestMoneyResult.getRkDisplay())
+    ? CmDepositsEnum.SHARE_COMPLETE_PAY    // RkDisplay="Y" → 已认款
+    : CmDepositsEnum.SHARE_CANCEL_PAY;     // RkDisplay="N" → 撤销认款
+depositsPayment.setPaymentStatus(cmDepositsE.getCode());</code></pre>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>EBS推送字段 <code>RkDisplay</code></th><th>设置状态</th><th>含义</th></tr>
+</thead>
+<tbody>
+<tr><td><code>"Y"</code></td><td><code>SHARE_COMPLETE_PAY</code></td><td>已认款</td></tr>
+<tr><td><code>"N"</code></td><td><code>SHARE_CANCEL_PAY</code></td><td>撤销认款</td></tr>
+</tbody>
+</table>
+<h4>状态变更逻辑</h4>
+<p><strong>代码位置</strong>：<code>CmDepositsPaymentServiceImpl.java:369-417</code> → <code>updateRkWithEbsData()</code></p>
+<p><strong>当EBS推送 <code>RkDisplay = "N"</code>（撤销认款）时：</strong></p>
+<ol>
+<li>更新 <code>paymentStatus = SHARE_CANCEL_PAY</code>（撤销认款）</li>
+<li>调用 <code>cancelPayById()</code> 执行撤销：
+  <ul>
+    <li>认缴记录状态 → <code>RECORD_PAYMENT_WITHDRAW</code>（撤销认缴）</li>
+    <li>合同认缴状态 → <code>COMMON_FLAG_N</code>（未缴清）</li>
+    <li>认缴概况状态 → <code>COMMON_FLAG_N</code>（未缴清）</li>
+    <li>推送CRM（<code>depositPayStatus = "N"</code>）</li>
+  </ul>
+</li>
+<li>若该认款已转封顶认款（<code>convertCeilingFlag = "Y"</code>）：
+  <ul>
+    <li>查找对应的封顶认款（<code>paymentType = APP_PAY_CEILING</code>）</li>
+    <li>扣减封顶认款金额（<code>synPaymentAmount -= 撤销金额</code>）</li>
+    <li>若封顶金额 &lt; 封顶标准 → 撤销封顶认款</li>
+  </ul>
+</li>
+</ol>
+<p><strong>当EBS推送 <code>RkDisplay = "Y"</code>（已认款）时：</strong></p>
+<ol>
+<li>更新 <code>paymentStatus = SHARE_COMPLETE_PAY</code>（已认款）</li>
+<li>不触发撤销逻辑</li>
+</ol>
+<h4>认款状态对操作的影响</h4>
+<p><strong>代码位置</strong>：<code>CmDepositsPaymentServiceImpl.java:312-318</code> → <code>respectively()</code></p>
+<pre><code class="language-java">// 撤销认缴状态 → 不允许认领
+if (RECORD_PAYMENT_WITHDRAW.getCode().equals(cmDepositsPaymentvo.getPaymentStatus())) {
+    throw new CommonException("该笔认款金额已进行撤销操作，不能进行认领");
+}
+// 已转封顶认款 → 不允许普通认缴
+if (APPLY_PAY_NORMAL.getCode().equals(cmDepositsPaymentvo.getPaymentType())
+    && COMMON_FLAG_Y.getCode().equals(cmDepositsPaymentvo.getConvertCeilingFlag())) {
+    throw new CommonException("该认款已转换为封顶认款，不能再进行认缴操作");
+}</code></pre>
+<h4>完整状态流转图</h4>
+<pre><code class="language-text">EBS同步(RkDisplay=Y) ──→ 已认款(completepay)
+                              │
+                    EBS同步(RkDisplay=N)
+                              │
+                              ▼
+                        撤销认款(cancelpay)
+                              │
+                    cancelPayById()触发：
+                    · 认缴记录→撤销认缴
+                    · 合同→未缴清
+                    · 认缴概况→未缴清
+                    · 推送CRM
+                    · 若已转封顶→扣减封顶金额</code></pre>
+<h4>排查SQL</h4>
+<pre><code class="language-sql">-- 查询认款状态及关联信息
+SELECT
+    p.payment_id,
+    p.payment_no,
+    p.payment_status,
+    CASE p.payment_status
+      WHEN 'completepay' THEN '已认款'
+      WHEN 'cancelpay'   THEN '撤销认款'
+      ELSE p.payment_status
+    END AS 认款状态中文,
+    p.syn_payment_amount,
+    p.syn_payment_time,
+    p.billing_unit_code,
+    p.convert_ceiling_flag,
+    p.receipt_number,
+    p.fssc_doc_number,
+    p.syn_last_update_time
+FROM cm_deposits_payment p
+ORDER BY p.syn_last_update_time DESC;</code></pre>
+</KbCard>
+
 <KbCard title="表1：CM_DEPOSITS_PAYMENT（保证金到款表）">
 <table class="kb-field-tbl">
 <thead>
