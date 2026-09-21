@@ -572,6 +572,54 @@
 </table>
 </KbCard>
 
+<KbCard title="财务复核模块显示条件">
+<p><strong>代码位置</strong>：<code>h0-front/.../storeAcceptanceReimbursementInfo/views/DetailPage/index.tsx:228-241</code>（显示条件）、<code>index.tsx:3017-3032</code>（赋值逻辑）</p>
+<p><strong>业务意义</strong>：财务复核表、财务复核结果表、资源预算信息表三个模块的显示由 <code>show_1</code> 和 <code>show_3</code> 两个字段控制</p>
+
+<h4>显示条件</h4>
+<p>财务复核模块（财务复核表、财务复核结果表、资源预算信息表）显示需<strong>同时满足</strong>两个条件：</p>
+<pre><code>show_1 == 2  且  show_3 != 1</code></pre>
+
+<h4><code>show_1</code> 赋值逻辑（控制财务复核是否显示）</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>条件</th><th><code>show_1</code> 值</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>hzApproveStatus == APPROVED</code>（已审批）</td><td>2</td><td>审批通过后始终显示</td></tr>
+<tr><td><code>taskName</code> 属于以下节点 <strong>且</strong> <code>hzApproveStatus == RUN</code></td><td>2</td><td>审批流到达这些节点时显示</td></tr>
+<tr><td>其他情况</td><td>1</td><td>默认不显示</td></tr>
+</tbody>
+</table>
+<p><code>show_1 = 2</code> 时 <code>taskName</code> 列表：<code>销售会计复核面积</code>、<code>运营专员审批</code>、<code>等待节点</code>、<code>转折扣折让</code>、<code>经销商合同电子签章</code></p>
+
+<h4><code>show_3</code> 赋值逻辑（控制财务复核是否隐藏）</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>条件</th><th><code>show_3</code> 值</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>taskName == '盖章专员审批'</code> <strong>且</strong> <code>hzApproveStatus == RUN</code></td><td>1</td><td>盖章专员审批节点时隐藏</td></tr>
+<tr><td>其他情况</td><td>2</td><td>默认满足 <code>!= 1</code> 条件</td></tr>
+</tbody>
+</table>
+
+<h4>默认值</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>变量</th><th>默认值</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td><code>show_1</code></td><td>1</td><td>默认不显示财务复核</td></tr>
+<tr><td><code>show_3</code></td><td>2</td><td>默认满足 <code>!= 1</code> 条件</td></tr>
+</tbody>
+</table>
+
+<h4>各模块显示条件汇总</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>模块</th><th>函数名</th><th>显示条件</th></tr></thead>
+<tbody>
+<tr><td>财务复核表</td><td><code>financialReviewGridShow</code></td><td><code>show_1 == 2 && show_3 != 1</code></td></tr>
+<tr><td>财务复核结果表</td><td><code>financialReResultGridShow</code></td><td><code>show_1 == 2 && show_3 != 1</code></td></tr>
+<tr><td>资源预算信息表</td><td><code>resourceBudgetGridShow</code></td><td><code>show_1 == 2 && show_3 != 1</code></td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="字段取值/赋值逻辑">
 <h4>头部信息区 — 按字段来源分类</h4>
 <table class="kb-field-tbl">
