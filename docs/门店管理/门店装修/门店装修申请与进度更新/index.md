@@ -578,7 +578,7 @@ APPROVED ──发起签呈──→ isSecondChange=2
 <tr><td>SOFT_USERID</td><td>String</td><td>软装设计师用户ID</td><td>-</td><td>选择时带入</td></tr>
 <tr><td>SHOPMANAGER_NAME</td><td>String</td><td>负责人</td><td>-</td><td>用户输入</td></tr>
 <tr><td>SHOPMANAGER_MOB</td><td>String</td><td>负责人电话</td><td>-</td><td>用户输入</td></tr>
-<tr><td>DECORATION_FINISHED_TIME</td><td>LocalDate</td><td>装修完成时间</td><td>-</td><td>用户输入，默认当前日期</td></tr>
+<tr><td>DECORATION_FINISHED_TIME</td><td>LocalDate</td><td>装修完成时间</td><td>-</td><td>系统赋值：工作流流转到"装修完成"节点(ext=DecorationFinish)时设为当前日期；审批通过(onWfComplete)时若仍为null则设为当前日期。前端只读(disabled=true)</td></tr>
 <tr><td>PLAN_DESIGN_DATE</td><td>LocalDate</td><td>要求完成设计日期</td><td>要求完成设计时间</td><td>用户输入</td></tr>
 <tr><td>REPLY_DESIGN_DATE</td><td>LocalDate</td><td>交付设计日期</td><td>-</td><td>用户输入，默认当前日期</td></tr>
 <tr><td>DECORATION_INTERVAL_DATE</td><td>LocalDate</td><td>装修间隔期至</td><td>-</td><td>审批通过时计算: 装修完成时间+Waiting_Days-Advance_Permissible_Period</td></tr>
