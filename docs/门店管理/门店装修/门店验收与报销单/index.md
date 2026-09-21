@@ -895,6 +895,73 @@ else:
 <p>在 <code>SubsidyAndPurchaseVO.java:87-89</code> 构造函数中，<code>softPurchaseStandard</code> 和 <code>lanternStandard</code> 被硬编码为 <code>100</code>（带 <code>//TODO</code> 标注），说明该类尚在开发中，实际值应从数据库 <code>FIN_FEE_APPLY_FINISHED_HEADER</code> 表的 <code>SOFT_PURCHASE_STANDARD</code> 和 <code>LANTERN_STANDARD</code> 字段获取。</p>
 </KbCard>
 
+<KbCard title="可报销金额-含税计算逻辑">
+<p><strong>代码位置</strong>：<code>h0-front/packages/arrow-ae/src/pages/storeManage/storeAcceptanceReimbursementInfo/views/DetailPage/index.tsx</code>，<code>calCanTaxBxAmt</code> 函数（第341行）</p>
+<p><strong>业务意义</strong>：根据复核补贴标准、复核面积、得分率计算可报销金额（含税），再扣减广告费采购金额和扣罚金额，得出最终额度内/额度外/门头可报销金额</p>
+<p><strong>关键说明</strong>：计算完全由前端完成，后端 <code>FinFeeCheckBxHeaderServiceImpl.java:1122-1136</code> 的校验逻辑已被注释掉，不做二次验证</p>
+
+<h4>计算公式</h4>
+<p><strong>额度内可报销金额-含税（<code>IN_CAN_TAX_BX_AMT</code> / <code>inCanTaxBxAmt</code>）</strong>：</p>
+<pre><code>inCanTaxBxAmt = (reviewArea × inReviewStandard × sumScoreRate)
+                − (softAdvPurchaseAmt + lanternAdvAmt)
+                − allDeductAmt</code></pre>
+
+<p><strong>额度外可报销金额-含税（<code>OUT_CAN_TAX_BX_AMT</code> / <code>outCanTaxBxAmt</code>）</strong>：</p>
+<pre><code>outCanTaxBxAmt = outReviewStandard × reviewArea × sumScoreRate</code></pre>
+
+<p><strong>门头可报销金额-含税（<code>FD_CAN_TAX_BX_AMT</code> / <code>fdCanTaxBxAmt</code>）</strong>：</p>
+<pre><code>fdCanTaxBxAmt = fdReviewStandard × fdReviewArea × fdSumScoreRate</code></pre>
+
+<h4>变量说明</h4>
+<table class="kb-field-tbl">
+<thead><tr><th>变量</th><th>含义</th><th>来源</th></tr></thead>
+<tbody>
+<tr><td><code>reviewArea</code></td><td>复核面积</td><td>销售会计复核面积节点手动输入；补贴方式为"按数量"（<code>subsidyMode == 2</code>）时取 1</td></tr>
+<tr><td><code>inReviewStandard</code></td><td>额度内复核补贴标准</td><td>财务复核结果表，销售会计复核面积节点手动输入</td></tr>
+<tr><td><code>outReviewStandard</code></td><td>额度外复核补贴标准</td><td>同上</td></tr>
+<tr><td><code>sumScoreRate</code></td><td>总得分率</td><td>前端计算，详见"得分率计算逻辑"小节</td></tr>
+<tr><td><code>softAdvPurchaseAmt</code></td><td>软装广告费采购金额</td><td>装修金额信息表</td></tr>
+<tr><td><code>lanternAdvAmt</code></td><td>灯具广告费金额</td><td>装修金额信息表</td></tr>
+<tr><td><code>allDeductAmt</code></td><td>扣罚总金额</td><td><code>SubsidyAndPurchaseVO.getTotalDeductAmt()</code>，= 软装扣罚 + 灯具扣罚</td></tr>
+<tr><td><code>fdReviewStandard</code></td><td>门头复核补贴标准</td><td>财务复核结果表</td></tr>
+<tr><td><code>fdReviewArea</code></td><td>门头复核面积</td><td>财务复核表</td></tr>
+<tr><td><code>fdSumScoreRate</code></td><td>门头总得分率</td><td>前端计算</td></tr>
+</tbody>
+</table>
+
+<h4>发票金额不足时的扣减逻辑（<code>delCanBxAmt</code> 函数，第604行）</h4>
+<p>当 <code>发票总额 &lt; 可报销总额</code>（<code>sumInvoiceAmt &lt; sumCanTaxBxAmt</code>）时，按以下优先级依次扣减：</p>
+<ol>
+<li><strong>额度外</strong>（<code>outCanTaxBxAmt</code>）先扣减</li>
+<li>额度外扣完仍不足 → <strong>门头</strong>（<code>fdCanTaxBxAmt</code>）扣减</li>
+<li>门头扣完仍不足 → <strong>额度内</strong>（<code>inCanTaxBxAmt</code>）扣减</li>
+</ol>
+
+<h4>可报销金额合计计算（<code>calFinancialReResultSumAmt</code> 函数，第423行）</h4>
+<pre><code>sumOutCanTaxBxAmt = outCanTaxBxAmt + fdCanTaxBxAmt    // 可报销金额额度外小计
+sumCanTaxBxAmt = sumOutCanTaxBxAmt + inCanTaxBxAmt     // 可报销金额合计</code></pre>
+
+<h4>由含税金额反算不含税金额（<code>calCanNoTaxBxAmt</code> 函数，第406行）</h4>
+<pre><code>tax_rate = 1 + invoiceTaxRate × 0.01
+inCanNotTaxBxAmt = inCanTaxBxAmt / tax_rate
+outCanNotTaxBxAmt = outCanTaxBxAmt / tax_rate
+fdCanNotTaxBxAmt = fdCanTaxBxAmt / tax_rate</code></pre>
+
+<h4>兑现率计算（<code>calCashoutRate</code> 函数，第921行）</h4>
+<pre><code>cashoutRate = GREATEST(ROUND((inCanTaxBxAmt / (1 + invoiceTaxRate / 100)) / inReduceAmt, 4), 0)</code></pre>
+
+<h4>后端校验</h4>
+<p>后端 <code>FinFeeCheckBxHeaderServiceImpl.java:1122-1136</code> 中原有校验逻辑已被注释掉：</p>
+<pre><code>if ("销售会计复核面积".equals(procname)) {
+    FinFeeCheckBxHeaderVO finFeeCheckBxHeaderVO = selectDetail(checkBxId);
+    BigDecimal inReduceAmt = BigDecimal.ZERO;
+    BigDecimal inCanTaxBxAmt = BigDecimal.ZERO;
+    // 校验前端计算的核销金额、可报销金额-含税(元)，是否和后端计算的一致
+    // if (this.In_Reduce_Amt.compareTo(inReduceAmt) != 0 || ...) { ... }
+}</code></pre>
+<p>后端不做二次计算或验证，<code>IN_CAN_TAX_BX_AMT</code> 和 <code>OUT_CAN_TAX_BX_AMT</code> 的值由前端 DataSet 设置后随表单提交保存到数据库 <code>FIN_FEE_CHECK_BX_HEADER</code> 表。</p>
+</KbCard>
+
 <KbCard title="状态机">
 
 ```text
