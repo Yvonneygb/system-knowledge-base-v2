@@ -375,6 +375,7 @@ ORDER BY p.syn_last_update_time DESC;</code></pre>
 <tr><td>合同类型不能为空</td><td>查询/认缴时</td><td>合同类型参数缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 <tr><td>网络请求失败</td><td>全局</td><td>后端服务不可达或超时</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
 <tr><td>权限不足，无法操作</td><td>全局</td><td>当前用户无对应操作权限</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
+<tr><td>认缴申请暂无数据</td><td>认缴申请时</td><td>前端bug：<code>handleToDetail</code>检查<code>record.get('paymentId')</code>，但后端VO只返回<code>id</code>字段</td><td>warn提示</td><td style="text-align:center;"><a href="#err-detail-11" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 <div id="err-detail-1" class="error-detail-overlay">
@@ -521,6 +522,41 @@ ORDER BY p.syn_last_update_time DESC;</code></pre>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
 --</code></pre></div>
+</div>
+
+
+<div id="err-detail-11" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>认缴申请暂无数据（前端bug）</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>用户点击"认缴"按钮，前端<code>handleToDetail</code>函数检查<code>record.get('paymentId')</code>为空时触发</div>
+    <h5>代码位置</h5>
+    <div class="detail-text" v-pre><code>contractMargin/views/ListPage/index.tsx:37-41</code></div>
+    <h5>逻辑分析</h5>
+    <div class="detail-text" v-pre>
+      <ul>
+        <li>前端<code>handleToDetail</code>检查<code>record.get('paymentId')</code>，但后端VO（<code>CmDepositsPaymentVO</code>）只返回<code>id</code>字段，<strong>没有<code>paymentId</code>字段</strong></li>
+        <li>后端SQL（<code>CmDepositsPaymentMapper.xml</code> BaseSql）返回的是<code>CDP.ID</code>，映射为<code>id</code></li>
+        <li>ListDS字段定义中也没有<code>paymentId</code>字段</li>
+        <li>因此<code>record.get('paymentId')</code>始终返回<code>undefined</code>（falsy），导致<strong>永远</strong>提示"认缴申请暂无数据"</li>
+      </ul>
+    </div>
+    <h5>修复方案</h5>
+    <div class="detail-text" v-pre>将<code>paymentId</code>改为<code>id</code>：</div>
+    <pre class="detail-sql language-javascript" v-pre><code>// 修复前
+if (!record.get('paymentId')) {
+  message.warn('认缴申请暂无数据');
+  return;
+}
+// 修复后
+if (!record.get('id')) {
+  message.warn('认缴申请暂无数据');
+  return;
+}</code></pre>
+    <h5>排查方式</h5>
+    <div class="detail-text" v-pre>检查浏览器控制台Network，确认<code>/cm-deposits-payments/search</code>接口返回的JSON中是否包含<code>paymentId</code>字段（预期：不包含，只有<code>id</code>）</div>
+  </div>
 </div>
 
 
