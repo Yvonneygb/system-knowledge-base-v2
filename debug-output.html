@@ -1,5 +1,4 @@
 <BreadcrumbTabs />
-
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -42,7 +41,6 @@
       </div>
     </div>
   </div>
-
   <div class="kl-card">
     <div class="biz-kl-hdr">
       <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);"> 流程</span>
@@ -75,7 +73,6 @@
       </div>
     </div>
   </div>
-
   <div class="kl-card">
     <div class="biz-kl-hdr">
       <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);"> 规则</span>
@@ -118,7 +115,6 @@
 </div>
 </div>
 </div>
-
 <div id="biz-flow" style="display:none;">
 <div class="tab-pad">
 <div class="bf-truth-flow">
@@ -189,7 +185,6 @@
 </div>
 </div>
 </div>
-
 <div id="key-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -200,18 +195,15 @@
 <ul><li>第2点：workFlowStartValid方法进行流程启动前校验</li></ul>
 <ul><li>第3点：审批通过后合同生效，可进行归档和变更</li></ul>
 </KbCard>
-
 <KbCard num="2" title="重点逻辑2：合同区域校验 {区域校验}">
 <ul><li><strong>业务意义</strong>：合同需校验销售区域合法性</li></ul>
 <ul><li><strong>具体逻辑描述</strong></li></ul>
 <ul><li>第1点：通过doCheckAreaNew/doCheckArea方法校验区域</li></ul>
 <ul><li>第2点：校验经销商在选定区域内的合法性</li></ul>
 </KbCard>
-
 </div>
 </div>
 </div>
-
 <div id="detail-logic" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -231,15 +223,12 @@
 </tbody>
 </table>
 </KbCard>
-
 <KbCard title="选择弹窗">
 <blockquote>本页面查询条件使用文本输入和下拉选择，无独立弹窗。</blockquote>
 </KbCard>
-
 <KbCard title="导入">
 <blockquote>本页面无导入功能。</blockquote>
 </KbCard>
-
 <KbCard title="其他按钮">
 <table class="kb-field-tbl">
 <thead>
@@ -254,35 +243,27 @@
 </tbody>
 </table>
 </KbCard>
-
 <KbCard title="保存校验">
 <p><strong>校验1：</strong>经销商不能为空 —— 确保合同关联明确经销商</p>
 <p><strong>详细逻辑</strong></p>
 <ul><li>第1点：保存时校验经销商ID不为空</li></ul>
 <p><strong>系统体现：</strong>toast提醒</p>
 <p><strong>排查SQL</strong></p>
-
-```sql
-SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE CUSTOMER_ID IS NULL;
-```
+<pre><code class="language-sql">SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE CUSTOMER_ID IS NULL;
+</code></pre>
 </KbCard>
-
 <KbCard title="提交校验">
 <p><strong>校验1：</strong>流程启动校验 —— 确保合同数据完整</p>
 <p><strong>详细逻辑</strong></p>
 <ul><li>第1点：通过workFlowStartValid方法进行流程启动前校验</li><li>第2点：校验区域合法性(doCheckArea)</li></ul>
 <p><strong>系统体现：</strong>阻断性报错</p>
 <p><strong>排查SQL</strong></p>
-
-```sql
-SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUSTOMER_ID IS NULL OR CONTRACT_YEAR IS NULL);
-```
+<pre><code class="language-sql">SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUSTOMER_ID IS NULL OR CONTRACT_YEAR IS NULL);
+</code></pre>
 </KbCard>
-
 <KbCard title="应缴纳合同保证金取值逻辑">
 <p><strong>代码位置</strong>：<code>SaSaleContractHeadServiceImpl.java:837-851</code></p>
 <p><strong>业务意义</strong>：合同保存时由后端自动设置应缴保证金金额，数据来源于保证金缴纳标准表</p>
-
 <h4>取值逻辑</h4>
 <p>保存合同（<code>saveHeadData</code>）时，后端调用 <code>getDepositAmt(entid, salesContractType)</code> 自动设置保证金金额：</p>
 <pre><code>public BigDecimal getDepositAmt(Long entId, Long contractType) {
@@ -300,7 +281,6 @@ SELECT * FROM SA_SALE_CONTRACT_HEAD WHERE SALE_CONTRACT_HEAD_ID = #{id} AND (CUS
     }
     return standardAmount.divide(new BigDecimal("10000"), 2, RoundingMode.HALF_UP);
 }</code></pre>
-
 <h4>数据来源</h4>
 <p><strong>数据库表</strong>：<code>CM_DEPOSITS_PAY_STANDARD</code>（保证金缴纳标准表）</p>
 <p><strong>查询 SQL</strong>（<code>SaSaleContractHeadMapper.xml:479-481</code>）：</p>
@@ -310,7 +290,6 @@ WHERE  entid = #{entId}
        AND contract_type = #{contractType}
        AND start_time &lt;= sysdate
        AND end_time &gt;= sysdate</code></pre>
-
 <h4>查询条件</h4>
 <table class="kb-field-tbl">
 <thead><tr><th>条件</th><th>说明</th></tr></thead>
@@ -321,7 +300,6 @@ WHERE  entid = #{entId}
 <tr><td><code>end_time &gt;= sysdate</code></td><td>标准在当前日期未过期</td></tr>
 </tbody>
 </table>
-
 <h4>关键字段对照</h4>
 <table class="kb-field-tbl">
 <thead><tr><th><code>CM_DEPOSITS_PAY_STANDARD</code> 字段</th><th>含义</th><th>用途</th></tr></thead>
@@ -334,7 +312,6 @@ WHERE  entid = #{entId}
 <tr><td><code>END_TIME</code></td><td>有效结束时间</td><td>有效期校验</td></tr>
 </tbody>
 </table>
-
 <h4>可编辑条件</h4>
 <p>通过 <code>allowChange</code> 接口（<code>POST /sa-sale-contract-heads/allow-change</code>）查询 <code>CM_DEPOSITS_PAY_STANDARD.ALLOW_CHANGES</code> 字段：</p>
 <pre><code>SELECT nvl(t.allow_changes,'N') allow_changes
@@ -347,7 +324,6 @@ WHERE  t.contract_type = #{salesContractType}
 <li><code>ALLOW_CHANGES = 'Y'</code>：用户可编辑应缴纳合同保证金金额</li>
 <li><code>ALLOW_CHANGES = 'N'</code> 或为空：字段清空为 <code>null</code>，不可编辑</li>
 </ul>
-
 <h4>完整数据链路</h4>
 <pre><code>CM_DEPOSITS_PAY_STANDARD（保证金缴纳标准表）
   ├── ENTID（事业部ID）
@@ -365,7 +341,6 @@ getDepositAmt() 方法
        │
        ▼
 SA_SALE_CONTRACT_HEAD.DEPOSIT_AMT（合同应缴保证金，单位：万元）</code></pre>
-
 <h4>排查 SQL</h4>
 <pre><code>-- 1. 查询合同的应缴纳保证金
 SELECT s.sale_contract_head_id,
@@ -410,15 +385,12 @@ FROM   sa_sale_contract_head s
              AND p.end_time &gt;= sysdate
 WHERE  s.hz_approve_status = 'NEW';</code></pre>
 </KbCard>
-
 <KbCard title="已缴清（payComplete）判定逻辑">
 <p><strong>代码位置</strong>：<code>CmContractPaymentApplyServiceImpl.java:701</code>（<code>normalCompletion()</code>方法）</p>
 <p><strong>业务意义</strong>：认缴申请（保证金缴纳申请）审批通过后，系统判断认缴总额是否达到保证金标准金额，达到则标记合同"已缴清"</p>
-
 <h4>判定条件</h4>
 <p><strong>认缴总额 ≥ 保证金标准金额（STANDARD_AMOUNT）</strong></p>
 <p>即：<code>CM_CONTRACT_PAYMENT_RECORD</code> 中该合同类型+事业部+经销商的已认缴金额之和 ≥ <code>CM_DEPOSITS_PAY_STANDARD.STANDARD_AMOUNT</code></p>
-
 <h4>完整流程</h4>
 <p><strong>步骤1</strong>：查询认缴概况（<code>CM_CONTRACT_PAYMENT_SUMMARY</code>）</p>
 <ul>
@@ -433,22 +405,18 @@ WHERE  t.entid = #{entid}
        AND t.contract_type = #{contractType}
        AND t.customer_id = #{customerId}
        AND t.payment_status = #{paymentStatus}</code></pre>
-
 <p><strong>步骤4</strong>：判断是否缴清（<code>CmContractPaymentRecordServiceImpl.paymentProcessing()</code>：:81-95）：</p>
 <pre><code>return !NumberUtils.isNullReturnZero(payStandardAmountRs).equals(BigDecimal.ZERO)
         && NumberUtils.isNullReturnZero(totalPayAmount).compareTo(payStandardAmountRs) >= 0;</code></pre>
-
 <p><strong>步骤5</strong>：如果缴清（返回true）：</p>
 <ul>
 <li>更新 <code>CM_CONTRACT_PAYMENT_SUMMARY.PAY_COMPLETE = 'Y'</code></li>
 <li>更新 <code>SA_SALE_CONTRACT_HEAD.PAY_COMPLETE = 'Y'</code>（按 entId + salesContractType + custId 匹配）</li>
 <li>推送CRM</li>
 </ul>
-
 <h4>保证金减免申请的影响</h4>
 <p><strong>结论：保证金减免申请审批通过后，不影响"已缴清"判断。</strong></p>
 <p>减免申请审批通过后的处理（<code>CmDepositsReductionHeadServiceImpl.wfComplete()</code>：:226-242）：审批通过后<strong>只更新减免单自身的状态</strong>（status = APPLY_ENABLE），完全不触碰 <code>SaSaleContractHead.payComplete</code>。</p>
-
 <h4>示例场景</h4>
 <table class="kb-field-tbl">
 <thead><tr><th>项目</th><th>金额</th></tr></thead>
@@ -459,10 +427,8 @@ WHERE  t.entid = #{entid}
 </tbody>
 </table>
 <p><strong>"已缴清" = N</strong>，因为认缴总额(3000) &lt; 标准金额(5000)。减免金额从未参与"已缴清"的计算。要达到"已缴清"=Y，仍需认缴满5000。</p>
-
 <h4>特殊场景：标准金额 = 0</h4>
 <p>合同创建时（<code>SaSaleContractHeadServiceImpl.createContractHandle()</code>：:630-636），如果标准金额为0，直接设置 <code>payComplete = 'Y'</code>，无需认缴。</p>
-
 <h4>关键字段对照</h4>
 <table class="kb-field-tbl">
 <thead><tr><th>表</th><th>字段</th><th>含义</th></tr></thead>
@@ -474,7 +440,6 @@ WHERE  t.entid = #{entid}
 <tr><td><code>CM_CONTRACT_PAYMENT_RECORD</code></td><td><code>AMOUNT</code></td><td>单次认缴金额</td></tr>
 </tbody>
 </table>
-
 <h4>排查 SQL</h4>
 <pre><code>-- 1. 查询合同已缴清状态
 SELECT s.sale_contract_head_id,
@@ -516,7 +481,6 @@ FROM   cm_deposits_reduction_head h
 WHERE  h.customer_id = #{customerId}
 ORDER  BY h.creation_date DESC;</code></pre>
 </KbCard>
-
 <KbCard title="经销期间限制">
 <h4>1. 合同期间校验规则（verifyDate方法）</h4>
 <table class="kb-field-tbl">
@@ -530,26 +494,22 @@ ORDER  BY h.creation_date DESC;</code></pre>
 <tr><td>开始≤结束</td><td>开始日期不能大于结束日期</td><td>开始时间不允许大于结束时间，请重新确认</td></tr>
 </tbody>
 </table>
-
 <p><strong>等价校验逻辑</strong>（<code>SaSaleContractHeadServiceImpl.java:2173</code>）：</p>
-
-```java
-// 1. 开始日期必须为1号
+<pre><code class="language-java">// 1. 开始日期必须为1号
 if (startDate.getDayOfMonth() != 1) {
-    throw new CommonException("合同开始日期须为月度第一天!");
+    throw new CommonException(&quot;合同开始日期须为月度第一天!&quot;);
 }
 // 2. 结束日期必须为月末
 boolean isMonthEnd = endDate.getDayOfMonth() == YearMonth.of(endDate.getYear(), endDate.getMonth()).lengthOfMonth();
 if (!isMonthEnd) {
-    Error += "合同结束日期须为月度最后一天";
+    Error += &quot;合同结束日期须为月度最后一天&quot;;
 }
 // 3. 跨月数必须恰好12个月
 int monthSpan = (endDate.getYear() - startDate.getYear()) * 12 + endDate.getMonthValue() - startDate.getMonthValue();
 if (monthSpan != 11) {
-    Error += "总跨月度数只能为12个月";
+    Error += &quot;总跨月度数只能为12个月&quot;;
 }
-```
-
+</code></pre>
 <h4>2. 五金渠道特殊例外</h4>
 <p><strong>条件</strong>（<code>SaSaleContractHeadServiceImpl.java:724-727</code>）：</p>
 <ul>
@@ -558,7 +518,6 @@ if (monthSpan != 11) {
 <li>存在主合同ID（<code>masterContractId != null</code>）</li>
 </ul>
 <p>满足时<strong>允许按非整年签订合同</strong>，但仍校验：开始时间不大于主合同结束时间</p>
-
 <h4>3. 合同提前结束校验（veifyAhead方法）</h4>
 <p>查询同一客户 + 同一法人编码下、已生效（<code>valid=2</code>）的同类合同，按结束日期倒序取最新一条。</p>
 <p><strong>校验逻辑</strong>：</p>
@@ -566,13 +525,9 @@ if (monthSpan != 11) {
 <li>若该客户无已生效的同类合同 → 通过</li>
 <li>若有 → 新合同开始日期必须在旧合同结束日期之后</li>
 </ol>
-
 <h4>4. 延期发货日期计算</h4>
-
-```java
-delayDate = endDate + Contract_Delay_Date（公司参数）
-```
-
+<pre><code class="language-java">delayDate = endDate + Contract_Delay_Date（公司参数）
+</code></pre>
 <p>即合同结束后仍允许延期发货一段天数。</p>
 <p><strong>涉及的公司参数</strong>：</p>
 <table class="kb-field-tbl">
@@ -584,7 +539,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 <tr><td><code>CONTRACT_ARCHIVE_DELAYDAY</code></td><td>合同延期归档天数</td></tr>
 </tbody>
 </table>
-
 <h4>5. 推送CRM期间处理（doCrm方法）</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -597,15 +551,12 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 </tbody>
 </table>
 </KbCard>
-
 <KbCard title="状态机">
 <h4>状态机流转图</h4>
-
-```text
-新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审批 ──归档──→ 已归档
+<pre><code class="language-text">新建 ──保存──→ 已保存 ──提交──→ 审批中 ──OA审批通过──→ 已审批 ──归档──→ 已归档
                                 │
                                 └──OA审批拒绝──→ 已拒绝
-```
+</code></pre>
 <h4>状态机列表</h4>
 <table class="kb-field-tbl">
 <thead>
@@ -620,7 +571,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 </tbody>
 </table>
 </KbCard>
-
 <KbCard title="表1：SA_SALE_CONTRACT_HEAD（年度经销合同头表）">
 <table class="kb-field-tbl">
 <thead>
@@ -643,11 +593,9 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 </tbody>
 </table>
 </KbCard>
-
 </div>
 </div>
 </div>
-
 <div id="faq" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -689,8 +637,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE CUSTOMER_ID IS NULL OR CUSTOMER_NAME IS NULL;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-2" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -708,8 +654,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE CUSTOMER_CODE = #{customerCode};
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-3" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -723,8 +667,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
     AND HZ_APPROVE_STATUS = 'NEW';
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-4" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -737,8 +679,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE SALE_CONTRACT_HEAD_ID IS NULL OR SALE_CONTRACT_HEAD_ID = 0;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-5" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -753,8 +693,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
     AND HZ_APPROVE_STATUS = 'NEW';
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-6" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -767,8 +705,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE START_DATE &gt; END_DATE;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -782,8 +718,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE EXTRACT(DAY FROM START_DATE) != 1;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-8" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -798,8 +732,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE C.CORPORATE_CODE IS NULL;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-9" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -814,8 +746,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE S.PARENT_CONTRACT_ID IS NOT NULL AND P.SALE_CONTRACT_HEAD_ID IS NULL;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-10" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -830,8 +760,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
     AND ADD_MONTHS(ACTUAL_END_DATE, 1) &gt; END_DATE;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-11" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -849,8 +777,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
     AND END_DATE &gt;= #{newStartDate};
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-12" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -866,8 +792,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
     AND S.HZ_APPROVE_STATUS = 'NEW';
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-13" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -880,8 +804,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE PARAM_CODE = 'SALE_CONTRACT_DELAY_PIGEONHOLE_DAYS';
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-14" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -896,8 +818,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
     AND PIGEONHOLE_DATE IS NULL;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-15" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -910,8 +830,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
   WHERE CUST_CODE IS NULL OR CUST_CODE = '';
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-16" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -922,8 +840,6 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
     <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
 --</code></pre></div>
 </div>
-
-
 <div id="err-detail-17" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
@@ -934,12 +850,8 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
 --</code></pre></div>
 </div>
-
-
 </KbCard>
-
 <KbCard title="常见问题">
-
 <div class="faq-qa-wrap">
 <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
   <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
@@ -952,11 +864,9 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 </div>
 </div>
 </KbCard>
-
 </div>
 </div>
 </div>
-
 <div id="changelog" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
@@ -973,14 +883,11 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 </div>
 </div>
 </div>
-
 <div id="history" style="display:none;">
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="历史排查记录">
-
 <!-- 空白:待补充 -->
-
 </KbCard>
 </div>
 </div>
