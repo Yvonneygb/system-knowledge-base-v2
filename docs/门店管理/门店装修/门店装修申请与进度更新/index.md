@@ -819,6 +819,7 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <tr><td>请先选择门店编码</td><td>计算扣除金额</td><td>门店编码terminalCode为空</td><td>中</td><td style="text-align:center;"><a href="#err-detail-27" class="view-btn">查看</a></td></tr>
 <tr><td>本次店面装修面积不能大于门店面积</td><td>面积校验</td><td>thistimeTerminalArea&gt;terminalArea</td><td>中</td><td style="text-align:center;"><a href="#err-detail-28" class="view-btn">查看</a></td></tr>
 <tr><td>店面实际装修面积不能大于本次店面装修面积</td><td>面积校验</td><td>thisTerminalArea&gt;thistimeTerminalArea</td><td>中</td><td style="text-align:center;"><a href="#err-detail-29" class="view-btn">查看</a></td></tr>
+<tr><td>已审批通过的单据如何解除CRM软装订单关联</td><td>Q8</td><td>审批通过(APPROVED)的单据无法直接解绑，前端"移除软装订单"按钮不显示；作废时自动解绑但要求状态为NEW或REJECTED</td><td>中</td><td style="text-align:center;"><a href="#err-detail-30" class="view-btn">查看</a></td></tr>
 </tbody>
 </table>
 </KbCard>
@@ -1345,6 +1346,22 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
   </div>
 </div>
 
+<div id="err-detail-30" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>已审批通过的单据如何解除CRM软装订单关联</h4>
+    <h5>详细逻辑</h5>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户需要在审批通过后解除CRM软装订单的关联关系<br><strong>逻辑分析：</strong>审批通过（APPROVED）的单据，前端"移除软装订单"按钮显示条件为审批状态不在RUN/APPROVED/SUSPEND/RETURN中，APPROVED状态不满足此条件。作废时自动解绑逻辑在<code>FinFeeApplyFinishedHeaderServiceImpl.operate()</code>中，但作废也要求单据状态为NEW（新建）或REJECTED（审核拒绝），已审批通过的单据不满足作废条件。<br><strong>结论：</strong>已审批通过的单据无法直接解除CRM软装订单关联，这是业务设计上的限制。</div>
+<h5>排查SQL</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT f.terminal_apply_id   AS 装修申请ID,
+         f.terminal_apply_no   AS 申请单号,
+         f.hz_approve_status   AS 审批状态,
+         f.update_time         AS 最后更新时间
+  FROM   fin_fee_apply_finished_header f
+  WHERE  f.terminal_apply_id = #{传入的terminalApplyId};</code></pre>
+  </div>
+</div>
+
 <div class="tab-pad">
 <div class="kl-wrap">
 <KbCard title="Q1：装修申请提交时报&quot;预算剩余可用额度不足&quot;">
@@ -1380,6 +1397,16 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <KbCard title="Q7：提交时报&quot;单据正在申请变更中，不可提交&quot;">
 <p><strong>根因</strong>：isModify=2，单据已发起变更申请</p>
 <p><strong>解决方案</strong>：先完成或撤销变更申请，再提交</p>
+</KbCard>
+
+<KbCard title="Q8：已审批通过的门店装修申请，如何解除与CRM软装订单的关联关系？">
+<p><strong>根因</strong>：审批通过（APPROVED）的单据，前端"移除软装订单"按钮不显示，无法直接解绑</p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li><strong>手动解绑</strong>：前端"移除软装订单"按钮，需满足审批状态不在<code>RUN</code>/<code>APPROVED</code>/<code>SUSPEND</code>/<code>RETURN</code>中。审批通过的单据不满足此条件，无法直接解绑</li>
+<li><strong>作废时自动解绑</strong>：<code>FinFeeApplyFinishedHeaderServiceImpl.operate()</code>在作废时自动查询并解绑CRM软装订单。但作废也要求单据状态为<code>NEW</code>（新建）或<code>REJECTED</code>（审核拒绝）</li>
+</ol>
+<p><strong>结论</strong>：已审批通过的单据无法直接解除CRM软装订单关联，这是业务设计上的限制</p>
 </KbCard>
 
 </div>
