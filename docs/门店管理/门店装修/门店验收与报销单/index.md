@@ -190,6 +190,71 @@
 <ul><li><strong>业务意义</strong>：验收报销审批通过后自动生成额度内/外兑现记录</li><li><strong>具体逻辑描述</strong>：</li><li>生成FIN_FEE_TERMINAL_CASHOUT(额度内兑现)记录</li><li>生成FIN_FEE_TERMINAL_RE_CASHOUT(额度外兑现)记录</li><li>回写装修申请单的验收信息</li><li>同步资金池</li></ul>
 </KbCard>
 
+<KbCard num="4" title="重点逻辑4：软装/灯具补贴标准及相关计算字段的落表分析">
+<ul>
+<li><strong>业务意义</strong>：明确哪些字段落表、哪些字段是关联查询或动态计算，有助于排查数据异常</li>
+</ul>
+<h4>4.1 软装补贴标准、灯具补贴标准 — 关联查询，不落表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段</th><th>是否落表 FIN_FEE_CHECK_BX_HEADER</th><th>实际来源</th></tr>
+</thead>
+<tbody>
+<tr><td>softPurchaseStandard（软装补贴标准）</td><td>否</td><td>关联查询 FIN_FEE_APPLY_FINISHED_HEADER.SOFT_PURCHASE_STANDARD</td></tr>
+<tr><td>lanternStandard（灯具补贴标准）</td><td>否</td><td>关联查询 FIN_FEE_APPLY_FINISHED_HEADER.LANTERN_STANDARD</td></tr>
+</tbody>
+</table>
+<p>关联查询SQL（FinFeeCheckBxHeaderMapper.xml:1056-1114 getLovSearch）：</p>
+<pre><code>FROM fin_fee_check_bx_header cbh
+LEFT JOIN fin_fee_apply_finished_header afh
+  ON cbh.terminal_apply_id = afh.terminal_apply_id</code></pre>
+<p>通过 GET_DIV_DICT_NAME 函数将值集编码转为字典名称返回前端。前端获取方式：用户选择门店装修申请单（LOV）时，从返回结果中直接设置到 headDs。</p>
+<h4>4.2 计算字段 — 不落表，每次查询时动态计算</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>计算字段</th><th>是否落表</th><th>计算公式</th></tr>
+</thead>
+<tbody>
+<tr><td>softPurchaseStandardAmt（软装补贴标准金额）</td><td>否</td><td>softPurchaseStandard × reviewArea</td></tr>
+<tr><td>lanternStandardAmt（灯具补贴标准金额）</td><td>否</td><td>lanternStandard × reviewArea</td></tr>
+<tr><td>softReachPurchaseAmt（软装达标金额）</td><td>否</td><td>softPurchaseStandardAmt × softApprovalStandard</td></tr>
+<tr><td>lanternReachAmt（灯具达标金额）</td><td>否</td><td>lanternStandardAmt × lanternApprovalStandard</td></tr>
+<tr><td>softDeductAmt（软装扣罚金额）</td><td>否</td><td>max(softReachPurchaseAmt - softPurchaseAmt, 0)</td></tr>
+<tr><td>lanternDeductAmt（灯具扣罚金额）</td><td>否</td><td>max(lanternReachAmt - lanternAmt, 0)</td></tr>
+<tr><td>totalDeductAmt（总扣罚金额）</td><td>否</td><td>softDeductAmt + lanternDeductAmt</td></tr>
+<tr><td>softPurchasePercent（软装采购完成率）</td><td>否</td><td>softPurchaseAmt / softPurchaseStandardAmt</td></tr>
+<tr><td>lanternPercent（灯具采购完成率）</td><td>否</td><td>lanternAmt / lanternStandardAmt</td></tr>
+</tbody>
+</table>
+<h4>4.3 何时计算</h4>
+<ul>
+<li><strong>计算触发点</strong>：FinFeeCheckBxHeaderServiceImpl.java:188，查询详情时创建 SubsidyAndPurchaseVO 触发全部计算</li>
+<li><strong>计算逻辑集中在</strong>：SubsidyAndPurchaseVO.java:80-113 构造函数内</li>
+<li><strong>计算结果通过</strong> vo.setAllDeductAmt(...) 设置到 VO 返回前端</li>
+</ul>
+<h4>4.4 数据流转总结</h4>
+<pre><code>FIN_FEE_APPLY_FINISHED_HEADER (装修申请完成单)
+  ├── SOFT_PURCHASE_STANDARD (软装补贴标准) ─── 落表 ✓
+  └── LANTERN_STANDARD (灯具补贴标准) ──────── 落表 ✓
+         │
+         │  getLovSearch 关联查询
+         ▼
+FIN_FEE_CHECK_BX_HEADER (验收报销单)
+  ├── softPurchaseStandard ─── 不落表，关联查询
+  ├── lanternStandard ─────── 不落表，关联查询
+  ├── softApprovalStandard ── 落表 ✓ (软装审批标准)
+  ├── lanternApprovalStandard ─ 落表 ✓ (灯具审批标准)
+  └── reviewArea ─────────── 落表 ✓ (复核面积)
+         │
+         │  selectDetail() → SubsidyAndPurchaseVO 动态计算
+         ▼
+前端展示 (不持久化，每次查询重新计算)
+  ├── softPurchaseStandardAmt  = softPurchaseStandard × reviewArea
+  ├── softReachPurchaseAmt    = softPurchaseStandardAmt × softApprovalStandard
+  ├── softDeductAmt           = max(softReachPurchaseAmt - softPurchaseAmt, 0)
+  └── totalDeductAmt          = softDeductAmt + lanternDeductAmt</code></pre>
+</KbCard>
+
 </div>
 </div>
 </div>
