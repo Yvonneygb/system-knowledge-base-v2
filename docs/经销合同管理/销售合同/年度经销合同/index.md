@@ -460,7 +460,7 @@ WHERE  t.entid = #{entid}
 <tr><td>减免申请通过</td><td>2000</td></tr>
 </tbody>
 </table>
-<p><strong>"已缴清" = N</strong>，因为认缴总额(3000) < 标准金额(5000)。减免金额从未参与"已缴清"的计算。要达到"已缴清"=Y，仍需认缴满5000。</p>
+<p><strong>"已缴清" = N</strong>，因为认缴总额(3000) &lt; 标准金额(5000)。减免金额从未参与"已缴清"的计算。要达到"已缴清"=Y，仍需认缴满5000。</p>
 
 <h4>特殊场景：标准金额 = 0</h4>
 <p>合同创建时（<code>SaSaleContractHeadServiceImpl.createContractHandle()</code>：:630-636），如果标准金额为0，直接设置 <code>payComplete = 'Y'</code>，无需认缴。</p>
