@@ -2,6 +2,49 @@
 
 <div id="biz-intro" style="display:none;">
 <div class="tab-pad">
+
+<div class="kl-card">
+  <div class="biz-kl-hdr">
+    <span class="biz-tag" style="background:rgba(124,58,237,0.08);color:#7C3AED;border-color:rgba(124,58,237,0.18);"> 业务背景</span>
+    <h2>认缴业务从哪来，到哪去</h2>
+    <p>从经销商签署年度经销合同、打款到账，到通过认缴将款项认到具体经销商编码的完整链路</p>
+  </div>
+  <div class="biz-steps" style="counter-reset:step;">
+    <div class="biz-step-item">
+      <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3V13M3 8H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <h5>签署合同</h5>
+      <small>经销商与公司签署年度经销合同<br>根据合同类型缴纳合同保证金</small>
+    </div>
+    <div class="biz-step-arrow">&rarr;</div>
+    <div class="biz-step-item">
+      <div class="biz-step-circle" style="background:linear-gradient(135deg,#3B82F6,#2563EB);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8H13M9 4L13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h5>打款到账</h5>
+      <small>经销商通过自有公司账户向集团转账<br>每个事业部对应一个收款账户</small>
+    </div>
+    <div class="biz-step-arrow">&rarr;</div>
+    <div class="biz-step-item">
+      <div class="biz-step-circle" style="background:linear-gradient(135deg,#F59E0B,#D97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M2 6H14" stroke="white" stroke-width="1.5"/></svg></div>
+      <h5>财务台账</h5>
+      <small>财务共享系统根据收款账户生成台账<br>含打款法人+事业部+虚拟经销商</small>
+    </div>
+    <div class="biz-step-arrow">&rarr;</div>
+    <div class="biz-step-item">
+      <div class="biz-step-circle" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 2L12 6M8 2V14" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h5>同步DMS</h5>
+      <small>台账同步到DMS系统<br>生成【合同保证金】数据，待认缴状态</small>
+    </div>
+    <div class="biz-step-arrow">&rarr;</div>
+    <div class="biz-step-item">
+      <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13L6 9L9 11L13 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h5>认缴操作</h5>
+      <small>通过认缴动作<br>将款项认到具体经销商编码上</small>
+    </div>
+  </div>
+  <div class="kl-tip" style="margin-top:14px;">
+    <strong>认缴的本质：</strong>款已经收到事业部账户内了，但目前系统不清楚这笔款对应的是哪个经销商编码，所以需要通过认缴这个动作，将款项认到具体的经销商编码上。
+  </div>
+</div>
+
 <div class="kl-wrap">
   <div class="kl-card">
     <div class="biz-kl-hdr">
