@@ -291,8 +291,39 @@
 </KbCard>
 
 <KbCard title="选择弹窗">
-<h4>弹窗1：合同明细选择弹窗</h4>
-<p>在编辑页点击"选择合同明细"按钮时弹出，展示选中合同的全部明细行。</p>
+<h4>弹窗1：合同明细选择弹窗（可选出库单）</h4>
+<p>在编辑页点击"选择合同明细"按钮时弹出，展示选中合同的可签收明细行。</p>
+<h4>可选出库单条件</h4>
+<p>核心SQL：<code>DrpDiffprocbillLineMapper.xml:273-324</code> <code>queryContractDeliveryLine</code></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ic.accept_status IN ('WAITING','PART_ACCEPTED')</code></td><td>出库确认状态为"待确认"或"部分确认"</td></tr>
+<tr><td><code>nvl(ic.accepted_qty, 0) &lt; ic.sales_real_quantity</code></td><td>已确认数量小于实际销售数量（还有未确认数量）</td></tr>
+<tr><td><code>ih.source_name = 'DELIVERY'</code></td><td>来源名称为"发货"</td></tr>
+<tr><td><code>ih.business_type NOT LIKE ('免费%')</code></td><td>排除"免费"开头的业务类型</td></tr>
+<tr><td><code>ih.ad_deduct_type &lt;&gt; '广告费'</code></td><td>排除广告费扣减类型</td></tr>
+<tr><td><code>pc.contract_code = #{contractCode}</code></td><td>按所选合同编码过滤</td></tr>
+</tbody>
+</table>
+<h4>表关联关系</h4>
+<pre><code>epm_project_contract pc (项目合同)
+  JOIN inv_out_bill_intf_head_b ih (出库单接口头表) ON ih.contract_number = pc.contract_code
+  JOIN inv_out_bill_intf_confirm_b ic (出库单确认行表) ON ih.delivery_id = ic.delivery_id
+  JOIN inv_out_confirm_line cl (出库确认行表) ON ic.source_doc_detail_id = cl.confirm_line_id
+  JOIN item it (产品表) ON ic.item_number = it.item_code
+  LEFT JOIN epm_return_order_offset so (退货抵扣表) ON so.confirm_line_id = ic.source_doc_detail_id</code></pre>
+<h4>前端交互流程（detail.tsx:132-177）</h4>
+<ol>
+<li>用户选择合同（contract_code）</li>
+<li>用户选择批量设置签收时间（model_sign_date）</li>
+<li>前端校验：合同未选则提示"请先选择合同"，签收时间未选则提示"请先选择批量设置签收时间"</li>
+<li>调用 verifyContract 验证合同有效性</li>
+<li>调用 getContractLines(contractCode) 获取合同明细（即可选出库单行）</li>
+<li>默认所有明细行选中（this_receipt: 2），签收时间设为用户选择的批量签收时间</li>
+</ol>
 <table class="kb-field-tbl">
 <thead>
 <tr><th>字段名</th><th>组件</th><th>业务释义</th><th>取值/赋值逻辑</th></tr>

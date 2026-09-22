@@ -263,6 +263,52 @@
 <blockquote><strong>总结：</strong>灯具补贴标准和软装补贴标准仅在"软装设计师提交方案"节点可编辑（变更页面同样仅此节点可编辑），其余页面均为只读展示。</blockquote>
 </KbCard>
 
+<KbCard num="7" title="重点逻辑7：软装/灯具补贴标准对下游逻辑的影响">
+<p><strong>业务意义：</strong>软装补贴标准（<code>SOFT_PURCHASE_STANDARD</code>）和灯具补贴标准（<code>LANTERN_STANDARD</code>）由软装设计师在"软装设计师提交方案"节点选择，直接影响后续验收报销单的补贴金额计算、扣罚金额计算和采购完成率计算</p>
+<p><strong>值集来源：</strong>软装补贴标准来自值集 <code>AE.PURCHASE_STANDARD</code>，灯具补贴标准来自值集 <code>AE.LANTERN_PURCHASE_STANDARD</code></p>
+<h4>影响的下游单据和逻辑链路</h4>
+<pre><code>软装设计师选择 softPurchaseStandard / lanternStandard
+   │
+   ├──→ 装修申请完成单 (FIN_FEE_APPLY_FINISHED_HEADER)
+   │      字段: SOFT_PURCHASE_STANDARD, LANTERN_STANDARD
+   │      影响: 作为后续验收报销的补贴标准来源
+   │
+   ├──→ 装修申请变更单 (FIN_FEE_APPLY_CHANGE_HEADER)
+   │      字段: SOFT_PURCHASE_STANDARD, LANTERN_STANDARD
+   │      影响: 变更流程中同样需维护补贴标准
+   │
+   └──→ 验收报销单 (FIN_FEE_CHECK_BX_HEADER)
+          通过 SubsidyAndPurchaseVO 计算以下下游字段:
+          ├── softPurchaseStandardAmt  = softPurchaseStandard × reviewArea        (软装补贴标准金额)
+          ├── lanternStandardAmt      = lanternStandard × reviewArea              (灯具补贴标准金额)
+          ├── softReachPurchaseAmt    = softPurchaseStandardAmt × softApprovalStandard  (软装达标金额)
+          ├── lanternReachAmt         = lanternStandardAmt × lanternApprovalStandard    (灯具达标金额)
+          ├── softPurchasePercent     = softPurchaseAmt / softPurchaseStandardAmt       (软装采购完成率)
+          ├── lanternPercent          = lanternAmt / lanternStandardAmt                 (灯具采购完成率)
+          ├── softDeductAmt           = max(softReachPurchaseAmt - softPurchaseAmt, 0)  (软装扣罚金额)
+          ├── lanternDeductAmt        = max(lanternReachAmt - lanternAmt, 0)            (灯具扣罚金额)
+          └── totalDeductAmt          = softDeductAmt + lanternDeductAmt                (总扣罚金额)
+                 │
+                 ├──→ 扣罚金额(totalDeductAmt) 影响最终验收报销金额
+                 └──→ 采购完成率影响验收得分率</code></pre>
+<h4>核心计算类: SubsidyAndPurchaseVO</h4>
+<p>文件路径: <code>ae-business/src/main/java/com/arrow/dms/ae/biz/storeCheck/domain/vo/SubsidyAndPurchaseVO.java</code></p>
+<p>该类是软装/灯具补贴计算的核心。构造函数接收销售订单明细列表和验收报销单头实体，在构造时完成全部补贴计算。</p>
+<h4>前端计算逻辑</h4>
+<p>文件路径: <code>h0-front/packages/arrow-ae/src/pages/storeManage/storeAcceptanceReimbursementInfo/views/DetailPage/index.tsx</code></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>计算字段</th><th>公式</th><th>代码行号</th></tr>
+</thead>
+<tbody>
+<tr><td>软装补贴标准金额</td><td><code>softPurchaseStandard × reviewArea</code></td><td>第638-642行</td></tr>
+<tr><td>软装采购达标金额</td><td><code>softPurchaseStandard × reviewArea × softApprovalStandard</code></td><td>第643-647行</td></tr>
+<tr><td>软装扣罚金额</td><td><code>max(softReachPurchaseAmt - softPurchaseAmt, 0)</code></td><td>第664-670行</td></tr>
+<tr><td>总扣罚金额</td><td><code>softDeductAmt + lanternDeductAmt</code></td><td>第664-670行</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 </div>
 </div>
 </div>
