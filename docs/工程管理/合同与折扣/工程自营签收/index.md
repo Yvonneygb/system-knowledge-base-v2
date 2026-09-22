@@ -295,6 +295,47 @@
 <p>在编辑页点击"选择合同明细"按钮时弹出，展示选中合同的可签收明细行。</p>
 <h4>可选出库单条件</h4>
 <p>核心SQL：<code>DrpDiffprocbillLineMapper.xml:273-324</code> <code>queryContractDeliveryLine</code></p>
+<pre><code>SELECT ih.delivery_number invbillno,
+       ih.delivery_date outbillDate,
+       cl.inv_out_bill_line_id sourceBillId,
+       ih.order_number saSalebillNo,
+       it.item_id itemId,
+       it.item_code itemCode,
+       it.item_name itemName,
+       ic.accepted_qty acceptedQty,
+       ic.sales_real_quantity salesRealQuantity,
+       ic.sales_real_quantity - nvl(ic.accepted_qty,0) remainingAcceptedQty,
+       ic.sales_real_quantity - nvl(ic.accepted_qty, 0) qty,
+       ic.source_doc_detail_id lineNumber,
+       ic.line_number lineno,
+       ic.dealer_parice price,
+       round((ic.sales_real_quantity - nvl(ic.accepted_qty,0)) * ic.dealer_parice,2) amount,
+       ih.delivery_ou_code tradingCompanyCode,
+       ih.delivery_ou_name tradingCompanyName,
+       ic.engineering_price contractPrice,
+       round((ic.sales_real_quantity - nvl(ic.accepted_qty, 0)) * ic.engineering_price, 2) contractAmount,
+       ic.source_doc_line_id sourceDocLineId,
+       'inv_out' sourceType,
+       ic.virtual_flag virtualFlag,
+       nvl(os.offset_qty, 0) return_qty
+FROM epm_project_contract pc
+JOIN inv_out_bill_intf_head_b ih ON ih.contract_number = pc.contract_code
+JOIN inv_out_bill_intf_confirm_b ic ON ih.delivery_id = ic.delivery_id
+JOIN inv_out_confirm_line cl ON ic.source_doc_detail_id = cl.confirm_line_id
+JOIN item it ON ic.item_number = it.item_code
+LEFT JOIN (SELECT SUM(so.offset_qty) offset_qty,
+                  so.confirm_line_id
+           FROM epm_return_order_offset so
+           GROUP BY so.confirm_line_id) os
+       ON os.confirm_line_id = ic.source_doc_detail_id
+WHERE ic.accept_status IN ('WAITING','PART_ACCEPTED')
+  AND nvl(ic.accepted_qty, 0) &lt; ic.sales_real_quantity
+  AND ih.source_name = 'DELIVERY'
+  AND ih.business_type NOT LIKE ('免费%')
+  AND ih.ad_deduct_type &lt;&gt; '广告费'
+  AND pc.contract_code = #{contractCode}
+ORDER BY ih.delivery_date ASC</code></pre>
+<h4>条件说明</h4>
 <table class="kb-field-tbl">
 <thead>
 <tr><th>条件</th><th>说明</th></tr>
