@@ -500,16 +500,6 @@ and trunc(sysdate,'dd') - trunc(decoration_interval_date,'dd') &lt; #{advancePer
 </tbody>
 </table>
 
-<h4>Service层关键逻辑（MktTerminalServiceImpl.java:48-57）</h4>
-<pre><code>public Page&lt;MktTerminal&gt; finFeeApplyLov(PageRequest pageRequest, MktTerminal mktTerminal) {
-    if (mktTerminal.getEntid() == null) {
-        mktTerminal.setEntid(organizationId());      // 默认当前组织ID
-    }
-    mktTerminal.setAdvancePermissibleTime(advancePermissibleTime());  // 装修间隔天数
-    mktTerminal.setCreator(DetailsHelper.getUserDetails().getUsername());
-    mktTerminal.setCustCode(custCode());              // 经销商编码
-    return PageHelper.doPageAndSort(pageRequest, () -&gt; mktTerminalRepository.finFeeApplyLov(mktTerminal));
-}</code></pre>
 </KbCard>
 
 <KbCard title="选择弹窗">
