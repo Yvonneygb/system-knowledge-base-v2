@@ -205,6 +205,49 @@
 
 - 1、勾选"战略工程相关"后，可选择战略项目和战略协议
 - 2、战略工程关联后，合同享受战略工程折扣政策
+
+<h4>4.1 "战略工程相关"字段的可编辑条件</h4>
+<ul>
+<li><strong>字段名</strong>：strategicRelated（战略工程相关）</li>
+<li><strong>数据库列</strong>：<code>EPM_PROJECT_CONTRACT.STRATEGIC_RELATED</code></li>
+<li><strong>值</strong>：<code>2</code> = 是（关联战略工程），非2 = 否</li>
+<li><strong>可编辑条件</strong>：<strong>始终禁用（disabled）</strong>，不可手动勾选/取消</li>
+<li><strong>数据来源</strong>：其值由项目数据自动带出，非用户手动勾选</li>
+<li><strong>前端代码</strong>：<code>EpmProjectContract/views/DetailPage/index.tsx:1578</code> 中 <code>&lt;CheckBox name="strategicRelated" disabled/&gt;</code></li>
+</ul>
+
+<h4>4.2 "战略工程相关"字段影响的下游逻辑</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>下游逻辑</th><th>触发条件</th><th>代码位置</th></tr>
+</thead>
+<tbody>
+<tr><td>工作流审批人确定</td><td><code>strategicRelated == 2</code> 且组织ID=101(住贸)</td><td><code>EpmProjectContractServiceImpl.java:1817-1823</code></td></tr>
+<tr><td>折扣变更工作流参数</td><td><code>strategicRelated</code> 值传入工作流变量</td><td><code>EpmDiscountEcnServiceImpl.java:459</code></td></tr>
+<tr><td>住贸常规项目标记</td><td><code>strategicRelated == 1</code> 且客户编码=AW08999</td><td><code>EpmDiscountEcnServiceImpl.java:448</code></td></tr>
+<tr><td>前端显示战略项目字段</td><td><code>strategicRelated == 2</code></td><td>前端各合同详情页</td></tr>
+<tr><td>报表查询引用</td><td>关联查询 <code>strategic_related</code></td><td>终端返现报表、折扣单报表等</td></tr>
+</tbody>
+</table>
+
+<h4>4.3 工作流审批人确定逻辑</h4>
+<pre><code>// EpmProjectContractServiceImpl.java:1817-1823
+if (epmProjectContractSaveDTO.getOrganizationId().equals(101L)) {
+    if (strategicRelated.equals(2L)) {
+        // 通过战略项目ID查询战略项目经理工号(empid)
+        EpmProject epmProject = epmProjectRepository.selectByPrimary(strategicProjectId);
+        IamUser user = ...; // 确定审批人
+    }
+}</code></pre>
+<p>当组织ID为101（住贸）且 <code>strategicRelated == 2</code> 时，通过战略项目ID查询战略项目经理工号(empid)，用于确定工作流审批人。</p>
+
+<h4>4.4 折扣变更工作流参数传递</h4>
+<pre><code>// EpmDiscountEcnServiceImpl.java:448,459
+// 判断是否为"住贸常规项目"——strategicRelated == 1 且客户为AW08999
+paramMap.put("zhuMaoProject", strategicRelated == AeBaseConstants.ONE 
+        && customerCode.equals("AW08999") ? "1" : "");
+paramMap.put("strategicRelated", strategicRelated);</code></pre>
+<p>将 <code>strategicRelated</code> 的值传入工作流变量，供工作流分支判断。</p>
 </KbCard>
 
 </div>
