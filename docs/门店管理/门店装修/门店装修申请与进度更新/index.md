@@ -465,6 +465,53 @@
 </table>
 </KbCard>
 
+<KbCard title="可选门店条件">
+<p>选择门店的LOV为 <code>AE.STORE_FINFEEAPPLYCLOSE_DATA_VIEW</code>，后端接口为 <code>/v1/{organizationId}/mkt-terminals/fin-fee-apply-lov</code>，核心SQL在 <code>MktTerminalMapper.xml</code> 的 <code>selectListLov</code>。</p>
+
+<h4>过滤条件</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>co.valid = 2</code></td><td>客户组织记录有效</td></tr>
+<tr><td><code>mt.usable = 2</code></td><td>门店可用状态</td></tr>
+<tr><td><code>terminal_stat != 2</code></td><td>排除已撤店状态的门店</td></tr>
+<tr><td><code>MT.TERMINAL_ID not in (...)</code></td><td>排除已有装修申请中的门店（HZ_APPROVE_STATUS为NEW或RUN），或装修间隔日期未满允许天数</td></tr>
+<tr><td><code>MT.ENTID = #{entid}</code></td><td>按当前组织ID（事业部）过滤</td></tr>
+</tbody>
+</table>
+
+<h4>装修间隔期逻辑</h4>
+<pre><code>-- 如果门店的 decoration_interval_date 不为空，
+-- 且当前日期与该日期的差值小于 advancePermissibleTime 天，
+-- 则该门店不在可选列表中
+decoration_interval_date is not null 
+and trunc(sysdate,'dd') - trunc(decoration_interval_date,'dd') &lt; #{advancePermissibleTime}</code></pre>
+
+<h4>用户权限过滤</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>用户类型</th><th>过滤条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>经销商 (<code>userType == 'D'</code>)</td><td><code>MT.CUST_CODE IN (SELECT acct_code FROM hzero.arrow_dealer_user_link WHERE UPPER(LOGIN_NAME) = UPPER(当前用户名))</code></td><td>只能看自己关联的门店</td></tr>
+<tr><td>区域经理 (<code>userType == 'E'</code> 且角色 <code>REGION_MANAGER</code>)</td><td><code>MT.CUST_ID in (SELECT customer_id FROM CUSTOMER_ACCESS_CTRL WHERE USERID = 当前用户ID)</code></td><td>只能看自己有权限的客户下的门店</td></tr>
+</tbody>
+</table>
+
+<h4>Service层关键逻辑（MktTerminalServiceImpl.java:48-57）</h4>
+<pre><code>public Page&lt;MktTerminal&gt; finFeeApplyLov(PageRequest pageRequest, MktTerminal mktTerminal) {
+    if (mktTerminal.getEntid() == null) {
+        mktTerminal.setEntid(organizationId());      // 默认当前组织ID
+    }
+    mktTerminal.setAdvancePermissibleTime(advancePermissibleTime());  // 装修间隔天数
+    mktTerminal.setCreator(DetailsHelper.getUserDetails().getUsername());
+    mktTerminal.setCustCode(custCode());              // 经销商编码
+    return PageHelper.doPageAndSort(pageRequest, () -&gt; mktTerminalRepository.finFeeApplyLov(mktTerminal));
+}</code></pre>
+</KbCard>
+
 <KbCard title="选择弹窗">
 <table class="kb-field-tbl">
 <thead>
