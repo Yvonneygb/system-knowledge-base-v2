@@ -205,49 +205,28 @@
 
 - 1、勾选"战略工程相关"后，可选择战略项目和战略协议
 - 2、战略工程关联后，合同享受战略工程折扣政策
+</KbCard>
 
-<h4>4.1 "战略工程相关"字段的可编辑条件</h4>
-<ul>
-<li><strong>字段名</strong>：strategicRelated（战略工程相关）</li>
-<li><strong>数据库列</strong>：<code>EPM_PROJECT_CONTRACT.STRATEGIC_RELATED</code></li>
-<li><strong>值</strong>：<code>2</code> = 是（关联战略工程），非2 = 否</li>
-<li><strong>可编辑条件</strong>：<strong>始终禁用（disabled）</strong>，不可手动勾选/取消</li>
-<li><strong>数据来源</strong>：其值由项目数据自动带出，非用户手动勾选</li>
-<li><strong>前端代码</strong>：<code>EpmProjectContract/views/DetailPage/index.tsx:1578</code> 中 <code>&lt;CheckBox name="strategicRelated" disabled/&gt;</code></li>
-</ul>
+<KbCard num="5" title="重点逻辑5：纯定制合同处理">
+<KbQuote>纯定制合同不要求维护产品清单，简化操作流程</KbQuote>
 
-<h4>4.2 "战略工程相关"字段影响的下游逻辑</h4>
-<table class="kb-field-tbl">
-<thead>
-<tr><th>下游逻辑</th><th>触发条件</th><th>代码位置</th></tr>
-</thead>
-<tbody>
-<tr><td>工作流审批人确定</td><td><code>strategicRelated == 2</code> 且组织ID=101(住贸)</td><td><code>EpmProjectContractServiceImpl.java:1817-1823</code></td></tr>
-<tr><td>折扣变更工作流参数</td><td><code>strategicRelated</code> 值传入工作流变量</td><td><code>EpmDiscountEcnServiceImpl.java:459</code></td></tr>
-<tr><td>住贸常规项目标记</td><td><code>strategicRelated == 1</code> 且客户编码=AW08999</td><td><code>EpmDiscountEcnServiceImpl.java:448</code></td></tr>
-<tr><td>前端显示战略项目字段</td><td><code>strategicRelated == 2</code></td><td>前端各合同详情页</td></tr>
-<tr><td>报表查询引用</td><td>关联查询 <code>strategic_related</code></td><td>终端返现报表、折扣单报表等</td></tr>
-</tbody>
-</table>
+**具体逻辑**：
 
-<h4>4.3 工作流审批人确定逻辑</h4>
-<pre><code>// EpmProjectContractServiceImpl.java:1817-1823
-if (epmProjectContractSaveDTO.getOrganizationId().equals(101L)) {
-    if (strategicRelated.equals(2L)) {
-        // 通过战略项目ID查询战略项目经理工号(empid)
-        EpmProject epmProject = epmProjectRepository.selectByPrimary(strategicProjectId);
-        IamUser user = ...; // 确定审批人
-    }
-}</code></pre>
-<p>当组织ID为101（住贸）且 <code>strategicRelated == 2</code> 时，通过战略项目ID查询战略项目经理工号(empid)，用于确定工作流审批人。</p>
+- 1、isCustom=2时为纯定制合同，不要求维护产品清单信息
+- 2、保存时清除折扣相关信息：删除EPM_CONTRACT_ITEM、EPM_DISCOUNT_APPLY_LINE、EPM_DISCOUNT_APPLY_PLAN、EPM_DISCOUNT_APPLY
+- 3、非纯定制时，产品清单数据保存到EPM_CONTRACT_ITEM表，折扣信息保存到EPM_DISCOUNT_APPLY表
+- 4、一揽子合同(orderQtyCtrlType=2)时，合同数量默认为1
 
-<h4>4.4 折扣变更工作流参数传递</h4>
-<pre><code>// EpmDiscountEcnServiceImpl.java:448,459
-// 判断是否为"住贸常规项目"——strategicRelated == 1 且客户为AW08999
-paramMap.put("zhuMaoProject", strategicRelated == AeBaseConstants.ONE 
-        && customerCode.equals("AW08999") ? "1" : "");
-paramMap.put("strategicRelated", strategicRelated);</code></pre>
-<p>将 <code>strategicRelated</code> 的值传入工作流变量，供工作流分支判断。</p>
+</KbCard>
+<KbCard num="6" title="重点逻辑6：小型项目校验">
+<KbQuote>小型项目只能存在一个生效的合同，限制重复签约</KbQuote>
+
+**具体逻辑**：
+
+- 1、projectCategory=small时为小型项目，否则默认为normal(常规项目)
+- 2、小型项目校验：通过smallProjectCheck查询该项目是否已有生效合同，count>0则报错"报备类型为小型项目，只能存在一个生效的合同"
+- 3、小型项目自动赋默认值：priceContainTax=2(含税)、priceContainFreight=2(含运费)、discountType=2、planDateDefault=当前时间+1月
+
 </KbCard>
 
 </div>
@@ -658,6 +637,53 @@ paramMap.put("strategicRelated", strategicRelated);</code></pre>
 <td>-</td>
 </tr>
 </tbody></table></div>
+</KbCard>
+
+<KbCard title="战略工程相关字段详解">
+
+<h4>可编辑条件</h4>
+<ul>
+<li><strong>字段名</strong>：strategicRelated（战略工程相关）</li>
+<li><strong>数据库列</strong>：<code>EPM_PROJECT_CONTRACT.STRATEGIC_RELATED</code></li>
+<li><strong>值</strong>：<code>2</code> = 是（关联战略工程），非2 = 否</li>
+<li><strong>可编辑条件</strong>：<strong>始终禁用（disabled）</strong>，不可手动勾选/取消</li>
+<li><strong>数据来源</strong>：其值由项目数据自动带出，非用户手动勾选</li>
+<li><strong>前端代码</strong>：<code>EpmProjectContract/views/DetailPage/index.tsx:1578</code> 中 <code>&lt;CheckBox name="strategicRelated" disabled/&gt;</code></li>
+</ul>
+
+<h4>下游影响逻辑</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>下游逻辑</th><th>触发条件</th><th>代码位置</th></tr>
+</thead>
+<tbody>
+<tr><td>工作流审批人确定</td><td><code>strategicRelated == 2</code> 且组织ID=101(住贸)</td><td><code>EpmProjectContractServiceImpl.java:1817-1823</code></td></tr>
+<tr><td>折扣变更工作流参数</td><td><code>strategicRelated</code> 值传入工作流变量</td><td><code>EpmDiscountEcnServiceImpl.java:459</code></td></tr>
+<tr><td>住贸常规项目标记</td><td><code>strategicRelated == 1</code> 且客户编码=AW08999</td><td><code>EpmDiscountEcnServiceImpl.java:448</code></td></tr>
+<tr><td>前端显示战略项目字段</td><td><code>strategicRelated == 2</code></td><td>前端各合同详情页</td></tr>
+<tr><td>报表查询引用</td><td>关联查询 <code>strategic_related</code></td><td>终端返现报表、折扣单报表等</td></tr>
+</tbody>
+</table>
+
+<h4>工作流审批人确定逻辑</h4>
+<pre><code>// EpmProjectContractServiceImpl.java:1817-1823
+if (epmProjectContractSaveDTO.getOrganizationId().equals(101L)) {
+    if (strategicRelated.equals(2L)) {
+        // 通过战略项目ID查询战略项目经理工号(empid)
+        EpmProject epmProject = epmProjectRepository.selectByPrimary(strategicProjectId);
+        IamUser user = ...; // 确定审批人
+    }
+}</code></pre>
+<p>当组织ID为101（住贸）且 <code>strategicRelated == 2</code> 时，通过战略项目ID查询战略项目经理工号(empid)，用于确定工作流审批人。</p>
+
+<h4>折扣变更工作流参数传递</h4>
+<pre><code>// EpmDiscountEcnServiceImpl.java:448,459
+// 判断是否为"住贸常规项目"——strategicRelated == 1 且客户为AW08999
+paramMap.put("zhuMaoProject", strategicRelated == AeBaseConstants.ONE 
+        && customerCode.equals("AW08999") ? "1" : "");
+paramMap.put("strategicRelated", strategicRelated);</code></pre>
+<p>将 <code>strategicRelated</code> 的值传入工作流变量，供工作流分支判断。</p>
+
 </KbCard>
 
 <KbCard title="选择弹窗">
