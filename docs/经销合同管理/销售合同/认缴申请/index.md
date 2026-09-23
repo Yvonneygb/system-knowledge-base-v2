@@ -248,6 +248,62 @@
 <ul><li>第2点：法人信息用于资金流向确认</li></ul>
 </KbCard>
 
+<KbCard num="3" title="重点逻辑3：可选经销商范围条件 {数据范围}">
+<ul><li><strong>业务意义</strong>：认缴申请选择经销商时，需限定可选经销商范围，确保认缴申请归属于正确的法人和事业部</li></ul>
+
+<p><strong>核心查询SQL</strong>（<code>CmContractPaymentApplyMapper.xml:113-131</code> <code>findCustomer</code>）：</p>
+
+```sql
+select  distinct t.customer_id,
+                t.legal_entity_id   billing_unit_id,
+                t.legal_entity_code billing_unit_code,
+                t.legal_entity_name billing_unit_name,
+                t1.customer_code,
+                t1.customer_name,
+                t2.organization_id
+from    customer_legal_entity t
+        inner join customer     t1 on t1.customer_id = t.customer_id
+        inner join customer_org t2 on t2.customer_id = t1.customer_id
+where   t.legal_entity_code = #{billingUnitCode}
+  and   t2.organization_id  = #{organizationId}
+  and   t2.valid = 2
+  <if test="customerCode !=null">
+      and t1.customer_code like CONCAT(CONCAT('%',#{customerCode}),'%')
+  </if>
+  <if test="customerName !=null">
+      and t1.customer_name like CONCAT(CONCAT('%',#{customerName}),'%')
+  </if>
+```
+
+<p><strong>条件汇总</strong>：</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>t.legal_entity_code = #{billingUnitCode}</code></td><td>经销商必须属于指定的法人编码</td></tr>
+<tr><td><code>t2.organization_id = #{organizationId}</code></td><td>经销商必须在当前事业部下</td></tr>
+<tr><td><code>t2.valid = 2</code></td><td>只显示有效的客户组织记录</td></tr>
+<tr><td><code>customerCode</code>（可选）</td><td>按客户编码模糊查询</td></tr>
+<tr><td><code>customerName</code>（可选）</td><td>按客户名称模糊查询</td></tr>
+</tbody>
+</table>
+
+<p><strong>涉及数据库表</strong>：</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>表名</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>customer_legal_entity</code></td><td>客户法人关联表</td></tr>
+<tr><td><code>customer</code></td><td>客户（经销商）主数据表</td></tr>
+<tr><td><code>customer_org</code></td><td>客户组织表</td></tr>
+</tbody>
+</table>
+
+<p><strong>前端交互</strong>（<code>HeadDS.ts:64-95</code>）：<code>customerObj</code> 字段使用 LOV 编码 <code>AE.FIND_CUSTOMER</code>，动态参数 <code>lovPara</code> 传入 <code>billingUnitCode</code>（法人编码）。选择后自动带出 <code>customerId</code>、<code>customerCode</code>、<code>customerName</code></p>
+</KbCard>
+
 </div>
 </div>
 </div>
