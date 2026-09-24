@@ -228,6 +228,36 @@ LEFT JOIN epms.vendor_org_line vol
 WHERE  vo.usable = 2
   AND  (vo.end_date_active IS NULL OR vo.end_date_active &gt; SYSDATE)
 ORDER  BY v.vendor_code;</code></pre>
+
+<h4>过滤条件</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>vo.usable = 2</code></td><td>供应商组织状态为有效/启用</td></tr>
+<tr><td><code>vo.end_date_active IS NULL OR vo.end_date_active &gt; SYSDATE</code></td><td>供应商未过期或无过期日期</td></tr>
+</tbody>
+</table>
+
+<h4>涉及的数据库表</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>表名</th><th>说明</th><th>关联关系</th></tr>
+</thead>
+<tbody>
+<tr><td><code>VENDOR</code></td><td>供应商主表</td><td><code>vendor_id</code></td></tr>
+<tr><td><code>VENDOR_ORG</code></td><td>供应商组织表</td><td><code>vendor_id</code> → <code>vendor_id</code></td></tr>
+<tr><td><code>VENDOR_ORG_LINE</code></td><td>供应商地点表</td><td><code>vendor_org_id</code> → <code>vendor_org_id</code></td></tr>
+</tbody>
+</table>
+
+<h4>常见问题：选不到供应商</h4>
+<ul>
+<li>首先确认供应商档案已从SRM系统同步到ERP系统，再同步到DMS系统</li>
+<li>复核供应商档案已存在DMS系统并且状态有效（<code>usable = 2</code>）</li>
+<li>供应商档案需要关联当前报销单的法人，此动作由销售或运营专员在【供应商档案】进行维护</li>
+</ul>
 </KbCard>
 
 </div>
