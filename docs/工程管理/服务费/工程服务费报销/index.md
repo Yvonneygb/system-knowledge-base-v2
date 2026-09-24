@@ -214,19 +214,26 @@
 
 <KbCard title="可选供应商">
 <p>工程服务费报销时，可选的供应商查询 SQL 如下：</p>
-<pre v-pre><code>SELECT v.vendor_id       AS "供应商ID",
-       v.vendor_code     AS "供应商编码",
-       v.vendor_name     AS "供应商名称",
-       vo.vendor_org_id  AS "供应商组织ID",
-       vol.vendor_site_id   AS "供应商地点ID",
-       vol.vendor_site_code AS "供应商地点编码"
-FROM   epms.vendor v
-JOIN   epms.vendor_org vo
+<pre v-pre><code>SELECT v.vendor_id           AS "供应商ID",
+       v.vendor_code         AS "供应商编码",
+       v.vendor_name         AS "供应商名称",
+       vo.vendor_org_id      AS "供应商组织ID",
+       vo.contact            AS "联系人",
+       vo.tele               AS "电话",
+       vol.vendor_site_id    AS "供应商地点ID",
+       vol.vendor_site_code  AS "供应商地点编码",
+       vol.bank              AS "开户银行",
+       vol.bank_accno        AS "银行账号",
+       vol.bank_accname      AS "银行户名"
+FROM   vendor v
+JOIN   vendor_org vo
        ON vo.vendor_id = v.vendor_id
-LEFT JOIN epms.vendor_org_line vol
+LEFT JOIN vendor_org_line vol
        ON vol.vendor_org_id = vo.vendor_org_id
 WHERE  vo.usable = 2
   AND  (vo.end_date_active IS NULL OR vo.end_date_active &gt; SYSDATE)
+  AND  v.billing_unit_code = #{billingUnitCode}
+  AND  vol.org_code = #{tradingCompanyCode}
 ORDER  BY v.vendor_code;</code></pre>
 
 <h4>过滤条件</h4>
@@ -237,6 +244,8 @@ ORDER  BY v.vendor_code;</code></pre>
 <tbody>
 <tr><td><code>vo.usable = 2</code></td><td>供应商组织状态为有效/启用</td></tr>
 <tr><td><code>vo.end_date_active IS NULL OR vo.end_date_active &gt; SYSDATE</code></td><td>供应商未过期或无过期日期</td></tr>
+<tr><td><code>v.billing_unit_code = #{billingUnitCode}</code></td><td>按法人编码过滤</td></tr>
+<tr><td><code>vol.org_code = #{tradingCompanyCode}</code></td><td>按交易公司编码过滤</td></tr>
 </tbody>
 </table>
 
@@ -246,9 +255,9 @@ ORDER  BY v.vendor_code;</code></pre>
 <tr><th>表名</th><th>说明</th><th>关联关系</th></tr>
 </thead>
 <tbody>
-<tr><td><code>VENDOR</code></td><td>供应商主表</td><td><code>vendor_id</code></td></tr>
-<tr><td><code>VENDOR_ORG</code></td><td>供应商组织表</td><td><code>vendor_id</code> → <code>vendor_id</code></td></tr>
-<tr><td><code>VENDOR_ORG_LINE</code></td><td>供应商地点表</td><td><code>vendor_org_id</code> → <code>vendor_org_id</code></td></tr>
+<tr><td><code>VENDOR</code></td><td>供应商主表</td><td>供应商ID、编码、名称、法人编码</td></tr>
+<tr><td><code>VENDOR_ORG</code></td><td>供应商组织表</td><td>供应商组织ID、联系人、电话、状态、有效期</td></tr>
+<tr><td><code>VENDOR_ORG_LINE</code></td><td>供应商地点表</td><td>地点ID、地点编码、银行信息、交易公司编码</td></tr>
 </tbody>
 </table>
 
