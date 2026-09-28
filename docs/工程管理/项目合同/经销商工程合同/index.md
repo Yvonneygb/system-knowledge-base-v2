@@ -941,6 +941,13 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
             <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
             <td style="font-size:13px;text-align:center;"><a href="#err-detail-2" class="view-btn">查看</a></td>
           </tr>
+          <tr>
+            <td style="color:#DC2626;font-weight:600;">保存折扣单失败，事业部基础信息查询为空，请联系系统管理员</td>
+            <td style="font-size:13px;">保存</td>
+            <td style="font-size:13px;">按 divisionId 查 division_base_set 为空。divisionId 为空、误传组织ID、或事业部基础表/客户组织未维护</td>
+            <td style="font-size:13px;"><span style="background:#FEF2F2;color:#DC2626;padding:2px 8px;border-radius:3px;font-weight:600;font-size:12px;">阻断性报错</span></td>
+            <td style="font-size:13px;text-align:center;"><a href="#err-detail-3" class="view-btn">查看</a></td>
+          </tr>
 </tbody></table></div>
 
 <div id="err-detail-1" class="error-detail-overlay">
@@ -959,6 +966,38 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
     <h4><span style="color:#7C3AED;">报错：</span>该项目已发起失效</h4>
     <h5>详细逻辑</h5>
     <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br />合同已存在失效记录，不可重复发起</div>
+    <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
+  </div>
+</div>
+
+<div id="err-detail-3" class="error-detail-overlay">
+  <div class="error-detail-box" v-pre>
+    <a href="#" class="close-btn">&times;</a>
+    <h4><span style="color:#7C3AED;">报错：</span>保存折扣单失败，事业部基础信息查询为空，请联系系统管理员</h4>
+    <h5>触发条件</h5>
+    <div class="detail-text" v-pre>保存合同时（含保存并提交），按 dto.divisionId 查询事业部基础设置表 division_base_set 返回空。</div>
+    <h5>报错抛出点</h5>
+    <div class="detail-text" v-pre>EpmProjectContractServiceImpl.doInsertOrUpdateDiscountApply 第831-835行：divisionBaseSetRepository.selectByPrimaryKey(dto.getDivisionId()) 返回 null 时抛出。</div>
+    <h5>关键逻辑</h5>
+    <div class="detail-text" v-pre>第1点：按 DIVISION_BASE_SET.DIVISION_ID 主键精确匹配，divisionId 为空或不存在都会落空。
+第2点：saveDiscountApply 全程未对 divisionId 做兜底补全，完全依赖请求体透传。
+第3点：同方法第846-863行有按 organizationId 反查 division_base_set 的兜底逻辑，但位置在报错点之后，永远走不到。
+第4点：字段类型不统一放大风险——VO 中是 String，DTO 中是 Long，部分链路用 Long.parseLong（空值抛 NumberFormatException），部分用 NumberUtils.toLong（空值转 0，同样查不到）。</div>
+    <h5>divisionId 来源链路</h5>
+    <div class="detail-text" v-pre>经销商用户登录（userType = 'D'）→ 前端 initCustomerData() → GET /sa-out-bill-heads/select-customer → SaOutBillHeadMapper.selectCustomer 取 customer_org.division_id → 前端回填 headDs.divisionId → POST /save-data 原样透传 → selectByPrimaryKey(divisionId)。</div>
+    <h5>5种典型根因</h5>
+    <div class="detail-text" v-pre>S1 非经销商用户登录：initCustomerData() 仅在 userType === 'D' 时才调接口，其他用户类型直接 return false，前端不回填 divisionId。
+S2 前端未回传或传空：divisionId 为 null / 0。
+S3 值域混用：传入了 organizationId 而非 divisionId，两个字段量级差异大，按 division_id 查必然落空。
+S4 事业部基础表无该记录：division_base_set 中不存在该 division_id。
+S5 客户组织未维护事业部：customer_org.division_id 为空或非法值（非101~109）。</div>
+    <h5>排查SQL</h5>
+    <div class="detail-text" v-pre>① 定位报错合同的 divisionId：<br />SELECT epc.CONTRACT_ID, epc.CONTRACT_CODE, epc.CUSTOMER_CODE, p.DIVISION_ID AS 项目事业部ID FROM epm_project_contract epc LEFT JOIN epm_project p ON epc.PROJECT_ID = p.PROJECT_ID WHERE epc.CONTRACT_TYPE = 2 AND epc.CONTRACT_CODE = :contractCode;<br /><br />② 校验 divisionId 是否存在于事业部基础设置表：<br />SELECT dbs.DIVISION_ID, dbs.DIVISION_CODE, dbs.DIVISION_NAME, dbs.ORGANIZATION_ID FROM division_base_set dbs WHERE dbs.DIVISION_ID = :divisionId;<br /><br />③ 校验经销商客户组织的事业部是否维护：<br />SELECT co.CUSTOMER_ID, co.CUSTOMER_ORG_ID, co.ORGANIZATION_ID, co.DIVISION_ID, dbs.DIVISION_NAME, co.VALID FROM customer_org co LEFT JOIN division_base_set dbs ON co.DIVISION_ID = dbs.DIVISION_ID WHERE co.CUSTOMER_CODE = :customerCode AND co.VALID = 2;<br /><br />④ 批量找出事业部基础表缺失的配置：<br />SELECT d.DIVISION_ID, d.DIVISION_CODE, d.DIVISION_NAME FROM division d LEFT JOIN division_base_set dbs ON dbs.DIVISION_ID = d.DIVISION_ID WHERE dbs.DIVISION_ID IS NULL;</div>
+    <h5>解决方案</h5>
+    <div class="detail-text" v-pre>S1/S2：确认使用经销商账号登录；或由后台补全 divisionId 后重试。
+S3：检查请求体中 divisionId 是否误传组织ID，修正为事业部ID（101~109）。
+S4：联系系统管理员在 division_base_set 中补配该事业部基础信息。
+S5：在【客户组织】维护该经销商的 division_id，确保指向有效的 division_base_set 记录。</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
