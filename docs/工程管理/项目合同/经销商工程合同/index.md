@@ -45,19 +45,19 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h10v10H3z" stroke="white" stroke-width="1.5"/><path d="M5 6h6M5 9h6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>新建合同</h5>
-      <small>选经销商<br>录合同要素</small>
+      <small>选经销商<br />录合同要素</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.6 3.5L8 10l-3.1 1.5.6-3.5L3 5.5 6.5 5z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
       <h5>区域审批</h5>
-      <small>按区域走<br>差异化审批</small>
+      <small>按区域走<br />差异化审批</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l3 3 7-7" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>合同生效</h5>
-      <small>状态置生效<br>可供引用</small>
+      <small>状态置生效<br />可供引用</small>
     </div>
   </div>
 </div>
@@ -172,60 +172,72 @@
 <KbCard num="1" title="重点逻辑1：合同编码自动生成 {编码规则}">
 <KbQuote>每次新建合同时自动生成唯一编码</KbQuote>
 
-**具体逻辑**：
+<p><strong>具体逻辑</strong>：</p>
 
-- 1、新增合同时，系统自动生成合同编码
-- 2、增补合同时，mainContractId记录原始合同ID，supplementType=2(增补)
+<ul>
+<li>1、新增合同时，系统自动生成合同编码</li>
+<li>2、增补合同时，mainContractId记录原始合同ID，supplementType=2(增补)</li>
+</ul>
 </KbCard>
 
 <KbCard num="2" title="重点逻辑2：签约方式区分 {经销/直销}">
 <KbQuote>经销商工程合同固定签约方式为经销(contractType=2)</KbQuote>
 
-**具体逻辑**：
+<p><strong>具体逻辑</strong>：</p>
 
-- 1、列表查询固定传参contractType=2，仅展示经销合同
-- 2、新建时默认contractType=2(经销)
+<ul>
+<li>1、列表查询固定传参contractType=2，仅展示经销合同</li>
+<li>2、新建时默认contractType=2(经销)</li>
+</ul>
 </KbCard>
 
 <KbCard num="3" title="重点逻辑3：审批流程按区域区分 {多流程}">
 <KbQuote>不同区域的经销商工程合同使用不同的审批流程</KbQuote>
 
-**具体逻辑**：
+<p><strong>具体逻辑</strong>：</p>
 
-- 1、东区使用SUB_CONTRACT_JXSGCHT_EAST
-- 2、西区使用SUB_CONTRACT_JXSGCHT_WEST
-- 3、南区使用SUB_CONTRACT_JXSGCHT_SOUTH
-- 4、北区使用SUB_CONTRACT_JXSGCHT_NORTH
+<ul>
+<li>1、东区使用SUB_CONTRACT_JXSGCHT_EAST</li>
+<li>2、西区使用SUB_CONTRACT_JXSGCHT_WEST</li>
+<li>3、南区使用SUB_CONTRACT_JXSGCHT_SOUTH</li>
+<li>4、北区使用SUB_CONTRACT_JXSGCHT_NORTH</li>
+</ul>
 </KbCard>
 
 <KbCard num="4" title="重点逻辑4：战略工程关联 {战略项目}">
 <KbQuote>合同可关联战略工程，享受战略工程特殊政策</KbQuote>
 
-**具体逻辑**：
+<p><strong>具体逻辑</strong>：</p>
 
-- 1、勾选"战略工程相关"后，可选择战略项目和战略协议
-- 2、战略工程关联后，合同享受战略工程折扣政策
+<ul>
+<li>1、勾选"战略工程相关"后，可选择战略项目和战略协议</li>
+<li>2、战略工程关联后，合同享受战略工程折扣政策</li>
+</ul>
 </KbCard>
 
 <KbCard num="5" title="重点逻辑5：纯定制合同处理">
 <KbQuote>纯定制合同不要求维护产品清单，简化操作流程</KbQuote>
 
-**具体逻辑**：
+<p><strong>具体逻辑</strong>：</p>
 
-- 1、isCustom=2时为纯定制合同，不要求维护产品清单信息
-- 2、保存时清除折扣相关信息：删除EPM_CONTRACT_ITEM、EPM_DISCOUNT_APPLY_LINE、EPM_DISCOUNT_APPLY_PLAN、EPM_DISCOUNT_APPLY
-- 3、非纯定制时，产品清单数据保存到EPM_CONTRACT_ITEM表，折扣信息保存到EPM_DISCOUNT_APPLY表
-- 4、一揽子合同(orderQtyCtrlType=2)时，合同数量默认为1
+<ul>
+<li>1、isCustom=2时为纯定制合同，不要求维护产品清单信息</li>
+<li>2、保存时清除折扣相关信息：删除EPM_CONTRACT_ITEM、EPM_DISCOUNT_APPLY_LINE、EPM_DISCOUNT_APPLY_PLAN、EPM_DISCOUNT_APPLY</li>
+<li>3、非纯定制时，产品清单数据保存到EPM_CONTRACT_ITEM表，折扣信息保存到EPM_DISCOUNT_APPLY表</li>
+<li>4、一揽子合同(orderQtyCtrlType=2)时，合同数量默认为1</li>
+</ul>
 
 </KbCard>
 <KbCard num="6" title="重点逻辑6：小型项目校验">
 <KbQuote>小型项目只能存在一个生效的合同，限制重复签约</KbQuote>
 
-**具体逻辑**：
+<p><strong>具体逻辑</strong>：</p>
 
-- 1、projectCategory=small时为小型项目，否则默认为normal(常规项目)
-- 2、小型项目校验：通过smallProjectCheck查询该项目是否已有生效合同，count>0则报错"报备类型为小型项目，只能存在一个生效的合同"
-- 3、小型项目自动赋默认值：priceContainTax=2(含税)、priceContainFreight=2(含运费)、discountType=2、planDateDefault=当前时间+1月
+<ul>
+<li>1、projectCategory=small时为小型项目，否则默认为normal(常规项目)</li>
+<li>2、小型项目校验：通过smallProjectCheck查询该项目是否已有生效合同，count>0则报错"报备类型为小型项目，只能存在一个生效的合同"</li>
+<li>3、小型项目自动赋默认值：priceContainTax=2(含税)、priceContainFreight=2(含运费)、discountType=2、planDateDefault=当前时间+1月</li>
+</ul>
 
 </KbCard>
 
@@ -239,7 +251,7 @@
 <KbCard title="界面模块1：经销商工程合同列表页">
 <div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
+<colgroup><col style="width:13%" /><col style="width:9%" /><col style="width:17%" /><col style="width:12%" /><col style="width:21%" /><col style="width:12%" /><col style="width:16%" /></colgroup>
 <thead><tr>
 <th>字段名</th>
 <th>组件</th>
@@ -364,7 +376,7 @@
 <KbCard title="界面模块2：合同详情页-基本信息">
 <div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:13%"><col style="width:9%"><col style="width:17%"><col style="width:12%"><col style="width:21%"><col style="width:12%"><col style="width:16%"></colgroup>
+<colgroup><col style="width:13%" /><col style="width:9%" /><col style="width:17%" /><col style="width:12%" /><col style="width:21%" /><col style="width:12%" /><col style="width:16%" /></colgroup>
 <thead><tr>
 <th>字段名</th>
 <th>组件</th>
@@ -687,6 +699,99 @@ paramMap.put("strategicRelated", strategicRelated);</code></pre>
 </KbCard>
 
 <KbCard title="选择弹窗">
+<h4>弹窗1：报备项目选择弹窗</h4>
+<ul>
+<li><strong>触发位置</strong>：合同详情页"报备项目编码"字段LOV点击</li>
+<li><strong>接口</strong>：<code>GET /v1/{organizationId}/contracts/get-project-data</code></li>
+<li><strong>返回</strong>：可关联的已报备项目列表</li>
+<li><strong>选择后赋值</strong>：自动填充项目编码、项目名称、客户编码、客户名称、业主类型等字段</li>
+</ul>
+<pre v-pre><code>SELECT * FROM EPM_PROJECT
+WHERE ORGANIZATION_ID = #{organizationId}
+  AND PROJECT_STAT = 5
+  AND CUSTOMER_ID IS NOT NULL
+ORDER BY PROJECT_ID DESC;</code></pre>
+
+<h4>弹窗2：交易公司/开票单位选择弹窗</h4>
+<ul>
+<li><strong>触发位置</strong>：合同详情页"交易公司"/"开票单位"字段LOV点击</li>
+<li><strong>接口</strong>：<code>GET /v1/{organizationId}/epm-project-contracts/trading-company-customer</code></li>
+<li><strong>返回</strong>：法人客户列表</li>
+</ul>
+
+<h4>弹窗3：产品选择弹窗（可选产品条件）</h4>
+<ul>
+<li><strong>触发位置</strong>：合同明细行点击"选择产品"按钮</li>
+<li><strong>接口</strong>：<code>GET /v1/{organizationId}/epm-discount-policy/get-crm-item</code></li>
+<li><strong>页面DS</strong>：<code>ProductInfoDS.ts</code>（多选、每页10条、自动查询关闭）</li>
+<li><strong>弹窗查询条件</strong>：产品编码、产品名称、产品型号、模糊规则（值集 <code>AE.ITEM_SEARCH_TYPE</code>，默认 <code>leftAndright</code>）</li>
+</ul>
+
+<p><strong>前置校验（打开弹窗前必须满足）</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>顺序</th><th>校验</th><th>不满足提示</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>必须先选择报备项目（customerCode 非空）</td><td>请先选择报备项目</td></tr>
+<tr><td>2</td><td>必须先选择订单产品线（orderPdtLine 非空）</td><td>请先选择订单产品线</td></tr>
+</tbody>
+</table>
+
+<p><strong>弹窗入参</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>参数</th><th>取值来源</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>customerCode</code></td><td>主表 customerCode</td><td>经销商编码</td></tr>
+<tr><td><code>divisionId</code></td><td>主表 divisionId</td><td>事业部</td></tr>
+<tr><td><code>currency</code></td><td>主表 currency</td><td>币种</td></tr>
+<tr><td><code>orderPdtLine</code></td><td>主表 orderPdtLine</td><td>订单产品线</td></tr>
+<tr><td><code>channel</code></td><td>主表 channel</td><td>销售渠道</td></tr>
+<tr><td><code>type</code></td><td>固定 <code>1</code></td><td>单据类型：1=合同/折扣单，2=订单，3=报价单</td></tr>
+<tr><td><code>flag</code></td><td>固定 <code>0</code></td><td>标识位</td></tr>
+<tr><td><code>isHome</code></td><td>固定 <code>0</code></td><td>是否家装</td></tr>
+<tr><td><code>isMakt</code></td><td>固定 <code>0</code></td><td>是否MKT（0=走A系统 <code>AE_SALES_CHANNEL</code>）</td></tr>
+</tbody>
+</table>
+
+<blockquote><strong>重要说明：</strong>可选产品的过滤条件由 <strong>CRM 系统</strong>控制，DMS 侧不落地产品候选SQL。DMS 负责组装入参后外呼 CRM 接口（<code>HZERO / CRM-PROD / GET_PROD</code>），由 CRM 在其 SQL 层完成产品过滤，DMS 仅消费返回结果。因此不存在可枚举的产品候选查询SQL。</blockquote>
+
+<p><strong>DMS 侧组装入参时的转换与校验</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>处理项</th><th>逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>事业部 dept</td><td>优先取入参 dept，否则取用户上下文 DEPT，默认 <code>DIVISION_101</code></td></tr>
+<tr><td>OA系统类型 empType</td><td>用户类型=E 取配置 <code>CrmItemInAccount</code>，否则 <code>CrmItemOutAccount</code>；为空报"请先维护OA系统信息"</td></tr>
+<tr><td>经销商必填</td><td><code>flag != 2</code> 时 customerCode 必填，转换为 <code>acctCode</code></td></tr>
+<tr><td>币种补全</td><td>缺失时按 customerCode 查询客户组织表补全；仍为空报错</td></tr>
+<tr><td>渠道取值</td><td><code>isMakt != 2</code> 取 <code>AE_SALES_CHANNEL</code>；<code>isMakt == 2</code> 取 <code>AE_MKT_SALES_CHANNEL</code></td></tr>
+<tr><td>产品线取值</td><td>值集 <code>AE_EPM_ORDER_PDT_LINE</code></td></tr>
+<tr><td>事业部取值</td><td>值集 <code>AE_ITEM_ORGANIZATION</code></td></tr>
+<tr><td>订单类型</td><td>type=2 且 flag != 12223 时必填，值集 <code>AE_EPM_BILL_TYPE</code></td></tr>
+<tr><td>字典类型</td><td><code>isHome==2 或 isMakt==2</code> → <code>LH_PROD_CHANNEL</code>，否则 <code>LH_BU_CHANNEL</code></td></tr>
+<tr><td>是否校验专供</td><td>默认 <code>Y</code></td></tr>
+<tr><td>产品清单过滤规则</td><td>由 <code>prodChooseControlFlag</code> 控制</td></tr>
+<tr><td>模糊规则</td><td>默认 <code>leftAndright</code></td></tr>
+</tbody>
+</table>
+
+<p><strong>产品上架状态过滤（返回结果后处理）</strong></p>
+<ul>
+<li>CRM 返回 <code>prodStatus = UpperShelf</code>（已上架）→ 前端 <code>salesStatus = 2</code></li>
+<li>其他状态 → <code>salesStatus = 1</code></li>
+</ul>
+
+<p><strong>选中产品后的处理</strong></p>
+<ol>
+<li><strong>去重校验</strong>：产品编码已存在于合同明细行时，报"所选产品已在被其他明细行选择"</li>
+<li><strong>数据补全</strong>：入参固定 <code>channel: 4</code>（工程）、<code>businessType: 0</code>、<code>searchFlag: 12213</code></li>
+<li><strong>默认值</strong>：计合同折扣、计广告费默认 <code>0</code>（不计）；一口价产品 <code>extraDiscountRate = 1</code></li>
+<li><strong>产品归属渠道/产品定位为空时</strong>，实时调 CRM 接口重新获取</li>
+</ol>
 </KbCard>
 <KbCard title="导入">
 </KbCard>
@@ -702,7 +807,9 @@ paramMap.put("strategicRelated", strategicRelated);</code></pre>
 <KbCard title="保存校验">
 <KbSubTitle>校验1：项目必选 —— 确保合同关联有效项目</KbSubTitle>
 
-- 第1点：合同必须关联一个已报备且有效的项目
+<ul>
+<li>第1点：合同必须关联一个已报备且有效的项目</li>
+</ul>
 
 <KbTip>前端必输校验</KbTip>
 
@@ -714,8 +821,10 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
 <KbCard title="提交校验">
 <KbSubTitle>校验1：合同提交校验 —— 确保合同数据完整</KbSubTitle>
 
-- 第1点：调用doContractCheck校验合同数据完整性
-- 第2点：调用doCheckMotionChange校验合同变更
+<ul>
+<li>第1点：调用doContractCheck校验合同数据完整性</li>
+<li>第2点：调用doCheckMotionChange校验合同变更</li>
+</ul>
 
 <KbTip>阻断性报错</KbTip>
 
@@ -751,7 +860,6 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
 | REJECTED | 已驳回 | 保存、保存并提交、编辑 |
 | WITHDRAW | 已撤回 | 保存、保存并提交、编辑 |
 
----
 
 </KbCard>
 <KbCard num="1" title="表1：EPM_PROJECT_CONTRACT（工程项目合同表）">
@@ -791,7 +899,6 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
 | SERVICE_CHARGE | String | 不计服务费 | 不计服务费 | Y/N |
 | OBJECT_VERSION_NUMBER | Long | 乐观锁版本号 | - | 框架自动维护 |
 
----
 
 </KbCard>
 
@@ -817,7 +924,7 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
 <KbCard title="报错一览表" :hover="false">
 <div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:13%"><col style="width:32%"><col style="width:14%"><col style="width:14%"></colgroup>
+<colgroup><col style="width:27%" /><col style="width:13%" /><col style="width:32%" /><col style="width:14%" /><col style="width:14%" /></colgroup>
 <thead><tr><th>报错信息</th><th>提示节点</th><th>根因与解决方案</th><th>等级</th><th>详细逻辑</th></tr></thead>
 <tbody>
           <tr>
@@ -841,7 +948,7 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>项目数据不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>关联的项目已被删除或无效，重新选择项目</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br />关联的项目已被删除或无效，重新选择项目</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -851,7 +958,7 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该项目已发起失效</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br>合同已存在失效记录，不可重复发起</div>
+    <div class="detail-text" v-pre>（该报错的详细逻辑细则待补充；以下为表格中「根因与解决方案」供参考：）<br />合同已存在失效记录，不可重复发起</div>
     <div class="detail-tip" v-pre>阻断性报错，需修正对应数据后才能继续保存/提交</div>
   </div>
 </div>
@@ -864,7 +971,7 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
       <span style="font-size:15px;">合同审批通过但有效状态未变为"已生效"</span>
     </div>
     <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-      <strong style="color:#7C3AED;">原因：</strong>审批回调未正确触发；排查SQL：`SELECT CONTRACT_CODE, VALID, HZ_APPROVE_STATUS FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}`<br>
+      <strong style="color:#7C3AED;">原因：</strong>审批回调未正确触发；排查SQL：`SELECT CONTRACT_CODE, VALID, HZ_APPROVE_STATUS FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}`<br />
       <strong style="color:#7C3AED;">处理：</strong>检查HZ_INSTANCE_ID对应的流程实例状态，手动修正VALID=2
     </div>
   </div>
@@ -882,6 +989,7 @@ SELECT PROJECT_ID FROM EPM_PROJECT_CONTRACT WHERE CONTRACT_ID = #{contractId}
 | 日期 | 提交ID | 提交人 | 提交内容 |
 |------|-------|-------|---------|
 | - | - | - | 暂无2026年提交记录 |
+
 </KbCard>
 </div>
 </div>
