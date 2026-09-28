@@ -13,31 +13,31 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3V13M3 8H13" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>签署合同</h5>
-      <small>经销商与公司签署年度经销合同<br>根据合同类型缴纳合同保证金</small>
+      <small>经销商与公司签署年度经销合同<br />根据合同类型缴纳合同保证金</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#3B82F6,#2563EB);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8H13M9 4L13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>打款到账</h5>
-      <small>经销商通过自有公司账户向集团转账<br>每个事业部对应一个收款账户</small>
+      <small>经销商通过自有公司账户向集团转账<br />每个事业部对应一个收款账户</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#F59E0B,#D97706);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M2 6H14" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>财务台账</h5>
-      <small>财务共享系统根据收款账户生成台账<br>含打款法人+事业部+虚拟经销商</small>
+      <small>财务共享系统根据收款账户生成台账<br />含打款法人+事业部+虚拟经销商</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6L8 2L12 6M8 2V14" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>同步DMS</h5>
-      <small>台账同步到DMS系统<br>生成【合同保证金】数据，待认缴状态</small>
+      <small>台账同步到DMS系统<br />生成【合同保证金】数据，待认缴状态</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13L6 9L9 11L13 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>认缴操作</h5>
-      <small>通过认缴动作<br>将款项认到具体经销商编码上</small>
+      <small>通过认缴动作<br />将款项认到具体经销商编码上</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -96,25 +96,25 @@
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>新建申请</h5>
-        <small>选认款记录<br>带出可用金额</small>
+        <small>选认款记录<br />带出可用金额</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>保存并提交</h5>
-        <small>按合同类型填金额<br>启动审批</small>
+        <small>按合同类型填金额<br />启动审批</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
         <h5>审批判断</h5>
-        <small>通过则认缴生效<br>驳回回退未生效</small>
+        <small>通过则认缴生效<br />驳回回退未生效</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13L6 9L9 11L13 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h5>生效同步</h5>
-        <small>生成认缴记录<br>更新缴清·推送CRM</small>
+        <small>生成认缴记录<br />更新缴清·推送CRM</small>
       </div>
     </div>
   </div>
@@ -236,16 +236,56 @@
 <div class="kl-wrap">
 <KbCard num="1" title="重点逻辑1：OA审批流程 {审批流转}">
 <ul><li><strong>业务意义</strong>：认缴申请需经OA审批，确保认缴合规</li></ul>
-<ul><li><strong>具体逻辑描述</strong></li></ul>
 <ul><li>第1点：保存并提交时发起OA审批(CONTRACT_PAYMENT_APPLY_MCS_AW)</li></ul>
 <ul><li>第2点：审批通过后更新认缴状态，汇总到认缴概况</li></ul>
+
+<h4>审批通过后的完整处理（审批回调）</h4>
+<pre class="detail-sql" v-pre><code>OA审批通过 → 回调 POST /v1/{orgId}/workflow/complete
+  → WorkflowServiceImpl.wfComplete（按 subject=CONTRACT_PAYMENT_APPLY_MCS_AW 分发）
+  → CmContractPaymentApplyServiceImpl.wfComplete
+     ├─ ① 更新申请单状态
+     └─ ② afterCompletion → normalCompletion（普通认缴处理）
+          └─ 缴清时 → 更新认缴概况 → 更新合同 → 推送CRM</code></pre>
+
+<p><strong>① 更新申请单状态（必做）</strong></p>
+<ul>
+<li>CM_CONTRACT_PAYMENT_APPLY 表：STATUS 由 pending(未生效) 置为 enable(有效)，HZ_APPROVE_STATUS 置为 APPROVED</li>
+<li>审批拒绝则回退为 pending + REJECTED，<strong>无任何下游处理</strong></li>
+</ul>
+
+<p><strong>② 普通认缴处理（normalCompletion，对每一条申请行）</strong></p>
+<ul>
+<li><strong>第1步</strong>：防重校验——查 CM_CONTRACT_PAYMENT_RECORD 中该申请行是否已有记录，已有则报"申请单已认缴"</li>
+<li><strong>第2步</strong>：认缴概况维护——按"合同类型+事业部+经销商"查 CM_CONTRACT_PAYMENT_SUMMARY；不存在则取保证金标准金额插入认缴概况（PAY_COMPLETE='N'），存在则复用</li>
+<li><strong>第3步</strong>：插入认缴记录 CM_CONTRACT_PAYMENT_RECORD（PAYMENT_STATUS='pay'，金额=申请行认缴金额）</li>
+<li><strong>第4步</strong>：缴清判断——按"事业部+合同类型+经销商"统计已认缴总额，达到保证金标准金额即缴清</li>
+<li><strong>第5步</strong>：缴清时——认缴概况 PAY_COMPLETE 置 'Y' → 更新年度经销合同 SA_SALE_CONTRACT_HEAD.PAY_COMPLETE='Y' → 推送CRM缴清状态（depositPayStatus='Y'，经 CrmSdkService.updateByDepositPayStatus）</li>
+</ul>
+
+<blockquote><strong>注意：</strong>审批通过不直接更新合同保证金表 CM_DEPOSITS，通过认缴概况/认缴记录间接体现。</blockquote>
+
+<p><strong>缴清判断SQL：</strong></p>
+<pre class="detail-sql" v-pre><code>select sum(t.amount) from cm_contract_payment_record t
+where t.entid = #{entid}
+  and t.contract_type = #{contractType}
+  and t.customer_id = #{customerId}
+  and t.payment_status = 'pay'</code></pre>
 </KbCard>
 
 <KbCard num="2" title="重点逻辑2：客户/法人关联 {数据关联}">
 <ul><li><strong>业务意义</strong>：认缴申请需关联客户和法人信息</li></ul>
-<ul><li><strong>具体逻辑描述</strong></li></ul>
 <ul><li>第1点：通过findCustomer接口根据客户查找法人信息</li></ul>
 <ul><li>第2点：法人信息用于资金流向确认</li></ul>
+</KbCard>
+
+<KbCard num="2.5" title="重点逻辑2.5：认缴类型 {分类来源}">
+<ul><li><strong>业务意义</strong>：认缴申请按 PAYMENT_TYPE 区分认缴类型</li></ul>
+<ul>
+<li>第1点：字段为 <code>CM_CONTRACT_PAYMENT_APPLY.PAYMENT_TYPE</code>，界面值集 <code>AE.SUBSCRIPTION_PAYMENT_TYPE</code>，normal=普通认缴、ceiling=封顶认缴</li>
+<li>第2点：<strong>普通认缴是当前唯一在用的类型</strong>——认缴申请从【合同保证金】"认缴"按钮跳转创建，链路不传 paymentType；合同保证金页面查询固定 <code>paymentType='normal'</code></li>
+<li>第3点：<strong>封顶认缴业务已废弃</strong>——前端详情页"认缴类型"字段只读（disabled），代码库中无创建 <code>paymentType='ceiling'</code> 的入口；审批回调、撤销认缴中仅保留其消费端逻辑（历史功能残留）</li>
+<li>第4点：审批回调按 paymentType 分支，封顶认缴分支（ceilingCompletion）已废弃，实际均走普通认缴处理（normalCompletion）</li>
+</ul>
 </KbCard>
 
 <KbCard num="3" title="重点逻辑3：可选经销商范围条件 {数据范围}">
@@ -497,7 +537,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在新建/编辑页未选择合同直接点击保存<br><strong>逻辑分析：</strong>保存接口cm-contract-payment-applys/save在写入CM_CONTRACT_PAYMENT_APPLY前校验CONTRACT_ID非空。合同是认缴申请的关联主体，未选择合同将导致认缴金额无归属，后续客户/法人（findCustomer接口）无法带出，未缴余额校验也无从执行。校验在Controller层前置拦截，toast提示后阻断保存</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在新建/编辑页未选择合同直接点击保存<br /><strong>逻辑分析：</strong>保存接口cm-contract-payment-applys/save在写入CM_CONTRACT_PAYMENT_APPLY前校验CONTRACT_ID非空。合同是认缴申请的关联主体，未选择合同将导致认缴金额无归属，后续客户/法人（findCustomer接口）无法带出，未缴余额校验也无从执行。校验在Controller层前置拦截，toast提示后阻断保存</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_ID, CONTRACT_NO, CUSTOMER_NAME,
          APPLY_AMT, HZ_APPROVE_STATUS
@@ -512,7 +552,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>认缴金额必须大于0</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在认缴金额输入框填写0、负数或留空后点击保存<br><strong>逻辑分析：</strong>认缴金额（APPLY_AMT）代表申请认缴的保证金金额，必须为正数。0或负数无业务意义，且审批通过后汇总到认缴概况（CM_CONTRACT_PAYMENT_SUMMARY）将出现异常（认缴金额为0或负数导致未缴金额计算错误）。校验APPLY_AMT &gt; 0，toast提示后阻断保存</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在认缴金额输入框填写0、负数或留空后点击保存<br /><strong>逻辑分析：</strong>认缴金额（APPLY_AMT）代表申请认缴的保证金金额，必须为正数。0或负数无业务意义，且审批通过后汇总到认缴概况（CM_CONTRACT_PAYMENT_SUMMARY）将出现异常（认缴金额为0或负数导致未缴金额计算错误）。校验APPLY_AMT &gt; 0，toast提示后阻断保存</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, APPLY_AMT, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
@@ -526,7 +566,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>认缴金额超过未缴余额</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，提交校验发现APPLY_AMT &gt; 合同未缴保证金余额（UNPAID_AMT）<br><strong>逻辑分析：</strong>提交时校验认缴金额不超过合同未缴保证金余额，通过关联CM_CONTRACT_PAYMENT_APPLY.CONTRACT_ID与CM_CONTRACT_PAYMENT_SUMMARY.CONTRACT_ID比对UNPAID_AMT（未缴金额=认缴金额-已缴金额）。超出未缴余额意味着认缴超额，审批通过后已缴金额将超过认缴金额，保证金余额计算异常。此为阻断性报错，阻止OA流程（CONTRACT_PAYMENT_APPLY_MCS_AW）发起，需调减认缴金额或先确认认缴概况数据</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，提交校验发现APPLY_AMT &gt; 合同未缴保证金余额（UNPAID_AMT）<br /><strong>逻辑分析：</strong>提交时校验认缴金额不超过合同未缴保证金余额，通过关联CM_CONTRACT_PAYMENT_APPLY.CONTRACT_ID与CM_CONTRACT_PAYMENT_SUMMARY.CONTRACT_ID比对UNPAID_AMT（未缴金额=认缴金额-已缴金额）。超出未缴余额意味着认缴超额，审批通过后已缴金额将超过认缴金额，保证金余额计算异常。此为阻断性报错，阻止OA流程（CONTRACT_PAYMENT_APPLY_MCS_AW）发起，需调减认缴金额或先确认认缴概况数据</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.APPLY_AMT,
          S.SUBSCRIPTION_AMT, S.PAID_AMT, S.UNPAID_AMT,
@@ -544,7 +584,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>行明细不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户保存认缴申请时，认缴明细行（CM_CONTRACT_PAYMENT_APPLY_LINE）未填写或为空<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在save方法中校验明细行非空。认缴明细行记录认款分配、认缴金额拆分等详细信息，无明细行将导致认缴申请无具体认款来源，审批通过后无法汇总到认缴概况。需添加至少一行认缴明细</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户保存认缴申请时，认缴明细行（CM_CONTRACT_PAYMENT_APPLY_LINE）未填写或为空<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在save方法中校验明细行非空。认缴明细行记录认款分配、认缴金额拆分等详细信息，无明细行将导致认缴申请无具体认款来源，审批通过后无法汇总到认缴概况。需添加至少一行认缴明细</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.APPLY_AMT, A.HZ_APPROVE_STATUS,
          (SELECT COUNT(*) FROM CM_CONTRACT_PAYMENT_APPLY_LINE L
@@ -561,7 +601,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>法人已有封顶认缴记录，无需再次认缴</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对已封顶认缴的法人再次发起封顶认缴申请<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验法人封顶认缴状态。若法人已在CM_CONTRACT_PAYMENT_SUMMARY中存在PAY_COMPLETE='Y'（已缴清）的封顶认缴记录，再次发起封顶认缴将导致重复认缴。封顶认缴代表法人保证金已缴清，无需再次认缴</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对已封顶认缴的法人再次发起封顶认缴申请<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验法人封顶认缴状态。若法人已在CM_CONTRACT_PAYMENT_SUMMARY中存在PAY_COMPLETE='Y'（已缴清）的封顶认缴记录，再次发起封顶认缴将导致重复认缴。封顶认缴代表法人保证金已缴清，无需再次认缴</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT S.SUMMARY_ID, S.CONTRACT_NO, S.CUSTOMER_NAME, S.SUBSCRIPTION_AMT,
          S.PAID_AMT, S.PAY_COMPLETE
@@ -578,7 +618,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>法人已有封顶认缴流程在审批中</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对已有封顶认缴流程在审批中的法人再次发起封顶认缴申请<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验法人是否存在审批中的封顶认缴申请（HZ_APPROVE_STATUS='RUN'且认缴类型为封顶）。重复发起将导致OA流程冲突和认缴金额重复计算。需先完成或中止已有封顶认缴流程</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对已有封顶认缴流程在审批中的法人再次发起封顶认缴申请<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验法人是否存在审批中的封顶认缴申请（HZ_APPROVE_STATUS='RUN'且认缴类型为封顶）。重复发起将导致OA流程冲突和认缴金额重复计算。需先完成或中止已有封顶认缴流程</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.CUSTOMER_NAME,
          A.APPLY_AMT, A.APPLY_TYPE, A.HZ_APPROVE_STATUS
@@ -595,7 +635,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前法人存在普通认缴，请先中断或撤销</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对存在普通认缴的法人发起封顶认缴申请<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验普通认缴与封顶认缴互斥。若法人存在未完成或已审批的普通认缴（APPLY_TYPE='NORMAL'），不允许发起封顶认缴。封顶认缴要求法人所有认缴一次性缴清，与普通认缴的分批认缴逻辑冲突。需先中断普通认缴申请或撤销普通认缴</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对存在普通认缴的法人发起封顶认缴申请<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验普通认缴与封顶认缴互斥。若法人存在未完成或已审批的普通认缴（APPLY_TYPE='NORMAL'），不允许发起封顶认缴。封顶认缴要求法人所有认缴一次性缴清，与普通认缴的分批认缴逻辑冲突。需先中断普通认缴申请或撤销普通认缴</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CONTRACT_NO, A.CUSTOMER_NAME,
          A.APPLY_TYPE, A.APPLY_AMT, A.HZ_APPROVE_STATUS
@@ -612,7 +652,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>认缴的金额与封顶的金额不一致</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户发起封顶认缴申请时，申请认缴金额与封顶配置金额（CM_DEPOSITS_CEILING）不一致<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验封顶认缴的申请金额必须等于法人封顶配置金额。封顶认缴代表一次性缴清全部保证金，金额不一致将导致缴清标识计算错误。需调整认缴金额与封顶配置一致</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户发起封顶认缴申请时，申请认缴金额与封顶配置金额（CM_DEPOSITS_CEILING）不一致<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验封顶认缴的申请金额必须等于法人封顶配置金额。封顶认缴代表一次性缴清全部保证金，金额不一致将导致缴清标识计算错误。需调整认缴金额与封顶配置一致</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.APPLY_AMT AS 申请认缴金额,
          C.CEILING_AMT AS 封顶金额,
@@ -630,7 +670,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>认款单剩余可认款金额不足</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户提交认缴申请时，关联认款单（CM_DEPOSITS_PAYMENT）的剩余可认款金额小于申请认缴金额<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验认款单剩余可认款金额（认款金额-已认缴金额-已撤销金额）必须大于等于申请认缴金额。剩余金额不足将导致认缴超额，认款单金额被超用。需调减认缴金额或选择其他有余额的认款单</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户提交认缴申请时，关联认款单（CM_DEPOSITS_PAYMENT）的剩余可认款金额小于申请认缴金额<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验认款单剩余可认款金额（认款金额-已认缴金额-已撤销金额）必须大于等于申请认缴金额。剩余金额不足将导致认缴超额，认款单金额被超用。需调减认缴金额或选择其他有余额的认款单</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT P.PAYMENT_ID, P.CONTRACT_NO, P.PAYMENT_AMT,
          (SELECT NVL(SUM(A.APPLY_AMT), 0) FROM CM_CONTRACT_PAYMENT_APPLY A
@@ -650,7 +690,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>认款单不存在，请重新选择</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户保存认缴申请时，关联的认款单（CM_DEPOSITS_PAYMENT）已被删除或撤销<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验关联认款单存在性。认款单不存在根因有三类：(1)认款单已被删除；(2)认款单已撤销（STATUS='CANCELLED'）；(3)PAYMENT_ID传入错误。需重新选择有效认款单</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户保存认缴申请时，关联的认款单（CM_DEPOSITS_PAYMENT）已被删除或撤销<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验关联认款单存在性。认款单不存在根因有三类：(1)认款单已被删除；(2)认款单已撤销（STATUS='CANCELLED'）；(3)PAYMENT_ID传入错误。需重新选择有效认款单</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.PAYMENT_ID,
          P.PAYMENT_ID AS 认款单ID, P.STATUS AS 认款状态
@@ -667,7 +707,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>申请单已认缴，不能进行重复认缴</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对已执行认缴操作的申请单再次发起认缴<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验申请单认缴状态。若申请单已认缴（已生成认款记录CM_CONTRACT_PAYMENT_RECORD），再次认缴将导致认款金额重复计算。需确认申请单状态，仅未认缴的申请单可发起认缴</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对已执行认缴操作的申请单再次发起认缴<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl校验申请单认缴状态。若申请单已认缴（已生成认款记录CM_CONTRACT_PAYMENT_RECORD），再次认缴将导致认款金额重复计算。需确认申请单状态，仅未认缴的申请单可发起认缴</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.HZ_APPROVE_STATUS,
          (SELECT COUNT(*) FROM CM_CONTRACT_PAYMENT_RECORD R
@@ -684,7 +724,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，校验OA流程编码（CONTRACT_PAYMENT_APPLY_MCS_AW）为空<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在saveAndSubmit中校验流程编码非空。流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置CONTRACT_PAYMENT_APPLY_MCS_AW流程编码；(2)认缴类型未关联对应流程编码。需在流程配置中维护对应关系</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，校验OA流程编码（CONTRACT_PAYMENT_APPLY_MCS_AW）为空<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在saveAndSubmit中校验流程编码非空。流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置CONTRACT_PAYMENT_APPLY_MCS_AW流程编码；(2)认缴类型未关联对应流程编码。需在流程配置中维护对应关系</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, APPLY_TYPE, HZ_APPROVE_STATUS
   FROM CM_CONTRACT_PAYMENT_APPLY
@@ -699,7 +739,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>请选择需要删除的数据</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选中任何认缴申请记录直接点击"删除"按钮<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在remove方法中校验传入的删除列表非空。未选中数据时删除操作无意义，且可能导致空指针异常。需先选中至少一条记录再删除</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户未选中任何认缴申请记录直接点击"删除"按钮<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在remove方法中校验传入的删除列表非空。未选中数据时删除操作无意义，且可能导致空指针异常。需先选中至少一条记录再删除</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '请在前端列表页选中需要删除的认缴申请记录' AS 提示 FROM DUAL;
 --</code></pre></div>
@@ -711,7 +751,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>当前法人不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户保存认缴申请时，根据经销商查询法人主数据返回空<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl根据经销商CUSTOMER_ID查询法人主数据，若经销商未配置法人关联或法人主数据已失效，将抛出此异常。法人是认缴资金流向确认的关键主体。需在经销商主数据中维护法人关联</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户保存认缴申请时，根据经销商查询法人主数据返回空<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl根据经销商CUSTOMER_ID查询法人主数据，若经销商未配置法人关联或法人主数据已失效，将抛出此异常。法人是认缴资金流向确认的关键主体。需在经销商主数据中维护法人关联</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.APPLY_ID, A.APPLY_NO, A.CUSTOMER_NAME,
          C.CUSTOMER_ID, C.CORPORATE_CODE, C.CORPORATE_NAME
@@ -727,7 +767,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同类型不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>保存认缴申请或查询时，CONTRACT_TYPE参数为空<br><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在多处校验合同类型非空。合同类型区分年度经销合同、临时合同等，影响保证金标准和封顶配置的匹配。合同类型为空将导致保证金标准无法匹配，认缴金额计算无依据。需前端正确传入合同类型参数</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>保存认缴申请或查询时，CONTRACT_TYPE参数为空<br /><strong>逻辑分析：</strong>CmContractPaymentApplyServiceImpl在多处校验合同类型非空。合同类型区分年度经销合同、临时合同等，影响保证金标准和封顶配置的匹配。合同类型为空将导致保证金标准无法匹配，认缴金额计算无依据。需前端正确传入合同类型参数</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT APPLY_ID, APPLY_NO, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_TYPE, APPLY_AMT
   FROM CM_CONTRACT_PAYMENT_APPLY
@@ -741,7 +781,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用cm-contract-payment-applys相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用cm-contract-payment-applys相关接口时，后端服务不可达或请求超时<br /><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
 --</code></pre></div>
@@ -753,7 +793,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法操作</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对认缴申请保存、提交、删除等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对认缴申请保存、提交、删除等操作无对应功能权限或数据权限<br /><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
 --</code></pre></div>
@@ -771,7 +811,7 @@ SELECT A.APPLY_AMT, S.UNPAID_AMT FROM CM_CONTRACT_PAYMENT_APPLY A, CM_CONTRACT_P
     <span style="font-size:15px;">OA审批未发起</span>
   </div>
   <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>OA系统不可用或工作流配置缺失<br><strong style="color:#7C3AED;">处理：</strong>检查工作流CONTRACT_PAYMENT_APPLY_MCS_AW配置
+    <strong style="color:#7C3AED;">原因：</strong>OA系统不可用或工作流配置缺失<br /><strong style="color:#7C3AED;">处理：</strong>检查工作流CONTRACT_PAYMENT_APPLY_MCS_AW配置
   </div>
 </div>
 </div>
