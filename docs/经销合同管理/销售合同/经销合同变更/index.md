@@ -56,25 +56,25 @@
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>选原合同</h5>
-        <small>校验是否可变更<br>带出原合同信息</small>
+        <small>校验是否可变更<br />带出原合同信息</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
         <h5>区域校验</h5>
-        <small>信息变更类校验<br>区域冲突提示</small>
+        <small>信息变更类校验<br />区域冲突提示</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8h10M8 3v10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <h5>提交审批</h5>
-        <small>保存并提交<br>启动工作流</small>
+        <small>保存并提交<br />启动工作流</small>
       </div>
       <div class="biz-step-arrow">&rarr;</div>
       <div class="biz-step-item">
         <div class="biz-step-circle" style="background:linear-gradient(135deg,#059669,#047857);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 13L6 9L9 11L13 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h5>生成新合同</h5>
-        <small>审批通过生效<br>推送 CRM 与 OA</small>
+        <small>审批通过生效<br />推送 CRM 与 OA</small>
       </div>
     </div>
   </div>
@@ -233,22 +233,33 @@
 
 <KbCard title="选择弹窗">
 <h4>弹窗1：原合同选择（单选）</h4>
-<table class="kb-field-tbl">
-<thead>
-<tr><th>入参</th><th></th><th></th><th></th><th>数据范围</th></tr>
-</thead>
-<tbody>
-<tr><td>字段名</td><td>中文名</td><td>释义</td><td>示例</td><td></td></tr>
-<tr><td>contractNo</td><td>合同编号</td><td>原合同编号</td><td>"HT001"</td><td>已审批通过的年度经销合同</td></tr>
-</tbody>
-</table>
-<blockquote>查询SQL（后端接口oldSaSale）：</blockquote>
-
-```sql
-SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR
-FROM SA_SALE_CONTRACT_HEAD 
-WHERE HZ_APPROVE_STATUS = 'APPROVED' AND STATE_PIGEONHOLE IS NOT NULL
-```
+<p><strong>接口链路：</strong>LOV AE.OLD_SA_SALE → GET /v1/{organizationId}/sale-contract-add-heads/old-sa-sale → SaleContractAddHeadServiceImpl.oldSaSale → SaleContractAddHeadMapper.oldSaSale</p>
+<blockquote>可选原合同范围（SQL硬条件）：</blockquote>
+<ul>
+<li>有效数据：valid = '2'</li>
+<li>当前事业部：entid = #{entid}（Service层getCurrentDivision()带入）</li>
+<li>排除次年/余额合同：nvl(is_nextyear,0) &lt;&gt; 2 and nvl(is_balance,0) &lt;&gt; 2</li>
+<li>未关闭合同：close_data is null（Service未设置flag，默认走此分支）</li>
+</ul>
+<blockquote>用户级过滤（Service层）：</blockquote>
+<ul>
+<li>当前用户有"区域经理（REGION_MANAGER）"角色时，只能选到「被授权经销商（epms.customer_access_ctrl）∪ 自己创建的合同（created_by）」范围内的合同</li>
+</ul>
+<blockquote>查询SQL（SaleContractAddHeadMapper.oldSaSale，节选）：</blockquote>
+<pre class="detail-sql language-sql" v-pre><code>select SSCH.* from SA_SALE_CONTRACT_HEAD SSCH
+where valid = '2'
+  and entid = #{entid}
+  and nvl(is_nextyear, 0) &lt;&gt; 2
+  and nvl(is_balance, 0) &lt;&gt; 2
+  and close_data is null
+  -- 区域经理角色追加：
+  and SSCH.CUST_CODE in (SELECT cc.customer_code FROM epms.customer cc
+    INNER JOIN (SELECT DISTINCT c.customer_code FROM epms.customer_access_ctrl ac
+      INNER JOIN epms.customer c ON c.CUSTOMER_ID = ac.CUSTOMER_ID
+      WHERE ac.userid = #{userId}) ctrl ON ctrl.customer_code = cc.customer_code
+    UNION
+    SELECT bx.cust_code FROM epms.SA_SALE_CONTRACT_HEAD bx WHERE bx.created_by = #{userId})</code></pre>
+<p><strong>说明：</strong>HZ_APPROVE_STATUS、SA_CONTR_HEAD_CODE（LIKE模糊）、CORPORATE等为可选查询条件，非硬过滤。</p>
 </KbCard>
 
 <KbCard title="导入">
@@ -393,7 +404,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>原合同不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在新建变更申请页未选择原合同直接点击保存<br><strong>逻辑分析：</strong>保存接口sale-contract-add-heads/save在写入SALE_CONTRACT_ADD_HEAD前校验ORIGINAL_CONTRACT_ID非空。原合同是变更的对象，未选择原合同将导致变更内容无回写目标，后续变更区域（SaleContractAddArea）和变更任务拆分（SaleContractAddTaskSplit）也无从关联。校验在Controller层前置拦截，toast提示后阻断保存</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在新建变更申请页未选择原合同直接点击保存<br /><strong>逻辑分析：</strong>保存接口sale-contract-add-heads/save在写入SALE_CONTRACT_ADD_HEAD前校验ORIGINAL_CONTRACT_ID非空。原合同是变更的对象，未选择原合同将导致变更内容无回写目标，后续变更区域（SaleContractAddArea）和变更任务拆分（SaleContractAddTaskSplit）也无从关联。校验在Controller层前置拦截，toast提示后阻断保存</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          CUSTOMER_NAME, CHANGE_TYPE, HZ_APPROVE_STATUS
@@ -408,7 +419,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>原合同未归档</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在原合同选择弹窗中选择合同，oldSaSale接口校验发现合同未审批通过或未归档<br><strong>逻辑分析：</strong>原合同选择弹窗调用oldSaSale接口查询SA_SALE_CONTRACT_HEAD表，要求HZ_APPROVE_STATUS='APPROVED'（审批通过）且STATE_PIGEONHOLE IS NOT NULL（已归档）。未归档根因有二：(1)合同未审批通过（HZ_APPROVE_STATUS为NEW/RUN/REJECTED），变更需基于已审批合同；(2)合同已审批但未归档（STATE_PIGEONHOLE为空），变更需基于已归档合同。需先完成原合同的审批和归档再发起变更</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户在原合同选择弹窗中选择合同，oldSaSale接口校验发现合同未审批通过或未归档<br /><strong>逻辑分析：</strong>原合同选择弹窗调用oldSaSale接口查询SA_SALE_CONTRACT_HEAD表，要求HZ_APPROVE_STATUS='APPROVED'（审批通过）且STATE_PIGEONHOLE IS NOT NULL（已归档）。未归档根因有二：(1)合同未审批通过（HZ_APPROVE_STATUS为NEW/RUN/REJECTED），变更需基于已审批合同；(2)合同已审批但未归档（STATE_PIGEONHOLE为空），变更需基于已归档合同。需先完成原合同的审批和归档再发起变更</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT SALE_CONTRACT_HEAD_ID, CONTRACT_NO, CUSTOMER_NAME, CONTRACT_YEAR,
          HZ_APPROVE_STATUS, STATE_PIGEONHOLE, ACTUAL_PIGEONHOLE_DATE
@@ -424,7 +435,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>未找到该记录</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户编辑或查看变更申请时，根据ADD_HEAD_ID查询SALE_CONTRACT_ADD_HEAD返回空<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在doSelect、doUpdate等操作前根据主键查询变更单，若记录不存在或已被删除将抛出此异常。根因有三类：(1)变更单已被其他用户删除；(2)ADD_HEAD_ID传入错误；(3)数据权限隔离导致当前用户不可见。需确认变更单存在且当前用户有权限</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户编辑或查看变更申请时，根据ADD_HEAD_ID查询SALE_CONTRACT_ADD_HEAD返回空<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在doSelect、doUpdate等操作前根据主键查询变更单，若记录不存在或已被删除将抛出此异常。根因有三类：(1)变更单已被其他用户删除；(2)ADD_HEAD_ID传入错误；(3)数据权限隔离导致当前用户不可见。需确认变更单存在且当前用户有权限</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_NO, CUSTOMER_NAME,
          CHANGE_TYPE, HZ_APPROVE_STATUS
@@ -439,7 +450,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同信息不匹配</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户编辑变更申请时，变更单关联的原合同信息与实际原合同不一致<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验变更单（SALE_CONTRACT_ADD_HEAD）关联的原合同（ORIGINAL_CONTRACT_ID）与SA_SALE_CONTRACT_HEAD中的实际记录是否一致。不一致根因有二：(1)原合同已被变更或删除；(2)变更单ORIGINAL_CONTRACT_ID指向错误。需重新选择原合同</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户编辑变更申请时，变更单关联的原合同信息与实际原合同不一致<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验变更单（SALE_CONTRACT_ADD_HEAD）关联的原合同（ORIGINAL_CONTRACT_ID）与SA_SALE_CONTRACT_HEAD中的实际记录是否一致。不一致根因有二：(1)原合同已被变更或删除；(2)变更单ORIGINAL_CONTRACT_ID指向错误。需重新选择原合同</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.ADD_HEAD_NO, A.ORIGINAL_CONTRACT_ID, A.ORIGINAL_CONTRACT_NO,
          S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS
@@ -456,7 +467,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>不能删除非制单状态的单据</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中已提交或已审批的变更单点击"删除"按钮<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在remove方法中校验变更单状态，仅HZ_APPROVE_STATUS='NEW'（制单状态）的单据可删除。已提交（RUN）或已审批（APPROVED）的单据已进入OA流程或已回写原合同，删除将导致流程数据不一致。需先撤回OA流程再删除</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户选中已提交或已审批的变更单点击"删除"按钮<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在remove方法中校验变更单状态，仅HZ_APPROVE_STATUS='NEW'（制单状态）的单据可删除。已提交（RUN）或已审批（APPROVED）的单据已进入OA流程或已回写原合同，删除将导致流程数据不一致。需先撤回OA流程再删除</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_NO, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
@@ -471,7 +482,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>流程编码缺失，请选择流程</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，校验OA流程编码（CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS）为空<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在saveAndSubmit中校验流程编码非空。流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS流程编码；(2)变更类型未关联对应流程编码。需在流程配置中维护对应关系</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户点击"保存并提交"，校验OA流程编码（CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS）为空<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在saveAndSubmit中校验流程编码非空。流程编码缺失将导致OA流程无法启动。根因有二：(1)系统未配置CONTRACT_ADD_EVENT或CONTRACT_JXHTBG_AW_XS流程编码；(2)变更类型未关联对应流程编码。需在流程配置中维护对应关系</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, CHANGE_TYPE, HZ_APPROVE_STATUS
   FROM SALE_CONTRACT_ADD_HEAD
@@ -486,7 +497,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>电子合同签署中，不允许变更</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对原合同发起变更申请时，原合同正处于电子签章流程中<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验原合同的电子签章状态，若原合同正在电子签章流程中（签署中状态），不允许发起变更。变更将导致原合同内容变化，电子签章数据失效。需先完成或中止原合同电子签章流程再发起变更</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对原合同发起变更申请时，原合同正处于电子签章流程中<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验原合同的电子签章状态，若原合同正在电子签章流程中（签署中状态），不允许发起变更。变更将导致原合同内容变化，电子签章数据失效。需先完成或中止原合同电子签章流程再发起变更</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS,
          S.ELECTRONIC_SIGN_STATUS, S.STATE_PIGEONHOLE
@@ -502,7 +513,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>销售合同编码不能为空</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>校验变更申请时，原合同编码（ORIGINAL_CONTRACT_NO或SA_CONTR_HEAD_CODE）参数为空<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在多处校验销售合同编码非空。合同编码是关联原合同的关键字段，为空将导致原合同信息无法带出，变更回写无目标。需前端正确传入原合同编码</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>校验变更申请时，原合同编码（ORIGINAL_CONTRACT_NO或SA_CONTR_HEAD_CODE）参数为空<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在多处校验销售合同编码非空。合同编码是关联原合同的关键字段，为空将导致原合同信息无法带出，变更回写无目标。需前端正确传入原合同编码</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          CHANGE_TYPE, HZ_APPROVE_STATUS
@@ -517,7 +528,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>该合同已有单据在走合同归档，请先归档完再变更</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对原合同发起变更申请时，原合同存在未完成的归档单据<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验原合同是否存在归档流程中的单据。若原合同有单据正在归档流程中，发起变更将导致归档单据与变更后合同数据不一致。需先完成原合同相关单据的归档流程再发起变更</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对原合同发起变更申请时，原合同存在未完成的归档单据<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验原合同是否存在归档流程中的单据。若原合同有单据正在归档流程中，发起变更将导致归档单据与变更后合同数据不一致。需先完成原合同相关单据的归档流程再发起变更</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS,
          S.STATE_PIGEONHOLE, S.IS_PIGEONHOLE
@@ -534,7 +545,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>已经存在未审核完的合同变更单</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对原合同发起变更申请时，同一原合同已存在未审核完成的变更单<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验同一原合同（ORIGINAL_CONTRACT_ID）不允许存在多个未审核完成的变更单（HZ_APPROVE_STATUS为NEW或RUN）。重复发起变更将导致变更内容冲突，回写原合同时数据不一致。需先完成或中止已有变更单再发起新变更</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对原合同发起变更申请时，同一原合同已存在未审核完成的变更单<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验同一原合同（ORIGINAL_CONTRACT_ID）不允许存在多个未审核完成的变更单（HZ_APPROVE_STATUS为NEW或RUN）。重复发起变更将导致变更内容冲突，回写原合同时数据不一致。需先完成或中止已有变更单再发起新变更</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          ADD_HEAD_ID, ADD_HEAD_NO, HZ_APPROVE_STATUS
@@ -550,7 +561,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>经销商或者法人不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>变更申请校验时，经销商或法人主数据查询返回空<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl根据经销商ID查询经销商和法人主数据，若经销商已被删除或法人关联未配置将抛出此异常。经销商和法人是变更回写和CRM推送的关键主体。需确认经销商存在且已配置法人关联</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>变更申请校验时，经销商或法人主数据查询返回空<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl根据经销商ID查询经销商和法人主数据，若经销商已被删除或法人关联未配置将抛出此异常。经销商和法人是变更回写和CRM推送的关键主体。需确认经销商存在且已配置法人关联</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.CUSTOMER_NAME, C.CUSTOMER_ID, C.CORPORATE_CODE,
          C.CORPORATE_NAME
@@ -566,7 +577,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>合同不存在</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>变更申请校验或回写时，原合同或新合同在SA_SALE_CONTRACT_HEAD中查询不到<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在多处校验合同存在性。合同不存在根因有三类：(1)合同已被删除；(2)合同ID传入错误；(3)数据同步延迟。需确认合同存在且已同步</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>变更申请校验或回写时，原合同或新合同在SA_SALE_CONTRACT_HEAD中查询不到<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在多处校验合同存在性。合同不存在根因有三类：(1)合同已被删除；(2)合同ID传入错误；(3)数据同步延迟。需确认合同存在且已同步</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.ORIGINAL_CONTRACT_ID, A.ORIGINAL_CONTRACT_NO,
          S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO
@@ -582,7 +593,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>单据信息不合法</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>变更申请提交或审批回调时，变更单据状态或数据不满足操作前提<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在多处校验单据合法性。不合法根因有多类：(1)单据状态非预期（如已审批单据再次提交）；(2)必填字段缺失；(3)关联数据异常。需核查变更单状态和完整数据</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>变更申请提交或审批回调时，变更单据状态或数据不满足操作前提<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在多处校验单据合法性。不合法根因有多类：(1)单据状态非预期（如已审批单据再次提交）；(2)必填字段缺失；(3)关联数据异常。需核查变更单状态和完整数据</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT ADD_HEAD_ID, ADD_HEAD_NO, ORIGINAL_CONTRACT_ID, ORIGINAL_CONTRACT_NO,
          CUSTOMER_NAME, CHANGE_TYPE, HZ_APPROVE_STATUS
@@ -597,7 +608,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>MBO作废原合同失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>变更审批通过后回写原合同，调用MBO接口作废原合同返回失败<br><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在变更审批通过后调用MBO接口作废原合同（变更回写场景）。MBO作废失败根因有三类：(1)MBO系统不可用；(2)原合同在MBO侧状态不允许作废；(3)MBO接口认证失败。需联系MBO管理员核查</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>变更审批通过后回写原合同，调用MBO接口作废原合同返回失败<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl在变更审批通过后调用MBO接口作废原合同（变更回写场景）。MBO作废失败根因有三类：(1)MBO系统不可用；(2)原合同在MBO侧状态不允许作废；(3)MBO接口认证失败。需联系MBO管理员核查</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT A.ADD_HEAD_ID, A.ADD_HEAD_NO, A.HZ_APPROVE_STATUS,
          S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS AS 原合同状态
@@ -613,7 +624,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>网络请求失败</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用sale-contract-add-heads相关接口时，后端服务不可达或请求超时<br><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>前端调用sale-contract-add-heads相关接口时，后端服务不可达或请求超时<br /><strong>逻辑分析：</strong>前端通过axios调用AE_BUSINESS服务，网络异常、服务宕机、网关超时均会触发。前端拦截器统一捕获并toast提示。需检查AE_BUSINESS服务状态、网络连通性、网关配置</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '网络层异常，无SQL排查' AS 提示 FROM DUAL;
 --</code></pre></div>
@@ -625,7 +636,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <a href="#" class="close-btn">&times;</a>
     <h4><span style="color:#7C3AED;">报错：</span>权限不足，无法操作</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对变更保存、提交、删除等操作无对应功能权限或数据权限<br><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>当前用户对变更保存、提交、删除等操作无对应功能权限或数据权限<br /><strong>逻辑分析：</strong>后端通过权限注解校验用户角色，前端通过菜单和按钮权限控制显隐。用户无权限时后端返回403，前端拦截器toast提示。需在权限管理中为用户分配对应角色</div>
       <h5>排查SQL</h5>
     <pre class="detail-sql language-sql" v-pre><code>SELECT '权限层异常，请核查用户角色配置' AS 提示 FROM DUAL;
 --</code></pre></div>
@@ -643,7 +654,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <span style="font-size:15px;">变更未回写原合同</span>
   </div>
   <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
-    <strong style="color:#7C3AED;">原因：</strong>变更审批未通过或回写逻辑异常<br><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT HZ_APPROVE_STATUS FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #&#123;id&#125;</code>，确认状态为APPROVED
+    <strong style="color:#7C3AED;">原因：</strong>变更审批未通过或回写逻辑异常<br /><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT HZ_APPROVE_STATUS FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #&#123;id&#125;</code>，确认状态为APPROVED
   </div>
 </div>
 </div>

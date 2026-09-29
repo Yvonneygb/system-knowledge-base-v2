@@ -233,7 +233,27 @@
 </KbCard>
 
 <KbCard title="选择弹窗">
-<blockquote>本页面查询条件使用文本输入和下拉选择，无独立弹窗。</blockquote>
+<h4>弹窗1：经销商选择（新建/编辑页，单选）</h4>
+<p><strong>接口链路：</strong>LOV AE.CUSTOMER_ORGS_SEARCH（searchFlag=146）→ GET /v1/{organizationId}/customer-orgs/search → CustomerOrgServiceImpl.search → CustomerOrgMapper.selectValid</p>
+<blockquote>可选经销商范围（SQL条件）：</blockquote>
+<ul>
+<li>当前事业部对应组织：co.organization_id = #{organizationId}（Service层getCurrentDivision()覆盖）</li>
+<li>经销商类客户：co.customer_kind = 1</li>
+<li>关联部门表dept、客户表customer（左连接带出名称）</li>
+<li>当前用户是"区域经理（REGION_MANAGER）"角色时，仅可见customer_access_ctrl授权范围内的经销商</li>
+<li>登录用户为经销商本人（userType=D）时，经销商字段禁用不可改（前端控制）</li>
+</ul>
+<blockquote>查询SQL（CustomerOrgMapper.selectValid，节选）：</blockquote>
+<pre class="detail-sql language-sql" v-pre><code>select ...
+from customer_org co, dept d, CUSTOMER c
+where co.organization_id = #{organizationId}
+  and co.customer_kind = 1
+  and co.dept_id = d.dept_id(+)
+  and co.customer_id = c.customer_id(+)
+  -- 区域经理角色追加：
+  and c.customer_code IN (SELECT DISTINCT c.CUSTOMER_CODE FROM epms.customer_access_ctrl ac
+    INNER JOIN epms.customer c ON c.CUSTOMER_ID = ac.CUSTOMER_ID
+    WHERE ac.userid = #{userId})</code></pre>
 </KbCard>
 
 <KbCard title="导入">
