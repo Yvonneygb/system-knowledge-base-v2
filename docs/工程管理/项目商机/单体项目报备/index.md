@@ -46,25 +46,25 @@
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>新建报备</h5>
-      <small>录入工程信息<br>保存为草稿</small>
+      <small>录入工程信息<br />保存为草稿</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="2" width="10" height="12" rx="1" stroke="white" stroke-width="1.5"/><path d="M5 5H11M5 8H11M5 11H9" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <h5>查重拦截</h5>
-      <small>同城相似度校验<br>冲突则申诉</small>
+      <small>同城相似度校验<br />冲突则申诉</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#7C3AED,#6D28D9);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8L6 11L13 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="8" r="6" stroke="white" stroke-width="1.5"/></svg></div>
       <h5>OA审批</h5>
-      <small>推送 OA 审批<br>等待结果回调</small>
+      <small>推送 OA 审批<br />等待结果回调</small>
     </div>
     <div class="biz-step-arrow">&rarr;</div>
     <div class="biz-step-item">
       <div class="biz-step-circle" style="background:linear-gradient(135deg,#16a34a,#15803d);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L3 4V8C3 11 8 14 8 14C8 14 13 11 13 8V4L8 2Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M5.5 8L7 9.5L10.5 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h5>生效同步</h5>
-      <small>写入项目档案<br>推送 CRM 与检索</small>
+      <small>写入项目档案<br />推送 CRM 与检索</small>
     </div>
   </div>
   <div class="kl-tip" style="margin-top:14px;">
@@ -229,6 +229,50 @@
 
 </KbCard>
 
+<KbCard num="8.5" title="产品线可选值来源">
+
+- 产品线字段存储为 <code>EPM_REPORT.PDT_LINE</code>（Long），界面值集为 <code>AE.EPM.ORDER_PDT_LINE</code>（新页面）/ <code>epm.order_pdt_line</code>（旧页面）
+- 可选值由产品线配置表 <code>EPM_PDT_LINE</code> 控制，按"订单类型 + 事业部"配置，配置表含"是否工程报备专用(IS_PROJECT_REPORT)"字段区分报备用途
+- 报备详情页为 H0 低代码报表页面，编辑字段可选值配置在 H0 平台
+
+<h4>后端取值SQL（getOrderPdtLine）</h4>
+<pre class="detail-sql" v-pre><code>SELECT opl.ORDER_PDT_LINE_ID,
+       opl.ORDER_PDT_LINE_CODE,
+       opl.ORDER_PDT_LINE_NAME
+FROM   order_pdt_line opl
+inner join epm_pdt_line epl ON epl.order_pdt_line = opl.order_pdt_line_id
+inner join DIVISION_BASE_SET s ON epl.division_name = s.division_id
+WHERE  epl.bill_type = #{billType}
+  and  s.organization_id = #{organizationId}
+ORDER  BY order_pdt_line_code</code></pre>
+
+<table class="kb-field-tbl">
+<thead>
+<tr><th>条件</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>epl.bill_type = #{billType}</code></td><td>按订单类型过滤（值集 epm.bill_type）</td></tr>
+<tr><td><code>s.organization_id = #{organizationId}</code></td><td>按事业部过滤（事业部基础设置表）</td></tr>
+<tr><td>内连接 <code>epm_pdt_line</code></td><td>只取配置表中登记的产品线</td></tr>
+</tbody>
+</table>
+
+<h4>配置表 EPM_PDT_LINE 字段</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>字段</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>BILL_TYPE</code></td><td>订单类型（值集 epm.bill_type）</td></tr>
+<tr><td><code>DIVISION_NAME</code></td><td>事业部（值集 epm.division）</td></tr>
+<tr><td><code>ORDER_PDT_LINE</code></td><td>订单产品线（值集 epm.order_pdt_line）</td></tr>
+<tr><td><code>IS_MAJOR_DATA</code></td><td>是否主数据专用（1否/2是）</td></tr>
+<tr><td><code>IS_PROJECT_REPORT</code></td><td>是否工程报备专用（1否/2是）</td></tr>
+</tbody>
+</table>
+
+</KbCard>
+
 <KbCard num="9" title="列表查询">
 
 - 支持普通查询和ES查询两种模式切换
@@ -242,8 +286,6 @@
 
 - 仅允许删除非审批中、非已审批、非暂挂、非退回状态的报备数据
 - 删除时级联删除：折扣申请 → 合同 → 项目阶段 → 项目信息 → 工作流任务 → 报备主表
-
----
 
 </KbCard>
 
@@ -436,8 +478,6 @@ SELECT * FROM EPM_OA_BILL_REF WHERE BILL_NAME = '单体项目报备'
 - 解冻申请: `ENGINEERING_REPORT_JDSQ_MAIN`
 
 **单据名称枚举**: `DTXMBB("单体项目报备")`
-
----
 
 </KbCard>
 
@@ -686,8 +726,6 @@ SELECT * FROM EPM_OA_BILL_REF WHERE BILL_NAME = '单体项目报备'
 | OABILLID | VARCHAR2 | OA表单ID |
 | BILLNAME | VARCHAR2 | 单据名称(单体项目报备) |
 
----
-
 </KbCard>
 
 </div>
@@ -712,7 +750,7 @@ SELECT * FROM EPM_OA_BILL_REF WHERE BILL_NAME = '单体项目报备'
 <KbCard title="报错一览表" :hover="false">
 <div class="kb-field-scroll">
 <table class="kb-field-tbl">
-<colgroup><col style="width:27%"><col style="width:18%"><col style="width:40%"><col style="width:15%"></colgroup>
+<colgroup><col style="width:27%" /><col style="width:18%" /><col style="width:40%" /><col style="width:15%" /></colgroup>
 <thead><tr><th>报错信息</th><th>提示节点</th><th>根因与排查方向</th><th>等级</th></tr></thead>
 <tbody>
           <tr>
@@ -887,8 +925,6 @@ SELECT * FROM EPM_OA_BILL_REF WHERE BILL_NAME = '单体项目报备'
 | 查重拦截后无法提交 | 查重标记为Y需走申诉 | 通过申诉功能提交，注意申诉次数受配置限制 |
 | 报备审批通过后项目表未同步 | 审批回调异常 | 检查HZ_APPROVE_STATUS和CALLBACK_SOURCE字段，确认OA回调是否正常 |
 
----
-
 </KbCard>
 
 </div>
@@ -905,6 +941,7 @@ SELECT * FROM EPM_OA_BILL_REF WHERE BILL_NAME = '单体项目报备'
 | 2026-07-28 | 生成单体项目报备知识库文档 | 文档 |
 | 2026-04-23 | 修复单体报备相关问题(hfx) | 报备保存/提交/查重 |
 | 2026-01-15 | 单体报备推送ES定时任务优化(ReportPushEsJob) | ES数据同步 |
+
 </KbCard>
 </div>
 </div>
