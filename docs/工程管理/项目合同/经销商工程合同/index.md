@@ -240,6 +240,36 @@
 </ul>
 
 </KbCard>
+<KbCard num="7" title="重点逻辑7：可选报备条件 {报备项目弹窗}">
+<KbQuote>"报备项目编码" 弹窗只筛业务允许的报备，避免选了无效/已签合同的报备</KbQuote>
+
+<p><strong>入口与链路</strong>：</p>
+<ul>
+<li>1、字段：<code>projectLov</code>（label=报备项目编码），LOV 编码 <code>AE.PROJECT_DATA_VIEW</code></li>
+<li>2、动态参数：<code>EpmProjectContract/stores/headDS.ts</code> L148-158 <code>lovPara</code> 强制 <code>reportType=1</code></li>
+<li>3、API：<code>GET /v1/{organizationId}/contracts/get-project-data</code>（<code>ContractController.getProjectData</code>）</li>
+<li>4、SQL：<code>EpmProjectContractMapper.xml</code> L1306 <code>getProjectData</code></li>
+</ul>
+
+<p><strong>必备过滤条件</strong>：</p>
+<ul>
+<li>1、<code>p.hz_approve_status = 'APPROVED'</code> — 报备已审核通过</li>
+<li>2、<code>p.project_valid = 2</code> — 项目有效</li>
+<li>3、<code>p.report_type = 1</code> — 单体项目报备（前端 lovPara 硬编码）</li>
+<li>4、合同竣工条件：<code>ecc.contract_completed_id IS NULL</code> 或 <code>(ecc.contract_completed_id IS NOT NULL AND ecc.hz_approve_status IN ('NEW','REJECTED'))</code></li>
+</ul>
+
+<p><strong>用户身份自动注入</strong>（Service L424-440）：</p>
+<ul>
+<li>经销商用户（D）→ <code>dto.customerCode = additionInfo.DC</code>，SQL 按 <code>p.customer_code</code> 过滤只看本经销商报备</li>
+<li>内部用户（E）→ <code>dto.organizationId = additionInfo.DEPT</code>，但 XML L1335-1337 中 organizationId 过滤已被注释掉，意味着内部用户看到全量报备（潜在设计漏洞）</li>
+</ul>
+
+<p><strong>可选过滤</strong>（按入参）：<code>customerCode</code> 精确匹配、<code>PROJECT_CODE / PROJECT_NAME / stage_name / hz_approve_status</code> 4 个模糊匹配、<code>PROJECT_CATEGORY != #{projectCategory}</code> 排除指定类别</p>
+
+<p><strong>未消费的入参</strong>：<code>customerId</code>（DTO 字段存在但 SQL 无 <code>&lt;if test="customerId"&gt;</code> 分支）、<code>relProjectId</code>（前端有传但 XML 未消费）</p>
+
+</KbCard>
 
 </div>
 </div>
@@ -703,14 +733,27 @@ paramMap.put("strategicRelated", strategicRelated);</code></pre>
 <ul>
 <li><strong>触发位置</strong>：合同详情页"报备项目编码"字段LOV点击</li>
 <li><strong>接口</strong>：<code>GET /v1/{organizationId}/contracts/get-project-data</code></li>
+<li><strong>SQL 位置</strong>：<code>EpmProjectContractMapper.xml</code> L1306 <code>getProjectData</code></li>
 <li><strong>返回</strong>：可关联的已报备项目列表</li>
 <li><strong>选择后赋值</strong>：自动填充项目编码、项目名称、客户编码、客户名称、业主类型等字段</li>
 </ul>
-<pre v-pre><code>SELECT * FROM EPM_PROJECT
-WHERE ORGANIZATION_ID = #{organizationId}
-  AND PROJECT_STAT = 5
-  AND CUSTOMER_ID IS NOT NULL
-ORDER BY PROJECT_ID DESC;</code></pre>
+<pre class="detail-sql language-sql" v-pre><code>SELECT ...
+FROM epm_project p
+LEFT JOIN epm_contract_completed ecc ON ecc.project_id = p.project_id
+WHERE (ecc.contract_completed_id IS NULL
+       OR (ecc.contract_completed_id IS NOT NULL
+           AND ecc.hz_approve_status IN ('NEW','REJECTED')))   -- 未竣工 或 竣工未提交/被驳回
+  AND p.hz_approve_status = 'APPROVED'                          -- 报备审核通过
+  AND p.project_valid = 2                                       -- 项目有效
+  AND p.report_type = #{reportType}                             -- 1=单体（前端 lovPara 硬编码）
+  [AND p.customer_code = #{customerCode}]                       -- 经销商用户自动注入
+  [AND p.PROJECT_CODE LIKE '%'||#{projectCode}||'%']
+  [AND p.PROJECT_NAME LIKE '%'||#{projectName}||'%']
+  [AND p.stage_name LIKE '%'||#{stageName}||'%']
+  [AND p.hz_approve_status LIKE '%'||#{hzApproveStatus}||'%']
+  [AND p.PROJECT_CATEGORY != #{projectCategory}]                -- 排除指定类别
+ORDER BY p.PROJECT_ID DESC;</code></pre>
+<p style="margin-top:8px;font-size:0.78rem;color:#B45309;"><strong>注意：</strong>内部用户（userType=E）注入的 organizationId 过滤在 XML L1335-1337 被注释掉，因此内部用户会看到全量报备，不按组织隔离。</p>
 
 <h4>弹窗2：交易公司/开票单位选择弹窗</h4>
 <ul>
@@ -1014,6 +1057,38 @@ S5：在【客户组织】维护该经销商的 division_id，确保指向有效
       <strong style="color:#7C3AED;">处理：</strong>检查HZ_INSTANCE_ID对应的流程实例状态，手动修正VALID=2
     </div>
   </div>
+  <div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+    <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+      <span class="kl-num">Q2</span>
+      <span style="font-size:15px;">新增合同时，"报备项目编码"弹窗为空或看不到目标报备</span>
+    </div>
+    <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+      <strong style="color:#7C3AED;">必备过滤条件（5 条全部满足才会出现）：</strong><br />
+      ① <code>p.hz_approve_status = 'APPROVED'</code>（报备已审核通过）<br />
+      ② <code>p.project_valid = 2</code>（项目有效）<br />
+      ③ <code>p.report_type = 1</code>（单体项目报备，前端 lovPara 硬编码）<br />
+      ④ 合同竣工条件：<code>ecc.contract_completed_id IS NULL</code> 或 <code>(ecc.contract_completed_id IS NOT NULL AND ecc.hz_approve_status IN ('NEW','REJECTED'))</code>（未竣工，或竣工未提交/被驳回）<br />
+      ⑤ 用户身份：经销商（D）按 <code>customer_code = DC</code> 过滤；内部（E）注入 organizationId 但 SQL 已注释，等同全量可见<br />
+      <strong style="color:#7C3AED;">典型根因（任一不满足都会看不到）：</strong><br />
+      S1：报备未审核通过 → HZ_APPROVE_STATUS ≠ 'APPROVED'<br />
+      S2：项目无效 → project_valid ≠ 2<br />
+      S3：项目已签合同且竣工已通过 → contract_completed_id 存在且 hz_approve_status='APPROVED'<br />
+      S4：经销商用户用了 DC 错的账号登录 → 看不到自己经销商的报备<br />
+      <strong style="color:#7C3AED;">排查 SQL：</strong><br />
+      <pre class="detail-sql language-sql" v-pre><code>-- 1. 看报备审核状态 / 项目有效性
+SELECT p.PROJECT_ID, p.PROJECT_CODE, p.PROJECT_NAME, p.HZ_APPROVE_STATUS,
+       p.PROJECT_VALID, p.REPORT_TYPE, p.CUSTOMER_CODE,
+       ecc.CONTRACT_COMPLETED_ID, ecc.HZ_APPROVE_STATUS AS 竣工状态
+  FROM EPM_PROJECT p
+  LEFT JOIN EPM_CONTRACT_COMPLETED ecc ON ecc.PROJECT_ID = p.PROJECT_ID
+ WHERE p.PROJECT_CODE = :projectCode;
+-- 2. 用户身份与可见性核对
+SELECT a.USER_TYPE, a.DC, a.DEPT
+  FROM IAM_USER a
+ WHERE a.LOGIN_NAME = :loginName;</code></pre>
+      <strong style="color:#7C3AED;">处理：</strong>按上面 5 条必备条件逐一排查；S3 必须先把竣工退回 NEW/REJECTED 状态或新做合同
+    </div>
+  </div>
 </div>
 </KbCard>
 </div>
@@ -1027,7 +1102,7 @@ S5：在【客户组织】维护该经销商的 division_id，确保指向有效
 
 | 日期 | 提交ID | 提交人 | 提交内容 |
 |------|-------|-------|---------|
-| - | - | - | 暂无2026年提交记录 |
+| 2026-10-13 | 2632eaf | yvonneygb | 重点逻辑7：可选报备条件（5 条必备过滤+用户身份注入+可选模糊/类别）；弹窗1 SQL 修正（替换为真实 SQL）；FAQ Q2：弹窗看不到报备的 5 条件 + 4 根因 + 排查 SQL |
 
 </KbCard>
 </div>
