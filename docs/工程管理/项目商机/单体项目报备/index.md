@@ -221,11 +221,39 @@
 
 </KbCard>
 
-<KbCard num="8" title="报备有效期与冻结">
+<KbCard num="8" title="报备有效期与冻结（4 类冻结逻辑）">
 
-- 报备审批通过后设定有效期，超过有效周期未产生合同则项目冻结
-- 冻结后可申请解冻（工程单体报备解冻申请，流程编码: ENGINEERING_REPORT_JDSQ_MAIN）
-- 小型项目报备校验三个月内是否存在有效合同，不存在则失效报备
+报备审批通过后存在两类失效机制——**有效期冻结**（超 valid_end_date 未签合同）和**进度超时冻结**（进度未更新超过阶段允许的最大天数）。
+
+- 调度任务入口：<code>com.arrow.dms.ae.biz.job.api.ProjectFreezeJob</code>（<code>@JobHandler("projectFreezeJob")</code>）→ <code>ProjectServiceImpl.executeProjectFreeze</code>，分布式锁 <code>SYNC_PROJECT_FREEZE_V</code>，每日定时执行
+- 命中后将项目 <code>FREEZE_TYPE</code> 置为对应值、<code>FREEZE_TIME</code> 置为当前时间、<code>PROJECT_VALID</code> 置为 4（冻结），并推送给华耐和 CRM
+
+<h4>4 类冻结触发条件</h4>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>#</th><th>Mapper SQL</th><th>FREEZE_TYPE</th><th>触发条件</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><code>selectProjectFreeze</code></td><td><strong>1 = 超有效期冻结（未签合同）</strong></td><td><code>HZ_APPROVE_STATUS='APPROVED'</code> 且 <code>project_valid=2</code> 且 <code>report_type=1</code> 且 <strong>未签合同</strong> 且 <code>valid_end_date &lt; trunc(sysdate)</code></td></tr>
+<tr><td>2</td><td><code>selectProjectFreeze1</code></td><td><strong>4 = 超有效期冻结（已签合同）</strong></td><td>同上但<strong>已签合同</strong></td></tr>
+<tr><td>3</td><td><code>selectProjectFreeze2</code></td><td><strong>1 = 合同超期冻结</strong></td><td><code>project_valid=4</code> 且 <code>freeze_type=2</code>（进度超时冻结后）且<strong>未做解冻申请</strong>且 <code>valid_end_date &lt; trunc(sysdate)</code></td></tr>
+<tr><td>4</td><td><code>selectProjectFreeze3</code></td><td><strong>2 = 进度超时冻结</strong></td><td><code>HZ_APPROVE_STATUS='APPROVED'</code> 且 <code>project_valid=2</code> 且 <code>report_type=1</code> 且 <code>stage_id&gt;0</code> 且 <code>esd.update_cycle&gt;0</code> 且 <code>esd.update_cycle + trunc(max(eps.updatetime)) &lt; trunc(sysdate)</code></td></tr>
+</tbody>
+</table>
+
+<h4>进度超时冻结判定公式</h4>
+<p><strong>"上次该阶段进度更新时间 + 当前阶段配置的 update_cycle 天数 &lt; 今天" → 自动冻结</strong></p>
+<p>天数<strong>不固定</strong>，按"项目阶段"独立配置。最源头配置：<code>EPM_STAGE_DEF.UPDATE_CYCLE</code>（单位：天）</p>
+<p><code>EpmStageDef.java</code> L82 字段注释："进度允许不更新的最大时间限制，<strong>超期未更新，系统将对应项目置为冻结状态</strong>，单位为天"</p>
+
+<h4>冻结后联动</h4>
+<ul>
+<li>推送华耐（指定经销商）：<code>epmReportPushMsgService.huaNaiPushData</code></li>
+<li>推送 CRM：<code>arrowEbsSdkService.indivireportAdd(buildFreezeReportMap(...))</code></li>
+<li>ES 数据删除：<code>deleteEsAfter3WorkingDays</code>（按工作日计算，遇节假日顺延）</li>
+<li>解冻申请：流程编码 <code>ENGINEERING_REPORT_JDSQ_MAIN</code>，见「报备解冻申请」页面</li>
+<li>小型项目（<code>project_category='small'</code>）报备后 3 个月内未产生有效合同则报备失效</li>
+</ul>
 
 </KbCard>
 
@@ -478,6 +506,74 @@ SELECT * FROM EPM_OA_BILL_REF WHERE BILL_NAME = '单体项目报备'
 - 解冻申请: `ENGINEERING_REPORT_JDSQ_MAIN`
 
 **单据名称枚举**: `DTXMBB("单体项目报备")`
+
+</KbCard>
+
+<KbCard num="7" title="自动冻结调度与源头配置">
+
+<h4>调度任务：ProjectFreezeJob</h4>
+<ul>
+<li>类路径：<code>com.arrow.dms.ae.biz.job.api.ProjectFreezeJob</code></li>
+<li>JobHandler：<code>projectFreezeJob</code></li>
+<li>分布式锁：<code>SYNC_PROJECT_FREEZE_V</code></li>
+<li>触发频率：每日定时</li>
+<li>处理逻辑：调用 <code>ProjectServiceImpl.executeProjectFreeze</code>，按 4 段 SQL 扫描 <code>EPM_PROJECT</code></li>
+</ul>
+
+<h4>源头配置：EPM_STAGE_DEF.UPDATE_CYCLE</h4>
+<p>进度超时冻结的天数<strong>不固定</strong>，按"项目阶段"独立配置，最源头配置在 <code>EPM_STAGE_DEF.UPDATE_CYCLE</code>（单位：天）。</p>
+
+<p><strong>判定公式</strong>：</p>
+<pre class="detail-sql" v-pre><code>esd.update_cycle + Trunc((select max(eps.updatetime)
+                              from epm_project_stage eps
+                             where eps.project_id = ep.project_id
+                               and eps.stage_id    = ep.stage_id))
+                       &lt; Trunc(sysdate)</code></pre>
+
+<p>语义："上次该阶段进度更新时间 + 当前阶段配置的 update_cycle 天数 &lt; 今天" → 自动冻结（<code>FREEZE_TYPE=2</code>、<code>PROJECT_VALID=4</code>）</p>
+
+<h4>查看当前每阶段冻结天数配置</h4>
+<pre class="detail-sql" v-pre><code>SELECT d.organization_id,
+       o.organization_name  AS 组织,
+       esd.stage_id,
+       esd.stage_name       AS 阶段名称,
+       esd.seq              AS 阶段序号,
+       esd.update_mode      AS 更新方式_1手动_2自动,
+       esd.update_cycle     AS 冻结天数,
+       TO_CHAR(esd.updatetime,'YYYY-MM-DD HH24:MI:SS') AS 最后修改时间,
+       esd.updator          AS 最后修改人
+FROM EPM_STAGE_DEF esd
+LEFT JOIN hpfm_organization o ON o.organization_id = esd.organization_id
+WHERE esd.update_cycle IS NOT NULL
+ORDER BY esd.organization_id, esd.seq;</code></pre>
+
+<h4>查找即将触发冻结的项目（预警）</h4>
+<pre class="detail-sql" v-pre><code>SELECT ep.project_code                AS 项目编码,
+       ep.project_name                AS 项目名称,
+       ep.customer_code               AS 经销商编码,
+       ep.customer_name               AS 经销商名称,
+       esd.stage_name                 AS 当前阶段,
+       esd.update_cycle               AS 配置天数,
+       TO_CHAR(last_stage.updatetime,'YYYY-MM-DD') AS 上次进度更新,
+       TRUNC(SYSDATE) - TRUNC(last_stage.updatetime) AS 已超期天数,
+       esd.update_cycle - (TRUNC(SYSDATE) - TRUNC(last_stage.updatetime)) AS 剩余天数
+FROM epm_project ep
+JOIN epm_stage_def esd
+  ON esd.stage_id = ep.stage_id
+ AND esd.organization_id = ep.organization_id
+JOIN LATERAL (
+    SELECT MAX(eps.updatetime) AS updatetime
+    FROM epm_project_stage eps
+    WHERE eps.project_id = ep.project_id
+      AND eps.stage_id   = ep.stage_id
+) last_stage ON 1=1
+WHERE ep.HZ_APPROVE_STATUS = 'APPROVED'
+  AND ep.project_valid     = 2
+  AND ep.report_type       = 1
+  AND ep.stage_id          &gt; 0
+  AND esd.update_cycle     &gt; 0
+  AND esd.update_cycle - (TRUNC(SYSDATE) - TRUNC(last_stage.updatetime)) BETWEEN 0 AND 5
+ORDER BY 剩余天数 ASC;</code></pre>
 
 </KbCard>
 
@@ -921,6 +1017,7 @@ SELECT * FROM EPM_OA_BILL_REF WHERE BILL_NAME = '单体项目报备'
 | ES查询模式无数据 | ES索引数据未同步 | 检查ES_PUSH_STATUS字段，手动触发推送ES接口(/v1/{orgId}/report/report-to-es) |
 | 二次报备提示已存在 | 同一项目编码已有二次报备记录 | `SELECT * FROM EPM_REPORT WHERE PROJECT_CODE = :code AND REPORT_TIMES = 2` |
 | 报备数据删除后关联数据残留 | 批量删除级联关系复杂 | 确认删除逻辑覆盖：折扣→合同→阶段→项目→工作流→报备 |
+| **单体项目报备多久没更新进度会自动冻结？天数在哪里配置？** | 调度任务 `ProjectFreezeJob` 每日扫描触发 | 1. **天数不固定，按"项目阶段"独立配置**，最源头配置在 `EPM_STAGE_DEF.UPDATE_CYCLE` 字段（单位：天）；2. 判定公式："`update_cycle + trunc(max(epm_project_stage.updatetime)) < trunc(sysdate)`"，即"上次进度更新 + 当前阶段配置的天数 < 今天"则自动冻结（`FREEZE_TYPE=2`、`PROJECT_VALID=4`）；3. 查看当前配置：`SELECT ESD.ORGANIZATION_ID, ESD.STAGE_ID, ESD.STAGE_NAME, ESD.UPDATE_CYCLE FROM EPM_STAGE_DEF ESD WHERE ESD.UPDATE_CYCLE IS NOT NULL`；4. 详见重点逻辑8「报备有效期与冻结（4 类冻结逻辑）」 |
 | 经纬度保存报错 | 工程单体报备经纬度必填 | 确保项目地址已标注经纬度，可通过箭牌标注或地图选点获取 |
 | 查重拦截后无法提交 | 查重标记为Y需走申诉 | 通过申诉功能提交，注意申诉次数受配置限制 |
 | 报备审批通过后项目表未同步 | 审批回调异常 | 检查HZ_APPROVE_STATUS和CALLBACK_SOURCE字段，确认OA回调是否正常 |
@@ -938,6 +1035,8 @@ SELECT * FROM EPM_OA_BILL_REF WHERE BILL_NAME = '单体项目报备'
 
 | 日期 | 更新内容 | 影响范围 |
 |---|---|---|
+| 2026-10-13 | 重点逻辑8扩充：拆解为 4 类冻结（超有效期未签合同 / 超有效期已签合同 / 合同超期 / 进度超时），明确源头配置 `EPM_STAGE_DEF.UPDATE_CYCLE`，给出冻结 SQL 判定公式和 `ProjectFreezeJob` 调度入口；新增 detail-logic 自动冻结调度与源头配置卡；FAQ 新增"自动冻结天数"问答 | key-logic / detail-logic / FAQ |
+| 2026-08-30 | 按skill规范重写：8个重点逻辑、2个界面模块、3个选择弹窗、7个按钮、5个保存校验、6个提交校验、7个数据库表、14条报错信息、8个上游依赖、7个下游影响、8个FAQ | 整篇 |
 | 2026-07-28 | 生成单体项目报备知识库文档 | 文档 |
 | 2026-04-23 | 修复单体报备相关问题(hfx) | 报备保存/提交/查重 |
 | 2026-01-15 | 单体报备推送ES定时任务优化(ReportPushEsJob) | ES数据同步 |

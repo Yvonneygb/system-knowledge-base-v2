@@ -83,6 +83,11 @@
           <svg v-if="item.id === '问题反馈'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
           </svg>
+          <svg v-if="item.id === '系统任务'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 11-3-6.7L21 8"/>
+            <polyline points="21 3 21 8 16 8"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
         </div>
         <span>{{ item.label }}</span>
       </div>
@@ -246,6 +251,7 @@ const primaryNav = [
   { id: '电子合同管理', label: '电子合同管理', icon: 'fa-solid fa-file-signature' },
   { id: '问题反馈', label: '问题反馈', icon: 'fa-solid fa-comments' },
   { id: '开发管理', label: '开发管理', icon: 'fa-solid fa-code' },
+  { id: '系统任务', label: '系统任务', icon: 'fa-solid fa-arrows-rotate' },
 ]
 
 const secondaryNav = {
@@ -599,6 +605,15 @@ const secondaryNav = {
       ]
     }
   ],
+  '系统任务': [
+    {
+      label: '调度任务',
+      icon: 'fa-solid fa-clock',
+      items: [
+        { label: '发运部门业务员权限更新', link: '/系统任务/发运部门业务员权限更新/', icon: 'fa-solid fa-truck-fast' },
+      ]
+    }
+  ],
   '财务管理': [
     {
       label: '预提与冲销',
@@ -670,6 +685,7 @@ function resolvePanel(path) {
   if (path.includes('/电子合同管理/')) return '电子合同管理'
   if (path.includes('/问题反馈/')) return '问题反馈'
   if (path.includes('/开发管理/')) return '开发管理'
+  if (path.includes('/系统任务/')) return '系统任务'
   return null
 }
 
@@ -698,6 +714,7 @@ function resolveGroup(path) {
   if (path.includes('/电子合同管理/')) return '基础管理'
   if (path.includes('/问题反馈/')) return '问题反馈'
   if (path.includes('/开发管理/')) return '值集配置'
+  if (path.includes('/系统任务/')) return '调度任务'
   return null
 }
 
