@@ -387,7 +387,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
 <tr><td>合同信息不匹配</td><td>编辑时</td><td>变更单与原合同关联异常</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-4" class="view-btn">查看</a></td></tr>
 <tr><td>不能删除非制单状态的单据</td><td>删除时</td><td>仅未提交的单据可删除</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-5" class="view-btn">查看</a></td></tr>
 <tr><td>流程编码缺失，请选择流程</td><td>提交时</td><td>OA流程编码未配置</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-6" class="view-btn">查看</a></td></tr>
-<tr><td>电子合同签署中，不允许变更</td><td>提交时</td><td>原合同电子签章流程未完成</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
+<tr><td>电子合同签署中，不允许变更，有问题请咨询MBO管理员</td><td>提交时</td><td>DMS调用MBO canFreeze接口，MBO判断原合同状态非"暂存/已完成/已作废"（如签署中）返回非Y</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-7" class="view-btn">查看</a></td></tr>
 <tr><td>销售合同编码不能为空</td><td>校验时</td><td>原合同编码参数缺失</td><td>toast提醒</td><td style="text-align:center;"><a href="#err-detail-8" class="view-btn">查看</a></td></tr>
 <tr><td>该合同已有单据在走合同归档，请先归档完再变更</td><td>提交时</td><td>原合同存在未完成归档单据</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-9" class="view-btn">查看</a></td></tr>
 <tr><td>已经存在未审核完的合同变更单</td><td>提交时</td><td>同一原合同已有未审核变更单</td><td>阻断性报错</td><td style="text-align:center;"><a href="#err-detail-10" class="view-btn">查看</a></td></tr>
@@ -495,16 +495,28 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
 <div id="err-detail-7" class="error-detail-overlay">
   <div class="error-detail-box" v-pre>
     <a href="#" class="close-btn">&times;</a>
-    <h4><span style="color:#7C3AED;">报错：</span>电子合同签署中，不允许变更</h4>
+    <h4><span style="color:#7C3AED;">报错：</span>电子合同签署中，不允许变更，有问题请咨询MBO管理员</h4>
     <h5>详细逻辑</h5>
-    <div class="detail-text" v-pre><strong>触发条件：</strong>用户对原合同发起变更申请时，原合同正处于电子签章流程中<br /><strong>逻辑分析：</strong>SaleContractAddHeadServiceImpl校验原合同的电子签章状态，若原合同正在电子签章流程中（签署中状态），不允许发起变更。变更将导致原合同内容变化，电子签章数据失效。需先完成或中止原合同电子签章流程再发起变更</div>
-      <h5>排查SQL</h5>
-    <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID, S.CONTRACT_NO, S.HZ_APPROVE_STATUS,
-         S.ELECTRONIC_SIGN_STATUS, S.STATE_PIGEONHOLE
-  FROM SA_SALE_CONTRACT_HEAD S
-  WHERE S.SALE_CONTRACT_HEAD_ID = #{originalContractId}
-    AND S.ELECTRONIC_SIGN_STATUS = 'SIGNING';
---</code></pre></div>
+    <div class="detail-text" v-pre><strong>触发条件：</strong>经销合同变更 4 个调用点（saveAndSubmit / onUserSubmit / onUserReject / onWfBreak）中任一触发，调用 <code>mboFeignClient.canFreeze(map)</code> 后 MBO 返回非 "Y"<br /><br /><strong>逻辑分析（跨系统互斥保护）：</strong><br />① 本校验是 DMS ↔ MBO 跨系统互斥保护，避免 DMS 改了原合同内容导致 MBO 端电子签章数据失效<br />② DMS 端不存 MBO 状态，由 MBO 系统判断"原合同现在能不能动"<br />③ 入参：sourceDocumentCode = 原合同编码 saContrHeadCode；freezeFlag = Y/N（Y=申请冻结，N=申请解冻）<br />④ <strong>MBO 端电子合同状态规则</strong>：状态 = 暂存 / 已完成 / 已作废 时 MBO 才会传 freezeFlag=Y（允许变更）；其他状态（包括签署中）则 MBO 不传 Y，DMS 抛出本提示<br />⑤ 报错含义：DMS 想动原合同，但 MBO 认为还在签章过程中；必须先完成/中止 MBO 端签章流程<br />⑥ 解决方向：联系 <strong>MBO 管理员</strong>确认原合同状态 → 待 MBO 端合同走完电子签章（或撤销签章）后，再回 DMS 发起变更<br /><br /><strong>4 个调用点：</strong><br />&nbsp;&nbsp;• saveAndSubmit（提交变更前）→ freezeFlag=Y<br />&nbsp;&nbsp;• onUserSubmit（工作流回调提交）→ freezeFlag=Y<br />&nbsp;&nbsp;• onUserReject（驳回）→ freezeFlag=N（申请解冻）<br />&nbsp;&nbsp;• onWfBreak（流程中断/撤销）→ freezeFlag=N（申请解冻）</div>
+      <h5>排查SQL（DMS 端，最终状态以 MBO 为准）</h5>
+    <pre class="detail-sql language-sql" v-pre><code>SELECT S.SALE_CONTRACT_HEAD_ID,
+       S.CONTRACT_NO,
+       S.HZ_APPROVE_STATUS,
+       S.SIGNATURE_STATE   AS 电子签章状态,
+       S.STATE_PIGEONHOLE  AS 手工归档状态,
+       CASE S.SIGNATURE_STATE
+         WHEN 'DRAFT'     THEN '暂存'
+         WHEN 'SIGNING'   THEN '签署中'
+         WHEN 'COMPLETED' THEN '已完成'
+         WHEN 'CANCELED'  THEN '已作废'
+         ELSE S.SIGNATURE_STATE
+       END AS 电子合同状态_中文
+FROM SA_SALE_CONTRACT_HEAD S
+WHERE S.CONTRACT_NO = #{contractNo};
+-- 字段说明：
+--   SIGNATURE_STATE = DRAFT/SIGNING/COMPLETED/CANCELED
+--   DRAFT 暂存、COMPLETED 已完成、CANCELED 已作废 → MBO 才会传 freezeFlag=Y（允许变更）
+--   SIGNING 签署中 → MBO 不传 Y → DMS 抛出本报错</code></pre></div>
 </div>
 
 
@@ -657,6 +669,16 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
     <strong style="color:#7C3AED;">原因：</strong>变更审批未通过或回写逻辑异常<br /><strong style="color:#7C3AED;">处理：</strong>检查SQL <code>SELECT HZ_APPROVE_STATUS FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #&#123;id&#125;</code>，确认状态为APPROVED
   </div>
 </div>
+
+<div class="kl-card" style="margin-bottom:20px; padding-left:12px; padding-right:12px;">
+  <div class="kl-card-title" style="margin-bottom:16px; background:#FFFFFF;">
+    <span class="kl-num">Q2</span>
+    <span style="font-size:15px;">报错"电子合同签署中，不允许变更，有问题请咨询MBO管理员"</span>
+  </div>
+  <div class="faq-answer" style="padding:12px 16px; background:#F5F3FF; border-radius:6px; font-size:14px; color:#374151; line-height:1.8;">
+    <strong style="color:#7C3AED;">原因：</strong>DMS 在经销合同变更 4 个调用点（saveAndSubmit / onUserSubmit / onUserReject / onWfBreak）会调用 MBO 系统的 <code>canFreeze</code> 接口询问"原合同能不能动"。<strong>MBO 端电子合同状态 = 暂存 / 已完成 / 已作废 时才会回传 freezeFlag=Y</strong>（允许变更）；其他状态（典型如"签署中"）MBO 不传 Y，DMS 即抛此报错。<br /><br /><strong style="color:#7C3AED;">处理：</strong><br />1. 这是 <strong>DMS ↔ MBO 跨系统互斥保护</strong>，避免改了原合同导致 MBO 端签章数据失效<br />2. 业务需联系 <strong>MBO 管理员</strong>确认原合同状态<br />3. 待 MBO 端签章完成（或撤销）后，再回 DMS 发起变更<br />4. DMS 端可参考排查 SQL 看 SIGNATURE_STATE，但<strong>最终判定以 MBO 为准</strong>
+  </div>
+</div>
 </div>
 </KbCard>
 
@@ -673,6 +695,7 @@ SELECT * FROM SALE_CONTRACT_ADD_HEAD WHERE ADD_HEAD_ID = #{id} AND ORIGINAL_CONT
 <tr><th>日期</th><th>提交ID</th><th>提交人</th><th>提交内容</th></tr>
 </thead>
 <tbody>
+<tr><td>2026-10-13</td><td>-</td><td>AI</td><td>报错7扩充：明确"MBO 端电子合同状态 = 暂存/已完成/已作废 时才会回传 freezeFlag=Y"，补充 4 个调用点、跨系统互斥保护说明、freezeFlag 含义；排查 SQL 字段从 ELECTRONIC_SIGN_STATUS 修正为 SIGNATURE_STATE；FAQ 新增 Q2</td></tr>
 <tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
 </tbody>
 </table>
