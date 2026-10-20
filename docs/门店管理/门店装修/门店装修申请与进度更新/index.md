@@ -84,7 +84,7 @@
     <div class="kl-col-box alt" style="margin-bottom:0;">
       <div style="display:flex;gap:12px;align-items:flex-start;">
         <div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,#16A34A,#15803D);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="white" stroke-width="1.5"/><path d="M5 6.5L7 8.5L11 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div><h5 style="font-size:0.88rem;font-weight:800;color:#1F2937;margin:0 0 6px;">预算年度</h5><p style="font-size:0.73rem;color:#6B7280;margin:0;line-height:1.6;">预算年度根据上次装修完成时间自动推算，影响补贴计算口径</p></div>
+        <div><h5 style="font-size:0.88rem;font-weight:800;color:#1F2937;margin:0 0 6px;">预算年度</h5><p style="font-size:0.73rem;color:#6B7280;margin:0;line-height:1.6;">预算年度由"装修周期+预计装修完成时间"前端联动算出，影响补贴计算与额度校验口径</p></div>
       </div>
     </div>
     <div class="kl-col-box" style="margin-bottom:0;">
@@ -307,6 +307,45 @@
 <tr><td>总扣罚金额</td><td><code>softDeductAmt + lanternDeductAmt</code></td><td>第664-670行</td></tr>
 </tbody>
 </table>
+</KbCard>
+
+<KbCard num="8" title="重点逻辑8：装修周期→预计装修完成时间→预算年度 三级联动 {联动公式}">
+<KbQuote>装修周期由用户填写，预计装修完成时间和预算年度由前端联动算出</KbQuote>
+
+<p><strong>核心公式</strong>（前端联动）：</p>
+<ul>
+<li>① 预计装修完成时间 = 创建日期(creationDate) + 装修周期(decorationDays) 天</li>
+<li>② 预算年度(BUD_YEAR) = 预计装修完成时间的年份</li>
+</ul>
+
+<p><strong>触发入口</strong>：<code>finFeeApplyClose/index.tsx</code> L2644-2649，监听 <code>headFormDS.update</code> 事件：</p>
+<pre class="detail-sql language-sql" v-pre><code>if (name === 'decorationDays') {
+  const newDay = moment(record.get('creationDate')).add(value, 'days');
+  record.set('preDecorationFinishedTime', newDay);   // 预计装修完成时间
+  const budYear = moment(newDay).year();
+  record.set('budYear', budYear);                    // 预算年度
+}</code></pre>
+
+<p><strong>后端兜底</strong>（<code>FinFeeApplyFinishedHeaderServiceImpl.doUpdate</code> L234-236）：</p>
+<pre class="detail-sql language-sql" v-pre><code>if (finFeeApplyFinishedHeader.getPreDecorationFinishedTime() != null) {
+    finFeeApplyFinishedHeader.setBudYear(
+        (long) finFeeApplyFinishedHeader.getPreDecorationFinishedTime().getYear());
+}</code></pre>
+
+<p><strong>具体逻辑</strong>：</p>
+<ul>
+<li>1、前端 <code>preDecorationFinishedTime</code> 字段 <code>&lt;DatePicker disabled=&#123;true&#125; /&gt;</code>，用户不能直接编辑，只能通过改"装修周期"间接联动</li>
+<li>2、<code>preDecorationFinishedTime</code>（预计装修完成时间）、<code>lastDecorationDate</code>（旧店上次装修时间）、<code>decorationFinishedTime</code>（实际装修完成时间）是三个不同的字段，不要混淆</li>
+<li>3、变更时继承：<code>FinFeeApplyFinishedHeader.copyChange</code> L610</li>
+<li>4、<code>doInsert</code> 新增时没有显式 setBudYear，依赖前端 DTO 透传</li>
+<li>5、校验：<code>budYear &gt; LocalDate.now().getYear()</code> 时提交抛异常"申请单的预算年度不可晚于当前年份，不可提前发起申请"</li>
+</ul>
+
+<p><strong>下游影响</strong>：</p>
+<ul>
+<li>① 预算年度决定 <code>FIN_FEE_CHECK_BX_HEADER</code> 校验哪一年的额度外预算（feeTypeId=66014601）</li>
+<li>② 装修周期受公司参数 <code>Decoration_Days</code> 上限约束</li>
+</ul>
 </KbCard>
 
 </div>
@@ -1507,6 +1546,7 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <tbody>
 <tr><td>2025-09-05</td><td>-</td><td>hfy</td><td>初始创建FinFeeApplyFinishedHeaderServiceImpl应用服务</td></tr>
 <tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+<tr><td>2026-10-20</td><td>51b96f8</td><td>yvonneygb</td><td>重点逻辑8：装修周期→预计装修完成时间→预算年度 三级联动公式（finFeeApplyClose L2644-2649 联动 + service L234-236 兜底）；同步修正 biz-intro L87 "上次装修完成时间"错误描述（应为"预计装修完成时间"）</td></tr>
 </tbody>
 </table>
 </KbCard>
