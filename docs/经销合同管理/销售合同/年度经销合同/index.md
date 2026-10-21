@@ -988,7 +988,7 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 </thead>
 <tbody>
 <tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
-<tr><td>2026-10-21</td><td>$(COMMIT)</td><td>yvonneygb</td><td>界面模块1 列表页字段表新增"销售渠道"行：派生字段（表头无 salesChannel 列，仅存 contractChannelRelId），通过 EPM_CONTRACT_CHANNEL_REL_L 配置表 + scpdict std.sales_channel LOV 拼接而来，contractChannelRelId 为空时抛"无法匹配合同类型与销售渠道关联关系！"</td></tr>
+<tr><td>2026-10-21</td><td>f66fba5</td><td>yvonneygb</td><td>界面模块1 列表页字段表新增"销售渠道"行：派生字段（表头无 salesChannel 列，仅存 contractChannelRelId），通过 EPM_CONTRACT_CHANNEL_REL_L 配置表 + scpdict std.sales_channel LOV 拼接而来，contractChannelRelId 为空时抛"无法匹配合同类型与销售渠道关联关系！"</td></tr>
 </tbody>
 </table>
 </KbCard>
