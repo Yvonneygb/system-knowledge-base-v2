@@ -348,6 +348,43 @@
 </ul>
 </KbCard>
 
+<KbCard num="9" title="重点逻辑9：装修周期的影响链 {8项下游影响}">
+<KbQuote>装修周期是单据上联动最广的字段——改一个数字会触发 3 项联动输出 + 1 项输入校验 + 4 项业务影响 + 2 项报错关联</KbQuote>
+
+<p><strong>A. 3 项联动输出</strong>（输入即重算，前端 + 后端双重兜底）：</p>
+<ul>
+<li>① 预计装修完成时间 <code>preDecorationFinishedTime = creationDate + decorationDays</code>，前端 <code>finFeeApplyClose/index.tsx</code> L2644-2649</li>
+<li>② 预算年度 <code>budYear = preDecorationFinishedTime.getYear()</code>，前端 L2646 + 后端 <code>FinFeeApplyFinishedHeaderServiceImpl</code> L234-236 兜底</li>
+<li>③ 补贴年度入口：预算年度决定可申请哪一年的补贴额度，影响后续额度校验</li>
+</ul>
+
+<p><strong>B. 1 项输入校验</strong>（保存前触发）：</p>
+<ul>
+<li>上限校验：<code>decorationDays ≤ Decoration_Days</code>（系统参数），service L164 / L225-230，超限报错"装修周期只能小于等于:{v}"</li>
+</ul>
+
+<p><strong>C. 4 项业务影响</strong>（实际装修完成后结算时触发）：</p>
+<ul>
+<li>④ 超期天数 <code>overDate = (decorationFinishedTime - replyDesignDate) - decorationDays</code>，service L493</li>
+<li>⑤ 扣除比例 <code>deductProportion = proportion × overDate</code>，封顶 1（即 100%），L496-505</li>
+<li>⑥ 重生成限制：<code>overDate &gt; Over_Date_Limit</code>（系统参数）则禁止重生成结算单，L149-152</li>
+<li>⑦ OA 回传：<code>doProcessOA</code> 把装修周期回传给 OA 流程</li>
+</ul>
+
+<p><strong>D. 2 项报错关联</strong>：</p>
+<ul>
+<li>报错 3："装修周期只能小于等于 {Decoration_Days}"（超系统参数上限）</li>
+<li>报错 4："装修周期未配置"（Decoration_Days 系统参数缺失）</li>
+</ul>
+
+<p><strong>总结</strong>：</p>
+<ul>
+<li>改装修周期 = 改预计完成时间 + 改预算年度 + 改补贴年度入口</li>
+<li>改装修周期 = 改超期基准（超期天数 / 扣罚比例 / 重生成限制都跟着变）</li>
+<li>改装修周期要遵守上限（系统参数 Decoration_Days，超了直接报错）</li>
+</ul>
+</KbCard>
+
 </div>
 </div>
 </div>
@@ -1547,6 +1584,7 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <tr><td>2025-09-05</td><td>-</td><td>hfy</td><td>初始创建FinFeeApplyFinishedHeaderServiceImpl应用服务</td></tr>
 <tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
 <tr><td>2026-10-20</td><td>eebf33d</td><td>yvonneygb</td><td>重点逻辑8：装修周期→预计装修完成时间→预算年度 三级联动公式（finFeeApplyClose L2644-2649 联动 + service L234-236 兜底）；同步修正 biz-intro L87 "上次装修完成时间"错误描述（应为"预计装修完成时间"）</td></tr>
+<tr><td>2026-10-21</td><td>$(COMMIT)</td><td>yvonneygb</td><td>重点逻辑9：装修周期的影响链——8 项下游影响（联动3项 preDecorationFinishedTime/budYear/补贴年度入口 + 校验1项 ≤ Decoration_Days + 业务4项 overDate/deductProportion/重生成限制/OA 回传 + 报错2项 3/4）</td></tr>
 </tbody>
 </table>
 </KbCard>
