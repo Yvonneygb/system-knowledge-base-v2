@@ -1584,7 +1584,7 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <tr><td>2025-09-05</td><td>-</td><td>hfy</td><td>初始创建FinFeeApplyFinishedHeaderServiceImpl应用服务</td></tr>
 <tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
 <tr><td>2026-10-20</td><td>eebf33d</td><td>yvonneygb</td><td>重点逻辑8：装修周期→预计装修完成时间→预算年度 三级联动公式（finFeeApplyClose L2644-2649 联动 + service L234-236 兜底）；同步修正 biz-intro L87 "上次装修完成时间"错误描述（应为"预计装修完成时间"）</td></tr>
-<tr><td>2026-10-21</td><td>$(COMMIT)</td><td>yvonneygb</td><td>重点逻辑9：装修周期的影响链——8 项下游影响（联动3项 preDecorationFinishedTime/budYear/补贴年度入口 + 校验1项 ≤ Decoration_Days + 业务4项 overDate/deductProportion/重生成限制/OA 回传 + 报错2项 3/4）</td></tr>
+<tr><td>2026-10-21</td><td>2e8d9d3</td><td>yvonneygb</td><td>重点逻辑9：装修周期的影响链——8 项下游影响（联动3项 preDecorationFinishedTime/budYear/补贴年度入口 + 校验1项 ≤ Decoration_Days + 业务4项 overDate/deductProportion/重生成限制/OA 回传 + 报错2项 3/4）</td></tr>
 </tbody>
 </table>
 </KbCard>
