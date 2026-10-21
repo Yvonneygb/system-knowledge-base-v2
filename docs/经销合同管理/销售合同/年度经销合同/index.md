@@ -228,6 +228,7 @@
 <tr><td>交易公司</td><td>SA_SALE_CONTRACT_HEAD.TRADING_COMPANY_NAME</td><td>文本框</td><td>交易公司名称</td><td>常显</td><td>选择交易公司带出</td></tr>
 <tr><td>H0流程审批状态</td><td>SA_SALE_CONTRACT_HEAD.HZ_APPROVE_STATUS</td><td>文本框</td><td>流程审批状态</td><td>常显</td><td>流程回调更新</td></tr>
 <tr><td>归档状态</td><td>SA_SALE_CONTRACT_HEAD.STATE_PIGEONHOLE</td><td>文本框</td><td>合同归档状态</td><td>常显</td><td>归档后更新</td></tr>
+<tr><td>销售渠道</td><td>（派生字段，无表头列）</td><td>文本框</td><td>销售渠道集合（逗号分隔字符串）</td><td>常显</td><td><strong>派生字段，不入表头列</strong>：表头仅存 <code>contractChannelRelId</code>（L141/L476）。查询时 <code>SaSaleContractHeadServiceImpl.doSelect</code> L2073-2078 用该 ID 查 <code>EPM_CONTRACT_CHANNEL_REL_L</code>（配置表：合同类型→销售渠道映射），逐行取 <code>saleChannelCode</code>（来源 scpdict 字典 <code>std.sales_channel</code>，LOV 常量 <code>AE.STD.SALES_CHANNEL</code>），用逗号拼接成字符串赋给 VO.salesChannel。<code>contractChannelRelId</code> 必须非空，否则 <code>SaleContractAddHeadServiceImpl</code> L186-188 抛"无法匹配合同类型与销售渠道关联关系！"</td></tr>
 </tbody>
 </table>
 </KbCard>
@@ -987,6 +988,7 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 </thead>
 <tbody>
 <tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
+<tr><td>2026-10-21</td><td>$(COMMIT)</td><td>yvonneygb</td><td>界面模块1 列表页字段表新增"销售渠道"行：派生字段（表头无 salesChannel 列，仅存 contractChannelRelId），通过 EPM_CONTRACT_CHANNEL_REL_L 配置表 + scpdict std.sales_channel LOV 拼接而来，contractChannelRelId 为空时抛"无法匹配合同类型与销售渠道关联关系！"</td></tr>
 </tbody>
 </table>
 </KbCard>
