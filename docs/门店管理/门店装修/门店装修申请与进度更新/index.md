@@ -1613,7 +1613,7 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
 <tr><td>2026-10-20</td><td>eebf33d</td><td>yvonneygb</td><td>重点逻辑8：装修周期→预计装修完成时间→预算年度 三级联动公式（finFeeApplyClose L2644-2649 联动 + service L234-236 兜底）；同步修正 biz-intro L87 "上次装修完成时间"错误描述（应为"预计装修完成时间"）</td></tr>
 <tr><td>2026-10-21</td><td>2e8d9d3</td><td>yvonneygb</td><td>重点逻辑9：装修周期的影响链——8 项下游影响（联动3项 preDecorationFinishedTime/budYear/补贴年度入口 + 校验1项 ≤ Decoration_Days + 业务4项 overDate/deductProportion/重生成限制/OA 回传 + 报错2项 3/4）</td></tr>
-<tr><td>2026-10-27</td><td>$(COMMIT)</td><td>yvonneygb</td><td>重点逻辑7 补充"具体逻辑"：① 字段定义 stores/index.ts L803-828（lookupCode 绑定值集 + required 条件）② UI 控件 index.tsx L3081-3110（disabled 三节点 + optionsFilter 按事业部 tag 过滤）③ 数据库落库类型 BigDecimal ④ 变更继承 FinFeeApplyFinishedHeader:634 ⑤ 后端字典翻译 GET_DIV_DICT_NAME（FinishedHeaderMapper L1311-1315 + CheckBxHeaderMapper L1060-1061）</td></tr>
+<tr><td>2026-10-27</td><td>ec7d50a</td><td>yvonneygb</td><td>重点逻辑7 补充"具体逻辑"：① 字段定义 stores/index.ts L803-828（lookupCode 绑定值集 + required 条件）② UI 控件 index.tsx L3081-3110（disabled 三节点 + optionsFilter 按事业部 tag 过滤）③ 数据库落库类型 BigDecimal ④ 变更继承 FinFeeApplyFinishedHeader:634 ⑤ 后端字典翻译 GET_DIV_DICT_NAME（FinishedHeaderMapper L1311-1315 + CheckBxHeaderMapper L1060-1061）</td></tr>
 </tbody>
 </table>
 </KbCard>
