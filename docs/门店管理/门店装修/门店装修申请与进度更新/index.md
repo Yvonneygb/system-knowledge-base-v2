@@ -307,6 +307,34 @@
 <tr><td>总扣罚金额</td><td><code>softDeductAmt + lanternDeductAmt</code></td><td>第664-670行</td></tr>
 </tbody>
 </table>
+<h4>具体逻辑（值集 → 单据 → 落库 → 翻译）</h4>
+<ul>
+<li><strong>字段定义</strong>（<code>finFeeApplyClose/stores/index.ts</code> L803-828）：两个字段 <code>type: FieldType.string</code>，绑定 <code>lookupCode</code> 走值集下拉：
+<ul>
+<li><code>softPurchaseStandard</code> → <code>lookupCode: 'AE.PURCHASE_STANDARD'</code>，<code>required: ['软装设计师提交方案'].includes(taskName)</code></li>
+<li><code>lanternStandard</code> → <code>lookupCode: 'AE.LANTERN_PURCHASE_STANDARD'</code>，<code>required</code> 同上</li>
+</ul>
+</li>
+<li><strong>UI 控件</strong>（<code>finFeeApplyClose/index.tsx</code> L3081-3110）：<code>&lt;Select&gt;</code> 控件，<strong>disabled</strong> 条件 = <code>taskName ∈ ['软装设计师提交方案', '软装及礼品经理审批', '软装经理']</code> 且 <code>businessKey</code> 存在；<strong>optionsFilter 按事业部过滤</strong>：
+<pre class="detail-sql language-sql" v-pre><code>record.get('tag') ? record.get('tag').includes(userInfo.additionInfo.DEPT) : false</code></pre>
+</li>
+<li><strong>数据库落库类型</strong>：<code>BigDecimal</code>（3 个单据实体都有此字段）：
+<ul>
+<li><code>FinFeeApplyFinishedHeader.java</code> L558/L564</li>
+<li><code>FinFeeApplyChangeHeader.java</code> L546/L552</li>
+<li><code>FinFeeApplyClose.java</code> L510/L516</li>
+</ul>
+</li>
+<li><strong>变更继承</strong>（<code>FinFeeApplyFinishedHeader.java:634</code>）：变更单构造时直接拷贝原单字段，灯具补贴标准同步继承：
+<pre class="detail-sql language-sql" v-pre><code>this.lanternStandard = dbFinFeeApplyChangeHeader.getLanternStandard();</code></pre>
+</li>
+<li><strong>后端字典翻译</strong>（按 organization_id 取 meaning，用 Oracle 函数 <code>GET_DIV_DICT_NAME</code>）：
+<ul>
+<li><code>FinFeeApplyFinishedHeaderMapper.xml</code> L1311-1315：条件判断 <code>&gt; 0</code>（meaning 转 number）</li>
+<li><code>FinFeeCheckBxHeaderMapper.xml</code> L1060-1061：验收报销单导出时把 code 翻译成 meaning</li>
+</ul>
+</li>
+</ul>
 </KbCard>
 
 <KbCard num="8" title="重点逻辑8：装修周期→预计装修完成时间→预算年度 三级联动 {联动公式}">
@@ -1585,6 +1613,7 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
 <tr><td>2026-10-20</td><td>eebf33d</td><td>yvonneygb</td><td>重点逻辑8：装修周期→预计装修完成时间→预算年度 三级联动公式（finFeeApplyClose L2644-2649 联动 + service L234-236 兜底）；同步修正 biz-intro L87 "上次装修完成时间"错误描述（应为"预计装修完成时间"）</td></tr>
 <tr><td>2026-10-21</td><td>2e8d9d3</td><td>yvonneygb</td><td>重点逻辑9：装修周期的影响链——8 项下游影响（联动3项 preDecorationFinishedTime/budYear/补贴年度入口 + 校验1项 ≤ Decoration_Days + 业务4项 overDate/deductProportion/重生成限制/OA 回传 + 报错2项 3/4）</td></tr>
+<tr><td>2026-10-27</td><td>$(COMMIT)</td><td>yvonneygb</td><td>重点逻辑7 补充"具体逻辑"：① 字段定义 stores/index.ts L803-828（lookupCode 绑定值集 + required 条件）② UI 控件 index.tsx L3081-3110（disabled 三节点 + optionsFilter 按事业部 tag 过滤）③ 数据库落库类型 BigDecimal ④ 变更继承 FinFeeApplyFinishedHeader:634 ⑤ 后端字典翻译 GET_DIV_DICT_NAME（FinishedHeaderMapper L1311-1315 + CheckBxHeaderMapper L1060-1061）</td></tr>
 </tbody>
 </table>
 </KbCard>
