@@ -315,8 +315,15 @@
 <li><code>lanternStandard</code> → <code>lookupCode: 'AE.LANTERN_PURCHASE_STANDARD'</code>，<code>required</code> 同上</li>
 </ul>
 </li>
-<li><strong>UI 控件</strong>（<code>finFeeApplyClose/index.tsx</code> L3081-3110）：<code>&lt;Select&gt;</code> 控件，<strong>disabled</strong> 条件 = <code>taskName ∈ ['软装设计师提交方案', '软装及礼品经理审批', '软装经理']</code> 且 <code>businessKey</code> 存在；<strong>optionsFilter 按事业部过滤</strong>：
+<li><strong>UI 控件</strong>（<code>finFeeApplyClose/index.tsx</code> L3081-3110）：<code>&lt;Select&gt;</code> 控件，React <code>disabled={!条件}</code> <strong>反向语义</strong>：
+<ul>
+<li><strong>可编辑条件（disabled=false）</strong> = <code>taskName ∈ ['软装设计师提交方案', '软装及礼品经理审批', '软装经理']</code> <strong>且</strong> <code>businessKey</code> 存在</li>
+<li><strong>禁用条件（disabled=true）</strong> = <code>taskName 不在三个节点中 OR businessKey 为空</code></li>
+<li>即：<strong>前三个节点（软装设计师提交方案 / 软装及礼品经理审批 / 软装经理）有 businessKey 时均可编辑</strong>，其余场景只读</li>
+<li><strong>optionsFilter 按事业部过滤</strong>：
 <pre class="detail-sql language-sql" v-pre><code>record.get('tag') ? record.get('tag').includes(userInfo.additionInfo.DEPT) : false</code></pre>
+</li>
+</ul>
 </li>
 <li><strong>数据库落库类型</strong>：<code>BigDecimal</code>（3 个单据实体都有此字段）：
 <ul>
@@ -1614,6 +1621,7 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <tr><td>2026-10-20</td><td>eebf33d</td><td>yvonneygb</td><td>重点逻辑8：装修周期→预计装修完成时间→预算年度 三级联动公式（finFeeApplyClose L2644-2649 联动 + service L234-236 兜底）；同步修正 biz-intro L87 "上次装修完成时间"错误描述（应为"预计装修完成时间"）</td></tr>
 <tr><td>2026-10-21</td><td>2e8d9d3</td><td>yvonneygb</td><td>重点逻辑9：装修周期的影响链——8 项下游影响（联动3项 preDecorationFinishedTime/budYear/补贴年度入口 + 校验1项 ≤ Decoration_Days + 业务4项 overDate/deductProportion/重生成限制/OA 回传 + 报错2项 3/4）</td></tr>
 <tr><td>2026-10-27</td><td>ec7d50a</td><td>yvonneygb</td><td>重点逻辑7 补充"具体逻辑"：① 字段定义 stores/index.ts L803-828（lookupCode 绑定值集 + required 条件）② UI 控件 index.tsx L3081-3110（disabled 三节点 + optionsFilter 按事业部 tag 过滤）③ 数据库落库类型 BigDecimal ④ 变更继承 FinFeeApplyFinishedHeader:634 ⑤ 后端字典翻译 GET_DIV_DICT_NAME（FinishedHeaderMapper L1311-1315 + CheckBxHeaderMapper L1060-1061）</td></tr>
+<tr><td>2026-10-27</td><td>$(COMMIT)</td><td>yvonneygb</td><td>重点逻辑7 修正 UI 控件 disabled 反向语义说明：明确 React <code>disabled={!条件}</code> 取反——可编辑条件 = taskName ∈ [三个节点] AND businessKey 存在；前三个节点（软装设计师提交方案 / 软装及礼品经理审批 / 软装经理）有 businessKey 时均可编辑，并非"软装设计师提交方案时不可选"（用户纠错）</td></tr>
 </tbody>
 </table>
 </KbCard>
