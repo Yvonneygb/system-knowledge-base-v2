@@ -1632,7 +1632,7 @@ SELECT * FROM MKT_STOREPHOTO_SET_LINE
 <tr><td>2026-10-27</td><td>f3092c3</td><td>yvonneygb</td><td>重点逻辑7 修正 UI 控件 disabled 反向语义说明：明确 React <code>disabled={!条件}</code> 取反——可编辑条件 = taskName ∈ [三个节点] AND businessKey 存在；前三个节点（软装设计师提交方案 / 软装及礼品经理审批 / 软装经理）有 businessKey 时均可编辑，并非"软装设计师提交方案时不可选"（用户纠错）</td></tr>
 <tr><td>2026-10-27</td><td>e864775</td><td>yvonneygb</td><td>重点逻辑7 继续补充 4 个细节：① 保存/提交时硬性校验 index.tsx L674-690（taskName==软装设计师提交方案时非空校验 + notification.error 弹窗 + return）② 字段类型转换（前端 FieldType.string → DTO BigDecimal，Jackson 自动转换无需显式代码）③ 后端 service 层无显式处理（仅实体/DTO/VO 定义，字段由前端透传）</td></tr>
 <tr><td>2026-10-30</td><td>7040b2a</td><td>yvonneygb</td><td>字段表"申请补贴标准"行补充完整字段逻辑：① 数据来源 do-search-decorate 接口查询带入 ② 可编辑条件 hzApproveStatus ∈ [REBUT/NEW/REJECT]（getFormDisabled L1631-1635 + editor L3232-3257）③ 编辑校验 applySubsidyStandardUpdate L2501-2560（3 路分支 + 变更前上限 + 负值回退）④ 下游联动 L2579-2589（差异标准/金额重算 + isOverStandard 标记）</td></tr>
-<tr><td>2026-10-30</td><td>$(COMMIT)</td><td>yvonneygb</td><td>字段表"申请补贴标准"行追加"业务流程规则"段（业务侧补充）：① 经销商发起时填写，可超标准（>policySubsidyStandard 视为合规）② 审批流中超标准需走额外领导审批（isOverStandard=2）③ 验收报销时财务复核节点仍可再调整，以财务复核后最终值为准</td></tr>
+<tr><td>2026-10-30</td><td>784db99</td><td>yvonneygb</td><td>字段表"申请补贴标准"行追加"业务流程规则"段（业务侧补充）：① 经销商发起时填写，可超标准（>policySubsidyStandard 视为合规）② 审批流中超标准需走额外领导审批（isOverStandard=2）③ 验收报销时财务复核节点仍可再调整，以财务复核后最终值为准</td></tr>
 </tbody>
 </table>
 </KbCard>
