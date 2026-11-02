@@ -661,6 +661,17 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 <tr><td>PIGEONHOLE_DATE</td><td>DATE</td><td>应归档时间</td><td>-</td><td>系统带出</td></tr>
 <tr><td>ACTUAL_PIGEONHOLE_DATE</td><td>DATE</td><td>实际归档时间</td><td>-</td><td>归档后更新</td></tr>
 <tr><td>PIGEONHOLE_BY</td><td>VARCHAR</td><td>归档人</td><td>-</td><td>归档后更新</td></tr>
+<tr><td>LAST_TOTAL_TASK</td><td>NUMBER</td><td>上年总任务</td><td>合同总任务</td><td>用户手工录入（万元），用于计算总发货完成率（saleRate = saleAmt × 100 / lastTotalTask）</td></tr>
+<tr><td>OLD_START_DATE</td><td>DATE</td><td>上个合同经销期限-起</td><td>上个合同经销期限</td><td>用户在 DatePicker range 字段中选择；改值触发 selectsale() 调 /sa-sale-contract-heads/deliver 接口重新查询发货数据</td></tr>
+<tr><td>OLD_END_DATE</td><td>DATE</td><td>上个合同经销期限-止</td><td>上个合同经销期限</td><td>同 OLD_START_DATE（DatePicker range 的另一端）</td></tr>
+<tr><td>SALE_AMT</td><td>NUMBER</td><td>发货完成（分）</td><td>总发货完成（万元）</td><td>后端 SQL 聚合：发货（inv_out_bill_intf_head + inv_out_bill_intf_confirm）− 退货（sales_return_order），按 SELL_CHANNEL 汇总所有渠道，<strong>金额单位是分</strong>；前端展示时除以 10000 转万元（DetailPage L948）</td></tr>
+<tr><td>SALE_RATE</td><td>NUMBER</td><td>发货完成率（%）</td><td>总发货完成率</td><td><strong>前端计算</strong>：saleRate = saleAmt × 100 / lastTotalTask（两者均为万元单位，×100 是把比例转成"百分号前的数值"）；DetailPage L970-985</td></tr>
+<tr><td>RETAIL_CHANNEL_AMT</td><td>NUMBER</td><td>上合同零售渠道金额（分）</td><td>零售渠道（万元）</td><td>后端 Repository（SaSaleContractHeadRepositoryImpl L121-122）内存 switch-case 映射 SELL_CHANNEL='零售' → 此字段；前端除以 10000 转万元</td></tr>
+<tr><td>HOME_CHANNEL_AMT</td><td>NUMBER</td><td>上合同家装渠道金额（分）</td><td>家装渠道（万元）</td><td>后端 Repository L133-134 映射 SELL_CHANNEL='家装' → 此字段；前端除以 10000 转万元</td></tr>
+<tr><td>ENGINEERING_CHANNEL_AMT</td><td>NUMBER</td><td>上合同工程渠道金额（分）</td><td>工程渠道（万元）</td><td>后端 Repository L124-125 映射 SELL_CHANNEL='工程' → 此字段；前端除以 10000 转万元</td></tr>
+<tr><td>BUSINESS_CHANNEL_AMT</td><td>NUMBER</td><td>上合同电商渠道金额（分）</td><td>电商渠道（截图标注"电销渠道"，代码实际为"电商"）（万元）</td><td>后端 Repository L127-128 映射 SELL_CHANNEL='电商' → 此字段；前端除以 10000 转万元</td></tr>
+<tr><td>FITMETAL_CHANNEL_AMT</td><td>NUMBER</td><td>上合同小五金渠道金额（分）</td><td>五金渠道（万元）</td><td>后端 Repository L130-131 映射 SELL_CHANNEL='小五金'/'惠选'/'轻店' → 此字段（三个 SELL_CHANNEL 都映射到这一项）；前端除以 10000 转万元</td></tr>
+<tr><td>OTHER_CHANNEL_AMT</td><td>NUMBER</td><td>上合同其他渠道金额（分）</td><td>其他（万元）</td><td>后端 Repository L136-137 映射 SELL_CHANNEL='海外' → 此字段；前端除以 10000 转万元</td></tr>
 </tbody>
 </table>
 </KbCard>
@@ -989,6 +1000,7 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 <tbody>
 <tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
 <tr><td>2026-10-21</td><td>f66fba5</td><td>yvonneygb</td><td>界面模块1 列表页字段表新增"销售渠道"行：派生字段（表头无 salesChannel 列，仅存 contractChannelRelId），通过 EPM_CONTRACT_CHANNEL_REL_L 配置表 + scpdict std.sales_channel LOV 拼接而来，contractChannelRelId 为空时抛"无法匹配合同类型与销售渠道关联关系！"</td></tr>
+<tr><td>2026-11-02</td><td>-</td><td>AI</td><td>表1 SA_SALE_CONTRACT_HEAD 补充「上合同年度完成情况」10 个字段逻辑（LAST_TOTAL_TASK / OLD_START_DATE / OLD_END_DATE / SALE_AMT / SALE_RATE / 6 个 *_CHANNEL_AMT）：来源 /sa-sale-contract-heads/deliver 接口 + Repository switch-case 渠道映射，前端再做单位换算与发货完成率计算</td></tr>
 </tbody>
 </table>
 </KbCard>
