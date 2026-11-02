@@ -616,6 +616,80 @@ FIN_FEE_CHECK_BX_HEADER (验收报销单)
 <tr><td>CRM软装灯具订单</td><td>-</td><td>terminalApplyNo</td><td>查询可绑定的CRM软装灯具采购订单</td></tr>
 </tbody>
 </table>
+
+<p><strong>门店装修申请 LOV 条件与 SQL（验收与报销可选装修申请）</strong></p>
+<p>验收与报销单「新增」时，点击「装修申请单号」弹窗选装修申请。后台只返回「已审批、未被关闭、未被任何非中断验收报销单关联」的装修申请，过滤掉不能再次发起验收的申请。</p>
+
+<p><strong>入口链路</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>层级</th><th>文件</th><th>关键位置</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td>前端 DS</td><td><code>arrow-ae/.../storeAcceptanceReimbursementInfo/stores/headDS.ts</code></td><td><code>terminalApplyLov</code></td><td>lovCode = <code>AE.STORE_DECORATION_APPLICATION_VIEW</code>，自定义 URL 调后端</td></tr>
+<tr><td>Controller</td><td><code>FinFeeApplyFinishedHeaderController.java</code></td><td><code>finishedHeaderLov</code></td><td><code>@GetMapping</code> 默认按 <code>TERMINAL_APPLY_ID DESC</code> 排序，分页</td></tr>
+<tr><td>Service</td><td><code>FinFeeApplyFinishedHeaderServiceImpl.java</code></td><td><code>finishedHeaderLov</code></td><td>自动注入 <code>organizationId</code> 与 <code>creator(custCode)</code> 作为隐含条件</td></tr>
+<tr><td>Mapper SQL</td><td><code>FinFeeApplyFinishedHeaderMapper.xml</code></td><td><code>finishedHeaderLov</code>（L632-690+）</td><td>主过滤 + 用户可选条件</td></tr>
+</tbody>
+</table>
+
+<p><strong>Service 隐含注入（自动生效，前端无传值入口）</strong></p>
+<pre class="detail-sql language-java" v-pre><code>finFeeApplyFinishedHeader.setOrganizationId(organizationId());   // 当前用户租户 → SQL: ORGANIZATION_ID = ?
+finFeeApplyFinishedHeader.setCreator(custCode());                // 当前用户经销商编码 → SQL: CUST_CODE = ?</code></pre>
+
+<p><strong>Mapper SQL 核心</strong></p>
+<pre class="detail-sql language-sql" v-pre><code>select *
+from (
+    select af.*
+    from fin_fee_apply_finished_header af
+    where af.HZ_APPROVE_STATUS = 'APPROVED'                       -- ① 已审批
+      and (af.is_modify &lt;&gt; 2 or af.is_modify is null)             -- ② 未被「已修改」标记
+      /*未关闭或关闭单状态不为新建或审批拒绝*/
+      and not exists (
+          select 1
+          from fin_fee_apply_close ac
+          where ac.terminal_apply_id = af.terminal_apply_id
+            and af.HZ_APPROVE_STATUS not in ('NEW','REJECTED')
+      )                                                           -- ③ 没有「有效」关闭单
+      and not exists (
+          select 1
+          from fin_fee_check_bx_header fd
+          where fd.HZ_APPROVE_STATUS != 'INTERRUPT'
+            and af.terminal_apply_id = fd.terminal_apply_id
+      )                                                           -- ④ 没被「非中断」验收报销单关联
+) FFAFH
+where 1 = 1
+  /* 用户可选条件，见下表 */</code></pre>
+
+<p><strong>用户可选查询条件</strong></p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>分类</th><th>字段</th><th>匹配方式</th><th>SQL 片段</th></tr>
+</thead>
+<tbody>
+<tr><td>装修申请单</td><td><code>terminalApplyNo</code></td><td><strong>模糊</strong></td><td><code>TERMINAL_APPLY_NO like '%'||?||'%'</code></td></tr>
+<tr><td>装修申请单</td><td><code>terminalId</code></td><td>精确</td><td><code>TERMINAL_ID = ?</code></td></tr>
+<tr><td>门店基础</td><td><code>terminalCode</code></td><td><strong>模糊</strong></td><td><code>TERMINAL_CODE like '%'||?||'%'</code></td></tr>
+<tr><td>门店基础</td><td><code>terminalName</code></td><td><strong>模糊</strong></td><td><code>TERMINAL_NAME like '%'||?||'%'</code></td></tr>
+<tr><td>销售/运营</td><td><code>salezoneOrgName</code></td><td>精确</td><td><code>SALEZONE_ORG_NAME = ?</code></td></tr>
+<tr><td>销售/运营</td><td><code>operatCenterOrgName</code></td><td>精确</td><td><code>OPERAT_CENTER_ORG_NAME = ?</code></td></tr>
+<tr><td>经销商</td><td><code>custId</code></td><td>精确</td><td><code>CUST_ID = ?</code></td></tr>
+<tr><td>经销商</td><td><code>custCode</code></td><td>精确</td><td><code>CUST_CODE = ?</code> ← <strong>Service 隐含注入</strong></td></tr>
+<tr><td>经销商</td><td><code>custName</code></td><td>精确</td><td><code>CUST_NAME = ?</code></td></tr>
+<tr><td>经销商</td><td><code>shortName</code></td><td>精确</td><td><code>SHORT_NAME = ?</code></td></tr>
+<tr><td>经销商</td><td><code>custFullName</code></td><td>精确</td><td><code>CUST_FULL_NAME = ?</code></td></tr>
+<tr><td>经销商</td><td><code>customerClass</code></td><td>精确</td><td><code>CUSTOMER_CLASS = ?</code></td></tr>
+<tr><td>经销商（集团）</td><td><code>dCustId</code></td><td>精确</td><td><code>D_CUST_ID = ?</code></td></tr>
+<tr><td>经销商（集团）</td><td><code>dCustCode</code></td><td>精确</td><td><code>D_CUST_CODE = ?</code></td></tr>
+<tr><td>经销商（集团）</td><td><code>dCustName</code></td><td>精确</td><td><code>D_CUST_NAME = ?</code></td></tr>
+<tr><td>经销商（集团）</td><td><code>dCustFullName</code></td><td>精确</td><td><code>D_CUST_FULL_NAME = ?</code></td></tr>
+<tr><td>地区</td><td><code>provinceAreaid</code></td><td>精确</td><td><code>PROVINCE_AREAID = ?</code></td></tr>
+<tr><td>地区</td><td><code>provinceAreaname</code></td><td>精确</td><td><code>PROVINCE_AREANAME = ?</code></td></tr>
+<tr><td>租户</td><td><code>organizationId</code></td><td>精确</td><td><code>ORGANIZATION_ID = ?</code> ← <strong>Service 隐含注入</strong></td></tr>
+</tbody>
+</table>
+
+<p><strong>业务语义</strong>：已审批通过、未被关闭、未被任何「非中断」状态的验收报销单关联、且未被「已修改」标记的装修申请——这就是验收与报销单能选的「待关联装修申请」。</p>
 </KbCard>
 
 <KbCard title="导入">
@@ -1712,6 +1786,7 @@ NEW ──删除──→ (删除)
 </thead>
 <tbody>
 <tr><td>2026-08-30</td><td>-</td><td>-</td><td>按skill规范重写业务逻辑梳理MD文件</td></tr>
+<tr><td>2026-11-02</td><td>-</td><td>-</td><td>「选择弹窗」模块追加：门店装修申请 LOV 条件与 SQL（含 4 条核心过滤条件、Service 隐含注入、用户可选条件表）</td></tr>
 </tbody>
 </table>
 </KbCard>
