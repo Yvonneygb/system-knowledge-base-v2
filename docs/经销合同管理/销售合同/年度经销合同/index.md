@@ -233,6 +233,27 @@
 </table>
 </KbCard>
 
+<KbCard title="界面模块2：上合同年度完成情况（详情页）">
+<p>详情/编辑页 UI 区块「上合同年度完成情况」的逐项字段逻辑。数据来源：改上合同经销期限触发 <code>/sa-sale-contract-heads/deliver</code> 接口重查；渠道金额由 <code>SaSaleContractHeadRepositoryImpl</code>（L121-137）内存 switch-case 按 <code>SELL_CHANNEL</code> 映射。</p>
+<table class="kb-field-tbl">
+<thead>
+<tr><th>UI 显示项</th><th>对应字段</th><th>计算逻辑</th></tr>
+</thead>
+<tbody>
+<tr><td>*合同任务（万元）</td><td><code>LAST_TOTAL_TASK</code></td><td>用户手工录入（万元），用于计算总发货完成率</td></tr>
+<tr><td>上合同经销期限</td><td><code>OLD_START_DATE</code> → <code>OLD_END_DATE</code></td><td>用户在 DatePicker range 字段中选择；改值触发 <code>selectsale()</code> 调 <code>/sa-sale-contract-heads/deliver</code> 接口重新查询发货数据</td></tr>
+<tr><td>总发货完成（万元）</td><td><code>SALE_AMT</code></td><td>后端 SQL 聚合：发货（inv_out_bill_intf_head + inv_out_bill_intf_confirm）− 退货（sales_return_order），按 SELL_CHANNEL 汇总所有渠道，<strong>金额单位是分</strong>；前端展示时除以 10000 转万元（DetailPage L948）</td></tr>
+<tr><td>总发货完成率（%）</td><td><code>SALE_RATE</code></td><td><strong>前端计算</strong>：saleRate = saleAmt × 100 / lastTotalTask（两者均为万元单位，×100 是把比例转成"百分号前的数值"）；DetailPage L970-985</td></tr>
+<tr><td>零售渠道（万元）</td><td><code>RETAIL_CHANNEL_AMT</code></td><td>后端 Repository L121-122 映射 SELL_CHANNEL='零售' → 此字段；前端除以 10000 转万元</td></tr>
+<tr><td>家装渠道（万元）</td><td><code>HOME_CHANNEL_AMT</code></td><td>后端 Repository L133-134 映射 SELL_CHANNEL='家装' → 此字段；前端除以 10000 转万元</td></tr>
+<tr><td>工程渠道（万元）</td><td><code>ENGINEERING_CHANNEL_AMT</code></td><td>后端 Repository L124-125 映射 SELL_CHANNEL='工程' → 此字段；前端除以 10000 转万元</td></tr>
+<tr><td>电商渠道（万元）</td><td><code>BUSINESS_CHANNEL_AMT</code></td><td>后端 Repository L127-128 映射 SELL_CHANNEL='电商' → 此字段；前端除以 10000 转万元</td></tr>
+<tr><td>五金渠道（万元）</td><td><code>FITMETAL_CHANNEL_AMT</code></td><td>后端 Repository L130-131 映射 SELL_CHANNEL='小五金'/'惠选'/'轻店' → 此字段（三个 SELL_CHANNEL 都映射到这一项）；前端除以 10000 转万元</td></tr>
+<tr><td>其他（万元）</td><td><code>OTHER_CHANNEL_AMT</code></td><td>后端 Repository L136-137 映射 SELL_CHANNEL='海外' → 此字段；前端除以 10000 转万元</td></tr>
+</tbody>
+</table>
+</KbCard>
+
 <KbCard title="选择弹窗">
 <h4>弹窗1：经销商选择（新建/编辑页，单选）</h4>
 <p><strong>接口链路：</strong>LOV AE.CUSTOMER_ORGS_SEARCH（searchFlag=146）→ GET /v1/{organizationId}/customer-orgs/search → CustomerOrgServiceImpl.search → CustomerOrgMapper.selectValid</p>
@@ -1001,6 +1022,7 @@ delayDate = endDate + Contract_Delay_Date（公司参数）
 <tr><td>2026-08-30</td><td>-</td><td>AI</td><td>按skill规范重写</td></tr>
 <tr><td>2026-10-21</td><td>f66fba5</td><td>yvonneygb</td><td>界面模块1 列表页字段表新增"销售渠道"行：派生字段（表头无 salesChannel 列，仅存 contractChannelRelId），通过 EPM_CONTRACT_CHANNEL_REL_L 配置表 + scpdict std.sales_channel LOV 拼接而来，contractChannelRelId 为空时抛"无法匹配合同类型与销售渠道关联关系！"</td></tr>
 <tr><td>2026-11-02</td><td>-</td><td>AI</td><td>表1 SA_SALE_CONTRACT_HEAD 补充「上合同年度完成情况」10 个字段逻辑（LAST_TOTAL_TASK / OLD_START_DATE / OLD_END_DATE / SALE_AMT / SALE_RATE / 6 个 *_CHANNEL_AMT）：来源 /sa-sale-contract-heads/deliver 接口 + Repository switch-case 渠道映射，前端再做单位换算与发货完成率计算</td></tr>
+<tr><td>2026-11-03</td><td>-</td><td>AI</td><td>新增「界面模块2：上合同年度完成情况（详情页）」独立卡片（紧跟界面模块1之后）：按详情页 UI 区块逐项对应 10 字段计算逻辑，解决此前内容仅存在于页面底部表1卡片、难以定位的问题</td></tr>
 </tbody>
 </table>
 </KbCard>
